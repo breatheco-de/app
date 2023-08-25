@@ -68,6 +68,7 @@ const privateRoutes = [
   '!src/pages/profile/*{.js,.jsx}',
   '!src/pages/choose-program/*{.js,.jsx}',
   '!src/pages/example{.js,.jsx}',
+  '!src/pages/mentorship{.js,.jsx}',
 ];
 
 module.exports = {

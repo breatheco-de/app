@@ -23,9 +23,17 @@ import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import useStyle from '../../../common/hooks/useStyle';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE,LESSON&visibility=PUBLIC&status=PUBLISHED&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
   const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
 
@@ -100,7 +108,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   ].filter((item) => translations?.[item?.value] !== undefined);
 
   const eventStructuredData = {
-    '@context': 'http://schema.org',
+    '@context': 'https://schema.org',
     '@type': 'Article',
     name: data?.title,
     description: data?.description,

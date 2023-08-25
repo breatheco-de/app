@@ -16,6 +16,7 @@ import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
@@ -24,11 +25,18 @@ export const getStaticProps = async ({ locale, locales }) => {
   const currentLang = locale === 'en' ? 'us' : 'es';
   const lessons = []; // filtered lessons after removing repeated
   let arrLessons = []; // incoming lessons
-
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'LESSON,ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    exclude_category: 'how-to,como',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
-  arrLessons = Object.values(data.results);
+  arrLessons = Object.values(data?.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
     console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {

@@ -10,12 +10,14 @@ function Image(props) {
     <Box position="relative" {...rest}>
       <NextImage
         className={classNameImg}
-        style={styleImg}
-        objectFit={objectFit}
-        layout={layout}
         quality={quality}
         src={src}
         alt={alt}
+        style={{
+          ...styleImg,
+          objectFit,
+          fill: layout,
+        }}
       />
     </Box>
   );

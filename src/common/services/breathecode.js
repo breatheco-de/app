@@ -13,6 +13,15 @@ const breathecode = {
       ...axios.defaults.headers.common,
     },
   }).then((res) => res).catch((err) => console.error(err)),
+  put: (url, data) => fetch(url, {
+    method: 'PUT',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res).catch((err) => console.error(err)),
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -109,7 +118,7 @@ const breathecode = {
       getFinalProject: () => axios.get(`${url}/user/me/final_project${qs}`),
       createFinalProject: (args) => axios.post(`${url}/user/me/final_project`, args),
       sendScreenshot: (args) => axios.post(`${url}/user/me/final_project/screenshot`, args),
-      updateFinalProject: (args) => axios.put(`${url}/user/me/final_project`, args),
+      updateFinalProject: (args) => breathecode.put(`${url}/user/me/final_project`, args),
       uploadFile: (id, args) => axios.put(`${url}/task/${id}/attachment${qs}`, args),
       getFile: (args) => axios.get(`${url}/task/${args.id}/attachment`, {
         headers: args.academyId && {

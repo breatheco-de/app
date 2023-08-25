@@ -3,13 +3,24 @@ import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 
 const UID_OF_PAGE = 'home';
 
 function Page({ page }) {
-  return (
+  const router = useRouter();
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
+
+  useEffect(() => {
+    if (!prismicRef && !prismicApi) {
+      router.push('/login');
+    }
+  }, []);
+  return prismicRef && prismicApi && (
     <Box className="prismic-body" pt="3rem">
       <SliceZone slices={page?.data?.slices} components={components} />
     </Box>
@@ -23,6 +34,8 @@ export default Page;
 
 export async function getStaticProps({ locale, locales, previewData }) {
   const client = createClient({ previewData });
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
 
   const languages = {
     en: 'en-us',
@@ -46,7 +59,7 @@ export async function getStaticProps({ locale, locales, previewData }) {
   return {
     props: {
       page,
-      seo: {
+      seo: prismicRef && prismicApi ? {
         title: title || '',
         description,
         image: prismicH.asImageSrc(image) || '',
@@ -56,7 +69,7 @@ export async function getStaticProps({ locale, locales, previewData }) {
         publishedTime: page?.first_publication_date || '',
         modifiedTime: page?.last_publication_date || '',
         type: type || null,
-      },
+      } : {},
     },
   };
 }

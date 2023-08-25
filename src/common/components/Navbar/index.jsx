@@ -27,71 +27,10 @@ import LanguageSelector from '../LanguageSelector';
 import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
+import logoData from '../../../../public/logo.json';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-
-function Close2() {
-  return (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 19 4"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke="currentColor"
-        x1="1.5"
-        y1="2"
-        x2="16.5645"
-        y2="2"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
-function Hamburger2() {
-  return (
-    <svg
-      width="22px"
-      height="22px"
-      viewBox="0 0 28 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <line
-        stroke="currentColor"
-        x1="1.5"
-        y1="1.5"
-        x2="26.5"
-        y2="1.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke="currentColor"
-        x1="1.5"
-        y1="12"
-        x2="16.5645"
-        y2="12"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      <line
-        stroke="currentColor"
-        x1="1.5"
-        y1="22.5"
-        x2="26.5"
-        y2="22.5"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
@@ -124,7 +63,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
   const { width: screenWidth } = getBrowserSize();
-  const isMobile = screenWidth < 768;
+  const isTablet = screenWidth < 996;
+  const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
 
   useEffect(() => {
     // verify if accessToken exists
@@ -141,6 +81,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { selectedProgramSlug } = cohortSession;
 
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
+
+  const whiteLabelitems = t('white-label-version-items', {
+    selectedProgramSlug: '/choose-program',
+  }, { returnObjects: true });
 
   const items = t('ITEMS', {
     selectedProgramSlug: selectedProgramSlug || '/choose-program',
@@ -240,10 +184,15 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   })) : [];
 
   useEffect(() => {
-    if (!isLoading && user?.id) {
-      setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
-    } else {
-      setITEMS(items.filter((item) => item.disabled !== true));
+    if (pageProps?.existsWhiteLabel) {
+      setITEMS(whiteLabelitems);
+    }
+    if (!pageProps?.existsWhiteLabel) {
+      if (!isLoading && user?.id) {
+        setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
+      } else {
+        setITEMS(items.filter((item) => item.disabled !== true));
+      }
     }
   }, [user, isLoading, selectedProgramSlug, mktCourses]);
 
@@ -300,7 +249,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         justifyContent="space-between"
         align="center"
       >
-        {isMobile && (
+        {isTablet && (
           <Flex
             ml={{ base: -2 }}
             display={{ base: 'flex', xl: 'none' }}
@@ -319,9 +268,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               color={colorMode === 'light' ? 'black' : 'white'}
               icon={
                 isOpen ? (
-                  <Close2 />
+                  <Icon icon="close2" width="22px" height="22px" />
                 ) : (
-                  <Hamburger2 />
+                  <Icon icon="hamburger2" width="22px" height="22px" />
                 )
               }
               variant="default"
@@ -329,21 +278,47 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               aria-label="Toggle Navigation"
             />
             <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-              {logo}
+              {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
+                <Image
+                  src={logoData.logo_url}
+                  width={105}
+                  height={35}
+                  style={{
+                    maxHeight: '35px',
+                    minHeight: '35px',
+                    objectFit: 'cover',
+                    filter: imageFilter,
+                  }}
+                  alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+                />
+              ) : logo}
             </NextLink>
           </Flex>
         )}
 
         <Flex
-          display={{ base: 'none', xl: 'flex' }}
+          display={{ base: 'none', lg: 'flex' }}
           justify={{ base: 'center', xl: 'start' }}
         >
           <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-            {logo}
+            {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
+              <Image
+                src={logoData.logo_url}
+                width={105}
+                height={35}
+                style={{
+                  maxHeight: '35px',
+                  minHeight: '35px',
+                  objectFit: 'cover',
+                  filter: imageFilter,
+                }}
+                alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+              />
+            ) : logo}
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={mktCoursesFormat} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -361,7 +336,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             style={{
               margin: 0,
             }}
-            display={isMobile ? 'none' : 'flex'}
+            display={isTablet ? 'none' : 'flex'}
             height="auto"
             _hover={{
               background: commonColors,
@@ -603,7 +578,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
           mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
-          NAV_ITEMS={ITEMS}
+          NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
           haveSession={sessionExists}
           translations={translations}
           onClickLink={onToggle}

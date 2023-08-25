@@ -3,14 +3,26 @@ import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
+import Head from 'next/head';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
+import { cleanObject } from '../utils';
 
 function Page({ page }) {
   return (
-    <Box className="prismic-body" pt="3rem">
-      <SliceZone slices={page?.data?.slices} components={components} />
-    </Box>
+    <>
+      {page?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(page.structuredData) }}
+          />
+        </Head>
+      )}
+      <Box className="prismic-body" pt="3rem">
+        <SliceZone slices={page?.data?.slices} components={components} />
+      </Box>
+    </>
   );
 }
 
@@ -26,6 +38,14 @@ export default Page;
 export async function getStaticProps({ params, locale, previewData }) {
   const client = createClient({ previewData });
   const { uid } = params;
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
+
+  if (!prismicRef && !prismicApi) {
+    return {
+      notFound: true,
+    };
+  }
 
   const languages = {
     en: 'en-us',
@@ -43,6 +63,8 @@ export async function getStaticProps({ params, locale, previewData }) {
       notFound: true,
     };
   }
+
+  const data = page?.data;
   const alternateLanguages = Array.isArray(page?.alternate_languages) ? page?.alternate_languages : [];
 
   const languagesArr = [
@@ -88,9 +110,47 @@ export async function getStaticProps({ params, locale, previewData }) {
 
   const translationsExists = Object.keys(translations).length > 0;
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `https://4geeks.com/${page.uid}`,
+    },
+    name: data?.title,
+    description: data?.description,
+    image: {
+      '@type': 'ImageObject',
+      url: data?.image?.url,
+      height: data.image.dimensions?.width,
+      width: data.image.dimensions?.height,
+    },
+    datePublished: page?.first_publication_date,
+    dateModified: page?.last_publication_date,
+    author: {
+      '@type': 'Organization',
+      name: '4Geeks',
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: '4Geeks',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://4geeks.com/static/images/4geeks.png',
+        width: '284',
+        height: '220',
+      },
+    },
+  };
+
+  const cleanedStructuredData = cleanObject(structuredData);
+
   return {
     props: {
-      page,
+      page: {
+        ...page,
+        structuredData: cleanedStructuredData,
+      },
       seo: {
         title: title || '',
         description: description || '',

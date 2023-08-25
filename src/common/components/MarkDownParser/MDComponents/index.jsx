@@ -15,9 +15,11 @@ import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
 
 export function MDLink({ children, href }) {
+  const includesProtocol = href.startsWith('http');
+  const protocol = includesProtocol ? '' : 'https://';
   return (
     <Link
-      href={href}
+      href={`${protocol}${href}`}
       fontSize="inherit"
       color="blue.400"
       fontWeight="700"

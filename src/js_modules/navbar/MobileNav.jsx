@@ -21,6 +21,8 @@ function MobileNav({
   const { colorMode, toggleColorMode } = useColorMode();
   const commonColors = useColorModeValue('white', 'gray.800');
   const readSyllabus = JSON.parse(syllabusList);
+  const prismicRef = process.env.PRISMIC_REF;
+  const prismicApi = process.env.PRISMIC_API;
 
   useEffect(() => {
     if (haveSession) {
@@ -39,6 +41,7 @@ function MobileNav({
     }
     return item?.subMenu;
   };
+
   return (
     <Stack
       position="absolute"
@@ -51,20 +54,26 @@ function MobileNav({
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {customPublicItems.length > 0 && allItems.map((publicItem) => {
+      {customPublicItems.length > 0 && allItems.map((item) => {
         const {
           label, href, description, icon,
-        } = publicItem;
-        const submenuData = prepareSubMenuData(publicItem);
+        } = item;
+        const submenuData = prepareSubMenuData(item);
+
+        if (item.slug === 'social-and-live-learning' && !prismicRef && !prismicApi) {
+          return null;
+        }
 
         return (
           <MobileItem
             key={label}
+            with_popover={item?.with_popover}
+            image={item?.image}
             description={description}
             icon={icon}
             label={label}
-            subMenu={publicItem?.subMenu?.length > 1
-              ? publicItem?.subMenu
+            subMenu={item?.subMenu?.length > 1
+              ? item?.subMenu
               : submenuData}
             href={href}
             onClickLink={onClickLink}

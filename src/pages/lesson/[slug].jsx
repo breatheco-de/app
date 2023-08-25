@@ -1,9 +1,9 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-param-reassign */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, useColorModeValue, Skeleton,
+  Box, useColorModeValue, Skeleton, ModalOverlay, ModalContent, ModalCloseButton, Button, Tooltip, Modal,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -21,10 +21,19 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 import Heading from '../../common/components/Heading';
 
 export const getStaticPaths = async ({ locales }) => {
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=LESSON,ARTICLE&visibility=PUBLIC&status=PUBLISHED&exclude_category=how-to,como&academy=4,5,6,47&limit=2000`);
+  const querys = parseQuerys({
+    asset_type: 'LESSON,ARTICLE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    exclude_category: 'how-to,como',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   const paths = data.results.flatMap((res) => locales.map((locale) => ({
@@ -86,17 +95,15 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     markdown = await resp.text();
   } else {
-    // ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
     const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
     const resp = await fetch(ipynbHtmlUrl);
-    if (resp.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
+
     ipynbHtml = {
       html: await resp.text(),
+      iframe: ipynbIframe,
       statusText: resp.statusText,
+      status: resp.status,
     };
   }
   const translationArray = [
@@ -121,7 +128,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   ].filter((item) => translations?.[item?.value] !== undefined);
 
   const eventStructuredData = {
-    '@context': 'http://schema.org',
+    '@context': 'https://schema.org',
     '@type': 'Article',
     name: lesson?.title,
     description: lesson?.description,
@@ -177,13 +184,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { t } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const currentTheme = useColorModeValue('light', 'dark');
   const translations = lesson?.translations || { es: '', en: '', us: '' };
 
   const router = useRouter();
   const { slug } = router.query;
   const { locale } = router;
 
-  const isIpynb = ipynbHtml.statusText === 'OK';
+  const isIpynb = ipynbHtml?.statusText === 'OK' || ipynbHtml?.iframe;
 
   useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
@@ -329,11 +338,80 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               maxWidth="1280px"
               width={{ base: '100%', md: 'auto' }}
             >
-              <Box width="100%" height="100%">
-                <IpynbHtmlParser
-                  html={ipynbHtml.html}
-                />
-              </Box>
+              {ipynbHtml.status > 400 ? (
+                <Box>
+                  <Button
+                    background={currentTheme}
+                    position="absolute"
+                    margin="1rem 0 0 2rem"
+                    padding="5px"
+                    height="auto"
+                    onClick={() => setIsFullScreen(true)}
+                  >
+                    <Tooltip label={t('common:full-screen')} placement="top">
+                      <Box>
+                        <Icon icon="screen" color="#000" width="22px" height="22px" />
+                      </Box>
+                    </Tooltip>
+                  </Button>
+                  <Box display={currentTheme === 'dark' ? 'block' : 'none'}>
+                    <iframe
+                      id="iframe"
+                      src={`${ipynbHtml.iframe}?theme=dark&plain=true`}
+                      seamless
+                      style={{
+                        width: '100%',
+                        height: '80vh',
+                        maxHeight: '100%',
+                      }}
+                      title={`${lesson.title} IPython Notebook`}
+                    />
+                  </Box>
+                  <Box display={currentTheme === 'light' ? 'block' : 'none'}>
+                    <iframe
+                      id="iframe"
+                      src={`${ipynbHtml.iframe}?theme=light&plain=true`}
+                      seamless
+                      style={{
+                        width: '100%',
+                        height: '80vh',
+                        maxHeight: '100%',
+                      }}
+                      title={`${lesson.title} IPython Notebook`}
+                    />
+                  </Box>
+
+                  <Modal isOpen={isFullScreen} closeOnOverlayClick onClose={() => setIsFullScreen(false)} isCentered size="5xl" borderRadius="0">
+                    <ModalOverlay />
+                    <ModalContent>
+                      <ModalCloseButton
+                        style={{
+                          top: '9px',
+                          right: '18px',
+                          zIndex: '99',
+                        }}
+                      />
+                      <iframe
+                        id="iframe"
+                        src={`${ipynbHtml.iframe}?theme=${currentTheme}&plain=true`}
+                        seamless
+                        style={{
+                          width: '100%',
+                          height: '100vh',
+                          maxHeight: '100%',
+                        }}
+                        title={`${lesson.title} IPython Notebook`}
+                      />
+                    </ModalContent>
+                  </Modal>
+                </Box>
+              ) : (
+                <Box width="100%" height="100%">
+                  <IpynbHtmlParser
+                    html={ipynbHtml.html}
+                  />
+                </Box>
+              )}
             </Box>
           )}
         </Box>

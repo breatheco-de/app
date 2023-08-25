@@ -4,11 +4,17 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-function SimpleModal({ isOpen, title, children, onClose, maxWidth, ...rest }) {
+function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, ...rest }) {
   const { modal } = useStyle();
 
+  const closeHandler = () => {
+    if (!forceHandler) {
+      onClose();
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={closeHandler}>
       <ModalOverlay />
       <ModalContent
         {...rest}
@@ -16,8 +22,8 @@ function SimpleModal({ isOpen, title, children, onClose, maxWidth, ...rest }) {
         background={modal.background2}
       >
         {title && <ModalHeader>{title}</ModalHeader>}
-        <ModalCloseButton />
-        <ModalBody>
+        {(!hideCloseButton && !forceHandler) && <ModalCloseButton />}
+        <ModalBody {...bodyStyles}>
           {children}
         </ModalBody>
       </ModalContent>
@@ -31,10 +37,16 @@ SimpleModal.propTypes = {
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func.isRequired,
   maxWidth: PropTypes.string,
+  bodyStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  forceHandler: PropTypes.bool,
+  hideCloseButton: PropTypes.bool,
 };
 SimpleModal.defaultProps = {
   title: '',
   maxWidth: '780px',
+  bodyStyles: {},
+  forceHandler: false,
+  hideCloseButton: false,
 };
 
 export default SimpleModal;
