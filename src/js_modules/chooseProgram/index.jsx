@@ -43,6 +43,10 @@ function ChooseProgram({ chooseList, handleChoose }) {
     const currentCohortProps = programsList[cohort.slug];
     return ({
       ...item,
+      cohort: {
+        ...cohort,
+        available_as_saas: item?.role === 'TEACHER' ? false : cohort?.available_as_saas,
+      },
       subscription: currentCohortProps?.subscription,
       plan_financing: currentCohortProps?.plan_financing,
       all_subscriptions: currentCohortProps?.all_subscriptions,
