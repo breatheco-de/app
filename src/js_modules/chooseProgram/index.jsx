@@ -32,7 +32,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   }, [router.locale]);
 
   useEffect(() => {
-    bc.payment().courses()
+    bc.payment({ academy: process.env.WHITE_LABEL_ACADEMY || '' }).courses()
       .then(({ data }) => {
         setMarketingCursesList(data);
       });
