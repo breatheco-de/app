@@ -60,14 +60,16 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
     //   url,
     //   t(commonTranslation?.validators['invalid-url'] || 'common:validators.invalid-url'),
     // ),
-    screenshot: Yup.mixed()
+    screenshot: Yup.mixed().nullable()
       .test('fileFormat', t(commonTranslation?.validators['unsupported-image-file'] || 'common:validators.unsupported-image-file'), (value) => {
+        if (prefillImage) return true;
         if (value) {
           return ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'].includes(value.type);
         }
         return true;
       })
       .test('fileSize', commonTranslation?.validators['long-file'] || t('common:validators.long-file'), (value) => {
+        if (prefillImage) return true;
         if (value) {
           return value.size <= maxFileSize;
         }
@@ -92,9 +94,10 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
     const screenshot = result?.data?.url || prefillImage || null;
     const val = [{ ...allValues[0], screenshot }];
     bc.todo().updateFinalProject(val)
-      .then((res) => {
-        if (res) {
-          setFinalProjectData(res.data[0]);
+      .then(async (res) => {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setFinalProjectData(data[0]);
           refreshFinalProject();
           toast({
             position: 'top',
@@ -107,7 +110,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
           toast({
             position: 'top',
             title: 'Error',
-            description: 'Something went wrong updating your final project',
+            description: data.detail || 'Something went wrong updating your final project',
             status: 'error',
             duration: 5000,
           });

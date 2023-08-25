@@ -19,11 +19,19 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import { parseQuerys } from '../../utils/url';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
+  const querys = parseQuerys({
+    asset_type: 'PROJECT',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    limit: 2000,
+  });
   let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
 
   projects = Object.values(data.results);
@@ -113,7 +121,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   ].filter((item) => translations?.[item?.value] !== undefined);
 
   const eventStructuredData = {
-    '@context': 'http://schema.org',
+    '@context': 'https://schema.org',
     '@type': 'Article',
     name: result?.title,
     description: result?.description,

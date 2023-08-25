@@ -7,14 +7,15 @@ import syllabusList from '../../../public/syllabus.json';
 function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
   const readSyllabus = JSON.parse(syllabusList);
+  const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
-    if (haveSession) {
+    if (haveSession && NAV_ITEMS?.length > 0) {
       setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
     }
   }, [haveSession, NAV_ITEMS]);
 
-  const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
+  const publicItems = NAV_ITEMS?.length > 0 ? NAV_ITEMS?.filter((item) => item.private !== true) : [];
 
   const customPublicItems = publicItems;
   const allItems = [...privateItems, ...customPublicItems];
@@ -40,7 +41,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
         };
 
         return (
-          <DesktopItem key={publicItem.label} item={data} readSyllabus={readSyllabus} />
+          <DesktopItem key={publicItem.label} item={data} readSyllabus={syllabusExists ? readSyllabus : []} />
         );
       })}
     </Stack>
