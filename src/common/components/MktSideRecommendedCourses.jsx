@@ -13,6 +13,7 @@ import modifyEnv from '../../../modifyEnv';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize } from '../../utils';
 import useStyle from '../hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -46,6 +47,10 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
   const router = useRouter();
+  const qs = parseQuerys({
+    featured: true,
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+  });
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
 
   const headers = {
@@ -54,7 +59,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
+      const res = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {

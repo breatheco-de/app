@@ -28,6 +28,7 @@ import { getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
+import { parseQuerys } from '../../../utils/url';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -65,6 +66,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { width: screenWidth } = getBrowserSize();
   const isTablet = screenWidth < 996;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
+  const mktQs = parseQuerys({
+    featured: true,
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+  });
 
   useEffect(() => {
     // verify if accessToken exists
@@ -111,7 +116,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQs}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
