@@ -307,9 +307,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 width={105}
                 height={35}
                 style={{
-                  maxHeight: '35px',
-                  minHeight: '35px',
-                  objectFit: 'cover',
+                  maxHeight: '50px',
+                  minHeight: '50px',
+                  objectFit: pageProps?.existsWhiteLabel ? 'contain' : 'cover',
                   filter: imageFilter,
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}

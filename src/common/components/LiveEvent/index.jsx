@@ -7,6 +7,7 @@ import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
+import Image from 'next/image';
 import CustomTheme from '../../../../styles/theme';
 import Link from '../NextChakraLink';
 import Text from '../Text';
@@ -15,6 +16,7 @@ import { isValidDate } from '../../../utils';
 import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
+import logoData from '../../../../public/logo.json';
 
 function LiveEvent({
   mainClasses,
@@ -33,6 +35,8 @@ function LiveEvent({
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
+  const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
+  const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
 
   const otherEventsSorted = otherEvents?.length > 0 ? otherEvents.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at)) : [];
   const nearestEvent = otherEventsSorted[0];
@@ -218,12 +222,26 @@ function LiveEvent({
             opacity="0.5"
             padding="10px"
           >
-            <Icon
-              width="34px"
-              height="34px"
-              icon="logoModern"
-              color="currentColor"
-            />
+            {existsWhiteLabel ? (
+              <Image
+                src={logoData?.logo_url}
+                width={40}
+                height={40}
+                style={{
+                  maxHeight: '40px',
+                  minHeight: '40px',
+                  objectFit: 'contain',
+                }}
+                alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+              />
+            ) : (
+              <Icon
+                width="34px"
+                height="34px"
+                icon="logoModern"
+                color="currentColor"
+              />
+            )}
           </Box>
           <Box
             display="flex"
