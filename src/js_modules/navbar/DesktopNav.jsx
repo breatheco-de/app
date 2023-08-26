@@ -30,7 +30,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {customPublicItems.length > 0 && allItems.map((publicItem) => {
+      {allItems?.length > 0 && allItems.map((publicItem) => {
         const submenuData = prepareSubMenuData(publicItem);
 
         const data = {

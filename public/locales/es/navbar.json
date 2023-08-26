@@ -96,6 +96,7 @@
     },
     {
       "label": "Más formas de aprender",
+      "private": true,
       "icon": "4GeeksIcon",
       "image": "/static/images/4geeks.png",
       "description": "Miami Tech Works es parte de la comunidad de aprendizaje de 4Geeks. Visita 4Geeks.com para obtener más lecciones interactivas, talleres, mentorías y aprendizaje con IA.",
