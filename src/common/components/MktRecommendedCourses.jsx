@@ -10,6 +10,7 @@ import PublicCourseCard from './PublicCourseCard';
 import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
+import { parseQuerys } from '../../utils/url';
 
 const coursesLimit = 2;
 
@@ -23,6 +24,10 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredColor } = useStyle();
 
+  const qsConnector = parseQuerys({
+    featured: true,
+    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+  }, true);
   const defaultHostAndEndpoint = `${BREATHECODE_HOST}/v1/marketing/course`;
 
   const headers = {
@@ -32,7 +37,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}`, { headers });
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}${qsConnector}`, { headers });
         const data = await res.json();
         const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
         if (filteredData.length > 0) {
