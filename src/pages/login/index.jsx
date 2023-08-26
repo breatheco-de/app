@@ -7,11 +7,13 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 // import logo from '../../../public/static/images/bc_logo.png';
 import getT from 'next-translate/getT';
+import PropTypes from 'prop-types';
 import Login from '../../common/components/Forms/LogIn';
 import Register from '../../common/components/Forms/Register';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import { getQueryString, isWindow } from '../../utils';
+import logoData from '../../../public/logo.json';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'login');
@@ -37,7 +39,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-function login() {
+function LoginView({ existsWhiteLabel }) {
   const { t } = useTranslation('login');
   const { user } = useAuth();
   const redirect = isWindow && localStorage.getItem('redirect');
@@ -76,7 +78,21 @@ function login() {
       <Flex p="5vw 0 20px 0" flex={1} justify="center">
         <Stack spacing={4} w="full" maxW="md">
           <Box display={{ base: 'none', md: 'block' }} align="center" justify="center">
-            <Icon icon="logoModern" width="200px" height="100px" />
+            {existsWhiteLabel ? (
+              <Image
+                src={logoData.logo_url}
+                width={200}
+                height={200}
+                style={{
+                  maxHeight: '200px',
+                  minHeight: '200px',
+                  objectFit: 'contain',
+                }}
+                alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+              />
+            ) : (
+              <Icon icon="logoModern" width="200px" height="100px" />
+            )}
           </Box>
           <Stack spacing={6}>
             <Tabs index={currentTabIndex} isFitted variant="enclosed">
@@ -155,4 +171,11 @@ function login() {
   );
 }
 
-export default login;
+LoginView.propTypes = {
+  existsWhiteLabel: PropTypes.bool,
+};
+LoginView.defaultProps = {
+  existsWhiteLabel: false,
+};
+
+export default LoginView;
