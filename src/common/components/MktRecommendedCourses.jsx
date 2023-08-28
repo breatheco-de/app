@@ -11,7 +11,7 @@ import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
-import { WHITE_LABEL_ACADEMY } from '../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 const coursesLimit = 2;
 

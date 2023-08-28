@@ -45,7 +45,8 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
-import { WHITE_LABEL_ACADEMY, cleanObject } from '../../../utils';
+import { cleanObject } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({

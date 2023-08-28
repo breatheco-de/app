@@ -12,11 +12,12 @@ import FilterModal from '../../common/components/FilterModal';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
-import { WHITE_LABEL_ACADEMY, getQueryString } from '../../utils';
+import { getQueryString } from '../../utils';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');

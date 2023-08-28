@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
 const { parseQuerys } = require('../../src/utils/url');
-const { WHITE_LABEL_ACADEMY } = require('../../src/utils');
+const { WHITE_LABEL_ACADEMY } = require('../../src/utils/variables');
 require('dotenv').config({
   path: '.env.production',
 });

@@ -17,7 +17,8 @@ import Text from '../../common/components/Text';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
-import { WHITE_LABEL_ACADEMY, getQueryString } from '../../utils';
+import { getQueryString } from '../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {

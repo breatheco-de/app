@@ -11,7 +11,8 @@ import { CardSkeleton } from './Skeleton';
 import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
-import { WHITE_LABEL_ACADEMY, getBrowserSize } from '../../utils';
+import { getBrowserSize } from '../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 

@@ -1,6 +1,6 @@
 const { default: axios } = require('axios');
 const fs = require('fs');
-const { WHITE_LABEL_ACADEMY } = require('../src/utils');
+const { WHITE_LABEL_ACADEMY } = require('../src/utils/variables');
 require('dotenv').config({
   path: '.env.production',
 });

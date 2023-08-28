@@ -20,7 +20,8 @@ import MktRecommendedCourses from '../../common/components/MktRecommendedCourses
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { parseQuerys } from '../../utils/url';
-import { WHITE_LABEL_ACADEMY, cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({

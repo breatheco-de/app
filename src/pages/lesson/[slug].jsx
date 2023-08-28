@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Icon from '../../common/components/Icon';
-import { WHITE_LABEL_ACADEMY, cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
+import { cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
@@ -23,6 +23,7 @@ import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 import Heading from '../../common/components/Heading';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({

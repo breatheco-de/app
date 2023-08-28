@@ -4,7 +4,8 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from '../../../common/components/Text';
-import { WHITE_LABEL_ACADEMY, toCapitalize } from '../../../utils';
+import { toCapitalize } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 import { parseQuerys } from '../../../utils/url';

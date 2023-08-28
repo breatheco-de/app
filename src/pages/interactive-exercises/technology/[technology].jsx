@@ -4,10 +4,11 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from '../../../common/components/Text';
-import { WHITE_LABEL_ACADEMY, toCapitalize } from '../../../utils';
+import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 import { parseQuerys } from '../../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {

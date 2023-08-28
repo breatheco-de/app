@@ -14,9 +14,10 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
-import { WHITE_LABEL_ACADEMY, getQueryString, isWindow } from '../../utils';
+import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 const contentPerPage = 20;
 

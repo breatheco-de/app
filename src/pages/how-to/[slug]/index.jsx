@@ -21,7 +21,8 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { WHITE_LABEL_ACADEMY, cleanObject, unSlugifyCapitalize } from '../../../utils/index';
+import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 
