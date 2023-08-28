@@ -3,6 +3,7 @@
   "label": "Page",
   "repeatable": true,
   "status": true,
+  "format": "custom",
   "json": {
     "Main": {
       "uid": {
@@ -39,6 +40,14 @@
         "config": {
           "label": "type",
           "placeholder": "The default type is \"website\""
+        }
+      },
+      "landing_url": {
+        "type": "Link",
+        "config": {
+          "label": "Landing Url",
+          "placeholder": "",
+          "select": null
         }
       },
       "slices": {
