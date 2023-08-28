@@ -18,7 +18,11 @@ import { WHITE_LABEL_ACADEMY, getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 
-export const getStaticProps = async ({ locale, locales }) => {
+const contentPerPage = 20;
+
+export const getServerSideProps = async ({ locale, locales, query }) => {
+  console.log('query');
+  console.log(query);
   const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -30,8 +34,10 @@ export const getStaticProps = async ({ locale, locales }) => {
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
+    language: currentLang,
     academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
+    limit: query.page ? contentPerPage : 2000,
+    offset: query.page ? (query.page - 1) * contentPerPage : 0,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -122,6 +128,7 @@ export const getStaticProps = async ({ locale, locales }) => {
       },
 
       fallback: false,
+      count: data?.count,
       lessons: lessons.filter((lesson) => lesson?.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
@@ -131,25 +138,22 @@ export const getStaticProps = async ({ locale, locales }) => {
   };
 };
 
-function Projects({ lessons, technologyTags, difficulties }) {
+function Projects({ lessons, technologyTags, difficulties, count }) {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const page = getQueryString('page', 1);
   const pageIsEnabled = getQueryString('page', false);
   const search = getQueryString('search', '');
 
-  const contentPerPage = 20;
-  const startIndex = (page - 1) * contentPerPage;
-
   const queryFunction = async () => {
-    const endIndex = startIndex + contentPerPage;
-    const paginatedResults = lessons.slice(startIndex, endIndex);
+    // const endIndex = startIndex + contentPerPage;
+    // const paginatedResults = lessons.slice(startIndex, endIndex);
+    const paginatedResults = lessons;
 
     return {
-      count: lessons.length,
+      count,
       results: paginatedResults,
     };
   };
@@ -297,6 +301,7 @@ Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
+  count: PropTypes.number.isRequired,
 };
 
 export default Projects;
