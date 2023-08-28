@@ -5,7 +5,7 @@ import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import axiosInstance from '../../axios';
 import Icon from '../../common/components/Icon';
-import { isPlural } from '../../utils';
+import { WHITE_LABEL_ACADEMY, isPlural } from '../../utils';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
 import handlers from '../../common/handlers';
@@ -32,7 +32,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   }, [router.locale]);
 
   useEffect(() => {
-    bc.payment({ academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47' }).courses()
+    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
       .then(({ data }) => {
         setMarketingCursesList(data);
       });

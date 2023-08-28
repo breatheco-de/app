@@ -13,7 +13,7 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import GridContainer from '../../common/components/GridContainer';
-import { getQueryString } from '../../utils';
+import { WHITE_LABEL_ACADEMY, getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
@@ -29,7 +29,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
 

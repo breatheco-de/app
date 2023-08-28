@@ -21,7 +21,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
+import { WHITE_LABEL_ACADEMY, cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 
@@ -30,7 +30,7 @@ export const getStaticPaths = async ({ locales }) => {
     asset_type: 'ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);

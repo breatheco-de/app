@@ -410,6 +410,8 @@ function cleanObject(obj) {
   return cleaned;
 }
 
+const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -419,5 +421,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject,
+  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, WHITE_LABEL_ACADEMY,
 };

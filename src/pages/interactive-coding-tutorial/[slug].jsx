@@ -20,14 +20,14 @@ import MktRecommendedCourses from '../../common/components/MktRecommendedCourses
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { parseQuerys } from '../../utils/url';
-import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { WHITE_LABEL_ACADEMY, cleanObject, unSlugifyCapitalize } from '../../utils/index';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   let projects = [];
