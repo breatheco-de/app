@@ -11,8 +11,9 @@ import { CardSkeleton } from './Skeleton';
 import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
-import { getBrowserSize } from '../../utils';
+import { WHITE_LABEL_ACADEMY, getBrowserSize } from '../../utils';
 import useStyle from '../hooks/useStyle';
+import { parseQuerys } from '../../utils/url';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -47,6 +48,10 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
   const [courses, setCourses] = useState([]);
   const router = useRouter();
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
+  const qs = parseQuerys({
+    academy: WHITE_LABEL_ACADEMY,
+    featured: true,
+  });
 
   const headers = {
     'Accept-Language': lang,
@@ -54,7 +59,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch(`${BREATHECODE_HOST}${endpoint}`, { headers });
+      const res = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {

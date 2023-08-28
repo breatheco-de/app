@@ -10,6 +10,8 @@ import PublicCourseCard from './PublicCourseCard';
 import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
+import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../utils';
 
 const coursesLimit = 2;
 
@@ -22,7 +24,14 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredColor } = useStyle();
-
+  const qsConnector = parseQuerys({
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  }, true);
+  const qs = parseQuerys({
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  });
   const defaultHostAndEndpoint = `${BREATHECODE_HOST}/v1/marketing/course`;
 
   const headers = {
@@ -32,17 +41,18 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}`, { headers });
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}${qsConnector}`, { headers });
         const data = await res.json();
         const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
         if (filteredData.length > 0) {
           setCourses(filteredData);
           return;
         }
+      } else {
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${qs}`, { headers });
+        const data = await res.json();
+        setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
       }
-      const res = await fetch(endpoint || defaultHostAndEndpoint, { headers });
-      const data = await res.json();
-      setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
     } catch (e) {
       console.log(e);
     }

@@ -24,10 +24,11 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import { getBrowserSize, isWindow } from '../../../utils';
+import { WHITE_LABEL_ACADEMY, getBrowserSize, isWindow } from '../../../utils';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
+import { parseQuerys } from '../../../utils/url';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -111,7 +112,11 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+    const qs = parseQuerys({
+      featured: true,
+      academy: WHITE_LABEL_ACADEMY,
+    });
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${qs}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
