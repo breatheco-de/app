@@ -22,8 +22,6 @@ import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 const contentPerPage = 20;
 
 export const getServerSideProps = async ({ locale, locales, query }) => {
-  console.log('query');
-  console.log(query);
   const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
