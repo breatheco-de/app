@@ -1,11 +1,11 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
 const { parseQuerys } = require('../../src/utils/url');
-const { WHITE_LABEL_ACADEMY } = require('../../src/utils/variables');
 require('dotenv').config({
   path: '.env.production',
 });
 
+const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';

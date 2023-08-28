@@ -1,10 +1,10 @@
 const { default: axios } = require('axios');
 const fs = require('fs');
-const { WHITE_LABEL_ACADEMY } = require('../src/utils/variables');
 require('dotenv').config({
   path: '.env.production',
 });
 
+const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
