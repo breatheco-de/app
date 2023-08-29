@@ -5,12 +5,12 @@ import {
 import PropTypes from 'prop-types';
 import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
     method: 'GET',
     headers: {
@@ -36,7 +36,6 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
   const currentLang = locale === 'en' ? 'us' : 'es';
-  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 
   const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
     method: 'GET',
@@ -52,7 +51,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 1000,
     technologies: technology,
   });

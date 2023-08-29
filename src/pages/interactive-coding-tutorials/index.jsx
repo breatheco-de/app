@@ -17,6 +17,7 @@ import { getQueryString } from '../../utils';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'projects');
@@ -29,7 +30,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
 

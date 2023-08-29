@@ -17,6 +17,7 @@ import OtherEvents from './OtherEvents';
 import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
 import logoData from '../../../../public/logo.json';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 function LiveEvent({
   mainClasses,
@@ -35,7 +36,7 @@ function LiveEvent({
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
-  const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
+  const whiteLabelAcademy = WHITE_LABEL_ACADEMY;
   const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
 
   const otherEventsSorted = otherEvents?.length > 0 ? otherEvents.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at)) : [];

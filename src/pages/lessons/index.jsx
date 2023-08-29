@@ -17,6 +17,7 @@ import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 const contentPerPage = 20;
 
@@ -35,7 +36,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
     language: currentLang,
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: query.page ? contentPerPage : 2000,
     offset: query.page ? (query.page - 1) * contentPerPage : 0,
   });

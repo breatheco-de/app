@@ -23,6 +23,7 @@ import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 import Heading from '../../common/components/Heading';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
@@ -30,7 +31,7 @@ export const getStaticPaths = async ({ locales }) => {
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);

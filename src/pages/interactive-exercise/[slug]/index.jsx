@@ -46,13 +46,14 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
     asset_type: 'EXERCISE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);

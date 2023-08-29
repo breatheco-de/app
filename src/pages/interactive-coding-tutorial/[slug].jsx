@@ -21,13 +21,14 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { parseQuerys } from '../../utils/url';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   let projects = [];
