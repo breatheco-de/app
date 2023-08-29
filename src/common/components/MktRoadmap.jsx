@@ -113,7 +113,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
         >
           {data?.[0]?.slug && (
             <CustomTab onClick={() => handleSelect(0)} top="10px" left="0" p="1rem 12px">
-              {data?.[0]?.icon_url && (
+              {data?.[0]?.icon_url !== 'null' && (
                 <Image src={data?.[0]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
               )}
               {data?.[0]?.short_name || data?.[0]?.name}
@@ -122,7 +122,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
 
           {data?.[1]?.slug && (
             <CustomTab onClick={() => handleSelect(1)} top="112px" left="40px" p="1rem 12px">
-              {data?.[1]?.icon_url && (
+              {data?.[1]?.icon_url !== 'null' && (
                 <Image src={data?.[1]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
               )}
               {data?.[1]?.short_name || data?.[1]?.name}
@@ -130,7 +130,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
           )}
           {data?.[2]?.slug && (
             <CustomTab onClick={() => handleSelect(2)} top="218px" left="70px" p="1rem 12px">
-              {data?.[2]?.icon_url && (
+              {data?.[2]?.icon_url !== 'null' && (
                 <Image src={data?.[2]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
               )}
               {data?.[2]?.short_name || data?.[2]?.name}
@@ -138,7 +138,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
           )}
           {data?.[3]?.slug && (
             <CustomTab onClick={() => handleSelect(3)} bottom="144px" left="40px" p="1rem 12px">
-              {data?.[3]?.icon_url && (
+              {data?.[3]?.icon_url !== 'null' && (
                 <Image src={data?.[3]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
               )}
               {data?.[3]?.short_name || data?.[3]?.name}
@@ -146,7 +146,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
           )}
           {data?.[4]?.slug && (
             <CustomTab onClick={() => handleSelect(4)} bottom="57px" left="30px" p="1rem 12px">
-              {data?.[4]?.icon_url && (
+              {data?.[4]?.icon_url !== 'null' && (
                 <Image src={data?.[4]?.icon_url} height="35px" style={{ marginRight: '10px' }} />
               )}
               {data?.[4]?.short_name || data?.[4]?.name}

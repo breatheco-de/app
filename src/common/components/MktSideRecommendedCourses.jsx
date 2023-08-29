@@ -12,7 +12,7 @@ import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize } from '../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 
@@ -29,7 +29,7 @@ function Container({ course, courses, borderRadius, children, ...rest }) {
 
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+      <Link href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
@@ -108,7 +108,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
                 <Link
                   display={{ base: 'none', md: 'flex' }}
                   variant="buttonDefault"
-                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
+                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   colorScheme="success"
                   width="auto"
@@ -120,7 +120,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
                 </Link>
                 <Link
                   display={{ base: 'flex', md: 'none' }}
-                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
+                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   width="auto"
                   color="green.light"
