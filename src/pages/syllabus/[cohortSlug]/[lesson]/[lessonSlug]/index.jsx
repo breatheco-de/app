@@ -36,6 +36,7 @@ import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
+import { ORIGIN_HOST } from '../../../../../utils/variables';
 
 function Content() {
   const { t } = useTranslation('syllabus');
@@ -563,7 +564,7 @@ function Content() {
     },
   ];
 
-  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
+  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
 
