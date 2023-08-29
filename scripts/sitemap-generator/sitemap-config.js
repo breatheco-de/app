@@ -1,3 +1,5 @@
+const websiteUrl = process.env.DOMAIN_NAME || 'https://4geeks.com';
+
 const getFrequently = (route) => {
   if (
     route.includes('/interactive-exercises')
@@ -30,7 +32,6 @@ const getPriotity = (route) => {
 function addPage(page, index) {
   const path = page.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
   const route = path === '/index' ? '' : path;
-  const websiteUrl = process.env.WEBSITE_URL || 'https://4geeks.com';
   return `${index === 0 ? '<url>' : '  <url>'}
     <loc>${`${websiteUrl}${route}`}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
@@ -39,7 +40,6 @@ function addPage(page, index) {
   </url>`;
 }
 function addSitemap(page, index) {
-  const websiteUrl = process.env.WEBSITE_URL || 'https://4geeks.com';
   return `${index === 0 ? '<sitemap>' : '  <sitemap>'}
     <loc>${websiteUrl}/${page}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>

@@ -22,7 +22,7 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 
@@ -51,7 +51,7 @@ export const getStaticPaths = async ({ locales }) => {
 };
 export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
-  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const { slug } = params;
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
   const data = await resp.json();
@@ -113,8 +113,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     '@type': 'Article',
     name: data?.title,
     description: data?.description,
-    url: `https://4geeks.com/${slug}`,
-    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    url: `${ORIGIN_HOST}/${slug}`,
+    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
     datePublished: data?.published_at,
     dateModified: data?.updated_at,
     author: data?.author ? {
@@ -124,7 +124,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     keywords: data?.seo_keywords,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${slug}`,
+      '@id': `${ORIGIN_HOST}/${slug}`,
     },
   };
   const cleanedStructuredData = cleanObject(eventStructuredData);

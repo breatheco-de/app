@@ -27,13 +27,14 @@ import ServiceSummary from '../js_modules/checkout/ServiceSummary';
 import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
+import { ORIGIN_HOST } from '../utils/variables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const finance = getDataContentProps(`public/locales/${locale}`, 'finance');
   const image = t('seo.image', {
-    domain: process.env.WEBSITE_URL || 'https://4geeks.com',
+    domain: ORIGIN_HOST,
   });
   const ogUrl = {
     en: '/checkout',
