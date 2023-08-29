@@ -18,8 +18,8 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent,
-  readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  headContent, title, description, childrenDescription, subContent, submitText,
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
@@ -53,6 +53,7 @@ function ShowOnSignUp({
       },
       body: JSON.stringify({
         ...allValues,
+        ...subscribeValues,
         plan: '4geeks-standard',
       }),
     });
@@ -216,7 +217,7 @@ function ShowOnSignUp({
                     title={t('join-workshop')}
                     isDisabled={readOnly}
                   >
-                    {t('join-workshop')}
+                    {submitText || t('join-workshop')}
                   </Button>
                   <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                     {t('signup:already-have-account')}
@@ -321,6 +322,8 @@ ShowOnSignUp.propTypes = {
   subContent: PropTypes.node,
   title: PropTypes.string,
   description: PropTypes.string,
+  submitText: PropTypes.string,
+  subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   readOnly: PropTypes.bool,
   children: PropTypes.node,
   hideForm: PropTypes.bool,
@@ -334,6 +337,8 @@ ShowOnSignUp.defaultProps = {
   subContent: null,
   title: '',
   description: '',
+  submitText: null,
+  subscribeValues: {},
   readOnly: false,
   children: null,
   hideForm: false,
