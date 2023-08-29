@@ -1,14 +1,10 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-unsafe-optional-chaining */
 import {
   Box,
   useColorModeValue,
   Button,
-  FormControl,
-  Input,
   useToast,
   useColorMode,
-  FormErrorMessage,
   Skeleton,
   Modal,
   ModalBody,
@@ -21,7 +17,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { Formik, Form, Field } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
@@ -37,8 +32,6 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import MarkDownParser from '../../../common/components/MarkDownParser';
 import ShowOnSignUp from '../../../common/components/ShowOnSignup';
 import { MDSkeleton } from '../../../common/components/Skeleton';
-import validationSchema from '../../../common/components/Forms/validationSchemas';
-import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 // import CustomTheme from '../../../../styles/theme';
@@ -189,17 +182,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const fields = {
-  full_name: {
-    value: '', type: 'name', required: true, place_holder: 'Full name *', error: 'Please specify a valid full name',
-  },
-  email: {
-    value: '', type: 'email', required: true, place_holder: 'Email *', error: 'Please specify a valid email',
-  },
-};
-
 function TabletWithForm({
-  toast,
   exercise,
   commonTextColor,
   commonBorderColor,
@@ -208,8 +191,7 @@ function TabletWithForm({
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
-  const { backgroundColor, hexColor } = useStyle();
+  const { hexColor } = useStyle();
 
   // const UrlInput = styled.input`
   //   cursor: pointer;
@@ -665,7 +647,6 @@ Exercise.propTypes = {
 };
 
 TabletWithForm.propTypes = {
-  toast: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   commonTextColor: PropTypes.string.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
