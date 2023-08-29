@@ -12,6 +12,7 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import Link from '../../common/components/NextChakraLink';
 import GridContainer from '../../common/components/GridContainer';
 import { cleanObject } from '../../utils';
+import { ORIGIN_HOST } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${process.env.SYLLABUS}`);
@@ -59,7 +60,7 @@ export const getStaticProps = async ({ locale, locales, params }) => {
     '@type': 'Course',
     name: data?.name,
     description: data?.description,
-    url: `https://4geeks.com/read/${slug}`,
+    url: `${ORIGIN_HOST}/read/${slug}`,
     provider: {
       '@type': 'EducationalOrganization',
       name: data?.academy_owner?.name,

@@ -23,7 +23,7 @@ import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 import Heading from '../../common/components/Heading';
-import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
@@ -133,8 +133,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     '@type': 'Article',
     name: lesson?.title,
     description: lesson?.description,
-    url: `https://4geeks.com/${slug}`,
-    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    url: `${ORIGIN_HOST}/${slug}`,
+    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
     datePublished: lesson?.published_at,
     dateModified: lesson?.updated_at,
     author: lesson?.author ? {
@@ -144,7 +144,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     keywords: lesson?.seo_keywords,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${slug}`,
+      '@id': `${ORIGIN_HOST}/${slug}`,
     },
   };
 
@@ -155,7 +155,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       seo: {
         title,
         description: description || '',
-        image: `https://4geeks.com/thumbnail?slug=${slug}`,
+        image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
         slug,

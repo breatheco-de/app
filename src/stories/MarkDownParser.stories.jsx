@@ -1,5 +1,6 @@
 import React from 'react';
 import MarkDownParser from '../common/components/MarkDownParser';
+import { ORIGIN_HOST } from '../utils/variables';
 // import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 
 const content = `
@@ -33,7 +34,7 @@ const content = `
 const frontMatter = {
   title: "CSS Layouts: Create and Build Layouts with CSS",
   subtitle: "Building layouts is the most painful process when coding HTML & CSS. Learn the CSS layout rules: Display, Position, Float and Flex; and place any element anywhere you want.",
-  cover_local: "https://4geeks.com/_next/image?url=https%3A%2F%2Fgithub.com%2Fbreatheco-de%2Fexercise-starwars-api%2Fblob%2Fmain%2F.learn%2Fassets%2Fpreview.png%3Fraw%3Dtrue&w=1920&q=100",
+  cover_local: `${ORIGIN_HOST}/_next/image?url=https%3A%2F%2Fgithub.com%2Fbreatheco-de%2Fexercise-starwars-api%2Fblob%2Fmain%2F.learn%2Fassets%2Fpreview.png%3Fraw%3Dtrue&w=1920&q=100`,
   textColor: "white",
   date: "2020-10-19T16:36:31+00:00",
   tags: ["box-model","CSS","HTML","layouts"],
