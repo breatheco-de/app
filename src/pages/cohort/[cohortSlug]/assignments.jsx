@@ -38,6 +38,7 @@ import Text from '../../../common/components/Text';
 import TaskLabel from '../../../common/components/taskLabel';
 import DottedTimeline from '../../../common/components/DottedTimeline';
 import useStyle from '../../../common/hooks/useStyle';
+import useFormatTimeString from '../../../common/hooks/useFormatTimeString';
 import { isGithubUrl } from '../../../utils/regex';
 import ButtonHandler, { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
@@ -115,6 +116,7 @@ function Assignments() {
   const { query } = router;
   const { cohortSlug, academy } = query;
   const toast = useToast();
+  const { formatTimeString } = useFormatTimeString();
   const { hexColor } = useStyle();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
@@ -1005,6 +1007,12 @@ function Assignments() {
               {currentStudentList.map((student) => {
                 const { user } = student;
                 const fullname = `${student.user.first_name} ${student.user.last_name}`;
+                const percentage = Math.round((student.tasks.reduce((acum, val) => (val.task_status !== 'PENDING' && val.task_type === 'PROJECT' ? acum + 1 : acum), 0) / syllabusData.assignments.length) * 100);
+                const lastDeliver = student.tasks.reduce((date, val) => {
+                  if (date) return date > val ? date : val.updated_at;
+                  if (val.updated_at && val.task_status !== 'PENDING' && val.task_type === 'PROJECT') return val.updated_at;
+                  return null;
+                }, null);
                 const dots = syllabusData.assignments.map((elem) => {
                   const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
                   const { mandatory } = elem;
@@ -1029,7 +1037,11 @@ function Assignments() {
                           height="25px"
                           style={{ userSelect: 'none' }}
                         />
-                        <p>{fullname}</p>
+                        <Box>
+                          <p>{fullname}</p>
+                          <p>{`${percentage}${t('delivered-percentage')}`}</p>
+                          <p>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</p>
+                        </Box>
                       </Flex>
                     )}
                     dots={dots}
