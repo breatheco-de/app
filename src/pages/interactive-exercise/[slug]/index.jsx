@@ -228,7 +228,9 @@ function TabletWithForm({
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}
-          paddingTop="18px"
+          padding="0"
+          background="none"
+          border="none"
         >
           <>
             {user && !formSended && (

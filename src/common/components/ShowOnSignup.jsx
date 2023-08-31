@@ -18,7 +18,7 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent, submitText,
+  headContent, title, description, childrenDescription, subContent, submitText, padding,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -119,7 +119,7 @@ function ShowOnSignUp({
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding="0 18px 18px">
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
         {title && (
           <Text size="21px" fontWeight={700} lineHeight="25px">
             {title}
@@ -321,6 +321,7 @@ ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,
   subContent: PropTypes.node,
   title: PropTypes.string,
+  padding: PropTypes.string,
   description: PropTypes.string,
   submitText: PropTypes.string,
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -336,6 +337,7 @@ ShowOnSignUp.defaultProps = {
   headContent: null,
   subContent: null,
   title: '',
+  padding: null,
   description: '',
   submitText: null,
   subscribeValues: {},
