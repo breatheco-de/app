@@ -27,7 +27,7 @@ import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
-    asset_type: 'ARTICLE',
+    asset_type: 'LESSON,ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
   const data = await resp.json();
   const engPrefix = {
     us: 'en',
