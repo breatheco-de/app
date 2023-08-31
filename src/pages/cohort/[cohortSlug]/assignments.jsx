@@ -134,11 +134,12 @@ function Assignments() {
     value: 'PROJECT',
   });
   const [studentLabel, setStudentLabel] = useState(null);
+  const [studentOptions, setStudentOptions] = useState([]);
   const [projectLabel, setProjectLabel] = useState(null);
-  const [educationalLabel, setEducationalLabel] = useState(educationalStatusList.find((option) => option.value === query.educational_status) || {
+  const [educationalLabel, setEducationalLabel] = useState(query.educational_status ? educationalStatusList.filter((option) => query.educational_status.toLowerCase().includes(option.value)) : [{
     label: t('educational-list.active'),
     value: 'active',
-  });
+  }]);
   const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
@@ -195,6 +196,7 @@ function Assignments() {
       task_type: typeLabel?.value || undefined,
       student: studentId || undefined,
       sort,
+      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
       like: query.project,
       ...reverseStatus(query.status),
     })
@@ -295,6 +297,25 @@ function Assignments() {
           isClosable: true,
         });
       });
+    handlers
+      .getStudents(selectedCohortSlug, allCohorts.find((c) => c.slug === selectedCohortSlug)?.id || academy)
+      .then((students) => {
+        setStudentOptions(students.map((student) => ({
+          id: student.user.id,
+          value:
+            `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
+          label: `${student.user.first_name} ${student.user.last_name}`,
+        })));
+        if (query.student) {
+          const filteredStudent = students.find((student) => student.user.id === Number(query.student));
+          setStudentLabel(filteredStudent && {
+            id: filteredStudent.user.id,
+            value:
+              `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+            label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+          });
+        }
+      });
   }, []);
 
   const loadStudents = () => {
@@ -310,19 +331,12 @@ function Assignments() {
 
     if (cohortId) {
       setSelectedCohort(currentCohort);
-      bc.cohort({ sort, users: query.student, educational_status: educationalLabel?.value })
+      console.log('educationalLabel');
+      console.log(educationalLabel);
+      bc.cohort({ sort, users: query.student, educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined })
         .getStudentsWithTasks(slug, academyId)
         .then((res) => {
           const students = res?.data;
-          if (query.student) {
-            const filteredStudent = students.find((student) => student.user.id === Number(query.student));
-            setStudentLabel(filteredStudent && {
-              id: filteredStudent.user.id,
-              value:
-                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
-              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
-            });
-          }
           setCurrentStudentList(students);
         })
         .catch(() => {
@@ -398,7 +412,7 @@ function Assignments() {
     if (studentLabel) filter.student = studentLabel.id;
     if (statusLabel) filter.status = statusLabel.value;
     if (typeLabel) filter.task_type = typeLabel.value;
-    if (educationalLabel) filter.educational_status = educationalLabel.value;
+    if (educationalLabel.length > 0) filter.educational_status = educationalLabel.map((val) => val.value).join(',').toUpperCase();
     router.push({
       query: {
         ...params,
@@ -414,7 +428,7 @@ function Assignments() {
     setStudentLabel(null);
     setStatusLabel(null);
     setTypeLabel(null);
-    setEducationalLabel(null);
+    setEducationalLabel([]);
     router.push({
       query: {
         ...params,
@@ -665,6 +679,27 @@ function Assignments() {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Box marginBottom="10px">
+              <ReactSelect
+                id="educational-select"
+                placeholder={t('filter.educational-status')}
+                isClearable
+                isMulti
+                value={educationalLabel || ''}
+                onChange={(selected) => {
+                  setEducationalLabel(selected || []);
+                }}
+                options={educationalStatusList.map((stat) => ({
+                  value: stat.value,
+                  label: stat.label,
+                }))}
+                styles={{
+                  multiValue: () => ({
+                    backgroundColor: hexColor.featuredColor,
+                  }),
+                }}
+              />
+            </Box>
             {currentView === 1 && (
               <Box marginBottom="10px">
                 <ReactSelect
@@ -716,37 +751,12 @@ function Assignments() {
                 />
               </Box>
             )}
-            {currentView === 0 && (
-              <Box marginBottom="10px">
-                <ReactSelect
-                  id="educational-select"
-                  placeholder={t('filter.educational-status')}
-                  isClearable
-                  value={educationalLabel || ''}
-                  onChange={(selected) => {
-                    setEducationalLabel(
-                      selected !== null
-                        ? {
-                          value: selected?.value,
-                          label: selected?.label,
-                        }
-                        : null,
-                    );
-                  }}
-                  options={educationalStatusList.map((stat) => ({
-                    value: stat.value,
-                    label: stat.label,
-                  }))}
-                />
-              </Box>
-            )}
             <Box marginBottom="10px">
-              <AsyncSelect
+              <ReactSelect
                 id="student-select"
                 placeholder={t('filter.student')}
                 isClearable
                 value={studentLabel || ''}
-                // defaultInputValue={defaultStudentLabel}
                 height="50px"
                 fontSize="15px"
                 onChange={(selected) => {
@@ -760,17 +770,7 @@ function Assignments() {
                       : null,
                   );
                 }}
-                defaultOptions
-                cacheOptions
-                loadOptions={(inputValue) => handlers
-                  .getStudents(selectedCohortSlug, allCohorts.find((c) => c.slug === selectedCohortSlug)?.id || academy)
-                  .then((students) => students.filter((student) => `${student.user.first_name} ${student.user.last_name}`.toLowerCase().includes(inputValue.toLowerCase()))
-                    .map((student) => ({
-                      id: student.user.id,
-                      value:
-                        `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-                      label: `${student.user.first_name} ${student.user.last_name}`,
-                    })))}
+                options={studentOptions}
               />
             </Box>
             {currentView === 1 && (
