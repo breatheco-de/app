@@ -245,7 +245,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         padding="0 10px"
       >
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
-          <MktSideRecommendedCourses />
+          <MktSideRecommendedCourses technologies={lesson?.technologies} />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
@@ -328,7 +328,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </>
           )}
           <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
-            <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            <MktSideRecommendedCourses technologies={lesson?.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
           {isIpynb && markdown === '' && ipynbHtml?.html && (
