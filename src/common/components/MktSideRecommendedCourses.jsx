@@ -64,14 +64,13 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {
-        const filteredCourses = data?.filter((course) => {
-          const courseTechs = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
-            ? course?.technologies?.split(',').map((tag) => tag?.trim())
-            : [];
+        const coursesSorted = [];
+        for (let i = 0; i < technologies.length; i += 1) {
+          const course = data.find((c) => c?.technologies?.includes(technologies[i]));
+          coursesSorted.push(course);
+        }
 
-          return technologies?.some((tech) => courseTechs?.includes(tech));
-        });
-        const list = filteredCourses?.length > 0 ? filteredCourses : data;
+        const list = coursesSorted?.length > 0 ? coursesSorted : data;
         setIsLoading(false);
 
         setCourses(list?.filter((course) => course.course_translation).slice(0, coursesLimit));
