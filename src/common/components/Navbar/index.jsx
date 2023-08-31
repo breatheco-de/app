@@ -67,6 +67,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { width: screenWidth } = getBrowserSize();
   const isTablet = screenWidth < 996;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
+  const mktQueryString = parseQuerys({
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  });
 
   useEffect(() => {
     // verify if accessToken exists
@@ -113,11 +117,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    const qs = parseQuerys({
-      featured: true,
-      academy: WHITE_LABEL_ACADEMY,
-    });
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${qs}`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);

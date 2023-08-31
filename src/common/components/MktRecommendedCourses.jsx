@@ -24,11 +24,8 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredColor } = useStyle();
-  const qsConnector = parseQuerys({
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-  }, true);
-  const qs = parseQuerys({
+
+  const deafultQuerystring = parseQuerys({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
   });
@@ -41,7 +38,12 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}?technologies=${technologies}${qsConnector}`, { headers });
+        const qsConnector = parseQuerys({
+          technologies,
+          featured: true,
+          academy: WHITE_LABEL_ACADEMY,
+        });
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${qsConnector}`, { headers });
         const data = await res.json();
         const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
         if (filteredData.length > 0) {
@@ -49,7 +51,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
           return;
         }
       } else {
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${qs}`, { headers });
+        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${deafultQuerystring}`, { headers });
         const data = await res.json();
         setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
       }

@@ -28,7 +28,7 @@ import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
-    asset_type: 'ARTICLE',
+    asset_type: 'LESSON,ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     academy: WHITE_LABEL_ACADEMY,
@@ -53,7 +53,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=ARTICLE`);
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
   const data = await resp.json();
   const engPrefix = {
     us: 'en',
@@ -213,7 +213,7 @@ export default function HowToSlug({ data, markdown }) {
       )}
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
-          <MktSideRecommendedCourses />
+          <MktSideRecommendedCourses technologies={data.technologies} />
         </Box>
         <Box
           gridColumn="2 / span 12"
@@ -310,7 +310,7 @@ export default function HowToSlug({ data, markdown }) {
           </Box>
         </Box>
         <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
-          <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+          <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
     </>
