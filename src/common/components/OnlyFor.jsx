@@ -41,7 +41,6 @@ function OnlyFor({
   const userCapabilities = onlyTeachers ? cohortCapabilities : profileCapabilities;
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
   const cohortRole = cohortSession?.cohort_role?.toUpperCase() || profileRole || 'NONE';
-
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
   const isTeacher = teachers.includes(cohortRole);
@@ -71,6 +70,7 @@ OnlyFor.propTypes = {
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,
   onlyMember: PropTypes.bool,
+
   onlyTeachers: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
@@ -78,6 +78,7 @@ OnlyFor.propTypes = {
 OnlyFor.defaultProps = {
   academy: '',
   capabilities: [],
+
   onlyMember: false,
   onlyTeachers: false,
   profile: {},

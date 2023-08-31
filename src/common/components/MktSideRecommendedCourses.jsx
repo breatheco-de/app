@@ -12,6 +12,7 @@ import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize } from '../../utils';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 
@@ -28,7 +29,7 @@ function Container({ course, courses, borderRadius, children, ...rest }) {
 
   if (screenWidth < 768) {
     return (
-      <Link href={`https://4geeks.com${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+      <Link href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
@@ -41,17 +42,17 @@ function Container({ course, courses, borderRadius, children, ...rest }) {
   );
 }
 
-function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest }) {
+function MktSideRecommendedCourses({ title, endpoint, technologies, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
   const router = useRouter();
-  const qs = parseQuerys({
-    featured: true,
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
-  });
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
+  const qs = parseQuerys({
+    academy: WHITE_LABEL_ACADEMY,
+    featured: true,
+  });
 
   const headers = {
     'Accept-Language': lang,
@@ -63,8 +64,16 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
       const data = await res.json();
 
       if (res?.status < 400 && data.length > 0) {
+        const coursesSorted = [];
+        for (let i = 0; i < technologies.length; i += 1) {
+          const course = data.find((c) => c?.technologies?.includes(technologies[i]));
+          coursesSorted.push(course);
+        }
+
+        const list = coursesSorted?.length > 0 ? coursesSorted : data;
         setIsLoading(false);
-        setCourses(data?.filter((course) => course.course_translation).slice(0, coursesLimit));
+
+        setCourses(list?.filter((course) => course.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
       console.log(e);
@@ -107,7 +116,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
                 <Link
                   display={{ base: 'none', md: 'flex' }}
                   variant="buttonDefault"
-                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
+                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   colorScheme="success"
                   width="auto"
@@ -119,7 +128,7 @@ function MktSideRecommendedCourses({ title, endpoint, containerPadding, ...rest 
                 </Link>
                 <Link
                   display={{ base: 'flex', md: 'none' }}
-                  href={`https://4geeks.com${langConnector}/${course?.slug}`}
+                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   width="auto"
                   color="green.light"
@@ -143,12 +152,14 @@ MktSideRecommendedCourses.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   endpoint: PropTypes.string,
   containerPadding: PropTypes.string,
+  technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
 };
 
 MktSideRecommendedCourses.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
   containerPadding: '9px 8px',
+  technologies: [],
 };
 
 Container.propTypes = {

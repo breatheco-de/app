@@ -25,6 +25,7 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { getBrowserSize, isWindow } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
@@ -66,9 +67,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { width: screenWidth } = getBrowserSize();
   const isTablet = screenWidth < 996;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
-  const mktQs = parseQuerys({
+  const mktQueryString = parseQuerys({
     featured: true,
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
   });
 
   useEffect(() => {
@@ -116,7 +117,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQs}`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);

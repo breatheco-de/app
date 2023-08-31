@@ -18,12 +18,13 @@ import useFilter from '../../common/store/actions/filterAction';
 import Search from '../../js_modules/projects/Search';
 import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
-  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const image = t('seo.image', { domain: ORIGIN_HOST });
   const howTos = []; // filtered howTos after removing repeated
   let arrHowTos = []; // incoming howTos
 
@@ -31,7 +32,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
 

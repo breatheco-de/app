@@ -7,6 +7,7 @@ import Text from './Text';
 import Heading from './Heading';
 import ProjectsSection from './ProjectsSection';
 import useStyle from '../hooks/useStyle';
+import { ORIGIN_HOST } from '../../utils/variables';
 
 function PublicCourseCard({
   programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
@@ -89,7 +90,7 @@ function PublicCourseCard({
           border="1px solid"
           borderRadius="3px"
           borderColor={hexColor.blueDefault}
-          href={`https://4geeks.com/${programSlug}`}
+          href={`${ORIGIN_HOST}/${programSlug}`}
           textAlign="center"
           margin="10px auto 0 auto"
           display="block"

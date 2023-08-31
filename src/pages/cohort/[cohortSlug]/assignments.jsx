@@ -46,6 +46,7 @@ import { isWindow } from '../../../utils';
 import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
 import handlers from '../../../common/handlers';
 import LoaderScreen from '../../../common/components/LoaderScreen';
+import { ORIGIN_HOST } from '../../../utils/variables';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -881,7 +882,7 @@ function Assignments() {
                   const githubUrl = task?.github_url;
                   const haveGithubDomain = githubUrl && isGithubUrl.test(githubUrl);
                   const fullName = `${task.user.first_name} ${task.user.last_name}`;
-                  const projectLink = `https://4geeks.com${
+                  const projectLink = `${ORIGIN_HOST}${
                     lang[router.locale]
                   }project/${task.associated_slug}`;
 
@@ -1040,7 +1041,7 @@ function Assignments() {
             </Flex>
             <ReviewModal
               currentTask={currentTask}
-              projectLink={`https://4geeks.com${
+              projectLink={`${ORIGIN_HOST}${
                 lang[router.locale]
               }project/${currentTask?.slug}`}
               updpateAssignment={updpateAssignment}
@@ -1053,7 +1054,7 @@ function Assignments() {
             />
             <DeliverModal
               currentTask={currentTask}
-              projectLink={`https://4geeks.com${
+              projectLink={`${ORIGIN_HOST}${
                 lang[router.locale]
               }project/${currentTask?.slug}`}
               updpateAssignment={updpateAssignment}
@@ -1063,7 +1064,7 @@ function Assignments() {
             />
             <DetailsModal
               currentTask={currentTask}
-              projectLink={`https://4geeks.com${
+              projectLink={`${ORIGIN_HOST}${
                 lang[router.locale]
               }project/${currentTask?.slug}`}
               updpateAssignment={updpateAssignment}

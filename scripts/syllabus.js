@@ -4,9 +4,10 @@ require('dotenv').config({
   path: '.env.production',
 });
 
+const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
-const whiteLabelAcademies = process.env.WHITE_LABEL_ACADEMY;
+const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
 
 async function generateSyllabus() {
   const whiteLableArray = whiteLabelAcademies?.length > 0 ? whiteLabelAcademies.split(',') : [];

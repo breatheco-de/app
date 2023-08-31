@@ -62,7 +62,7 @@ function DesktopItem({ item, readSyllabus }) {
   // manage subMenus in level 2
   const existsSubMenu = item?.subMenu?.length > 0;
   const withPopover = item?.with_popover?.active;
-  const existsItemWithPopover = existsSubMenu || withPopover;
+  const existsItemWithPopover = existsSubMenu || withPopover || item.description;
 
   const itemSubMenu = existsSubMenu ? item.subMenu.map((l) => {
     const isLessons = l.slug === 'lessons';

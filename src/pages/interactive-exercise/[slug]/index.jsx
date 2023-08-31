@@ -46,13 +46,14 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
     asset_type: 'EXERCISE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
@@ -74,7 +75,7 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
-  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
   const result = await resp.json();
 
@@ -141,8 +142,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     '@type': 'Article',
     name: result?.title,
     description: result?.description,
-    url: `https://4geeks.com/${slug}`,
-    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    url: `${ORIGIN_HOST}/${slug}`,
+    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
     datePublished: result?.published_at,
     dateModified: result?.updated_at,
     author: result?.author ? {
@@ -152,7 +153,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     keywords: result?.seo_keywords,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${slug}`,
+      '@id': `${ORIGIN_HOST}/${slug}`,
     },
   };
 
@@ -508,7 +509,7 @@ function TabletWithForm({
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://4geeks.com/lesson/how-to-use-gitpod"
+                  href={`${ORIGIN_HOST}/lesson/how-to-use-gitpod`}
                   display="inline-block"
                   letterSpacing="0.05em"
                   fontFamily="Lato, Sans-serif"
@@ -520,7 +521,7 @@ function TabletWithForm({
                 <Link
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="https://4geeks.com/lesson/what-is-github-codespaces"
+                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
                   color="blue.default"
                   display="inline-block"
                   letterSpacing="0.05em"

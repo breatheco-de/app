@@ -35,7 +35,7 @@ function Footer({ pageProps }) {
   if (pageProps?.previewMode) return null;
 
   return (
-    <Container background="none" as="footer" maxW="none" padding="20px" position="absolute" top="100%">
+    <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       {!pageProps?.existsWhiteLabel && (
