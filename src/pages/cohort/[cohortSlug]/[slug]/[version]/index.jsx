@@ -45,6 +45,7 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
+import SimpleModal from '../../../../../common/components/SimpleModal';
 
 function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -751,6 +752,27 @@ function Dashboard() {
           )}
         </Flex>
       </Container>
+      {showGithubWarning !== 'active' && (
+        <SimpleModal
+          isOpen
+          style={{ marginTop: '10vh' }}
+          maxWidth="45rem"
+          borderRadius="13px"
+          headerStyles={{ textAlign: 'center' }}
+          title="Welcome to 4Geeks!"
+        >
+          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+            <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
+              Watch this short video that explains how to get the most out of 4Geeks and enhance your learning experience
+            </Text>
+            <ReactPlayerV2
+              url="https://www.loom.com/share/9fbe5af774ff40fdafb0a3693abc85ba"
+              width="100%"
+              height="100%"
+            />
+          </Box>
+        </SimpleModal>
+      )}
       {showGithubWarning === 'active' && (
         <Modal
           isOpen={showWarningModal}
