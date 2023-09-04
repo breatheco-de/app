@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 const { default: axios } = require('axios');
 const fs = require('fs');
+const { isWhiteLabelAcademy } = require('./_utils');
 require('dotenv').config({
   path: '.env.production',
 });
@@ -157,36 +158,40 @@ const generateAliasRedirects = async (redirects, projects) => {
 };
 
 async function generateRedirect() {
-  console.log('Generating redirects...');
+  if (!isWhiteLabelAcademy) {
+    console.log('Generating redirects...');
 
-  const lessonsList = await getLessons();
-  const excersisesList = await getExercises();
-  const projectList = await getProjects();
-  const howToList = await getHowTo();
-  const eventList = await getEvents();
-  const aliasRedirectList = await getAliasRedirects();
+    const lessonsList = await getLessons();
+    const excersisesList = await getExercises();
+    const projectList = await getProjects();
+    const howToList = await getHowTo();
+    const eventList = await getEvents();
+    const aliasRedirectList = await getAliasRedirects();
 
-  const lessonRedirectList = generateAssetRedirect(lessonsList);
-  const excersisesRedirectList = generateAssetRedirect(excersisesList);
-  const projectRedirectList = generateAssetRedirect(projectList);
-  const howToRedirectList = generateAssetRedirect(howToList);
-  const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
+    const lessonRedirectList = generateAssetRedirect(lessonsList);
+    const excersisesRedirectList = generateAssetRedirect(excersisesList);
+    const projectRedirectList = generateAssetRedirect(projectList);
+    const howToRedirectList = generateAssetRedirect(howToList);
+    const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
 
-  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
-    .then((redirects) => redirects);
-    // .filter((item) => !item.destination?.includes(item?.source))
+    const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
+      .then((redirects) => redirects);
+      // .filter((item) => !item.destination?.includes(item?.source))
 
-  const redirectJson = [
-    ...lessonRedirectList,
-    ...excersisesRedirectList,
-    ...projectRedirectList,
-    ...howToRedirectList,
-    ...eventRedirectList,
-  ];
+    const redirectJson = [
+      ...lessonRedirectList,
+      ...excersisesRedirectList,
+      ...projectRedirectList,
+      ...howToRedirectList,
+      ...eventRedirectList,
+    ];
 
-  fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
-  fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
+    fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
+    fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
 
-  console.log('Redirects generated!');
+    console.log('Redirects generated!');
+  } else {
+    console.log('Redirects not generated, in white label academy');
+  }
 }
 generateRedirect();

@@ -1,6 +1,9 @@
 const { promisify } = require('util');
 const { resolve } = require('path');
 const fs = require('fs');
+require('dotenv').config({
+  path: '.env.production',
+});
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
@@ -15,6 +18,9 @@ async function walk(dir) {
   );
   return files.reduce((a, f) => a.concat(f), []);
 }
+
+const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
+const isWhiteLabelAcademy = typeof DOMAIN_NAME === 'string' && DOMAIN_NAME !== 'https://4geeks.com';
 
 const fail = (msg, ...params) => {
   console.log(msg, ...params);
@@ -36,4 +42,5 @@ module.exports = {
   fail,
   warn,
   success,
+  isWhiteLabelAcademy,
 };
