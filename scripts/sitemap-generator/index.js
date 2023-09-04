@@ -177,25 +177,21 @@ async function generateSitemap() {
     'exercises-sitemap.xml',
     'technologies-sitemap.xml',
   ]);
+  const pagesSitemapList = isWhiteLabelAcademy ? whiteLabelAcademySitemapsList : sitemap;
 
-  if (!isWhiteLabelAcademy) {
-    try {
-      fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
-      fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
-      fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
-      fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
-      fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
-      fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
-      fs.writeFileSync('public/events-sitemap.xml', eventsSitemap);
-    } catch (err) {
-      console.error("Couldn't write sitemaps files", err);
-    }
-
-    fs.writeFileSync('public/sitemap.xml', sitemap);
-  } else {
+  try {
     fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
-    fs.writeFileSync('public/sitemap.xml', whiteLabelAcademySitemapsList);
+    fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
+    fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
+    fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
+    fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
+    fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
+    fs.writeFileSync('public/events-sitemap.xml', eventsSitemap);
+  } catch (err) {
+    console.error("Couldn't write sitemaps files", err);
   }
+
+  fs.writeFileSync('public/sitemap.xml', pagesSitemapList);
 
   console.log('Sitemaps generated!');
 }

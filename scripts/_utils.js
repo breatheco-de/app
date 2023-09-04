@@ -19,6 +19,7 @@ async function walk(dir) {
   return files.reduce((a, f) => a.concat(f), []);
 }
 
+const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4';
 const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
 const isWhiteLabelAcademy = typeof DOMAIN_NAME === 'string' && DOMAIN_NAME !== 'https://4geeks.com';
 
@@ -42,5 +43,6 @@ module.exports = {
   fail,
   warn,
   success,
+  WHITE_LABEL_ACADEMY,
   isWhiteLabelAcademy,
 };
