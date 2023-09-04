@@ -4,7 +4,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, ...rest }) {
+function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, ...rest }) {
   const { modal, borderColor2 } = useStyle();
 
   const closeHandler = () => {
@@ -14,7 +14,7 @@ function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, f
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeHandler}>
+    <Modal isOpen={isOpen} onClose={closeHandler} closeOnOverlayClick={closeOnOverlayClick}>
       <ModalOverlay />
       <ModalContent
         {...rest}
@@ -50,6 +50,7 @@ SimpleModal.propTypes = {
   forceHandler: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
   headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  closeOnOverlayClick: PropTypes.bool,
 };
 SimpleModal.defaultProps = {
   title: '',
@@ -59,6 +60,7 @@ SimpleModal.defaultProps = {
   hideCloseButton: false,
   onClose: () => {},
   headerStyles: {},
+  closeOnOverlayClick: true,
 };
 
 export default SimpleModal;
