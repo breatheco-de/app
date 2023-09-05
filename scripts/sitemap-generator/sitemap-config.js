@@ -69,6 +69,8 @@ const privateRoutes = [
   '!src/pages/choose-program/*{.js,.jsx}',
   '!src/pages/example{.js,.jsx}',
   '!src/pages/mentorship{.js,.jsx}',
+  '!src/pages/slice-simulator.jsx',
+  '!src/pages/thumbnail.jsx',
 ];
 
 module.exports = {

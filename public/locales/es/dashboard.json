@@ -162,5 +162,9 @@
     "assignments": "Tareas",
     "teacher-tutorial": "Tutorial de profesor",
     "no-instructions": ">:warning: No se encontró instrucción disponible para este módulo"
+  },
+  "welcome-modal": {
+    "title": "Welcome to 4Geeks!",
+    "description": "Mira este breve video que explica cómo aprovechar al máximo 4Geeks y mejorar tu experiencia de aprendizaje"
   }
 }

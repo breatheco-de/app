@@ -1,11 +1,11 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
 const { parseQuerys } = require('../../src/utils/url');
+const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('../_utils');
 require('dotenv').config({
   path: '.env.production',
 });
 
-const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
@@ -41,10 +41,13 @@ const getReadPages = () => {
 };
 
 const getEvents = async (extraQuerys = {}) => {
-  const qs = parseQuerys(extraQuerys, true);
-  const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
+  if (!isWhiteLabelAcademy) {
+    const qs = parseQuerys(extraQuerys, true);
+    const { data } = await axios.get(`${BREATHECODE_HOST}/v1/events/all${qs}`);
 
-  return data;
+    return data;
+  }
+  return [];
 };
 
 const getAsset = async (type, extraQuerys = {}) => {

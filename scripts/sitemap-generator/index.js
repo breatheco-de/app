@@ -17,6 +17,7 @@ const {
   sitemapTemplate,
   listOfSitemapsTemplate,
 } = require('./sitemap-config');
+const { isWhiteLabelAcademy } = require('../_utils');
 
 require('dotenv').config({
   path: '.env.production',
@@ -128,21 +129,36 @@ async function generateSitemap() {
   // excludes Nextjs files and API routes.
   const pages = await globby([
     'src/pages/**/*{.js,.jsx}',
+    'src/pages/*{.js,.jsx}',
     '!src/pages/**/[slug]/*{.js,.jsx}',
+    '!src/pages/**/[event_slug]{.js,.jsx}',
     '!src/pages/**/[slug]{.js,.jsx}',
     '!src/pages/**/[uid]{.js,.jsx}',
-    '!src/pages/**/[technology]*{.js,.jsx}',
+    '!src/pages/**/**/[technology]{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
     '!src/pages/edit-markdown.jsx',
     ...privateRoutes,
     '!src/pages/**/_*{.js,.jsx}',
     '!src/pages/api',
   ]);
+  const whiteLabelPages = [
+    'src/pages/404.jsx',
+    'src/pages/index.jsx',
+    'src/pages/login/index.jsx',
+    'src/pages/mentorship/index.jsx',
+    'src/pages/checkout.jsx',
+    'src/pages/thank-you.jsx',
+  ];
 
-  const pagesSitemap = sitemapTemplate([
-    ...pages, ...readRoute, ...prismicTypePages, ...paginatedLessonsRoute,
-    ...paginatedExercisesRoute, ...paginatedProjectsRoute, ...paginatedHowTosRoute,
-  ]);
+  const pagesSitemap = !isWhiteLabelAcademy
+    ? sitemapTemplate([
+      ...pages, ...readRoute, ...prismicTypePages, ...paginatedLessonsRoute,
+      ...paginatedExercisesRoute, ...paginatedProjectsRoute, ...paginatedHowTosRoute,
+    ])
+    : sitemapTemplate([
+      ...whiteLabelPages, ...prismicTypePages,
+    ]);
+
   const howToSitemap = sitemapTemplate(howTosRoute);
   const lessonsSitemap = sitemapTemplate(lessonsRoute);
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
@@ -150,6 +166,9 @@ async function generateSitemap() {
   const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
   const eventsSitemap = sitemapTemplate(eventsRoute);
 
+  const whiteLabelAcademySitemapsList = listOfSitemapsTemplate([
+    'pages-sitemap.xml',
+  ]);
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
     'howto-sitemap.xml',
@@ -158,6 +177,7 @@ async function generateSitemap() {
     'exercises-sitemap.xml',
     'technologies-sitemap.xml',
   ]);
+  const pagesSitemapList = isWhiteLabelAcademy ? whiteLabelAcademySitemapsList : sitemap;
 
   try {
     fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
@@ -171,7 +191,7 @@ async function generateSitemap() {
     console.error("Couldn't write sitemaps files", err);
   }
 
-  fs.writeFileSync('public/sitemap.xml', sitemap);
+  fs.writeFileSync('public/sitemap.xml', pagesSitemapList);
 
   console.log('Sitemaps generated!');
 }
