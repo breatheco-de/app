@@ -132,10 +132,10 @@ async function generateRedirect() {
 
     const lessonsList = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
     const excersisesList = await getAsset('exercise');
-    const projectList = await getAsset('project').map((item) => {
+    const projectList = await getAsset('PROJECT').then((data) => data.map((item) => {
       item.difficulty = mapDifficulty(item.difficulty);
       return item;
-    });
+    }));
     const howToList = await getAsset('LESSON,ARTICLE').then(
       (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
     );
