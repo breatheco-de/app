@@ -121,7 +121,7 @@ function ShowOnSignUp({
 
       <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
         {title && (
-          <Text size="21px" fontWeight={700} lineHeight="25px">
+          <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
             {title}
           </Text>
         )}
@@ -219,7 +219,7 @@ function ShowOnSignUp({
                   >
                     {submitText || t('join-workshop')}
                   </Button>
-                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                  <Text textAlign="center" size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                     {t('signup:already-have-account')}
                     {' '}
                     <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
