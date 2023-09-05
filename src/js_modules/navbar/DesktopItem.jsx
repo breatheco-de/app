@@ -21,6 +21,7 @@ import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
+import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
 
 const StyledBox = styled(Box)`
 .custom-popover {
@@ -104,12 +105,13 @@ function DesktopItem({ item, readSyllabus }) {
           >
             {item.label}
             {existsItemWithPopover && (
-              <Icon
-                icon="arrowDown"
-                color="currentColor"
-                width="22px"
-                height="22px"
-              />
+              <span>
+                <ArrowDown
+                  color="currentColor"
+                  width="22px"
+                  height="22px"
+                />
+              </span>
             )}
           </Button>
           <Box
@@ -182,7 +184,9 @@ function DesktopItem({ item, readSyllabus }) {
                       style={{ borderRadius: '5px' }}
                     >
                       {item?.with_popover?.title}
-                      <Icon icon="arrowRight" width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                      <span>
+                        <ArrowRight width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                      </span>
                     </NextChakraLink>
                   )}
                 </Box>
@@ -284,8 +288,7 @@ function DesktopItem({ item, readSyllabus }) {
                                   align="center"
                                   flex={1}
                                 >
-                                  <Icon
-                                    icon="arrowRight"
+                                  <ArrowRight
                                     color="#0097CD"
                                     width="12px"
                                     height="12px"
@@ -325,12 +328,13 @@ function DesktopItem({ item, readSyllabus }) {
         >
           {item.label}
           {item.subMenu && (
-            <Icon
-              icon="arrowDown"
-              color={getColorIcon(item.href || item.asPath)}
-              width="22px"
-              height="22px"
-            />
+            <span>
+              <ArrowDown
+                color={getColorIcon(item.href || item.asPath)}
+                width="22px"
+                height="22px"
+              />
+            </span>
           )}
         </NextChakraLink>
       )}

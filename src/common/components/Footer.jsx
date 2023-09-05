@@ -21,6 +21,7 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
+import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
@@ -56,10 +57,10 @@ function Footer({ pageProps }) {
             >
               <Flex justifyContent="space-around">
                 <Link key="github" href="https://github.com/breatheco-de" target="_blank" rel="noopener noreferrer">
-                  <Icon icon="github" width="23px" height="23px" />
+                  <GithubIcon width="23px" height="23px" />
                 </Link>
                 <Link key="youtube" href="https://www.youtube.com/user/alesanchezr" target="_blank" rel="noopener noreferrer">
-                  <Icon icon="youtube" width="23px" height="23px" color={hexColor.black} />
+                  <YoutubeIcon width="23px" height="23px" color={hexColor.black} />
                 </Link>
               </Flex>
             </Box>
@@ -69,7 +70,7 @@ function Footer({ pageProps }) {
               key="logo"
               width={['100%', '50%', '25%', '25%']}
             >
-              <Icon style={{ margin: 'auto' }} icon="4GeeksIcon" width="150px" height="60px" />
+              <LogoIcon style={{ margin: 'auto' }} width="150px" height="60px" />
             </Box>
             <Box
               key="searchbar"
