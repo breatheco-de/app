@@ -20,6 +20,7 @@ import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
+import logoData from '../../../public/logo.json';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
@@ -27,13 +28,14 @@ function Footer({ pageProps }) {
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
 
+  const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
   return (
-    <Container background="none" as="footer" maxW="none" padding="20px" position="absolute" top="100%">
+    <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
       {!hideDivider && <Divider borderBottomWidth="2px" m="3rem 0 0 0" />}
 
       {!pageProps?.existsWhiteLabel && (
@@ -325,7 +327,7 @@ function Footer({ pageProps }) {
         // alignItems="center"
         textAlign="center"
       >
-        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright')}</Text>
+        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName })}</Text>
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"

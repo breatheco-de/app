@@ -44,8 +44,8 @@ function InternalLinkComponent(props) {
 function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { store, props } = wrapper.useWrappedStore(rest);
-  const whiteLabelAcademy = process.env.WHITE_LABEL_ACADEMY;
-  const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
+  const domainName = process.env.DOMAIN_NAME;
+  const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
 
   const pageProps = {
     ...props?.pageProps,

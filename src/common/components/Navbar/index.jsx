@@ -25,9 +25,11 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { getBrowserSize, isWindow } from '../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
+import { parseQuerys } from '../../../utils/url';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -65,6 +67,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { width: screenWidth } = getBrowserSize();
   const isTablet = screenWidth < 996;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
+  const mktQueryString = parseQuerys({
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  });
 
   useEffect(() => {
     // verify if accessToken exists
@@ -111,7 +117,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}/v1/marketing/course?featured=true`)
+    axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
         setMktCourses(filterByTranslations || []);
@@ -307,9 +313,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 width={105}
                 height={35}
                 style={{
-                  maxHeight: '35px',
-                  minHeight: '35px',
-                  objectFit: 'cover',
+                  maxHeight: '50px',
+                  minHeight: '50px',
+                  objectFit: pageProps?.existsWhiteLabel ? 'contain' : 'cover',
                   filter: imageFilter,
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}

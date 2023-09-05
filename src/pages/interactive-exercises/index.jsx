@@ -17,11 +17,12 @@ import GridContainer from '../../common/components/GridContainer';
 import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'exercises');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
-  const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const image = t('seo.image', { domain: ORIGIN_HOST });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
@@ -29,7 +30,7 @@ export const getStaticProps = async ({ locale, locales }) => {
     asset_type: 'EXERCISE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);

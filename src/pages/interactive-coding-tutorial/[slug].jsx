@@ -21,13 +21,14 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { parseQuerys } from '../../utils/url';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
     asset_type: 'PROJECT',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   let projects = [];
@@ -65,7 +66,7 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
-  const staticImage = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
+  const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
   const result = await response.json();
   const engPrefix = {
@@ -125,8 +126,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     '@type': 'Article',
     name: result?.title,
     description: result?.description,
-    url: `https://4geeks.com/${slug}`,
-    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    url: `${ORIGIN_HOST}/${slug}`,
+    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
     datePublished: result?.published_at,
     dateModified: result?.updated_at,
     author: result?.author ? {
@@ -136,7 +137,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     keywords: result?.seo_keywords,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${slug}`,
+      '@id': `${ORIGIN_HOST}/${slug}`,
     },
   };
 
