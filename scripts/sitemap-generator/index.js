@@ -2,8 +2,8 @@ const fs = require('fs');
 const globby = require('globby');
 
 const {
-  getPrismicPages, getReadPages, getAsset, getLandingTechnologies, getEvents,
-} = require('./requests');
+  getPrismicPages, getPublicSyllabus, getAsset, getLandingTechnologies, getEvents,
+} = require('../../src/utils/requests');
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 
@@ -27,7 +27,7 @@ async function generateSitemap() {
   console.log('Generating sitemaps...');
 
   const prismicPages = await getPrismicPages();
-  const readPages = await getReadPages();
+  const readPages = await getPublicSyllabus();
   const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como');
 
   const exercisesPages = await getAsset('exercise');

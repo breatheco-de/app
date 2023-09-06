@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 const { default: axios } = require('axios');
-const { parseQuerys } = require('../../src/utils/url');
-const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('../_utils');
+const { parseQuerys } = require('./url');
+const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('../../scripts/_utils');
 require('dotenv').config({
   path: '.env.production',
 });
@@ -20,7 +20,7 @@ const getPrismicPages = () => {
   return data;
 };
 
-const getTechonologyAssets = async (slug) => {
+const getTechnologyAssets = async (slug) => {
   const resp = axios.get(`${process.env.BREATHECODE_HOST}/v1/registry/asset?limit=9000&technologies=${slug}&academy=${WHITE_LABEL_ACADEMY}`)
     .then((res) => res.data.results)
     .catch(() => {
@@ -29,7 +29,7 @@ const getTechonologyAssets = async (slug) => {
   return resp;
 };
 
-const getReadPages = () => {
+const getPublicSyllabus = () => {
   const resp = axios.get(
     `${BREATHECODE_HOST}/v1/admissions/public/syllabus?slug=${SYLLABUS}`,
   )
@@ -56,6 +56,7 @@ const getAsset = async (type, extraQuerys = {}) => {
   let offset = 0;
   let allResults = [];
 
+  // TODO: evitar usar then y catch
   let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
     .then((res) => res.data.results)
     .catch(() => {
@@ -67,7 +68,7 @@ const getAsset = async (type, extraQuerys = {}) => {
     allResults = allResults.concat(results);
     offset += limit;
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}`)
+    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
       .then((res) => res.data.results)
       .catch(() => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -78,6 +79,7 @@ const getAsset = async (type, extraQuerys = {}) => {
   return allResults;
 };
 
+// mover a carpeta sitemap-generator
 const getLandingTechnologies = () => {
   const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
     headers: {
@@ -87,7 +89,7 @@ const getLandingTechnologies = () => {
   })
     .then(async (res) => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
-        const assets = await getTechonologyAssets(tech?.slug);
+        const assets = await getTechnologyAssets(tech?.slug);
         return { ...tech, assets };
       });
 
@@ -122,8 +124,8 @@ const getLandingTechnologies = () => {
 module.exports = {
   getAsset,
   getPrismicPages,
-  getReadPages,
+  getPublicSyllabus,
   getLandingTechnologies,
-  getTechonologyAssets,
+  getTechnologyAssets,
   getEvents,
 };
