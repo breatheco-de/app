@@ -50,14 +50,14 @@ const getEvents = async (extraQuerys = {}) => {
   return [];
 };
 
-const getAsset = async (type, extraQuerys = {}) => {
+const getAsset = async (type = null, extraQuerys = {}) => {
   const qs = parseQuerys(extraQuerys, true);
   const limit = 100;
   let offset = 0;
   let allResults = [];
+  const assetTypeConnector = type !== null ? `asset_type=${type}&` : '';
 
-  // TODO: evitar usar then y catch
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?${assetTypeConnector}visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -89,7 +89,9 @@ const getLandingTechnologies = () => {
   })
     .then(async (res) => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
-        const assets = await getTechnologyAssets(tech?.slug);
+        const assets = await getAsset(null, {
+          technologies: tech?.slug,
+        });
         return { ...tech, assets };
       });
 

@@ -3,36 +3,21 @@ const { default: axios } = require('axios');
 const fs = require('fs');
 const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
 // const { getAsset } = require('../src/utils/requests');
-const generatedRoutes = require('../src/utils/route-builder');
 require('dotenv').config({
   path: '.env.production',
 });
+
+const assetLists = require('../src/lib/asset-list.json');
+
+// const assetLists = import('../src/lib/asset-list.json')
+//   .then((data) => data.default)
+//   .catch((err) => console.log(err));
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
 const redirectConfig = {
   permanent: true,
 };
-
-// const mapDifficulty = (difficulty) => {
-//   switch (difficulty?.toLowerCase()) {
-//     case 'junior':
-//       return 'easy';
-//     case 'semi-senior':
-//       return 'intermediate';
-//     case 'senior':
-//       return 'hard';
-//     default:
-//       return 'unknown';
-//   }
-// };
-
-// const getEvents = () => {
-//   const data = axios.get(`${BREATHECODE_HOST}/v1/events/all`)
-//     .then((res) => res.data)
-//     .catch((err) => console.log(err));
-//   return data;
-// };
 
 const getAliasRedirects = async () => {
   const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=${WHITE_LABEL_ACADEMY}`)
@@ -131,20 +116,19 @@ async function generateRedirect() {
   if (!isWhiteLabelAcademy) {
     console.log('Generating redirects...');
 
-    // TODO: adaptar generatedRoutes
-    const lessonsList = await generatedRoutes().then((data) => data.lessons);
-    // ---------------------
-
-    console.log('lessonsList:::', lessonsList);
+    const lessonsList = assetLists.lessons;
+    const excersisesList = assetLists.excersises;
+    const projectList = assetLists.projects;
+    const howToList = assetLists.howTos;
+    const eventList = assetLists.events;
 
     const aliasRedirectList = await getAliasRedirects();
 
     const lessonRedirectList = generateAssetRedirect(lessonsList);
-    // const excersisesRedirectList = generateAssetRedirect(excersisesList);
-    // const projectRedirectList = generateAssetRedirect(projectList);
-    // const howToRedirectList = generateAssetRedirect(howToList);
-    // const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
-    const projectList = [];
+    const excersisesRedirectList = generateAssetRedirect(excersisesList);
+    const projectRedirectList = generateAssetRedirect(projectList);
+    const howToRedirectList = generateAssetRedirect(howToList);
+    const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
 
     const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
       .then((redirects) => redirects);
@@ -152,10 +136,10 @@ async function generateRedirect() {
 
     const redirectJson = [
       ...lessonRedirectList,
-      // ...excersisesRedirectList,
-      // ...projectRedirectList,
-      // ...howToRedirectList,
-      // ...eventRedirectList,
+      ...excersisesRedirectList,
+      ...projectRedirectList,
+      ...howToRedirectList,
+      ...eventRedirectList,
     ];
 
     fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));

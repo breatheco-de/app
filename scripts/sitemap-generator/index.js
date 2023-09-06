@@ -2,7 +2,7 @@ const fs = require('fs');
 const globby = require('globby');
 
 const {
-  getPrismicPages, getPublicSyllabus, getAsset, getLandingTechnologies, getEvents,
+  getPrismicPages, getPublicSyllabus,
 } = require('../../src/utils/requests');
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
@@ -18,6 +18,7 @@ const {
   listOfSitemapsTemplate,
 } = require('./sitemap-config');
 const { isWhiteLabelAcademy } = require('../_utils');
+const assetLists = require('../../src/lib/asset-list.json');
 
 require('dotenv').config({
   path: '.env.production',
@@ -28,15 +29,12 @@ async function generateSitemap() {
 
   const prismicPages = await getPrismicPages();
   const readPages = await getPublicSyllabus();
-  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como');
-
-  const exercisesPages = await getAsset('exercise');
-  const projectsPages = await getAsset('project');
-  const howTosPages = await getAsset('LESSON,ARTICLE').then(
-    (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-  );
-  const technologyLandingPages = await getLandingTechnologies();
-  const eventsPages = await getEvents();
+  const lessonsPages = assetLists.lessons;
+  const exercisesPages = assetLists.excersises;
+  const projectsPages = assetLists.projects;
+  const howTosPages = assetLists.howTos;
+  const technologyLandingPages = assetLists.landingTechnologies;
+  const eventsPages = assetLists.events;
 
   const pagination = (data, conector) => {
     const limit = 20;
