@@ -58,6 +58,8 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
     'Accept-Language': lang,
   };
 
+  const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
+
   const fetchCourses = async () => {
     try {
       const res = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
@@ -65,15 +67,19 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
 
       if (res?.status < 400 && data.length > 0) {
         const coursesSorted = [];
-        for (let i = 0; i < technologies.length; i += 1) {
-          const course = data.find((c) => c?.technologies?.includes(technologies[i]));
-          coursesSorted.push(course);
+        for (let i = 0; i < technologiesArray.length; i += 1) {
+          const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]));
+          const alreadyExists = coursesSorted.some((c) => c?.slug === course?.slug);
+
+          if (course && !alreadyExists) {
+            coursesSorted.push(course);
+          }
         }
 
-        const list = coursesSorted?.length > 0 ? coursesSorted : data;
+        const list = coursesSorted?.length > 0 ? coursesSorted : [];
         setIsLoading(false);
 
-        setCourses(list?.filter((course) => course.course_translation).slice(0, coursesLimit));
+        setCourses(list?.filter((course) => course?.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
       console.log(e);
