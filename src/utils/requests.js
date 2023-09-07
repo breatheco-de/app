@@ -51,13 +51,21 @@ const getEvents = async (extraQuerys = {}) => {
 };
 
 const getAsset = async (type = null, extraQuerys = {}) => {
-  const qs = parseQuerys(extraQuerys, true);
   const limit = 100;
   let offset = 0;
   let allResults = [];
-  const assetTypeConnector = type !== null ? `asset_type=${type}&` : '';
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?${assetTypeConnector}visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
+  const qsRequest = parseQuerys({
+    asset_type: type === null ? undefined : type,
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    limit,
+    offset,
+    academy: WHITE_LABEL_ACADEMY,
+    ...extraQuerys,
+  });
+
+  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then((res) => res.data.results)
     .catch(() => {
       console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
@@ -67,8 +75,17 @@ const getAsset = async (type = null, extraQuerys = {}) => {
   while (results.length > 0) {
     allResults = allResults.concat(results);
     offset += limit;
+    const newQsRequests = parseQuerys({
+      asset_type: type,
+      visibility: 'PUBLIC',
+      status: 'PUBLISHED',
+      limit,
+      offset,
+      academy: WHITE_LABEL_ACADEMY,
+      ...extraQuerys,
+    });
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&visibility=PUBLIC&status=PUBLISHED&limit=${limit}&offset=${offset}${qs}&academy=${WHITE_LABEL_ACADEMY}`)
+    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
       .then((res) => res.data.results)
       .catch(() => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
