@@ -6,7 +6,7 @@
   "no-information": "No information available about this student's project",
   "educational-status": "Educational Status",
   "delivered-percentage": "% delivered",
-  "last-deliver": "Last deliver: {{date}} ago",
+  "last-deliver": "Last delivery: {{date}} ago",
   "no-deliver": "No deliveries yet",
   "status": {
     "delivered": "Delivered",

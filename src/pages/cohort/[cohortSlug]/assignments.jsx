@@ -1039,8 +1039,8 @@ function Assignments() {
                         />
                         <Box>
                           <p>{fullname}</p>
-                          <p>{`${percentage}${t('delivered-percentage')}`}</p>
-                          <p>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</p>
+                          <small>{`${percentage}${t('delivered-percentage')} - `}</small>
+                          <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small>
                         </Box>
                       </Flex>
                     )}
