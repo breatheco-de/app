@@ -275,7 +275,6 @@ function Content() {
           });
           setReadmeUrlPathname(finalPathname);
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
-
           const exensionName = getExtensionName(data.readme_url);
           if (exensionName === 'ipynb') {
             setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
