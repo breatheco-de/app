@@ -35,8 +35,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .then((res) => res.default)
     .catch(() => []);
 
-  const allAssetList = assetList.landingTechnologies;
-  const technologyData = allAssetList.find((tech) => tech.slug === slug);
+  const allTechnologiesList = assetList.landingTechnologies;
+  const technologyData = allTechnologiesList.find((tech) => tech.slug === slug && tech.lang === locale);
 
   if (!technologyData?.slug) {
     return {
@@ -100,7 +100,6 @@ function LessonByTechnology({ data, technologyData }) {
       maxWidth="1280px"
       margin="0 auto"
     >
-      {JSON.stringify(data)}
       <Text
         as="h1"
         fontSize="15px"

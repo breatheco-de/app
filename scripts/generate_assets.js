@@ -42,7 +42,7 @@ async function getData() {
     howTos,
     events,
   };
-  console.log('Fetched next data:\n', {
+  console.log('Next data has been fetched:\n', {
     landingTechnologies: landingTechnologies.length,
     lessons: lessons.length,
     excersises: excersises.length,

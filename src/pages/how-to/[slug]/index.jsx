@@ -36,7 +36,9 @@ export const getStaticPaths = async ({ locales }) => {
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
-  const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
+  const howToData = data.results.filter(
+    (l) => (l.asset_type === 'LESSON' || l.asset_type === 'ARTICLE') && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
+  );
 
   const paths = howToData.flatMap((res) => locales.map((locale) => ({
     params: {

@@ -66,7 +66,9 @@ async function generateSitemap() {
 
     if (type === 'lesson') {
       const lessonsData = data?.length > 0 ? data.filter((l) => {
-        const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
+        const lessonExists = l.assets.some(
+          (a) => (a?.asset_type === 'LESSON' || a?.asset_type === 'ARTICLE') && a?.category?.slug !== 'how-to' && a?.category?.slug !== 'como',
+        );
         return lessonExists;
       }) : [];
       return lessonsData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
@@ -81,9 +83,18 @@ async function generateSitemap() {
     if (type === 'project') {
       const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
-        return assets.length > 0 && (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`);
+        return assets;
       }) : [];
-      return projectsData;
+      return projectsData.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
+    }
+    if (type === 'how-to') {
+      const howTosData = data?.length > 0 ? data.filter((l) => {
+        const assets = l.assets.some(
+          (a) => a.category?.slug === 'how-to' || a.category?.slug === 'como',
+        );
+        return assets;
+      }) : [];
+      return howTosData.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'tech') {
       return (data?.length > 0 ? data.map(

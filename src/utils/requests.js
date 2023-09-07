@@ -99,6 +99,7 @@ const getLandingTechnologies = () => {
         (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
           .map((finalData) => ({
             ...finalData,
+            assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
             lang: 'en',
           })),
       );
@@ -107,6 +108,7 @@ const getLandingTechnologies = () => {
         (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
           .map((finalData) => ({
             ...finalData,
+            assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
             lang: 'es',
           })),
       );
