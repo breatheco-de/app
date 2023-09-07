@@ -36,6 +36,7 @@ import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
+import { ORIGIN_HOST } from '../../../../../utils/variables';
 
 function Content() {
   const { t } = useTranslation('syllabus');
@@ -273,26 +274,26 @@ function Content() {
             assetType: assetTypeValues[lesson],
           });
           setReadmeUrlPathname(finalPathname);
-          let currentlocaleLang = data.translations[language];
+          let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           const exensionName = getExtensionName(data.readme_url);
           if (exensionName === 'ipynb') {
             setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
-            if (currentlocaleLang === undefined) {
-              currentlocaleLang = `${lessonSlug}-${language}`;
+            if (currentTranslationSlug === undefined) {
+              currentTranslationSlug = `${lessonSlug}-${language}`;
             }
             Promise.all([
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
             ])
               .then(([respMarkdown, respData]) => {
                 const currData = respData.data;
                 const markdownData = respMarkdown.data;
 
                 if (lesson === 'answer') {
-                  setQuizSlug(currentlocaleLang);
+                  setQuizSlug(currentTranslationSlug);
                 } else {
                   setQuizSlug(null);
                 }
@@ -563,7 +564,7 @@ function Content() {
     },
   ];
 
-  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `https://4geeks.com/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
+  const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
 

@@ -98,10 +98,10 @@ export function AnimatedAvatar({
 }
 
 export function CustomTab({
-  children, onClick, top, bottom, left, right, style,
+  children, onClick, top, bottom, left, right, style, ...rest
 }) {
   return (
-    <Tab className="pulse-blue" animation={pulseAnimation} _selected={{ backgroundColor: 'blue.default', color: 'white', animation: 'none' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700">
+    <Tab className="pulse-blue" animation={pulseAnimation} _selected={{ backgroundColor: 'blue.default', color: 'white', animation: 'none' }} style={style} p="20px 0" width="178px" fontSize="15px" background="blue.light" color="blue.default" onClick={onClick} textTransform="uppercase" position="absolute" left={left} right={right} top={top} bottom={bottom} borderRadius="22px" fontWeight="700" {...rest}>
       {children}
     </Tab>
   );

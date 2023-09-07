@@ -2,8 +2,8 @@ const fs = require('fs');
 const globby = require('globby');
 
 const {
-  getPrismicPages, getReadPages, getAsset, getLandingTechnologies, getEvents,
-} = require('./requests');
+  getPrismicPages, getPublicSyllabus,
+} = require('../../src/utils/requests');
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 
@@ -17,6 +17,8 @@ const {
   sitemapTemplate,
   listOfSitemapsTemplate,
 } = require('./sitemap-config');
+const { isWhiteLabelAcademy } = require('../_utils');
+const assetLists = require('../../src/lib/asset-list.json');
 
 require('dotenv').config({
   path: '.env.production',
@@ -26,16 +28,13 @@ async function generateSitemap() {
   console.log('Generating sitemaps...');
 
   const prismicPages = await getPrismicPages();
-  const readPages = await getReadPages();
-  const lessonsPages = await getAsset('LESSON,ARTICLE&exclude_category=how-to,como');
-
-  const exercisesPages = await getAsset('exercise');
-  const projectsPages = await getAsset('project');
-  const howTosPages = await getAsset('article').then(
-    (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-  );
-  const technologyLandingPages = await getLandingTechnologies();
-  const eventsPages = await getEvents();
+  const readPages = await getPublicSyllabus();
+  const lessonsPages = assetLists.lessons;
+  const exercisesPages = assetLists.excersises;
+  const projectsPages = assetLists.projects;
+  const howTosPages = assetLists.howTos;
+  const technologyLandingPages = assetLists.landingTechnologies;
+  const eventsPages = assetLists.events;
 
   const pagination = (data, conector) => {
     const limit = 20;
@@ -67,7 +66,9 @@ async function generateSitemap() {
 
     if (type === 'lesson') {
       const lessonsData = data?.length > 0 ? data.filter((l) => {
-        const lessonExists = l.assets.some((a) => a?.asset_type === 'LESSON');
+        const lessonExists = l.assets.some(
+          (a) => (a?.asset_type === 'LESSON' || a?.asset_type === 'ARTICLE') && a?.category?.slug !== 'how-to' && a?.category?.slug !== 'como',
+        );
         return lessonExists;
       }) : [];
       return lessonsData?.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
@@ -82,9 +83,18 @@ async function generateSitemap() {
     if (type === 'project') {
       const projectsData = data?.length > 0 ? data.filter((l) => {
         const assets = l.assets.some((a) => a?.asset_type === 'PROJECT');
-        return assets.length > 0 && (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`);
+        return assets;
       }) : [];
-      return projectsData;
+      return projectsData.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
+    }
+    if (type === 'how-to') {
+      const howTosData = data?.length > 0 ? data.filter((l) => {
+        const assets = l.assets.some(
+          (a) => a.category?.slug === 'how-to' || a.category?.slug === 'como',
+        );
+        return assets;
+      }) : [];
+      return howTosData.map((l) => (`${getLangConnector(l.lang)}/${conector}/${l?.slug}`));
     }
     if (type === 'tech') {
       return (data?.length > 0 ? data.map(
@@ -128,21 +138,36 @@ async function generateSitemap() {
   // excludes Nextjs files and API routes.
   const pages = await globby([
     'src/pages/**/*{.js,.jsx}',
+    'src/pages/*{.js,.jsx}',
     '!src/pages/**/[slug]/*{.js,.jsx}',
+    '!src/pages/**/[event_slug]{.js,.jsx}',
     '!src/pages/**/[slug]{.js,.jsx}',
     '!src/pages/**/[uid]{.js,.jsx}',
-    '!src/pages/**/[technology]*{.js,.jsx}',
+    '!src/pages/**/**/[technology]{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
     '!src/pages/edit-markdown.jsx',
     ...privateRoutes,
     '!src/pages/**/_*{.js,.jsx}',
     '!src/pages/api',
   ]);
+  const whiteLabelPages = [
+    'src/pages/404.jsx',
+    'src/pages/index.jsx',
+    'src/pages/login/index.jsx',
+    'src/pages/mentorship/index.jsx',
+    'src/pages/checkout.jsx',
+    'src/pages/thank-you.jsx',
+  ];
 
-  const pagesSitemap = sitemapTemplate([
-    ...pages, ...readRoute, ...prismicTypePages, ...paginatedLessonsRoute,
-    ...paginatedExercisesRoute, ...paginatedProjectsRoute, ...paginatedHowTosRoute,
-  ]);
+  const pagesSitemap = !isWhiteLabelAcademy
+    ? sitemapTemplate([
+      ...pages, ...readRoute, ...prismicTypePages, ...paginatedLessonsRoute,
+      ...paginatedExercisesRoute, ...paginatedProjectsRoute, ...paginatedHowTosRoute,
+    ])
+    : sitemapTemplate([
+      ...whiteLabelPages, ...prismicTypePages,
+    ]);
+
   const howToSitemap = sitemapTemplate(howTosRoute);
   const lessonsSitemap = sitemapTemplate(lessonsRoute);
   const projectsSitemap = sitemapTemplate(projectsCodingRoute);
@@ -150,6 +175,9 @@ async function generateSitemap() {
   const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
   const eventsSitemap = sitemapTemplate(eventsRoute);
 
+  const whiteLabelAcademySitemapsList = listOfSitemapsTemplate([
+    'pages-sitemap.xml',
+  ]);
   const sitemap = listOfSitemapsTemplate([
     'pages-sitemap.xml',
     'howto-sitemap.xml',
@@ -158,6 +186,7 @@ async function generateSitemap() {
     'exercises-sitemap.xml',
     'technologies-sitemap.xml',
   ]);
+  const pagesSitemapList = isWhiteLabelAcademy ? whiteLabelAcademySitemapsList : sitemap;
 
   try {
     fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
@@ -171,7 +200,7 @@ async function generateSitemap() {
     console.error("Couldn't write sitemaps files", err);
   }
 
-  fs.writeFileSync('public/sitemap.xml', sitemap);
+  fs.writeFileSync('public/sitemap.xml', pagesSitemapList);
 
   console.log('Sitemaps generated!');
 }

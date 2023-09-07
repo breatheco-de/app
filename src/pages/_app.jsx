@@ -45,7 +45,7 @@ function App({ Component, ...rest }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { store, props } = wrapper.useWrappedStore(rest);
   const domainName = process.env.DOMAIN_NAME;
-  const existsWhiteLabel = typeof domainName === 'string' && domainName !== '4geeks.com';
+  const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
 
   const pageProps = {
     ...props?.pageProps,

@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
 import { cleanObject } from '../utils';
+import { ORIGIN_HOST } from '../utils/variables';
 
 function Page({ page }) {
   return (
@@ -115,7 +116,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     '@type': 'Article',
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${page.uid}`,
+      '@id': `${ORIGIN_HOST}/${page.uid}`,
     },
     name: data?.title,
     description: data?.description,
@@ -136,7 +137,7 @@ export async function getStaticProps({ params, locale, previewData }) {
       name: '4Geeks',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://4geeks.com/static/images/4geeks.png',
+        url: `${ORIGIN_HOST}/static/images/4geeks.png`,
         width: '284',
         height: '220',
       },
