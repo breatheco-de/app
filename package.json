@@ -17,7 +17,7 @@
     "node": "18.x"
   },
   "scripts": {
-    "dev": "npm run make:iconDict && next dev -p 3000",
+    "dev": "npm run make:assets && npm run make:iconDict && next dev -p 3000",
     "build": "cross-env NODE_ENV=production npm run test && npm run make:assets && npm run generate-files && next build",
     "start": "npm run make:iconDict && next start -p 3080",
     "lint": "next lint",
