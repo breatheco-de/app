@@ -76,7 +76,7 @@ const getAsset = async (type = null, extraQuerys = {}) => {
     allResults = allResults.concat(results);
     offset += limit;
     const newQsRequests = parseQuerys({
-      asset_type: type,
+      asset_type: type === null ? undefined : type,
       visibility: 'PUBLIC',
       status: 'PUBLISHED',
       limit,
