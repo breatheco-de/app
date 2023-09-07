@@ -14,8 +14,11 @@ import {
   ModalOverlay,
   Grid,
   GridItem,
+  ListItem,
+  OrderedList,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -184,6 +187,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 function TabletWithForm({
+  toast,
   exercise,
   commonTextColor,
   commonBorderColor,
@@ -192,16 +196,17 @@ function TabletWithForm({
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor } = useStyle();
 
-  // const UrlInput = styled.input`
-  //   cursor: pointer;
-  //   background: none;
-  //   width: 100%;
-  //   &:focus {
-  //     outline: none;
-  //   }
-  // `;
+  const UrlInput = styled.input`
+    cursor: pointer;
+    background: none;
+    width: 100%;
+    &:focus {
+      outline: none;
+    }
+  `;
 
   return (
     <>
@@ -293,11 +298,7 @@ function TabletWithForm({
               textTransform="uppercase"
               borderColor="blue.default"
               color="blue.default"
-              onClick={() => {
-                if (typeof window !== 'undefined') {
-                  window.open(exercise.url, '_blank').focus();
-                }
-              }}
+              onClick={() => setShowCloneModal(true)}
             >
               {t('clone')}
             </Button>
@@ -407,6 +408,93 @@ function TabletWithForm({
                 </Link>
               </Text>
 
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+        <Modal
+          isOpen={showCloneModal}
+          size="md"
+          margin="0 10px"
+          onClose={() => {
+            setShowCloneModal(false);
+          }}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+              {t('clone-modal.title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody padding={{ base: '30px' }}>
+              <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
+                {t('clone-modal.text-part-one')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Learnpack Plugin
+                </Link>
+                {t('clone-modal.text-part-two')}
+              </Text>
+              <Text
+                // cursor="pointer"
+                id="command-container"
+                padding="9px"
+                background={useColorModeValue('featuredLight', 'darkTheme')}
+                fontWeight="400"
+                marginBottom="5px"
+                style={{ borderRadius: '5px' }}
+                fontSize="14px"
+                lineHeight="24px"
+              >
+                <UrlInput
+                  id="clone-command"
+                  value={`git clone ${exercise.url}`}
+                  type="text"
+                  readOnly
+                  onClick={(e) => {
+                    e.target.select();
+                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+                    toast({
+                      title: t('clone-modal.copy-command'),
+                      status: 'success',
+                      duration: 7000,
+                      isClosable: true,
+                    });
+                  }}
+                />
+              </Text>
+              <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
+                {t('clone-modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.length) : '' })}
+              </Text>
+              <OrderedList>
+                {t('clone-modal.steps', {}, { returnObjects: true }).map((step) => (
+                  <ListItem key={step} fontSize="14px">{step}</ListItem>
+                ))}
+              </OrderedList>
+              <Text display="flex" alignItems="center" marginTop="15px">
+                <span>
+                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
+                </span>
+                <Link
+                  href="/how-to/github-clone-repository"
+                  target="_blank"
+                  fontSize="15px"
+                  fontWeight="700"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                  marginLeft="10px"
+                >
+                  {t('how-to-clone')}
+                </Link>
+              </Text>
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -652,6 +740,7 @@ Exercise.propTypes = {
 TabletWithForm.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   commonTextColor: PropTypes.string.isRequired,
+  toast: PropTypes.func.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
   exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };

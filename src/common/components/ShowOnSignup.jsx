@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -26,6 +26,7 @@ function ShowOnSignUp({
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const { t } = useTranslation('workshops');
   const router = useRouter();
@@ -208,6 +209,15 @@ function ShowOnSignUp({
                     setFormProps={setFormProps}
                     readOnly={readOnly}
                   />
+                  <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                    <Text size="10px">
+                      {t('signup:validators.termns-and-conditions-required')}
+                      {' '}
+                      <Link variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                        {t('common:privacy-policy')}
+                      </Link>
+                    </Text>
+                  </Checkbox>
 
                   <Button
                     mt="10px"
@@ -215,7 +225,7 @@ function ShowOnSignUp({
                     variant="default"
                     isLoading={isSubmitting}
                     title={t('join-workshop')}
-                    isDisabled={readOnly}
+                    isDisabled={!isChecked || readOnly}
                   >
                     {submitText || t('join-workshop')}
                   </Button>
