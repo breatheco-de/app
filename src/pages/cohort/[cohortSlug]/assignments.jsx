@@ -28,7 +28,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
-import ReactSelect, { AsyncSelect } from '../../../common/components/ReactSelect';
+import ReactSelect from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
 import { usePersistent } from '../../../common/hooks/usePersistent';
@@ -121,9 +121,7 @@ function Assignments() {
   const { hexColor } = useStyle();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
-  const [allCohorts, setAllCohorts] = useState([]);
   const [syllabusData, setSyllabusData] = useState({
-    projects: [],
     assignments: [],
   });
   const [personalCohorts, setPersonalCohorts] = useState([]);
@@ -149,10 +147,8 @@ function Assignments() {
   const [sort, setSort] = useState(query.sort || undefined);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  // const [projects, setProjects] = useState([]);
 
-  const [selectedCohort, setSelectedCohort] = useState({});
-  const [selectedCohortSlug, setSelectedCohortSlug] = useState(cohortSlug);
+  const [selectedCohort, setSelectedCohort] = useState(null);
   const [loadStatus, setLoadStatus] = useState({
     loading: true,
     status: 'loading',
@@ -209,21 +205,6 @@ function Assignments() {
         setContextState({
           allTasks: [...allTasks],
         });
-
-        // const projectsList = [];
-        // for (let i = 0; i < allTasks.length; i += 1) {
-        //   const isProject = allTasks[i].task_type === 'PROJECT';
-        //   if (
-        //     projectsList.find(
-        //       (p) => allTasks[i] !== 'PROJECT'
-        //         && allTasks[i].associated_slug === p.associated_slug,
-        //     )
-        //   ) {
-        //     continue;
-        //   }
-        //   if (isProject) projectsList.push(allTasks[i]);
-        // }
-        // if (projectsList.length > 0) setProjects(projectsList);
       })
       .catch((error) => {
         setIsFetching(false);
@@ -256,6 +237,7 @@ function Assignments() {
         setPersonalCohorts(
           dataStruct.sort((a, b) => a.label.localeCompare(b.label)),
         );
+        setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
       })
       .catch(() => {
         toast({
@@ -266,74 +248,63 @@ function Assignments() {
           isClosable: true,
         });
       });
-    bc.admissions().cohort(cohortSlug, academy)
-      .then(async ({ data }) => {
-        setAllCohorts([{
-          label: data.name,
-          slug: data.slug,
-          value: data.id,
-          academy: data.academy.id,
-        }]);
-        const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
-        if (syllabusInfo?.data) {
-          let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-          assignments = [].concat(...assignments);
-          const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
-          if (query.project) {
-            const filteredProject = syllabusProjects.find((project) => project.slug === query.project);
-            setProjectLabel(filteredProject && { label: filteredProject.title, value: filteredProject.slug });
-          }
-          setSyllabusData({
-            projects: syllabusProjects,
-            assignments,
-          });
-        }
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:error-fetching-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-    handlers
-      .getStudents(selectedCohortSlug, allCohorts.find((c) => c.slug === selectedCohortSlug)?.id || academy)
-      .then((students) => {
-        setStudentOptions(students.map((student) => ({
-          id: student.user.id,
-          value:
-            `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-          label: `${student.user.first_name} ${student.user.last_name}`,
-        })));
-        if (query.student) {
-          const filteredStudent = students.find((student) => student.user.id === Number(query.student));
-          setStudentLabel(filteredStudent && {
-            id: filteredStudent.user.id,
-            value:
-              `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
-            label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
-          });
-        }
-      });
   }, []);
 
+  useEffect(() => {
+    if (selectedCohort) {
+      bc.admissions().cohort(selectedCohort.slug, academy)
+        .then(async ({ data }) => {
+          const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+          if (syllabusInfo?.data) {
+            let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+            assignments = [].concat(...assignments);
+            const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
+            if (query.project) {
+              const filteredProject = syllabusProjects.find((project) => project.slug === query.project);
+              setProjectLabel(filteredProject && { label: filteredProject.title, value: filteredProject.slug });
+            }
+            setSyllabusData({
+              assignments,
+            });
+          }
+        })
+        .catch(() => {
+          toast({
+            position: 'top',
+            title: t('alert-message:error-fetching-cohorts'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        });
+      handlers
+        .getStudents(selectedCohort.slug, academy)
+        .then((students) => {
+          setStudentOptions(students.map((student) => ({
+            id: student.user.id,
+            value:
+              `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
+            label: `${student.user.first_name} ${student.user.last_name}`,
+          })));
+          if (query.student) {
+            const filteredStudent = students.find((student) => student.user.id === Number(query.student));
+            setStudentLabel(filteredStudent && {
+              id: filteredStudent.user.id,
+              value:
+                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+            });
+          }
+        });
+    }
+  }, [selectedCohort]);
+
   const loadStudents = () => {
-    const findSelectedCohort = allCohorts.find(
-      (l) => l.slug === selectedCohortSlug,
-    );
-    const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
-
-    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
-    const cohortId = findSelectedCohort?.value || defaultCohort?.value;
-    const currentCohort = findSelectedCohort || defaultCohort;
-
-    if (cohortId) {
-      setSelectedCohort(currentCohort);
-      console.log('educationalLabel');
-      console.log(educationalLabel);
+    if (selectedCohort) {
+      setLoadStatus({ loading: true, status: 'loading' });
+      const cohortId = selectedCohort.value;
+      const academyId = selectedCohort.academy || academy;
+      const slug = selectedCohort.slug || cohortSlug;
       bc.cohort({ sort, users: query.student, educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined })
         .getStudentsWithTasks(slug, academyId)
         .then((res) => {
@@ -351,7 +322,7 @@ function Assignments() {
         });
       getFilterAssignments(cohortId, academyId, router.query.student);
     }
-    if (!cohortId && allCohorts.length > 0) {
+    if (!selectedCohort?.value && selectedCohort !== null) {
       setLoadStatus({ loading: false, status: 'idle' });
     }
   };
@@ -359,8 +330,7 @@ function Assignments() {
   useEffect(() => {
     loadStudents();
   }, [
-    allCohorts,
-    selectedCohortSlug,
+    selectedCohort,
     studentDefaultValue,
     router.query,
   ]);
@@ -460,7 +430,7 @@ function Assignments() {
     try {
       const status = getStatus(task);
       let file;
-      const academyId = selectedCohort?.academy || academy || allCohorts.find((l) => l.slug === cohortSlug)?.academy;
+      const academyId = selectedCohort?.academy || academy || personalCohorts.find((l) => l.slug === cohortSlug)?.academy;
       if (status === 'UNDELIVERED' || status === 'REJECTED') {
         const { data } = await bc.todo().deliver({
           id: task.id,
@@ -529,30 +499,36 @@ function Assignments() {
             {`${t('title')}:`}
           </Heading>
           {personalCohorts.length > 0 && (
-          <ReactSelect
-            unstyled
-            color="#0097CD"
-            fontWeight="700"
-            id="cohort-select"
-            fontSize="25px"
-            placeholder={t('common:select-cohort')}
-            noOptionsMessage={() => t('common:no-options-message')}
-            defaultInputValue={selectedCohort?.label}
-            onChange={(cohort) => {
-              if (cohort.slug !== selectedCohort.slug) {
-                setCurrentStudentList([]);
-                setContextState({
-                  allTasks: [],
+            <ReactSelect
+              unstyled
+              color="#0097CD"
+              fontWeight="700"
+              id="cohort-select"
+              fontSize="25px"
+              placeholder={t('common:select-cohort')}
+              noOptionsMessage={() => t('common:no-options-message')}
+              value={selectedCohort || ''}
+              onChange={(cohort) => {
+                if (cohort.slug !== selectedCohort?.slug) {
+                  setCurrentStudentList([]);
+                  setContextState({
+                    allTasks: [],
+                  });
+                }
+                setSelectedCohort(cohort);
+                router.push({
+                  query: {
+                    ...router.query,
+                    cohortSlug: cohort.slug,
+                  },
                 });
-              }
-              setSelectedCohortSlug(cohort.slug);
-            }}
-            options={personalCohorts.map((cohort) => ({
-              value: cohort.value,
-              slug: cohort.slug,
-              label: cohort.label,
-            }))}
-          />
+              }}
+              options={personalCohorts.map((cohort) => ({
+                value: cohort.value,
+                slug: cohort.slug,
+                label: cohort.label,
+              }))}
+            />
           )}
         </Box>
       </Box>
@@ -1083,6 +1059,17 @@ function Assignments() {
               isOpen={currentTask && currentTask.status === 'APPROVED'}
               onClose={() => setCurrentTask(null)}
             />
+            {loadStatus.status === 'loading' && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                mt="2rem"
+                mb="5rem"
+                position="relative"
+              >
+                <LoaderScreen width="80px" height="80px" />
+              </Box>
+            )}
           </Box>
         )}
       </Box>
