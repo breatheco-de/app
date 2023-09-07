@@ -9,6 +9,8 @@ import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
 import { parseQuerys } from '../../../utils/url';
+// import assetList from '../../../lib/asset-list.json';
+// const assetLists = require('../src/lib/asset-list.json');
 
 export const getStaticPaths = async ({ locales }) => {
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {

@@ -16,18 +16,7 @@ const mapDifficulty = (difficulty) => {
 };
 
 async function getData() {
-  const name = 'fetching data';
-  const loading = (function () {
-    const h = [`${name}`, `${name}.`, `${name}..`, `${name}...`];
-    let i = 0;
-
-    return setInterval(() => {
-      i = (i > 3) ? 0 : i;
-      console.clear();
-      console.log(h[i]);
-      i += 1;
-    }, 300);
-  }());
+  console.log('fetching recyclable data for sitemap and redirects...');
 
   console.time('Time fetching data');
 
@@ -60,7 +49,6 @@ async function getData() {
     projects: projects.length,
     howTos: howTos.length,
   });
-  clearInterval(loading);
 
   // This file is disposable and will disappear at the end of the build process.
   fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
