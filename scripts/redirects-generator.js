@@ -2,19 +2,12 @@
 const { default: axios } = require('axios');
 const fs = require('fs');
 const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
-// const { getAsset } = require('../src/utils/requests');
 require('dotenv').config({
   path: '.env.production',
 });
-
 const assetLists = require('../src/lib/asset-list.json');
 
-// const assetLists = import('../src/lib/asset-list.json')
-//   .then((data) => data.default)
-//   .catch((err) => console.log(err));
-
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
-
 const redirectConfig = {
   permanent: true,
 };
