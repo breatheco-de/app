@@ -1,10 +1,7 @@
 /* eslint-disable no-await-in-loop */
-const { default: axios } = require('axios');
-const { parseQuerys } = require('./url');
-const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('../../scripts/_utils');
-require('dotenv').config({
-  path: '.env.production',
-});
+import axios from 'axios';
+import { parseQuerys } from './url';
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../../scripts/_utils';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -142,7 +139,7 @@ const getLandingTechnologies = () => {
   return technologies;
 };
 
-module.exports = {
+export {
   getAsset,
   getPrismicPages,
   getPublicSyllabus,

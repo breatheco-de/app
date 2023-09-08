@@ -1,57 +1,27 @@
 [
   {
-    "source": "/lesson/Introduction-to-express-js-es",
-    "destination": "/es/lesson/Introduction-to-express-js-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/intro_mongodb_and_mongoose-es",
-    "destination": "/es/lesson/intro_mongodb_and_mongoose-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/using_mongodb-es",
-    "destination": "/es/lesson/using_mongodb-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/introduccion-a-express-generator",
-    "destination": "/es/lesson/introduccion-a-express-generator",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/introduccion-a-node-js",
-    "destination": "/es/lesson/introduccion-a-node-js",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/mongoose_with_mongodb-es",
-    "destination": "/es/lesson/mongoose_with_mongodb-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/que-es-una-middleware-express-node",
-    "destination": "/es/lesson/que-es-una-middleware-express-node",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/intro_to_jwt_and_node-es",
-    "destination": "/es/lesson/intro_to_jwt_and_node-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/formularios-con-node",
-    "destination": "/es/lesson/formularios-con-node",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/Graficar-funciones-con-Python",
-    "destination": "/es/lesson/Graficar-funciones-con-Python",
-    "permanent": true
-  },
-  {
     "source": "/lesson/como-utilizar-node-y-npm",
     "destination": "/es/lesson/como-utilizar-node-y-npm",
+    "permanent": true
+  },
+  {
+    "source": "/how-to/como-programar-en-python",
+    "destination": "/es/how-to/como-programar-en-python",
+    "permanent": true
+  },
+  {
+    "source": "/how-to/javascript-substring",
+    "destination": "/es/how-to/javascript-substring",
+    "permanent": true
+  },
+  {
+    "source": "/how-to/settimeout-javascript",
+    "destination": "/es/how-to/settimeout-javascript",
+    "permanent": true
+  },
+  {
+    "source": "/how-to/php-expresiones-regulares",
+    "destination": "/es/how-to/php-expresiones-regulares",
     "permanent": true
   },
   {
@@ -255,6 +225,11 @@
     "permanent": true
   },
   {
+    "source": "/how-to/expresiones-regulares-linux",
+    "destination": "/es/how-to/expresiones-regulares-linux",
+    "permanent": true
+  },
+  {
     "source": "/lesson/conexion-a-bases-de-datos-sql",
     "destination": "/es/lesson/conexion-a-bases-de-datos-sql",
     "permanent": true
@@ -315,6 +290,11 @@
     "permanent": true
   },
   {
+    "source": "/how-to/portfolio-github",
+    "destination": "/es/how-to/portfolio-github",
+    "permanent": true
+  },
+  {
     "source": "/lesson/portfolio-desarrollador-web",
     "destination": "/es/lesson/portfolio-desarrollador-web",
     "permanent": true
@@ -347,6 +327,11 @@
   {
     "source": "/lesson/que-es-y-como-mejorar-la-legibilidad-del-codigo",
     "destination": "/es/lesson/que-es-y-como-mejorar-la-legibilidad-del-codigo",
+    "permanent": true
+  },
+  {
+    "source": "/how-to/terminos-y-condiciones",
+    "destination": "/es/how-to/terminos-y-condiciones",
     "permanent": true
   },
   {
@@ -740,13 +725,8 @@
     "permanent": true
   },
   {
-    "source": "/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "destination": "/es/lesson/sorting-algorithms-explanied-in-javascript-es",
-    "permanent": true
-  },
-  {
-    "source": "/lesson/regex-tutorial-regular-expression-ejemplo",
-    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo",
+    "source": "/lesson/working-with-strings-in-python-es",
+    "destination": "/es/lesson/working-with-strings-in-python-es",
     "permanent": true
   },
   {
@@ -765,8 +745,8 @@
     "permanent": true
   },
   {
-    "source": "/lesson/depurando-codigo-html",
-    "destination": "/es/lesson/depurando-codigo-html",
+    "source": "/interactive-exercise/tutorial-pandas-para-machine-learning",
+    "destination": "/es/interactive-exercise/tutorial-pandas-para-machine-learning",
     "permanent": true
   },
   {
@@ -857,16 +837,6 @@
   {
     "source": "/interactive-exercise/numpy-exercises-tutorial-es",
     "destination": "/es/interactive-exercise/numpy-exercises-tutorial-es",
-    "permanent": true
-  },
-  {
-    "source": "/interactive-coding-tutorial/codifica-una-landing-page-con-node",
-    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node",
-    "permanent": true
-  },
-  {
-    "source": "/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
-    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
     "permanent": true
   },
   {

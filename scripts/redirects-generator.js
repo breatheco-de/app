@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
-const { default: axios } = require('axios');
-const fs = require('fs');
+import axios from 'axios';
+
 const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
-require('dotenv').config({
-  path: '.env.production',
-});
+// require('dotenv').config({
+//   path: '.env.production',
+// });
 const assetLists = require('../src/lib/asset-list.json');
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
@@ -135,8 +136,8 @@ async function generateRedirect() {
       ...eventRedirectList,
     ];
 
-    fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
-    fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
+    Bun.write('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
+    Bun.write('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
 
     console.log('Redirects generated!');
   } else {

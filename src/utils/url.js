@@ -31,7 +31,7 @@ const parseQuerys = (query, connector = false) => {
   return queryString;
 };
 
-module.exports = {
+export {
   isAbsoluteUrl,
   getUrlProps,
   urlExists,
