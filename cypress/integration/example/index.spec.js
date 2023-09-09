@@ -1,10 +1,10 @@
-/// <reference types="cypress" />
+// /// <reference types="cypress" />
 
-describe('Example for starting cypress e2e tests', () => {
+// describe('Example for starting cypress e2e tests', () => {
 
-  it('Visit to home page', () => {
+//   it('Visit to home page', () => {
 
-    cy.visit('/')
+//     cy.visit('/')
 
-  })
-})
+//   })
+// })

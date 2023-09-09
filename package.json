@@ -37,8 +37,8 @@
     "slicemachine": "start-slicemachine",
     "make:redirect": "bun ./scripts/redirects-generator.js",
     "make:syllabus": "bun ./scripts/syllabus.js",
-    "generate-files": "bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict",
-    "make:assets": "bun ./scripts/generate_assets.js"
+    "make:assets": "bun ./scripts/generate_assets.js",
+    "generate-files": "bun make:assets && bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.19",
