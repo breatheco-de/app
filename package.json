@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "bun make:iconDict && next dev -p 3000",
-    "build": "bun run generate-files && next build",
+    "build": "next build",
     "start": "bun make:iconDict && next start -p 3080",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
