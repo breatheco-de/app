@@ -16,11 +16,11 @@
     "show-pending-tasks": "Show only Pending Tasks",
     "activitiesLength": "{{count}} Activities",
     "newActivities": {
-      "title": "Hey! There are {{tasksLength}} new activities on this day",
+      "title": "Hey! There are {{tasksLength}} new activities for this day",
       "handler-text": "Sync now"
     },
     "start-message": "You have not started this module",
-    "no-activities": "The module doesn't have any lessons, exercises or projects",
+    "no-activities": "The module doesn't have any lessons, exercises, or projects",
     "start-module": "Start module"
   },
   "callToAction": {
@@ -45,18 +45,18 @@
     "no-assistant": "This cohort does not have any assistants yet",
     "no-students": "This cohort does not have any students yet",
     "no-active-students": "This cohort does not have any active students yet",
-    "no-graduated-students": "This cohort does not have any graduated students yet"
+    "no-graduated-students": "This cohort does not have any graduates yet"
   },
   "supportSideBar": {
     "title": "Don't Get Stuck",
-    "description": "Did you know you can schedule mentoring sessions any time or ask in the Support Chat?",
+    "description": "Did you know you can schedule mentoring sessions at any time or ask in the Support Chat?",
     "no-mentors": "No mentors available",
     "no-mentor-link": "No link to create session with this mentor",
     "search-mentor": "Search mentor by name",
     "start-mentorship": "To get started, select a mentorship type",
     "mentoring": "Schedule a 1-1 mentoring session.",
     "select-type": "Select a type of mentorship",
-    "mentoring-available": "Avalible mentorships",
+    "mentoring-available": "Available mentorships",
     "no-mentoring-available": "You have no mentorships available.",
     "create-session-text": "Book now",
     "learn-more": "Learn more.",
@@ -102,7 +102,7 @@
   },
   "modalInfo": {
     "title": "Review status",
-    "still-reviewing": "Your teacher is still reviewing your deliver and will provide feedback once it's done",
+    "still-reviewing": "Your teacher is still reviewing your delivery and will provide feedback once it's done",
     "approved": "Your teacher has successfully approved your project!",
     "files-sended-to-teacher": "",
     "rejected": {
@@ -114,22 +114,22 @@
     "link-info": "Sent to teacher:",
     "remove-delivery": "Remove delivery",
     "non-github-url": {
-      "title": "non-github URL detected",
-      "description": "Usually projects are delivered through Github, are you sure you want to submit a non-github URL?",
+      "title": "non-Github URL detected",
+      "description": "Usually projects are delivered through Github, are you sure you want to submit a non-Github URL?",
       "confirm": "Confirm",
       "cancel": "Cancel"
     }
   },
   "warningModal" : {
-    "title": "sincronize with github",
+    "title": "synchronize with Github",
     "sub-title": "Your Github account is not connected",
-    "text": "Current 4Geeks Academy students with a connected Github account are able to get unlimited Codespaces hours",
+    "text": "Current 4Geeks Academy students with a connected Github account are able to get unlimited Codespace hours",
     "connect": "CONNECT WITH GITHUB",
     "skip": "Skip for now"
   },
   "unsynced": {
     "title": "There are {{taskLength}} unsynced cohort tasks",
-    "description": "These tasks may be deleted and lost in the future. Make sure to synch them if you don't want to lose them.",
+    "description": "These tasks may be deleted and lost in the future. Make sure to sync them if you don't want to lose them.",
     "unsync": "Remove unsynced",
     "sync": "Sync with current cohort",
     "reject-unsync-title": "Please confirm your action to reject all unsynced tasks",
@@ -157,8 +157,8 @@
   },
   "teacher-sidebar": {
     "actions": "Actions",
-    "take-attendancy": "Take attendancy",
-    "review-attendancy": "Review attendancy",
+    "take-attendancy": "Take attendance",
+    "review-attendancy": "Review attendance",
     "assignments": "Assignments",
     "teacher-tutorial": "Teacher tutorial",
     "no-instructions": ">:warning: No available instruction found for this module"
