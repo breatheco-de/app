@@ -18,7 +18,7 @@
   },
   "scripts": {
     "dev": "npm run make:iconDict && next dev -p 3000",
-    "build": "cross-env NODE_ENV=production npm run test && npm run generate-files && npm run && next build",
+    "build": "cross-env NODE_ENV=production npm run test && npm run make:assets && npm run generate-files && next build",
     "start": "npm run make:iconDict && next start -p 3080",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
@@ -37,7 +37,8 @@
     "slicemachine": "start-slicemachine",
     "make:redirect": "node ./scripts/redirects-generator.js",
     "make:syllabus": "node ./scripts/syllabus.js",
-    "generate-files": "npm run make:redirect && npm run make:sitemap && npm run make:syllabus && npm run make:iconDict"
+    "generate-files": "npm run make:redirect && npm run make:sitemap && npm run make:syllabus && npm run make:iconDict",
+    "make:assets": "node ./scripts/generate_assets.js"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.19",

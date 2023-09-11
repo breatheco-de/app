@@ -10,6 +10,7 @@ import '@uiw/react-markdown-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import markdownDefaultText from '../lib/markdown-example';
 import useDebounce from '../common/hooks/useDebounce';
+import { ORIGIN_HOST } from '../utils/variables';
 
 const MarkdownEditor = dynamic(
   () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
@@ -17,7 +18,7 @@ const MarkdownEditor = dynamic(
 );
 
 export const getStaticProps = async ({ locale, locales }) => {
-  const image = 'https://4geeks.com/static/images/4geeks.png';
+  const image = `${ORIGIN_HOST}/static/images/4geeks.png`;
 
   return {
     props: {

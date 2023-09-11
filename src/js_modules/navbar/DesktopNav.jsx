@@ -10,12 +10,12 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
-    if (haveSession) {
+    if (haveSession && NAV_ITEMS?.length > 0) {
       setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
     }
   }, [haveSession, NAV_ITEMS]);
 
-  const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
+  const publicItems = NAV_ITEMS?.length > 0 ? NAV_ITEMS?.filter((item) => item.private !== true) : [];
 
   const customPublicItems = publicItems;
   const allItems = [...privateItems, ...customPublicItems];
@@ -30,7 +30,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {customPublicItems.length > 0 && allItems.map((publicItem) => {
+      {allItems?.length > 0 && allItems.map((publicItem) => {
         const submenuData = prepareSubMenuData(publicItem);
 
         const data = {

@@ -18,7 +18,7 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent,
+  headContent, title, description, childrenDescription, subContent, isLive,
   readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -212,6 +212,7 @@ function ShowOnSignUp({
                     mt="10px"
                     type="submit"
                     variant="default"
+                    className={isLive ? 'pulse-blue' : ''}
                     isLoading={isSubmitting}
                     title={t('join-workshop')}
                     isDisabled={readOnly}
@@ -305,6 +306,7 @@ function ShowOnSignUp({
         handlerText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
+          refetchAfterSuccess();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
@@ -326,6 +328,7 @@ ShowOnSignUp.propTypes = {
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
+  isLive: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -339,6 +342,7 @@ ShowOnSignUp.defaultProps = {
   childrenDescription: null,
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
+  isLive: false,
 };
 
 export default ShowOnSignUp;

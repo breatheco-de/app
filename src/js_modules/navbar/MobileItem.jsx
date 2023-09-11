@@ -14,12 +14,13 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 // import { useRouter } from 'next/router';
+import Image from 'next/image';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 
 function MobileItem({
-  label, subMenu, href, onClickLink, description, icon, readSyllabus,
+  label, subMenu, href, onClickLink, description, icon, readSyllabus, with_popover: withPopover, image,
 }) {
   const { isOpen, onToggle } = useDisclosure();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
@@ -32,8 +33,11 @@ function MobileItem({
   //   }
   //   return linkColor;
   // };
+  const existsSubMenu = subMenu?.length > 0;
+  const withPopoverActive = withPopover?.active;
+  const existsItemWithPopover = existsSubMenu || withPopoverActive;
   // manage subMenus in level 2
-  const itemSubMenu = subMenu?.length > 0 && subMenu.map((l) => {
+  const itemSubMenu = existsSubMenu && subMenu.map((l) => {
     const isLessons = l.slug === 'lessons';
     if (isLessons) {
       return ({
@@ -69,7 +73,7 @@ function MobileItem({
           </NextChakraLink>
         </Box>
       )}
-      {itemSubMenu && (
+      {existsItemWithPopover && (
         <Flex
           py={2}
           justifyContent="left"
@@ -103,17 +107,21 @@ function MobileItem({
           align="start"
         >
           <Flex
-            flexDirection="row"
-            padding="0 0 20px 0"
+            flexDirection="column"
+            padding={withPopoverActive ? '0px' : '0 0 20px 0'}
             gridGap="15px"
-            borderBottom={1}
+            borderBottom={withPopoverActive ? 0 : 1}
             borderStyle="solid"
             borderColor={bordercolor2}
-            alignItems="center"
+            alignItems="start"
             color={linkColor}
           >
             <Box width="auto">
-              <Icon icon={icon} width="50px" height="50px" />
+              {image ? (
+                <Image src={image} width={105} height={35} style={{ objectFit: 'cover', height: '35px' }} />
+              ) : (
+                <Icon icon={icon} width="50px" height="50px" />
+              )}
             </Box>
             <Box display="flex" flexDirection="column">
               <Text size="xl" fontWeight={900}>
@@ -122,6 +130,19 @@ function MobileItem({
               <Text color={linkColor} fontWeight={500}>
                 {description}
               </Text>
+              {withPopoverActive && (
+                <NextChakraLink
+                  href={withPopover.link}
+                  key={withPopover.link}
+                  display="block"
+                  p="0.8rem 0"
+                  width="max-content"
+                  style={{ borderRadius: '5px' }}
+                >
+                  {withPopover?.title}
+                  <Icon icon="arrowRight" width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                </NextChakraLink>
+              )}
             </Box>
           </Flex>
 
@@ -187,6 +208,8 @@ MobileItem.propTypes = {
       href: PropTypes.string,
     }),
   ),
+  with_popover: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  image: PropTypes.string,
   onClickLink: PropTypes.func.isRequired,
   readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
@@ -195,6 +218,8 @@ MobileItem.defaultProps = {
   href: '/',
   description: '',
   icon: 'book',
+  with_popover: {},
+  image: '',
   subMenu: undefined,
 };
 

@@ -133,7 +133,7 @@ function ChooseYourClass({
   }, [isSecondStep, gmapStatus]);
 
   useEffect(() => {
-    if (gmapStatus.loaded) {
+    if (gmapStatus.loaded && GOOGLE_KEY) {
       getNearestLocation(GOOGLE_KEY).then(({ data }) => {
         if (data) {
           setCoords({

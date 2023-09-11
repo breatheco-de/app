@@ -112,13 +112,15 @@ function MentoringFree({
       )}
       <Box display="flex" flexDirection="column" padding="16px" alignItems="center">
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
-            {t('supportSideBar.mentoring')}
-            <br />
-            <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
-              {t('supportSideBar.learn-more')}
-            </Link>
-          </Heading>
+          {!mentoryProps?.service && (
+            <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+              {t('supportSideBar.mentoring')}
+              <br />
+              <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
+                {t('supportSideBar.learn-more')}
+              </Link>
+            </Heading>
+          )}
           {!mentoryProps?.service && programServices.length <= 0 && (
             <Heading size="16px" textAlign="center" justify="center" mt="10px" mb="0px">
               {programServices.length > 0 ? `${programServices.length} ${t('supportSideBar.mentoring-available')}` : t('supportSideBar.no-mentoring-available')}
@@ -176,6 +178,19 @@ function MentoringFree({
                     </>
                   ) : ''}
                 </Box>
+                {mentoryProps?.service && (
+                  <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+                    <Box>
+                      {t('mentorship.you-have')}
+                    </Box>
+                    <Box display="flex" color="white" justifyContent="center" alignItems="center" background="green.400" width="30px" height="30px" borderRadius="50%">
+                      <Icon icon="infinite" width="20px" height="20px" />
+                    </Box>
+                    <Box textAlign="center">
+                      {t('mentorship.available-sessions')}
+                    </Box>
+                  </Box>
+                )}
                 {mentoryProps?.service && (
                   <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="20px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                     <Box>

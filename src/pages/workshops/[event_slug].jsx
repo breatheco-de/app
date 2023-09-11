@@ -26,6 +26,13 @@ import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
 import useSubscribeToPlan from '../../common/hooks/useSubscribeToPlan';
 
+const arrayOfImages = [
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811551-c4cadebe-9bea-4abe-9d11-4c19d5b66241.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811556-1d9de108-2166-4803-8014-1e1d406066a2.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811564-e7889add-dd02-4b91-bb0b-91b9e5f843af.gif',
+];
+
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
 export const getStaticPaths = async ({ locales }) => {
@@ -34,7 +41,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = data.filter((ev) => ev?.slug)
     .flatMap((res) => locales.map((locale) => ({
       params: {
-        event_slug: res.slug,
+        event_slug: res?.slug,
       },
       locale,
     })));
@@ -113,6 +120,7 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
+  const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
 
   const router = useRouter();
@@ -158,6 +166,18 @@ function Page({ event }) {
         .catch(() => {});
     }
   }, [event]);
+
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      setRandomImage(arrayOfImages[currentIndex]);
+      currentIndex = (currentIndex + 1) % 4;
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   const limitedUsers = showAll ? users : users.slice(0, 15);
 
@@ -229,9 +249,6 @@ function Page({ event }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const arrayOfImages = [
-    '/static/images/person1.webp',
-  ];
   const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
@@ -503,13 +520,14 @@ function Page({ event }) {
             <ShowOnSignUp
               hideForm={finishedEvent}
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
+              isLive={readyToJoinEvent && !finishedEvent}
               refetchAfterSuccess={() => {
                 getMySubscriptions();
                 getCurrentConsumables();
               }}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
-                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                  <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                 </Box>
               ) : (
                 <Timer
@@ -538,6 +556,7 @@ function Page({ event }) {
                   mt="10px"
                   type="submit"
                   variant="default"
+                  className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                   background={buttonEnabled ? 'blue.default' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                   isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
