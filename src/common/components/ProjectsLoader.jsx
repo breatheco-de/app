@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
@@ -14,15 +14,16 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   const pagePath = options?.pagePath;
   const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [router.query]);
+
   const loadMore = useCallback(async () => {
-    if (fetchData) {
-      const { data } = await fetchData(lang, currentPage + 1, router.query);
-      const results = data?.results.map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
-      );
-      console.log('data fetched');
-      articles.push(...results);
-    }
+    const { data } = await fetchData(lang, currentPage + 1, router.query);
+    const results = data?.results.map(
+      (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+    );
+    articles.push(...results);
     setCurrentPage((prevPage) => prevPage + 1);
   }, [currentPage, articles]);
   const pageCount = Math.ceil(count / itemsPerPage);
