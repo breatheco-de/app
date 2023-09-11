@@ -17,7 +17,7 @@
     {
       "label": "Learning library",
       "icon": "book",
-      "description": "For all the self-taught geeks out there, here our content library with most of the learning materials we have produces throughout the years.",
+      "description": "For all the self-taught geeks out there, here is our content library with most of the learning materials we have produced throughout the years.",
       "asPath": "/read",
       "subMenu": [
         {
@@ -50,7 +50,7 @@
           "label": "Build projects",
           "slug": "projects",
           "href": "/interactive-coding-tutorials",
-          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions and more.",
+          "description": "Curated section of projects to build while learning with simple instructions, videos, solutions, and more.",
           "subMenu": [
             {
               "href": "/interactive-coding-tutorials",
@@ -99,7 +99,7 @@
       "private": true,
       "icon": "4GeeksIcon",
       "image": "/static/images/4geeks.png",
-      "description": "Miami Tech Works is part of 4Geeks learning community. Go to 4Geeks.com for more interactive lessons, workshops, mentorhips and learning with AI.",
+      "description": "Miami Tech Works is part of 4Geeks learning community. Go to 4Geeks.com for more interactive lessons, workshops, mentorhips, and learning with AI.",
       "with_popover": {
         "active": true,
         "title": "Take me to 4Geeks.com",
