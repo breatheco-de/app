@@ -157,8 +157,8 @@
   },
   "teacher-sidebar": {
     "actions": "Actions",
-    "take-attendancy": "Take attendancy",
-    "review-attendancy": "Review attendancy",
+    "take-attendancy": "Take attendance",
+    "review-attendancy": "Review attendance",
     "assignments": "Assignments",
     "teacher-tutorial": "Teacher tutorial",
     "no-instructions": ">:warning: No available instruction found for this module"
