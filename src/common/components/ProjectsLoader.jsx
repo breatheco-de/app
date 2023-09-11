@@ -1,36 +1,35 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback } from 'react';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
 
-function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options }) {
-  const [currentPage, setCurrentPage] = useState(1);
+function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options, count, fetchData, lang }) {
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(router?.query?.page ? Number(router.query.page) : 1);
 
   const pagePath = options?.pagePath;
   const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
 
-  const articleChunks = useMemo(() => {
-    const newArticleChunks = [];
-    for (let i = 0; i < articles.length; i += itemsPerPage) {
-      newArticleChunks.push(articles.slice(i, i + itemsPerPage));
+  const loadMore = useCallback(async () => {
+    if (fetchData) {
+      const { data } = await fetchData(lang, currentPage + 1, router.query);
+      const results = data?.results.map(
+        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+      );
+      console.log('data fetched');
+      articles.push(...results);
     }
-    return newArticleChunks;
-  }, [articles, itemsPerPage]);
-
-  const loadMore = useCallback(() => {
     setCurrentPage((prevPage) => prevPage + 1);
-  }, []);
-  const pageCount = Math.ceil(articles.length / itemsPerPage);
+  }, [currentPage, articles]);
+  const pageCount = Math.ceil(count / itemsPerPage);
 
-  const currentArticles = articleChunks.slice(0, currentPage).flat();
   const isSearching = searchQuery.length > 0;
 
-  const hasMore = currentPage < articleChunks.length && !isSearching;
+  const hasMore = articles.length < count && !isSearching;
 
   return (
     <div>
@@ -43,21 +42,21 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
           <link rel="next" href={`${pathname}?page=${currentPage + 1}`} />
         )}
       </Head>
-      {currentArticles.length > 0 && (
-        <InfiniteScroll
-          data={currentArticles}
-          renderItem={renderItem}
-          loadMore={loadMore}
-          currentPage={currentPage}
-          pageCount={pageCount}
-          hasMore={hasMore}
-        >
-          <ProjectList
-            projects={hasMore ? currentArticles : articles}
-            {...options}
-          />
-        </InfiniteScroll>
-      )}
+
+      <InfiniteScroll
+        data={articles}
+        renderItem={renderItem}
+        loadMore={loadMore}
+        currentPage={currentPage}
+        pageCount={pageCount}
+        hasMore={hasMore}
+      >
+        <ProjectList
+          projects={articles}
+          {...options}
+        />
+      </InfiniteScroll>
+
     </div>
   );
 }
@@ -65,6 +64,9 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
 ProjectsLoader.propTypes = {
   articles: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   itemsPerPage: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
+  fetchData: PropTypes.func.isRequired,
+  lang: PropTypes.string.isRequired,
   renderItem: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   searchQuery: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
   options: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
