@@ -3,7 +3,7 @@
   "title": "Asignaciones",
   "students-view": "vista de studiantes",
   "projects-view": "vista de proyectos",
-  "no-information": "No hay información disponible para el proyecto de este estudiante",
+  "no-information": "Es posible que el estudiante nunca haya abierto esta tarea. No se encontró información sobre la tarea de este estudiante.",
   "educational-status": "Estatus eduacional",
   "delivered-percentage": "% de entregado",
   "last-deliver": "Última entrega: hace {{date}}",
