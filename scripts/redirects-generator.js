@@ -2,35 +2,14 @@
 const { default: axios } = require('axios');
 const fs = require('fs');
 const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
-const { getAsset } = require('./sitemap-generator/requests');
 require('dotenv').config({
   path: '.env.production',
 });
+const assetLists = require('../src/lib/asset-list.json');
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
-
 const redirectConfig = {
   permanent: true,
-};
-
-const mapDifficulty = (difficulty) => {
-  switch (difficulty?.toLowerCase()) {
-    case 'junior':
-      return 'easy';
-    case 'semi-senior':
-      return 'intermediate';
-    case 'senior':
-      return 'hard';
-    default:
-      return 'unknown';
-  }
-};
-
-const getEvents = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/events/all`)
-    .then((res) => res.data)
-    .catch((err) => console.log(err));
-  return data;
 };
 
 const getAliasRedirects = async () => {
@@ -130,17 +109,12 @@ async function generateRedirect() {
   if (!isWhiteLabelAcademy) {
     console.log('Generating redirects...');
 
-    const lessonsList = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
-    const excersisesList = await getAsset('exercise');
-    const projectList = await getAsset('PROJECT').then((data) => data.map((item) => {
-      item.difficulty = mapDifficulty(item.difficulty);
-      return item;
-    }));
-    const howToList = await getAsset('LESSON,ARTICLE').then(
-      (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-    );
+    const lessonsList = assetLists.lessons;
+    const excersisesList = assetLists.excersises;
+    const projectList = assetLists.projects;
+    const howToList = assetLists.howTos;
+    const eventList = assetLists.events;
 
-    const eventList = await getEvents();
     const aliasRedirectList = await getAliasRedirects();
 
     const lessonRedirectList = generateAssetRedirect(lessonsList);
