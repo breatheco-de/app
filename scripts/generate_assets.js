@@ -2,8 +2,6 @@
 /* eslint-disable no-param-reassign */
 import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
 
-const fs = require('fs');
-
 const mapDifficulty = (difficulty) => {
   switch (difficulty?.toLowerCase()) {
     case 'junior':
@@ -52,9 +50,14 @@ async function getData() {
     howTos: howTos.length,
   });
 
-  // This file is disposable and will disappear at the end of the build process.
-  fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
-  // Bun.write('src/lib/asset-list.json', JSON.stringify(data));
+  try {
+    // This file is disposable and will disappear at the end of the build process.
+    await Bun.write('src/lib/asset-list.json', JSON.stringify(data));
+  } catch (err) {
+    console.error("Couldn't write content for src/lib/asset-list.json", err);
+  }
+
+  // fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
 
   return data;
 }
