@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import { parseQuerys } from './url';
@@ -7,6 +8,19 @@ const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-te
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
+
+const mapDifficulty = (difficulty) => {
+  switch (difficulty?.toLowerCase()) {
+    case 'junior':
+      return 'easy';
+    case 'semi-senior':
+      return 'intermediate';
+    case 'senior':
+      return 'hard';
+    default:
+      return 'unknown';
+  }
+};
 
 const getPrismicPages = () => {
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
@@ -47,7 +61,13 @@ const getEvents = async (extraQuerys = {}) => {
   return [];
 };
 
-const getAsset = async (type = null, extraQuerys = {}) => {
+/**
+ * @param {String} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
+ * @param {Object} extraQuerys Extra querys to filter the assets
+ * @param {string} category Category of the asset for filter purposes
+ * @returns {Promise} Array of objects with the assets
+ */
+const getAsset = async (type = null, extraQuerys = {}, category = null) => {
   const limit = 100;
   let offset = 0;
   let allResults = [];
@@ -88,6 +108,18 @@ const getAsset = async (type = null, extraQuerys = {}) => {
         console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
         return [];
       });
+  }
+
+  if (category === 'how-to') {
+    return allResults.filter(
+      (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
+    );
+  }
+  if (category === 'project') {
+    return allResults.map((item) => {
+      item.difficulty = mapDifficulty(item.difficulty);
+      return item;
+    });
   }
 
   return allResults;

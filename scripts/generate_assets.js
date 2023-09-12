@@ -2,19 +2,6 @@
 import fs from 'fs';
 import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
 
-const mapDifficulty = (difficulty) => {
-  switch (difficulty?.toLowerCase()) {
-    case 'junior':
-      return 'easy';
-    case 'semi-senior':
-      return 'intermediate';
-    case 'senior':
-      return 'hard';
-    default:
-      return 'unknown';
-  }
-};
-
 async function getData() {
   console.log('fetching recyclable data for sitemap and redirects...');
 
@@ -22,14 +9,9 @@ async function getData() {
 
   const landingTechnologies = await getLandingTechnologies();
   const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
-  const excersises = await getAsset('exercise');
-  const projects = await getAsset('PROJECT').then((data) => data.map((item) => {
-    item.difficulty = mapDifficulty(item.difficulty);
-    return item;
-  }));
-  const howTos = await getAsset('LESSON,ARTICLE').then(
-    (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-  );
+  const excersises = await getAsset('EXERCISE');
+  const projects = await getAsset('PROJECT', {}, 'project');
+  const howTos = await getAsset('LESSON,ARTICLE', {}, 'how-to');
   const events = await getEvents();
 
   console.timeEnd('Time fetching data');
