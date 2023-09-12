@@ -5,6 +5,9 @@
   "projects-view": "vista de proyectos",
   "no-information": "No hay información disponible para el proyecto de este estudiante",
   "educational-status": "Estatus eduacional",
+  "delivered-percentage": "% de entregado",
+  "last-deliver": "Última entrega: hace {{date}}",
+  "no-deliver": "Sin entregas",
   "status": {
     "delivered": "Entregado",
     "approved": "Aprobado",
