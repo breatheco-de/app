@@ -2,26 +2,35 @@
 
 ## Getting Started.
 
-Install node:
+1. Install Bun:
 
 ```bash
-nvm install 18
-# then
-nvm use 18 
+# If bun has not been installed in your work environment (Gitpod, Codespaces, and more)
+npm install -g bun 
 ```
 
-Install packages:
+2. Install packages:
 
 ```bash
-npm install --legacy-peer-deps
+bun install
 ```
 
-Then, run the development server:
+3. Copy `.env.example` content to `.env.development` and `.env.production`
+
+4. Then generate required files before start:
 
 ```bash
-npm run dev
+bun prepare
 # or
-yarn dev
+bun run prepare
+```
+
+5. Then, run the development server:
+
+```bash
+bun run dev
+# or
+bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -48,10 +57,11 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## Run lint
-npm run lint:files
+```bash
+bun run lint:files
+```
 
 ## Fix lint errors
-npm run lint:fix
-
-<!-- lista con pages si es privada o no -->
-<!-- hacer un archivo json con toods las paginas (no getStaticProps) -->
+```bash
+bun run lint:fix
+```
