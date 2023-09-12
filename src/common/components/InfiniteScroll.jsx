@@ -52,8 +52,6 @@ function InfiniteScroll({ data, renderItem, loadMore, hasMore, currentPage, page
     };
   }, [childrenRef, children]);
 
-  // const nextPage = currentPage + 1;
-
   return (
     <>
       {!renderItem
