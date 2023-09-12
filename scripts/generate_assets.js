@@ -1,7 +1,6 @@
 /* eslint-disable no-param-reassign */
 import fs from 'fs';
 import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
-import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
 
 const mapDifficulty = (difficulty) => {
   switch (difficulty?.toLowerCase()) {
@@ -17,10 +16,6 @@ const mapDifficulty = (difficulty) => {
 };
 
 async function getData() {
-  console.log('BREATHECODE_HOST:::', BREATHECODE_HOST);
-  console.log('ORIGIN_HOST:::', ORIGIN_HOST);
-  console.log('WHITE_LABEL_ACADEMY:::', WHITE_LABEL_ACADEMY);
-
   console.log('fetching recyclable data for sitemap and redirects...');
 
   console.time('Time fetching data');

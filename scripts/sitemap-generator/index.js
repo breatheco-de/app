@@ -6,7 +6,7 @@ import {
   sitemapTemplate,
   listOfSitemapsTemplate,
 } from './sitemap-config';
-import { isWhiteLabelAcademy } from '../_utils';
+import { isWhiteLabelAcademy } from '../../src/utils/variables';
 import assetLists from '../../src/lib/asset-list.json';
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
