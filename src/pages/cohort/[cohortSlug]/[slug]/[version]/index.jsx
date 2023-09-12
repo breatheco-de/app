@@ -508,7 +508,7 @@ function Dashboard() {
                     otherEvents={events}
                   />
                 )}
-                {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+                {true && cohortSession?.stage === 'FINAL_PROJECT' && (
                   <FinalProject
                     tasks={taskTodoState}
                     studentAndTeachers={onlyStudentsActive}
@@ -731,7 +731,7 @@ function Dashboard() {
                   otherEvents={events}
                 />
               )}
-              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+              {true && cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
                   tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}

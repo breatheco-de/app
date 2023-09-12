@@ -32,6 +32,7 @@
     "add-participants": "Añadir miembros",
     "participants-hint": "Estudiantes que participaron en este proyecto.",
     "button": "Subir proyecto final",
+    "no-students": "No se encontraron más estudiantes en esta cohorte, no puedes añadir miembros a este proyecto",
     "confirmation": {
       "title": "¿Estas seguro?",
       "text": "Si te quitas a ti mismo de este proyecto, no tendrás acceso a él, tus compañeros de equipo tendrán que agregarte de nuevo para tener acceso",
