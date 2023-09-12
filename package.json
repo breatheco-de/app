@@ -38,7 +38,7 @@
     "make:redirect": "bun ./scripts/redirects-generator.js",
     "make:syllabus": "bun ./scripts/syllabus.js",
     "make:assets": "bun ./scripts/generate_assets.js",
-    "generate-files": "bun make:assets && bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict"
+    "generate-files": "bun run make:assets"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.19",
