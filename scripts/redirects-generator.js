@@ -1,70 +1,19 @@
 /* eslint-disable no-param-reassign */
 const { default: axios } = require('axios');
 const fs = require('fs');
+const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
 require('dotenv').config({
   path: '.env.production',
 });
+const assetLists = require('../src/lib/asset-list.json');
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
-
 const redirectConfig = {
   permanent: true,
 };
 
-const getLessons = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=lesson&limit=1000`)
-    .then((res) => res.data.results)
-    .catch((err) => console.log(err));
-  return data;
-};
-const getExercises = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=exercise&limit=1000`)
-    .then((res) => res.data.results)
-    .catch((err) => console.log(err));
-  return data;
-};
-
-const getProjects = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=project&limit=2000`)
-    .then((res) => {
-      //  if res.data.results in map have difficulty === 'junior' change to 'easy' and if difficulty === 'semi-senior' change to 'intermediate' and if difficulty === 'senior' change to 'hard' and if difficulty === null change to 'unknown'
-      const dataCleaned = res.data.results.map((item) => {
-        if (item.difficulty?.toLowerCase() === 'junior') {
-          item.difficulty = 'easy';
-        }
-        if (item.difficulty?.toLowerCase() === 'semi-senior') {
-          item.difficulty = 'intermediate';
-        }
-        if (item.difficulty?.toLowerCase() === 'senior') {
-          item.difficulty = 'hard';
-        }
-        if (item.difficulty === null) {
-          item.difficulty = 'unknown';
-        }
-        return item;
-      });
-      return dataCleaned;
-    })
-    .catch((err) => console.log(err));
-  return data;
-};
-
-const getHowTo = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=ARTICLE&limit=1000`)
-    .then((res) => (res.data.results?.length > 0 ? res.data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como') : []))
-    .catch((err) => console.log(err));
-  return data;
-};
-
-const getEvents = () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/events/all`)
-    .then((res) => res.data)
-    .catch((err) => console.log(err));
-  return data;
-};
-
 const getAliasRedirects = async () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=4`)
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=${WHITE_LABEL_ACADEMY}`)
     .then((res) => res.data)
     .catch((err) => {
       console.error('Error getting alias redirects', err);
@@ -157,36 +106,41 @@ const generateAliasRedirects = async (redirects, projects) => {
 };
 
 async function generateRedirect() {
-  console.log('Generating redirects...');
+  if (!isWhiteLabelAcademy) {
+    console.log('Generating redirects...');
 
-  const lessonsList = await getLessons();
-  const excersisesList = await getExercises();
-  const projectList = await getProjects();
-  const howToList = await getHowTo();
-  const eventList = await getEvents();
-  const aliasRedirectList = await getAliasRedirects();
+    const lessonsList = assetLists.lessons;
+    const excersisesList = assetLists.excersises;
+    const projectList = assetLists.projects;
+    const howToList = assetLists.howTos;
+    const eventList = assetLists.events;
 
-  const lessonRedirectList = generateAssetRedirect(lessonsList);
-  const excersisesRedirectList = generateAssetRedirect(excersisesList);
-  const projectRedirectList = generateAssetRedirect(projectList);
-  const howToRedirectList = generateAssetRedirect(howToList);
-  const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
+    const aliasRedirectList = await getAliasRedirects();
 
-  const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
-    .then((redirects) => redirects);
-    // .filter((item) => !item.destination?.includes(item?.source))
+    const lessonRedirectList = generateAssetRedirect(lessonsList);
+    const excersisesRedirectList = generateAssetRedirect(excersisesList);
+    const projectRedirectList = generateAssetRedirect(projectList);
+    const howToRedirectList = generateAssetRedirect(howToList);
+    const eventRedirectList = generateAssetRedirect(eventList, 'EVENT');
 
-  const redirectJson = [
-    ...lessonRedirectList,
-    ...excersisesRedirectList,
-    ...projectRedirectList,
-    ...howToRedirectList,
-    ...eventRedirectList,
-  ];
+    const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
+      .then((redirects) => redirects);
+      // .filter((item) => !item.destination?.includes(item?.source))
 
-  fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
-  fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
+    const redirectJson = [
+      ...lessonRedirectList,
+      ...excersisesRedirectList,
+      ...projectRedirectList,
+      ...howToRedirectList,
+      ...eventRedirectList,
+    ];
 
-  console.log('Redirects generated!');
+    fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
+    fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
+
+    console.log('Redirects generated!');
+  } else {
+    console.log('Redirects not generated, in white label academy');
+  }
 }
 generateRedirect();

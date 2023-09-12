@@ -19,11 +19,7 @@ import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
-const contentPerPage = 20;
-
-export const getServerSideProps = async ({ locale, locales, query }) => {
-  console.log('query');
-  console.log(query);
+export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'lesson');
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: process.env.WEBSITE_URL || 'https://4geeks.com' });
@@ -35,10 +31,8 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
-    language: currentLang,
     academy: WHITE_LABEL_ACADEMY,
-    limit: query.page ? contentPerPage : 2000,
-    offset: query.page ? (query.page - 1) * contentPerPage : 0,
+    limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -129,7 +123,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
       },
 
       fallback: false,
-      count: data?.count,
       lessons: lessons.filter((lesson) => lesson?.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
@@ -139,22 +132,25 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   };
 };
 
-function Projects({ lessons, technologyTags, difficulties, count }) {
+function Projects({ lessons, technologyTags, difficulties }) {
   const { t } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const router = useRouter();
   const iconColor = useColorModeValue('#FFF', '#283340');
+  const page = getQueryString('page', 1);
   const pageIsEnabled = getQueryString('page', false);
   const search = getQueryString('search', '');
 
+  const contentPerPage = 20;
+  const startIndex = (page - 1) * contentPerPage;
+
   const queryFunction = async () => {
-    // const endIndex = startIndex + contentPerPage;
-    // const paginatedResults = lessons.slice(startIndex, endIndex);
-    const paginatedResults = lessons;
+    const endIndex = startIndex + contentPerPage;
+    const paginatedResults = lessons.slice(startIndex, endIndex);
 
     return {
-      count,
+      count: lessons.length,
       results: paginatedResults,
     };
   };
@@ -302,7 +298,6 @@ Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
-  count: PropTypes.number.isRequired,
 };
 
 export default Projects;
