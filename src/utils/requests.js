@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import { parseQuerys } from './url';
-import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../../scripts/_utils';
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
