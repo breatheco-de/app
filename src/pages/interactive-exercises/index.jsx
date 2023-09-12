@@ -19,22 +19,42 @@ import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
-export const getStaticProps = async ({ locale, locales }) => {
+const contentPerPage = 20;
+
+const fetchExercises = async (lang, page, query) => {
+  const difficulty = {
+    junior: 'BEGINNER,EASY',
+    'mid-level': 'INTERMEDIATE',
+    senior: 'HARD',
+  };
+  const technologies = query.techs !== '' ? query.techs : undefined;
+  const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const querys = parseQuerys({
+    asset_type: 'EXERCISE',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    language: lang,
+    academy: WHITE_LABEL_ACADEMY,
+    limit: contentPerPage,
+    offset: page ? (page - 1) * contentPerPage : 0,
+    difficulty: difficulty[query.difficulty],
+    technologies,
+    video,
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
+  const data = await resp.json();
+  return { resp, data };
+};
+
+export const getServerSideProps = async ({ locale, locales, query }) => {
   const t = await getT(locale, 'exercises');
+  const { page } = query;
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: ORIGIN_HOST });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const exercises = []; // filtered exercises after removing repeated
   let arrExercises = []; // incoming exercises
-  const querys = parseQuerys({
-    asset_type: 'EXERCISE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
+  const { resp, data } = await fetchExercises(currentLang, page, query);
 
   arrExercises = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
@@ -43,15 +63,6 @@ export const getStaticProps = async ({ locale, locales }) => {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
-  let technologyTags = [];
-  let difficulties = [];
-
-  // const technologiesResponse = await fetch(
-  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=exercise&limit=1000`,
-  //   {
-  //     Accept: 'application/json, text/plain, */*',
-  //   },
-  // );
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000`,
     {
@@ -72,37 +83,9 @@ export const getStaticProps = async ({ locale, locales }) => {
       continue;
     }
     exercises.push(arrExercises[i]);
-
-    if (typeof arrExercises[i].technology === 'string') technologyTags.push(arrExercises[i].technology);
-    if (Array.isArray(arrExercises[i].technologies)) {
-      technologyTags = technologyTags.concat(arrExercises[i].technologies);
-    }
-
-    if (typeof arrExercises[i].difficulty === 'string') {
-      if (arrExercises[i].difficulty === 'BEGINNER') arrExercises[i].difficulty = 'beginner';
-      if (arrExercises[i].difficulty.toUpperCase() === 'BEGGINER') arrExercises[i].difficulty = 'beginner';
-      difficulties.push(arrExercises[i].difficulty.toLowerCase());
-    }
   }
 
-  technologyTags = [...new Set(technologyTags)];
-  difficulties = [...new Set(difficulties)];
-
-  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
-
-  // Verify if difficulty exist in expected position, else fill void array with 'nullString'
-  const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
-      return difficulty;
-    }
-    return 'nullString';
-  };
-
-  // Fill common difficulties in expected position
-  const difficultiesSorted = [];
-  ['beginner', 'easy', 'intermediate', 'hard'].forEach((difficulty) => {
-    difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
-  });
+  const difficulties = ['beginner', 'easy', 'intermediate', 'hard'];
 
   const ogUrl = {
     en: '/interactive-exercises',
@@ -124,26 +107,23 @@ export const getStaticProps = async ({ locale, locales }) => {
         card: 'large',
       },
       fallback: false,
-      exercises: exercises.filter((project) => project.lang === currentLang).map(
+      count: data?.count,
+      exercises: exercises.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags,
-      difficulties: difficultiesSorted,
+      technologyTags: technologies,
+      difficulties,
     },
   };
 };
 
-function Exercices({ exercises, technologyTags, difficulties }) {
-  const { t } = useTranslation('exercises');
+function Exercices({ exercises, technologyTags, difficulties, count }) {
+  const { t, lang } = useTranslation('exercises');
   const { filteredBy, setExerciseFilters } = useFilter();
   const router = useRouter();
-  const page = getQueryString('page', 1);
   const search = getQueryString('search', '');
   const pageIsEnabled = getQueryString('page', false);
   const iconColor = useColorModeValue('#FFF', '#283340');
-
-  const contentPerPage = 20;
-  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.exercisesOptions;
   const techsQuery = router.query.techs;
@@ -152,11 +132,10 @@ function Exercices({ exercises, technologyTags, difficulties }) {
   const technologiesActived = technologies.length || (techsQuery?.length > 0 ? techsQuery?.split(',')?.length : 0);
 
   const queryFunction = async () => {
-    const endIndex = startIndex + contentPerPage;
-    const paginatedResults = exercises.slice(startIndex, endIndex);
+    const paginatedResults = exercises;
 
     return {
-      count: exercises.length,
+      count,
       results: paginatedResults,
     };
   };
@@ -260,7 +239,10 @@ function Exercices({ exercises, technologyTags, difficulties }) {
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
             articles={exercises}
-            itemsPerPage={20}
+            itemsPerPage={contentPerPage}
+            lang={lang}
+            fetchData={fetchExercises}
+            count={count}
             searchQuery={search}
             options={{
               withoutImage: true,
@@ -289,6 +271,7 @@ Exercices.propTypes = {
   exercises: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   difficulties: PropTypes.arrayOf(PropTypes.string),
+  count: PropTypes.number.isRequired,
 };
 Exercices.defaultProps = {
   exercises: [],
