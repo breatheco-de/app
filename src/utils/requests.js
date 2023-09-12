@@ -85,7 +85,7 @@ const getAsset = async (type = null, extraQuerys = {}, category = null) => {
   let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then((res) => res.data.results)
     .catch(() => {
-      console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
+      console.error(`SITEMAP: Error fetching ${type?.toUpperCase()} pages`);
       return [];
     });
 
