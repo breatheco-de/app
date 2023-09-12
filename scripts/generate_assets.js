@@ -25,11 +25,11 @@ async function getData() {
     events,
   };
   console.log('Next data has been fetched:\n', {
-    landingTechnologies: landingTechnologies.length,
-    lessons: lessons.length,
-    excersises: excersises.length,
-    projects: projects.length,
-    howTos: howTos.length,
+    landingTechnologies: landingTechnologies?.length,
+    lessons: lessons?.length,
+    excersises: excersises?.length,
+    projects: projects?.length,
+    howTos: howTos?.length,
   });
 
   // This file is disposable and will disappear at the end of the build process.

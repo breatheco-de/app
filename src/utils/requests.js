@@ -62,7 +62,7 @@ const getEvents = async (extraQuerys = {}) => {
 };
 
 /**
- * @param {String} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
+ * @param {String|null} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
  * @param {Object} extraQuerys Extra querys to filter the assets
  * @param {string} category Category of the asset for filter purposes
  * @returns {Promise} Array of objects with the assets
@@ -85,7 +85,7 @@ const getAsset = async (type = null, extraQuerys = {}, category = null) => {
   let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then((res) => res.data.results)
     .catch(() => {
-      console.error(`SITEMAP: Error fetching ${type?.toUpperCase()} pages`);
+      console.error(`GET_ASSET: Error fetching ${type?.toUpperCase()}`);
       return [];
     });
 
