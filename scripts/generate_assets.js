@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
+import fs from 'fs';
 import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
 
 const mapDifficulty = (difficulty) => {
@@ -50,14 +51,8 @@ async function getData() {
     howTos: howTos.length,
   });
 
-  try {
-    // This file is disposable and will disappear at the end of the build process.
-    await Bun.write('src/lib/asset-list.json', JSON.stringify(data));
-  } catch (err) {
-    console.error("Couldn't write content for src/lib/asset-list.json", err);
-  }
-
-  // fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
+  // This file is disposable and will disappear at the end of the build process.
+  fs.writeFileSync('src/lib/asset-list.json', JSON.stringify(data));
 
   return data;
 }
