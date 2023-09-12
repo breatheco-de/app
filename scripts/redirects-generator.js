@@ -1,12 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-
-const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
-// require('dotenv').config({
-//   path: '.env.production',
-// });
-const assetLists = require('../src/lib/asset-list.json');
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './_utils';
+import assetLists from '../src/lib/asset-list.json';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const redirectConfig = {
