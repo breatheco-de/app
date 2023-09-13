@@ -88,12 +88,12 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       const data = await res.json();
 
       if (res.status >= 400) {
-        throw new Error(data.message);
+        throw new Error(data.detail);
       }
       return data.results;
     })
     .catch((err) => {
-      console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.message}`);
+      console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
       return [];
     });
 
@@ -115,12 +115,12 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
         const data = await res.json();
 
         if (res.status >= 400) {
-          throw new Error(data.message);
+          throw new Error(data.detail);
         }
         return data.results;
       })
       .catch((err) => {
-        console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.message}`);
+        console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
         return [];
       });
   }
