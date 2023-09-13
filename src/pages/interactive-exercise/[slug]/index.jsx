@@ -3,11 +3,8 @@ import {
   Box,
   useColorModeValue,
   Button,
-  FormControl,
-  Input,
   useToast,
   useColorMode,
-  FormErrorMessage,
   Skeleton,
   Modal,
   ModalBody,
@@ -17,10 +14,12 @@ import {
   ModalOverlay,
   Grid,
   GridItem,
+  ListItem,
+  OrderedList,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
-import { Formik, Form, Field } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
@@ -34,9 +33,8 @@ import Icon from '../../../common/components/Icon';
 import SimpleTable from '../../../js_modules/projects/SimpleTable';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MarkDownParser from '../../../common/components/MarkDownParser';
+import ShowOnSignUp from '../../../common/components/ShowOnSignup';
 import { MDSkeleton } from '../../../common/components/Skeleton';
-import validationSchema from '../../../common/components/Forms/validationSchemas';
-import { processFormEntry } from '../../../common/components/Forms/actions';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 // import CustomTheme from '../../../../styles/theme';
@@ -188,15 +186,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-const fields = {
-  full_name: {
-    value: '', type: 'name', required: true, place_holder: 'Full name *', error: 'Please specify a valid full name',
-  },
-  email: {
-    value: '', type: 'email', required: true, place_holder: 'Email *', error: 'Please specify a valid email',
-  },
-};
-
 function TabletWithForm({
   toast,
   exercise,
@@ -207,17 +196,17 @@ function TabletWithForm({
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [formStatus, setFormStatus] = useState({ status: 'idle', msg: '' });
-  const { backgroundColor, hexColor } = useStyle();
+  const [showCloneModal, setShowCloneModal] = useState(false);
+  const { hexColor } = useStyle();
 
-  // const UrlInput = styled.input`
-  //   cursor: pointer;
-  //   background: none;
-  //   width: 100%;
-  //   &:focus {
-  //     outline: none;
-  //   }
-  // `;
+  const UrlInput = styled.input`
+    cursor: pointer;
+    background: none;
+    width: 100%;
+    &:focus {
+      outline: none;
+    }
+  `;
 
   return (
     <>
@@ -237,196 +226,84 @@ function TabletWithForm({
         borderStyle="solid"
         borderColor={commonBorderColor}
       >
-        {!user && !formSended
-          ? (
-            <>
+        <ShowOnSignUp
+          hideForm={!user && formSended}
+          title={!user && t('direct-access-request')}
+          submitText={t('get-instant-access')}
+          subscribeValues={{ asset: exercise.id }}
+          refetchAfterSuccess={() => {
+            setFormSended(true);
+          }}
+          padding="0"
+          background="none"
+          border="none"
+        >
+          <>
+            {user && !formSended && (
               <Heading
                 size="15px"
-                textAlign="left"
+                textAlign="center"
                 textTransform="uppercase"
-                justify="center"
                 width="100%"
-                mt="0px"
+                fontWeight="900"
                 mb="0px"
               >
-                {t('direct-access-request')}
+                {t('download')}
               </Heading>
-
-              <Text size="md" color={commonTextColor} textAlign="left" my="10px" px="0px">
-                {t('direct-access-request-description')}
-              </Text>
-              <Formik
-                initialValues={{ full_name: '', email: '', current_download: exercise.slug }}
-                onSubmit={(values, actions) => {
-                  processFormEntry(values).then((data) => {
-                    actions.setSubmitting(false);
-                    if (data && data.error !== false && data.error !== undefined) {
-                      setFormStatus({ status: 'error', msg: data.error });
-                    } else {
-                      setFormStatus({ status: 'thank-you', msg: 'Thank you for your request!' });
-                      toast({
-                        title: t('alert-message:request-apply-success'),
-                        description: t('alert-message:email-will-be-sent'),
-                        status: 'success',
-                        duration: 7000,
-                        isClosable: true,
-                      });
-                      setFormSended(true);
-                    }
-                  })
-                    .catch((error) => {
-                      console.error('error', error);
-                      actions.setSubmitting(false);
-                      setFormStatus({ status: 'error', msg: error.message || error });
-                    });
-                }}
-                validationSchema={validationSchema.leadForm}
-              >
-                {(props) => {
-                  const { isSubmitting } = props;
-                  return (
-                    <Form>
-                      <Box py="0" flexDirection="column" display="flex" alignItems="center">
-                        <Field id="field912" name="full_name">
-                          {({ field, form }) => (
-                            <FormControl
-                              padding="6px 0"
-                              isInvalid={form.errors.full_name && form.touched.full_name}
-                            >
-                              <Input
-                                {...field}
-                                id="full_name"
-                                placeholder={t('common:full-name')}
-                                type="name"
-                                backgroundColor={backgroundColor}
-                                style={{
-                                  borderRadius: '3px',
-                                  transition: 'background 0.2s ease-in-out',
-                                }}
-                              />
-                              <FormErrorMessage>{fields.full_name.error}</FormErrorMessage>
-                            </FormControl>
-                          )}
-                        </Field>
-
-                        <Field id="field923" name="email">
-                          {({ field, form }) => (
-                            <FormControl
-                              padding="6px 0"
-                              isInvalid={form.errors.email && form.touched.email}
-                            >
-                              <Input
-                                {...field}
-                                id="email"
-                                placeholder={t('common:email')}
-                                type="email"
-                                backgroundColor={backgroundColor}
-                                style={{
-                                  borderRadius: '3px',
-                                  transition: 'background 0.2s ease-in-out',
-                                }}
-                              />
-                              <FormErrorMessage>{fields.email.error}</FormErrorMessage>
-                            </FormControl>
-                          )}
-                        </Field>
-
-                        {formStatus.status === 'error' && (
-                        <FormErrorMessage>{formStatus.msg}</FormErrorMessage>
-                        )}
-                        <Button
-                          marginTop="30px"
-                          borderRadius="3px"
-                          width="100%"
-                          padding="0"
-                          disabled={formStatus.status === 'thank-you'}
-                          whiteSpace="normal"
-                          isLoading={isSubmitting}
-                          type="submit"
-                          variant="default"
-                          textTransform="uppercase"
-                        >
-                          {t('get-instant-access')}
-                        </Button>
-                      </Box>
-                    </Form>
-                  );
-                }}
-              </Formik>
-            </>
-          ) : (
-            <>
-              {user ? (
+            )}
+            {formSended && (
+              <>
+                <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
                 <Heading
                   size="15px"
                   textAlign="center"
                   textTransform="uppercase"
                   width="100%"
                   fontWeight="900"
-              // mt="30px"
+                  mt="30px"
                   mb="0px"
                 >
-                  {t('download')}
+                  {t('thanks')}
                 </Heading>
-              ) : (
-                <>
-                  <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
-                  <Heading
-                    size="15px"
-                    textAlign="center"
-                    textTransform="uppercase"
-                    width="100%"
-                    fontWeight="900"
-                    mt="30px"
-                    mb="0px"
-                  >
-                    {t('thanks')}
-                  </Heading>
-                  <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
-                    {t('download')}
-                  </Text>
-                </>
-              )}
+                <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
+                  {t('download')}
+                </Text>
+              </>
+            )}
 
-              <Button
-                marginTop="20px"
-                borderRadius="3px"
-                width="100%"
-                padding="0"
-                whiteSpace="normal"
-                variant="default"
-                color="white"
-                // color={fontColor}
-                fontSize="14px"
-                alignItems="center"
-                onClick={() => setShowModal(true)}
-              >
-                {'  '}
-                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-                {t('open-gitpod')}
-              </Button>
-              <Button
-                marginTop="20px"
-                borderRadius="3px"
-                width="100%"
-                fontSize="14px"
-                padding="0"
-                whiteSpace="normal"
-                variant="otuline"
-                border="1px solid"
-                textTransform="uppercase"
-                borderColor="blue.default"
-                color="blue.default"
-                onClick={() => {
-                  if (typeof window !== 'undefined') {
-                    window.open(exercise.url, '_blank').focus();
-                  }
-                }}
-              >
-                {t('clone')}
-              </Button>
-            </>
-          )}
+            <Button
+              marginTop="20px"
+              borderRadius="3px"
+              width="100%"
+              padding="0"
+              whiteSpace="normal"
+              variant="default"
+              color="white"
+              fontSize="14px"
+              alignItems="center"
+              onClick={() => setShowModal(true)}
+            >
+              {'  '}
+              <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
+              {t('open-gitpod')}
+            </Button>
+            <Button
+              borderRadius="3px"
+              width="100%"
+              fontSize="14px"
+              padding="0"
+              whiteSpace="normal"
+              variant="otuline"
+              border="1px solid"
+              textTransform="uppercase"
+              borderColor="blue.default"
+              color="blue.default"
+              onClick={() => setShowCloneModal(true)}
+            >
+              {t('clone')}
+            </Button>
+          </>
+        </ShowOnSignUp>
         <Modal
           isOpen={showModal}
           size="xl"
@@ -531,6 +408,93 @@ function TabletWithForm({
                 </Link>
               </Text>
 
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+        <Modal
+          isOpen={showCloneModal}
+          size="md"
+          margin="0 10px"
+          onClose={() => {
+            setShowCloneModal(false);
+          }}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+              {t('clone-modal.title')}
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody padding={{ base: '30px' }}>
+              <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
+                {t('clone-modal.text-part-one')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Learnpack Plugin
+                </Link>
+                {t('clone-modal.text-part-two')}
+              </Text>
+              <Text
+                // cursor="pointer"
+                id="command-container"
+                padding="9px"
+                background={useColorModeValue('featuredLight', 'darkTheme')}
+                fontWeight="400"
+                marginBottom="5px"
+                style={{ borderRadius: '5px' }}
+                fontSize="14px"
+                lineHeight="24px"
+              >
+                <UrlInput
+                  id="clone-command"
+                  value={`git clone ${exercise.url}`}
+                  type="text"
+                  readOnly
+                  onClick={(e) => {
+                    e.target.select();
+                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+                    toast({
+                      title: t('clone-modal.copy-command'),
+                      status: 'success',
+                      duration: 7000,
+                      isClosable: true,
+                    });
+                  }}
+                />
+              </Text>
+              <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
+                {t('clone-modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.length) : '' })}
+              </Text>
+              <OrderedList>
+                {t('clone-modal.steps', {}, { returnObjects: true }).map((step) => (
+                  <ListItem key={step} fontSize="14px">{step}</ListItem>
+                ))}
+              </OrderedList>
+              <Text display="flex" alignItems="center" marginTop="15px">
+                <span>
+                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
+                </span>
+                <Link
+                  href="/how-to/github-clone-repository"
+                  target="_blank"
+                  fontSize="15px"
+                  fontWeight="700"
+                  color={useColorModeValue('blue.default', 'blue.300')}
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                  marginLeft="10px"
+                >
+                  {t('how-to-clone')}
+                </Link>
+              </Text>
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -774,17 +738,11 @@ Exercise.propTypes = {
 };
 
 TabletWithForm.propTypes = {
-  isSubmitting: PropTypes.bool,
-  toast: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  user: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   commonTextColor: PropTypes.string.isRequired,
+  toast: PropTypes.func.isRequired,
   commonBorderColor: PropTypes.string.isRequired,
   exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-};
-TabletWithForm.defaultProps = {
-  isSubmitting: false,
-  user: {},
 };
 
 export default Exercise;
