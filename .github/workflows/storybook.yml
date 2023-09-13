@@ -25,6 +25,7 @@ jobs:
         run: |
           npm install -g bun
           bun build-storybook
+          bun install
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
