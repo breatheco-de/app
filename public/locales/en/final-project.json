@@ -10,10 +10,10 @@
   "complete-required-projects": "Complete required projects",
   "modal": {
     "title": "It's final project time!!!",
-    "subtitle": "Congratulations on reaching to this phase of the program.",
-    "description": "We are still learning a lot but this last project will become something to showcase to friends and potential employer.",
+    "subtitle": "Congratulations on reaching this phase of the program.",
+    "description": "We are still learning a lot but this last project will become something to showcase to friends and potential employers.",
     "bullets": [
-      "<a class='link' href='#' target='blank' rel='noopener noreferrer'>Why building a final project?</a>",
+      "<a class='link' href='#' target='blank' rel='noopener noreferrer'>Why build a final project?</a>",
       "<a class='link' href='#' target='blank' rel='noopener noreferrer'>How to pick your final project topic?</a>"
     ],
     "button": "Upload final project"
@@ -30,17 +30,17 @@
     "upload-screenshot": "Upload screenshot",
     "screenshot-hint": "Your home page or animated gif using the project.",
     "add-participants": "Add participants",
-    "participants-hint": "Each student taking part on this project.",
+    "participants-hint": "Each student taking place in this project.",
     "button":"Submit final project",
     "no-students": "No other students have been found on this cohort, you cannot add any members to this project",
     "confirmation": {
       "title": "Are you sure?",
-      "text": "If you remove yourself from this project, you won't have access to it, your team mates will have to add you again to regain access.",
+      "text": "If you remove yourself from this project, you won't have access to it, and your teammates will have to add you again to regain access.",
       "confirm": "Remove",
       "cancel": "Cancel"
     },
     "warning-modal": {
-      "title": "Please add someone else in the project if you want to remove yourself.",
+      "title": "Please add someone else to the project if you want to remove yourself.",
       "close": "Close"
     }
   }

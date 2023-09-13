@@ -10,7 +10,7 @@
   },
   "bullets": [
     {
-      "text": "Follow a structured syllabus & plan with.",
+      "text": "Follow a structured syllabus & plan.",
       "icon": "book"
     },
     {
@@ -64,7 +64,7 @@
   "students": {
     "title": "Meet students from all over the world",
     "subTitle": "120 people took this course and 63 are online right now",
-    "description": "Some of our students are open to speak with others any time, by pressing this button you will be able to schedule a meeting with one of them",
+    "description": "Some of our students are open to speak with others anytime. By pressing this button you will be able to schedule a meeting with one of them",
     "button": {
       "title": "Meet developers in the making",
       "link": "#pricing"
@@ -73,7 +73,7 @@
   "mentors": {
     "title": "We support you in your journey, wherever you are",
     "subTitle": "There are +6 mentors online and available right now. ",
-    "description": "Some of our students are open to speak with others any time, by pressing this button you will be able to schedule a meeting with one of them",
+    "description": "Some of our students are open to speak with others anytime. By pressing this button you will be able to schedule a meeting with one of them",
     "button": {
       "title": "Schedule a mentoring session",
       "link": "#mentors"
@@ -82,7 +82,7 @@
   },
   "events": {
     "title": "We take online education to another level.",
-    "subTitle": "Live clases, coding sessions, workshops and hangouts every few hours",
+    "subTitle": "Live clases, coding sessions, workshops, and hangouts every few hours",
     "description": "During the pre-work you learn some basic CSS and HTML, and hopefully how to use the flex-box to create simple layouts.",
     "live": {
       "title": "Today's live class"
@@ -104,11 +104,11 @@
       {
         "title": "HTML/CSS",
         "icon": "html",
-        "description": "During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the \"component oriented\" approach.",
+        "description": "During the pre-work you learn some basic <strong>CSS</strong> and <strong>HTML</strong>, and hopefully how to use the <strong>flex-box</strong> to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables spectacular layouts and the amazing Bootstrap framework that will make your life so much easier with the \"component oriented\" approach.",
         "steps": [
           {
             "title": "Start with the basics",
-            "text": "During the pre-work you learn some basic CSS and HTML, and hopefully how to use the flex-box to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the amazing Bootstrap framework that will make you life so much easier with the \"component oriented\" approach."
+            "text": "During the pre-work you learn some basic CSS and HTML, and hopefully how to use the flex-box to create simple layouts. The first day we will review the pre-work completion and introduce a more evolved CSS that enables amazing layouts and the spectacular Bootstrap framework that will make your life so much easier with the \"component oriented\" approach."
           },
           {
             "title": "Welcome to the mid level",
@@ -127,7 +127,7 @@
       {
         "title": "Bootstrap",
         "icon": "bootstrap",
-        "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
+        "description": "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomized words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing",
         "steps": [
           {
             "title": "STEP Bootstrap 1",
@@ -217,7 +217,7 @@
           "title": "It has no expiration date"
         },
         {
-          "title": "Valid to apply for internships on EU for none UE residents"
+          "title": "Valid to apply for internships in EU for non EU residents"
         },
         {
           "title": "Endorsed by the US Department of Education"
@@ -366,7 +366,7 @@
         "show": true,
         "isFree": true,
         "title": "Free trial",
-        "price": "7 days trial",
+        "price": "7-day trial",
         "months": "",
         "highlightText": "",
         "description": "No card needed. Full access to all features for 7 days",

@@ -72,6 +72,6 @@
     "description": "Description",
     "github-url": "Github URL",
     "comment-placeholder": "Comment or feedback for the student (optional)",
-    "no-review-required": "This project can be approved without requiring review, since it was not necessary to send any file or url"
+    "no-review-required": "This project can be approved without requiring review since it was not necessary to send any file or url"
   }
 }

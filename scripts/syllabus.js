@@ -1,15 +1,10 @@
-const { default: axios } = require('axios');
-const fs = require('fs');
-const { fail } = require('./_utils');
-require('dotenv').config({
-  path: '.env.production',
-});
+/* eslint-disable no-undef */
+import axios from 'axios';
+import { fail, warn } from './_utils';
+import { BREATHECODE_HOST, DOMAIN_NAME, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
 
-const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
-const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
 
 async function generateSyllabus() {
   const whiteLableArray = whiteLabelAcademies?.length > 0 ? whiteLabelAcademies.split(',') : [];
@@ -22,10 +17,13 @@ async function generateSyllabus() {
     }
 
     const logoData = await axios.get(`${BREATHECODE_HOST}/v1/admissions/academy/${whiteLableArray[0]}`)
-      .then((resp) => resp?.data);
+      .then((resp) => resp?.data)
+      .catch((err) => {
+        warn('WARN: No logo data has been found', err.response?.data);
+      });
 
     if (logoData?.name) {
-      fs.writeFileSync('public/logo.json', JSON.stringify(logoData));
+      Bun.write('public/logo.json', JSON.stringify(logoData));
     }
   } else {
     console.log('No white label academy has been set on WHITE_LABEL_ACADEMY env variable');
@@ -38,7 +36,7 @@ async function generateSyllabus() {
     ${data.map((item) => `{"label": "${item.name}", "href": "/read/${item.slug}"}`).join(',')}
   ]` : '[]';
 
-  fs.writeFileSync('public/syllabus.json', JSON.stringify(paths));
+  Bun.write('public/syllabus.json', JSON.stringify(paths));
 }
 
 generateSyllabus();

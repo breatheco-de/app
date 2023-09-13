@@ -6,7 +6,7 @@
   "edit-on-github": "Edit on Github",
   "open-google-collab": "Open in Collab",
   "github-not-connected": "Your Github account is not connected.",
-  "github-warning": "Your Github account is not connected. Only active 4Geeks Academy students with a conected Github account you will be able to get unlimited Codespaces hours.",
+  "github-warning": "Your Github account is not connected. Only active 4Geeks Academy students with a conected Github account will be able to get unlimited Codespace hours.",
   "title": "Welcome | Learn",
   "backToHome": "Back to home",
   "goBack": "Go Back",
@@ -58,7 +58,7 @@
   "full-screen": "Full screen",
   "no-title": "No title 🙂",
   "search-not-found": "No matches found for this search",
-  "asset-not-found-in-current-language": "There are not content for this technology on this language, try a different language.",
+  "asset-not-found-in-current-language": "There is no content for this technology in this language, try a different language.",
   "no-elements": "No elements found",
   "select": "Select",
   "difficulties": "Difficulties",
@@ -67,7 +67,7 @@
   "clear-all": "Clear all",
   "english": "English",
   "spanish": "Spanish",
-  "remaining":"Remianing",
+  "remaining":"Remaining",
   "show-more": "Show more",
   "show-less": "Show less",
   "seach-technology": "Search technology",
@@ -89,7 +89,7 @@
     "mark-as-not-done": "Mark as not done"
   },
   "learnpack": {
-    "description": "This practice will run outside of 4Geeks.com through LearnPack. An interactive learning tool that runs integrated with VSCode.",
+    "description": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start new exercise",
     "continue-exercise": "Continue exercise"
   },
@@ -105,7 +105,7 @@
   },
   "subtasks": {
     "title": "{{asset_type}} has {{count}} tasks",
-    "description": "To better take advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
+    "description": "To take better advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
   },
   "related-courses": "Courses related to this article",
   "average-duration": "Average duration",

@@ -19,39 +19,20 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { parseQuerys } from '../../utils/url';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST } from '../../utils/variables';
+import { getAsset } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'PROJECT',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
+  const data = await getAsset('PROJECT', {}, 'project');
 
-  projects = Object.values(data.results);
-  if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
+  if (data?.length) {
+    console.log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
-    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
+    console.error('Error: fetching Projects list for /interactive-coding-tutorial');
   }
 
-  for (let i = 0; i < projects.length; i += 1) {
-    if (projects[i].difficulty === null) projects[i].difficulty = 'unknown';
-    if (typeof projects[i].difficulty === 'string') {
-      if (projects[i].difficulty?.toLowerCase() === 'junior') projects[i].difficulty = 'easy';
-      else if (projects[i].difficulty?.toLowerCase() === 'semi-senior') projects[i].difficulty = 'intermediate';
-      else if (projects[i].difficulty?.toLowerCase() === 'senior') projects[i].difficulty = 'hard';
-    }
-  }
-
-  const paths = projects.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },

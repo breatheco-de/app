@@ -1,6 +1,12 @@
 FROM gitpod/workspace-full
 
 RUN sudo apt-get update
+
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+RUN echo 'export BUN_INSTALL="/home/gitpod/.bun"' >> /home/gitpod/.bashrc.d/600-bun | bash && \
+    echo 'export PATH="$BUN_INSTALL/bin:$PATH"' >> /home/gitpod/.bashrc.d/600-bun | bash
+
 # Install Cypress-base dependencies
 RUN sudo apt-get install -y \
     libgtk2.0-0 \

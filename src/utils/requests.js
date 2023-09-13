@@ -1,15 +1,27 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
-const { default: axios } = require('axios');
-const { parseQuerys } = require('./url');
-const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('../../scripts/_utils');
-require('dotenv').config({
-  path: '.env.production',
-});
+import axios from 'axios';
+import { parseQuerys } from './url';
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
+import bc from '../common/services/breathecode';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
+
+const mapDifficulty = (difficulty) => {
+  switch (difficulty?.toLowerCase()) {
+    case 'junior':
+      return 'easy';
+    case 'semi-senior':
+      return 'intermediate';
+    case 'senior':
+      return 'hard';
+    default:
+      return 'unknown';
+  }
+};
 
 const getPrismicPages = () => {
   const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
@@ -50,13 +62,19 @@ const getEvents = async (extraQuerys = {}) => {
   return [];
 };
 
-const getAsset = async (type = null, extraQuerys = {}) => {
+/**
+ * @param {String} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
+ * @param {Object} extraQuerys Extra querys to filter the assets
+ * @param {string} category Category of the asset for filter purposes
+ * @returns {Promise} Array of objects with the assets
+ */
+const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   const limit = 100;
   let offset = 0;
   let allResults = [];
 
   const qsRequest = parseQuerys({
-    asset_type: type === null ? undefined : type,
+    asset_type: type || undefined,
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     limit,
@@ -65,10 +83,17 @@ const getAsset = async (type = null, extraQuerys = {}) => {
     ...extraQuerys,
   });
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
+  let results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
+    .then(async (res) => {
+      const data = await res.json();
+
+      if (res.status >= 400) {
+        throw new Error(data.detail);
+      }
+      return data.results;
+    })
+    .catch((err) => {
+      console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
       return [];
     });
 
@@ -85,12 +110,31 @@ const getAsset = async (type = null, extraQuerys = {}) => {
       ...extraQuerys,
     });
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
-      .then((res) => res.data.results)
-      .catch(() => {
-        console.error(`SITEMAP: Error fetching ${type.toUpperCase()} pages`);
+    results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (res.status >= 400) {
+          throw new Error(data.detail);
+        }
+        return data.results;
+      })
+      .catch((err) => {
+        console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
         return [];
       });
+  }
+
+  if (category === 'how-to') {
+    return allResults.filter(
+      (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
+    );
+  }
+  if (category === 'project') {
+    return allResults.map((item) => {
+      item.difficulty = mapDifficulty(item.difficulty);
+      return item;
+    });
   }
 
   return allResults;
@@ -108,7 +152,7 @@ const getLandingTechnologies = () => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
         const assets = await getAsset(null, {
           technologies: tech?.slug,
-        });
+        }, 'technologies');
         return { ...tech, assets };
       });
 
@@ -137,12 +181,13 @@ const getLandingTechnologies = () => {
     })
     .catch(() => {
       console.error('SITEMAP: Error fetching Technologies pages');
+      return [];
     });
 
   return technologies;
 };
 
-module.exports = {
+export {
   getAsset,
   getPrismicPages,
   getPublicSyllabus,

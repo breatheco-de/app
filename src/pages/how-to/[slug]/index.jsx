@@ -22,25 +22,14 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
-import { parseQuerys } from '../../../utils/url';
+import { getAsset } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
-  const howToData = data.results.filter(
-    (l) => (l.asset_type === 'LESSON' || l.asset_type === 'ARTICLE') && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-  );
+  const data = await getAsset('LESSON,ARTICLE', {}, 'how-to');
 
-  const paths = howToData.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
