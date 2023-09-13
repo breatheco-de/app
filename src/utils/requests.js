@@ -166,6 +166,7 @@ const getLandingTechnologies = () => {
     })
     .catch(() => {
       console.error('SITEMAP: Error fetching Technologies pages');
+      return [];
     });
 
   return technologies;
