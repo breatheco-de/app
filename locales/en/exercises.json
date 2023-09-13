@@ -10,7 +10,7 @@
   "filter": "Filter",
   "filters": "Filters",
   "created": "Created by:",
-  "description": "The following exercises explain different programming concepts and have been published by members of BreatheCode, now 4Geeks, search for an exercise using the filters",
+  "description": "The following exercises explain different programming concepts and have been published by our members. Search for an exercise using the filters",
   "backToExercises": "Back to Exercises",
   "direct-access-request": "Sign Up for instant access",
   "direct-access-request-description": "Enter your information and receive instant access",
@@ -18,13 +18,13 @@
   "download": "Now you can download or clone the interactive material.",
   "open-tutorial": "OPEN TUTORIAL ONLINE",
   "open-gitpod": "Open with LearnPack",
-  "clone": "CLONE LOCALY",
+  "clone": "CLONE LOCALLY",
   "clone-tooltip": "Clone repository",
   "how-to-clone": "Read more about cloning a project",
   "clone-link": "/how-to/github-clone-repository",
   "modal" : {
     "title": "Choose Provisional Vendor",
-    "text-part-one": "LearnPack allow you to open these exercises on VSCode instantly and for free using one of the following vendors:",
+    "text-part-one": "LearnPack allows you to open these exercises on VSCode instantly and for free using one of the following vendors:",
     "text-part-two": "Here you can know more about ",
     "or": " or "
   },
@@ -44,6 +44,6 @@
   "average-duration": "Average Duration",
   "landing-technology": {
     "title": "{{technology}} Interactive tutorial exercises",
-    "subTitle": "Practicar {{technology}}"
+    "subTitle": "Practice {{technology}}"
   }
 }

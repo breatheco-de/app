@@ -54,7 +54,7 @@
   "many_months_payment": "{{qty}} months payment",
   "info": {
     "this-plan-includes": "This plan includes",
-    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
+    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}.",
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
@@ -86,7 +86,7 @@
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match",
-    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses and other marketing materials. We'll never share your email,"
+    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses, and other marketing materials. We'll never share your email,"
   },
   "no-date-available": "We currently have no dates available for the location entered",
   "alert-message": {
@@ -102,7 +102,7 @@
   },
   "alert-message-validate-email": {
     "title": "Verify email",
-    "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
+    "description": "You haven't validated your email yet, login to your email account and look for the invitation",
     "description2": "Don't forget to check your email spam inbox as well!"
   },
   "resend": "Resend",
@@ -114,7 +114,7 @@
     "purchase-completed-title": "You have successfully completed the purchase",
     "you-have-received": "You have received",
     "events": "events",
-    "sessions": "sesiones",
+    "sessions": "sessions",
     "back-to-dashboard": "Back to dashboard",
     "confirm-purchase-connector": "You are about to buy:",
     "qty-events-to-consume": "{{qty}} events to apply",
@@ -125,7 +125,7 @@
   },
   "select-service-of-plan": {
     "title": "Which experience do you want to upgrade?",
-    "description": "We find plans with mentoring available for you, select one before continuing:",
+    "description": "We have plans with mentoring available for you, select one before continuing:",
     "select-text": "Select experience",
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
