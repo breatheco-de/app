@@ -15,6 +15,41 @@
     "destination": "/en/lesson/what-is-an-application-model-and-how-to-diagram-it"
   },
   {
+    "source": "/lesson/intro-to-4geeks",
+    "type": "LESSON",
+    "destination": "/en/lesson/intro-to-4geeks-full-stack"
+  },
+  {
+    "source": "/lesson/python-syntax",
+    "type": "LESSON",
+    "destination": "/en/lesson/python-vs-javascript-syntax"
+  },
+  {
+    "source": "/how-to/bootstrap",
+    "type": "QUIZ",
+    "destination": "/en/how-to/bootstrap-quiz"
+  },
+  {
+    "source": "/interactive-exercise/events",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/javascript-events-exercises"
+  },
+  {
+    "source": "/how-to/arquitectura-del-internet",
+    "type": "QUIZ",
+    "destination": "/es/how-to/arquitectura-de-internet"
+  },
+  {
+    "source": "/interactive-exercise/react-js",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-exercises"
+  },
+  {
+    "source": "/interactive-exercise/layouts",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/css-layouts-tutorial-exercises"
+  },
+  {
     "source": "/lesson/how-to-create-unit-testing-with-Javascript-and-Jest",
     "type": "LESSON",
     "destination": "/en/lesson/how-to-create-unit-testing-with-javascript-and-jest"
@@ -202,42 +237,77 @@
   {
     "source": "/lesson/calculus-and-linear-algebra",
     "type": "LESSON",
+    "destination": "/es/lesson/array-arreglo-en-javascript"
+  },
+  {
+    "source": "/lesson/regex-tutorial-regular-expression-examples-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/regex-tutorial-regular-expression-ejemplo"
+  },
+  {
+    "source": "/lesson/python-syntax-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/python-vs-js-syntax-es"
+  },
+  {
+    "source": "/lesson/intro-to-4geeks-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/intro-to-4geeks-full-stack-es"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/interactive-exercise/react-exercises",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/react-js-exercises"
+  },
+  {
+    "source": "/interactive-exercise/object-oriented-programing",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/object-oriented-programing-in-javascript"
+  },
+  {
+    "source": "/interactive-exercise/numpy-exercises-tutorial-us",
+    "type": "EXERCISE",
+    "destination": "/en/interactive-exercise/numpy-exercises-tutorial"
+  },
+  {
+    "source": "/lesson/how-to-use-gitpod-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/como-utilizar-gitpod"
+  },
+  {
+    "source": "/lesson/intro-to-python-es",
+    "type": "LESSON",
+    "destination": "/es/lesson/que-es-python-tutorial"
+  },
+  {
+    "source": "/how-to/nvm-install-windows-es",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/como-instalar-nvm-en-windows"
+  },
+  {
+    "source": "/how-to/ask",
+    "type": "ARTICLE",
+    "destination": "/en/how-to/how-to-ask-programming-questions"
+  },
+  {
+    "source": "/how-to/how-to-ask-programming-questions-es",
+    "type": "ARTICLE",
+    "destination": "/es/how-to/como-hacer-preguntas-de-programacion"
+  },
+  {
+    "source": "/lesson/calculus-and-linear-algebra",
+    "type": "LESSON",
     "destination": "/en/lesson/integrals-and-derivatives"
   },
   {
     "source": "/how-to/install-node-npm-mac-osx",
     "type": "ARTICLE",
     "destination": "/en/how-to/install-node-nvm-mac-osx"
-  },
-  {
-    "source": "/interactive-coding-tutorial/create-form-node-js-es",
-    "type": "PROJECT",
-    "destination": "/es/interactive-coding-tutorial/crear-formulario-con-node-js"
-  },
-  {
-    "source": "/lesson/express-generator",
-    "type": "LESSON",
-    "destination": "/en/lesson/introduction-to-express-generator"
-  },
-  {
-    "source": "/lesson/how-to-use-node-and-npm-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/como-utilizar-node-y-npm"
-  },
-  {
-    "source": "/lesson/introduction-to-node-js-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/introduccion-a-node-js"
-  },
-  {
-    "source": "/lesson/introduction-to-express-generator-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/introduccion-a-express-generator"
-  },
-  {
-    "source": "/lesson/what-is-an-express-middleware-node-es",
-    "type": "LESSON",
-    "destination": "/es/lesson/que-es-una-middleware-express-node"
   },
   {
     "source": "/how-to/How-to-update-python-in-terminal",
@@ -253,16 +323,6 @@
     "source": "/how-to/How-to-disable-javascript-in-tor",
     "type": "ARTICLE",
     "destination": "/en/how-to/how-to-disable-javascript-in-tor"
-  },
-  {
-    "source": "/lesson/forms-with-node",
-    "type": "LESSON",
-    "destination": "/es/lesson/formularios-con-node"
-  },
-  {
-    "source": "/interactive-coding-tutorial/code-landing-page-with-node",
-    "type": "PROJECT",
-    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node"
   },
   {
     "source": "/lesson/get-read-for-your-job-hunt",
@@ -585,16 +645,6 @@
     "destination": "/es/how-to/como-clonar-un-repositorio-de-github"
   },
   {
-    "source": "/lesson/Como-comenzar-un-proyecto-de-codificacion",
-    "type": "LESSON",
-    "destination": "/es/lesson/como-comenzar-un-proyecto-de-codificacion"
-  },
-  {
-    "source": "/lesson/Tutorial-de-Github-Codespaces",
-    "type": "LESSON",
-    "destination": "/es/lesson/tutorial-de-github-codespaces"
-  },
-  {
     "source": "/how-to/regex-es",
     "type": "ARTICLE",
     "destination": "/es/how-to/ejemplos-expresiones-regulares"
@@ -658,6 +708,21 @@
     "source": "/how-to/foreach-javascript",
     "type": "ARTICLE",
     "destination": "/es/how-to/metodo-foreach-javascript"
+  },
+  {
+    "source": "/project/code-rest-api-with-node-and-jwt-authentication",
+    "type": "PROJECT-REROUTE",
+    "destination": "/en/interactive-coding-tutorial/code-rest-api-with-node-and-jwt-authentication"
+  },
+  {
+    "source": "/project/codifica-una-landing-page-con-node",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/codifica-una-landing-page-con-node"
+  },
+  {
+    "source": "/project/Crea-un-API-Rest-en-NodeJs-con-ExpressJs",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/Crea-un-API-Rest-en-NodeJs-con-ExpressJs"
   },
   {
     "source": "/project/Tutorial-de-Proyecto-de-NLP",
@@ -1166,6 +1231,11 @@
   },
   {
     "source": "/project/proyecto-de-regresion-lineal-regularizada",
+    "type": "PROJECT-REROUTE",
+    "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
+  },
+  {
+    "source": "/project/regularized-linear-regression-project-tutorial",
     "type": "PROJECT-REROUTE",
     "destination": "/es/interactive-coding-tutorial/proyecto-de-regresion-lineal-regularizada"
   },
