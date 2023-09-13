@@ -6,6 +6,7 @@ import modifyEnv from '../../../modifyEnv';
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
+const hostV2 = `${BREATHECODE_HOST}/v2`;
 
 const breathecode = {
   get: (url) => fetch(url, {
@@ -176,6 +177,19 @@ const breathecode = {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
+        },
+      }),
+    };
+  },
+  activity: (query = {}) => {
+    const url = `${hostV2}/activity`;
+    const qs = parseQuerys(query);
+    return {
+      getActivity: (academyId) => axios({
+        method: 'get',
+        url: `${url}/academy/activity${qs}`,
+        headers: {
+          academy: academyId,
         },
       }),
     };

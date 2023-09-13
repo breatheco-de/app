@@ -62,6 +62,14 @@ function StudentReport() {
       }).catch((e) => {
         console.log(e);
       });
+    bc.activity({ user_id: studentId }).getActivity(academy)
+      .then((res) => {
+        console.log('res');
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   }, []);
 
   useEffect(() => {
@@ -448,9 +456,9 @@ function StudentReport() {
       <Divider borderBottom="1px solid" color={borderColor} />
       <Flex
         maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
-        margin="2% auto 0 auto"
+        margin="auto"
       >
-        <Box width="100%" maxWidth="695px">
+        <Box width="100%" maxWidth="695px" marginTop="2%">
           <Box marginBottom="20px" width="100%">
             <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
             <Box marginTop="20px">
@@ -511,6 +519,7 @@ function StudentReport() {
                   <Flex gridGap="10px" alignItems="center">
                     <Icon
                       icon="learnpack"
+                      color={hexColor.blueDefault}
                       width="20px"
                       height="20px"
                     />
@@ -553,6 +562,14 @@ function StudentReport() {
             onClose={onCloseProject}
             readOnly
           />
+        </Box>
+        <Box marginLeft="20px" display={{ base: 'none', md: 'block' }}>
+          <Divider border="1px solid" orientation="vertical" color={borderColor} />
+        </Box>
+        <Box marginTop="2%" padding="0 20px">
+          <Flex>
+            <Heading color={hexColor.fontColor2} size="m">{t('activities')}</Heading>
+          </Flex>
         </Box>
       </Flex>
     </Box>
