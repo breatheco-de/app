@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import axios from 'axios';
-import { fail } from './_utils';
+import { fail, warn } from './_utils';
 import { BREATHECODE_HOST, DOMAIN_NAME, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
 
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -17,7 +17,10 @@ async function generateSyllabus() {
     }
 
     const logoData = await axios.get(`${BREATHECODE_HOST}/v1/admissions/academy/${whiteLableArray[0]}`)
-      .then((resp) => resp?.data);
+      .then((resp) => resp?.data)
+      .catch((err) => {
+        warn('WARN: No logo data has been found', err.response?.data);
+      });
 
     if (logoData?.name) {
       Bun.write('public/logo.json', JSON.stringify(logoData));
