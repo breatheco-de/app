@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import axiosInstance from '../../axios';
 import Icon from '../../common/components/Icon';
 import { isPlural } from '../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
 import handlers from '../../common/handlers';
@@ -32,7 +33,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   }, [router.locale]);
 
   useEffect(() => {
-    bc.payment().courses()
+    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
       .then(({ data }) => {
         setMarketingCursesList(data);
       });
@@ -43,6 +44,10 @@ function ChooseProgram({ chooseList, handleChoose }) {
     const currentCohortProps = programsList[cohort.slug];
     return ({
       ...item,
+      cohort: {
+        ...cohort,
+        available_as_saas: item?.role === 'TEACHER' ? false : cohort?.available_as_saas,
+      },
       subscription: currentCohortProps?.subscription,
       plan_financing: currentCohortProps?.plan_financing,
       all_subscriptions: currentCohortProps?.all_subscriptions,

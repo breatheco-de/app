@@ -21,7 +21,7 @@ const parseQuerys = (query, connector = false) => {
       if (connector) {
         queryString += `&${key}=${query[key]}`;
       }
-      if (query[key] !== undefined) {
+      if (!connector && query[key] !== undefined) {
         queryString += `${queryString ? '&' : '?'}${key}=${query[key]}`;
       }
     });

@@ -22,6 +22,8 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
+import Heading from '../../common/components/Heading';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 export const getStaticPaths = async ({ locales }) => {
   const querys = parseQuerys({
@@ -29,7 +31,7 @@ export const getStaticPaths = async ({ locales }) => {
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: 'how-to,como',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
+    academy: WHITE_LABEL_ACADEMY,
     limit: 2000,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
@@ -131,8 +133,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     '@type': 'Article',
     name: lesson?.title,
     description: lesson?.description,
-    url: `https://4geeks.com/${slug}`,
-    image: `https://4geeks.com/thumbnail?slug=${slug}`,
+    url: `${ORIGIN_HOST}/${slug}`,
+    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
     datePublished: lesson?.published_at,
     dateModified: lesson?.updated_at,
     author: lesson?.author ? {
@@ -142,7 +144,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     keywords: lesson?.seo_keywords,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://4geeks.com/${slug}`,
+      '@id': `${ORIGIN_HOST}/${slug}`,
     },
   };
 
@@ -153,7 +155,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       seo: {
         title,
         description: description || '',
-        image: `https://4geeks.com/thumbnail?slug=${slug}`,
+        image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
         pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
         url: ogUrl.en || `/${locale}/lesson/${slug}`,
         slug,
@@ -243,7 +245,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         padding="0 10px"
       >
         <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
-          <MktSideRecommendedCourses />
+          <MktSideRecommendedCourses technologies={lesson?.technologies} />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
@@ -268,7 +270,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   <Skeleton width="130px" height="26px" borderRadius="10px" />
                 )}
               </Box>
-              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'block' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
                 {lesson?.readme_url && (
                   <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${lesson?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                     <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
@@ -290,6 +292,12 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
             </Box>
           </Box>
+          {lesson?.title && (
+            <Heading size="l" as="h1" fontWeight="700" margin="0rem 0 2rem 0">
+              {lesson.title}
+            </Heading>
+          )}
+
           {markdown && !isIpynb ? (
             <Box
               height="100%"
@@ -320,7 +328,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </>
           )}
           <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
-            <MktSideRecommendedCourses title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            <MktSideRecommendedCourses technologies={lesson?.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
           {isIpynb && markdown === '' && ipynbHtml?.html && (

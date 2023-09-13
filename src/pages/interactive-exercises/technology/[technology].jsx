@@ -7,20 +7,17 @@ import Text from '../../../common/components/Text';
 import { toCapitalize } from '../../../utils';
 import Heading from '../../../common/components/Heading';
 import ProjectList from '../../../js_modules/projects/ProjectList';
-import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
-  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  });
-  const data = resp?.status > 400 ? {} : await resp?.json();
+  const assetList = await import('../../../lib/asset-list.json')
+    .then((res) => res.default)
+    .catch(() => []);
 
-  const paths = data?.results?.length > 0 ? data?.results?.flatMap((res) => locales.map((locale) => ({
+  const data = assetList.landingTechnologies.filter(
+    (l) => l.assets.some((a) => a.asset_type.toUpperCase() === 'EXERCISE'),
+  );
+
+  const paths = data?.length > 0 ? data.flatMap((res) => locales.map((locale) => ({
     params: {
       technology: res.slug,
     },
@@ -35,34 +32,19 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { technology } = params;
-  const currentLang = locale === 'en' ? 'us' : 'es';
-  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || '4,5,6,47';
 
-  const responseTechs = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/academy/technology?slug=${technology}&limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  });
-  const techs = await responseTechs.json(); // array of objects
-  const technologyData = techs.results.find((tech) => tech.slug === technology);
+  const assetList = await import('../../../lib/asset-list.json')
+    .then((res) => res.default)
+    .catch(() => []);
 
-  const qs = parseQuerys({
-    asset_type: 'EXERCISE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: process.env.WHITE_LABEL_ACADEMY || '4,5,6,47',
-    limit: 1000,
-    technologies: technology,
-  });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${qs}`);
-  const exercises = await response.json();
+  const allTechnologiesList = assetList.landingTechnologies;
+  const technologyData = allTechnologiesList.find((tech) => tech.slug === technology && tech.lang === locale);
 
-  const dataFiltered = exercises?.results;
+  const dataFiltered = technologyData?.assets?.length > 0 ? technologyData.assets.filter(
+    (l) => (l.asset_type.toUpperCase() === 'EXERCISE'),
+  ) : [];
 
-  if (responseTechs.status >= 400 || response.status >= 400 || response.status_code >= 400
-    || !technologyData || dataFiltered.length === 0) {
+  if (!technologyData || dataFiltered.length === 0) {
     return {
       notFound: true,
     };
@@ -88,7 +70,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       fallback: false,
       technologyData,
-      exercises: dataFiltered.filter((project) => project.lang === currentLang).map(
+      exercises: dataFiltered.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },

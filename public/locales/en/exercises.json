@@ -12,7 +12,7 @@
   "created": "Created by:",
   "description": "The following exercises explain different programming concepts and have been published by members of BreatheCode, now 4Geeks, search for an exercise using the filters",
   "backToExercises": "Back to Exercises",
-  "direct-access-request": "Get Instant Access",
+  "direct-access-request": "Sign Up for instant access",
   "direct-access-request-description": "Enter your information and receive instant access",
   "thanks": "Thanks!",
   "download": "Now you can download or clone the interactive material.",
@@ -21,11 +21,23 @@
   "clone": "CLONE LOCALY",
   "clone-tooltip": "Clone repository",
   "how-to-clone": "Read more about cloning a project",
+  "clone-link": "/how-to/github-clone-repository",
   "modal" : {
     "title": "Choose Provisional Vendor",
     "text-part-one": "LearnPack allow you to open these exercises on VSCode instantly and for free using one of the following vendors:",
     "text-part-two": "Here you can know more about ",
     "or": " or "
+  },
+  "clone-modal" : {
+    "title": "How to clone a project?",
+    "text-part-one": "We don’t recomend it, but some excerises can be downloaded and runned locally using VSCode and the ",
+    "text-part-two": ". If you want to do so, you must start by cloning the project into your computer by typing the following command on your terminal:",
+    "note": "Note: This will create a new folder “{{folder}}” in your computer with the project code inside.",
+    "copy-command": "Command has been copied to the clipboard!",
+    "steps": [
+      "Open this folder in VSCode.",
+      "Read the README.md file and follow the rest of the instructions."
+    ]
   },
   "powered": "Powered by ",
   "get-instant-access": "Get instant access",

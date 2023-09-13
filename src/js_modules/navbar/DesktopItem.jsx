@@ -15,28 +15,22 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 import styled from 'styled-components';
+import Image from 'next/image';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
-import Image from '../../common/components/Image';
 import useStyle from '../../common/hooks/useStyle';
+import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
 
 const StyledBox = styled(Box)`
 .custom-popover {
   display: none;
   top:50px;
 }
-
-:hover .custom-popover {
-  display: block;
-}
-
 `;
 
-const Triangle = styled(Box)`
-display: none;
-`;
+const Triangle = styled(Box)``;
 
 function DesktopItem({ item, readSyllabus }) {
   const router = useRouter();
@@ -67,7 +61,11 @@ function DesktopItem({ item, readSyllabus }) {
   };
 
   // manage subMenus in level 2
-  const itemSubMenu = item?.subMenu?.length > 0 && item.subMenu.map((l) => {
+  const existsSubMenu = item?.subMenu?.length > 0;
+  const withPopover = item?.with_popover?.active;
+  const existsItemWithPopover = existsSubMenu || withPopover || item.description;
+
+  const itemSubMenu = existsSubMenu ? item.subMenu.map((l) => {
     const isLessons = l.slug === 'lessons';
     if (isLessons) {
       return ({
@@ -76,7 +74,7 @@ function DesktopItem({ item, readSyllabus }) {
       });
     }
     return l;
-  });
+  }) : [];
 
   if (item.slug === 'social-and-live-learning' && !prismicRef && !prismicApi) {
     return null;
@@ -87,18 +85,10 @@ function DesktopItem({ item, readSyllabus }) {
       key={item.label}
       position="relative"
       className="styled-box"
-      css={{
-        '&:hover': {
-          '.custom-popover': {
-            display: 'block',
-          },
-          '.triangle': {
-            display: 'block',
-          },
-        },
-      }}
+      role="group"
+      _groupHover={{ display: 'block' }}
     >
-      {itemSubMenu ? (
+      {existsItemWithPopover ? (
         <>
           <Button
             variant="unstyled"
@@ -114,13 +104,14 @@ function DesktopItem({ item, readSyllabus }) {
             }}
           >
             {item.label}
-            {item?.subMenu?.length > 0 && (
-              <Icon
-                icon="arrowDown"
-                color="currentColor"
-                width="22px"
-                height="22px"
-              />
+            {existsItemWithPopover && (
+              <span>
+                <ArrowDown
+                  color="currentColor"
+                  width="22px"
+                  height="22px"
+                />
+              </span>
             )}
           </Button>
           <Box
@@ -135,6 +126,8 @@ function DesktopItem({ item, readSyllabus }) {
             border="1px solid"
             borderColor={popoverBorderColor}
             width="640px"
+            role="group"
+            _groupHover={{ display: 'block' }}
           >
             <div style={{ width: '100%', position: 'absolute', top: '-10px' }}>
               <Triangle
@@ -160,136 +153,156 @@ function DesktopItem({ item, readSyllabus }) {
             >
               <Flex
                 flexDirection="row"
-                padding="0 0 16px 0"
-                borderBottom={borderSize}
+                padding={existsSubMenu && '0 0 16px 0'}
+                borderBottom={existsSubMenu ? borderSize : '0px'}
                 borderStyle="solid"
-                borderColor={borderColor}
+                borderColor={existsSubMenu ? borderColor : 'transparent'}
                 alignItems="center"
                 color={linkColor}
-                mb="10px"
+                mb={withPopover ? '0px' : '10px'}
                 gridGap="20px"
               >
-                <Box width="auto" ml="4px">
-                  <Icon icon={item.icon} width="50px" height="50px" />
+                <Box width="auto" ml="4px" flexShrink={0}>
+                  {item?.image ? (
+                    <Image src={item?.image} width={135} height={77.4} style={{ objectFit: 'cover' }} />
+                  ) : (
+                    <Icon icon={item?.icon} width="50px" height="50px" />
+                  )}
                 </Box>
                 <Box display="flex" flexDirection="column" mr={{ base: '10px', md: '20px' }}>
                   <Text size="xl" fontWeight={900}>
                     {item.label}
                   </Text>
                   <Text fontWeight={500}>{item.description}</Text>
+                  {withPopover && (
+                    <NextChakraLink
+                      href={item?.with_popover.link}
+                      key={item?.with_popover.link}
+                      display="block"
+                      p="0.8rem 0"
+                      width="max-content"
+                      style={{ borderRadius: '5px' }}
+                    >
+                      {item?.with_popover?.title}
+                      <span>
+                        <ArrowRight width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                      </span>
+                    </NextChakraLink>
+                  )}
                 </Box>
               </Flex>
-              <Tabs
-                defaultIndex={0}
-                display="flex"
-                flexDirection={{ base: 'column', md: 'row' }}
-                // gridGap="8px"
-                variant="unstyled"
-              >
-                <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
-                  {
-                    itemSubMenu && itemSubMenu.map((child) => {
+              {existsSubMenu && (
+                <Tabs
+                  defaultIndex={0}
+                  display="flex"
+                  flexDirection={{ base: 'column', md: 'row' }}
+                  // gridGap="8px"
+                  variant="unstyled"
+                >
+                  <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
+                    {
+                      existsSubMenu && itemSubMenu.map((child) => {
+                        const {
+                          icon, label, subLabel, href,
+                        } = child;
+
+                        const isUrl = icon && isAbsoluteUrl(icon);
+
+                        return (
+                          <Tab
+                            key={`${label}-${href}`}
+                            borderLeft="4px solid transparent"
+                            _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
+                            // my="2px"
+                            opacity={0.7}
+                            _hover={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
+                            borderRadius="2px"
+                            justifyContent="flex-start"
+                            style={{
+                              // transition: 'all 0.15s ease-in-out',
+                              padding: '0.5rem 0.8rem',
+                            }}
+                            gridGap="14px"
+                            // p={2}
+                            textAlign="left"
+                          >
+                            {icon && (isUrl ? (
+                              <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
+                            ) : <Icon icon={icon} width="33px" height="30px" color={iconColor} />)}
+                            <Text
+                              // width="100%"
+                              minWidth="130px"
+                              // transition="all .3s ease"
+                              color={getColorLink(href)}
+                              _groupHover={{ color: groupHoverColor }}
+                              fontWeight={500}
+                            >
+                              {label}
+                            </Text>
+                            {/* optional short description */}
+                            {subLabel && <Text fontSize="sm">{subLabel}</Text>}
+                          </Tab>
+                        );
+                      })
+                    }
+                  </TabList>
+                  <Box width="3px" background={backgroundOfLine} margin="0 15px" />
+                  <TabPanels>
+                    {existsSubMenu && itemSubMenu.map((child) => {
                       const {
-                        icon, label, subLabel, href,
+                        description, subMenu,
                       } = child;
 
-                      const isUrl = icon && isAbsoluteUrl(icon);
-
                       return (
-                        <Tab
-                          key={`${label}-${href}`}
-                          borderLeft="4px solid transparent"
-                          _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
-                          // my="2px"
-                          opacity={0.7}
-                          _hover={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
-                          borderRadius="2px"
-                          justifyContent="flex-start"
-                          style={{
-                            // transition: 'all 0.15s ease-in-out',
-                            padding: '0.5rem 0.8rem',
-                          }}
-                          gridGap="14px"
-                          // p={2}
-                          textAlign="left"
-                        >
-                          {icon && (isUrl ? (
-                            <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
-                          ) : <Icon icon={icon} width="33px" height="30px" color={iconColor} />)}
-                          <Text
-                            // width="100%"
-                            minWidth="130px"
-                            // transition="all .3s ease"
-                            color={getColorLink(href)}
-                            _groupHover={{ color: groupHoverColor }}
-                            fontWeight={500}
-                          >
-                            {label}
-                          </Text>
-                          {/* optional short description */}
-                          {subLabel && <Text fontSize="sm">{subLabel}</Text>}
-                        </Tab>
-                      );
-                    })
-                  }
-                </TabList>
-                <Box width="3px" background={backgroundOfLine} margin="0 15px" />
-                <TabPanels>
-                  {itemSubMenu && itemSubMenu.map((child) => {
-                    const {
-                      description, subMenu,
-                    } = child;
-
-                    return (
-                      <TabPanel key={description} padding={0}>
-                        {description && (
-                          <CustomText fontSize="14px" pb="15px">
-                            {description}
-                          </CustomText>
-                        )}
-                        {subMenu.length > 0 && subMenu.map((l) => (
-                          <NextChakraLink
-                            href={l.href}
-                            key={l.href}
-                            // role="group"
-                            display="block"
-                            p={2}
-                            style={{ borderRadius: '5px' }}
-                            _hover={{ bg: backgroundHoverLink }}
-                          >
-                            <Stack direction="row" align="center">
-                              <Box>
-                                <Text
+                        <TabPanel key={description} padding={0}>
+                          {description && (
+                            <CustomText fontSize="14px" pb="15px">
+                              {description}
+                            </CustomText>
+                          )}
+                          {subMenu.length > 0 && subMenu.map((l) => (
+                            <NextChakraLink
+                              href={l.href}
+                              key={l.href}
+                              // role="group"
+                              display="block"
+                              p={2}
+                              style={{ borderRadius: '5px' }}
+                              _hover={{ bg: backgroundHoverLink }}
+                            >
+                              <Stack direction="row" align="center">
+                                <Box>
+                                  <Text
+                                    // transition="all .3s ease"
+                                    color={getColorLink(l.href)}
+                                    _groupHover={{ color: groupHoverColor }}
+                                    fontWeight={500}
+                                  >
+                                    {l.label}
+                                  </Text>
+                                </Box>
+                                <Flex
                                   // transition="all .3s ease"
-                                  color={getColorLink(l.href)}
-                                  _groupHover={{ color: groupHoverColor }}
-                                  fontWeight={500}
+                                  opacity={1}
+                                  justify="flex-start"
+                                  align="center"
+                                  flex={1}
                                 >
-                                  {l.label}
-                                </Text>
-                              </Box>
-                              <Flex
-                                // transition="all .3s ease"
-                                opacity={1}
-                                justify="flex-start"
-                                align="center"
-                                flex={1}
-                              >
-                                <Icon
-                                  icon="arrowRight"
-                                  color="#0097CD"
-                                  width="12px"
-                                  height="12px"
-                                />
-                              </Flex>
-                            </Stack>
-                          </NextChakraLink>
-                        ))}
-                      </TabPanel>
-                    );
-                  })}
-                </TabPanels>
-              </Tabs>
+                                  <ArrowRight
+                                    color="#0097CD"
+                                    width="12px"
+                                    height="12px"
+                                  />
+                                </Flex>
+                              </Stack>
+                            </NextChakraLink>
+                          ))}
+                        </TabPanel>
+                      );
+                    })}
+                  </TabPanels>
+                </Tabs>
+              )}
             </Stack>
           </Box>
         </>
@@ -315,12 +328,13 @@ function DesktopItem({ item, readSyllabus }) {
         >
           {item.label}
           {item.subMenu && (
-            <Icon
-              icon="arrowDown"
-              color={getColorIcon(item.href || item.asPath)}
-              width="22px"
-              height="22px"
-            />
+            <span>
+              <ArrowDown
+                color={getColorIcon(item.href || item.asPath)}
+                width="22px"
+                height="22px"
+              />
+            </span>
           )}
         </NextChakraLink>
       )}
@@ -334,11 +348,16 @@ DesktopItem.propTypes = {
     href: PropTypes.string,
     asPath: PropTypes.string,
     icon: PropTypes.string,
+    image: PropTypes.string,
     description: PropTypes.string,
     subMenu: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
     slug: PropTypes.string,
-  }).isRequired,
+    with_popover: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  }),
   readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+};
+DesktopItem.defaultProps = {
+  item: {},
 };
 
 export default memo(DesktopItem);

@@ -12,6 +12,7 @@ import {
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import { ORIGIN_HOST } from '../../utils/variables';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
@@ -397,6 +398,7 @@ function DeliverHandler({
 
 export function NoInfoModal({ isOpen, onClose }) {
   const { t } = useTranslation('assignments');
+  const { hexColor } = useStyle();
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
 
   return (
@@ -405,7 +407,7 @@ export function NoInfoModal({ isOpen, onClose }) {
       <ModalContent borderRadius="17px" marginTop="10%">
         <ModalHeader
           fontSize="15px"
-          color="gray.600"
+          color={hexColor.fontColor2}
           textAlign="center"
           letterSpacing="0.05em"
           borderBottom="1px solid"
@@ -648,7 +650,7 @@ function ButtonHandler({
     es: '/es/',
     en: '/',
   };
-  const projectLink = `https://4geeks.com${lang[router.locale]}project/${currentTask.associated_slug}`;
+  const projectLink = `${ORIGIN_HOST}${lang[router.locale]}project/${currentTask.associated_slug}`;
 
   // const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 

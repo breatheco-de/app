@@ -2,6 +2,7 @@ import React from 'react';
 import { addMinutes, subMinutes, addDays, addHours } from 'date-fns';
 import LiveEvent from '../common/components/LiveEvent';
 import { Box } from '@chakra-ui/react';
+import { ORIGIN_HOST } from '../utils/variables';
 
 export default {
   title: 'components/Live Event',
@@ -159,14 +160,14 @@ StartsIn5Hours.args = {
   width: '320px',
   mainClasses: [{
     subLabel: 'Master Class',
-    featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+    featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
     startingSoonDelta: 30,
     starting_at: new Date(addHours(new Date(), 5)),
     ending_at: new Date(addHours(new Date(), 6)),
     liveClassHash: 'dfsdf',
   }],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'My Wonderful HTML Email Workflow',
@@ -190,7 +191,7 @@ export const NoTodayClass = Component.bind({});
 NoTodayClass.args = {
   mainClasses:[],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
   otherEvents: [{
     title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.',
@@ -213,7 +214,7 @@ NoTodayClass.args = {
 export const UpcomingEventsTomorrow = Component.bind({});
 UpcomingEventsTomorrow.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
   mainClasses:[],
   otherEvents: [{
@@ -237,7 +238,7 @@ UpcomingEventsTomorrow.args = {
 export const UpcomingEventToday = Component.bind({});
 UpcomingEventToday.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
   mainClasses:[],
   otherEvents: [{
@@ -269,7 +270,7 @@ UpcomingEventToday.args = {
 export const EventsIn2DaysOrMore = Component.bind({});
 EventsIn2DaysOrMore.args = {
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
   mainClasses:[],
   otherEvents: [{
@@ -336,6 +337,6 @@ export const NoClassAndEventsAvailable = Component.bind({});
 NoClassAndEventsAvailable.args = {
   mainClasses:[],
   featureLabel: 'Live classes, coding sessions, workshops and hangouts every few hours.',
-  featureReadMoreUrl: 'https://4geeks.com/lesson/live-events-workshops-and-classes',
+  featureReadMoreUrl: `${ORIGIN_HOST}/lesson/live-events-workshops-and-classes`,
   startingSoonDelta: 30,
 };
