@@ -8,8 +8,8 @@ async function getData() {
   console.time('Time fetching data');
 
   const landingTechnologies = await getLandingTechnologies();
-  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
-  const excersises = await getAsset('EXERCISE');
+  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' }, 'lesson');
+  const excersises = await getAsset('EXERCISE', {}, 'excersise');
   const projects = await getAsset('PROJECT', {}, 'project');
   const howTos = await getAsset('LESSON,ARTICLE', {}, 'how-to');
   const events = await getEvents();
@@ -30,6 +30,7 @@ async function getData() {
     excersises: excersises?.length,
     projects: projects?.length,
     howTos: howTos?.length,
+    events: events?.length,
   });
 
   // This file is disposable and will disappear at the end of the build process.

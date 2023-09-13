@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
+import bc from '../common/services/breathecode';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -62,18 +63,18 @@ const getEvents = async (extraQuerys = {}) => {
 };
 
 /**
- * @param {String|null} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
+ * @param {String} type Type of the asset (LESSON, ARTICLE, EXERCISE, PROJECT)
  * @param {Object} extraQuerys Extra querys to filter the assets
  * @param {string} category Category of the asset for filter purposes
  * @returns {Promise} Array of objects with the assets
  */
-const getAsset = async (type = null, extraQuerys = {}, category = null) => {
+const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   const limit = 100;
   let offset = 0;
   let allResults = [];
 
   const qsRequest = parseQuerys({
-    asset_type: type === null ? undefined : type,
+    asset_type: type || undefined,
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     limit,
@@ -82,10 +83,17 @@ const getAsset = async (type = null, extraQuerys = {}, category = null) => {
     ...extraQuerys,
   });
 
-  let results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error(`GET_ASSET: Error fetching ${type?.toUpperCase()}`);
+  let results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
+    .then(async (res) => {
+      const data = await res.json();
+
+      if (res.status >= 400) {
+        throw new Error(data.message);
+      }
+      return data.results;
+    })
+    .catch((err) => {
+      console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.message}`);
       return [];
     });
 
@@ -102,14 +110,17 @@ const getAsset = async (type = null, extraQuerys = {}, category = null) => {
       ...extraQuerys,
     });
 
-    results = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
-      .then((res) => res.data.results)
-      .catch(() => {
-        if (type === null || type === undefined) {
-          console.error(`SITEMAP: Error fetching /v1/registry/asset${newQsRequests}`);
-        } else {
-          console.error(`SITEMAP: Error fetching ${type?.toUpperCase()} pages`);
+    results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
+      .then(async (res) => {
+        const data = await res.json();
+
+        if (res.status >= 400) {
+          throw new Error(data.message);
         }
+        return data.results;
+      })
+      .catch((err) => {
+        console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.message}`);
         return [];
       });
   }
@@ -141,7 +152,7 @@ const getLandingTechnologies = () => {
       const formatedWithAssets = res.data.results.map(async (tech) => {
         const assets = await getAsset(null, {
           technologies: tech?.slug,
-        });
+        }, 'technologies');
         return { ...tech, assets };
       });
 
