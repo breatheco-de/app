@@ -76,7 +76,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
           }
         }
 
-        const list = coursesSorted?.length > 0 ? coursesSorted : [];
+        const list = coursesSorted?.length > 0 ? coursesSorted : data;
         setIsLoading(false);
 
         setCourses(list?.filter((course) => course?.course_translation).slice(0, coursesLimit));
