@@ -482,7 +482,7 @@ function TabletWithForm({
                   <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
                 </span>
                 <Link
-                  href="/how-to/github-clone-repository"
+                  href={t('clone-link')}
                   target="_blank"
                   fontSize="15px"
                   fontWeight="700"

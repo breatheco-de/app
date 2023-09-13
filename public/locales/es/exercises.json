@@ -21,6 +21,7 @@
   "clone": "Clonar localmente",
   "clone-tooltip": "Clonar repositorio",
   "how-to-clone": "Leer más sobre cómo clonar un proyecto",
+  "clone-link": "/es/how-to/como-clonar-un-repositorio-de-github",
   "modal" : {
     "title": "Elige un Proveedor Provisional",
     "text-part-one": "LearnPack te permite abrir estos ejercicios en VSCode de forma instantánea y gratuita utilizando uno de los siguientes proveedores:",

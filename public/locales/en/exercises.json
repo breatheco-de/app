@@ -21,6 +21,7 @@
   "clone": "CLONE LOCALY",
   "clone-tooltip": "Clone repository",
   "how-to-clone": "Read more about cloning a project",
+  "clone-link": "/how-to/github-clone-repository",
   "modal" : {
     "title": "Choose Provisional Vendor",
     "text-part-one": "LearnPack allow you to open these exercises on VSCode instantly and for free using one of the following vendors:",
