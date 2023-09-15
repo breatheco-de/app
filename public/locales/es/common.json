@@ -1,4 +1,15 @@
 {
+  "word-connector": {
+    "and": "y",
+    "or": "o",
+    "to": "a",
+    "from": "de",
+    "of": "de",
+    "in": "en",
+    "on": "en",
+    "with": "con",
+    "for": "para"
+  },
   "heading": "Bienvenido a",
   "change-locale": "Cambiar Idioma",
   "error-with-status": "{{statusCode}} error ocurrió en el servidor",
