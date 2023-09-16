@@ -130,5 +130,21 @@
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
+  },
+  "pricing": {
+    "basic-plan": {
+      "type": "Basic",
+      "hook-message": "Get ready to meet our academy",
+      "title": "Free Member",
+      "description": "Learn basic HTML, CSS, JavaScript and React",
+      "button-title": "Start free"
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Improve your skills with extra challenges and benefits.",
+      "title": "Premium member",
+      "description": "All the content you need to become a hireable developer",
+      "button-title": "Get Premium"
+    }
   }
 }

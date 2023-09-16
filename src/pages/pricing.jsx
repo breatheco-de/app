@@ -6,57 +6,10 @@ import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
-import { processPlans } from '../common/handlers/subscriptions';
+import { getSuggestedPlan } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
-
-const getSuggestedPlan = (slug) => bc.payment({
-  original_plan: slug,
-}).planOffer()
-  .then(async (resp) => {
-    const data = resp?.data;
-    if (data.length === 0) {
-      return ({
-        status_code: 404,
-        detail: 'No suggested plan found',
-      });
-    }
-    const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
-    const suggestedPlan = currentOffer?.suggested_plan;
-    const originalPlan = currentOffer?.original_plan;
-
-    const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
-      quarterly: false,
-      halfYearly: false,
-    }) : {};
-    const suggestedRespBulletItems = await bc.payment().getPlanProps(suggestedPlan.slug);
-
-    const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
-      quarterly: false,
-      halfYearly: false,
-    }) : {};
-    const originalRespBulletItems = await bc.payment().getPlanProps(suggestedPlan.slug);
-
-    const originalPlanData = {
-      ...dataForOriginPlan,
-      featured_info: originalRespBulletItems?.data,
-    };
-    const suggestedPlanData = {
-      ...dataForSuggestedPlan,
-      featured_info: suggestedRespBulletItems?.data,
-    };
-
-    return ({
-      plans: {
-        original_plan: originalPlanData,
-        suggested_plan: suggestedPlanData,
-      },
-      details: currentOffer?.details,
-      title: currentOffer?.details?.title,
-    });
-  })
-  .catch((err) => err?.response?.data);
 
 export async function getServerSideProps({ query, locale }) {
   const t = await getT(locale, 'common');
@@ -82,6 +35,10 @@ export async function getServerSideProps({ query, locale }) {
   };
 }
 
+const switchTypes = {
+  monthly: 'monthly',
+  yearly: 'yearly',
+};
 function PricingPage({ data }) {
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
@@ -161,7 +118,11 @@ function PricingPage({ data }) {
           )}
 
           <Flex width="100%" justifyContent="center" gridGap="24px">
-            {monthlyPlans?.length > 0 && monthlyPlans.map((plan) => (
+            {activeType === switchTypes.monthly && monthlyPlans?.length > 0 && monthlyPlans.map((plan) => (
+              <PricingCard item={plan} />
+            ))}
+
+            {activeType === switchTypes.yearly && monthlyPlans?.length > 0 && yearlyPlans.map((plan) => (
               <PricingCard item={plan} />
             ))}
           </Flex>

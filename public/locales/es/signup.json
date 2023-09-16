@@ -130,5 +130,21 @@
     "cohort-connector": "Cohorte: {{name}}",
     "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
+  },
+  "pricing": {
+    "basic-plan": {
+      "type": "Básico",
+      "hook-message": "Prepárate para conocer nuestra academia",
+      "title": "Miembro Gratuito",
+      "description": "Aprende HTML, CSS, JavaScript y React básico",
+      "button-title": "Comenzar gratis"
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
+      "title": "Miembro Premium",
+      "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
+      "button-title": "Obtener Premium"
+    }
   }
 }

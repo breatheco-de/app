@@ -47,6 +47,16 @@ const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
 )
   : '');
 
+function slugToTitle(slug) {
+  return slug.split('-').map(
+    (word, i) => {
+      if (i === 0) return word.charAt(0).toUpperCase() + word.slice(1);
+      return word.charAt(0) + word.slice(1);
+    },
+  ).join(' ').replace(/([A-Z])/g, ' $1')
+  .trim();
+}
+
 const cleanQueryStrings = (url) => url.split('?')[0];
 
 const isPlural = (element) => {
@@ -386,5 +396,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject,
+  adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle,
 };
