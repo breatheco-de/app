@@ -8,7 +8,13 @@
     "in": "in",
     "on": "on",
     "with": "with",
-    "for": "for"
+    "for": "for",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "days": "days",
+    "weeks": "weeks",
+    "months": "months"
   },
   "heading": "Welcome to",
   "change-locale": "Change locale",

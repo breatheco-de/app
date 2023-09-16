@@ -8,7 +8,13 @@
     "in": "en",
     "on": "en",
     "with": "con",
-    "for": "para"
+    "for": "para",
+    "day": "día",
+    "week": "semana",
+    "month": "mes",
+    "days": "días",
+    "weeks": "semanas",
+    "months": "meses"
   },
   "heading": "Bienvenido a",
   "change-locale": "Cambiar Idioma",
