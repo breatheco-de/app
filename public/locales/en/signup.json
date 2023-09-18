@@ -53,6 +53,7 @@
   "yearly_payment": "Yearly payment",
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
+  "our_plans": "Our plans",
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
@@ -134,6 +135,7 @@
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   },
   "pricing": {
+    "already-have-plan": "You already have it",
     "basic-plan": {
       "type": "Basic",
       "hook-message": "Get ready to meet our academy",

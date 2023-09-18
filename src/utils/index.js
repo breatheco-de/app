@@ -48,6 +48,7 @@ const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
   : '');
 
 function slugToTitle(slug) {
+  if (slug === undefined) return '';
   return slug.split('-').map(
     (word, i) => {
       if (i === 0) return word.charAt(0).toUpperCase() + word.slice(1);
