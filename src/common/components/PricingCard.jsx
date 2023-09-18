@@ -1,5 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -130,7 +130,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             {viewProps.description}
           </Text>
         </Flex>
-        <Flex flexDirection="column" gridGap="16px" mt="16px">
+        <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
           {item?.featured_info?.map((info) => info.service.slug && (
             <Box display="flex" gridGap="8px">
               {info?.service?.icon_url
@@ -151,6 +151,35 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             </Box>
           ))}
         </Flex>
+
+        <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
+          {item?.featured_info?.map((info) => info.service.slug && (
+            <AccordionItem display="flex" flexDirection="column" gridGap="2px" border={0}>
+              <AccordionButton padding="8px 0">
+                <Box display="flex" gridGap="10px" flex="1" textAlign="left">
+                  {info?.service?.icon_url
+                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                    : (
+                      <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
+                    )}
+                  <Text size="16px" fontWeight={700} textAlign="left">
+                    {info?.service?.title || slugToTitle(info?.service?.slug)}
+                  </Text>
+                </Box>
+                {info.features.length > 0 && (
+                  <AccordionIcon />
+                )}
+              </AccordionButton>
+              {info.features.length > 0 && (
+                <AccordionPanel padding="0 24px 16px 24px">
+                  <Text size="14px" textAlign="left">
+                    {info.features[0]?.description}
+                  </Text>
+                </AccordionPanel>
+              )}
+            </AccordionItem>
+          ))}
+        </Accordion>
       </Flex>
     </Flex>
   );
