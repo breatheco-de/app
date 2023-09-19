@@ -195,11 +195,14 @@ function Dashboard() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
-      setIsOpenFinalProject(true);
-    }
     if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
       setWelcomeModal(true);
+    }
+  }, [cohortUserDaysCalculated.result]);
+
+  useEffect(() => {
+    if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
+      setIsOpenFinalProject(true);
     }
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
