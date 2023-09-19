@@ -44,132 +44,139 @@ export const getStaticPaths = async ({ locales }) => {
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-  const lesson = await response.json();
+  try {
+    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+    const lesson = await response.json();
 
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
-
-  const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
-  const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
-  const extension = urlPathname ? urlPathname.split('.').pop() : null;
-  const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
-  const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
-
-  const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
-
-  if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
-    return {
-      notFound: true,
+    const engPrefix = {
+      us: 'en',
+      en: 'en',
     };
-  }
 
-  const ogUrl = {
-    en: `/lesson/${slug}`,
-    us: `/lesson/${slug}`,
-  };
+    const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
+    const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+    const extension = urlPathname ? urlPathname.split('.').pop() : null;
+    const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
+    const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
 
-  const { title, description, translations } = lesson;
-  const translationsExists = Object.keys(translations).length > 0;
+    const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
 
-  const exensionName = getExtensionName(lesson.readme_url);
-  let markdown = '';
-  let ipynbHtml = '';
-
-  if (exensionName !== 'ipynb') {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-    if (resp.status >= 400) {
+    if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
       return {
         notFound: true,
       };
     }
-    markdown = await resp.text();
-  } else {
-    const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
-    const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
-    const resp = await fetch(ipynbHtmlUrl);
 
-    ipynbHtml = {
-      html: await resp.text(),
-      iframe: ipynbIframe,
-      statusText: resp.statusText,
-      status: resp.status,
+    const ogUrl = {
+      en: `/lesson/${slug}`,
+      us: `/lesson/${slug}`,
+    };
+
+    const { title, description, translations } = lesson;
+    const translationsExists = Object.keys(translations).length > 0;
+
+    const exensionName = getExtensionName(lesson.readme_url);
+    let markdown = '';
+    let ipynbHtml = '';
+
+    if (exensionName !== 'ipynb') {
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+      if (resp.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await resp.text();
+    } else {
+      const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+      const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
+      const resp = await fetch(ipynbHtmlUrl);
+
+      ipynbHtml = {
+        html: await resp.text(),
+        iframe: ipynbIframe,
+        statusText: resp.statusText,
+        status: resp.status,
+      };
+    }
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us,
+        link: `/lesson/${translations?.us}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/lesson/${translations?.en}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es,
+        link: `/es/lesson/${translations?.es}`,
+      },
+    ].filter((item) => translations?.[item?.value] !== undefined);
+
+    const eventStructuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: lesson?.title,
+      description: lesson?.description,
+      url: `${ORIGIN_HOST}/${slug}`,
+      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      datePublished: lesson?.published_at,
+      dateModified: lesson?.updated_at,
+      author: lesson?.author ? {
+        '@type': 'Person',
+        name: `${lesson?.author?.first_name} ${lesson?.author?.last_name}`,
+      } : null,
+      keywords: lesson?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}/${slug}`,
+      },
+    };
+
+    const cleanedStructuredData = cleanObject(eventStructuredData);
+
+    return {
+      props: {
+        seo: {
+          title,
+          description: description || '',
+          image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+          pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
+          url: ogUrl.en || `/${locale}/lesson/${slug}`,
+          slug,
+          type: 'article',
+          card: 'large',
+          translations,
+          locales,
+          locale,
+          keywords: lesson?.seo_keywords || '',
+          publishedTime: lesson?.created_at || '',
+          modifiedTime: lesson?.updated_at || '',
+        },
+        fallback: false,
+        lesson: {
+          ...lesson,
+          collab_url: finalPathname,
+          structuredData: cleanedStructuredData,
+        },
+        translations: translationArray,
+        markdown,
+        ipynbHtml,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type LESSON for /${locale}/lesson/${slug}`, error);
+    return {
+      notFound: true,
     };
   }
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/lesson/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/lesson/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/lesson/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: lesson?.title,
-    description: lesson?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: lesson?.published_at,
-    dateModified: lesson?.updated_at,
-    author: lesson?.author ? {
-      '@type': 'Person',
-      name: `${lesson?.author?.first_name} ${lesson?.author?.last_name}`,
-    } : null,
-    keywords: lesson?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        title,
-        description: description || '',
-        image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-        pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
-        url: ogUrl.en || `/${locale}/lesson/${slug}`,
-        slug,
-        type: 'article',
-        card: 'large',
-        translations,
-        locales,
-        locale,
-        keywords: lesson?.seo_keywords || '',
-        publishedTime: lesson?.created_at || '',
-        modifiedTime: lesson?.updated_at || '',
-      },
-      fallback: false,
-      lesson: {
-        ...lesson,
-        collab_url: finalPathname,
-        structuredData: cleanedStructuredData,
-      },
-      translations: translationArray,
-      markdown,
-      ipynbHtml,
-    },
-  };
 };
 
 function LessonSlug({ lesson, markdown, ipynbHtml }) {

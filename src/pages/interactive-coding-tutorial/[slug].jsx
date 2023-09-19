@@ -48,109 +48,117 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
-  const result = await response.json();
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
 
-  const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+  try {
+    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
+    const result = await response.json();
+    const engPrefix = {
+      us: 'en',
+      en: 'en',
+    };
 
-  if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+    if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const {
+      title, description, translations, preview,
+    } = result;
+    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+    if (markdownResp.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
+    const markdown = await markdownResp.text();
+
+    const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
+    const ogUrl = {
+      en: `/interactive-coding-tutorial/${slug}`,
+      us: `/interactive-coding-tutorial/${slug}`,
+    };
+
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us,
+        link: `/interactive-coding-tutorial/${translations?.us}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/interactive-coding-tutorial/${translations?.en}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es,
+        link: `/es/interactive-coding-tutorial/${translations?.es}`,
+      },
+    ].filter((item) => translations?.[item?.value] !== undefined);
+
+    const eventStructuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: result?.title,
+      description: result?.description,
+      url: `${ORIGIN_HOST}/${slug}`,
+      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      datePublished: result?.published_at,
+      dateModified: result?.updated_at,
+      author: result?.author ? {
+        '@type': 'Person',
+        name: `${result?.author?.first_name} ${result?.author?.last_name}`,
+      } : null,
+      keywords: result?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}/${slug}`,
+      },
+    };
+
+    const cleanedStructuredData = cleanObject(eventStructuredData);
+
+    return {
+      props: {
+        seo: {
+          title,
+          url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
+          slug,
+          description: description || '',
+          image: preview || staticImage,
+          translations,
+          pathConnector: '/interactive-coding-tutorial',
+          type: 'article',
+          keywords: result?.seo_keywords || '',
+          card: 'large',
+          locales,
+          locale,
+          publishedTime: result?.created_at || '',
+          modifiedTime: result?.updated_at || '',
+        },
+        project: {
+          ...result,
+          difficulty,
+          structuredData: cleanedStructuredData,
+        },
+        markdown,
+        translations: translationArray,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type PROJECT for /${locale}/interactive-coding-tutorial/${slug}`, error);
     return {
       notFound: true,
     };
   }
-
-  const {
-    title, description, translations, preview,
-  } = result;
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-  if (markdownResp.status >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-  const markdown = await markdownResp.text();
-
-  const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
-  const ogUrl = {
-    en: `/interactive-coding-tutorial/${slug}`,
-    us: `/interactive-coding-tutorial/${slug}`,
-  };
-
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/interactive-coding-tutorial/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/interactive-coding-tutorial/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/interactive-coding-tutorial/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: result?.title,
-    description: result?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: result?.published_at,
-    dateModified: result?.updated_at,
-    author: result?.author ? {
-      '@type': 'Person',
-      name: `${result?.author?.first_name} ${result?.author?.last_name}`,
-    } : null,
-    keywords: result?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        title,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
-        slug,
-        description: description || '',
-        image: preview || staticImage,
-        translations,
-        pathConnector: '/interactive-coding-tutorial',
-        type: 'article',
-        keywords: result?.seo_keywords || '',
-        card: 'large',
-        locales,
-        locale,
-        publishedTime: result?.created_at || '',
-        modifiedTime: result?.updated_at || '',
-      },
-      project: {
-        ...result,
-        difficulty,
-        structuredData: cleanedStructuredData,
-      },
-      markdown,
-      translations: translationArray,
-    },
-  };
 };
 
 function TableInfo({ t, project, commonTextColor }) {
