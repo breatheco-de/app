@@ -21,7 +21,7 @@ export async function getServerSideProps({ query, locale }) {
   const planFormated = plan && encodeURIComponent(plan);
   const suggestedPlan = planFormated ? await getSuggestedPlan(planFormated, translations) : {};
 
-  if (suggestedPlan?.status_code >= 400) {
+  if (Object.values(suggestedPlan).length === 0 || suggestedPlan?.status_code >= 400) {
     return {
       notFound: true,
     };
@@ -48,8 +48,8 @@ function PricingPage({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
 
-  const basicPlan = data.plans.original_plan;
-  const suggestedPlan = data.plans.suggested_plan;
+  const basicPlan = data?.plans?.original_plan;
+  const suggestedPlan = data?.plans?.suggested_plan;
 
   const allFeaturedPlans = [
     ...basicPlan?.plans || [],
