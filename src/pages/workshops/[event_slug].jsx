@@ -34,7 +34,7 @@ export const getStaticPaths = async ({ locales }) => {
   const paths = data.filter((ev) => ev?.slug)
     .flatMap((res) => locales.map((locale) => ({
       params: {
-        event_slug: res.slug,
+        event_slug: res?.slug,
       },
       locale,
     })));
@@ -503,6 +503,10 @@ function Page({ event }) {
             <ShowOnSignUp
               hideForm={finishedEvent}
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
+              refetchAfterSuccess={() => {
+                getMySubscriptions();
+                getCurrentConsumables();
+              }}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
                   <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />

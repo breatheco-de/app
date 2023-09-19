@@ -5,6 +5,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import ProjectList from '../../js_modules/projects/ProjectList';
 import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
+import { ORIGIN_HOST } from '../../utils/variables';
 
 function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +35,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   return (
     <div>
       <Head>
-        <link rel="canonical" href={`https://4geeks.com${pagePath}`} />
+        <link rel="canonical" href={`${ORIGIN_HOST}${pagePath}`} />
         {currentPage - 1 > 0 && (
           <link rel="prev" href={`${pathname}?page=${currentPage - 1}`} />
         )}

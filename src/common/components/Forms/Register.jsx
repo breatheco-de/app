@@ -9,6 +9,7 @@ import {
   Box,
   Avatar,
   useToast,
+  Checkbox,
   // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
@@ -19,6 +20,7 @@ import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
 import modifyEnv from '../../../../modifyEnv';
+import NextChakraLink from '../NextChakraLink';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
@@ -31,6 +33,7 @@ function Register({ setIsLoggedFromRegister }) {
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan({ enableRedirectOnCTA: true });
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [isChecked, setIsChecked] = useState(false);
   const accessToken = getStorageItem('accessToken');
   const toast = useToast();
   // const [showPSW, setShowPSW] = useState(false);
@@ -411,11 +414,22 @@ function Register({ setIsLoggedFromRegister }) {
                 )}
               </Field> */}
 
+              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                <Text size="10px">
+                  {t('signup:validators.termns-and-conditions-required')}
+                  {' '}
+                  <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                    {t('common:privacy-policy')}
+                  </NextChakraLink>
+                </Text>
+              </Checkbox>
+
               <Button
                 variant="default"
                 fontSize="l"
                 isLoading={isSubmitting}
                 type="submit"
+                isDisabled={isChecked === false}
               >
                 {t('register')}
               </Button>

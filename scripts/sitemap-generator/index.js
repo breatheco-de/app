@@ -31,7 +31,7 @@ async function generateSitemap() {
 
   const exercisesPages = await getAsset('exercise');
   const projectsPages = await getAsset('project');
-  const howTosPages = await getAsset('article').then(
+  const howTosPages = await getAsset('LESSON,ARTICLE').then(
     (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
   );
   const technologyLandingPages = await getLandingTechnologies();

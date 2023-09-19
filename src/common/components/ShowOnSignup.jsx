@@ -17,7 +17,10 @@ import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
-function ShowOnSignUp({ headContent, title, description, childrenDescription, subContent, readOnly, children, hideForm, hideSwitchUser, ...rest }) {
+function ShowOnSignUp({
+  headContent, title, description, childrenDescription, subContent,
+  readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+}) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
@@ -73,6 +76,7 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
     if (data?.access_token) {
       handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
         .finally(() => {
+          refetchAfterSuccess();
           setVerifyEmailProps({
             data: {
               ...allValues,
@@ -301,6 +305,7 @@ function ShowOnSignUp({ headContent, title, description, childrenDescription, su
         handlerText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
+          refetchAfterSuccess();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
@@ -321,6 +326,7 @@ ShowOnSignUp.propTypes = {
   hideForm: PropTypes.bool,
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
+  refetchAfterSuccess: PropTypes.func,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -333,6 +339,7 @@ ShowOnSignUp.defaultProps = {
   hideForm: false,
   childrenDescription: null,
   hideSwitchUser: false,
+  refetchAfterSuccess: () => {},
 };
 
 export default ShowOnSignUp;

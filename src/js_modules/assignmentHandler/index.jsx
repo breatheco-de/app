@@ -12,6 +12,7 @@ import {
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import { ORIGIN_HOST } from '../../utils/variables';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
@@ -640,7 +641,7 @@ function ButtonHandler({
     es: '/es/',
     en: '/',
   };
-  const projectLink = `https://4geeks.com${lang[router.locale]}project/${currentTask.associated_slug}`;
+  const projectLink = `${ORIGIN_HOST}${lang[router.locale]}project/${currentTask.associated_slug}`;
 
   // const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 

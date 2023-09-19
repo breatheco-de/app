@@ -179,7 +179,7 @@ function profileHandlers({
               show: true,
             })) : [];
 
-            const trialPlan = (!financingOptionsManyMonthsExists) ? {
+            const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
               title: t('subscription.upgrade-modal.free_trial'),
               price: 0,
               priceText: getTrialLabel().priceText,
