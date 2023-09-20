@@ -154,7 +154,7 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}`, {
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
         headers: academyId && {
           academy: academyId,
         },
