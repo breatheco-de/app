@@ -45,7 +45,7 @@
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
   "start-free-course": "Start free course",
-  "free": "Totalmente gratuito.",
+  "free": "Totally free",
   "free_trial": "Prueba gratuita",
   "monthly_payment": "Monthly payment",
   "quarterly_payment": "Quarterly payment",
@@ -140,7 +140,7 @@
       "type": "Basic",
       "hook-message": "Get ready to meet our academy",
       "title": "Free Member",
-      "description": "Learn basic HTML, CSS, JavaScript and React",
+      "description": "All you need to start learning to code",
       "button-title": "Start free"
     },
     "premium-plan": {
