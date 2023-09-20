@@ -18,8 +18,8 @@ export async function getServerSideProps({ query, locale }) {
   axiosInstance.defaults.headers.common['Accept-Language'] = locale;
 
   const { plan } = query;
-  const planFormated = plan && encodeURIComponent(plan);
-  const suggestedPlan = planFormated ? await getSuggestedPlan(planFormated, translations) : {};
+  const planFormated = (plan && encodeURIComponent(plan)) || '4geeks-standard';
+  const suggestedPlan = await getSuggestedPlan(planFormated, translations);
 
   if (Object.values(suggestedPlan).length === 0 || suggestedPlan?.status_code >= 400) {
     return {
@@ -48,16 +48,31 @@ function PricingPage({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
 
-  const basicPlan = data?.plans?.original_plan;
+  const originalPlan = data?.plans?.original_plan;
   const suggestedPlan = data?.plans?.suggested_plan;
+  const existsYearlyInOriginalPlan = originalPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
+  const existsYearlyInSuggestedPlan = suggestedPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
 
   const allFeaturedPlans = [
-    ...basicPlan?.plans || [],
+    ...originalPlan?.plans || [],
     ...suggestedPlan?.plans || [],
   ];
 
-  const monthlyPlans = allFeaturedPlans?.length > 0 ? allFeaturedPlans.filter((p) => p?.period !== 'YEAR') : [];
-  const yearlyPlans = allFeaturedPlans?.length > 0 ? allFeaturedPlans.filter((p) => p?.period === 'YEAR') : [];
+  const getYearlyPlans = () => {
+    if (!existsYearlyInOriginalPlan && existsYearlyInSuggestedPlan) {
+      const yearlyPlan = suggestedPlan?.plans?.filter((p) => p?.period === 'YEAR');
+      const freeOrTrialPlan = originalPlan?.plans?.filter((p) => p?.price === 0 || p?.period === 'TRIAL' || p?.period === 'FREE') || [];
+      return [...freeOrTrialPlan, ...yearlyPlan];
+    }
+    return allFeaturedPlans.filter((p) => p?.period === 'YEAR');
+  };
+
+  const monthlyPlans = allFeaturedPlans?.length > 0
+    ? allFeaturedPlans.filter((p) => p?.period !== 'YEAR')
+    : [];
+  const yearlyPlans = allFeaturedPlans?.length > 0
+    ? getYearlyPlans()
+    : [];
 
   const switcherInfo = [
     {

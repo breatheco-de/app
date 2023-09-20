@@ -51,8 +51,8 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       },
     },
   };
-  const viewProps = item.price > 0 ? utilProps.premium : utilProps.basic;
-  const isFree = item.price === 0;
+  const viewProps = item?.tag === 'suggested' ? utilProps.premium : utilProps.basic;
+  const isOriginalPlan = item?.tag === 'original';
   const border = viewProps?.border;
   const background = viewProps?.background;
   const featured = viewProps?.featured;
@@ -82,11 +82,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         <Box as="span" color="white" width="fit-content" padding="4px 1rem" fontSize="18px" fontWeight={700} background={background} borderRadius="22px">
           {viewProps.type}
         </Box>
-        <Text fontSize="18px" height="40px" fontWeight={700} color={isFree ? '' : 'yellow.default'} textAlign="center" style={{ textWrap: 'balance' }}>
+        <Text fontSize="18px" height="40px" fontWeight={700} color={isOriginalPlan ? '' : 'yellow.default'} textAlign="center" style={{ textWrap: 'balance' }}>
           {viewProps.hookMessage}
         </Text>
         <Box>
-          {item.price > 0 ? (
+          {!isOriginalPlan ? (
             <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
               <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
                 {`$${item.price}`}
@@ -110,7 +110,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             </Text>
           ) : (
             <Button variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
-              {!isFree && (
+              {!isOriginalPlan && (
                 <Icon icon="rocket" color="white" width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
               )}
               {viewProps.button.title}
@@ -120,8 +120,8 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       </Flex>
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">
-          <Text display="flex" justifyContent="center" size={isFree ? '18px' : '21px'} fontWeight={700} textAlign="center">
-            {!isFree && (
+          <Text display="flex" justifyContent="center" size={isOriginalPlan ? '18px' : '21px'} fontWeight={700} textAlign="center">
+            {!isOriginalPlan && (
               <Icon icon="rocket" color={hexColor.yellowDefault} width="16px" height="24px" style={{ transform: 'rotate(35deg)', alignSelf: 'center', marginRight: '10px' }} />
             )}
             {viewProps.title}
