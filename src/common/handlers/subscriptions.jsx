@@ -22,11 +22,13 @@ export const getTranslations = (t = () => {}) => {
         day: t('common:word-connector.day'),
         week: t('common:word-connector.week'),
         month: t('common:word-connector.month'),
+        year: t('common:word-connector.year'),
       };
       const pluralTranslation = {
         day: t('common:word-connector.days'),
         week: t('common:word-connector.weeks'),
         month: t('common:word-connector.months'),
+        year: t('common:word-connector.years'),
       };
       const periodText = qty > 1 ? pluralTranslation[periodValue] : singularTranslation[periodValue];
       return t('signup:info.free-trial-period', { qty, period: periodText });
