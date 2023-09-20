@@ -65,15 +65,16 @@ function Summary() {
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
-    if (planId?.length > 0) {
-      const findPlan = checkoutData?.plans?.find((plan) => plan.plan_id === planId);
-      setSelectedPlanCheckoutData(findPlan);
-      getPlanProps(findPlan);
+    const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
+    if (findedPlan) {
+      if (findedPlan) {
+        setSelectedPlanCheckoutData(findedPlan);
+        getPlanProps(findedPlan);
+      }
     }
 
-    if (!planId && checkoutData?.plans[selectedIndex]) {
+    if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);

@@ -12,9 +12,11 @@
     "day": "day",
     "week": "week",
     "month": "month",
+    "year": "year",
     "days": "days",
     "weeks": "weeks",
-    "months": "months"
+    "months": "months",
+    "years": "years"
   },
   "heading": "Welcome to",
   "change-locale": "Change locale",
