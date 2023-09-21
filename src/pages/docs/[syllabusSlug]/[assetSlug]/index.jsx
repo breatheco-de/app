@@ -30,11 +30,15 @@ import { MDSkeleton } from '../../../../common/components/Skeleton';
 
 function Docs() {
   const router = useRouter();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('docs');
   const [syllabusData, setSyllabusData] = useState(null);
   const [asset, setAsset] = useState(null);
   const [open, setOpen] = useState(null);
   const [moduleMap, setModuleMap] = useState([]);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const { syllabusSlug, assetSlug } = router.query;
   const { hexColor, borderColor, featuredLight, fontColor } = useStyle();
@@ -45,8 +49,9 @@ function Docs() {
 
   const getSyllabusData = async () => {
     try {
-      const result = await bc.syllabus({ version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+      const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
       const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+      if (!syllabus) throw new Error('syllabus not found');
       setSyllabusData(syllabus);
 
       const moduleData = syllabus.json.days.filter((assignment) => {
@@ -78,12 +83,18 @@ function Docs() {
       });
       setModuleMap(moduleData);
     } catch (e) {
+      setLoadStatus({
+        loading: false,
+        status: 'not-found',
+      });
       console.log(e);
     }
   };
 
   const getAssetData = async () => {
     try {
+      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((myAsset) => myAsset.slug === assetSlug));
+      if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
 
@@ -122,7 +133,15 @@ function Docs() {
         ipynbHtml,
         collab_url: finalPathname,
       });
+      setLoadStatus({
+        loading: false,
+        status: 'done',
+      });
     } catch (e) {
+      setLoadStatus({
+        loading: false,
+        status: '',
+      });
       console.log(e);
     }
   };
@@ -132,13 +151,18 @@ function Docs() {
   }, []);
 
   useEffect(() => {
-    getAssetData();
-  }, [assetSlug]);
+    if (moduleMap.length > 0) getAssetData();
+  }, [assetSlug, moduleMap]);
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
 
   return (
     <>
+      {!loadStatus.loading && loadStatus.status === 'not-found' && (
+        <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">
+          {t('not-found')}
+        </Heading>
+      )}
       <GridContainer
         maxWidth="1228px"
         margin="28px auto 0 auto"
@@ -215,7 +239,11 @@ function Docs() {
             </Heading>
           )}
 
-          {asset?.markdown && !isIpynb ? (
+          {loadStatus.loading && (
+            <MDSkeleton />
+          )}
+
+          {asset?.markdown && !isIpynb && (
             <Box
               height="100%"
               margin="0 rem auto 0 auto"
@@ -230,12 +258,6 @@ function Docs() {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
             </Box>
-          ) : (
-            <>
-              {!isIpynb && (
-                <MDSkeleton />
-              )}
-            </>
           )}
 
           {isIpynb && asset?.markdown === '' && asset?.ipynbHtml?.html && (
