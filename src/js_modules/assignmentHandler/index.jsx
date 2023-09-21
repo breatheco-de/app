@@ -394,6 +394,7 @@ function DeliverHandler({
 
 export function NoInfoModal({ isOpen, onClose }) {
   const { t } = useTranslation('assignments');
+  const { hexColor } = useStyle();
   const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
 
   return (
@@ -402,7 +403,7 @@ export function NoInfoModal({ isOpen, onClose }) {
       <ModalContent borderRadius="17px" marginTop="10%">
         <ModalHeader
           fontSize="15px"
-          color="gray.600"
+          color={hexColor.fontColor2}
           textAlign="center"
           letterSpacing="0.05em"
           borderBottom="1px solid"

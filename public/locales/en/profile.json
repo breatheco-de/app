@@ -32,7 +32,7 @@
   ],
   "remove-github-modal": {
     "title": "Remove Github account",
-    "description": "By removing your Github account, any github login will be unlinked; however, you will be able to sync it again, if you wish"
+    "description": "By removing your Github account, any Github login will be unlinked; however, you will be able to sync it again, if you wish"
   },
   "share-certificate": {
     "title": "Share your new career title",

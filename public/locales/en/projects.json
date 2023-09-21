@@ -1,7 +1,7 @@
 {
   "seo": {
     "title": "Projects",
-    "description": "A place to work new projects and improve your knowledge about coding programming.",
+    "description": "A place to work on new projects and improve your knowledge about coding programming.",
     "keywords": ["interactive coding projects", "projects"],
     "image": "{{domain}}/static/images/4geeks.png"
   },

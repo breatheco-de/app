@@ -22,23 +22,14 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
-import { parseQuerys } from '../../../utils/url';
+import { getAsset } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
-  const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
+  const data = await getAsset('LESSON,ARTICLE', {}, 'how-to');
 
-  const paths = howToData.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -53,110 +44,118 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
-  const data = await resp.json();
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
 
-  const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+  try {
+    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
+    const data = await resp.json();
+    const engPrefix = {
+      us: 'en',
+      en: 'en',
+    };
 
-  if (resp.status >= 400 || !isCurrenLang) {
+    const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+    if (resp.status >= 400 || !isCurrenLang) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const {
+      title, description, translations, preview,
+    } = data;
+
+    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+    if (markdownResp?.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const markdown = await markdownResp.text();
+
+    const ogUrl = {
+      en: `/how-to/${slug}`,
+      us: `/how-to/${slug}`,
+    };
+
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us,
+        link: `/how-to/${translations?.us}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/how-to/${translations?.en}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es,
+        link: `/es/how-to/${translations?.es}`,
+      },
+    ].filter((item) => translations?.[item?.value] !== undefined);
+
+    const eventStructuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: data?.title,
+      description: data?.description,
+      url: `${ORIGIN_HOST}/${slug}`,
+      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      datePublished: data?.published_at,
+      dateModified: data?.updated_at,
+      author: data?.author ? {
+        '@type': 'Person',
+        name: `${data?.author?.first_name} ${data?.author?.last_name}`,
+      } : null,
+      keywords: data?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}/${slug}`,
+      },
+    };
+    const cleanedStructuredData = cleanObject(eventStructuredData);
+
+    return {
+      props: {
+        seo: {
+          title,
+          description: description || '',
+          image: preview || staticImage,
+          type: 'article',
+          translations,
+          pathConnector: '/how-to',
+          url: ogUrl.en || `/${locale}/how-to/${slug}`,
+          slug,
+          keywords: data?.seo_keywords || '',
+          card: 'default',
+          locales,
+          locale,
+          publishedTime: data?.created_at || '',
+          modifiedTime: data?.updated_at || '',
+        },
+        translations: translationArray,
+        // page props
+        fallback: false,
+        data: {
+          ...data,
+          structuredData: cleanedStructuredData,
+        },
+        markdown: markdown || '',
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type HOW-TO for /${locale}/how-to/${slug}`, error);
     return {
       notFound: true,
     };
   }
-
-  const {
-    title, description, translations, preview,
-  } = data;
-
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-  if (markdownResp?.status >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const markdown = await markdownResp.text();
-
-  const ogUrl = {
-    en: `/how-to/${slug}`,
-    us: `/how-to/${slug}`,
-  };
-
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/how-to/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/how-to/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/how-to/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: data?.title,
-    description: data?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: data?.published_at,
-    dateModified: data?.updated_at,
-    author: data?.author ? {
-      '@type': 'Person',
-      name: `${data?.author?.first_name} ${data?.author?.last_name}`,
-    } : null,
-    keywords: data?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        title,
-        description: description || '',
-        image: preview || staticImage,
-        type: 'article',
-        translations,
-        pathConnector: '/how-to',
-        url: ogUrl.en || `/${locale}/how-to/${slug}`,
-        slug,
-        keywords: data?.seo_keywords || '',
-        card: 'default',
-        locales,
-        locale,
-        publishedTime: data?.created_at || '',
-        modifiedTime: data?.updated_at || '',
-      },
-      translations: translationArray,
-      // page props
-      fallback: false,
-      data: {
-        ...data,
-        structuredData: cleanedStructuredData,
-      },
-      markdown: markdown || '',
-    },
-  };
 };
 
 export default function HowToSlug({ data, markdown }) {

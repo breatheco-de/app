@@ -209,7 +209,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: 0,
-          priceText: isTotallyFree ? 'Free' : t('free-trial'),
+          priceText: isTotallyFree ? 'Free' : t('free_trial'),
           plan_id: `p-${singlePlan?.trial_duration}-trial`,
           period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
           type: isTotallyFree ? 'FREE' : 'TRIAL',

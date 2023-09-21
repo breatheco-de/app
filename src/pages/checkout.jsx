@@ -193,9 +193,8 @@ function Checkout() {
           const existsAmountPerMonth = data?.price_per_month > 0;
           const existsAmountPerQuarter = data?.price_per_quarter > 0;
           const existsAmountPerYear = data?.price_per_year > 0;
-          const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
 
-          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
+          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
           if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
             toast({
