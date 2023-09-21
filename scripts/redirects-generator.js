@@ -3,13 +3,17 @@
 import axios from 'axios';
 import { BREATHECODE_HOST, isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
 import assetLists from '../src/lib/asset-list.json';
+import { parseQuerys } from '../src/utils/url';
 
 const redirectConfig = {
   permanent: true,
 };
 
 const getAliasRedirects = async () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=${WHITE_LABEL_ACADEMY}`)
+  const qs = parseQuerys({
+    academy: WHITE_LABEL_ACADEMY,
+  });
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect${qs}`)
     .then((res) => res.data)
     .catch((err) => {
       console.error('Error getting alias redirects', err);
