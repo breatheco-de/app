@@ -132,7 +132,7 @@ function Content() {
     }));
     const customHandler = () => {
       if (nextModule && cohortSlug && firstTask) {
-        router.push(router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`));
+        router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
       }
     };
     if (user?.id) {
@@ -229,16 +229,20 @@ function Content() {
     });
   };
 
-  const onClickAssignment = (e, item) => {
-    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
-
-    router.push(link);
+  const cleanCurrentData = () => {
+    setShowModal(false);
     setCurrentData({});
     setCurrentSelectedModule(null);
     setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
+  };
+  const onClickAssignment = (e, item) => {
+    const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
+
+    router.push(link);
+    cleanCurrentData();
   };
 
   const EventIfNotFound = () => {
@@ -274,26 +278,26 @@ function Content() {
             assetType: assetTypeValues[lesson],
           });
           setReadmeUrlPathname(finalPathname);
-          let currentlocaleLang = data.translations[language];
+          let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           const exensionName = getExtensionName(data.readme_url);
           if (exensionName === 'ipynb') {
             setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
-            if (currentlocaleLang === undefined) {
-              currentlocaleLang = `${lessonSlug}-${language}`;
+            if (currentTranslationSlug === undefined) {
+              currentTranslationSlug = `${lessonSlug}-${language}`;
             }
             Promise.all([
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}.md`),
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentlocaleLang}?asset_type=${assetTypeValues[lesson]}`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
             ])
               .then(([respMarkdown, respData]) => {
                 const currData = respData.data;
                 const markdownData = respMarkdown.data;
 
                 if (lesson === 'answer') {
-                  setQuizSlug(currentlocaleLang);
+                  setQuizSlug(currentTranslationSlug);
                 } else {
                   setQuizSlug(null);
                 }
@@ -433,12 +437,7 @@ function Content() {
   })[currentModuleIndex];
 
   const handleNextPage = () => {
-    setCurrentData({});
-    setCurrentSelectedModule(null);
-    setCallToActionProps({});
-    setReadme(null);
-    setIpynbHtmlUrl(null);
-    setCurrentBlankProps(null);
+    cleanCurrentData();
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
@@ -486,12 +485,7 @@ function Content() {
   };
 
   const handlePrevPage = () => {
-    setCurrentData({});
-    setCurrentSelectedModule(null);
-    setCallToActionProps({});
-    setReadme(null);
-    setIpynbHtmlUrl(null);
-    setCurrentBlankProps(null);
+    cleanCurrentData();
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
@@ -715,7 +709,7 @@ function Content() {
             </Box>
           )}
 
-          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
             {currentData?.url && !isQuiz && (
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
@@ -803,7 +797,6 @@ function Content() {
               )}
             </Box>
             <Box display="flex" gridGap="3rem">
-              {/* showPendingTasks bool to change states */}
               {(previousAssignment || !!prevModule) && (
                 <Box
                   color="blue.default"

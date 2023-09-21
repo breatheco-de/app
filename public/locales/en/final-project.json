@@ -32,6 +32,7 @@
     "add-participants": "Add participants",
     "participants-hint": "Each student taking place in this project.",
     "button":"Submit final project",
+    "no-students": "No other students have been found on this cohort, you cannot add any members to this project",
     "confirmation": {
       "title": "Are you sure?",
       "text": "If you remove yourself from this project, you won't have access to it, and your teammates will have to add you again to regain access.",

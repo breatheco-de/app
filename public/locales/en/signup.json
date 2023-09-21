@@ -13,7 +13,6 @@
   "payment-info": "Payment information",
   "select-payment-plan": "Select your payment plan:",
   "what-you-will-get": "What you will get:",
-  "free-trial": "Free trial",
   "contact-information": "Contact information",
   "choose-your-class": "Choose your class",
   "summary": "Summary",
@@ -46,12 +45,15 @@
   "already-have-account": "Already have an account?",
   "login-here": "Login here.",
   "start-free-course": "Start free course",
+  "free": "Totally free",
+  "free_trial": "Prueba gratuita",
   "monthly_payment": "Monthly payment",
   "quarterly_payment": "Quarterly payment",
   "half_yearly_payment": "Half yearly payment",
   "yearly_payment": "Yearly payment",
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
+  "our_plans": "Our plans",
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
@@ -62,6 +64,7 @@
     "will-pay-per-half-year": "You will subscribe and pay ${{price}} dollars every half year",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
     "free": "Totally free",
+    "free-trial-period": "Free trial for {{qty}} {{period}}",
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
@@ -130,5 +133,22 @@
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
+  },
+  "pricing": {
+    "already-have-plan": "You already have it",
+    "basic-plan": {
+      "type": "Basic",
+      "hook-message": "Get ready to meet our academy",
+      "title": "Free Member",
+      "description": "All you need to start learning to code",
+      "button-title": "Start free"
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Improve your skills with extra challenges and benefits.",
+      "title": "Premium member",
+      "description": "All the content you need to become a hireable developer",
+      "button-title": "Get Premium"
+    }
   }
 }

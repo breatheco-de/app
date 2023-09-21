@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import { Box, ListItem, UnorderedList, useToast, Button } from '@chakra-ui/react';
+import { Box, ListItem, UnorderedList, useToast, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { Image } from '@chakra-ui/next-js';
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import SimpleModal from '../components/SimpleModal';
@@ -88,7 +87,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
     <SimpleModal
       isOpen={isCheckingSuccess}
       onClose={onClose}
-      style={{ marginTop: '10vh', padding: '16px' }}
+      style={{ marginTop: '10vh', padding: '0px' }}
       maxWidth="45rem"
       bodyStyles={{ padding: '0' }}
       borderRadius="13px"
@@ -96,7 +95,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
     >
       <Box display="flex" gridGap="16px">
         <Box width="100%">
-          <Image src="/static/images/vertical-banner.webp" width={294} height={364} style={{ objectFit: 'cover' }} margin="0 auto" alt="Purchase of standard plan completed" />
+          <Image src="/static/images/vertical-banner.webp" style={{ objectFit: 'cover', borderRadius: '13px 0 0 13px' }} margin="0 auto" alt="Purchase of standard plan completed" />
         </Box>
         <Box display="flex" gridGap="16px" flexDirection="column" justifyContent="center" width="100%" borderRadius="11px" padding="8px 16px" background={modal.featuredBackground}>
           <Heading as="h1" size="xsm" display="flex" flexDirection="column">

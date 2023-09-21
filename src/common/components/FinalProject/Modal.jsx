@@ -41,7 +41,16 @@ function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, clos
                   <Text size="18px" key={bullet} dangerouslySetInnerHTML={{ __html: bullet }} />
                 ))}
               </Flex>
-              <Button variant="default" onClick={() => setOpenForm(true)} width="fit-content" margin="auto 0 0 0" padding="0 1.8rem">
+              <Button
+                variant="default"
+                width="fit-content"
+                margin="auto 0 0 0"
+                padding="0 1.8rem"
+                onClick={() => {
+                  setOpenForm(true);
+                  closeModal();
+                }}
+              >
                 {finalProjectTranslation?.modal?.button || t('modal.button')}
               </Button>
             </Flex>

@@ -12,7 +12,7 @@
   "created": "Creado por:",
   "description": "Los siguientes ejercicios explican conceptos diferentes de programación y han sido publicados por miembros de BreatheCode, ahora 4Geeks, busca un ejercicio usando los filtros",
   "backToExercises": "Volver a ejercicios",
-  "direct-access-request": "Obtén acceso ahora",
+  "direct-access-request": "Registrate para obtener acceso",
   "direct-access-request-description": "Ingresa tu información y recibirás acceso instantáneo",
   "thanks": "¡Gracias!",
   "download": "Ya puedes descargar o clonar el material interactivo.",
@@ -21,11 +21,23 @@
   "clone": "Clonar localmente",
   "clone-tooltip": "Clonar repositorio",
   "how-to-clone": "Leer más sobre cómo clonar un proyecto",
+  "clone-link": "/es/how-to/como-clonar-un-repositorio-de-github",
   "modal" : {
     "title": "Elige un Proveedor Provisional",
     "text-part-one": "LearnPack te permite abrir estos ejercicios en VSCode de forma instantánea y gratuita utilizando uno de los siguientes proveedores:",
     "text-part-two": "Aquí puedes saber más sobre ",
     "or": " o "
+  },
+  "clone-modal" : {
+    "title": "¿Como clonar un proyecto?",
+    "text-part-one": "No lo recomendamos, pero algunos ejercicios se pueden descargar y ejecutar localmente usando VSCode y el ",
+    "text-part-two": ". Si quieres hacerlo, debes comenzar por clonar el proyecto en tu computadora escribiendo el siguiente comando en tu terminal:",
+    "note": "Nota: Esto creará una nueva carpeta “{{folder}}” en su computadora con el código del proyecto dentro.",
+    "copy-command": "¡El Comando ha sido copiado al portapapeles!",
+    "steps": [
+      "Abre esta carpeta en VSCode.",
+      "Lee el archivo README.md y sigue el resto de las instrucciones."
+    ]
   },
   "powered": "Desarrollado por ",
   "get-instant-access": "Obtener acceso",

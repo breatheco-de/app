@@ -1,4 +1,23 @@
 {
+  "word-connector": {
+    "and": "y",
+    "or": "o",
+    "to": "a",
+    "from": "de",
+    "of": "de",
+    "in": "en",
+    "on": "en",
+    "with": "con",
+    "for": "para",
+    "day": "día",
+    "week": "semana",
+    "month": "mes",
+    "year": "año",
+    "days": "días",
+    "weeks": "semanas",
+    "months": "meses",
+    "years": "años"
+  },
   "heading": "Bienvenido a",
   "change-locale": "Cambiar Idioma",
   "error-with-status": "{{statusCode}} error ocurrió en el servidor",

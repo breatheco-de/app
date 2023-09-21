@@ -1,6 +1,6 @@
-const { promisify } = require('util');
-const { resolve } = require('path');
-const fs = require('fs');
+import { promisify } from 'util';
+import { resolve } from 'path';
+import fs from 'fs';
 
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
@@ -31,7 +31,7 @@ const success = (msg, ...params) => {
   process.exit(0);
 };
 
-module.exports = {
+export {
   walk,
   fail,
   warn,

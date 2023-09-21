@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -18,14 +18,15 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent,
-  readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const { t } = useTranslation('workshops');
   const router = useRouter();
@@ -53,6 +54,7 @@ function ShowOnSignUp({
       },
       body: JSON.stringify({
         ...allValues,
+        ...subscribeValues,
         plan: '4geeks-standard',
       }),
     });
@@ -118,9 +120,9 @@ function ShowOnSignUp({
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding="0 18px 18px">
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
         {title && (
-          <Text size="21px" fontWeight={700} lineHeight="25px">
+          <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
             {title}
           </Text>
         )}
@@ -207,18 +209,28 @@ function ShowOnSignUp({
                     setFormProps={setFormProps}
                     readOnly={readOnly}
                   />
+                  <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                    <Text size="10px">
+                      {t('signup:validators.termns-and-conditions-required')}
+                      {' '}
+                      <Link variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                        {t('common:privacy-policy')}
+                      </Link>
+                    </Text>
+                  </Checkbox>
 
                   <Button
                     mt="10px"
                     type="submit"
                     variant="default"
+                    className={isLive ? 'pulse-blue' : ''}
                     isLoading={isSubmitting}
                     title={t('join-workshop')}
-                    isDisabled={readOnly}
+                    isDisabled={!isChecked || readOnly}
                   >
-                    {t('join-workshop')}
+                    {submitText || t('join-workshop')}
                   </Button>
-                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                  <Text textAlign="center" size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                     {t('signup:already-have-account')}
                     {' '}
                     <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
@@ -320,26 +332,34 @@ ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,
   subContent: PropTypes.node,
   title: PropTypes.string,
+  padding: PropTypes.string,
   description: PropTypes.string,
+  submitText: PropTypes.string,
+  subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   readOnly: PropTypes.bool,
   children: PropTypes.node,
   hideForm: PropTypes.bool,
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
+  isLive: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
   headContent: null,
   subContent: null,
   title: '',
+  padding: null,
   description: '',
+  submitText: null,
+  subscribeValues: {},
   readOnly: false,
   children: null,
   hideForm: false,
   childrenDescription: null,
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
+  isLive: false,
 };
 
 export default ShowOnSignUp;
