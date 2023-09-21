@@ -15,17 +15,16 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { nestAssignments } from '../../../../common/hooks/useModuleHandler';
 import useStyle from '../../../../common/hooks/useStyle';
-import useAuth from '../../../../common/hooks/useAuth';
 import bc from '../../../../common/services/breathecode';
 import Heading from '../../../../common/components/Heading';
 import Text from '../../../../common/components/Text';
 import Link from '../../../../common/components/NextChakraLink';
 import Icon from '../../../../common/components/Icon';
 import { getExtensionName } from '../../../../utils';
+import { WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
 import MarkDownParser from '../../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../../../common/components/GridContainer';
-import asPrivate from '../../../../common/context/PrivateRouteWrapper';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
 
@@ -37,21 +36,20 @@ function Docs() {
   const [open, setOpen] = useState(null);
   const [moduleMap, setModuleMap] = useState([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { user } = useAuth();
   const { syllabusSlug, assetSlug } = router.query;
   const { hexColor, borderColor, featuredLight, fontColor } = useStyle();
   const currentTheme = useColorModeValue('light', 'dark');
 
-  const academyId = user?.active_cohort?.academy_id;
   const markdownData = asset?.markdown ? getMarkDownContent(asset.markdown) : '';
   const isIpynb = asset?.ipynbHtml?.statusText === 'OK' || asset?.ipynbHtml?.iframe;
 
   const getSyllabusData = async () => {
     try {
-      const result = await bc.syllabus().get(academyId, syllabusSlug);
-      setSyllabusData(result.data);
+      const result = await bc.syllabus({ version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+      const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+      setSyllabusData(syllabus);
 
-      const moduleData = result.data.json.days.filter((assignment) => {
+      const moduleData = syllabus.json.days.filter((assignment) => {
         const {
           lessons, replits, assignments, quizzes,
         } = assignment;
@@ -167,7 +165,7 @@ function Docs() {
                 {open === index && (
                   <Box marginLeft="15px">
                     {module.modules.map((assetModule, i) => (
-                      <Box display="flex" flexDirection="column" justifyContent="center" margin="5px 0" height="55px" padding="0 15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
+                      <Box margin="5px 0" padding="0 15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
                         <Link
                           color={hexColor.fontColor3}
                           href={`/docs/${syllabusSlug}/${assetModule.slug}`}
@@ -330,4 +328,4 @@ function Docs() {
   );
 }
 
-export default asPrivate(Docs);
+export default Docs;
