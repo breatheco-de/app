@@ -1,4 +1,5 @@
 import { unSlugifyCapitalize } from '../../utils';
+import { BASE_PLAN } from '../../utils/variables';
 import bc from '../services/breathecode';
 
 /**
@@ -278,3 +279,44 @@ export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
     return {};
   }
 };
+
+/**
+ * @typedef {Object} PlanExistenceObject
+ * @property {object} basePlan - Original plan
+ * @property {object} suggestedPlan - Suggested plan
+ * @property {boolean} hasBasePlan - Indicates if the base plan is active.
+ * @property {boolean} hasASuggestedPlan - Indicates if a suggested plan is active.
+ */
+/**
+ * @param {Array} subscriptions List of subscriptions of user
+ * @returns {Promise<PlanExistenceObject>}
+ */
+export const validatePlanExistence = (subscriptions) => new Promise((resolve, reject) => {
+  try {
+    getSuggestedPlan(BASE_PLAN, {}, true)
+      .then((planComparison) => {
+        const { original_plan: basePlan, suggested_plan: suggestedPlan } = planComparison;
+
+        const hasBasePlan = subscriptions.some((s) => s?.plans?.[0]?.slug === basePlan?.slug);
+        const hasASuggestedPlan = subscriptions.some((s) => s?.plans?.[0]?.slug === suggestedPlan?.slug);
+
+        resolve({
+          basePlan,
+          suggestedPlan,
+          hasBasePlan,
+          hasASuggestedPlan,
+        });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  } catch (error) {
+    reject(error);
+    resolve({
+      basePlan: {},
+      suggestedPlan: {},
+      hasBasePlan: false,
+      hasASuggestedPlan: false,
+    });
+  }
+});
