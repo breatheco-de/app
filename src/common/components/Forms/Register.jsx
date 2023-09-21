@@ -76,7 +76,7 @@ function Register({ setIsLoggedFromRegister }) {
               },
             });
           } else {
-            router.push('/login?tab=login');
+            router.push('/login');
             setShowAlreadyMember(false);
           }
         }}
