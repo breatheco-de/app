@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {

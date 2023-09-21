@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -34,7 +33,6 @@ import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
-import handlers from '../../../common/handlers';
 import Projects from '../../../common/views/Projects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
 
@@ -118,7 +116,6 @@ function Assignments() {
     value: 'PROJECT',
   });
   const [studentLabel, setStudentLabel] = useState(null);
-  const [studentOptions, setStudentOptions] = useState([]);
   const [projectLabel, setProjectLabel] = useState(null);
   const [educationalLabel, setEducationalLabel] = useState(query.educational_status ? educationalStatusList.filter((option) => query.educational_status.toLowerCase().includes(option.value)) : [{
     label: t('educational-list.active'),
@@ -178,6 +175,24 @@ function Assignments() {
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
   };
 
+  const getDefaultStudent = () => {
+    if (query.student) {
+      bc.cohort({ users: query.student })
+        .getStudentsWithTasks(cohortSlug, academy)
+        .then((res) => {
+          if (res.data?.length > 0) {
+            const filteredStudent = res.data[0];
+            setStudentLabel(filteredStudent && {
+              id: filteredStudent.user.id,
+              value:
+                  `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+            });
+          }
+        });
+    }
+  };
+
   useEffect(() => {
     bc.admissions()
       .me()
@@ -206,6 +221,7 @@ function Assignments() {
           isClosable: true,
         });
       });
+    getDefaultStudent();
   }, []);
 
   useEffect(() => {
@@ -233,25 +249,6 @@ function Assignments() {
             duration: 7000,
             isClosable: true,
           });
-        });
-      handlers
-        .getStudents(selectedCohort.slug, academy)
-        .then((students) => {
-          setStudentOptions(students.map((student) => ({
-            id: student.user.id,
-            value:
-              `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-            label: `${student.user.first_name} ${student.user.last_name}`,
-          })));
-          if (query.student) {
-            const filteredStudent = students.find((student) => student.user.id === Number(query.student));
-            setStudentLabel(filteredStudent && {
-              id: filteredStudent.user.id,
-              value:
-                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
-              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
-            });
-          }
         });
     }
   }, [selectedCohort]);
@@ -332,6 +329,17 @@ function Assignments() {
     });
     loadStudents();
   };
+
+  const getOptionsStudents = (inputValue) => bc.cohort(inputValue ? { like: inputValue, limit: 2000 } : { limit: 2000 })
+    .getStudents(
+      selectedCohort.slug,
+      selectedCohort.academy || academy,
+    )
+    .then((students) => students.data.results.map((student) => ({
+      id: student.user.id,
+      value: student.user.id,
+      label: `${student.user.first_name} ${student.user.last_name}`,
+    })).sort((a, b) => a.label.localeCompare(b.label)));
 
   return (
     <>
@@ -599,7 +607,7 @@ function Assignments() {
               </Box>
             )}
             <Box marginBottom="10px">
-              <ReactSelect
+              <AsyncSelect
                 id="student-select"
                 placeholder={t('filter.student')}
                 isClearable
@@ -617,7 +625,9 @@ function Assignments() {
                       : null,
                   );
                 }}
-                options={studentOptions}
+                defaultOptions
+                cacheOptions
+                loadOptions={getOptionsStudents}
               />
             </Box>
             {currentView === 1 && (

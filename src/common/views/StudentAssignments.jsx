@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -171,15 +170,15 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
         onClose={() => setCurrentTask(null)}
       />
       {loadStatus.status === 'loading' && (
-      <Box
-        display="flex"
-        justifyContent="center"
-        mt="2rem"
-        mb="5rem"
-        position="relative"
-      >
-        <LoaderScreen width="80px" height="80px" />
-      </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          mt="2rem"
+          mb="5rem"
+          position="relative"
+        >
+          <LoaderScreen width="80px" height="80px" />
+        </Box>
       )}
     </Box>
   );
