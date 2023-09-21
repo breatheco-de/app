@@ -7,10 +7,11 @@ import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
-import { getSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
+import { getQueryString, isDevMode } from '../utils';
 
 export async function getServerSideProps({ query, locale }) {
   const t = await getT(locale, ['common', 'signup']);
@@ -19,7 +20,7 @@ export async function getServerSideProps({ query, locale }) {
 
   const { plan } = query;
   const planFormated = (plan && encodeURIComponent(plan)) || '4geeks-standard';
-  const suggestedPlan = await getSuggestedPlan(planFormated, translations);
+  const suggestedPlan = await fetchSuggestedPlan(planFormated, translations);
 
   if (Object.values(suggestedPlan).length === 0 || suggestedPlan?.status_code >= 400) {
     return {
@@ -42,14 +43,26 @@ const switchTypes = {
   yearly: 'yearly',
 };
 function PricingPage({ data }) {
-  const { t } = useTranslation('signup');
+  const { t } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
+  const queryPlan = getQueryString('plan');
+  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
+  const [principalData, setPrincipalData] = useState(data || {});
 
-  const originalPlan = data?.plans?.original_plan;
-  const suggestedPlan = data?.plans?.suggested_plan;
+  useEffect(() => {
+    if (isDevMode) {
+      fetchSuggestedPlan(planFormated, t)
+        .then((suggestedPlanData) => {
+          setPrincipalData(suggestedPlanData);
+        });
+    }
+  }, []);
+
+  const originalPlan = principalData?.plans?.original_plan;
+  const suggestedPlan = principalData?.plans?.suggested_plan;
   const existsYearlyInOriginalPlan = originalPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
   const existsYearlyInSuggestedPlan = suggestedPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
 
@@ -77,12 +90,12 @@ function PricingPage({ data }) {
   const switcherInfo = [
     {
       type: 'monthly',
-      name: t('info.monthly'),
+      name: t('signup:info.monthly'),
       exists: monthlyPlans.length > 0,
     },
     {
       type: 'yearly',
-      name: t('info.yearly'),
+      name: t('signup:info.yearly'),
       exists: yearlyPlans.length > 0,
     },
   ];
@@ -121,7 +134,7 @@ function PricingPage({ data }) {
       >
         <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="2 / span 8">
           <Heading as="h1" textAlign="center">
-            {t('our_plans')}
+            {t('signup:our_plans')}
           </Heading>
           {existentOptions.length > 0 && (
             <Box display="flex" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
