@@ -259,3 +259,18 @@ export const getSuggestedPlan = (slug, translations = {}) => bc.payment({
     });
   })
   .catch((err) => err?.response?.data);
+
+/**
+ * @param {String} planSlug Original plan slug
+ * @param {Function} t Translation function
+ * @returns {Promise<object>} Formated original and suggested plan data
+ */
+export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
+  try {
+    const suggestedPlanData = await getSuggestedPlan(planSlug, t);
+    return suggestedPlanData;
+  } catch (error) {
+    console.error(error);
+    return {};
+  }
+};
