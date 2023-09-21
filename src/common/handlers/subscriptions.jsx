@@ -220,43 +220,47 @@ export const processPlans = (data, {
  *
  * @param {string} slug - Original plan slug
  * @param {object} translations - Translations for plan content (optional)
+ * @param {boolean} ignoreProcessPlans - Whether to ignore processing the plans (optional)
  * @returns {Promise<object>} - The suggested with formated data data.
  */
-export const getSuggestedPlan = (slug, translations = {}) => bc.payment({
+export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = false) => bc.payment({
   original_plan: slug,
 }).planOffer()
   .then(async (resp) => {
     const data = resp?.data;
-    if (data.length === 0) {
+    const planComparison = data[0];
+
+    if (data?.length === 0) {
       return ({
         status_code: 404,
         detail: 'No suggested plan found',
       });
     }
-    const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
-    const suggestedPlan = currentOffer?.suggested_plan;
-    const originalPlan = currentOffer?.original_plan;
+    if (!ignoreProcessPlans) {
+      const originalPlan = planComparison?.original_plan;
+      const suggestedPlan = planComparison?.suggested_plan;
 
-    const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
-      quarterly: false,
-      halfYearly: false,
-      tag: 'original',
-    }, translations) : {};
+      const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
+        quarterly: false,
+        halfYearly: false,
+        tag: 'original',
+      }, translations) : {};
+      const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
+        quarterly: false,
+        halfYearly: false,
+        tag: 'suggested',
+      }, translations) : {};
 
-    const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
-      quarterly: false,
-      halfYearly: false,
-      tag: 'suggested',
-    }, translations) : {};
-
-    return ({
-      plans: {
-        original_plan: dataForOriginPlan,
-        suggested_plan: dataForSuggestedPlan,
-      },
-      details: currentOffer?.details,
-      title: currentOffer?.details?.title,
-    });
+      return ({
+        plans: {
+          original_plan: dataForOriginPlan,
+          suggested_plan: dataForSuggestedPlan,
+        },
+        details: planComparison?.details,
+        title: planComparison?.details?.title,
+      });
+    }
+    return planComparison;
   })
   .catch((err) => err?.response?.data);
 
