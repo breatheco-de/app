@@ -4,14 +4,17 @@ import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
+import ModalToGetAccess from '../common/components/ModalToGetAccess';
 
 const UID_OF_PAGE = 'home';
 
 function Page({ page }) {
   const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
   const landingUrl = page?.data?.landing_url;
@@ -26,6 +29,7 @@ function Page({ page }) {
   }, []);
   return prismicRef && prismicApi && (
     <Box className="prismic-body" pt="3rem">
+      <ModalToGetAccess isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <SliceZone slices={page?.data?.slices} components={components} />
     </Box>
   );

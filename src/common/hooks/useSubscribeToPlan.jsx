@@ -11,7 +11,7 @@ import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
 
-const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program' } = {}) => {
+const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {
   const { t } = useTranslation(['common']);
   const [planProps, setPlanProps] = useState({});
   const router = useRouter();
@@ -79,6 +79,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
     if (enableRedirectOnCTA === true && redirectTo?.length > 0) {
       router.push(redirectTo);
     } else {
+      onExternalClose();
       setIsCheckingSuccess(false);
     }
   };
