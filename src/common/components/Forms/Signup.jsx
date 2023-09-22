@@ -137,7 +137,7 @@ function SignupView({ onClose }) {
                 <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
                   {t('already-have-account')}
                   {' '}
-                  <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+                  <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
                 </Flex>
               </Box>
               <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
