@@ -25,13 +25,14 @@ function MobileNav({
   const prismicApi = process.env.PRISMIC_API;
 
   useEffect(() => {
-    if (haveSession) {
-      setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
-    }
-  }, [haveSession]);
-  const publicItems = NAV_ITEMS.filter((item) => item.private !== true);
+    const hasNavItems = NAV_ITEMS?.length > 0;
 
-  const customPublicItems = publicItems;
+    if (haveSession && hasNavItems) {
+      setPrivateItems(NAV_ITEMS.filter((item) => item?.private));
+    }
+  }, [haveSession, NAV_ITEMS]);
+  const publicItems = NAV_ITEMS.filter((item) => !item.private) || [];
+  const customPublicItems = [...publicItems];
   const allItems = [...privateItems, ...customPublicItems];
 
   // manage submenus in level 1
@@ -54,7 +55,7 @@ function MobileNav({
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {customPublicItems.length > 0 && allItems.map((item) => {
+      {allItems?.length > 0 && allItems.map((item) => {
         const {
           label, href, description, icon,
         } = item;
