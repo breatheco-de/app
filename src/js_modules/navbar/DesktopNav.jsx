@@ -20,9 +20,10 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const publicItems = NAV_ITEMS?.filter((item) => !item.private) || [];
   const customPublicItems = [...publicItems];
   const allItems = [...privateItems, ...customPublicItems];
+  const itemListAsc = allItems.sort((a, b) => a.position - b.position);
 
   const prepareSubMenuData = (item) => {
-    if (item.slug === 'social-and-live-learning') {
+    if (item.id === 'courses') {
       return extraContent;
     }
     return item?.subMenu;
@@ -30,7 +31,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {allItems.map((publicItem) => {
+      {itemListAsc.map((publicItem) => {
         const submenuData = prepareSubMenuData(publicItem);
         const subMenuLength = publicItem?.subMenu?.length || 0;
 

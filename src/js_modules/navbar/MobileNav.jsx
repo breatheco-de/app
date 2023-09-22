@@ -34,10 +34,11 @@ function MobileNav({
   const publicItems = NAV_ITEMS.filter((item) => !item.private) || [];
   const customPublicItems = [...publicItems];
   const allItems = [...privateItems, ...customPublicItems];
+  const itemListAsc = allItems.sort((a, b) => a.position - b.position);
 
   // manage submenus in level 1
   const prepareSubMenuData = (item) => {
-    if (item.slug === 'social-and-live-learning') {
+    if (item.id === 'courses') {
       return mktCourses;
     }
     return item?.subMenu;
@@ -55,13 +56,13 @@ function MobileNav({
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
     >
-      {allItems?.length > 0 && allItems.map((item) => {
+      {itemListAsc?.length > 0 && itemListAsc.map((item) => {
         const {
           label, href, description, icon,
         } = item;
         const submenuData = prepareSubMenuData(item);
 
-        if (item.slug === 'social-and-live-learning' && !prismicRef && !prismicApi) {
+        if (item.slug === 'courses' && !prismicRef && !prismicApi) {
           return null;
         }
 
