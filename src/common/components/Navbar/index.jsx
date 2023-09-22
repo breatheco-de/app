@@ -120,7 +120,22 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
-        setMktCourses(filterByTranslations || []);
+        const coursesStruct = filterByTranslations?.map((item) => ({
+          ...item,
+          slug: item?.slug,
+          label: item?.course_translation?.title,
+          asPath: `/course/${item?.slug}`,
+          icon: item?.icon_url,
+          description: item?.course_translation?.description,
+          subMenu: [
+            {
+              href: `/${item?.slug}`,
+              label: t('start-coding'),
+            },
+          ],
+        }));
+
+        setMktCourses(coursesStruct || []);
       })
       .catch((error) => {
         console.error(error);
@@ -175,19 +190,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     (item) => item?.cohort?.available_as_saas === false,
   );
 
-  const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
-    slug: item?.slug,
-    label: item?.course_translation?.title,
-    asPath: `/course/${item?.slug}`,
-    icon: item?.icon_url,
-    description: item?.course_translation?.description,
-    subMenu: [
-      {
-        href: `/${item?.slug}`,
-        label: t('start-coding'),
-      },
-    ],
-  })) : [];
+  const coursesList = marketingCourses.length > 0 ? marketingCourses : [];
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
@@ -324,7 +327,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={coursesList} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -583,7 +586,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
+          mktCourses={!isNotAvailableForMktCourses && coursesList}
           NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
           haveSession={sessionExists}
           translations={translations}
