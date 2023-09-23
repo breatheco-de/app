@@ -290,11 +290,13 @@ export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
  */
 /**
  * @param {Array} subscriptions List of subscriptions of user
+ * @param {String} plan Base plan slug
  * @returns {Promise<PlanExistenceObject>}
  */
-export const validatePlanExistence = (subscriptions) => new Promise((resolve, reject) => {
+export const validatePlanExistence = (subscriptions, plan = '') => new Promise((resolve, reject) => {
+  const plaSlug = plan || BASE_PLAN;
   try {
-    getSuggestedPlan(BASE_PLAN, {}, true)
+    getSuggestedPlan(plaSlug, {}, true)
       .then((planComparison) => {
         const { original_plan: basePlan, suggested_plan: suggestedPlan } = planComparison;
 
@@ -306,6 +308,7 @@ export const validatePlanExistence = (subscriptions) => new Promise((resolve, re
           suggestedPlan,
           hasBasePlan,
           hasASuggestedPlan,
+          allSubscriptions: subscriptions,
         });
       })
       .catch((error) => {
@@ -318,13 +321,33 @@ export const validatePlanExistence = (subscriptions) => new Promise((resolve, re
       suggestedPlan: {},
       hasBasePlan: false,
       hasASuggestedPlan: false,
+      allSubscriptions: {},
     });
   }
 });
 
+/**
+ * @param {String} planSlug // Base plan slug to generate list of prices
+ * @returns {Promise<object>} // Formated object of data with list of prices
+ */
 export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
   .then(async (resp) => {
     const data = await processPlans(resp?.data);
     return data;
   })
   .catch(() => ({}));
+
+/**
+ * @returns {Promise<object>} // List of user subscriptions
+ */
+export const getSubscriptions = () => bc.payment({
+  status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+}).subscriptions()
+  .then(({ data }) => {
+    const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
+    const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
+
+    const allPlans = [...planFinancing, ...planSubscriptions];
+
+    return allPlans;
+  });

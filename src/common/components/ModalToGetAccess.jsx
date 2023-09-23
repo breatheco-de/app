@@ -6,6 +6,7 @@ import SimpleModal from './SimpleModal';
 import Signup from './Forms/Signup';
 import LogIn from './Forms/LogIn';
 import Heading from './Heading';
+import UpgradeForConsumableView from './UpgradeForConsumableView';
 // import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import AlertMessage from './AlertMessage';
@@ -21,7 +22,7 @@ export const stageType = {
   outOfConsumables: 'out-of-consumables',
 };
 
-function ModalToGetAccess({ stage, message, planSlug, isOpen, onClose, onConfirm }) {
+function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onClose, onConfirm }) {
   const { t } = useTranslation('signup');
   const { hexColor, featuredColor } = useStyle();
   const [stageView, setStageView] = useState('');
@@ -41,13 +42,13 @@ function ModalToGetAccess({ stage, message, planSlug, isOpen, onClose, onConfirm
   };
   const image = getImage();
 
-  const onWaitingList = (externalData) => {
+  const onWaitingList = (data) => {
     setStageView(stageType.waitingList);
-    setPlanData(externalData);
+    setPlanData(data);
   };
-  const onSubscribed = (externalData) => {
+  const onSubscribed = (data) => {
     setStageView(stageType.purchasedPlan);
-    setPlanData(externalData);
+    setPlanData(data);
   };
   const handleOnClose = () => {
     onClose();
@@ -193,14 +194,7 @@ function ModalToGetAccess({ stage, message, planSlug, isOpen, onClose, onConfirm
         )}
 
         {view === stageType.outOfConsumables && (
-          <Flex flexDirection="column" gridGap="16px">
-            <Heading size="21px">
-              You ran out of Mentoring sessions
-            </Heading>
-            <Text size="14px" fontWeight={700}>
-              You can purchase a mentoring session bundle or purchase a plan here:
-            </Text>
-          </Flex>
+          <UpgradeForConsumableView externalData={externalData} />
         )}
       </Flex>
 
@@ -215,6 +209,7 @@ ModalToGetAccess.propTypes = {
   onConfirm: PropTypes.func,
   planSlug: PropTypes.string,
   message: PropTypes.string,
+  externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
 };
 ModalToGetAccess.defaultProps = {
   stage: stageType.login,
@@ -223,6 +218,7 @@ ModalToGetAccess.defaultProps = {
   onConfirm: () => {},
   planSlug: '',
   message: '',
+  externalData: {},
 };
 
 export default ModalToGetAccess;
