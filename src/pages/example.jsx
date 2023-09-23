@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
-import ModalToGetAccess, { stage } from '../common/components/ModalToGetAccess';
+import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
 
 export const getStaticProps = () => {
   if (!isDevMode) {
@@ -21,27 +21,29 @@ export const getStaticProps = () => {
 
 export default function Example() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [state, setState] = useState('');
+  const [stage, setStage] = useState('');
 
   const onClick = (value) => {
+    setStage(value);
     setIsModalOpen(true);
-    setState(value);
   };
 
   return (
     <main className={styles.main}>
-      <Button onClick={() => onClick(stage.login)}>
-        Open Login
+      <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
+        Open modal
       </Button>
-      <Button onClick={() => onClick(stage.signup)}>
-        Open Signup
+      <Button variant="default" onClick={() => onClick(stageType.outOfConsumables)}>
+        Open out of Consumables
       </Button>
 
       <ModalToGetAccess
         isOpen={isModalOpen}
-        state={state}
-        message={state === stage.login && 'In order to compile the code you need to register for free.'}
-        onClose={() => setIsModalOpen(false)}
+        stage={stage}
+        message={stage === stageType.login && 'In order to compile the code you need to register for free.'}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
       />
     </main>
   );

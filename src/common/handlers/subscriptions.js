@@ -1,4 +1,4 @@
-import { unSlugifyCapitalize } from '../../utils';
+import { slugToTitle, unSlugifyCapitalize } from '../../utils';
 import { BASE_PLAN } from '../../utils/variables';
 import bc from '../services/breathecode';
 
@@ -210,6 +210,7 @@ export const processPlans = (data, {
 
     return ({
       ...data,
+      title: data?.title || slugToTitle(data?.slug),
       isTrial: !isNotTrial && !financingOptionsExists,
       plans: planList,
       featured_info: planPropsData || [],

@@ -19,11 +19,11 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
 import { generatePlan } from '../../handlers/subscriptions';
 
-function SignupView({ planSlug, onClose, onWaitingList }) {
+function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLoginLink, containerGap }) {
   const { t, lang } = useTranslation('signup');
   const { featuredColor } = useStyle();
   const [isChecked, setIsChecked] = useState(false);
-  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan({ enableRedirectOnCTA: false, onClose });
+  const { handleSubscribeToPlan } = useSubscribeToPlan({ enableRedirectOnCTA: false, onClose });
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -58,6 +58,9 @@ function SignupView({ planSlug, onClose, onWaitingList }) {
       handleSubscribeToPlan({
         slug: defaultPlanSlug,
         accessToken: data?.access_token,
+        onSubscribedToPlan: (generatedPlan) => {
+          onSubscribed(generatedPlan);
+        },
       })
         .finally(() => {
           actions.setSubmitting(false);
@@ -104,7 +107,7 @@ function SignupView({ planSlug, onClose, onWaitingList }) {
 
   return (
     <>
-      {successModal}
+      {/* {successModal} */}
       <Formik
         initialValues={{
           first_name: '',
@@ -118,8 +121,6 @@ function SignupView({ planSlug, onClose, onWaitingList }) {
             phone: values?.phone.includes('undefined') ? '' : values?.phone,
             plan: defaultPlanSlug,
           };
-          actions.setSubmitting(false);
-
           handleSubmit(actions, allValues);
         }}
         validationSchema={signupValidation}
@@ -129,16 +130,18 @@ function SignupView({ planSlug, onClose, onWaitingList }) {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gridGap: '62px',
+              gridGap: containerGap,
             }}
           >
-            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap="22px">
-              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }}>
-                <Heading size="18px">{t('about-you')}</Heading>
+            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap="24px">
+              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between">
+                <Heading size="21px">{t('about-you')}</Heading>
                 <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
                   {t('already-have-account')}
                   {' '}
-                  <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+                  {externalLoginLink || (
+                    <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+                  )}
                 </Flex>
               </Box>
               <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
@@ -206,14 +209,14 @@ function SignupView({ planSlug, onClose, onWaitingList }) {
               </Checkbox>
             </Box>
             <Button
-              width="fit-content"
+              width="100%"
               type="submit"
               variant="default"
               isDisabled={isChecked === false}
               isLoading={isSubmitting}
               alignSelf="flex-end"
             >
-              {t('next-step')}
+              {t('create-account')}
             </Button>
           </Form>
         )}
@@ -253,11 +256,17 @@ SignupView.propTypes = {
   onClose: PropTypes.func,
   planSlug: PropTypes.string,
   onWaitingList: PropTypes.func,
+  onSubscribed: PropTypes.func,
+  externalLoginLink: PropTypes.node,
+  containerGap: PropTypes.string,
 };
 SignupView.defaultProps = {
   onClose: () => {},
   planSlug: '',
   onWaitingList: () => {},
+  onSubscribed: () => {},
+  externalLoginLink: null,
+  containerGap: '24px',
 };
 
 export default SignupView;

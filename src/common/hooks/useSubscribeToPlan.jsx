@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Box, ListItem, UnorderedList, useToast, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import bc from '../services/breathecode';
 import SimpleModal from '../components/SimpleModal';
 import useSignup from '../store/actions/signupAction';
 import axiosInstance from '../../axios';
@@ -10,6 +9,7 @@ import useStyle from './useStyle';
 import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
+import { generatePlan } from '../handlers/subscriptions';
 
 const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {
   const { t } = useTranslation(['common']);
@@ -21,58 +21,47 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
   const toast = useToast();
   const [isCheckingSuccess, setIsCheckingSuccess] = useState(false);
 
-  const handleSubscribeToPlan = ({ slug, accessToken }) => new Promise((resolve, reject) => {
+  const handleSubscribeToPlan = ({ slug, accessToken, onSubscribedToPlan = () => {} }) => new Promise((resolve, reject) => {
     setIsInProcessOfSubscription(true);
     if (accessToken) {
       axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
     }
+    generatePlan(slug)
+      .then((data) => {
+        onSubscribedToPlan(data);
+        setPlanProps({
+          ...data,
+          title: toCapitalize(unSlugify(data?.slug)),
+          bullets: data?.featured_info || [],
+        });
 
-    bc.payment().getPlan(slug)
-      .then((plan) => {
-        const data = plan?.data;
-        if (data) {
-          bc.payment().getPlanProps(encodeURIComponent(data?.slug))
-            .then((resp) => {
-              const planInfo = resp?.data;
-              if (resp?.status < 400) {
-                setPlanProps({
-                  ...data,
-                  title: toCapitalize(unSlugify(data?.slug)),
-                  bullets: planInfo,
+        handleChecking({ plan: data, token: accessToken })
+          .then((respData) => {
+            handlePayment({
+              ...respData,
+              installments: respData?.how_many_months,
+            })
+              .then((respPayment) => {
+                resolve(respPayment.data);
+                if (respPayment.status < 400) {
+                  setIsCheckingSuccess(true);
+                }
+              })
+              .catch(() => {
+                reject();
+                toast({
+                  position: 'top',
+                  title: t('alert-message:payment-error'),
+                  status: 'error',
+                  duration: 7000,
+                  isClosable: true,
                 });
-
-                handleChecking({ plan: data, token: accessToken })
-                  .then((respData) => {
-                    handlePayment({
-                      ...respData,
-                      installments: respData?.how_many_months,
-                    })
-                      .then((respPayment) => {
-                        resolve(respPayment.data);
-                        if (respPayment.status < 400) {
-                          setIsCheckingSuccess(true);
-                        }
-                      })
-                      .catch(() => {
-                        reject();
-                        toast({
-                          position: 'top',
-                          title: t('alert-message:payment-error'),
-                          status: 'error',
-                          duration: 7000,
-                          isClosable: true,
-                        });
-                      });
-                  })
-                  .catch(() => {
-                    reject();
-                  });
-              }
-            });
-        } else {
-          reject(new Error('Plan not found'));
-        }
-      });
+              });
+          })
+          .catch(() => {
+            reject();
+          });
+      }).catch(() => reject());
   });
 
   const onClose = () => {
