@@ -13,7 +13,7 @@ import Text from './Text';
 import Icon from './Icon';
 import { slugToTitle } from '../../utils';
 
-export const stage = {
+export const stageValue = {
   login: 'login',
   signup: 'signup',
   waitingList: 'waiting-list',
@@ -21,20 +21,20 @@ export const stage = {
   // outOfConsumables: 'out-of-consumables',
 };
 
-function ModalToGetAccess({ state, message, planSlug, isOpen, onClose, onConfirm }) {
+function ModalToGetAccess({ stage, message, planSlug, isOpen, onClose, onConfirm }) {
   const { t } = useTranslation('signup');
   const { hexColor, featuredColor } = useStyle();
   const [stageView, setStageView] = useState('');
   const [planData, setPlanData] = useState({});
 
-  const view = stageView || state;
+  const view = stageView || stage;
   const withoutSpacing = true;
-  const image = view === stage.waitingList
+  const image = view === stageValue.waitingList
     ? 'static/images/happy-meeting-2.webp'
     : 'static/images/happy-meeting.webp';
 
   const onWaitingList = (externalData) => {
-    setStageView(stage.waitingList);
+    setStageView(stageValue.waitingList);
     setPlanData(externalData);
   };
 
@@ -65,7 +65,7 @@ function ModalToGetAccess({ state, message, planSlug, isOpen, onClose, onConfirm
           <AlertMessage type="soft" full withoutIcon message={message} borderRadius="4px" padding="6px" textStyle={{ fontSize: '14px' }} mb="16px" />
         )}
 
-        {view === stage.login && (
+        {view === stageValue.login && (
           <Box display="flex" flexDirection="column">
             <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '6px', md: '10px' }} alignItems={{ base: 'start', md: 'center' }} mt="0" mb="24px" justifyContent="space-between">
               <Heading size="21px">{t('about-you')}</Heading>
@@ -78,14 +78,14 @@ function ModalToGetAccess({ state, message, planSlug, isOpen, onClose, onConfirm
             <LogIn hideLabel disableRedirect callBack={onClose} actionfontSize="14px" />
           </Box>
         )}
-        {view === stage.signup && (
+        {view === stageValue.signup && (
           <Signup
             planSlug={planSlug}
             onClose={onClose}
             onWaitingList={onWaitingList}
           />
         )}
-        {view === stage.waitingList && (
+        {view === stageValue.waitingList && (
           <Flex flexDirection="column" gridGap="16px">
             <Heading size="21px">
               {t('in-waiting-list-title')}
@@ -128,7 +128,7 @@ function ModalToGetAccess({ state, message, planSlug, isOpen, onClose, onConfirm
 }
 
 ModalToGetAccess.propTypes = {
-  state: PropTypes.string,
+  stage: PropTypes.string,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   onConfirm: PropTypes.func,
@@ -136,7 +136,7 @@ ModalToGetAccess.propTypes = {
   message: PropTypes.string,
 };
 ModalToGetAccess.defaultProps = {
-  state: stage.login,
+  stage: stageValue.login,
   isOpen: false,
   onClose: () => {},
   onConfirm: () => {},
