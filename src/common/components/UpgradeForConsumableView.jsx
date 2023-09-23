@@ -14,8 +14,6 @@ function UpgradeForConsumableView({ externalData }) {
   const { hexColor } = useStyle();
   const router = useRouter();
 
-  const suggestedPlan = externalData?.suggestedPlan;
-  const basePlan = externalData?.basePlan;
   const hasASuggestedPlan = externalData?.hasASuggestedPlan;
   const hasBasePlan = externalData?.hasBasePlan;
   const allSubscriptions = externalData?.allSubscriptions || [];
@@ -59,13 +57,7 @@ function UpgradeForConsumableView({ externalData }) {
   const handleGetConsumables = () => {
     setIsValidating(true);
     if (selectedIndex === 0 && (!hasBasePlan || !hasASuggestedPlan)) {
-      setStorageItem('redirected-from', router?.asPath);
-      router.push({
-        pathname: '/checkout',
-        query: {
-          plan: hasBasePlan ? suggestedPlan?.slug : basePlan?.slug,
-        },
-      });
+      router.push('/pricing');
     }
 
     if (selectedIndex === 1) {
