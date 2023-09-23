@@ -209,12 +209,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   const userImg = user?.profile?.avatar_url || user?.github?.avatar_url;
-  // const getImage = () => {
-  //   if (user && user.github) {
-  //     return user.github.avatar_url;
-  //   }
-  //   return '';
-  // };
 
   const getName = () => {
     if (user && user?.first_name) {

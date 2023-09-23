@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { Box, Flex, Image } from '@chakra-ui/react';
+import { Box, Button, Flex, Image } from '@chakra-ui/react';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import SimpleModal from './SimpleModal';
@@ -9,21 +9,34 @@ import Heading from './Heading';
 import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import AlertMessage from './AlertMessage';
+import Text from './Text';
+import Icon from './Icon';
+import { slugToTitle } from '../../utils';
 
-const stage = {
+export const stage = {
   login: 'login',
   signup: 'signup',
-  purchasedPlan: 'purchased-plan',
   waitingList: 'waiting-list',
-  outOfConsumables: 'out-of-consumables',
+  // purchasedPlan: 'purchased-plan',
+  // outOfConsumables: 'out-of-consumables',
 };
 
-function ModalToGetAccess({ isOpen, onClose, onConfirm }) {
+function ModalToGetAccess({ state, message, planSlug, isOpen, onClose, onConfirm }) {
   const { t } = useTranslation('signup');
-  const { featuredColor } = useStyle();
-  // [view, setView]
-  const [view] = useState('login');
+  const { hexColor, featuredColor } = useStyle();
+  const [stageView, setStageView] = useState('');
+  const [planData, setPlanData] = useState({});
+
+  const view = stageView || state;
   const withoutSpacing = true;
+  const image = view === stage.waitingList
+    ? 'static/images/happy-meeting-2.webp'
+    : 'static/images/happy-meeting.webp';
+
+  const onWaitingList = (externalData) => {
+    setStageView(stage.waitingList);
+    setPlanData(externalData);
+  };
 
   return (
     <SimpleModal
@@ -44,11 +57,13 @@ function ModalToGetAccess({ isOpen, onClose, onConfirm }) {
       }}
     >
       <Box display="flex" flex={0.5} alignItems={!withoutSpacing && 'center'}>
-        <Image src="static/images/happy-meeting.webp" alt="Get Access" style={{ objectFit: 'cover' }} margin={withoutSpacing && '2rem 0 0 0'} />
+        <Image src={image} alt="Get Access" style={{ objectFit: 'cover' }} margin={withoutSpacing && '2rem 0 0 0'} />
       </Box>
 
       <Box flex={0.5} paddingBottom={withoutSpacing && '1rem'}>
-        <AlertMessage type="soft" full withoutIcon message="In order to compile the code you need to register for free." borderRadius="4px" padding="6px" textStyle={{ fontSize: '14px' }} mb="16px" />
+        {message && message?.length > 0 && (
+          <AlertMessage type="soft" full withoutIcon message={message} borderRadius="4px" padding="6px" textStyle={{ fontSize: '14px' }} mb="16px" />
+        )}
 
         {view === stage.login && (
           <Box display="flex" flexDirection="column">
@@ -60,10 +75,52 @@ function ModalToGetAccess({ isOpen, onClose, onConfirm }) {
                 <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('register-here')}</NextChakraLink>
               </Flex>
             </Flex>
-            <LogIn hideLabel callBack={onClose} actionfontSize="14px" />
+            <LogIn hideLabel disableRedirect callBack={onClose} actionfontSize="14px" />
           </Box>
         )}
-        {view === stage.signup && <Signup onClose={onClose} />}
+        {view === stage.signup && (
+          <Signup
+            planSlug={planSlug}
+            onClose={onClose}
+            onWaitingList={onWaitingList}
+          />
+        )}
+        {view === stage.waitingList && (
+          <Flex flexDirection="column" gridGap="16px">
+            <Heading size="21px">
+              {t('in-waiting-list-title')}
+            </Heading>
+            <Text size="14px" fontWeight={700}>
+              {t('signup-thanks-text')}
+            </Text>
+            <Flex flexDirection="column" gridGap="16px">
+              {planData.featured_info.map((info) => info.service.slug && (
+                <Box display="flex" gridGap="8px">
+                  {info?.service?.icon_url
+                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                    : (
+                      <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
+                    )}
+                  <Box>
+                    <Text size="16px" fontWeight={700} textAlign="left">
+                      {info?.service?.title || slugToTitle(info?.service?.slug)}
+                    </Text>
+                    {info.features.length > 0 && (
+                      <Text size="14px" textAlign="left">
+                        {info.features[0]?.description}
+                      </Text>
+                    )}
+                  </Box>
+                </Box>
+              ))}
+            </Flex>
+
+            <Button display="flex" gridGap="10px" width="fit-content" margin="0 auto" onClick={onClose} variant="Link" fontSize="17px" borderColor="blue.default" color="blue.default" _hover={{ textDecoration: 'underline' }}>
+              {t('continue-learning')}
+              <Icon icon="longArrowRight" color="currentColor" width="24px" height="10px" />
+            </Button>
+          </Flex>
+        )}
       </Box>
 
     </SimpleModal>
@@ -71,14 +128,20 @@ function ModalToGetAccess({ isOpen, onClose, onConfirm }) {
 }
 
 ModalToGetAccess.propTypes = {
+  state: PropTypes.string,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   onConfirm: PropTypes.func,
+  planSlug: PropTypes.string,
+  message: PropTypes.string,
 };
 ModalToGetAccess.defaultProps = {
+  state: stage.login,
   isOpen: false,
   onClose: () => {},
   onConfirm: () => {},
+  planSlug: '',
+  message: '',
 };
 
 export default ModalToGetAccess;

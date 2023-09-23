@@ -17,8 +17,9 @@ import { setStorageItem } from '../../../utils';
 import { startSignup, typeError } from '../../handlers/signup';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
+import { generatePlan } from '../../handlers/subscriptions';
 
-function SignupView({ onClose }) {
+function SignupView({ planSlug, onClose, onWaitingList }) {
   const { t, lang } = useTranslation('signup');
   const { featuredColor } = useStyle();
   const [isChecked, setIsChecked] = useState(false);
@@ -34,11 +35,7 @@ function SignupView({ onClose }) {
   const toast = useToast();
   const router = useRouter();
 
-  const defaultLocation = {
-    name: 'Miami',
-    country_code: 'US',
-  };
-
+  const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
       .min(2, t('validators.short-input'))
@@ -59,7 +56,7 @@ function SignupView({ onClose }) {
 
     if (data?.access_token) {
       handleSubscribeToPlan({
-        slug: BASE_PLAN,
+        slug: defaultPlanSlug,
         accessToken: data?.access_token,
       })
         .finally(() => {
@@ -72,6 +69,10 @@ function SignupView({ onClose }) {
         },
       });
     } else {
+      generatePlan(defaultPlanSlug)
+        .then((generatedPlan) => {
+          onWaitingList(generatedPlan);
+        });
       actions.setSubmitting(false);
     }
 
@@ -115,7 +116,7 @@ function SignupView({ onClose }) {
           const allValues = {
             ...values,
             phone: values?.phone.includes('undefined') ? '' : values?.phone,
-            plan: BASE_PLAN,
+            plan: defaultPlanSlug,
           };
           actions.setSubmitting(false);
 
@@ -172,7 +173,6 @@ function SignupView({ onClose }) {
                   placeholder={t('common:phone')}
                   formData={formProps}
                   required={false}
-                  sessionContextLocation={defaultLocation}
                 />
                 {t('phone-info')}
               </Box>
@@ -251,9 +251,13 @@ function SignupView({ onClose }) {
 
 SignupView.propTypes = {
   onClose: PropTypes.func,
+  planSlug: PropTypes.string,
+  onWaitingList: PropTypes.func,
 };
 SignupView.defaultProps = {
   onClose: () => {},
+  planSlug: '',
+  onWaitingList: () => {},
 };
 
 export default SignupView;

@@ -320,3 +320,10 @@ export const validatePlanExistence = (subscriptions) => new Promise((resolve, re
     });
   }
 });
+
+export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
+  .then(async (resp) => {
+    const data = await processPlans(resp?.data);
+    return data;
+  })
+  .catch(() => ({}));

@@ -13,7 +13,7 @@ import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import modifyEnv from '../../../../modifyEnv';
 
-function LogIn({ hideLabel, actionfontSize }) {
+function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
   const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
@@ -35,9 +35,10 @@ function LogIn({ hideLabel, actionfontSize }) {
         password: '',
       }}
       onSubmit={(values, actions) => {
-        login(values)
+        login(values, disableRedirect)
           .then((data) => {
             actions.setSubmitting(false);
+            callBack();
             if (data.status === 200) {
               toast({
                 position: 'top',
@@ -193,10 +194,14 @@ function LogIn({ hideLabel, actionfontSize }) {
 LogIn.propTypes = {
   hideLabel: PropTypes.bool,
   actionfontSize: PropTypes.string,
+  disableRedirect: PropTypes.bool,
+  callBack: PropTypes.func,
 };
 LogIn.defaultProps = {
   hideLabel: false,
   actionfontSize: '',
+  disableRedirect: false,
+  callBack: () => {},
 };
 
 export default LogIn;
