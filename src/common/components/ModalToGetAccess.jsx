@@ -74,7 +74,7 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
       }}
     >
       <Box display={{ base: 'none', md: 'flex' }} flex={0.5} alignItems={!withoutSpacing && 'center'} maxWidth="392px">
-        <Image src={image} alt="Get Access" style={{ objectFit: 'cover' }} margin={withoutSpacing && '2rem 0 0 0'} />
+        <Image src={image} alt="Get Access" style={{ objectFit: 'cover' }} margin={withoutSpacing && '2rem 0 0 0'} borderBottomLeftRadius="6px" />
       </Box>
 
       <Flex flexDirection="column" marginTop={!message && '2rem'} flex={{ base: 1, md: 0.5 }} paddingBottom={withoutSpacing && '1rem'} width={{ base: 'auto', md: '394px' }}>
