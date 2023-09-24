@@ -26,6 +26,7 @@ import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
+import { BASE_PLAN } from '../../../utils/variables';
 
 function Register({ setIsLoggedFromRegister }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -76,7 +77,7 @@ function Register({ setIsLoggedFromRegister }) {
               },
             });
           } else {
-            router.push('/login?tab=login');
+            router.push('/login');
             setShowAlreadyMember(false);
           }
         }}
@@ -174,7 +175,7 @@ function Register({ setIsLoggedFromRegister }) {
             setIsLoggedFromRegister(true);
 
             handleSubscribeToPlan({
-              slug: '4geeks-standard',
+              slug: BASE_PLAN,
               accessToken: data?.access_token,
             })
               .finally(() => {

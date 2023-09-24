@@ -27,7 +27,8 @@ import ServiceSummary from '../js_modules/checkout/ServiceSummary';
 import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
-import { ORIGIN_HOST } from '../utils/variables';
+import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
+import { generatePlan } from '../common/handlers/subscriptions';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -71,6 +72,7 @@ function Checkout() {
   const [isPreloading, setIsPreloading] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [defaultPlanData, setDefaultPlanData] = useState({});
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
@@ -112,6 +114,13 @@ function Checkout() {
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
+
+  useEffect(() => {
+    generatePlan(plan || BASE_PLAN)
+      .then((data) => {
+        setDefaultPlanData(data);
+      });
+  }, []);
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
@@ -361,7 +370,7 @@ function Checkout() {
         }}
       />
       {/* Stepper */}
-      {!readyToSelectService && !serviceToRequest?.id && (
+      {!isFirstStep && !readyToSelectService && !serviceToRequest?.id && (
         <Stepper
           stepIndex={stepIndex}
           checkoutData={checkoutData}
@@ -378,14 +387,15 @@ function Checkout() {
         flexDirection="column"
         gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
-        maxWidth={{ base: '100%', md: '900px' }}
-        margin={{ base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
+        maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
+        margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
+            defaultPlanData={defaultPlanData}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}

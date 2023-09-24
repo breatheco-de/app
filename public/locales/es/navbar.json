@@ -1,20 +1,52 @@
 {
   "login": "Ingresar",
+  "get-started": "Empezar",
   "logout": "Cerrar sesión",
   "language": "Idioma",
   "my-profile": "Mi perfil",
   "start-coding": "Empezar a programar",
   "ITEMS": [
     {
-      "label": "Dashboard",
+      "id": "courses",
+      "label": "Courses",
+      "icon": "graduationCap",
+      "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
+      "asPath": "/courses",
+      "subMenu": [],
+      "position": 1
+    },
+    {
+      "id": "bootcamp",
+      "label": "Coding Bootcamp",
+      "href": "https://4geeksacademy.com",
+      "hide_on_auth": true,
+      "position": 2
+    },
+    {
+      "id": "events",
+      "label": "Aprende en vivo",
+      "icon": "calendar",
       "private": true,
-      "href": "{{selectedProgramSlug}}"
+      "description": "Únete a nosotros en nuestros talleres gratuitos, webinars y otros eventos para aprender más sobre nuestros programas y comenzar tu camino para convertirte en desarrollador.",
+      "subMenu": [
+        {
+          "label": "Eventos en vivo",
+          "slug": "live-events",
+          "asPath": "/workshops",
+          "icon": "live-event",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/workshops",
+              "label": "Próximos eventos en vivo"
+            }
+          ]
+        }
+      ],
+      "position": 3
     },
     {
-      "label": "Sobre Nosotros",
-      "href": "/sobre-nosotros"
-    },
-    {
+      "id": "read",
       "label": "Catálogo de contenidos",
       "icon": "book",
       "description": "Para los geeks autodidactas, este es nuestro extenso catálogo de contenido con todos los materiales y tutoriales que hemos desarrollado hasta el día de hoy.",
@@ -38,7 +70,6 @@
           "slug": "exercises",
           "subLabel": "",
           "description": "Lista curada de tutoriales interactivos, con soluciones y videos para practicar y mejorar tus habilidades.",
-          "href": "/interactive-exercises",
           "subMenu": [
             {
               "href": "/interactive-exercises",
@@ -49,7 +80,6 @@
         {
           "label": "Construye Projectos",
           "slug": "projects",
-          "href": "/interactive-coding-tutorials",
           "description": "Selección curada de tutoriales y projectos para construir con instrucciones simples y video soluciones",
           "subMenu": [
             {
@@ -61,7 +91,6 @@
         {
           "label": "Preguntas Frecuentes",
           "slug": "how-tos",
-          "href": "/how-to",
           "description": "Guías sobre distintos temas relacionados con las tecnologías que enseñamos en nuestros cursos",
           "subMenu": [
             {
@@ -70,24 +99,25 @@
             }
           ]
         }
-      ]
+      ],
+      "position": 4
     },
     {
-      "label": "Aprendizaje social y en vivo",
-      "slug": "social-and-live-learning",
-      "icon": "book",
-      "disabled": false,
-      "description": "La forma más eficiente de aprender: Únete a una cohorte con compañeros, transmisiones en vivo, sesiones improvisadas de codificación, tutorías en vivo con expertos reales y mantenga la motivación.",
-      "asPath": "/read",
-      "subMenu": [],
-      "hide_on_auth": true
+      "id": "feedback",
+      "label": "Feedback",
+      "icon": "group",
+      "href": "#feedback",
+      "private": true,
+      "position": 5
     },
     {
-      "label": "Coding Bootcamp",
-      "href": "https://4geeksacademy.com",
-      "hide_on_auth": true
+      "id": "pricing",
+      "label": "Precios",
+      "href": "/pricing",
+      "position": 6
     }
   ],
+
   "white-label-version-items": [
     {
       "label": "Dashboard",

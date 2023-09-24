@@ -24,7 +24,7 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import { getBrowserSize, isWindow } from '../../../utils';
+import { isWindow } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
@@ -64,8 +64,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
-  const { width: screenWidth } = getBrowserSize();
-  const isTablet = screenWidth < 996;
+
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
   const mktQueryString = parseQuerys({
     featured: true,
@@ -120,7 +119,22 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
-        setMktCourses(filterByTranslations || []);
+        const coursesStruct = filterByTranslations?.map((item) => ({
+          ...item,
+          slug: item?.slug,
+          label: item?.course_translation?.title,
+          asPath: `/course/${item?.slug}`,
+          icon: item?.icon_url,
+          description: item?.course_translation?.description,
+          subMenu: [
+            {
+              href: `/${item?.slug}`,
+              label: t('start-coding'),
+            },
+          ],
+        }));
+
+        setMktCourses(coursesStruct || []);
       })
       .catch((error) => {
         console.error(error);
@@ -171,23 +185,11 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     ) && item?.course_translation?.title,
   );
 
-  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-    (item) => item?.cohort?.available_as_saas === false,
-  );
+  // const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
+  //   (item) => item?.cohort?.available_as_saas === false,
+  // );
 
-  const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
-    slug: item?.slug,
-    label: item?.course_translation?.title,
-    asPath: `/course/${item?.slug}`,
-    icon: item?.icon_url,
-    description: item?.course_translation?.description,
-    subMenu: [
-      {
-        href: `/${item?.slug}`,
-        label: t('start-coding'),
-      },
-    ],
-  })) : [];
+  const coursesList = marketingCourses.length > 0 ? marketingCourses : [];
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
@@ -207,12 +209,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   const userImg = user?.profile?.avatar_url || user?.github?.avatar_url;
-  // const getImage = () => {
-  //   if (user && user.github) {
-  //     return user.github.avatar_url;
-  //   }
-  //   return '';
-  // };
 
   const getName = () => {
     if (user && user?.first_name) {
@@ -255,52 +251,50 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         justifyContent="space-between"
         align="center"
       >
-        {isTablet && (
-          <Flex
-            ml={{ base: -2 }}
-            display={{ base: 'flex', xl: 'none' }}
-            gridGap="12px"
-            className="here-2"
-          >
-            <IconButton
-              onClick={onToggle}
-              _hover={{
-                background: commonColors,
-              }}
-              _active={{
-                background: commonColors,
-              }}
-              background={commonColors}
-              color={colorMode === 'light' ? 'black' : 'white'}
-              icon={
-                isOpen ? (
-                  <Icon icon="close2" width="22px" height="22px" />
-                ) : (
-                  <Icon icon="hamburger2" width="22px" height="22px" />
-                )
-              }
-              variant="default"
-              height="auto"
-              aria-label="Toggle Navigation"
-            />
-            <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-              {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
-                <Image
-                  src={logoData.logo_url}
-                  width={105}
-                  height={35}
-                  style={{
-                    maxHeight: '35px',
-                    minHeight: '35px',
-                    objectFit: 'cover',
-                    filter: imageFilter,
-                  }}
-                  alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
-                />
-              ) : logo}
-            </NextLink>
-          </Flex>
-        )}
+        <Flex
+          ml={{ base: -2 }}
+          display={{ base: 'flex', lg: 'none' }}
+          gridGap="12px"
+          className="here-2"
+        >
+          <IconButton
+            onClick={onToggle}
+            _hover={{
+              background: commonColors,
+            }}
+            _active={{
+              background: commonColors,
+            }}
+            background={commonColors}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            icon={
+              isOpen ? (
+                <Icon icon="close2" width="22px" height="22px" />
+              ) : (
+                <Icon icon="hamburger2" width="22px" height="22px" />
+              )
+            }
+            variant="default"
+            height="auto"
+            aria-label="Toggle Navigation"
+          />
+          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+            {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
+              <Image
+                src={logoData.logo_url}
+                width={105}
+                height={35}
+                style={{
+                  maxHeight: '35px',
+                  minHeight: '35px',
+                  objectFit: 'cover',
+                  filter: imageFilter,
+                }}
+                alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+              />
+            ) : logo}
+          </NextLink>
+        </Flex>
 
         <Flex
           display={{ base: 'none', lg: 'flex' }}
@@ -324,7 +318,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={coursesList} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -342,7 +336,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             style={{
               margin: 0,
             }}
-            display={isTablet ? 'none' : 'flex'}
+            display={{ base: 'none', lg: 'flex' }}
             height="auto"
             _hover={{
               background: commonColors,
@@ -554,36 +548,31 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               </PopoverContent>
             </Popover>
           ) : (
-            <NextChakraLink
-              href="/login"
-              fontWeight="700"
-              style={{
-                margin: '0 0px 0 10px',
-              }}
-              fontSize="13px"
-              lineHeight="22px"
-              _hover={{
-                textDecoration: 'none',
-              }}
-              letterSpacing="0.05em"
-            >
-              <Button
-                display="flex"
-                width="100px"
-                fontWeight={700}
-                lineHeight="0.05em"
-                variant="default"
+            <Box display="flex" gridGap="0px" alignItems="center">
+              <NextChakraLink
+                href="/login"
+                fontWeight="700"
+                fontSize="13px"
+                padding="12px 24px"
+                lineHeight="22px"
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                letterSpacing="0.05em"
               >
                 {t('login')}
-              </Button>
-            </NextChakraLink>
+              </NextChakraLink>
+              <Link variant="buttonDefault" href="/pricing">
+                {t('get-started')}
+              </Link>
+            </Box>
           )}
         </Stack>
       </Flex>
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
+          mktCourses={coursesList}
           NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
           haveSession={sessionExists}
           translations={translations}

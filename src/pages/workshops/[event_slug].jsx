@@ -25,6 +25,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
 import useSubscribeToPlan from '../../common/hooks/useSubscribeToPlan';
+import { validatePlanExistence } from '../../common/handlers/subscriptions';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -252,36 +253,52 @@ function Page({ event }) {
   const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
-    const findedPlanCoincidences = subscriptions.filter(
-      (s) => s.selected_event_type_set?.event_types.some(
-        (ev) => ev?.slug === event?.event_type?.slug,
-      ),
-    );
-    const relevantProps = findedPlanCoincidences.map(
-      (subscription) => ({
-        event_type_set_slug: subscription?.selected_event_type_set.slug,
-        plan_slug: subscription?.plans?.[0]?.slug,
-      }),
-    );
-    const propsToQueryString = {
-      event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
-      plans: relevantProps.map((p) => p.plan_slug).join(','),
-    };
+    validatePlanExistence(subscriptions)
+      .then((data) => {
+        const { basePlan, suggestedPlan, hasBasePlan, hasASuggestedPlan } = data;
+        if (!hasBasePlan && !hasASuggestedPlan) {
+          handleSubscribeToPlan({ slug: basePlan?.slug })
+            .finally(() => {
+              getMySubscriptions();
+              getCurrentConsumables();
+              setIsInProcessOfSubscription(false);
+            });
+        }
+        if (hasBasePlan && !hasASuggestedPlan) {
+          router.push({
+            pathname: '/checkout',
+            query: {
+              plan: suggestedPlan?.slug,
+            },
+          });
+        }
+        if (hasASuggestedPlan) {
+          const findedPlanCoincidences = subscriptions.filter(
+            (s) => s.selected_event_type_set?.event_types.some(
+              (ev) => ev?.slug === event?.event_type?.slug,
+            ),
+          );
+          const relevantProps = findedPlanCoincidences.map(
+            (subscription) => ({
+              event_type_set_slug: subscription?.selected_event_type_set.slug,
+              plan_slug: subscription?.plans?.[0]?.slug,
+            }),
+          );
+          const propsToQueryString = {
+            event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
+            plans: relevantProps.map((p) => p.plan_slug).join(','),
+          };
 
-    if (findedPlanCoincidences?.length > 0) {
-      setStorageItem('redirected-from', router?.asPath);
-      router.push({
-        pathname: '/checkout',
-        query: propsToQueryString,
-      });
-    } else {
-      handleSubscribeToPlan({ slug: '4geeks-standard' })
-        .finally(() => {
-          getMySubscriptions();
-          getCurrentConsumables();
-          setIsInProcessOfSubscription(false);
-        });
-    }
+          if (findedPlanCoincidences?.length > 0) {
+            setStorageItem('redirected-from', router?.asPath);
+            router.push({
+              pathname: '/checkout',
+              query: propsToQueryString,
+            });
+          }
+        }
+      })
+      .catch(() => setIsInProcessOfSubscription(false));
   };
 
   const currentConsumable = consumables?.event_type_sets?.find(

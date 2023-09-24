@@ -1,4 +1,5 @@
 export const DOMAIN_NAME = process.env.DOMAIN_NAME || '';
+export const BASE_PLAN = process.env.BASE_PLAN || '';
 export const BREATHECODE_HOST = process.env.BREATHECODE_HOST || '';
 export const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY || undefined;
 export const ORIGIN_HOST = (typeof window !== 'undefined' && window.location.origin) || DOMAIN_NAME;

@@ -22,6 +22,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
   const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
@@ -140,9 +141,11 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           });
 
           if (!disableRedirectAfterSuccess) {
-            if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
+            if ((redirectAfterRegister || redirectedFrom)
+              && (redirectAfterRegister?.length > 0 && redirectedFrom.length > 0)) {
               router.push(redirectAfterRegister);
               localStorage.removeItem('redirect');
+              localStorage.removeItem('redirected-from');
               localStorage.removeItem('redirect-after-register');
             } else {
               router.push('/choose-program');

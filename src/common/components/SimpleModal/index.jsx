@@ -17,9 +17,10 @@ function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, f
     <Modal isOpen={isOpen} onClose={closeHandler} closeOnOverlayClick={closeOnOverlayClick}>
       <ModalOverlay />
       <ModalContent
-        {...rest}
         maxWidth={maxWidth}
         background={modal.background2}
+        style={{ marginTop: '10vh' }}
+        {...rest}
       >
         {title && (
         <ModalHeader
