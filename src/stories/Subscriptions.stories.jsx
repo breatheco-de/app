@@ -93,9 +93,11 @@ isFreeTrial.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -196,9 +198,11 @@ isActive.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -300,9 +304,11 @@ isCancelled.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -402,9 +408,11 @@ isPaymentUpToDate.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -504,9 +512,11 @@ PaymentIssue.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -606,9 +616,11 @@ FullyPaid.args = {
                 }
             ],
             "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
