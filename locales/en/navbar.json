@@ -7,6 +7,11 @@
   "start-coding": "Start Coding",
   "ITEMS": [
     {
+      "label": "Dashboard",
+      "private": true,
+      "href": "{{selectedProgramSlug}}"
+    },
+    {
       "id": "courses",
       "label": "Courses",
       "icon": "graduationCap",
@@ -103,18 +108,10 @@
       "position": 4
     },
     {
-      "id": "feedback",
-      "label": "Feedback",
-      "icon": "group",
-      "href": "#feedback",
-      "private": true,
-      "position": 5
-    },
-    {
       "id": "pricing",
       "label": "Pricing",
       "href": "/pricing",
-      "position": 6
+      "position": 5
     }
   ],
 
