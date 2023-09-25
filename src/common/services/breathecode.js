@@ -146,6 +146,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      join: (id) => breathecode.get(`${host}/admissions/cohort/${id}/join`),
       takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
