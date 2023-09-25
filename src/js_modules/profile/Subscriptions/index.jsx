@@ -31,7 +31,10 @@ function Subscriptions({ storybookConfig }) {
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
 
-  const cohortProps = subscriptionProps.selected_cohort;
+  const cohortProps = subscriptionProps?.selected_cohort_set?.cohorts?.find(
+    (cohort) => cohortsState.some((l) => l?.cohort?.slug === cohort?.slug),
+  );
+
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
@@ -65,11 +68,15 @@ function Subscriptions({ storybookConfig }) {
   const cohortsExist = cohorts?.length > 0;
   const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
     && subscriptionData.subscriptions.some((subscription) => {
-      const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
+      const exists = cohorts.some((l) => (subscription?.selected_cohort_set?.cohorts?.length > 0 ? subscription?.selected_cohort_set?.cohorts?.some(
+        (c) => l?.cohort?.slug === c?.slug,
+      ) : []));
       return exists;
     })) || (subscriptionData?.plan_financings?.length > 0
       && subscriptionData.plan_financings.some((subscription) => {
-        const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
+        const exists = cohorts.some((l) => (subscription?.selected_cohort_set?.cohorts?.length > 0 ? subscription?.selected_cohort_set?.cohorts?.some(
+          (c) => l?.cohort?.slug === c?.slug,
+        ) : []));
         return exists;
       }));
 
@@ -115,6 +122,9 @@ function Subscriptions({ storybookConfig }) {
             const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
 
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
+            const cohortInfo = subscription?.selected_cohort_set?.cohorts?.length > 0
+              ? subscription?.selected_cohort_set.cohorts?.find((cohort) => cohorts.some((l) => l?.cohort?.slug === cohort?.slug))
+              : [];
 
             const nextPaymentDate = {
               en: format(new Date(subscription?.next_payment_at), 'MMM do'),
@@ -142,7 +152,7 @@ function Subscriptions({ storybookConfig }) {
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
                     <Text fontSize="11px" fontWeight="700">
-                      {subscription?.selected_cohort?.name}
+                      {cohortInfo?.name}
                     </Text>
                   </Flex>
 

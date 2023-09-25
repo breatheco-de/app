@@ -148,10 +148,10 @@ function chooseProgram() {
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
           plan_financing: subscriptionData?.plan_financings?.find(
-            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
           ) || null,
           subscription: subscriptionData?.subscriptions?.find(
-            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
           ) || null,
           all_subscriptions: allSubscriptions,
           slug: value.cohort.slug,
