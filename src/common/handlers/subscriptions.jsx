@@ -142,7 +142,7 @@ export const processPlans = (data, {
       plan_id: `p-${singlePlan?.trial_duration}-trial`,
       period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
       period_label: isTotallyFree
-        ? textInfo.label.totally_free
+        ? textInfo.totally_free
         : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit),
       type: isTotallyFree ? 'FREE' : 'TRIAL',
       isFree: true,
