@@ -142,10 +142,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             ...value,
             name: value.cohort.name,
             plan_financing: subscriptionRespData?.plan_financings?.find(
-              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
+              (sub) => sub?.selected_cohort_set?.slug === value?.cohort?.slug,
             ) || null,
             subscription: subscriptionRespData?.subscriptions?.find(
-              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
+              (sub) => sub?.selected_cohort_set?.slug === value?.cohort?.slug,
             ) || null,
             slug: value?.cohort?.slug,
           }));

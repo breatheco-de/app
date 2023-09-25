@@ -31,7 +31,7 @@ function Subscriptions({ storybookConfig }) {
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
 
-  const cohortProps = subscriptionProps.selected_cohort;
+  const cohortProps = subscriptionProps.selected_cohort_set;
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
@@ -65,11 +65,11 @@ function Subscriptions({ storybookConfig }) {
   const cohortsExist = cohorts?.length > 0;
   const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
     && subscriptionData.subscriptions.some((subscription) => {
-      const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
+      const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort_set?.slug);
       return exists;
     })) || (subscriptionData?.plan_financings?.length > 0
       && subscriptionData.plan_financings.some((subscription) => {
-        const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
+        const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort_set?.slug);
         return exists;
       }));
 
@@ -142,7 +142,7 @@ function Subscriptions({ storybookConfig }) {
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
                     <Text fontSize="11px" fontWeight="700">
-                      {subscription?.selected_cohort?.name}
+                      {subscription?.selected_cohort_set?.name}
                     </Text>
                   </Flex>
 
