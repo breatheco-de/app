@@ -89,13 +89,15 @@ const breathecode = {
     };
   },
 
-  syllabus: () => {
+  syllabus: (query = {}) => {
     const url = `${host}/admissions`;
+    const qs = parseQuerys(query);
     return {
       get: (academyVersion = '4', slug, version = '1') => {
         if (!slug) throw new Error('Missing slug');
         else return axios.get(`${url}/academy/${academyVersion}/syllabus/${slug}/version/${version}`);
       },
+      getPublicVersion: () => axios.get(`${url}/syllabus/version${qs}`),
     };
   },
 

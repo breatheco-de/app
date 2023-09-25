@@ -31,9 +31,10 @@ function Subscriptions({ storybookConfig }) {
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
 
-  const cohortProps = subscriptionProps.selected_cohort_set?.cohorts?.find(
+  const cohortProps = subscriptionProps?.selected_cohort_set?.cohorts?.find(
     (cohort) => cohortsState.some((l) => l?.cohort?.slug === cohort?.slug),
   );
+
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
