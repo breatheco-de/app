@@ -68,7 +68,7 @@ function Page({ id }) {
         <Box>
           <LoaderScreen width="100px" height="100px" position="initial" />
           <Text size="22px">
-            Creating access to the cohort...
+            Creating cohort access...
           </Text>
         </Box>
       )}
