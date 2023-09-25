@@ -69,7 +69,7 @@ const getEvents = async (extraQuerys = {}) => {
  * @returns {Promise} Array of objects with the assets
  */
 const getAsset = async (type = '', extraQuerys = {}, category = '') => {
-  const limit = 100;
+  const limit = 500;
   let offset = 0;
   let allResults = [];
 
@@ -83,22 +83,25 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     ...extraQuerys,
   });
 
-  let results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
+  let response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then(async (res) => {
       const data = await res.json();
 
       if (res.status >= 400) {
         throw new Error(data.detail);
       }
-      return data.results;
+      return data;
     })
     .catch((err) => {
       console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
       return [];
     });
 
-  while (results.length > 0) {
-    allResults = allResults.concat(results);
+  let { results } = response;
+  const { count } = response;
+  allResults = allResults.concat(results);
+
+  while (results.length + offset < count) {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
@@ -110,26 +113,23 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       ...extraQuerys,
     });
 
-    results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
+    response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
       .then(async (res) => {
         const data = await res.json();
 
         if (res.status >= 400) {
           throw new Error(data.detail);
         }
-        return data.results;
+        return data;
       })
       .catch((err) => {
         console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
         return [];
       });
+    results = response.results;
+    allResults = allResults.concat(results);
   }
 
-  if (category === 'how-to') {
-    return allResults.filter(
-      (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
-    );
-  }
   if (category === 'project') {
     return allResults.map((item) => {
       item.difficulty = mapDifficulty(item.difficulty);
@@ -141,41 +141,32 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
 };
 
 // mover a carpeta sitemap-generator
-const getLandingTechnologies = () => {
+const getLandingTechnologies = (assets) => {
   const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
     headers: {
       Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
       Academy: 4,
     },
   })
-    .then(async (res) => {
-      const formatedWithAssets = res.data.results.map(async (tech) => {
-        const assets = await getAsset(null, {
-          technologies: tech?.slug,
-        }, 'technologies');
-        return { ...tech, assets };
-      });
+    .then((res) => {
+      const formatedWithAssets = res.data.results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
 
-      const technologiesInEnglish = Promise.all(formatedWithAssets).then(
-        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
-          .map((finalData) => ({
-            ...finalData,
-            assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
-            lang: 'en',
-          })),
-      );
+      const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
+        .map((finalData) => ({
+          ...finalData,
+          assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
+          lang: 'en',
+        }));
 
-      const technologiesInSpanish = Promise.all(formatedWithAssets).then(
-        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
-          .map((finalData) => ({
-            ...finalData,
-            assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
-            lang: 'es',
-          })),
-      );
+      const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
+        .map((finalData) => ({
+          ...finalData,
+          assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
+          lang: 'es',
+        }));
 
-      const dataEng = await technologiesInEnglish;
-      const dataEsp = await technologiesInSpanish;
+      const dataEng = technologiesInEnglish;
+      const dataEsp = technologiesInSpanish;
 
       return [...dataEng, ...dataEsp];
     })
