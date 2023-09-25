@@ -1,4 +1,5 @@
-import { unSlugifyCapitalize } from '../../utils';
+import { slugToTitle, unSlugifyCapitalize } from '../../utils';
+import { BASE_PLAN } from '../../utils/variables';
 import bc from '../services/breathecode';
 
 /**
@@ -209,6 +210,7 @@ export const processPlans = (data, {
 
     return ({
       ...data,
+      title: data?.title || slugToTitle(data?.slug),
       isTrial: !isNotTrial && !financingOptionsExists,
       plans: planList,
       featured_info: planPropsData || [],
@@ -220,42 +222,132 @@ export const processPlans = (data, {
  *
  * @param {string} slug - Original plan slug
  * @param {object} translations - Translations for plan content (optional)
+ * @param {boolean} ignoreProcessPlans - Whether to ignore processing the plans (optional)
  * @returns {Promise<object>} - The suggested with formated data data.
  */
-export const getSuggestedPlan = (slug, translations = {}) => bc.payment({
+export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = false) => bc.payment({
   original_plan: slug,
 }).planOffer()
   .then(async (resp) => {
     const data = resp?.data;
-    if (data.length === 0) {
+    const planComparison = data[0];
+
+    if (data?.length === 0) {
       return ({
         status_code: 404,
         detail: 'No suggested plan found',
       });
     }
-    const currentOffer = data.find((item) => item?.original_plan?.slug === slug);
-    const suggestedPlan = currentOffer?.suggested_plan;
-    const originalPlan = currentOffer?.original_plan;
+    if (!ignoreProcessPlans) {
+      const originalPlan = planComparison?.original_plan;
+      const suggestedPlan = planComparison?.suggested_plan;
 
-    const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
-      quarterly: false,
-      halfYearly: false,
-      tag: 'original',
-    }, translations) : {};
+      const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
+        quarterly: false,
+        halfYearly: false,
+        tag: 'original',
+      }, translations) : {};
+      const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
+        quarterly: false,
+        halfYearly: false,
+        tag: 'suggested',
+      }, translations) : {};
 
-    const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
-      quarterly: false,
-      halfYearly: false,
-      tag: 'suggested',
-    }, translations) : {};
-
-    return ({
-      plans: {
-        original_plan: dataForOriginPlan,
-        suggested_plan: dataForSuggestedPlan,
-      },
-      details: currentOffer?.details,
-      title: currentOffer?.details?.title,
-    });
+      return ({
+        plans: {
+          original_plan: dataForOriginPlan,
+          suggested_plan: dataForSuggestedPlan,
+        },
+        details: planComparison?.details,
+        title: planComparison?.details?.title,
+      });
+    }
+    return planComparison;
   })
   .catch((err) => err?.response?.data);
+
+/**
+ * @param {String} planSlug Original plan slug
+ * @param {Function} t Translation function
+ * @returns {Promise<object>} Formated original and suggested plan data
+ */
+export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
+  try {
+    const suggestedPlanData = await getSuggestedPlan(planSlug, t);
+    return suggestedPlanData;
+  } catch (error) {
+    console.error(error);
+    return {};
+  }
+};
+
+/**
+ * @typedef {Object} PlanExistenceObject
+ * @property {object} basePlan - Original plan
+ * @property {object} suggestedPlan - Suggested plan
+ * @property {boolean} hasBasePlan - Indicates if the base plan is active.
+ * @property {boolean} hasASuggestedPlan - Indicates if a suggested plan is active.
+ */
+/**
+ * @param {Array} subscriptions List of subscriptions of user
+ * @param {String} plan Base plan slug
+ * @returns {Promise<PlanExistenceObject>}
+ */
+export const validatePlanExistence = (subscriptions, plan = '') => new Promise((resolve, reject) => {
+  const plaSlug = plan || BASE_PLAN;
+  try {
+    getSuggestedPlan(plaSlug, {}, true)
+      .then((planComparison) => {
+        const { original_plan: basePlan, suggested_plan: suggestedPlan } = planComparison;
+
+        const hasBasePlan = subscriptions.some((s) => s?.plans?.[0]?.slug === basePlan?.slug);
+        const hasASuggestedPlan = subscriptions.some((s) => s?.plans?.[0]?.slug === suggestedPlan?.slug);
+
+        resolve({
+          basePlan,
+          suggestedPlan,
+          hasBasePlan,
+          hasASuggestedPlan,
+          allSubscriptions: subscriptions,
+        });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  } catch (error) {
+    reject(error);
+    resolve({
+      basePlan: {},
+      suggestedPlan: {},
+      hasBasePlan: false,
+      hasASuggestedPlan: false,
+      allSubscriptions: {},
+    });
+  }
+});
+
+/**
+ * @param {String} planSlug // Base plan slug to generate list of prices
+ * @returns {Promise<object>} // Formated object of data with list of prices
+ */
+export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
+  .then(async (resp) => {
+    const data = await processPlans(resp?.data);
+    return data;
+  })
+  .catch(() => ({}));
+
+/**
+ * @returns {Promise<object>} // List of user subscriptions
+ */
+export const getSubscriptions = () => bc.payment({
+  status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+}).subscriptions()
+  .then(({ data }) => {
+    const planFinancing = data.plan_financings.length > 0 ? data.plan_financings : [];
+    const planSubscriptions = data.subscriptions.length > 0 ? data.subscriptions : [];
+
+    const allPlans = [...planFinancing, ...planSubscriptions];
+
+    return allPlans;
+  });
