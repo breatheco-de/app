@@ -159,9 +159,11 @@ function Docs() {
   return (
     <>
       {!loadStatus.loading && loadStatus.status === 'not-found' && (
-        <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">
-          {t('not-found')}
-        </Heading>
+        <Box height="50vh">
+          <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">
+            {t('not-found')}
+          </Heading>
+        </Box>
       )}
       <GridContainer
         maxWidth="1228px"
