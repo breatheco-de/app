@@ -69,7 +69,7 @@ const getEvents = async (extraQuerys = {}) => {
  * @returns {Promise} Array of objects with the assets
  */
 const getAsset = async (type = '', extraQuerys = {}, category = '') => {
-  const limit = 500;
+  const limit = 100;
   let offset = 0;
   let allResults = [];
 
