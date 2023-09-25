@@ -15,6 +15,7 @@ import { getBrowserSize } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
+import { error } from '../../utils/logging';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -82,7 +83,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
         setCourses(list?.filter((course) => course?.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
-      console.log(e);
+      error(e);
     }
   };
 

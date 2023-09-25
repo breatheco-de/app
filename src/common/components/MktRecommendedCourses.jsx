@@ -12,6 +12,7 @@ import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { error } from '../../utils/logging';
 
 const coursesLimit = 2;
 
@@ -56,7 +57,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
         setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
-      console.log(e);
+      error(e);
     }
   };
 

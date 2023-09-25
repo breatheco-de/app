@@ -1,4 +1,5 @@
 import { isWindow, removeURLParameter, setStorageItem } from '../../utils';
+import { log } from '../../utils/logging';
 import useAuth from '../hooks/useAuth';
 
 export const withGuard = (PassedComponent) => {
@@ -46,11 +47,11 @@ export const withGuard = (PassedComponent) => {
     if (queryTokenExists === false) {
       if (!tokenExists && isWindow) {
         if (requiresDefaultRedirect) {
-          console.log('redirect choose-program setted');
+          log('redirect choose-program setted');
           localStorage.setItem('redirect', '/choose-program');
           redirectToLogin();
         } else {
-          console.log('redirect setted');
+          log('redirect setted');
           localStorage.setItem('redirect', pathname);
           redirectToLogin();
         }
