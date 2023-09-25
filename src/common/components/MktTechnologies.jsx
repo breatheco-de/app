@@ -5,6 +5,7 @@ import axios from 'axios';
 import Icon from './Icon';
 import GridContainer from './GridContainer';
 import modifyEnv from '../../../modifyEnv';
+import { log } from '../../utils/logging';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -28,7 +29,7 @@ function MktTechnologies({ id, endpoint, ...rest }) {
           setTechnologies(response.data?.filter((tech) => tech.icon_url));
         });
     } catch (e) {
-      console.log(e);
+      log(e);
     }
   }, []);
 

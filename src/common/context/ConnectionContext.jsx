@@ -8,6 +8,7 @@ import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import axiosInstance from '../../axios';
 import modifyEnv from '../../../modifyEnv';
+import { log } from '../../utils/logging';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
@@ -51,7 +52,7 @@ function OnlineContext({ children }) {
       const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {
-        console.log('WebSocket Client Connected');
+        log('WebSocket Client Connected');
         setUsersConnected((prev) => ({ ...prev, [temporalToken?.user_id]: true }));
       };
 

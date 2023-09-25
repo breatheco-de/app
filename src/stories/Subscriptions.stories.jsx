@@ -92,7 +92,7 @@ isFreeTrial.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
@@ -195,7 +195,7 @@ isActive.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
@@ -299,7 +299,7 @@ isCancelled.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
@@ -401,7 +401,7 @@ isPaymentUpToDate.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
@@ -503,7 +503,7 @@ PaymentIssue.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
@@ -605,7 +605,7 @@ FullyPaid.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
