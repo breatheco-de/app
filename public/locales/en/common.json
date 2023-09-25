@@ -152,7 +152,7 @@
     "pay-per-month": "Pay {{value}} month",
     "pay-per-half": "Pay {{value}} half"
   },
-  "upgrade": "upgrade",
+  "upgrade": "Upgrade",
   "go-back": "Go back",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "By entering your data you will unlock the interactive content of \"{{title}}\" and many more",

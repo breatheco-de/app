@@ -22,6 +22,16 @@ const breathecode = {
     },
     body: JSON.stringify(data),
   }).then((res) => res).catch((err) => console.error(err)),
+  post: (url, data) => fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res).catch((err) => console.error(err)),
+
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -146,7 +156,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
-      join: (id) => breathecode.get(`${host}/admissions/cohort/${id}/join`),
+      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
       takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {

@@ -265,9 +265,9 @@ export const getSuggestedPlan = (slug, translations = {}) => bc.payment({
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
+export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
   try {
-    const suggestedPlanData = await getSuggestedPlan(planSlug, t);
+    const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
     return suggestedPlanData;
   } catch (error) {
     console.error(error);
