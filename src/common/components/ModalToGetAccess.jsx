@@ -33,12 +33,12 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
 
   const getImage = () => {
     if (view === stageType.waitingList) {
-      return 'static/images/happy-meeting-2.webp';
+      return '/static/images/happy-meeting-2.webp';
     }
     if (view === stageType.outOfConsumables) {
-      return 'static/images/frustrated-person.webp';
+      return '/static/images/frustrated-person.webp';
     }
-    return 'static/images/happy-meeting.webp';
+    return '/static/images/happy-meeting.webp';
   };
   const image = getImage();
 

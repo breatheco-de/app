@@ -8,6 +8,7 @@ import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Image from '../Image';
+import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
 import useOnline from '../../hooks/useOnline';
@@ -16,6 +17,7 @@ import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
+import { validatePlanExistence } from '../../handlers/subscriptions';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -38,6 +40,7 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
         display="flex"
         variant="default"
         fontSize="14px"
+        isLoading={rest.isLoading}
         fontWeight={700}
         onClick={() => handleGetMoreMentorships()}
         alignItems="center"
@@ -99,6 +102,9 @@ function MentoringConsumables({
   const [open, setOpen] = useState(false);
   const [existsMentors, setExistsMentors] = useState(true);
   const { borderColor, lightColor, hexColor } = useStyle();
+  const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
+  const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
+  const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
@@ -141,32 +147,19 @@ function MentoringConsumables({
   };
 
   const handleGetMoreMentorships = () => {
+    setIsFetchingDataForModal(true);
     const academyService = mentoryProps?.service?.slug
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
-
-    const coincidencesOfServiceWithOtherSubscriptions = allSubscriptions?.filter(
-      (s) => s?.selected_mentorship_service_set?.mentorship_services.some(
-        (service) => service.slug === academyService?.slug,
-      ),
-    );
-    const relevantProps = coincidencesOfServiceWithOtherSubscriptions.map(
-      (subscription) => ({
-        mentorship_service_set_slug: subscription?.selected_mentorship_service_set.slug,
-        plan_slug: subscription?.plans?.[0]?.slug,
-      }),
-    );
-
-    const propsToQueryString = {
-      mentorship_service_set: relevantProps.map((p) => p.mentorship_service_set_slug).join(','),
-      plans: relevantProps.map((p) => p.plan_slug).join(','),
-      selected_service: mentoryProps?.service?.slug,
-    };
-
-    router.push({
-      pathname: '/checkout',
-      query: propsToQueryString,
-    });
+    validatePlanExistence(allSubscriptions).then((data) => {
+      setDataToGetAccessModal({
+        ...data,
+        event: '',
+        academyServiceSlug: academyService?.slug,
+      });
+      setIsModalToGetAccessOpen(true);
+    })
+      .finally(() => setIsFetchingDataForModal(false));
   };
 
   return (
@@ -257,7 +250,7 @@ function MentoringConsumables({
           </Box>
         )}
         {mentoryProps?.service && open && !mentoryProps?.mentor && !existConsumablesOnCurrentService ? (
-          <NoConsumablesCard t={t} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
+          <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} subscriptionData={subscriptionData} setMentoryProps={setMentoryProps} mt="30px" />
         ) : open && (
           <>
             {!mentoryProps?.time ? (
@@ -432,6 +425,15 @@ function MentoringConsumables({
           </>
         )}
       </Box>
+
+      <ModalToGetAccess
+        isOpen={isModalToGetAccessOpen}
+        stage={stageType.outOfConsumables}
+        externalData={dataToGetAccessModal}
+        onClose={() => {
+          setIsModalToGetAccessOpen(false);
+        }}
+      />
     </Box>
   );
 }

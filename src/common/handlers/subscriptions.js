@@ -17,6 +17,7 @@ export const getTranslations = (t = () => {}) => {
     half_yearly_payment: t('signup:half_yearly_payment'),
     yearly_payment: t('signup:yearly_payment'),
     free: t('signup:free'),
+    totally_free: t('signup:totally_free'),
     free_trial_period: (qty, period) => {
       const periodValue = period?.toLowerCase();
       const singularTranslation = {
@@ -98,6 +99,8 @@ export const processPlans = (data, {
     };
 
     const textInfo = {
+      free: translations?.free || 'Free',
+      totally_free: translations?.totally_free || 'Totally free',
       free_trial: translations?.free_trial || 'Free trial',
       one_payment: translations?.one_payment || 'One payment',
       monthly_payment: translations?.monthly_payment || 'Monthly payment',
@@ -136,11 +139,11 @@ export const processPlans = (data, {
       ...relevantInfo,
       title: singlePlan?.title ? singlePlan?.title : unSlugifyCapitalize(String(singlePlan?.slug)),
       price: 0,
-      priceText: isTotallyFree ? 'Free' : textInfo.free_trial,
+      priceText: isTotallyFree ? textInfo.free : textInfo.free_trial,
       plan_id: `p-${singlePlan?.trial_duration}-trial`,
       period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
       period_label: isTotallyFree
-        ? textInfo.label.free
+        ? textInfo.totally_free
         : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit),
       type: isTotallyFree ? 'FREE' : 'TRIAL',
       isFree: true,
@@ -271,9 +274,9 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, t = () => {}) => {
+export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
   try {
-    const suggestedPlanData = await getSuggestedPlan(planSlug, t);
+    const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
     return suggestedPlanData;
   } catch (error) {
     console.error(error);
