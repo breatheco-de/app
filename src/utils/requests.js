@@ -141,41 +141,59 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
 };
 
 // mover a carpeta sitemap-generator
-const getLandingTechnologies = (assets) => {
-  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  })
-    .then((res) => {
-      const formatedWithAssets = res.data.results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
-
-      const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
-        .map((finalData) => ({
-          ...finalData,
-          assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
-          lang: 'en',
-        }));
-
-      const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
-        .map((finalData) => ({
-          ...finalData,
-          assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
-          lang: 'es',
-        }));
-
-      const dataEng = technologiesInEnglish;
-      const dataEsp = technologiesInSpanish;
-
-      return [...dataEng, ...dataEsp];
-    })
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Technologies pages');
-      return [];
+const getLandingTechnologies = async (assets) => {
+  try {
+    const limit = 100;
+    let offset = 0;
+    let res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
+      headers: {
+        Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+        Academy: 4,
+      },
     });
+    let { results } = res.data;
+    const { count } = res.data;
 
-  return technologies;
+    while (results.length < count) {
+      offset += limit;
+      res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
+        headers: {
+          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
+          Academy: 4,
+        },
+      });
+
+      if (res.status >= 400) {
+        throw new Error(res.detail);
+      }
+
+      results = results.concat(res.data.results);
+    }
+
+    const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
+
+    const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
+      .map((finalData) => ({
+        ...finalData,
+        assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
+        lang: 'en',
+      }));
+
+    const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
+      .map((finalData) => ({
+        ...finalData,
+        assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
+        lang: 'es',
+      }));
+
+    const dataEng = technologiesInEnglish;
+    const dataEsp = technologiesInSpanish;
+
+    return [...dataEng, ...dataEsp];
+  } catch (e) {
+    console.error('SITEMAP: Error fetching Technologies pages');
+    return [];
+  }
 };
 
 export {
