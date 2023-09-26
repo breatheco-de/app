@@ -1,6 +1,6 @@
 # 4Geeks Developers Community
 
-## Getting Started.
+## Getting Started
 
 1. Install Bun:
 
