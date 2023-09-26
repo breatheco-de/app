@@ -1,16 +1,9 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import MarkDownParser from '../common/components/MarkDownParser';
 import { ORIGIN_HOST } from '../utils/variables';
 // import getMarkDownContent from '../common/components/MarkDownParser/markdown';
-let data = JSON.stringify({roles:[{role:'assistant'}]})
 
-const showContent = () => {
-  console.log("show")
-  localStorage.setItem("profile", data);}
-const hideContent = () => {
-  console.log("hide")
-  localStorage.removeItem("profile");}
- 
+
 const frontMatter = {
   title: "CSS Layouts: Create and Build Layouts with CSS",
   subtitle: "Building layouts is the most painful process when coding HTML & CSS. Learn the CSS layout rules: Display, Position, Float and Flex; and place any element anywhere you want.",
@@ -24,23 +17,54 @@ const frontMatter = {
 export default {
   title: 'Components/MarkDownParser',
   component: MarkDownParser,
-  argTypes: {},
+  argTypes: {
+    role: {
+    options: ['assistant', 'teacher', 'student'],
+    control: 'select',
+  },
+    permission: {
+    options: ['Join event', 'Join mentorship','Add code reviews', 'Create my profile','Join live class'],
+    control: 'select',
+  },
+  },
 };
 
 const Component = (args) => {
-  // const [data, setData] = useState(null);
-  // useEffect(() => {
-  //   (async () => {
-  //     const results = await fetch(
-  //       'https://raw.githubusercontent.com/breatheco-de/content/master/src/content/lesson/css-layouts.md',
-  //     )
-  //       .then((res) => res.text())
-  //       .catch((err) => console.error(err));
-  //     const markdownContent = getMarkDownContent(results);
-  //     setData(markdownContent);
-  //   })();
-  // }, [data]);
-  return <MarkDownParser {...args} />;
+ console.log(args,"args")
+const[role,setRole]=useState(args.role);
+const[permission,setPermission]=useState(args.permission);
+
+const renderCodeName = () =>{
+  if(permission == "Join event"){
+    return "event_join"
+  }
+  else if(permission == "Join live class")
+  return "live_class_join"
+
+  else if(permission == "Add code reviews")
+  return "add_code_review"
+else{
+  return permission?.toLowerCase().split(" ").join("_")
+}
+}
+
+let data = JSON.stringify(
+  {
+  permissions:[{name:permission,codename: renderCodeName()}],
+  permissionsSlug:[renderCodeName()],
+
+  roles:[{role:`${role}`}]
+})
+
+
+useEffect(() => {
+
+  setPermission(args.permission);
+  setRole(args.role);
+ 
+}, [args.role,args.permission]);
+localStorage.setItem("profile", data);
+return <MarkDownParser {...args} />;
 };
 
 export const Default = Component.bind({});
@@ -82,7 +106,7 @@ BeforeAfter.args = {
   ## Before and After
 
   + Make sure you add image url for before and after
-  <before-after before="https://picsum.photos/id/237/200/300" after="https://picsum.photos/id/236/200/300"/>  
+  <before-after before="https://picsum.photos/200" after="https://picsum.photos/200"/>  
 `,
 };
 export const Checkbox = Component.bind({});
@@ -96,25 +120,22 @@ Checkbox.args = {
 `,
 };
 export const Onlyfor = Component.bind({});
+
 Onlyfor.args = {
   
   content:`
-  ## Only for 
+  ## OnlyFor 
 
-  + Here is content that is hidden:
-  
-    <onlyfor permission="read_private_lesson">hidden content</onlyfor>
+  + Permissions: ""
+  + Role: "${JSON.parse(localStorage.getItem("profile"))?.roles[0].role ? JSON.parse(localStorage.getItem("profile"))?.roles[0].role : "select role"}"
+  + Content:
 
-  + Here is content that is displays:
-    <onlyfor >hidden content</onlyfor>
-  
+<div class="onlyfor">
+  <onlyfor permission="join_mentoriship" >If this text shows, role has access to this permission</onlyfor>
+</div>
 
 `,
 };
 
-// export const ContentControl = Component.bind({});
-// ContentControl.args = {
-//   frontMatter,
-//   content,
-//   withToc: false,
-// };
+
+
