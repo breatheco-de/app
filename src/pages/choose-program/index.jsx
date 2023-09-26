@@ -238,19 +238,21 @@ function chooseProgram() {
   }, []);
 
   useEffect(() => {
+    if (dataQuery?.date_joined) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
+      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
+        setWelcomeModal(true);
+      }
+    }
+  }, [dataQuery]);
+  useEffect(() => {
     if (userID !== undefined) {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
         bc_id: userID,
       });
     }
-
     if (user?.id && !userLoading) {
-      const cohortUserDaysCalculated = calculateDifferenceDays(user?.date_joined);
-      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
-        setWelcomeModal(true);
-      }
-
       ldClient?.identify({
         kind: 'user',
         key: user?.id,
@@ -340,13 +342,13 @@ function chooseProgram() {
         maxWidth="45rem"
         borderRadius="13px"
         headerStyles={{ textAlign: 'center' }}
-        title={t('welcome-modal.title')}
+        title={t('dashboard:welcome-modal.title')}
         bodyStyles={{ padding: 0 }}
         closeOnOverlayClick={false}
       >
         <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
           <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
-            {t('welcome-modal.description')}
+            {t('dashboard:welcome-modal.description')}
           </Text>
         </Box>
         <Box padding="0 15px 15px">
