@@ -27,8 +27,10 @@ import getMarkDownContent from '../../../../common/components/MarkDownParser/mar
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
+import modifyEnv from '../../../../../modifyEnv';
 
 function Docs() {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t } = useTranslation('docs');
   const [syllabusData, setSyllabusData] = useState(null);
@@ -82,6 +84,10 @@ function Docs() {
         return myModule;
       });
       setModuleMap(moduleData);
+      if (!assetSlug) {
+        router.push(`/docs/${syllabusSlug}/${moduleData[0]?.modules[0]?.slug}`);
+        setOpen(0);
+      }
     } catch (e) {
       setLoadStatus({
         loading: false,
@@ -95,7 +101,7 @@ function Docs() {
     try {
       const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((myAsset) => myAsset.slug === assetSlug));
       if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
+      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
 
       const urlPathname = assetData?.readme_url ? assetData?.readme_url.split('https://github.com')[1] : null;
@@ -109,14 +115,14 @@ function Docs() {
       let ipynbHtml = '';
 
       if (exensionName !== 'ipynb') {
-        const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
+        const resp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
         if (resp.status >= 400) {
           throw new Error('markdown not found');
         }
         markdown = await resp.text();
       } else {
-        const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
-        const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
+        const ipynbIframe = `${BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
+        const ipynbHtmlUrl = `${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
         const resp = await fetch(ipynbHtmlUrl);
 
         ipynbHtml = {
@@ -151,7 +157,7 @@ function Docs() {
   }, []);
 
   useEffect(() => {
-    if (moduleMap.length > 0) getAssetData();
+    if (moduleMap.length > 0 && assetSlug) getAssetData();
   }, [assetSlug, moduleMap]);
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
