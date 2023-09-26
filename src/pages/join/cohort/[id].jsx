@@ -29,8 +29,7 @@ function Page({ id }) {
     bc.cohort().join(id)
       .then(async (resp) => {
         const dataRequested = await resp.json();
-
-        if (dataRequested.status_code < 400) {
+        if (dataRequested?.status === 'ACTIVE') {
           router.push('/choose-program');
         }
         setData(dataRequested);
