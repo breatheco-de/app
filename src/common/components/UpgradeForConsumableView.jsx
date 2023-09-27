@@ -11,11 +11,12 @@ function UpgradeForConsumableView({ externalData }) {
   const { t } = useTranslation('signup');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
-  const { hexColor } = useStyle();
+  const { fontColor, featuredColor, hexColor } = useStyle();
   const router = useRouter();
 
   const hasASuggestedPlan = externalData?.hasASuggestedPlan;
   const hasBasePlan = externalData?.hasBasePlan;
+  const basePlan = externalData?.basePlan;
   const allSubscriptions = externalData?.allSubscriptions || [];
   const event = externalData?.event || {};
   const academyService = externalData?.academyService || {};
@@ -54,10 +55,18 @@ function UpgradeForConsumableView({ externalData }) {
     plans: eventRelevantProps.map((p) => p.plan_slug).join(','),
   };
 
+  const alreadySubscribedToAll = hasBasePlan && hasASuggestedPlan;
+  const noExistsConsumablesForUserSubscriptions = findedEventTypeOfPlanCoincidences?.length === 0;
+
   const handleGetConsumables = () => {
     setIsValidating(true);
-    if (selectedIndex === 0 && (!hasBasePlan || !hasASuggestedPlan)) {
-      router.push('/pricing');
+    if (selectedIndex === 0 && !alreadySubscribedToAll) {
+      router.push({
+        pathname: '/pricing',
+        query: {
+          plan: basePlan?.plans[0]?.slug,
+        },
+      });
     }
 
     if (selectedIndex === 1) {
@@ -91,36 +100,55 @@ function UpgradeForConsumableView({ externalData }) {
           : t('consumables.ran-out-of-mentorships-text')}
       </Text>
       <Flex flexDirection="column" gridGap="16px">
-        {(!hasBasePlan || !hasASuggestedPlan) && (
-          <Flex cursor="pointer" background="yellow.light" onClick={() => setSelectedIndex(0)} border="2px solid" borderColor={selectedIndex === 0 ? hexColor.yellowDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
+        <Button variant="unstyled" isDisabled={alreadySubscribedToAll} _hover={{ background: 'yellow.light' }} display="flex" cursor="pointer" background="yellow.light" onClick={() => setSelectedIndex(0)} border="2px solid" borderColor={selectedIndex === 0 ? hexColor.yellowDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
+          <Flex gridGap="10px" alignItems="center">
             <Text size="12px" fontWeight={700} padding="4px 10px" background="yellow.default" color="white" borderRadius="18px">
-              {hasBasePlan ? t('consumables.base-plan') : t('consumables.full-plan')}
+              {hasBasePlan ? t('consumables.full-plan') : t('consumables.basic-plan')}
             </Text>
-            <Text size="12px" fontWeight={700}>{t('purchase-a-plan')}</Text>
-            <Text size="12px" fontWeight={400}>
-              {isEventConsumable
-                ? t('consumables.and-get-event-access')
-                : t('consumables.and-get-mentorship-access')}
-            </Text>
+            {alreadySubscribedToAll && (
+              <Text size="11px">
+                {`(${t('consumables.already-have-it')})`}
+              </Text>
+            )}
           </Flex>
-        )}
+          <Text size="12px" fontWeight={700} color="black">
+            {t('upgrade-a-plan')}
+          </Text>
+          <Text size="12px" fontWeight={400} color="black">
+            {isEventConsumable
+              ? t('consumables.and-get-event-access')
+              : t('consumables.and-get-mentorship-access')}
+          </Text>
+        </Button>
 
-        {/* findedEventTypeOfPlanCoincidences?.length > 0 && */}
-        {findedEventTypeOfPlanCoincidences?.length > 0 && (
-          <Flex cursor="pointer" background="blue.light" onClick={() => setSelectedIndex(1)} border="2px solid" borderColor={selectedIndex === 1 ? hexColor.blueDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
+        <Button variant="unstyled" isDisabled={noExistsConsumablesForUserSubscriptions} _hover={{ background: featuredColor }} display="flex" cursor="pointer" background={featuredColor} onClick={() => setSelectedIndex(1)} border="2px solid" borderColor={selectedIndex === 1 ? hexColor.blueDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
+          <Flex gridGap="10px" alignItems="center">
             <Text size="12px" fontWeight={700} padding="4px 10px" background="blue.default" color="white" borderRadius="18px">
               Bundle
             </Text>
-            <Text size="12px" fontWeight={700}>
-              {isEventConsumable
-                ? t('consumables.purchase-one-or-more-events')
-                : t('consumables.purchase-one-or-more-sessions')}
-            </Text>
-            <Text size="12px" fontWeight={400}>
-              {t('consumables.avoid-monthly-commitment')}
-            </Text>
+            {noExistsConsumablesForUserSubscriptions && (
+              <>
+                {isEventConsumable ? (
+                  <Text size="11px">
+                    {`(${t('consumables.consumable-event-not-available')})`}
+                  </Text>
+                ) : (
+                  <Text size="11px">
+                    {`(${t('consumables.consumable-mentorship-not-available')})`}
+                  </Text>
+                )}
+              </>
+            )}
           </Flex>
-        )}
+          <Text size="12px" fontWeight={700} color={fontColor}>
+            {isEventConsumable
+              ? t('consumables.purchase-one-or-more-events')
+              : t('consumables.purchase-one-or-more-sessions')}
+          </Text>
+          <Text size="12px" fontWeight={400} color={fontColor}>
+            {t('consumables.avoid-monthly-commitment')}
+          </Text>
+        </Button>
       </Flex>
 
       <Button

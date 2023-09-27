@@ -18,6 +18,7 @@ import { AvatarSkeletonWrapped } from '../Skeleton';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 import { validatePlanExistence } from '../../handlers/subscriptions';
+import { isDevMode } from '../../../utils';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -97,7 +98,6 @@ function MentoringConsumables({
 
   const [cohortSession] = usePersistent('cohortSession', {});
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const isNotProduction = process.env.VERCEL_ENV !== 'production';
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const [existsMentors, setExistsMentors] = useState(true);
@@ -110,7 +110,6 @@ function MentoringConsumables({
   const { slug } = router.query;
 
   const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
-
   const existConsumablesOnCurrentService = consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
 
   useEffect(() => {
@@ -233,7 +232,7 @@ function MentoringConsumables({
           </>
         )}
 
-        {isNotProduction && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
+        {isDevMode && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
           <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
             <Box>
               {t('mentorship.you-have')}

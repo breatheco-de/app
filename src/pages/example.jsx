@@ -27,7 +27,7 @@ export default function Example() {
   const [stage, setStage] = useState('');
   const { isAuthenticated } = useAuth();
   const [isFetchingEvent, setIsFetchingEvent] = useState(false);
-  const [panData, setPlanData] = useState();
+  const [planData, setPlanData] = useState();
 
   const onClick = (value) => {
     setStage(value);
@@ -68,7 +68,7 @@ export default function Example() {
       <ModalToGetAccess
         isOpen={isModalOpen}
         stage={stage}
-        externalData={panData}
+        externalData={planData}
         message={stage === stageType.login && 'In order to compile the code you need to register for free.'}
         onClose={() => {
           setIsModalOpen(false);
