@@ -10,10 +10,11 @@ import {
   TabPanels,
   Tabs,
   Button,
+  Badge
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
@@ -22,12 +23,13 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
+import bc from '../../common/services/breathecode'
 
 const StyledBox = styled(Box)`
-.custom-popover {
-  display: none;
-  top:50px;
-}
+  .custom-popover {
+    display: none;
+    top: 50px;
+  }
 `;
 
 const Triangle = styled(Box)``;
@@ -46,14 +48,22 @@ function DesktopItem({ item, readSyllabus }) {
   const prismicApi = process.env.PRISMIC_API;
 
   const getColorLink = (link) => {
-    if (router?.pathname === link || router.asPath === link || router?.pathname.includes(link)) {
+    if (
+      router?.pathname === link
+      || router.asPath === link
+      || router?.pathname.includes(link)
+    ) {
       return 'blue.default';
     }
     return linkColor;
   };
 
   const getColorIcon = (link) => {
-    if (router?.pathname === link || router?.asPath === link || router?.pathname.includes(link)) {
+    if (
+      router?.pathname === link
+      || router?.asPath === link
+      || router?.pathname.includes(link)
+    ) {
       return '#0097CD';
     }
     return 'gray';
@@ -64,20 +74,44 @@ function DesktopItem({ item, readSyllabus }) {
   const withPopover = item?.with_popover?.active;
   const existsItemWithPopover = existsSubMenu || withPopover || item.description;
 
-  const itemSubMenu = existsSubMenu ? item.subMenu.map((l) => {
-    const isLessons = l.slug === 'lessons';
-    if (isLessons) {
-      return ({
-        ...l,
-        subMenu: [...readSyllabus, ...l.subMenuContent],
-      });
-    }
-    return l;
-  }) : [];
+  const itemSubMenu = existsSubMenu
+    ? item.subMenu.map((l) => {
+      const isLessons = l.slug === 'lessons';
+      if (isLessons) {
+        return {
+          ...l,
+          subMenu: [...readSyllabus, ...l.subMenuContent],
+        };
+      }
+      return l;
+    })
+    : [];
 
   if (item?.id === 'courses' && !prismicRef && !prismicApi) {
     return null;
   }
+
+
+  const accion = () => {
+    bc.auth().me().then((resp) => {
+      const data = resp?.data
+      console.log(data)
+    });
+    // bc.admissions().cohorts().then((resp) => {
+    //   const data = resp?.data
+    //   console.log(data)
+    // });
+    
+    // const domain = router.route.origin;
+    
+  }
+
+  
+  
+  // useEffect(()=>{
+  //   const takeToken = a
+
+  // })
 
   return (
     <StyledBox
@@ -101,15 +135,21 @@ function DesktopItem({ item, readSyllabus }) {
               textDecoration: 'none',
               color: 'blue.default',
             }}
+            onClick={accion}
           >
             {item.label}
+            {/* Notificacion de cursos activos */}
+
+            {/*domain != "4geeks.com" &&*/}
+            { 
+              <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2">
+                <Text>5</Text>
+              </Badge>
+            }    
+
             {existsItemWithPopover && (
               <span>
-                <ArrowDown
-                  color="currentColor"
-                  width="22px"
-                  height="22px"
-                />
+                <ArrowDown color="currentColor" width="22px" height="22px" />
               </span>
             )}
           </Button>
@@ -143,13 +183,7 @@ function DesktopItem({ item, readSyllabus }) {
                 marginLeft="30px"
               />
             </div>
-            <Stack
-              border={0}
-              boxShadow="2xl"
-              p={4}
-              rounded="md"
-              minW="md"
-            >
+            <Stack border={0} boxShadow="2xl" p={4} rounded="md" minW="md">
               <Flex
                 flexDirection="row"
                 padding={existsSubMenu && '0 0 16px 0'}
@@ -163,15 +197,41 @@ function DesktopItem({ item, readSyllabus }) {
               >
                 <Box width="auto" ml="4px" flexShrink={0}>
                   {item?.image ? (
-                    <Image src={item?.image} width={135} height={77.4} style={{ objectFit: 'cover' }} />
+                    <Image
+                      src={item?.image}
+                      width={135}
+                      height={77.4}
+                      style={{ objectFit: 'cover' }}
+                    />
                   ) : (
-                    <Icon icon={item?.icon} width="50px" height="50px" color={hexColor.blueDefault} />
+                    <Icon
+                      icon={item?.icon}
+                      width="50px"
+                      height="50px"
+                      color={hexColor.blueDefault}
+                    />
                   )}
                 </Box>
-                <Box display="flex" flexDirection="column" mr={{ base: '10px', md: '20px' }}>
-                  <Text size="xl" fontWeight={900}>
-                    {item.label}
-                  </Text>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  mr={{ base: '10px', md: '20px' }}
+                >
+                  {/* Warning amarillo */}
+                  <Box
+                    bg="#FFB718"
+                    borderRadius="lg"
+                    padding="md"
+                    shadow="md"
+                    color="black"
+                    m="0.8rem 0"
+                    p="1px 0"
+                  >
+                    <Text textAlign="center" fontSize="15px">
+                      You have 5 active course at 4geeks.com
+                    </Text>
+                  </Box>
+
                   <Text fontWeight={500}>{item.description}</Text>
                   {withPopover && (
                     <NextChakraLink
@@ -184,7 +244,12 @@ function DesktopItem({ item, readSyllabus }) {
                     >
                       {item?.with_popover?.title}
                       <span>
-                        <ArrowRight width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                        <ArrowRight
+                          width="12px"
+                          height="12px"
+                          color="#0097CD"
+                          style={{ display: 'inline', marginLeft: '8px' }}
+                        />
                       </span>
                     </NextChakraLink>
                   )}
@@ -199,147 +264,189 @@ function DesktopItem({ item, readSyllabus }) {
                     // gridGap="8px"
                     variant="unstyled"
                   >
-                    <TabList display="flex" gridGap="12px" flexDirection={{ base: 'row', md: 'column' }} width={{ base: '100%', md: 'auto' }}>
-                      {
-                        existsSubMenu && itemSubMenu.map((child) => {
-                          const {
-                            icon, label, subLabel, href,
-                          } = child;
+                    <TabList
+                      display="flex"
+                      gridGap="12px"
+                      flexDirection={{ base: 'row', md: 'column' }}
+                      width={{ base: '100%', md: 'auto' }}
+                    >
+                      {existsSubMenu
+                        && itemSubMenu.map((child) => {
+                          const { icon, label, subLabel, href } = child;
 
                           const isUrl = icon && isAbsoluteUrl(icon);
 
-                          return !child?.href && (
-                            <Tab
-                              key={`${label}-${href}`}
-                              borderLeft="4px solid transparent"
-                              _selected={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
-                              // my="2px"
-                              opacity={0.7}
-                              _hover={{ borderLeft: '4px solid', borderColor: 'blue.default', opacity: 1 }}
-                              borderRadius="2px"
-                              justifyContent="flex-start"
-                              style={{
-                                // transition: 'all 0.15s ease-in-out',
-                                padding: '0.5rem 0.8rem',
-                              }}
-                              gridGap="14px"
-                              // p={2}
-                              textAlign="left"
-                            >
-                              {icon && (isUrl ? (
-                                <Image src={icon} width={33} height={33} alt={label} style={{ minWidth: '33px', minHeight: '33px' }} />
-                              ) : <Icon icon={icon} width="33px" height="30px" color={hexColor.blueDefault} />)}
+                          return (
+                            !child?.href && (
+                              <Tab
+                                key={`${label}-${href}`}
+                                borderLeft="4px solid transparent"
+                                _selected={{
+                                  borderLeft: '4px solid',
+                                  borderColor: 'blue.default',
+                                  opacity: 1,
+                                }}
+                                // my="2px"
+                                opacity={0.7}
+                                _hover={{
+                                  borderLeft: '4px solid',
+                                  borderColor: 'blue.default',
+                                  opacity: 1,
+                                }}
+                                borderRadius="2px"
+                                justifyContent="flex-start"
+                                style={{
+                                  // transition: 'all 0.15s ease-in-out',
+                                  padding: '0.5rem 0.8rem',
+                                }}
+                                gridGap="14px"
+                                // p={2}
+                                textAlign="left"
+                              >
+                                {icon
+                                  && (isUrl ? (
+                                    <Image
+                                      src={icon}
+                                      width={33}
+                                      height={33}
+                                      alt={label}
+                                      style={{
+                                        minWidth: '33px',
+                                        minHeight: '33px',
+                                      }}
+                                    />
+                                  ) : (
+                                    <Icon
+                                      icon={icon}
+                                      width="33px"
+                                      height="30px"
+                                      color={hexColor.blueDefault}
+                                    />
+                                  ))}
+                                <Text
+                                  // width="100%"
+                                  minWidth="130px"
+                                  // transition="all .3s ease"
+                                  color={getColorLink(href)}
+                                  _groupHover={{ color: groupHoverColor }}
+                                  fontWeight={500}
+                                >
+                                  {label}
+                                </Text>
+                                {/* optional short description */}
+                                {subLabel && (
+                                  <Text fontSize="sm">{subLabel}</Text>
+                                )}
+                              </Tab>
+                            )
+                          );
+                        })}
+                    </TabList>
+                    <Box
+                      width="3px"
+                      background={backgroundOfLine}
+                      margin="0 15px"
+                    />
+                    <TabPanels>
+                      {existsSubMenu
+                        && itemSubMenu.map((child) => {
+                          const { description, subMenu = [] } = child;
+
+                          return (
+                            !child?.href && (
+                              <TabPanel key={description} padding={0}>
+                                {description && (
+                                  <CustomText fontSize="14px" pb="15px">
+                                    {description}
+                                  </CustomText>
+                                )}
+                                {subMenu?.length > 0
+                                  && subMenu.map((l) => (
+                                    <NextChakraLink
+                                      href={l.href}
+                                      key={l.href}
+                                      // role="group"
+                                      display="block"
+                                      p={2}
+                                      style={{ borderRadius: '5px' }}
+                                      _hover={{ bg: backgroundHoverLink }}
+                                    >
+                                      <Stack direction="row" align="center">
+                                        <Box>
+                                          <Text
+                                            // transition="all .3s ease"
+                                            color={getColorLink(l.href)}
+                                            _groupHover={{
+                                              color: groupHoverColor,
+                                            }}
+                                            fontWeight={500}
+                                          >
+                                            {l.label}
+                                          </Text>
+                                        </Box>
+                                        <Flex
+                                          // transition="all .3s ease"
+                                          opacity={1}
+                                          justify="flex-start"
+                                          align="center"
+                                          flex={1}
+                                        >
+                                          <ArrowRight
+                                            color="#0097CD"
+                                            width="12px"
+                                            height="12px"
+                                          />
+                                        </Flex>
+                                      </Stack>
+                                    </NextChakraLink>
+                                  ))}
+                              </TabPanel>
+                            )
+                          );
+                        })}
+                    </TabPanels>
+                  </Tabs>
+                  {existsSubMenu
+                    && itemSubMenu.map(
+                      (child) => child?.href && (
+                      <Box>
+                        <NextChakraLink
+                          href={child.href}
+                          key={child.href}
+                          display="block"
+                          p={2}
+                          style={{ borderRadius: '5px' }}
+                          _hover={{ bg: backgroundHoverLink }}
+                        >
+                          <Stack direction="row" align="center">
+                            <Box>
                               <Text
-                                // width="100%"
-                                minWidth="130px"
-                                // transition="all .3s ease"
-                                color={getColorLink(href)}
+                                    // transition="all .3s ease"
+                                color={getColorLink(child.href)}
                                 _groupHover={{ color: groupHoverColor }}
                                 fontWeight={500}
                               >
-                                {label}
+                                {child.label}
                               </Text>
-                              {/* optional short description */}
-                              {subLabel && <Text fontSize="sm">{subLabel}</Text>}
-                            </Tab>
-                          );
-                        })
-                      }
-                    </TabList>
-                    <Box width="3px" background={backgroundOfLine} margin="0 15px" />
-                    <TabPanels>
-                      {existsSubMenu && itemSubMenu.map((child) => {
-                        const {
-                          description, subMenu = [],
-                        } = child;
-
-                        return !child?.href && (
-                          <TabPanel key={description} padding={0}>
-                            {description && (
-                              <CustomText fontSize="14px" pb="15px">
-                                {description}
-                              </CustomText>
-                            )}
-                            {subMenu?.length > 0 && subMenu.map((l) => (
-                              <NextChakraLink
-                                href={l.href}
-                                key={l.href}
-                                // role="group"
-                                display="block"
-                                p={2}
-                                style={{ borderRadius: '5px' }}
-                                _hover={{ bg: backgroundHoverLink }}
-                              >
-                                <Stack direction="row" align="center">
-                                  <Box>
-                                    <Text
-                                      // transition="all .3s ease"
-                                      color={getColorLink(l.href)}
-                                      _groupHover={{ color: groupHoverColor }}
-                                      fontWeight={500}
-                                    >
-                                      {l.label}
-                                    </Text>
-                                  </Box>
-                                  <Flex
-                                    // transition="all .3s ease"
-                                    opacity={1}
-                                    justify="flex-start"
-                                    align="center"
-                                    flex={1}
-                                  >
-                                    <ArrowRight
-                                      color="#0097CD"
-                                      width="12px"
-                                      height="12px"
-                                    />
-                                  </Flex>
-                                </Stack>
-                              </NextChakraLink>
-                            ))}
-                          </TabPanel>
-                        );
-                      })}
-                    </TabPanels>
-                  </Tabs>
-                  {existsSubMenu && itemSubMenu.map((child) => child?.href && (
-                    <Box>
-                      <NextChakraLink
-                        href={child.href}
-                        key={child.href}
-                        display="block"
-                        p={2}
-                        style={{ borderRadius: '5px' }}
-                        _hover={{ bg: backgroundHoverLink }}
-                      >
-                        <Stack direction="row" align="center">
-                          <Box>
-                            <Text
-                              // transition="all .3s ease"
-                              color={getColorLink(child.href)}
-                              _groupHover={{ color: groupHoverColor }}
-                              fontWeight={500}
+                            </Box>
+                            <Flex
+                                  // transition="all .3s ease"
+                              opacity={1}
+                              justify="flex-start"
+                              align="center"
+                              flex={1}
                             >
-                              {child.label}
-                            </Text>
-                          </Box>
-                          <Flex
-                            // transition="all .3s ease"
-                            opacity={1}
-                            justify="flex-start"
-                            align="center"
-                            flex={1}
-                          >
-                            <ArrowRight
-                              color={hexColor.blueDefault}
-                              width="12px"
-                              height="12px"
-                            />
-                          </Flex>
-                        </Stack>
-                      </NextChakraLink>
-                    </Box>
-                  ))}
+                              <ArrowRight
+                                color={hexColor.blueDefault}
+                                width="12px"
+                                height="12px"
+                              />
+                            </Flex>
+                          </Stack>
+                        </NextChakraLink>
+                      </Box>
+                      ),
+                    )}
                 </>
               )}
             </Stack>
@@ -394,7 +501,8 @@ DesktopItem.propTypes = {
     slug: PropTypes.string,
     with_popover: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   }),
-  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  readSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any]))
+    .isRequired,
 };
 DesktopItem.defaultProps = {
   item: {},
