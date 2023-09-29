@@ -19,31 +19,38 @@ function AcceptInvite() {
   const { t } = useTranslation('login');
   const [isChecked, setIsChecked] = useState(false);
   //const router = useRouter();
-  //const [invite, setInvite] = useState()
+  const [invite, setInvite] = useState();
 
-  const acceptInvite = (values) => {
+  const acceptInvite = async (values) => {
     console.log(values);
 
-    // bc.auth().invites().get().then((resp)=>{
-    //   const data = resp.data;
-    //   setInvite(data)
-    // }).catch((err)=>{
-    //   console.log(err)
+    //Crear un invite, django, Pedirle, acceso a alejandro
+
+    const inviteData = await bc.auth().invites().get().then((resp) => {
+      const { data } = resp;
+
+      console.log(data);
+      return data;
+    })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // bc.admissions().me().then((resp) => {
+    //   console.log(resp.data);
     // });
 
-    bc.admissions().me().then((resp) => {
-      console.log(resp.data);
-    });
+    setInvite(inviteData);
+    console.log(invite[0]);
 
-    //console.log(invite)
-
-    // bc.auth().invites().accept(invite.academy.id)
-    // .then((resp) => {
-    //   const data = resp?.data;
-    //   console.log(data)
-    // }).catch((err)=>{
-    //   console.log(err)
-    // })
+    bc.auth().invites().accept(invite[0].academy.id, values)
+      .then((resp) => {
+        const data = resp?.data;
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
     //router.push('/login');
 
