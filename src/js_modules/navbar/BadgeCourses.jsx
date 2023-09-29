@@ -10,5 +10,4 @@ function BadgeCourses(courses) {
     </Badge>
   );
 }
-
 export default BadgeCourses;
