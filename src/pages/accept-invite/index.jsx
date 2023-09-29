@@ -11,14 +11,14 @@ import {
 import { Form, Formik, Field } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import NextChakraLink from '../../common/components/NextChakraLink';
-//import bc from '../../common/services/breathecode'
+import bc from '../../common/services/breathecode';
 
 function AcceptInvite() {
   const { t } = useTranslation('login');
   const [isChecked, setIsChecked] = useState(false);
-  const router = useRouter();
+  //const router = useRouter();
   //const [invite, setInvite] = useState()
 
   const acceptInvite = (values) => {
@@ -31,7 +31,11 @@ function AcceptInvite() {
     //   console.log(err)
     // });
 
-    // console.log(invite)
+    bc.admissions().me().then((resp) => {
+      console.log(resp.data);
+    });
+
+    //console.log(invite)
 
     // bc.auth().invites().accept(invite.academy.id)
     // .then((resp) => {
@@ -41,7 +45,7 @@ function AcceptInvite() {
     //   console.log(err)
     // })
 
-    router.push('/login');
+    //router.push('/login');
 
     //ACOMODAR LOS FETCHS -> HACERLOS ANIDADOS CON VERIFICACIONES
   };
