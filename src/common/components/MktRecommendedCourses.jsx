@@ -151,6 +151,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
               maxWidth="300px"
               icon_url={course.icon_url}
               iconBackground="#25BF6C"
+              href={course?.course_translation?.landing_url}
               programName={course.course_translation.title}
               programSlug={course.slug}
               programDescription={course.course_translation.description}
