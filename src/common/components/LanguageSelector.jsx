@@ -48,12 +48,21 @@ function LanguageSelector({ display, translations }) {
           backgroundColor="transparent"
           width="auto"
           alignSelf="center"
-          _hover={{
-            background: 'transparent',
+          style={{
+            backgroundColor: 'red',
+            active: {
+              background: 'transparent',
+            },
+            hover: {
+              background: 'transparent',
+            },
           }}
-          _active={{
-            background: 'transparent',
-          }}
+          // _hover={{
+          //   background: 'transparent',
+          // }}
+          // _active={{
+          //   background: 'transparent',
+          // }}
           onClick={() => setLanguagesOpen(!languagesOpen)}
         >
           <Box

@@ -10,11 +10,11 @@ import {
   TabPanels,
   Tabs,
   Button,
-  Badge
+  Badge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
@@ -23,7 +23,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
-import bc from '../../common/services/breathecode'
+import bc from '../../common/services/breathecode';
 
 const StyledBox = styled(Box)`
   .custom-popover {
@@ -91,27 +91,23 @@ function DesktopItem({ item, readSyllabus }) {
     return null;
   }
 
+  //LOAD COHORTS
 
-  const accion = () => {
-    bc.auth().me().then((resp) => {
-      const data = resp?.data
-      console.log(data)
-    });
-    // bc.admissions().cohorts().then((resp) => {
-    //   const data = resp?.data
-    //   console.log(data)
-    // });
-    
-    // const domain = router.route.origin;
-    
-  }
+  // bc.admissions().cohorts().then((resp) => {
+  //   const data = resp?.data
+  //   console.log(data)
+  // });
+  const [cohorts, setCohorts] = useState([]);
+  const domain = router.route.origin;
 
-  
-  
-  // useEffect(()=>{
-  //   const takeToken = a
-
-  // })
+  useEffect(() => {
+    bc.auth()
+      .me()
+      .then((resp) => {
+        const data = resp?.data;
+        setCohorts(data.cohorts);
+      });
+  }, []);
 
   return (
     <StyledBox
@@ -135,17 +131,25 @@ function DesktopItem({ item, readSyllabus }) {
               textDecoration: 'none',
               color: 'blue.default',
             }}
-            onClick={accion}
           >
             {item.label}
             {/* Notificacion de cursos activos */}
 
             {/*domain != "4geeks.com" &&*/}
-            { 
-              <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2">
-                <Text>5</Text>
+            {domain !== '4geeks.com' && (
+              <Badge
+                bg="#FFB718"
+                color="black"
+                variant="warning"
+                size="sm"
+                m="2"
+              >
+                <Text>
+                  5
+                  {cohorts.length}
+                </Text>
               </Badge>
-            }    
+            )}
 
             {existsItemWithPopover && (
               <span>
@@ -227,9 +231,14 @@ function DesktopItem({ item, readSyllabus }) {
                     m="0.8rem 0"
                     p="1px 0"
                   >
-                    <Text textAlign="center" fontSize="15px">
-                      You have 5 active course at 4geeks.com
-                    </Text>
+                    {domain !== '4geeks.com' && (
+                      <Text textAlign="center" fontSize="15px">
+                        You have 5 +
+                        {cohorts.length}
+                        + active course at
+                        4geeks.com
+                      </Text>
+                    )}
                   </Box>
 
                   <Text fontWeight={500}>{item.description}</Text>
