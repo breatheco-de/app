@@ -4,46 +4,47 @@ import {
   Flex,
   Button,
   FormControl,
-  Stack,
   FormLabel,
   Input,
-  FormErrorMessage,
-  // Form,
-  Box,
-  Avatar,
-  useToast,
   Checkbox,
-  // InputRightElement,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
-import { useState} from 'react';
-import NextChakraLink from '../../common/components/NextChakraLink';
-import bc from '../../common/services/breathecode'
+import { useState } from 'react';
 import { useRouter } from 'next/router';
+import NextChakraLink from '../../common/components/NextChakraLink';
+//import bc from '../../common/services/breathecode'
 
 function AcceptInvite() {
   const { t } = useTranslation('login');
-  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [isChecked, setIsChecked] = useState(false);
-  const [userId, setUserId] = useState(0)
   const router = useRouter();
+  //const [invite, setInvite] = useState()
 
   const acceptInvite = (values) => {
-    
-    console.log(values)
+    console.log(values);
 
-    bc.admissions().me().then((resp)=>{
-      const data = resp?.data;
-      setUserId(data.id)
-    })
+    // bc.auth().invites().get().then((resp)=>{
+    //   const data = resp.data;
+    //   setInvite(data)
+    // }).catch((err)=>{
+    //   console.log(err)
+    // });
 
-    bc.auth().invites().accept(userId)
-    .then((resp) => {
-      const data = resp?.data;
-      console.log(data)
-    })
-  }
+    // console.log(invite)
+
+    // bc.auth().invites().accept(invite.academy.id)
+    // .then((resp) => {
+    //   const data = resp?.data;
+    //   console.log(data)
+    // }).catch((err)=>{
+    //   console.log(err)
+    // })
+
+    router.push('/login');
+
+    //ACOMODAR LOS FETCHS -> HACERLOS ANIDADOS CON VERIFICACIONES
+  };
 
   return (
     <Flex
@@ -61,6 +62,7 @@ function AcceptInvite() {
       />
       <Text margin="30px" textAlign="center">
         {t(
+          // `You have been invited to ${invite.academy.name}506Tek Academy, please fill out the following form to accept the invite`
           'You have been invited to 506Tek Academy, please fill out the following form to accept the invite',
         )}
       </Text>
@@ -74,7 +76,6 @@ function AcceptInvite() {
           password: '',
           passwordConfirmation: '',
         }}
-
         onSubmit={acceptInvite}
       >
         {({ isSubmitting }) => (
