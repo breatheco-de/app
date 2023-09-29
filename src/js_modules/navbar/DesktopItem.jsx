@@ -10,7 +10,6 @@ import {
   TabPanels,
   Tabs,
   Button,
-  Badge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -24,6 +23,7 @@ import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
 import bc from '../../common/services/breathecode';
+import BadgeCourses from './BadgeCourses';
 
 const StyledBox = styled(Box)`
   .custom-popover {
@@ -137,18 +137,7 @@ function DesktopItem({ item, readSyllabus }) {
 
             {/*domain != "4geeks.com" &&*/}
             {domain !== '4geeks.com' && (
-              <Badge
-                bg="#FFB718"
-                color="black"
-                variant="warning"
-                size="sm"
-                m="2"
-              >
-                <Text>
-                  5
-                  {cohorts.length}
-                </Text>
-              </Badge>
+              <BadgeCourses courses={cohorts.length} />
             )}
 
             {existsItemWithPopover && (
