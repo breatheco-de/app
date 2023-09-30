@@ -8,9 +8,10 @@ const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.B
 const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
-  get: (url) => fetch(url, {
+  get: (url, config) => fetch(url, {
     headers: {
       ...axios.defaults.headers.common,
+      ...config?.headers,
     },
   }).then((res) => res).catch((err) => console.error(err)),
   put: (url, data) => fetch(url, {
@@ -94,6 +95,12 @@ const breathecode = {
       syllabus: (slug, version, academy) => axios.get(`${url}/syllabus/${slug}/version/${version}${qs}`, {
         headers: academy && {
           academy,
+        },
+      }),
+      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+        headers: {
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
+          academy: 4,
         },
       }),
     };

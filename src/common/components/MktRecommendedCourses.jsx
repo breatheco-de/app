@@ -127,6 +127,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
           </Box>
         )}
         <Box
+          as="aside"
           ref={ref}
           flexGrow="1"
           flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
