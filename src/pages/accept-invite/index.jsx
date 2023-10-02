@@ -7,54 +7,55 @@ import {
   FormLabel,
   Input,
   Checkbox,
+  useToast,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import bc from '../../common/services/breathecode';
 
 function AcceptInvite() {
   const { t } = useTranslation('login');
   const [isChecked, setIsChecked] = useState(false);
-  //const router = useRouter();
-  const [invite, setInvite] = useState();
+  const toast = useToast();
+  const router = useRouter();
 
   const acceptInvite = async (values) => {
-    console.log(values);
-
-    //Crear un invite, django, Pedirle, acceso a alejandro
-
-    const inviteData = await bc.auth().invites().get().then((resp) => {
-      const { data } = resp;
-
-      console.log(data);
-      return data;
-    })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    // bc.admissions().me().then((resp) => {
-    //   console.log(resp.data);
-    // });
-
-    setInvite(inviteData);
-    console.log(invite[0]);
-
-    bc.auth().invites().accept(invite[0].academy.id, values)
+    const invitesData = await bc.auth().invites().get()
       .then((resp) => {
-        const data = resp?.data;
-        console.log(data);
+        const { data } = resp;
+        return data;
       })
       .catch((err) => {
         console.log(err);
       });
 
-    //router.push('/login');
+    const inviteMTW = invitesData.find(
+      (invite) => invite.academy.slug === 'miami-tech-works',
+    );
 
-    //ACOMODAR LOS FETCHS -> HACERLOS ANIDADOS CON VERIFICACIONES
+    bc.auth().invites().accept(inviteMTW.academy.id, values)
+      .then((resp) => {
+        console.log(resp);
+        toast({
+          title: 'Successfully accepted!',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        router.push('/login');
+      })
+      .catch((err) => {
+        console.log(err);
+        toast({
+          title: `Error!: ,${err}`,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      });
   };
 
   return (
