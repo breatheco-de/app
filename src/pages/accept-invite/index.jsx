@@ -61,9 +61,9 @@ function AcceptInvite() {
     <Flex
       alignItems="center"
       flexDirection="column"
-      width="50%"
-      margin="auto"
-      mt="40px"
+      width={['90%', '90%', '50%']}
+      m={['40px 20px', '40px 20px', '40px auto']}
+      maxWidth="1366px"
     >
       <Image
         width={180}
@@ -176,7 +176,7 @@ function AcceptInvite() {
               </Field>
             </Flex>
             <Flex mt="20px">
-              <Field name="email">
+              <Field name="password">
                 {({ field, form }) => (
                   <FormControl
                     //isRequired
