@@ -22,6 +22,7 @@ import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import Icon from '../../common/components/Icon';
+import { WHITE_LABEL_ACADEMY, isWhiteLabelAcademy } from '../../utils/variables';
 
 function ContactInformation({
   courseChoosed, defaultPlanData, formProps, setFormProps, setVerifyEmailProps,
@@ -39,7 +40,7 @@ function ContactInformation({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { backgroundColor, featuredColor, hexColor } = useStyle();
-
+  const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
   const { syllabus } = router.query;
 
   const signupValidation = Yup.object().shape({
@@ -62,15 +63,29 @@ function ContactInformation({
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': router?.locale || 'en',
-      },
-      body: JSON.stringify(allValues),
-    });
+    let resp = {};
+    if (isWhiteLabelAcademy) {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
+        },
+        body: JSON.stringify({ allValues,
+          academy: whiteLabelAcademies[0] }),
+      });
+    } else {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
+        },
+        body: JSON.stringify(allValues),
+      });
+    }
     const data = await resp.json();
+
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }

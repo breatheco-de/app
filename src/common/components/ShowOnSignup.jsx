@@ -1,4 +1,11 @@
-import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Button,
+  useColorModeValue,
+  useToast,
+  Checkbox,
+} from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -16,12 +23,29 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import { SILENT_CODE } from '../../lib/types';
 import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  headContent,
+  title,
+  description,
+  childrenDescription,
+  subContent,
+  submitText,
+  padding,
+  isLive,
+  subscribeValues,
+  readOnly,
+  children,
+  hideForm,
+  hideSwitchUser,
+  refetchAfterSuccess,
+  ...rest
 }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const BREATHECODE_HOST = modifyEnv({
+    queryString: 'host',
+    env: process.env.BREATHECODE_HOST,
+  });
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
@@ -31,6 +55,7 @@ function ShowOnSignUp({
   const { t } = useTranslation('workshops');
   const router = useRouter();
   const toast = useToast();
+  const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
   const [formProps, setFormProps] = useState({
     first_name: '',
     last_name: '',
@@ -38,30 +63,57 @@ function ShowOnSignUp({
   });
 
   const subscriptionValidation = Yup.object().shape({
-    first_name: Yup.string().min(2, t('common:validators.short-input')).max(50, t('common:validators.long-input')).required(t('common:validators.first-name-required')),
-    last_name: Yup.string().min(2, t('common:validators.short-input')).max(50, t('common:validators.long-input')).required(t('common:validators.last-name-required')),
-    email: Yup.string().email(t('common:validators.invalid-email')).required(t('common:validators.email-required')),
+    first_name: Yup.string()
+      .min(2, t('common:validators.short-input'))
+      .max(50, t('common:validators.long-input'))
+      .required(t('common:validators.first-name-required')),
+    last_name: Yup.string()
+      .min(2, t('common:validators.short-input'))
+      .max(50, t('common:validators.long-input'))
+      .required(t('common:validators.last-name-required')),
+    email: Yup.string()
+      .email(t('common:validators.invalid-email'))
+      .required(t('common:validators.email-required')),
   });
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': router?.locale || 'en',
-      },
-      body: JSON.stringify({
-        ...allValues,
-        ...subscribeValues,
-        plan: '4geeks-standard',
-      }),
-    });
-
+    let resp = {};
+    if (isWhiteLabelAcademy) {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
+        },
+        body: JSON.stringify({
+          ...allValues,
+          ...subscribeValues,
+          plan: '4geeks-standard',
+          academy: whiteLabelAcademies[0],
+        }),
+      });
+    } else {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
+        },
+        body: JSON.stringify({
+          ...allValues,
+          ...subscribeValues,
+          plan: '4geeks-standard',
+        }),
+      });
+    }
     const data = await resp.json();
-    if (data.silent_code === SILENT_CODE.USER_EXISTS
-        || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
+
+    if (
+      data.silent_code === SILENT_CODE.USER_EXISTS
+      || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS
+    ) {
       setShowAlreadyMember(true);
     }
     if (resp?.status >= 400) {
@@ -76,17 +128,19 @@ function ShowOnSignUp({
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
-        .finally(() => {
-          refetchAfterSuccess();
-          setVerifyEmailProps({
-            data: {
-              ...allValues,
-              ...data,
-            },
-            state: true,
-          });
+      handleSubscribeToPlan({
+        slug: '4geeks-standard',
+        accessToken: data?.access_token,
+      }).finally(() => {
+        refetchAfterSuccess();
+        setVerifyEmailProps({
+          data: {
+            ...allValues,
+            ...data,
+          },
+          state: true,
         });
+      });
       router.push({
         query: {
           ...router.query,
@@ -120,9 +174,19 @@ function ShowOnSignUp({
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
+      <Box
+        display="flex"
+        flexDirection="column"
+        gridGap={rest?.gridGap || '10px'}
+        padding={padding || '0 18px 18px'}
+      >
         {title && (
-          <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
+          <Text
+            textAlign="center"
+            size="21px"
+            fontWeight={700}
+            lineHeight="25px"
+          >
             {title}
           </Text>
         )}
@@ -137,7 +201,12 @@ function ShowOnSignUp({
             {children}
 
             {hideSwitchUser ? null : (
-              <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+              <Text
+                size="13px"
+                padding="4px 8px"
+                borderRadius="4px"
+                background={featuredColor}
+              >
                 {t('switch-user-connector', { name: user.first_name })}
                 {' '}
                 <Button
@@ -209,11 +278,22 @@ function ShowOnSignUp({
                     setFormProps={setFormProps}
                     readOnly={readOnly}
                   />
-                  <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                  <Checkbox
+                    size="md"
+                    spacing="8px"
+                    colorScheme="green"
+                    isChecked={isChecked}
+                    onChange={() => setIsChecked(!isChecked)}
+                  >
                     <Text size="10px">
                       {t('signup:validators.termns-and-conditions-required')}
                       {' '}
-                      <Link variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                      <Link
+                        variant="default"
+                        fontSize="10px"
+                        href="/privacy-policy"
+                        target="_blank"
+                      >
                         {t('common:privacy-policy')}
                       </Link>
                     </Text>
@@ -230,10 +310,21 @@ function ShowOnSignUp({
                   >
                     {submitText || t('join-workshop')}
                   </Button>
-                  <Text textAlign="center" size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                  <Text
+                    textAlign="center"
+                    size="13px"
+                    padding="4px 8px"
+                    borderRadius="4px"
+                    background={featuredColor}
+                  >
                     {t('signup:already-have-account')}
                     {' '}
-                    <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
+                    <Link
+                      redirectAfterLogin
+                      variant="default"
+                      href="/login"
+                      fontSize="13px"
+                    >
                       {t('signup:login-here')}
                     </Link>
                   </Text>
@@ -250,17 +341,34 @@ function ShowOnSignUp({
         onClose={() => setShowAlreadyMember(false)}
         title={t('signup:alert-message.title')}
         childrenDescription={(
-          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-7.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            gridGap="17px"
+          >
+            <Avatar
+              src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+              border="3px solid #0097CD"
+              width="91px"
+              height="91px"
+              borderRadius="50px"
+            />
             <Text
               size="14px"
               textAlign="center"
-              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.description') }}
+              dangerouslySetInnerHTML={{
+                __html: t('signup:alert-message.description'),
+              }}
             />
           </Box>
         )}
         closeButtonVariant="outline"
-        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        closeButtonStyles={{
+          borderRadius: '3px',
+          color: '#0097CD',
+          borderColor: '#0097CD',
+        }}
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
@@ -277,14 +385,33 @@ function ShowOnSignUp({
         title={t('signup:alert-message.validate-email-title')}
         footerStyle={{ flexDirection: 'row-reverse' }}
         closeButtonVariant="outline"
-        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+        closeButtonStyles={{
+          borderRadius: '3px',
+          color: '#0097CD',
+          borderColor: '#0097CD',
+        }}
         childrenDescription={(
-          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+          <Box
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            gridGap="17px"
+          >
+            <Avatar
+              src={`${BREATHECODE_HOST}/static/img/avatar-1.png`}
+              border="3px solid #0097CD"
+              width="91px"
+              height="91px"
+              borderRadius="50px"
+            />
             <Text
               size="14px"
               textAlign="center"
-              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+              dangerouslySetInnerHTML={{
+                __html: t('signup:alert-message.validate-email-description', {
+                  email: verifyEmailProps?.data?.email,
+                }),
+              }}
             />
           </Box>
         )}
@@ -292,7 +419,8 @@ function ShowOnSignUp({
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           const inviteId = verifyEmailProps?.data?.id;
-          bc.auth().resendConfirmationEmail(inviteId)
+          bc.auth()
+            .resendConfirmationEmail(inviteId)
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
@@ -307,7 +435,9 @@ function ShowOnSignUp({
                 toast({
                   position: 'top',
                   status: 'success',
-                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                  title: t('signup:alert-message.email-sent-to', {
+                    email: data?.email,
+                  }),
                   isClosable: true,
                   duration: 6000,
                 });

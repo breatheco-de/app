@@ -1,4 +1,8 @@
-import { BREATHECODE_HOST } from '../../utils/variables';
+import {
+  BREATHECODE_HOST,
+  isWhiteLabelAcademy,
+  WHITE_LABEL_ACADEMY,
+} from '../../utils/variables';
 
 export const typeError = {
   common: 'common',
@@ -17,15 +21,31 @@ export const typeError = {
  * @returns {Promise<Data>} Data from the request
  */
 export const startSignup = async (formValues, lang) => {
+  const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
   try {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': lang,
-      },
-      body: JSON.stringify(formValues),
-    });
+    let resp = {};
+    if (isWhiteLabelAcademy) {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': lang,
+        },
+        body: JSON.stringify({
+          ...formValues,
+          academy: whiteLabelAcademies[0],
+        }),
+      });
+    } else {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': lang,
+        },
+        body: JSON.stringify(formValues),
+      });
+    }
     const data = await resp.json();
 
     if (resp.status >= 400 && data?.phone) {

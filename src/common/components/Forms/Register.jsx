@@ -26,10 +26,11 @@ import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
-import { BASE_PLAN } from '../../../utils/variables';
+import { BASE_PLAN, isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 
 function Register({ setIsLoggedFromRegister }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
   const { t } = useTranslation('login');
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan({ enableRedirectOnCTA: true });
@@ -145,18 +146,35 @@ function Register({ setIsLoggedFromRegister }) {
           // passwordConfirmation: '',
         }}
         onSubmit={async (values, actions) => {
-          const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept-Language': router?.locale || 'en',
-            },
-            body: JSON.stringify({
-              ...values,
-              plan: '4geeks-standard',
-            }),
-          });
+          let resp = {};
+          if (isWhiteLabelAcademy) {
+            resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept-Language': router?.locale || 'en',
+              },
+              body: JSON.stringify({
+                ...values,
+                plan: '4geeks-standard',
+                academy: whiteLabelAcademies[0],
+              }),
+            });
+          } else {
+            resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept-Language': router?.locale || 'en',
+              },
+              body: JSON.stringify({
+                ...values,
+                plan: '4geeks-standard',
+              }),
+            });
+          }
           const data = await resp.json();
+
           if (data.silent_code === SILENT_CODE.USER_EXISTS
               || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
             setShowAlreadyMember(true);

@@ -1,4 +1,14 @@
-import { Box, Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay, Text, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Text,
+  useToast,
+} from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
@@ -11,18 +21,21 @@ import Heading from './Heading';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem, toCapitalize } from '../../utils';
 import { log } from '../../utils/logging';
+import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 
 function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   const { t } = useTranslation('profile');
-  const {
-    modal,
-  } = useStyle();
+  const { modal } = useStyle();
   const router = useRouter();
   const locale = router?.locale || storySettings?.locale;
   const stTranslation = storySettings?.translation[locale] || {};
   // const technology = router?.query?.technology || 'Python';
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const BREATHECODE_HOST = modifyEnv({
+    queryString: 'host',
+    env: process.env.BREATHECODE_HOST,
+  });
   const toast = useToast();
+  const whiteLabelAcademies = WHITE_LABEL_ACADEMY;
 
   const [formProps, setFormProps] = useState({
     first_name: '',
@@ -45,15 +58,29 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(allValues),
-    });
-
+    let resp = {};
+    if (isWhiteLabelAcademy) {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          allValues,
+          academy: whiteLabelAcademies[0],
+        }),
+      });
+    } else {
+      resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(allValues),
+      });
+    }
     const data = await resp.json();
+
     if (resp.status < 400) {
       setStorageItem('subscriptionId', data.id);
       router.push('/thank-you');
@@ -71,18 +98,41 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   };
 
   return (
-    <Modal isOpen={modalIsOpen} size="xl" onClose={() => log('clicked to close')}>
+    <Modal
+      isOpen={modalIsOpen}
+      size="xl"
+      onClose={() => log('clicked to close')}
+    >
       <ModalOverlay />
       <ModalContent background={modal.background} margin="9rem 10px 0 10px">
         <ModalCloseButton />
         <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
           {title && (
-            <Heading as="p" size="sm" fontWeight="700" letterSpacing="0.05em" textAlign="center" padding="0 0 14px 0">
+            <Heading
+              as="p"
+              size="sm"
+              fontWeight="700"
+              letterSpacing="0.05em"
+              textAlign="center"
+              padding="0 0 14px 0"
+            >
               {title}
             </Heading>
           )}
-          <Text fontSize="14px" px={{ base: '10px', md: '2rem' }} mt="10px" mb="2rem" textAlign="center">
-            {stTranslation?.common?.['modal-tech-description']?.replaceAll('{{title}}', title) || t('common:modal-tech-description', { title: toCapitalize(title) })}
+          <Text
+            fontSize="14px"
+            px={{ base: '10px', md: '2rem' }}
+            mt="10px"
+            mb="2rem"
+            textAlign="center"
+          >
+            {stTranslation?.common?.['modal-tech-description']?.replaceAll(
+              '{{title}}',
+              title,
+            )
+              || t('common:modal-tech-description', {
+                title: toCapitalize(title),
+              })}
           </Text>
           <Formik
             initialValues={{
@@ -110,7 +160,10 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
                   <FieldForm
                     type="text"
                     name="first_name"
-                    label={stTranslation?.common?.['first-name'] || t('common:first-name')}
+                    label={
+                      stTranslation?.common?.['first-name']
+                      || t('common:first-name')
+                    }
                     formProps={formProps}
                     setFormProps={setFormProps}
                   />

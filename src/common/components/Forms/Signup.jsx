@@ -53,7 +53,6 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
 
   const handleSubmit = async (actions, allValues) => {
     const data = await startSignup(allValues, lang);
-
     if (data?.access_token) {
       handleSubscribeToPlan({
         slug: defaultPlanSlug,
