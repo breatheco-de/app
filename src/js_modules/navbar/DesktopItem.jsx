@@ -10,10 +10,11 @@ import {
   TabPanels,
   Tabs,
   Button,
+  Badge,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo, useEffect, useState } from 'react';
+import { memo } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
@@ -22,8 +23,9 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
-import bc from '../../common/services/breathecode';
-import BadgeCourses from './BadgeCourses';
+//import bc from '../../common/services/breathecode';
+import { isWhiteLabelAcademy } from '../../utils/variables';
+//import { getStorageItem } from '../../utils';
 
 const StyledBox = styled(Box)`
   .custom-popover {
@@ -93,22 +95,6 @@ function DesktopItem({ item, readSyllabus }) {
 
   //LOAD COHORTS
 
-  // bc.admissions().cohorts().then((resp) => {
-  //   const data = resp?.data
-  //   console.log(data)
-  // });
-  const [cohorts, setCohorts] = useState([]);
-  const domain = router.route.origin;
-
-  useEffect(() => {
-    bc.auth()
-      .me()
-      .then((resp) => {
-        const data = resp?.data;
-        setCohorts(data.cohorts);
-      });
-  }, []);
-
   return (
     <StyledBox
       key={item.label}
@@ -133,11 +119,15 @@ function DesktopItem({ item, readSyllabus }) {
             }}
           >
             {item.label}
+
             {/* Notificacion de cursos activos */}
 
-            {/*domain != "4geeks.com" &&*/}
-            {domain !== '4geeks.com' && (
-              <BadgeCourses courses={cohorts.length} />
+            {isWhiteLabelAcademy && (
+              <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2">
+                <Text>
+                  5
+                </Text>
+              </Badge>
             )}
 
             {existsItemWithPopover && (
@@ -211,6 +201,7 @@ function DesktopItem({ item, readSyllabus }) {
                   mr={{ base: '10px', md: '20px' }}
                 >
                   {/* Warning amarillo */}
+                  {isWhiteLabelAcademy && (
                   <Box
                     bg="#FFB718"
                     borderRadius="lg"
@@ -220,15 +211,15 @@ function DesktopItem({ item, readSyllabus }) {
                     m="0.8rem 0"
                     p="1px 0"
                   >
-                    {domain !== '4geeks.com' && (
-                      <Text textAlign="center" fontSize="15px">
-                        You have 5 +
-                        {cohorts.length}
-                        + active course at
-                        4geeks.com
-                      </Text>
-                    )}
+                    <Text textAlign="center" fontSize="15px">
+                      You have
+                      {' '}
+                      <strong>5</strong>
+                      {' '}
+                      active course at 4geeks.com
+                    </Text>
                   </Box>
+                  )}
 
                   <Text fontWeight={500}>{item.description}</Text>
                   {withPopover && (
