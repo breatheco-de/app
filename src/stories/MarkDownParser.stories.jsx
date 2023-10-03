@@ -46,7 +46,7 @@ let data = JSON.stringify(
 
 })
 
-console.log(data,"profile data!!!")
+
 useEffect(() => {
 
   setPermission(args.permission);
