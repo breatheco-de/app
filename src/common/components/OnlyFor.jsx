@@ -31,8 +31,6 @@ function Component({ withBanner }) {
 function OnlyFor({
   cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, profile,
 }) {
-  console.log(profile, 'profile onlyfor');
-  console.log(capabilities, 'capabilities onlyfor');
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
