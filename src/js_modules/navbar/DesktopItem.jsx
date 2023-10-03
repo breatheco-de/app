@@ -22,6 +22,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
+import { getStorageItem } from '../../utils';
 
 const StyledBox = styled(Box)`
 .custom-popover {
@@ -74,6 +75,8 @@ function DesktopItem({ item, readSyllabus }) {
     }
     return l;
   }) : [];
+
+  const token = getStorageItem('accessToken');
 
   if (item?.id === 'courses' && !prismicRef && !prismicApi) {
     return null;
@@ -175,7 +178,9 @@ function DesktopItem({ item, readSyllabus }) {
                   <Text fontWeight={500}>{item.description}</Text>
                   {withPopover && (
                     <NextChakraLink
-                      href={item?.with_popover.link}
+                      //href={item?.with_popover.link}
+                      //href={`${item.with_popover.link}?token=${token}`}
+                      href={`${item.with_popover.link}?token=${token}`}
                       key={item?.with_popover.link}
                       display="block"
                       p="0.8rem 0"
