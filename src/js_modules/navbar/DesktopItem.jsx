@@ -129,10 +129,10 @@ function DesktopItem({ item, readSyllabus }) {
 
             {/* Notificacion de cursos activos */}
 
-            {isWhiteLabelAcademy && (
+            {(isWhiteLabelAcademy && profile?.cohorts) && (
               <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2" borderRadius="5px">
                 <Text>
-                  {profile?.cohorts?.length || 0}
+                  {profile?.cohorts?.length}
                 </Text>
               </Badge>
             )}
