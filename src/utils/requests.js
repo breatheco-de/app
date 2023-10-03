@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
+import { kv } from '@vercel/kv';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
@@ -140,6 +141,26 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   return allResults;
 };
 
+const getAssetsFromCache = async () => {
+  try {
+    console.log('Fetching assets from cache');
+    const assets = await kv.get('assets');
+    return assets;
+  } catch (e) {
+    console.log('Failed to fetch from vercel cache');
+    return null;
+  }
+};
+
+const setAssetsOnCache = async (assets) => {
+  try {
+    console.log('Setting up assets on cache');
+    await kv.set('assets', assets);
+  } catch (e) {
+    console.log('Failed to set vercel cache');
+  }
+};
+
 // mover a carpeta sitemap-generator
 const getLandingTechnologies = async (assets) => {
   try {
@@ -198,6 +219,8 @@ const getLandingTechnologies = async (assets) => {
 
 export {
   getAsset,
+  getAssetsFromCache,
+  setAssetsOnCache,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,
