@@ -159,7 +159,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 export default function HowToSlug({ data, markdown }) {
-  const { t } = useTranslation('how-to');
+  const { t, lang } = useTranslation('how-to');
   // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -178,6 +178,7 @@ export default function HowToSlug({ data, markdown }) {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     if (!isHowTo) {
@@ -223,7 +224,7 @@ export default function HowToSlug({ data, markdown }) {
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
           <Link
-            href="/how-to"
+            href={`${langPrefix}/how-to`}
             margin="3rem 0 2.375rem 0"
             gridColumn="2 / span 12"
             color={linkColor}
@@ -239,7 +240,7 @@ export default function HowToSlug({ data, markdown }) {
               <TagCapsule
                 variant="rounded"
                 isLink
-                href="/how-to"
+                href={`${langPrefix}/how-to`}
                 tags={data?.technologies}
                 marginY="8px"
                 fontSize="13px"
