@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
@@ -23,9 +23,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
-//import bc from '../../common/services/breathecode';
 import { isWhiteLabelAcademy } from '../../utils/variables';
-//import { getStorageItem } from '../../utils';
 
 const StyledBox = styled(Box)`
   .custom-popover {
@@ -93,7 +91,16 @@ function DesktopItem({ item, readSyllabus }) {
     return null;
   }
 
-  //LOAD COHORTS
+  const [profile, setProfile] = useState({});
+
+  const loadProfile = () => {
+    const user = typeof window !== 'undefined' && JSON.parse(localStorage?.getItem('profile'));
+    return user;
+  };
+
+  setTimeout(() => {
+    setProfile(loadProfile());
+  }, 1000);
 
   return (
     <StyledBox
@@ -123,9 +130,9 @@ function DesktopItem({ item, readSyllabus }) {
             {/* Notificacion de cursos activos */}
 
             {isWhiteLabelAcademy && (
-              <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2">
+              <Badge bg="#FFB718" color="black" variant="warning" size="sm" m="2" borderRadius="5px">
                 <Text>
-                  5
+                  {profile?.cohorts?.length || 0}
                 </Text>
               </Badge>
             )}
@@ -214,7 +221,7 @@ function DesktopItem({ item, readSyllabus }) {
                     <Text textAlign="center" fontSize="15px">
                       You have
                       {' '}
-                      <strong>5</strong>
+                      <strong>{profile?.cohorts?.length}</strong>
                       {' '}
                       active course at 4geeks.com
                     </Text>
