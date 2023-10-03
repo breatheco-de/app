@@ -13,7 +13,7 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -26,6 +26,8 @@ import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import { PREPARING_FOR_COHORT } from '../../common/store/types';
+import SimpleModal from '../../common/components/SimpleModal';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -59,6 +61,7 @@ function chooseProgram() {
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
+  const [welcomeModal, setWelcomeModal] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
   const { lightColor } = useStyle();
   const router = useRouter();
@@ -243,6 +246,11 @@ function chooseProgram() {
     }
 
     if (user?.id && !userLoading) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(user?.date_joined);
+      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
+        setWelcomeModal(true);
+      }
+
       ldClient?.identify({
         kind: 'user',
         key: user?.id,
@@ -325,6 +333,31 @@ function chooseProgram() {
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
+      <SimpleModal
+        isOpen={welcomeModal}
+        onClose={() => setWelcomeModal(false)}
+        style={{ marginTop: '10vh' }}
+        maxWidth="45rem"
+        borderRadius="13px"
+        headerStyles={{ textAlign: 'center' }}
+        title={t('welcome-modal.title')}
+        bodyStyles={{ padding: 0 }}
+        closeOnOverlayClick={false}
+      >
+        <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
+          <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
+            {t('welcome-modal.description')}
+          </Text>
+        </Box>
+        <Box padding="0 15px 15px">
+          <ReactPlayerV2
+            url="https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba"
+            width="100%"
+            height="100%"
+            iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+          />
+        </Box>
+      </SimpleModal>
       <GridContainer gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
         <Box gridColumn="2 / span 8">
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">

@@ -28,7 +28,7 @@ function Summary() {
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
   const periodText = {
-    FREE: t('free'),
+    FREE: t('totally_free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
     QUARTER: t('info.quarterly'),

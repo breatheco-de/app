@@ -8,9 +8,10 @@ const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.B
 const host = `${BREATHECODE_HOST}/v1`;
 
 const breathecode = {
-  get: (url) => fetch(url, {
+  get: (url, config) => fetch(url, {
     headers: {
       ...axios.defaults.headers.common,
+      ...config?.headers,
     },
   }).then((res) => res).catch((err) => console.error(err)),
   put: (url, data) => fetch(url, {
@@ -22,6 +23,16 @@ const breathecode = {
     },
     body: JSON.stringify(data),
   }).then((res) => res).catch((err) => console.error(err)),
+  post: (url, data) => fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res).catch((err) => console.error(err)),
+
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -86,6 +97,12 @@ const breathecode = {
           academy,
         },
       }),
+      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+        headers: {
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
     };
   },
 
@@ -146,6 +163,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
       takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {

@@ -31,7 +31,7 @@ export async function getServerSideProps({ query, locale }) {
   return {
     props: {
       seo: {
-        title: `${t('upgrade')} ${t('word-connector.to')} ${suggestedPlan?.title}` || '',
+        title: `${t('common:upgrade')} ${t('common:word-connector.to')} ${suggestedPlan?.title}` || '',
       },
       data: suggestedPlan,
     },
