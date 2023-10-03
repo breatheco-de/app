@@ -1,4 +1,5 @@
 import modifyEnv from '../../../modifyEnv';
+import { log } from '../../utils/logging';
 
 /**
  *
@@ -33,7 +34,7 @@ const saveForm = async (formData = null, tags = [], automations = []) => {
   Object.keys(error).forEach((key) => {
     throw Error(`${error[key][0]} ${key}`);
   });
-  return console.log('Running SaveForm', saveForm);
+  return log('Running SaveForm', saveForm);
 };
 
 export default saveForm;

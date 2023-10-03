@@ -13,6 +13,7 @@ import { slugify } from '../../../../utils';
 import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
+import { log } from '../../../../utils/logging';
 
 export function MDLink({ children, href }) {
   const includesProtocol = href.startsWith('http');
@@ -487,7 +488,7 @@ export function OnlyForBanner({
   children, permission, cohortSession, profile,
 }) {
   const capabilities = (permission || '')?.split(',');
-  console.log('md_permissions:', capabilities);
+  log('md_permissions:', capabilities);
 
   return (
     <OnlyFor

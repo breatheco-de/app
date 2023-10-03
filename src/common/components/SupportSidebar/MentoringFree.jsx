@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Avatar, AvatarGroup, Box, Button, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Image, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react';
 import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Icon from '../Icon';
-import Image from '../Image';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 import bc from '../../services/breathecode';
@@ -210,7 +209,7 @@ function MentoringFree({
                       height="40px"
                       objectFit="cover"
                       style={{ minWidth: '40px', width: '40px !important', height: '40px !important' }}
-                      styleImg={{ borderRadius: '50px' }}
+                      borderRadius="50%"
                     />
                     <Box>
                       <Box fontWeight="700" fontSize="15px" color={useColorModeValue('gray.900', 'white')} letterSpacing="0.05em">
@@ -266,7 +265,6 @@ function MentoringFree({
                               <Box as="hr" borderColor="gray.300" margin="0 18px" />
                             )}
                             <Box display="flex" gridGap="18px" flexDirection="row" py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
-                              {/* onClick={() => { setMentoryProps({ ...mentoryProps, mentor }); setSavedChanges({ ...savedChanges, mentor }); }} */}
                               <Image
                                 src={mentor?.user.profile?.avatar_url}
                                 alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
@@ -274,7 +272,7 @@ function MentoringFree({
                                 height="78px"
                                 objectFit="cover"
                                 style={{ minWidth: '78px', width: '78px !important', height: '78px !important' }}
-                                styleImg={{ borderRadius: '50px' }}
+                                borderRadius="50%"
                               />
                               <Box display="flex" flexDirection="column" width="100%">
                                 <Box fontSize="15px" fontWeight="600">

@@ -144,5 +144,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     PRISMIC_API: process.env.PRISMIC_API,
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
+    BASE_PLAN: process.env.BASE_PLAN,
   },
 })));

@@ -22,12 +22,13 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getAsset } from '../../utils/requests';
+import { log } from '../../utils/logging';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('PROJECT', {}, 'project');
 
   if (data?.length) {
-    console.log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
+    log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
     console.error('Error: fetching Projects list for /interactive-coding-tutorial');
   }

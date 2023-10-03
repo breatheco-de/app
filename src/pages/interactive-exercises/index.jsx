@@ -18,6 +18,7 @@ import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
 
@@ -58,7 +59,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
 
   arrExercises = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
+    log(`SUCCESS: ${arrExercises.length} Exercises fetched for /interactive-exercises`);
   } else {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
@@ -72,7 +73,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-exercises`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-exercises`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-exercises`);
   }

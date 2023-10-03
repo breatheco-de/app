@@ -264,7 +264,7 @@ function ShowOnSignUp({
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/login?tab=login');
+          router.push('/login');
           setShowAlreadyMember(false);
         }}
         handlerText={t('common:login')}

@@ -18,11 +18,13 @@ import Image from 'next/image';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 import { isAbsoluteUrl } from '../../utils/url';
+import useStyle from '../../common/hooks/useStyle';
 
 function MobileItem({
   label, subMenu, href, onClickLink, description, icon, readSyllabus, with_popover: withPopover, image,
 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const { hexColor } = useStyle();
   const linkColor = useColorModeValue('gray.600', 'gray.200');
   const bordercolor1 = useColorModeValue('gray.200', 'gray.700');
   const bordercolor2 = useColorModeValue('gray.200', 'gray.900');
@@ -120,7 +122,7 @@ function MobileItem({
               {image ? (
                 <Image src={image} width={105} height={35} style={{ objectFit: 'cover', height: '35px' }} />
               ) : (
-                <Icon icon={icon} width="50px" height="50px" />
+                <Icon icon={icon} width="50px" height="50px" color={hexColor.blueDefault} />
               )}
             </Box>
             <Box display="flex" flexDirection="column">
@@ -140,7 +142,7 @@ function MobileItem({
                   style={{ borderRadius: '5px' }}
                 >
                   {withPopover?.title}
-                  <Icon icon="arrowRight" width="12px" height="12px" color="#0097CD" style={{ display: 'inline', marginLeft: '8px' }} />
+                  <Icon icon="arrowRight" width="12px" height="12px" color={hexColor.blueDefault} style={{ display: 'inline', marginLeft: '8px' }} />
                 </NextChakraLink>
               )}
             </Box>
@@ -167,6 +169,7 @@ function MobileItem({
                         <NextChakraLink
                           key={l.label}
                           onClick={onClickLink}
+                          color="blue.default"
                           // color={getColorLink(l.href)}
                           style={{ textDecoration: 'none' }}
                           href={l.href}
@@ -182,6 +185,7 @@ function MobileItem({
               <NextChakraLink
                 key={child.label}
                 onClick={onClickLink}
+                color="blue.default"
                 // color={getColorLink(child.href)}
                 style={{ textDecoration: 'none' }}
                 py={2}

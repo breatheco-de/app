@@ -27,14 +27,20 @@ import getMarkDownContent from '../../../../common/components/MarkDownParser/mar
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
+import modifyEnv from '../../../../../modifyEnv';
 
 function Docs() {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation('docs');
   const [syllabusData, setSyllabusData] = useState(null);
   const [asset, setAsset] = useState(null);
   const [open, setOpen] = useState(null);
   const [moduleMap, setModuleMap] = useState([]);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
   const [isFullScreen, setIsFullScreen] = useState(false);
   const { syllabusSlug, assetSlug } = router.query;
   const { hexColor, borderColor, featuredLight, fontColor } = useStyle();
@@ -45,8 +51,9 @@ function Docs() {
 
   const getSyllabusData = async () => {
     try {
-      const result = await bc.syllabus({ version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+      const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
       const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+      if (!syllabus) throw new Error('syllabus not found');
       setSyllabusData(syllabus);
 
       const moduleData = syllabus.json.days.filter((assignment) => {
@@ -77,14 +84,24 @@ function Docs() {
         return myModule;
       });
       setModuleMap(moduleData);
+      if (!assetSlug) {
+        router.push(`/docs/${syllabusSlug}/${moduleData[0]?.modules[0]?.slug}`);
+        setOpen(0);
+      }
     } catch (e) {
+      setLoadStatus({
+        loading: false,
+        status: 'not-found',
+      });
       console.log(e);
     }
   };
 
   const getAssetData = async () => {
     try {
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
+      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((myAsset) => myAsset.slug === assetSlug));
+      if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
+      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
 
       const urlPathname = assetData?.readme_url ? assetData?.readme_url.split('https://github.com')[1] : null;
@@ -98,14 +115,14 @@ function Docs() {
       let ipynbHtml = '';
 
       if (exensionName !== 'ipynb') {
-        const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
+        const resp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
         if (resp.status >= 400) {
           throw new Error('markdown not found');
         }
         markdown = await resp.text();
       } else {
-        const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
-        const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
+        const ipynbIframe = `${BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
+        const ipynbHtmlUrl = `${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
         const resp = await fetch(ipynbHtmlUrl);
 
         ipynbHtml = {
@@ -122,7 +139,15 @@ function Docs() {
         ipynbHtml,
         collab_url: finalPathname,
       });
+      setLoadStatus({
+        loading: false,
+        status: 'done',
+      });
     } catch (e) {
+      setLoadStatus({
+        loading: false,
+        status: '',
+      });
       console.log(e);
     }
   };
@@ -132,13 +157,20 @@ function Docs() {
   }, []);
 
   useEffect(() => {
-    getAssetData();
-  }, [assetSlug]);
+    if (moduleMap.length > 0 && assetSlug) getAssetData();
+  }, [assetSlug, moduleMap]);
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
 
   return (
     <>
+      {!loadStatus.loading && loadStatus.status === 'not-found' && (
+        <Box height="50vh">
+          <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">
+            {t('not-found')}
+          </Heading>
+        </Box>
+      )}
       <GridContainer
         maxWidth="1228px"
         margin="28px auto 0 auto"
@@ -215,7 +247,11 @@ function Docs() {
             </Heading>
           )}
 
-          {asset?.markdown && !isIpynb ? (
+          {loadStatus.loading && (
+            <MDSkeleton />
+          )}
+
+          {asset?.markdown && !isIpynb && (
             <Box
               height="100%"
               margin="0 rem auto 0 auto"
@@ -230,12 +266,6 @@ function Docs() {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
             </Box>
-          ) : (
-            <>
-              {!isIpynb && (
-                <MDSkeleton />
-              )}
-            </>
           )}
 
           {isIpynb && asset?.markdown === '' && asset?.ipynbHtml?.html && (

@@ -18,6 +18,7 @@ import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
 
@@ -53,7 +54,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
 
   arrLessons = Object.values(data?.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
+    log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {
     console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
@@ -67,7 +68,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /lessons`);
   }

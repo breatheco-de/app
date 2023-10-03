@@ -12,6 +12,7 @@ import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { error } from '../../utils/logging';
 
 const coursesLimit = 2;
 
@@ -56,7 +57,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
         setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
-      console.log(e);
+      error(e);
     }
   };
 
@@ -126,6 +127,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
           </Box>
         )}
         <Box
+          as="aside"
           ref={ref}
           flexGrow="1"
           flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
@@ -150,6 +152,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
               maxWidth="300px"
               icon_url={course.icon_url}
               iconBackground="#25BF6C"
+              href={course?.course_translation?.landing_url}
               programName={course.course_translation.title}
               programSlug={course.slug}
               programDescription={course.course_translation.description}

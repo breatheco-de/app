@@ -37,6 +37,7 @@ import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../../../../utils/variables';
+import { log } from '../../../../../utils/logging';
 
 function Content() {
   const { t } = useTranslation('syllabus');
@@ -165,7 +166,7 @@ function Content() {
             updateTasks[index].opened_at = result.data.opened_at;
             setTaskTodo([...updateTasks]);
           }
-        }).catch((e) => console.log(e));
+        }).catch((e) => log('update_task_error:', e));
     }
   }, [currentTask]);
 

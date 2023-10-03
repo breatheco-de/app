@@ -186,7 +186,7 @@ function AuthProvider({ children }) {
     authHandler();
   }, [router]);
 
-  const login = async (payload = null) => {
+  const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
@@ -219,12 +219,16 @@ function AuthProvider({ children }) {
             type: 'LOGIN',
             payload: responseData,
           });
-          if (redirect && redirect.length > 0) {
-            router.push(redirect);
-            localStorage.removeItem('redirect');
+          if (!disableRedirect) {
+            if (redirect && redirect.length > 0) {
+              router.push(redirect);
+              localStorage.removeItem('redirect');
+            } else {
+              router.push('/choose-program');
+              localStorage.removeItem('redirect');
+            }
           } else {
-            router.push('/choose-program');
-            localStorage.removeItem('redirect');
+            router.reload();
           }
         }
         return response;

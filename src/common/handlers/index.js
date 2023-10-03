@@ -34,8 +34,8 @@ const handlers = {
         reject(error);
       });
   }),
-  getStudents: (slug, academyId) => new Promise((resolve, reject) => {
-    bc.cohort().getStudents(slug, academyId)
+  getStudents: (slug, academyId, params = {}) => new Promise((resolve, reject) => {
+    bc.cohort(params).getStudents(slug, academyId)
       .then(({ data }) => {
         const sortedStudents = data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),

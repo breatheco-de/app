@@ -20,6 +20,7 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
+import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
 
@@ -67,7 +68,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const { resp, data } = await fetchArticles(currentLang, page, query);
   arrHowTos = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
+    log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
     console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
@@ -81,7 +82,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
   }
@@ -129,7 +130,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
 };
 
 export default function HowTo({ data, technologyTags, difficulties, count }) {
-  // console.log(data.filter((l) => l.title === 'How to print in javascript'));
+  // log(data.filter((l) => l.title === 'How to print in javascript'));
   const { t, lang } = useTranslation('how-to');
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();

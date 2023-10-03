@@ -33,6 +33,7 @@ import Text from '../../common/components/Text';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import CustomTheme from '../../../styles/theme';
 import GridContainer from '../../common/components/GridContainer';
+import { error } from '../../utils/logging';
 // import KPI from '../../common/components/KPI';
 
 // eslint-disable-next-line react/prop-types
@@ -99,7 +100,7 @@ function Mentorship() {
       setIsLoading(false);
       setSessions(data);
     } catch (e) {
-      console.log(e);
+      error(e);
       setIsLoading(false);
     }
   }, [startDate]);
