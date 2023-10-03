@@ -5,7 +5,7 @@
 1. Install Bun:
 
 ```bash
-# If bun has not been installed in your work environment (Gitpod, Codespaces, and more)
+# If bun has not been installed in your work environment (Gitpod, Codespaces, and more).
 npm install -g bun 
 ```
 
