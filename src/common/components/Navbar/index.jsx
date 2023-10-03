@@ -578,17 +578,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           translations={translations}
           onClickLink={onToggle}
         />
-        {/* {isBelowTablet && (
-              <MobileNav
-                mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
-                NAV_ITEMS={ITEMS}
-                haveSession={sessionExists}
-                translations={translations}
-                readSyllabus={readSyllabus}
-                onClickLink={onToggle}
-              />
-            )}
-        */}
+
       </Collapse>
     </Box>
   );

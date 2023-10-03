@@ -183,6 +183,7 @@ function Module({
       </Flex>
       <HStack
         // justifyContent="flex-end"
+        flexShrink={0}
         width="auto"
         style={{
           margin: 0,

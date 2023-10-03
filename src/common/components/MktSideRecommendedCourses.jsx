@@ -92,7 +92,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   }, []);
 
   return courses?.length > 0 && (
-    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
+    <Box as="aside" minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
       {title && (
         <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
           {title || t('continue-learning-course')}
@@ -101,6 +101,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
       {!isLoading && courses?.length > 0 ? (
         <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
           {courses.map((course) => {
+            const courseLink = course?.course_translation?.landing_url;
             // const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
             //   ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
             //   : [];
@@ -123,7 +124,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                 <Link
                   display={{ base: 'none', md: 'flex' }}
                   variant="buttonDefault"
-                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
+                  href={courseLink || `${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   colorScheme="success"
                   width="auto"
@@ -135,7 +136,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                 </Link>
                 <Link
                   display={{ base: 'flex', md: 'none' }}
-                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
+                  href={courseLink || `${ORIGIN_HOST}${langConnector}/${course?.slug}`}
                   alignItems="center"
                   width="auto"
                   color="green.light"

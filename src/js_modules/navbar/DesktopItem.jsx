@@ -87,6 +87,9 @@ function DesktopItem({ item, readSyllabus }) {
     })
     : [];
 
+  const token = 
+        ('accessToken');
+
   if (item?.id === 'courses' && !prismicRef && !prismicApi) {
     return null;
   }
@@ -231,7 +234,9 @@ function DesktopItem({ item, readSyllabus }) {
                   <Text fontWeight={500}>{item.description}</Text>
                   {withPopover && (
                     <NextChakraLink
-                      href={item?.with_popover.link}
+                      //href={item?.with_popover.link}
+                      //href={`${item.with_popover.link}?token=${token}`}
+                      href={`${item.with_popover.link}?token=${token}`}
                       key={item?.with_popover.link}
                       display="block"
                       p="0.8rem 0"
