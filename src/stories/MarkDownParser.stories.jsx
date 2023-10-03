@@ -50,7 +50,9 @@ console.log(data,"profile data!!!")
 useEffect(() => {
 
   setPermission(args.permission);
-  
+if(args.permission != permission){
+  window.location.reload();
+}
  
 }, [args.permission]);
 localStorage.setItem("profile", data);
@@ -115,12 +117,10 @@ Onlyfor.args = {
   
   content:`
   ## OnlyFor 
-
- 
 <div class="onlyfor">
-  <onlyfor permission="join_mentorship" >If this text shows, assisant role has access to this permission</onlyfor>
-  <onlyfor permission="get_my_certificate" >If this text shows, student role has access to this permission</onlyfor>
-  <onlyfor permission="add_code_review" >If this text shows, teacher role has access to this permission</onlyfor>
+  <onlyfor  permission="join_mentorship" >If this text shows, assisant role has access to this permission</onlyfor>
+  <onlyfor  permission="get_my_certificate" >If this text shows, student role has access to this permission</onlyfor>
+  <onlyfor  permission="add_code_review" >If this text shows, teacher role has access to this permission</onlyfor>
 </div>
 
 `,
