@@ -18,30 +18,21 @@ export default {
   title: 'Components/MarkDownParser',
   component: MarkDownParser,
   argTypes: {
-    role: {
-    options: ['assistant', 'teacher', 'student'],
-    control: 'select',
-  },
+   
     permission: {
-    options: ['Join event', 'Join mentorship','Add code reviews', 'Create my profile','Join live class'],
+    options: ['Get my certificate','Add code reviews','Join mentorship'],
     control: 'select',
   },
   },
 };
 
 const Component = (args) => {
- console.log(args,"args")
-const[role,setRole]=useState(args.role);
+ 
+
 const[permission,setPermission]=useState(args.permission);
 
 const renderCodeName = () =>{
-  if(permission == "Join event"){
-    return "event_join"
-  }
-  else if(permission == "Join live class")
-  return "live_class_join"
-
-  else if(permission == "Add code reviews")
+if(permission == "Add code reviews")
   return "add_code_review"
 else{
   return permission?.toLowerCase().split(" ").join("_")
@@ -50,19 +41,18 @@ else{
 
 let data = JSON.stringify(
   {
-  permissions:[{name:permission,codename: renderCodeName()}],
-  permissionsSlug:[renderCodeName()],
+    permissions:[{name:permission,codename: renderCodeName()}],
+    permissionsSlug:[renderCodeName()],
 
-  roles:[{role:`${role}`}]
 })
 
-
+console.log(data,"profile data!!!")
 useEffect(() => {
 
   setPermission(args.permission);
-  setRole(args.role);
+  
  
-}, [args.role,args.permission]);
+}, [args.permission]);
 localStorage.setItem("profile", data);
 return <MarkDownParser {...args} />;
 };
@@ -126,12 +116,11 @@ Onlyfor.args = {
   content:`
   ## OnlyFor 
 
-  + Permissions: ""
-  + Role: "${JSON.parse(localStorage.getItem("profile"))?.roles[0].role ? JSON.parse(localStorage.getItem("profile"))?.roles[0].role : "select role"}"
-  + Content:
-
+ 
 <div class="onlyfor">
-  <onlyfor permission="join_mentoriship" >If this text shows, role has access to this permission</onlyfor>
+  <onlyfor permission="join_mentorship" >If this text shows, assisant role has access to this permission</onlyfor>
+  <onlyfor permission="get_my_certificate" >If this text shows, student role has access to this permission</onlyfor>
+  <onlyfor permission="add_code_review" >If this text shows, teacher role has access to this permission</onlyfor>
 </div>
 
 `,
