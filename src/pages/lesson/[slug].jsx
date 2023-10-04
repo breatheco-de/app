@@ -180,7 +180,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 function LessonSlug({ lesson, markdown, ipynbHtml }) {
-  const { t } = useTranslation('lesson');
+  const { t, lang } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -192,6 +192,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { locale } = router;
 
   const isIpynb = ipynbHtml?.statusText === 'OK' || ipynbHtml?.iframe;
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
@@ -252,7 +253,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                 {lesson?.technologies ? (
                   <TagCapsule
                     isLink
-                    href="/lessons"
+                    href={`${langPrefix}/lessons`}
                     variant="rounded"
                     tags={lesson?.technologies || ['']}
                     marginY="8px"
