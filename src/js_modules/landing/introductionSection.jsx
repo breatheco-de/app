@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text, Button,
+  Box, useColorModeValue, Text, Button, Link,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
@@ -166,19 +166,20 @@ function IntroductionSection({
 
         {/* ----------------------- Button ----------------------- */}
         {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
-          <Button
-            variant="default"
+          <Link
+            variant="buttonDefault"
             width="fit-content"
             minWidth="200px"
+            textAlign="center"
             height="52px"
             fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
-            onClick={() => router?.push(slice?.primary?.button_link?.url || '#pricing')}
+            href={slice?.primary?.button_link || '#pricing'}
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
-          </Button>
+          </Link>
         ) : (
           <>
             {data?.callToAction?.title && (
