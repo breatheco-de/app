@@ -43,6 +43,7 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
+  console.log(`get asset ${slug}`);
 
   try {
     const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
