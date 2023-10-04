@@ -90,7 +90,7 @@ function Checkout() {
   const queryPlans = getQueryString('plans');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
-  const planFormated = plan && encodeURIComponent(plan);
+  const planFormated = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
