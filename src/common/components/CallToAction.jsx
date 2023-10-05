@@ -7,7 +7,8 @@ import Text from './Text';
 
 function CallToAction({
   background, imageSrc, href, styleContainer, isExternalLink, title, text,
-  buttonText, width, onClick, margin, buttonsData, buttonStyle,
+  buttonText, width, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
+  isLoading,
 }) {
   return (
     <Box
@@ -44,7 +45,7 @@ function CallToAction({
       >
         <Box maxWidth="530px">
           {title && (
-          <Heading as="h5" fontSize="xsm" color="white" margin={0} marginBottom="11px">
+          <Heading as="h5" fontSize={fontSizeOfTitle} color="white" margin={0} marginBottom="11px">
             {title}
           </Heading>
           )}
@@ -70,7 +71,7 @@ function CallToAction({
           gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
         >
           {buttonText && (
-          <Button whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+          <Button isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
             {buttonText}
           </Button>
           )}
@@ -81,6 +82,7 @@ function CallToAction({
               key={element.text}
               as="a"
               href={element.href}
+              isLoading={isLoading}
               target={element.isExternalLink ? '_blank' : '_self'}
               onClick={onClick}
               marginY="auto"
@@ -113,6 +115,8 @@ CallToAction.propTypes = {
   margin: PropTypes.string,
   onClick: PropTypes.func,
   buttonsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  fontSizeOfTitle: PropTypes.string,
+  isLoading: PropTypes.bool,
 };
 
 CallToAction.defaultProps = {
@@ -129,6 +133,8 @@ CallToAction.defaultProps = {
   margin: '0 auto',
   onClick: () => {},
   buttonsData: [],
+  fontSizeOfTitle: 'var(--heading-xsm)',
+  isLoading: false,
 };
 
 export default CallToAction;

@@ -161,27 +161,7 @@ function Module({
   const langLink = lang !== 'en' ? `/${lang}` : '';
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
-  const generatePublicLinks = () => {
-    const taskSlug = taskTranslations?.slug || undefined;
-
-    if (data?.translations && taskSlug) {
-      if (data.task_type === 'LESSON') {
-        return `${langLink}/lesson/${taskSlug}`;
-      }
-      if (data.task_type === 'EXERCISE') {
-        return `${langLink}/interactive-exercise/${taskSlug}`;
-      }
-      if (data.task_type === 'PROJECT') {
-        return `${langLink}/interactive-coding-tutorial/${taskSlug}`;
-      }
-      if (data.task_type === 'QUIZ') {
-        return '#';
-      }
-    }
-    return '#';
-  };
-
-  const link = isDisabled ? generatePublicLinks() : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const link = isDisabled ? '#' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
   return (
     <>
       <ModuleComponent
@@ -190,6 +170,9 @@ function Module({
         textWithLink
         link={link}
         isDone={isDone}
+        leftContentStyle={isDisabled ? {
+          textDecoration: 'none',
+        } : {}}
         data={{
           type,
           title: taskTranslations?.title || title,
