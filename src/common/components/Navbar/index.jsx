@@ -15,7 +15,6 @@ import { es } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import bc from '../../services/breathecode';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -41,7 +40,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
-  const [cohortsOfUser, setCohortsOfUser] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -141,55 +139,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       });
   }, []);
 
-  useEffect(() => {
-    if (!isLoading && user !== null && mktCourses?.length > 0) {
-      Promise.all([
-        bc.payment({
-          status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-        }).subscriptions(),
-        bc.admissions().me(),
-      ])
-        .then((responses) => {
-          const [subscriptions, userResp] = responses;
-          const subscriptionRespData = subscriptions?.data;
-          const formatedCohortSubscriptions = userResp?.data?.cohorts?.map((value) => ({
-            ...value,
-            name: value.cohort.name,
-            plan_financing: subscriptionRespData?.plan_financings?.find(
-              (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value?.cohort?.slug),
-            ) || null,
-            subscription: subscriptionRespData?.subscriptions?.find(
-              (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value?.cohort?.slug),
-            ) || null,
-            slug: value?.cohort?.slug,
-          }));
-
-          setCohortsOfUser(formatedCohortSubscriptions);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [isLoading, mktCourses]);
-
-  const activeSubscriptionCohorts = cohortsOfUser?.length > 0 ? cohortsOfUser?.filter((item) => {
-    const cohort = item?.cohort;
-    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
-
-    return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
-  }) : [];
-
-  const marketingCourses = Array.isArray(mktCourses) && mktCourses.filter(
-    (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
-    ) && item?.course_translation?.title,
-  );
-
-  // const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-  //   (item) => item?.cohort?.available_as_saas === false,
-  // );
-
-  const coursesList = marketingCourses.length > 0 ? marketingCourses : [];
+  const coursesList = mktCourses?.length > 0 ? mktCourses : [];
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {

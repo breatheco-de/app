@@ -22,6 +22,7 @@ import { SUBS_STATUS, getAllMySubscriptions } from '../../../common/handlers/sub
 import CallToAction from '../../../common/components/CallToAction';
 import { getQueryString } from '../../../utils';
 import { parseQuerys } from '../../../utils/url';
+import ModalToGetAccess, { stageType } from '../../../common/components/ModalToGetAccess';
 
 export const getServerSideProps = async ({ locale, query }) => {
   const t = await getT(locale, 'dashboard');
@@ -55,6 +56,7 @@ function Page({ id, syllabus, cohort }) {
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [alreadyHaveCohort, setAlreadyHaveCohort] = useState(false);
+  const [isModalToGetAccesOpen, setIsModalToGetAccesOpen] = useState(false);
   const toast = useToast();
   const router = useRouter();
   const qsForPricing = parseQuerys({ plan: encodeURIComponent(qsPlan) });
@@ -167,37 +169,130 @@ function Page({ id, syllabus, cohort }) {
     }
   };
 
-  return cohort?.id && (
-    <GridContainer
-      withContainer
-      display={{ base: 'flex', md: 'grid' }}
-      flexDirection={{ base: 'column', md: '' }}
-      mt="17px"
-      maxWidth="1280px"
-      padding="0 1rem"
-      gridColumn="1 / span 10"
-    >
-      <Link display="flex" gridGap="4px" variant="default" href="/choose-program">
-        <Icon
-          icon="arrowLeft"
-          width="20px"
-          height="20px"
-          style={{ marginRight: '7px' }}
-          color="currentColor"
-        />
-        {t('backToChooseProgram')}
-      </Link>
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
 
-      <Flex mt="3rem" gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
-        <Box flex={{ base: 1, md: 0.75 }}>
-          <Heading as="h1" size="xl">
-            {syllabus?.name}
-          </Heading>
-          <TagCapsule
-            height="30px"
-            tags={techs}
+  return cohort?.id && (
+    <>
+      <ModalToGetAccess
+        stage={stageType.isWaitingForCohort}
+        isOpen={isModalToGetAccesOpen}
+        onClose={() => setIsModalToGetAccesOpen(false)}
+        closeOnOverlayClick
+        customFunction={joinCohort}
+      />
+      <GridContainer
+        withContainer
+        display={{ base: 'flex', md: 'grid' }}
+        flexDirection={{ base: 'column', md: '' }}
+        mt="17px"
+        maxWidth="1280px"
+        padding="0 1rem"
+        gridColumn="1 / span 10"
+      >
+        <Link display="flex" gridGap="4px" variant="default" href="/choose-program">
+          <Icon
+            icon="arrowLeft"
+            width="20px"
+            height="20px"
+            style={{ marginRight: '7px' }}
+            color="currentColor"
           />
-          <Box display={{ base: 'block', md: 'none' }} flex={1}>
+          {t('backToChooseProgram')}
+        </Link>
+
+        <Flex mt="3rem" gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
+          <Box flex={{ base: 1, md: 0.75 }}>
+            <Heading as="h1" size="xl">
+              {syllabus?.name}
+            </Heading>
+            <TagCapsule
+              height="30px"
+              tags={techs}
+            />
+            <Box display={{ base: 'block', md: 'none' }} flex={1}>
+              {cohort?.kickoff_date && (
+                <CohortSideBar
+                  cohort={cohort}
+                  teacherVersionActive={false}
+                  studentAndTeachers={[]}
+                  cohortCity={cohort?.name}
+                  width="100%"
+                  isDisabled
+                />
+              )}
+            </Box>
+
+            {existsRelatedSubscription ? (
+              <Button
+                variant="default"
+                isLoading={isFetching || alreadyHaveCohort}
+                isDisabled={!isAuthenticated}
+                onClick={joinCohort}
+                textTransform="uppercase"
+                fontSize="13px"
+                mt="1rem"
+              >
+                {t('join-cohort-page.join-next-cohort')}
+              </Button>
+            ) : (
+              <CallToAction
+                background="blue.default"
+                buttonStyle={{
+                  backgroundColor: hexColor.backgroundColor,
+                  color: hexColor.blueDefault,
+                  borderColor: hexColor.blueDefault,
+                }}
+                onClick={handleClick}
+                isLoading={alreadyHaveCohort}
+                margin="40px 0 auto 0"
+                title={t('join-cohort-page.cta-description')}
+                href={`/pricing${qsForPricing}`}
+                buttonText={t('join-cohort-page.cta-button')}
+                width={{ base: '100%', md: 'fit-content' }}
+              />
+            )}
+
+            <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
+              {syllabus?.modules?.length > 0 && syllabus.modules.map((module) => (
+                <Box key={module.slug} id={module.slug}>
+                  <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
+                    <Heading as="h2" fontSize="22px">
+                      {module?.title}
+                    </Heading>
+                    <Heading
+                      as="span"
+                      fontSize="15px"
+                      color={disabledColor2}
+                      fontWeight="normal"
+                      textTransform="uppercase"
+                      textAlign="right"
+                    >
+                      {t('modules.activitiesLength', { count: module?.content?.length || 0 })}
+                    </Heading>
+                  </Box>
+                  <Text margin="0 0 22px 0px" color={hexColor.fontColor3} size="md">
+                    {module?.description}
+                  </Text>
+
+                  {module?.content?.length > 0 && module.content.map((contentData, index) => {
+                    const cheatedIndex = index;
+
+                    return (
+                      <Module
+                        key={`${module.title}-${cheatedIndex}`}
+                        currIndex={index}
+                        data={contentData}
+                        taskTodo={[]}
+                        isDisabled
+                        onDisabledClick={() => setIsModalToGetAccesOpen(true)}
+                      />
+                    );
+                  })}
+                </Box>
+              ))}
+            </Flex>
+          </Box>
+          <Box display={{ base: 'none', md: 'block' }} flex={0.35}>
             {cohort?.kickoff_date && (
               <CohortSideBar
                 cohort={cohort}
@@ -209,90 +304,9 @@ function Page({ id, syllabus, cohort }) {
               />
             )}
           </Box>
-
-          {relatedSubscription?.status === SUBS_STATUS.ACTIVE ? (
-            <Button
-              variant="default"
-              isLoading={isFetching || alreadyHaveCohort}
-              isDisabled={!isAuthenticated}
-              onClick={joinCohort}
-              textTransform="uppercase"
-              fontSize="13px"
-              mt="1rem"
-            >
-              {t('join-cohort-page.join-next-cohort')}
-            </Button>
-          ) : (
-            <CallToAction
-              background="blue.default"
-              buttonStyle={{
-                backgroundColor: hexColor.backgroundColor,
-                color: hexColor.blueDefault,
-                borderColor: hexColor.blueDefault,
-              }}
-              onClick={handleClick}
-              isLoading={alreadyHaveCohort}
-              margin="40px 0 auto 0"
-              title={t('join-cohort-page.cta-description')}
-              href={`/pricing${qsForPricing}`}
-              buttonText={t('join-cohort-page.cta-button')}
-              width={{ base: '100%', md: 'fit-content' }}
-            />
-          )}
-
-          <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
-            {syllabus?.modules?.length > 0 && syllabus.modules.map((module) => (
-              <Box key={module.slug} id={module.slug}>
-                <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
-                  <Heading as="h2" fontSize="22px">
-                    {module?.title}
-                  </Heading>
-                  <Heading
-                    as="span"
-                    fontSize="15px"
-                    color={disabledColor2}
-                    fontWeight="normal"
-                    textTransform="uppercase"
-                    textAlign="right"
-                  >
-                    {t('modules.activitiesLength', { count: module?.content?.length || 0 })}
-                  </Heading>
-                </Box>
-                <Text margin="0 0 22px 0px" color={hexColor.fontColor3} size="md">
-                  {module?.description}
-                </Text>
-
-                {module?.content?.length > 0 && module.content.map((contentData, index) => {
-                  const cheatedIndex = index;
-
-                  return (
-                    <Module
-                      key={`${module.title}-${cheatedIndex}`}
-                      currIndex={index}
-                      data={contentData}
-                      taskTodo={[]}
-                      isDisabled
-                    />
-                  );
-                })}
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-        <Box display={{ base: 'none', md: 'block' }} flex={0.35}>
-          {cohort?.kickoff_date && (
-            <CohortSideBar
-              cohort={cohort}
-              teacherVersionActive={false}
-              studentAndTeachers={[]}
-              cohortCity={cohort?.name}
-              width="100%"
-              isDisabled
-            />
-          )}
-        </Box>
-      </Flex>
-    </GridContainer>
+        </Flex>
+      </GridContainer>
+    </>
   );
 }
 
