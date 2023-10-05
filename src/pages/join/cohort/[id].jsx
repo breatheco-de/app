@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -18,6 +18,10 @@ import CohortSideBar from '../../../common/components/CohortSideBar';
 import Icon from '../../../common/components/Icon';
 import axiosInstance from '../../../axios';
 import { usePersistent } from '../../../common/hooks/usePersistent';
+import { SUBS_STATUS, getAllMySubscriptions } from '../../../common/handlers/subscriptions';
+import CallToAction from '../../../common/components/CallToAction';
+import { getQueryString } from '../../../utils';
+import { parseQuerys } from '../../../utils/url';
 
 export const getServerSideProps = async ({ locale, query }) => {
   const t = await getT(locale, 'dashboard');
@@ -33,7 +37,7 @@ export const getServerSideProps = async ({ locale, query }) => {
   return {
     props: {
       seo: {
-        title: t('join-cohort', { cohortTitle: data.cohort?.name }),
+        title: data.cohort?.name ? t('join-cohort-page.seo-title', { cohortTitle: data.cohort?.name }) : '',
       },
       id: idInt,
       syllabus: data.syllabus || null,
@@ -45,11 +49,15 @@ export const getServerSideProps = async ({ locale, query }) => {
 function Page({ id, syllabus, cohort }) {
   const { disabledColor2, hexColor } = useStyle();
   const { t, lang } = useTranslation('dashboard');
+  const qsPlan = getQueryString('plan');
   const { isAuthenticated, choose } = useAuth();
   const [isFetching, setIsFetching] = useState(false);
   const [, setCohortSession] = usePersistent('cohortSession', {});
+  const [relatedSubscription, setRelatedSubscription] = useState(null);
+  const [alreadyHaveCohort, setAlreadyHaveCohort] = useState(false);
   const toast = useToast();
   const router = useRouter();
+  const qsForPricing = parseQuerys({ plan: encodeURIComponent(qsPlan) });
 
   const redirectTocohort = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
@@ -70,7 +78,6 @@ function Page({ id, syllabus, cohort }) {
     });
     router.push(cohortDashboardLink);
   };
-
   const joinCohort = () => {
     if (isAuthenticated) {
       setIsFetching(true);
@@ -100,6 +107,7 @@ function Page({ id, syllabus, cohort }) {
               duration: 5000,
               isClosable: true,
             });
+            router.push(`/pricing${qsForPricing}`);
           }
         })
         .catch(() => {})
@@ -111,9 +119,55 @@ function Page({ id, syllabus, cohort }) {
     }
   };
 
-  const techs = syllabus?.main_technologies?.split(',') || [];
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAllMySubscriptions().then((subscriptions) => {
+        const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
+          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
+          return isRelated;
+        }) : null;
 
-  return (
+        setRelatedSubscription(subscriptionRelatedToThisCohort);
+      });
+
+      bc.admissions().me().then((resp) => {
+        const data = resp?.data;
+        const alreadyHaveThisCohort = data?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
+
+        if (alreadyHaveThisCohort) {
+          toast({
+            position: 'top',
+            title: t('already-have-this-cohort'),
+            status: 'info',
+            duration: 5000,
+          });
+          setAlreadyHaveCohort(true);
+          redirectTocohort();
+        }
+      });
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (cohort?.id === null || cohort?.id === undefined) {
+      toast({
+        position: 'top',
+        title: t('join-cohort-page.cta-cohort-not-found'),
+        status: 'error',
+        duration: 5000,
+      });
+      router.push(`/pricing${qsForPricing}`);
+    }
+  }, [cohort?.id]);
+
+  const techs = syllabus?.main_technologies?.split(',') || [];
+  const handleClick = (e) => {
+    if (alreadyHaveCohort) {
+      e.preventDefault();
+    }
+  };
+
+  return cohort?.id && (
     <GridContainer
       withContainer
       display={{ base: 'flex', md: 'grid' }}
@@ -155,17 +209,36 @@ function Page({ id, syllabus, cohort }) {
               />
             )}
           </Box>
-          <Button
-            variant="default"
-            isLoading={isFetching}
-            isDisabled={!isAuthenticated}
-            onClick={joinCohort}
-            textTransform="uppercase"
-            fontSize="13px"
-            mt="1rem"
-          >
-            {t('join-next-cohort')}
-          </Button>
+
+          {relatedSubscription?.status === SUBS_STATUS.ACTIVE ? (
+            <Button
+              variant="default"
+              isLoading={isFetching || alreadyHaveCohort}
+              isDisabled={!isAuthenticated}
+              onClick={joinCohort}
+              textTransform="uppercase"
+              fontSize="13px"
+              mt="1rem"
+            >
+              {t('join-cohort-page.join-next-cohort')}
+            </Button>
+          ) : (
+            <CallToAction
+              background="blue.default"
+              buttonStyle={{
+                backgroundColor: hexColor.backgroundColor,
+                color: hexColor.blueDefault,
+                borderColor: hexColor.blueDefault,
+              }}
+              onClick={handleClick}
+              isLoading={alreadyHaveCohort}
+              margin="40px 0 auto 0"
+              title={t('join-cohort-page.cta-description')}
+              href={`/pricing${qsForPricing}`}
+              buttonText={t('join-cohort-page.cta-button')}
+              width={{ base: '100%', md: 'fit-content' }}
+            />
+          )}
 
           <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
             {syllabus?.modules?.length > 0 && syllabus.modules.map((module) => (

@@ -2,6 +2,14 @@ import { slugToTitle, unSlugifyCapitalize } from '../../utils';
 import { BASE_PLAN } from '../../utils/variables';
 import bc from '../services/breathecode';
 
+export const SUBS_STATUS = {
+  ACTIVE: 'ACTIVE',
+  FREE_TRIAL: 'FREE_TRIAL',
+  FULLY_PAID: 'FULLY_PAID',
+  CANCELLED: 'CANCELLED',
+  PAYMENT_ISSUE: 'PAYMENT_ISSUE',
+};
+
 /**
  * Get translations for plan content.
  *
@@ -354,3 +362,24 @@ export const getSubscriptions = () => bc.payment({
 
     return allPlans;
   });
+
+/**
+ * This function requires the user to be logged in.
+ *
+ * @returns {Promise<object>} // List of subscriptions (Plan financing and subscriptions)
+ */
+export const getAllMySubscriptions = async () => {
+  try {
+    const resp = await bc.payment().subscriptions();
+    const data = resp?.data;
+
+    const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+    const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+    const allSubscriptions = [...planFinancings, ...subscriptions];
+
+    return allSubscriptions;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};

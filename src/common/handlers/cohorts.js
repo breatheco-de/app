@@ -6,7 +6,7 @@ import { error } from '../../utils/logging';
  * @param {Number | String} id Required id of the cohort
  * @returns {Promise<object>} Returns a cohort found
  */
-export const getCohort = (id) => bc.admissions().cohorts()
+export const getCohort = (id) => bc.admissions({ id }).cohorts()
   .then((resp) => {
     const cohortFinded = resp.data.find((cohort) => cohort?.id === id);
     return cohortFinded;
