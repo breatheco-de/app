@@ -141,23 +141,30 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   return allResults;
 };
 
-const getAssetsFromCache = async () => {
+/**
+ * @param {String} key The key of the value in redis
+ */
+const getCacheItem = async (key) => {
   try {
-    console.log('Fetching assets from cache');
-    const assets = await kv.get('assets');
-    return assets;
+    console.log(`Fetching ${key} from cache`);
+    const item = await kv.get(key);
+    return item;
   } catch (e) {
-    console.log('Failed to fetch from vercel cache');
+    console.log(`Failed to fetch ${key} from vercel cache`);
     return null;
   }
 };
 
-const setAssetsOnCache = async (assets) => {
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The value to be stored in the cache
+ */
+const setCacheItem = async (key, value) => {
   try {
-    console.log('Setting up assets on cache');
-    await kv.set('assets', assets);
+    console.log(`Setting up ${key} on cache`);
+    await kv.set(key, value);
   } catch (e) {
-    console.log('Failed to set vercel cache');
+    console.log(`Failed to set ${key} on cache`);
   }
 };
 
@@ -219,8 +226,8 @@ const getLandingTechnologies = async (assets) => {
 
 export {
   getAsset,
-  getAssetsFromCache,
-  setAssetsOnCache,
+  getCacheItem,
+  setCacheItem,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,
