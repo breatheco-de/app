@@ -17,7 +17,7 @@ import Icon from '../../common/components/Icon';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, taskTodo, currIndex, isDisabled,
+  data, taskTodo, currIndex, isDisabled, onDisabledClick,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -161,7 +161,7 @@ function Module({
   const langLink = lang !== 'en' ? `/${lang}` : '';
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
-  const link = isDisabled ? '#' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+  const link = isDisabled ? '#disabled' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
   return (
     <>
       <ModuleComponent
@@ -170,6 +170,7 @@ function Module({
         textWithLink
         link={link}
         isDone={isDone}
+        onDisabledClick={onDisabledClick}
         leftContentStyle={isDisabled ? {
           textDecoration: 'none',
         } : {}}
@@ -193,7 +194,7 @@ function Module({
             fileData={fileData}
           />
         ) : (
-          <Button variant="link" gridGap="4px">
+          <Button variant="link" gridGap="4px" onClick={onDisabledClick}>
             <Icon icon="padlock" width="20px" height="20px" />
             <Box as="span" display={{ base: 'none', sm: 'initial' }}>
               {`${wordConnector?.[taskTypeLowerCase]} ${t(`common:${taskTypeLowerCase}`).toLocaleLowerCase()}`}
@@ -221,11 +222,13 @@ Module.propTypes = {
   currIndex: PropTypes.number,
   taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   isDisabled: PropTypes.bool,
+  onDisabledClick: PropTypes.func,
 };
 Module.defaultProps = {
   data: {},
   currIndex: 0,
   isDisabled: false,
+  onDisabledClick: () => {},
 };
 
 export default memo(Module);
