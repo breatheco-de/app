@@ -46,7 +46,6 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
-  console.log(`get asset ${slug}`);
 
   try {
     let lesson;
