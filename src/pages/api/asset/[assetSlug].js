@@ -23,8 +23,7 @@ export default async function handler(req, res) {
 
       const response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const asset = await response.json();
-      console.log('asset');
-      console.log(asset);
+
       if (!asset || response.status >= 400) return res.status(404).json({ message: `Asset not found for ${assetSlug}` });
       const type = getAssetType(asset);
       if (!type) return res.status(200).json({ message: `Asset type not superted for ${asset.slug}` });
