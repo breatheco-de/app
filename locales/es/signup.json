@@ -62,6 +62,10 @@
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
   "our_plans": "Nuestros planes",
+  "join-cohort": {
+    "description": "Por favor, únete a la cohorte para acceder al contenido del programa.",
+    "button": "Unirse a la cohorte"
+  },
   "info": {
     "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagarás ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",

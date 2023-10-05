@@ -61,6 +61,10 @@
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
   "our_plans": "Our plans",
+  "join-cohort": {
+    "description": "Please join the cohort in order to the access the program content.",
+    "button": "Join cohort"
+  },
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
