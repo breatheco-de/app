@@ -16,7 +16,7 @@ function TwoColumn({ slice }) {
       slice={slice}
       background={slice?.primary?.background_color}
       linkButton={slice?.primary?.link_button}
-      buttonUrl={slice.primary.button_url}
+      buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
       buttonLabel={slice?.primary?.button_label}
       imageUrl={slice?.primary?.image?.url}
       imageAlt={slice?.primary?.image?.alt}

@@ -176,7 +176,7 @@ function IntroductionSection({
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
-            href={slice?.primary?.button_link || '#pricing'}
+            href={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing'}
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
           </Link>
