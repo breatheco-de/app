@@ -52,6 +52,8 @@ function PricingPage({ data }) {
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
   const [principalData, setPrincipalData] = useState(data || {});
 
+  const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
+
   useEffect(() => {
     if (isDevMode) {
       fetchSuggestedPlan(planFormated, t)
@@ -125,14 +127,13 @@ function PricingPage({ data }) {
   return (
     <Box>
       <GridContainer
-        maxWidth="1280px"
+        maxWidth="1180px"
         position="relative"
         margin="0 auto"
-        gridColumn="1 / span 10"
         mt="4rem"
         padding="0 10px"
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="2 / span 8">
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="1 / span 10">
           <Heading as="h1" textAlign="center">
             {t('signup:our_plans')}
           </Heading>
@@ -176,6 +177,13 @@ function PricingPage({ data }) {
                   display={activeType === switchTypes.yearly ? 'flex' : 'none'}
                 />
               ))}
+              {bootcampInfo?.type && (
+                <PricingCard
+                  item={bootcampInfo}
+                  width={{ base: '300px', md: '100%' }}
+                  display="flex"
+                />
+              )}
             </Flex>
           </Box>
         </Box>

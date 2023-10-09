@@ -14,17 +14,36 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const { fontColor, hexColor, featuredCard } = useStyle();
+  const isBootcampType = item?.type.toLowerCase() === 'bootcamp';
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
-    basic: {
+    bootcamp: {
+      type: item.type,
+      hookMessage: item.description,
+      title: item.title,
+      description: item?.['sub-description'],
+      border: '2px solid #01455E',
+      background: '#01455E',
+      featured: '',
+      featuredFontColor: '#01455E',
+      button: {
+        variant: 'default',
+        color: '#fff',
+        background: '#01455E',
+        title: item.button,
+      },
+    },
+
+    // basic
+    original: {
       type: t('pricing.basic-plan.type'),
       hookMessage: t('pricing.basic-plan.hook-message'),
       title: t('pricing.basic-plan.title'),
       description: t('pricing.basic-plan.description'),
-
-      border: `1px solid ${hexColor.blueDefault}`,
+      border: `2px solid ${hexColor.blueDefault}`,
       background: featuredCard.blue.background,
       featured: featuredCard.blue.featured,
+      featuredFontColor: '#000',
       button: {
         variant: 'outline',
         color: 'blue.default',
@@ -33,15 +52,17 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         title: t('pricing.basic-plan.button-title'),
       },
     },
-    premium: {
+
+    // premium
+    suggested: {
       type: t('pricing.premium-plan.type'),
       hookMessage: t('pricing.premium-plan.hook-message'),
       title: t('pricing.premium-plan.title'),
       description: t('pricing.premium-plan.description'),
-
-      border: `1px solid ${hexColor.yellowDefault}`,
+      border: `2px solid ${hexColor.yellowDefault}`,
       background: featuredCard.yellow.background,
       featured: featuredCard.yellow.featured,
+      featuredFontColor: hexColor.yellowDefault,
       button: {
         variant: 'default',
         color: 'white',
@@ -51,8 +72,8 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       },
     },
   };
-  const viewProps = item?.tag === 'suggested' ? utilProps.premium : utilProps.basic;
-  const isOriginalPlan = item?.tag === 'original';
+  const viewProps = utilProps?.[item?.planType] || utilProps.original;
+  const isOriginalPlan = item?.planType === 'original';
   const border = viewProps?.border;
   const background = viewProps?.background;
   const featured = viewProps?.featured;
@@ -63,7 +84,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       plan_id: item?.plan_id,
     });
 
-    router.push(`/checkout${qs}`);
+    if (isBootcampType) {
+      router.push(item?.button_link);
+    } else {
+      router.push(`/checkout${qs}`);
+    }
   };
 
   return (
@@ -82,11 +107,12 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         <Box as="span" color="white" width="fit-content" padding="4px 1rem" fontSize="18px" fontWeight={700} background={background} borderRadius="22px">
           {viewProps.type}
         </Box>
-        <Text fontSize="18px" height="40px" fontWeight={700} color={isOriginalPlan ? '' : 'yellow.default'} textAlign="center" style={{ textWrap: 'balance' }}>
+        <Text fontSize="18px" height="auto" fontWeight={700} color={viewProps.featuredFontColor} textAlign="center" style={{ textWrap: 'balance' }}>
           {viewProps.hookMessage}
         </Text>
         <Box>
-          {!isOriginalPlan ? (
+
+          {(!isBootcampType && !isOriginalPlan) ? (
             <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
               <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
                 {`$${item.price}`}
@@ -100,28 +126,38 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
               {`$${item.price}`}
             </Box>
           )}
-          <Text fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
-            {item.period_label}
-          </Text>
+          {item.period_label && (
+            <Text fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
+              {item.period_label}
+            </Text>
+          )}
 
-          {relatedSubscription?.invoices?.[0]?.amount === item?.price ? (
+          {(!isBootcampType && relatedSubscription?.invoices?.[0]?.amount === item?.price) ? (
             <Text width="100%" color={viewProps.background} textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
               {utilProps.already_have_it}
             </Text>
           ) : (
-            <Button variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
-              {!isOriginalPlan && (
-                <Icon icon="rocket" color="white" width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
+            <>
+              {isBootcampType ? (
+                <Button variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
+                  {viewProps.button.title}
+                </Button>
+              ) : (
+                <Button variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
+                  {!isOriginalPlan && (
+                    <Icon icon="rocket" color="white" width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
+                  )}
+                  {viewProps.button.title}
+                </Button>
               )}
-              {viewProps.button.title}
-            </Button>
+            </>
           )}
         </Box>
       </Flex>
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">
-          <Text display="flex" justifyContent="center" size={isOriginalPlan ? '18px' : '21px'} fontWeight={700} textAlign="center">
-            {!isOriginalPlan && (
+          <Text display="flex" alignItems="center" justifyContent="center" size={isOriginalPlan ? '18px' : '21px'} fontWeight={700} textAlign="center">
+            {!isOriginalPlan && !isBootcampType && (
               <Icon icon="rocket" color={hexColor.yellowDefault} width="16px" height="24px" style={{ transform: 'rotate(35deg)', alignSelf: 'center', marginRight: '10px' }} />
             )}
             {viewProps.title}
@@ -131,7 +167,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
           </Text>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
-          {item?.featured_info?.map((info) => info.service.slug && (
+          {item?.featured_info?.map((info) => info?.service?.slug && (
             <Box display="flex" gridGap="8px">
               {info?.service?.icon_url
                 ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
@@ -142,9 +178,9 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                 <Text size="16px" fontWeight={700} textAlign="left">
                   {info?.service?.title || slugToTitle(info?.service?.slug)}
                 </Text>
-                {info.features.length > 0 && (
+                {info.features?.length > 0 && (
                   <Text size="14px" textAlign="left">
-                    {info.features[0]?.description}
+                    {info.features?.[0]?.description}
                   </Text>
                 )}
               </Box>
@@ -166,14 +202,14 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                     {info?.service?.title || slugToTitle(info?.service?.slug)}
                   </Text>
                 </Box>
-                {info.features.length > 0 && (
+                {info.features?.length > 0 && (
                   <AccordionIcon />
                 )}
               </AccordionButton>
-              {info.features.length > 0 && (
+              {info.features?.length > 0 && (
                 <AccordionPanel padding="0 24px 16px 24px">
                   <Text size="14px" textAlign="left">
-                    {info.features[0]?.description}
+                    {info.features?.[0]?.description}
                   </Text>
                 </AccordionPanel>
               )}

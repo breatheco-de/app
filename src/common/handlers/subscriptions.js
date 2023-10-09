@@ -62,7 +62,7 @@ export const getTranslations = (t = () => {}) => {
  * @param {boolean} options.quarterly - Whether to include quarterly plans (default: true)
  * @param {boolean} options.halfYearly - Whether to include half-yearly plans (default: true)
  * @param {boolean} options.yearly - Whether to include yearly plans (default: true)
- * @param {string} options.tag - Tag to be added to the plan data (optional)
+ * @param {string} options.planType - Tag to be added to the plan data (optional)
  * @param {object} translations - Translations for plan content (optional)
  * @returns {Promise<object>} - The processed plans data
  */
@@ -71,7 +71,7 @@ export const processPlans = (data, {
   quarterly = true,
   halfYearly = true,
   yearly = true,
-  tag = '',
+  planType = '',
 } = {}, translations = {}) => bc.payment().getPlanProps(data?.slug)
   .then((resp) => {
     const planPropsData = resp?.data;
@@ -103,7 +103,7 @@ export const processPlans = (data, {
       featured_info: planPropsData || [],
       trial_duration: singlePlan?.trial_duration || 0,
       trial_duration_unit: singlePlan?.trial_duration_unit || '',
-      tag,
+      planType,
     };
 
     const textInfo = {
@@ -256,12 +256,12 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
       const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
         quarterly: false,
         halfYearly: false,
-        tag: 'original',
+        planType: 'original',
       }, translations) : {};
       const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
         quarterly: false,
         halfYearly: false,
-        tag: 'suggested',
+        planType: 'suggested',
       }, translations) : {};
 
       return ({
