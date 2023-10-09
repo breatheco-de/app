@@ -1,6 +1,5 @@
 /* eslint-disable react/destructuring-assignment */
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Image } from '@chakra-ui/next-js';
@@ -8,11 +7,10 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
-import { slugToTitle } from '../../utils';
+import { isWindow, slugToTitle } from '../../utils';
 
-export default function PricingCard({ item, priceFormat, relatedSubscription, ...rest }) {
-  const { t } = useTranslation('signup');
-  const router = useRouter();
+export default function PricingCard({ item, relatedSubscription, ...rest }) {
+  const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard } = useStyle();
   const isBootcampType = item?.type.toLowerCase() === 'bootcamp';
   const utilProps = {
@@ -43,7 +41,7 @@ export default function PricingCard({ item, priceFormat, relatedSubscription, ..
       border: `2px solid ${hexColor.blueDefault}`,
       background: featuredCard.blue.background,
       featured: featuredCard.blue.featured,
-      featuredFontColor: '#000',
+      featuredFontColor: fontColor,
       button: {
         variant: 'outline',
         color: 'blue.default',
@@ -79,15 +77,18 @@ export default function PricingCard({ item, priceFormat, relatedSubscription, ..
   const featured = viewProps?.featured;
 
   const handlePlan = () => {
+    const langPath = lang === 'en' ? '' : `/${lang}`;
     const qs = parseQuerys({
       plan: item?.plan_slug,
       plan_id: item?.plan_id,
     });
 
-    if (isBootcampType) {
-      router.push(item?.button_link);
-    } else {
-      router.push(`/checkout${qs}`);
+    if (isWindow) {
+      if (isBootcampType) {
+        window.location.href = item?.button_link;
+      } else {
+        window.location.href = `${langPath}/checkout${qs}`;
+      }
     }
   };
 
@@ -224,9 +225,7 @@ export default function PricingCard({ item, priceFormat, relatedSubscription, ..
 PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
-  priceFormat: PropTypes.string,
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
-  priceFormat: 'en-US',
 };

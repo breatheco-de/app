@@ -18,7 +18,7 @@ const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
-function PricingPage({ data }) {
+function PricingPage({ data, isForModal }) {
   const { t, lang } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
@@ -26,21 +26,23 @@ function PricingPage({ data }) {
   const { hexColor } = useStyle();
   const queryPlan = getQueryString('plan');
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
-  const [isFetching, setIsFetching] = useState(true);
+  const [isFetching, setIsFetching] = useState(!data?.title);
   const [principalData, setPrincipalData] = useState(data || {});
 
   axiosInstance.defaults.headers.common['Accept-Language'] = lang;
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
   useEffect(() => {
-    const translations = getTranslations(t);
-    fetchSuggestedPlan(planFormated, translations)
-      .then((suggestedPlanData) => {
-        setPrincipalData(suggestedPlanData);
-      })
-      .finally(() => {
-        setIsFetching(false);
-      });
+    if (!data?.title) {
+      const translations = getTranslations(t);
+      fetchSuggestedPlan(planFormated, translations)
+        .then((suggestedPlanData) => {
+          setPrincipalData(suggestedPlanData);
+        })
+        .finally(() => {
+          setIsFetching(false);
+        });
+    }
   }, []);
 
   const originalPlan = principalData?.plans?.original_plan;
@@ -105,9 +107,9 @@ function PricingPage({ data }) {
   }, [isAuthenticated]);
 
   return (
-    <Box>
+    <>
       {isFetching && (
-        <LoaderScreen position="fixed" />
+        <LoaderScreen position={isForModal ? 'absolute' : 'fixed'} />
       )}
       <Head>
         {principalData?.title && (
@@ -118,7 +120,7 @@ function PricingPage({ data }) {
         maxWidth="1180px"
         position="relative"
         margin="0 auto"
-        mt="4rem"
+        my={isForModal ? '2rem' : '4rem'}
         padding="0 10px"
       >
         <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="1 / span 10">
@@ -176,12 +178,16 @@ function PricingPage({ data }) {
           </Box>
         </Box>
       </GridContainer>
-    </Box>
+    </>
   );
 }
 
 PricingPage.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
+  isForModal: PropTypes.bool,
+};
+PricingPage.defaultProps = {
+  isForModal: false,
 };
 
 export default PricingPage;

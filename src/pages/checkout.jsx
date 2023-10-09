@@ -28,7 +28,9 @@ import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
-import { generatePlan } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import SimpleModal from '../common/components/SimpleModal';
+import PricingView from './pricing';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -80,6 +82,7 @@ function Checkout() {
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps } = state;
   const { backgroundColor3 } = useStyle();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   const cohorts = cohortsData?.cohorts;
 
@@ -90,7 +93,7 @@ function Checkout() {
   const queryPlans = getQueryString('plans');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
-  const planFormated = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+  const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -107,7 +110,7 @@ function Checkout() {
     confirm_email: '',
   });
 
-  const queryPlanExists = planFormated && planFormated?.length > 0;
+  const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
@@ -116,7 +119,9 @@ function Checkout() {
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
-    generatePlan(plan || BASE_PLAN)
+    const translations = getTranslations(t);
+    const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+    fetchSuggestedPlan(defaultPlan, translations)
       .then((data) => {
         setDefaultPlanData(data);
       });
@@ -124,6 +129,9 @@ function Checkout() {
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
+    if (!queryPlanExists && isAuthenticated) {
+      setIsPricingModalOpen(true);
+    }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
     }
@@ -300,6 +308,9 @@ function Checkout() {
       {isPreloading && (
         <LoaderScreen />
       )}
+      <SimpleModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} borderRadius="13px" maxWidth="7xl" closeOnOverlayClick={false} hideCloseButton style={{ marginTop: '2rem', position: 'relative' }}>
+        <PricingView data={defaultPlanData} isForModal my="1rem" />
+      </SimpleModal>
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
@@ -395,7 +406,7 @@ function Checkout() {
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            defaultPlanData={defaultPlanData}
+            defaultPlanData={defaultPlanData?.plans?.original_plan}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}
