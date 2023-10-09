@@ -7,7 +7,7 @@ import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
-import { fetchSuggestedPlan } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
@@ -33,7 +33,8 @@ function PricingPage({ data }) {
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
   useEffect(() => {
-    fetchSuggestedPlan(planFormated, t)
+    const translations = getTranslations(t);
+    fetchSuggestedPlan(planFormated, translations)
       .then((suggestedPlanData) => {
         setPrincipalData(suggestedPlanData);
       })
