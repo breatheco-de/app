@@ -10,7 +10,7 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { slugToTitle } from '../../utils';
 
-export default function PricingCard({ item, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, priceFormat, relatedSubscription, ...rest }) {
   const { t } = useTranslation('signup');
   const router = useRouter();
   const { fontColor, hexColor, featuredCard } = useStyle();
@@ -224,7 +224,9 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
 PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
+  priceFormat: PropTypes.string,
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
+  priceFormat: 'en-US',
 };

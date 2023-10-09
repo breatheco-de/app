@@ -1,66 +1,45 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import getT from 'next-translate/getT';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Head from 'next/head';
 import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
-import { getQueryString, isDevMode } from '../utils';
-
-export async function getServerSideProps({ query, locale }) {
-  const t = await getT(locale, ['common', 'signup']);
-  const translations = getTranslations(t);
-  axiosInstance.defaults.headers.common['Accept-Language'] = locale;
-
-  const { plan } = query;
-  const planFormated = (plan && encodeURIComponent(plan)) || '4geeks-standard';
-  const suggestedPlan = await fetchSuggestedPlan(planFormated, translations);
-
-  if (Object.values(suggestedPlan).length === 0 || suggestedPlan?.status_code >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      seo: {
-        title: `${t('common:upgrade')} ${t('common:word-connector.to')} ${suggestedPlan?.title}` || '',
-      },
-      data: suggestedPlan,
-    },
-  };
-}
+import { getQueryString } from '../utils';
+import LoaderScreen from '../common/components/LoaderScreen';
 
 const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
 function PricingPage({ data }) {
-  const { t } = useTranslation(['signup', 'common']);
+  const { t, lang } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
   const queryPlan = getQueryString('plan');
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
+  const [isFetching, setIsFetching] = useState(true);
   const [principalData, setPrincipalData] = useState(data || {});
 
+  axiosInstance.defaults.headers.common['Accept-Language'] = lang;
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
   useEffect(() => {
-    if (isDevMode) {
-      fetchSuggestedPlan(planFormated, t)
-        .then((suggestedPlanData) => {
-          setPrincipalData(suggestedPlanData);
-        });
-    }
+    fetchSuggestedPlan(planFormated, t)
+      .then((suggestedPlanData) => {
+        setPrincipalData(suggestedPlanData);
+      })
+      .finally(() => {
+        setIsFetching(false);
+      });
   }, []);
 
   const originalPlan = principalData?.plans?.original_plan;
@@ -126,6 +105,14 @@ function PricingPage({ data }) {
 
   return (
     <Box>
+      {isFetching && (
+        <LoaderScreen position="fixed" />
+      )}
+      <Head>
+        {principalData?.title && (
+          <title>{`${principalData?.title} | 4Geeks`}</title>
+        )}
+      </Head>
       <GridContainer
         maxWidth="1180px"
         position="relative"
