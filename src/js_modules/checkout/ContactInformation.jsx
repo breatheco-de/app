@@ -299,7 +299,7 @@ function ContactInformation({
             position="absolute"
             top={0}
             left={0}
-            src="static/images/happy-meeting-3.webp"
+            src="/static/images/happy-meeting-3.webp"
             alt="Get Access"
             height="631px"
             style={{ objectFit: 'cover' }}
