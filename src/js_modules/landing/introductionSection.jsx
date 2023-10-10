@@ -3,11 +3,12 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text, Button, Link,
+  Box, useColorModeValue, Text, Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
+import { useState } from 'react';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
@@ -17,6 +18,7 @@ function IntroductionSection({
   data, slice, fitContent, ...rest
 }) {
   const router = useRouter();
+  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const colors = useColorModeValue('#000', '#fff');
 
   const isLeftBigger = slice?.primary?.two_column_size === 'Left is bigger';
@@ -166,20 +168,24 @@ function IntroductionSection({
 
         {/* ----------------------- Button ----------------------- */}
         {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
-          <Link
-            variant="buttonDefault"
+          <Button
+            variant="default"
             width="fit-content"
             minWidth="200px"
             textAlign="center"
             height="52px"
+            isLoading={isLoadingContent}
+            onClick={() => {
+              router.push(slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing');
+              setIsLoadingContent(true);
+            }}
             fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
             textTransform="uppercase"
-            href={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing'}
           >
             <PrismicRichText field={slice?.primary?.buttontext} />
-          </Link>
+          </Button>
         ) : (
           <>
             {data?.callToAction?.title && (

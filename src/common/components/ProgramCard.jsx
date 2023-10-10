@@ -71,7 +71,7 @@ function ProgramCard({
   programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isLoadingPageContent,
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -349,6 +349,7 @@ function ProgramCard({
                       whiteSpace="normal"
                       variant="default"
                       onClick={handleChoose}
+                      isLoading={isLoadingPageContent}
                     >
                       {programCardTR?.['start-course'] || t('start-course')}
                     </Button>
@@ -418,7 +419,7 @@ function ProgramCard({
                     {!isExpired && (
                       <>
                         {(courseProgress > 0 && !isCancelled) ? (
-                          <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
+                          <Button variant="link" onClick={handleChoose} isLoading={isLoadingPageContent} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
                               : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
@@ -435,6 +436,7 @@ function ProgramCard({
                               variant="default"
                               mb={isAvailableAsSaas && !statusActive && '10px'}
                               onClick={handleChoose}
+                              isLoading={isLoadingPageContent}
                             >
                               {programCardTR?.['start-course'] || t('start-course')}
                             </Button>
@@ -502,6 +504,7 @@ function ProgramCard({
                 variant="default"
                 mt="20px"
                 onClick={handleChoose}
+                isLoading={isLoadingPageContent}
               >
                 {t('learn-more')}
               </Button>
@@ -556,6 +559,7 @@ ProgramCard.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   bullets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
+  isLoadingPageContent: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -581,6 +585,7 @@ ProgramCard.defaultProps = {
   subscription: {},
   bullets: [],
   background: '',
+  isLoadingPageContent: false,
 };
 
 export default memo(ProgramCard);
