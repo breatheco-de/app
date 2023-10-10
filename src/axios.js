@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { log } from './utils/logging';
 
 const axiosInstance = axios.create();
 const activeRequests = []; // Array to store CancelToken instances
@@ -17,7 +18,7 @@ axiosInstance.interceptors.request.use((config) => {
 export const cancelAllCurrentRequests = (message = 'All request was canceled') => {
   try {
     if (activeRequests && activeRequests.length > 0) {
-      console.log(message);
+      log(message);
       activeRequests.forEach((source) => {
         source.cancel(message);
       });
@@ -32,7 +33,7 @@ export const cancelAllCurrentRequests = (message = 'All request was canceled') =
 export const cancelCurrentRequest = (message = 'Last request was canceled') => {
   try {
     if (activeRequests && activeRequests.length > 0) {
-      console.log(message);
+      log(message);
       activeRequests[activeRequests.length - 1].cancel(message);
       activeRequests.pop(); // Remove the last CancelToken instance from the array
     }

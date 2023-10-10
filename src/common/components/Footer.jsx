@@ -22,6 +22,7 @@ import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
+import { log } from '../../utils/logging';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
@@ -85,12 +86,12 @@ function Footer({ pageProps }) {
                     e.preventDefault();
                     bc.marketing().lead({ email })
                       .then((success) => {
-                        console.log(success);
+                        log(success);
                         if (success === undefined) setFormStatus('error');
                         else setFormStatus('success');
                       }).catch((err) => {
                         setFormStatus('error');
-                        console.log(err);
+                        log(err);
                       });
                   }}
                 >

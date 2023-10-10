@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -24,7 +24,8 @@ import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
-import useSubscribeToPlan from '../../common/hooks/useSubscribeToPlan';
+import { validatePlanExistence } from '../../common/handlers/subscriptions';
+import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -122,12 +123,15 @@ function Page({ event }) {
   const [myCohorts, setMyCohorts] = useState([]);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
+  const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
+  const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
+  // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
@@ -252,36 +256,19 @@ function Page({ event }) {
   const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
-    const findedPlanCoincidences = subscriptions.filter(
-      (s) => s.selected_event_type_set?.event_types.some(
-        (ev) => ev?.slug === event?.event_type?.slug,
-      ),
-    );
-    const relevantProps = findedPlanCoincidences.map(
-      (subscription) => ({
-        event_type_set_slug: subscription?.selected_event_type_set.slug,
-        plan_slug: subscription?.plans?.[0]?.slug,
-      }),
-    );
-    const propsToQueryString = {
-      event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
-      plans: relevantProps.map((p) => p.plan_slug).join(','),
-    };
-
-    if (findedPlanCoincidences?.length > 0) {
-      setStorageItem('redirected-from', router?.asPath);
-      router.push({
-        pathname: '/checkout',
-        query: propsToQueryString,
-      });
-    } else {
-      handleSubscribeToPlan({ slug: '4geeks-standard' })
-        .finally(() => {
-          getMySubscriptions();
-          getCurrentConsumables();
-          setIsInProcessOfSubscription(false);
+    setIsFetchingDataForModal(true);
+    validatePlanExistence(subscriptions)
+      .then((data) => {
+        setDataToGetAccessModal({
+          ...data,
+          event,
+          academyServiceSlug: '',
         });
-    }
+        setIsModalToGetAccessOpen(true);
+      })
+      .finally(() => {
+        setIsFetchingDataForModal(false);
+      });
   };
 
   const currentConsumable = consumables?.event_type_sets?.find(
@@ -365,6 +352,15 @@ function Page({ event }) {
 
   return (
     <Box as="div">
+      <ModalToGetAccess
+        isOpen={isModalToGetAccessOpen}
+        stage={stageType.outOfConsumables}
+        externalData={dataToGetAccessModal}
+        onClose={() => {
+          setIsModalToGetAccessOpen(false);
+        }}
+      />
+
       <Head>
         <script
           type="application/ld+json"
@@ -622,7 +618,7 @@ function Page({ event }) {
                     fontSize="14px"
                     fontWeight={700}
                     onClick={handleGetMoreEventConsumables}
-                    isLoading={isInProcessOfSubscription}
+                    isLoading={isFetchingDataForModal}
                     alignItems="center"
                     gridGap="10px"
                     width="100%"

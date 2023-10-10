@@ -195,5 +195,53 @@
   "logout-and-switch-user": "Logout and switch user",
   "free": "Free",
   "login": "Login",
-  "privacy-policy": "Privacy policy"
+  "privacy-policy": "Privacy policy",
+  "bootcamp": {
+    "planType": "bootcamp",
+    "type": "Bootcamp",
+    "period_label": "",
+    "title": "Bootcamp Program",
+    "description": "From nothing to a career in tech in just a few months, no previous experience required.",
+    "button": "Request More Info",
+    "button_link": "https://4geeksacademy.com/programs",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and  unlimited support until you find a job.",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "job-guarantee",
+          "title": "Job guarantee"
+        },
+        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; conditions apply." }]
+      },
+      {
+        "service": {
+          "slug": "lifetime-technical-support",
+          "title": "Lifetime technical support"
+        },
+        "features": [{ "description": "Lifetime 1-1 Technical Mentorship, chat support, and AI support from our internal bot." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-access-to-community-content",
+          "title": "Unlimited access to community & content"
+        },
+        "features": [{ "description": "Access to hundreds of lessons, practices, and interactive projects." }]
+      },
+      {
+        "service": {
+          "slug": "full-access-to-community-&-content",
+          "title": "Full access to community & content"
+        },
+        "features": [{ "description": "Access to hundreds of lessons, practices, and interactive projects." }]
+      },
+      {
+        "service": {
+          "slug": "career-support-for-life",
+          "title": "Career support for life"
+        },
+        "features": [{ "description": "Get instant feedback on your performance, request 1-on-1 and group mentorship sessions, expert code reviews, and Q&A chat support." }]
+      }
+    ]
+  }
 }

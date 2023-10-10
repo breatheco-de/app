@@ -14,10 +14,11 @@ function SimpleTable({
   technologies,
   href,
 }) {
-  const { t } = useTranslation('exercises');
+  const { t, lang } = useTranslation('exercises');
   const verifyIfNotNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   return (
     <Flex flexDirection="column" width="100%">
@@ -161,7 +162,7 @@ function SimpleTable({
         </Text>
         <TagCapsule
           isLink
-          href={href}
+          href={`${langPrefix}${href}`}
           variant="rounded"
           tags={technologies}
           marginY="8px"

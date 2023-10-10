@@ -1,8 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import getT from 'next-translate/getT';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Head from 'next/head';
 import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
 import useStyle from '../common/hooks/useStyle';
@@ -11,52 +11,36 @@ import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscrip
 import useAuth from '../common/hooks/useAuth';
 import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
-import { getQueryString, isDevMode } from '../utils';
-
-export async function getServerSideProps({ query, locale }) {
-  const t = await getT(locale, ['common', 'signup']);
-  const translations = getTranslations(t);
-  axiosInstance.defaults.headers.common['Accept-Language'] = locale;
-
-  const { plan } = query;
-  const planFormated = (plan && encodeURIComponent(plan)) || '4geeks-standard';
-  const suggestedPlan = await fetchSuggestedPlan(planFormated, translations);
-
-  if (Object.values(suggestedPlan).length === 0 || suggestedPlan?.status_code >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-
-  return {
-    props: {
-      seo: {
-        title: `${t('common:upgrade')} ${t('common:word-connector.to')} ${suggestedPlan?.title}` || '',
-      },
-      data: suggestedPlan,
-    },
-  };
-}
+import { getQueryString } from '../utils';
+import LoaderScreen from '../common/components/LoaderScreen';
 
 const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
-function PricingPage({ data }) {
-  const { t } = useTranslation(['signup', 'common']);
+function PricingView({ data, isForModal }) {
+  const { t, lang } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
   const queryPlan = getQueryString('plan');
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
+  const [isFetching, setIsFetching] = useState(!data?.title);
   const [principalData, setPrincipalData] = useState(data || {});
 
+  axiosInstance.defaults.headers.common['Accept-Language'] = lang;
+  const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
+
   useEffect(() => {
-    if (isDevMode) {
-      fetchSuggestedPlan(planFormated, t)
+    if (!data?.title) {
+      const translations = getTranslations(t);
+      fetchSuggestedPlan(planFormated, translations)
         .then((suggestedPlanData) => {
           setPrincipalData(suggestedPlanData);
+        })
+        .finally(() => {
+          setIsFetching(false);
         });
     }
   }, []);
@@ -123,16 +107,23 @@ function PricingPage({ data }) {
   }, [isAuthenticated]);
 
   return (
-    <Box>
+    <>
+      {isFetching && (
+        <LoaderScreen position={isForModal ? 'absolute' : 'fixed'} />
+      )}
+      <Head>
+        {principalData?.title && (
+          <title>{`${principalData?.title} | 4Geeks`}</title>
+        )}
+      </Head>
       <GridContainer
-        maxWidth="1280px"
+        maxWidth="1180px"
         position="relative"
         margin="0 auto"
-        gridColumn="1 / span 10"
-        mt="4rem"
+        my={isForModal ? '2rem' : '4rem'}
         padding="0 10px"
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="2 / span 8">
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="1 / span 10">
           <Heading as="h1" textAlign="center">
             {t('signup:our_plans')}
           </Heading>
@@ -176,16 +167,27 @@ function PricingPage({ data }) {
                   display={activeType === switchTypes.yearly ? 'flex' : 'none'}
                 />
               ))}
+              {bootcampInfo?.type && (
+                <PricingCard
+                  item={bootcampInfo}
+                  width={{ base: '300px', md: '100%' }}
+                  display="flex"
+                />
+              )}
             </Flex>
           </Box>
         </Box>
       </GridContainer>
-    </Box>
+    </>
   );
 }
 
-PricingPage.propTypes = {
+PricingView.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
+  isForModal: PropTypes.bool,
+};
+PricingView.defaultProps = {
+  isForModal: false,
 };
 
-export default PricingPage;
+export default PricingView;

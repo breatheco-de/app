@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
+import { kv } from '@vercel/kv';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
@@ -83,22 +84,25 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     ...extraQuerys,
   });
 
-  let results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
+  let response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then(async (res) => {
       const data = await res.json();
 
       if (res.status >= 400) {
         throw new Error(data.detail);
       }
-      return data.results;
+      return data;
     })
     .catch((err) => {
-      console.error(`GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
+      console.error(`Error: GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
       return [];
     });
 
-  while (results.length > 0) {
-    allResults = allResults.concat(results);
+  let { results } = response;
+  const { count } = response;
+  allResults = allResults.concat(results);
+
+  while (results.length + offset < count) {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
@@ -110,26 +114,23 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       ...extraQuerys,
     });
 
-    results = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
+    response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
       .then(async (res) => {
         const data = await res.json();
 
         if (res.status >= 400) {
           throw new Error(data.detail);
         }
-        return data.results;
+        return data;
       })
       .catch((err) => {
-        console.error(`GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
+        console.error(`Error: GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
         return [];
       });
+    results = response.results;
+    allResults = allResults.concat(results);
   }
 
-  if (category === 'how-to') {
-    return allResults.filter(
-      (l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como',
-    );
-  }
   if (category === 'project') {
     return allResults.map((item) => {
       item.difficulty = mapDifficulty(item.difficulty);
@@ -140,55 +141,74 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   return allResults;
 };
 
+/**
+ * @param {String} key The key of the value in redis
+ */
+const getCacheItem = async (key) => {
+  try {
+    console.log(`Fetching ${key} from cache`);
+    const item = await kv.get(key);
+    return item;
+  } catch (e) {
+    console.log(`Failed to fetch ${key} from vercel cache`);
+    return null;
+  }
+};
+
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The value to be stored in the cache
+ */
+const setCacheItem = async (key, value) => {
+  try {
+    console.log(`Setting up ${key} on cache`);
+    await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
+  } catch (e) {
+    console.log(`Failed to set ${key} on cache`);
+  }
+};
+
 // mover a carpeta sitemap-generator
-const getLandingTechnologies = () => {
-  const technologies = axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=1000&academy=${WHITE_LABEL_ACADEMY}`, {
-    headers: {
-      Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-      Academy: 4,
-    },
-  })
-    .then(async (res) => {
-      const formatedWithAssets = res.data.results.map(async (tech) => {
-        const assets = await getAsset(null, {
-          technologies: tech?.slug,
-        }, 'technologies');
-        return { ...tech, assets };
+const getLandingTechnologies = async (assets) => {
+  try {
+    const results = [];
+    assets.forEach((asset) => {
+      asset.technologies.forEach((tech) => {
+        if (!results.some((result) => result.slug === tech.slug)) results.push({ ...tech });
       });
-
-      const technologiesInEnglish = Promise.all(formatedWithAssets).then(
-        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
-          .map((finalData) => ({
-            ...finalData,
-            assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
-            lang: 'en',
-          })),
-      );
-
-      const technologiesInSpanish = Promise.all(formatedWithAssets).then(
-        (formatedData) => formatedData.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
-          .map((finalData) => ({
-            ...finalData,
-            assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
-            lang: 'es',
-          })),
-      );
-
-      const dataEng = await technologiesInEnglish;
-      const dataEsp = await technologiesInSpanish;
-
-      return [...dataEng, ...dataEsp];
-    })
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Technologies pages');
-      return [];
+      asset.technologies = asset.technologies.map((tech) => tech.slug);
     });
 
-  return technologies;
+    const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
+
+    const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
+      .map((finalData) => ({
+        ...finalData,
+        assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
+        lang: 'en',
+      }));
+
+    const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
+      .map((finalData) => ({
+        ...finalData,
+        assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
+        lang: 'es',
+      }));
+
+    const dataEng = technologiesInEnglish;
+    const dataEsp = technologiesInSpanish;
+
+    return [...dataEng, ...dataEsp];
+  } catch (e) {
+    console.error('SITEMAP: Error fetching Technologies pages');
+    return [];
+  }
 };
 
 export {
   getAsset,
+  getCacheItem,
+  setCacheItem,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,
