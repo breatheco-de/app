@@ -23,7 +23,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       border: '2px solid #01455E',
       background: '#01455E',
       featured: '',
-      featuredFontColor: '#01455E',
+      featuredFontColor: featuredCard.blueDark,
       button: {
         variant: 'default',
         color: '#fff',
@@ -113,19 +113,23 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         </Text>
         <Box>
 
-          {(!isBootcampType && !isOriginalPlan) ? (
-            <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-              <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                {`$${item.price}`}
-              </Box>
-              <Box fontSize="20px" textDecoration="line-through" textAlign="center">
-                {`$${Math.floor(item.price * 1.2)}`}
-              </Box>
-            </Box>
-          ) : (
-            <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-              {`$${item.price}`}
-            </Box>
+          {!isBootcampType && (
+            <>
+              {!isOriginalPlan ? (
+                <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
+                  <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                    {`$${item.price}`}
+                  </Box>
+                  <Box fontSize="20px" textDecoration="line-through" textAlign="center">
+                    {`$${Math.floor(item.price * 1.2)}`}
+                  </Box>
+                </Box>
+              ) : (
+                <Box fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                  {`$${item?.price}`}
+                </Box>
+              )}
+            </>
           )}
           {item.period_label && (
             <Text fontSize="14px" fontWeight={700} textAlign="center" pb="16px">

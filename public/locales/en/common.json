@@ -199,8 +199,7 @@
   "bootcamp": {
     "planType": "bootcamp",
     "type": "Bootcamp",
-    "price": 2000,
-    "period_label": "One time",
+    "period_label": "",
     "title": "Bootcamp Program",
     "description": "From nothing to a career in tech in just a few months, no previous experience required.",
     "button": "Request More Info",

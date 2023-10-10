@@ -22,6 +22,7 @@ const useStyle = () => {
 
   const featuredCard = {
     background: useColorModeValue('white', '#181a1b'),
+    blueDark: useColorModeValue('#01455E', '#27b1e4'),
     blue: {
       background: useColorModeValue('blue.default', '#157497'),
       featured: useColorModeValue('blue.light', '#092835'),

@@ -127,6 +127,7 @@ function Assignments() {
   const [sort, setSort] = useState(query.sort || undefined);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
+  const [currentStudentCount, setCurrentStudentCount] = useState(0);
 
   const [selectedCohort, setSelectedCohort] = useState(null);
   const [loadStatus, setLoadStatus] = useState({
@@ -143,10 +144,11 @@ function Assignments() {
     return {};
   };
 
-  const getFilterAssignments = (cohortId, academyId) => {
+  const getFilterAssignments = (cohortId, academyId, limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
-      limit: 1000,
+      limit,
+      offset,
       task_type: typeLabel?.value || undefined,
       student: router.query.student || undefined,
       sort,
@@ -159,7 +161,8 @@ function Assignments() {
         const allTasks = projectList.data?.results;
 
         setContextState({
-          allTasks: [...allTasks],
+          allTasks: appendMore ? [...contextState.allTasks, ...allTasks] : [...allTasks],
+          tasksCount: projectList.data?.count,
         });
       })
       .catch((error) => {
@@ -253,15 +256,24 @@ function Assignments() {
     }
   }, [selectedCohort]);
 
-  const loadStudents = () => {
+  const loadStudents = (limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
     const academyId = selectedCohort.academy || academy;
     const { slug } = selectedCohort;
-    bc.cohort({ sort, users: query.student, educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined })
+    bc.cohort({
+      limit,
+      offset,
+      sort,
+      users: query.student,
+      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
+    })
       .getStudentsWithTasks(slug, academyId)
       .then((res) => {
-        const students = res?.data;
+        console.log('res');
+        console.log(res);
+        const students = appendMore ? [...currentStudentList, ...res.data.results] : res?.data?.results;
         setCurrentStudentList(students);
+        setCurrentStudentCount(res?.data?.count);
       })
       .catch(() => {
         toast({
@@ -321,6 +333,7 @@ function Assignments() {
   const updpateAssignment = (taskUpdated) => {
     const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
     setContextState({
+      ...contextState,
       allTasks: [
         ...contextState.allTasks.slice(0, keyIndex), // before keyIndex (inclusive)
         taskUpdated, // key item (updated)
@@ -389,7 +402,9 @@ function Assignments() {
               onChange={(cohort) => {
                 if (cohort.slug !== selectedCohort?.slug) {
                   setCurrentStudentList([]);
+                  setCurrentStudentCount(0);
                   setContextState({
+                    tasksCount: 0,
                     allTasks: [],
                   });
                 }
@@ -682,7 +697,13 @@ function Assignments() {
         p="0 0 30px 0"
       >
         {currentView === 1 ? (
-          <Projects updpateAssignment={updpateAssignment} loadStatus={loadStatus} syllabusData={syllabusData} />
+          <Projects
+            updpateAssignment={updpateAssignment}
+            loadStatus={loadStatus}
+            syllabusData={syllabusData}
+            getFilterAssignments={getFilterAssignments}
+            selectedCohort={selectedCohort}
+          />
         ) : (
           <StudentAssignments
             currentStudentList={currentStudentList}
@@ -690,6 +711,8 @@ function Assignments() {
             selectedCohort={selectedCohort}
             syllabusData={syllabusData}
             updpateAssignment={updpateAssignment}
+            count={currentStudentCount}
+            loadStudents={loadStudents}
           />
         )}
       </Box>
