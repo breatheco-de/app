@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
-import { kv } from '@vercel/kv';
 import bc from '../../../common/services/breathecode';
 import { getExtensionName } from '../../../utils';
+import { setCacheItem } from '../../../utils/requests';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
       asset.markdown = markdown;
       asset.ipynbHtml = ipynbHtml;
 
-      await kv.set(assetSlug, asset);
+      await setCacheItem(assetSlug, asset);
 
       res.status(200).json({ message: `${asset.slug} updated` });
     } catch (e) {
