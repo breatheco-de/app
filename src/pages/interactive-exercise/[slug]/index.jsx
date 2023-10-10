@@ -42,22 +42,14 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
-import { parseQuerys } from '../../../utils/url';
 import { cleanObject } from '../../../utils';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { ORIGIN_HOST } from '../../../utils/variables';
+import { getAsset } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'EXERCISE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
+  const data = await getAsset('EXERCISE', {});
 
-  const paths = data.results.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -74,116 +66,118 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
-  const result = await resp.json();
 
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
+  try {
+    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
+    const result = await resp.json();
+    const engPrefix = {
+      us: 'en',
+      en: 'en',
+    };
+    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
 
-  const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+    if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || !isCurrenLang) {
+      return {
+        notFound: true,
+      };
+    }
 
-  if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || !isCurrenLang) {
+    const {
+      title, translations, description, preview,
+    } = result;
+    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+    if (markdownResp?.status >= 400) {
+      return {
+        notFound: true,
+      };
+    }
+    const markdown = await markdownResp.text();
+
+    // in "lesson.translations" rename "us" key to "en" key if exists
+    if (result?.translations && result.translations.us) {
+      result.translations.en = result.translations.us;
+      delete result.translations.us;
+    }
+
+    const ogUrl = {
+      en: `/interactive-exercise/${slug}`,
+      us: `/interactive-exercise/${slug}`,
+    };
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us,
+        link: `/interactive-exercise/${translations?.us}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/interactive-exercise/${translations?.en}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es,
+        link: `/es/interactive-exercise/${translations?.es}`,
+      },
+    ].filter((item) => translations?.[item?.value] !== undefined);
+    const eventStructuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: result?.title,
+      description: result?.description,
+      url: `${ORIGIN_HOST}/${slug}`,
+      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      datePublished: result?.published_at,
+      dateModified: result?.updated_at,
+      author: result?.author ? {
+        '@type': 'Person',
+        name: `${result?.author?.first_name} ${result?.author?.last_name}`,
+      } : null,
+      keywords: result?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}/${slug}`,
+      },
+    };
+    const cleanedStructuredData = cleanObject(eventStructuredData);
+
+    return {
+      props: {
+        seo: {
+          type: 'article',
+          title,
+          image: preview || staticImage,
+          description: description || '',
+          translations,
+          pathConnector: '/interactive-exercise',
+          url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+          slug,
+          keywords: result?.seo_keywords || '',
+          card: 'large',
+          locales,
+          locale,
+          publishedTime: result?.created_at || '',
+          modifiedTime: result?.updated_at || '',
+        },
+        fallback: false,
+        exercise: {
+          ...result,
+          structuredData: cleanedStructuredData,
+        },
+        translations: translationArray,
+        markdown,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type EXERCISE for /${locale}/interactive-exercise/${slug}`, error);
     return {
       notFound: true,
     };
   }
-
-  const {
-    title, translations, description, preview,
-  } = result;
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-  if (markdownResp?.status >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const markdown = await markdownResp.text();
-
-  // in "lesson.translations" rename "us" key to "en" key if exists
-  if (result?.translations && result.translations.us) {
-    result.translations.en = result.translations.us;
-    delete result.translations.us;
-  }
-
-  const ogUrl = {
-    en: `/interactive-exercise/${slug}`,
-    us: `/interactive-exercise/${slug}`,
-  };
-
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/interactive-exercise/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/interactive-exercise/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/interactive-exercise/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: result?.title,
-    description: result?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: result?.published_at,
-    dateModified: result?.updated_at,
-    author: result?.author ? {
-      '@type': 'Person',
-      name: `${result?.author?.first_name} ${result?.author?.last_name}`,
-    } : null,
-    keywords: result?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        type: 'article',
-        title,
-        image: preview || staticImage,
-        description: description || '',
-        translations,
-        pathConnector: '/interactive-exercise',
-        url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
-        slug,
-        keywords: result?.seo_keywords || '',
-        card: 'large',
-        locales,
-        locale,
-        publishedTime: result?.created_at || '',
-        modifiedTime: result?.updated_at || '',
-      },
-      fallback: false,
-      exercise: {
-        ...result,
-        structuredData: cleanedStructuredData,
-      },
-      translations: translationArray,
-      markdown,
-    },
-  };
 };
 
 function TabletWithForm({

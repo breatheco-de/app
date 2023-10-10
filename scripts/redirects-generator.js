@@ -1,19 +1,19 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
-const { default: axios } = require('axios');
-const fs = require('fs');
-const { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } = require('./_utils');
-require('dotenv').config({
-  path: '.env.production',
-});
-const assetLists = require('../src/lib/asset-list.json');
+import axios from 'axios';
+import { BREATHECODE_HOST, isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from '../src/utils/variables';
+import assetLists from '../src/lib/asset-list.json';
+import { parseQuerys } from '../src/utils/url';
 
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const redirectConfig = {
   permanent: true,
 };
 
 const getAliasRedirects = async () => {
-  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect?academy=${WHITE_LABEL_ACADEMY}`)
+  const qs = parseQuerys({
+    academy: WHITE_LABEL_ACADEMY,
+  });
+  const data = axios.get(`${BREATHECODE_HOST}/v1/registry/alias/redirect${qs}`)
     .then((res) => res.data)
     .catch((err) => {
       console.error('Error getting alias redirects', err);
@@ -125,7 +125,6 @@ async function generateRedirect() {
 
     const aliasRedirectionList = await generateAliasRedirects(aliasRedirectList, projectList)
       .then((redirects) => redirects);
-      // .filter((item) => !item.destination?.includes(item?.source))
 
     const redirectJson = [
       ...lessonRedirectList,
@@ -135,8 +134,8 @@ async function generateRedirect() {
       ...eventRedirectList,
     ];
 
-    fs.writeFileSync('public/redirects-from-api.json', JSON.stringify(redirectJson, null, 2));
-    fs.writeFileSync('public/alias-redirects.json', JSON.stringify(aliasRedirectionList, null, 2));
+    Bun.write('public/redirects-from-api.json', JSON.stringify(redirectJson));
+    Bun.write('public/alias-redirects.json', JSON.stringify(aliasRedirectionList));
 
     console.log('Redirects generated!');
   } else {

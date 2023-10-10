@@ -79,7 +79,7 @@
       "title": "Intro to coding",
       "icon": "coding",
       "text": "From zero to getting paid as a developer, learn the skills of the present and future. Boost your professional career and get hired by a tech company.",
-      "href": "/learn-to-code"
+      "href": "#"
     },
     {
       "title": "Data Science",
@@ -90,13 +90,13 @@
     {
       "title": "30daysofgeekcoding",
       "icon": "geekcoding",
-      "text": "Keep your motivation with this 30 day challenge. Join hundreds of other developers coding a little every day.",
+      "text": "Keep your motivation with this 30-day challenge. Join hundreds of other developers coding a little every day.",
       "href": "#"
     },
     {
       "title": "A.I. & machine learning",
       "icon": "machine-learning",
-      "text": "Start with Python and Data Science, Machine Learning, Deep Learning and maintaining a production environment in A.I.",
+      "text": "Start with Python and Data Science, Machine Learning, Deep Learning, and maintaining a production environment in A.I.",
       "href": "#"
     }
   ]

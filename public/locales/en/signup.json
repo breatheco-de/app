@@ -6,14 +6,17 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Welcome to:",
+  "what-includes": "What includes?",
   "continue-learning": "Continue learning",
+  "in-waiting-list-title": "You are in out waiting list",
+  "signup-thanks-text": "Thanks for signing up to try 4Geeks. We'll be in touch when your seat is ready",
   "subscriptions": "Subscriptions",
   "go-back": "Go back",
   "next-step": "Next step",
+  "create-account": "Create account",
   "payment-info": "Payment information",
   "select-payment-plan": "Select your payment plan:",
   "what-you-will-get": "What you will get:",
-  "free-trial": "Free trial",
   "contact-information": "Contact information",
   "choose-your-class": "Choose your class",
   "summary": "Summary",
@@ -44,17 +47,27 @@
   "signing-for": "You are signing up for",
   "getting-for": "You are getting",
   "already-have-account": "Already have an account?",
+  "no-have-account": "You don't have an account?",
   "login-here": "Login here.",
+  "register-here": "Register here.",
   "start-free-course": "Start free course",
+  "free": "Free",
+  "totally_free": "Totally free",
+  "free_trial": "Free trial",
   "monthly_payment": "Monthly payment",
   "quarterly_payment": "Quarterly payment",
   "half_yearly_payment": "Half yearly payment",
   "yearly_payment": "Yearly payment",
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
+  "our_plans": "Our plans",
+  "join-cohort": {
+    "description": "Please join the cohort in order to the access the program content.",
+    "button": "Join cohort"
+  },
   "info": {
     "this-plan-includes": "This plan includes",
-    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next one on {{next_month}}.",
+    "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
     "will-pay-month": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}.",
     "will-pay-now" : "You will pay ${{price} right now, no other charges apply in the future.",
     "will-pay-per-month": "You will subscribe and pay ${{price}} dollars every month",
@@ -62,6 +75,7 @@
     "will-pay-per-half-year": "You will subscribe and pay ${{price}} dollars every half year",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
     "free": "Totally free",
+    "free-trial-period": "Free trial for {{qty}} {{period}}",
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
@@ -86,7 +100,7 @@
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match",
-    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses and other marketing materials. We'll never share your email,"
+    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses, and other marketing materials. We'll never share your email,"
   },
   "no-date-available": "We currently have no dates available for the location entered",
   "alert-message": {
@@ -102,19 +116,35 @@
   },
   "alert-message-validate-email": {
     "title": "Verify email",
-    "description": "You haven't validated your email yet, log in into your email account and look for the invitation to",
+    "description": "You haven't validated your email yet, login to your email account and look for the invitation",
     "description2": "Don't forget to check your email spam inbox as well!"
   },
   "resend": "Resend",
   "mentorship-bundle-title": "Mentorship sessions bundle",
   "event-bundle-title": "Event bundle",
+  "upgrade-a-plan": "Upgrade a plan",
+  "take-me-there": "Take me there",
   "consumables": {
+    "already-have-it": "Already have it",
+    "consumable-event-not-available": "This event is not available for your subscription",
+    "consumable-mentorship-not-available": "This mentorship is not available for your subscription",
+    "full-plan": "Full plan",
+    "basic-plan": "Basic plan",
+    "ran-out-of-events": "You ran out of events",
+    "ran-out-of-events-text": "You can purchase a event access bundle or purchase a plan here:",
+    "and-get-event-access": "And join to more events",
+    "purchase-one-or-more-events": "Purchase one or more event access",
+    "ran-out-of-mentorships": "You ran out of mentorships",
+    "ran-out-of-mentorships-text": "You can purchase a mentoring session bundle or purchase a plan here:",
+    "and-get-mentorship-access": "And get more mentorships",
+    "purchase-one-or-more-sessions": "Purchase one or more sessions",
+    "avoid-monthly-commitment": "Avoid monthly commitment",
     "select-bundle": "Select your bundle:",
     "change-my-selection": "Change my selection",
     "purchase-completed-title": "You have successfully completed the purchase",
     "you-have-received": "You have received",
     "events": "events",
-    "sessions": "sesiones",
+    "sessions": "sessions",
     "back-to-dashboard": "Back to dashboard",
     "confirm-purchase-connector": "You are about to buy:",
     "qty-events-to-consume": "{{qty}} events to apply",
@@ -125,10 +155,27 @@
   },
   "select-service-of-plan": {
     "title": "Which experience do you want to upgrade?",
-    "description": "We find plans with mentoring available for you, select one before continuing:",
+    "description": "We have plans with mentoring available for you, select one before continuing:",
     "select-text": "Select experience",
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
+  },
+  "pricing": {
+    "already-have-plan": "You already have it",
+    "basic-plan": {
+      "type": "Basic",
+      "hook-message": "Get ready to meet our academy",
+      "title": "Free Member",
+      "description": "All you need to start learning to code",
+      "button-title": "Start free"
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Improve your skills with extra challenges and benefits.",
+      "title": "Premium member",
+      "description": "All the content you need to become a hireable developer",
+      "button-title": "Get Premium"
+    }
   }
 }

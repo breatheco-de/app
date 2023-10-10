@@ -18,6 +18,7 @@ import Question from '../../../common/components/Question';
 import AlertMessage from '../../../common/components/AlertMessage';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
+import { log } from '../../../utils/logging';
 
 function Survey() {
   const router = useRouter();
@@ -36,12 +37,12 @@ function Survey() {
           return;
         }
         const { data } = res;
-        console.log(data);
+        log('suyver_data:', data);
         setQuestions(data.map((q) => ({ message: q.title, ...q })));
         setMsg(null);
       })
       .catch((error) => {
-        console.log('error_surver:', error);
+        log('error_survey:', error);
         setMsg({ text: error.message || error, type: 'error' });
         setQuestions([]);
       });

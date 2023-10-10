@@ -4,10 +4,10 @@ import {
 import PropTypes from 'prop-types';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { getStorageItem } from '../../utils';
-import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import axiosInstance from '../../axios';
 import modifyEnv from '../../../modifyEnv';
+import { log } from '../../utils/logging';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
@@ -16,7 +16,7 @@ function OnlineContext({ children }) {
   const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
   const { isLoading } = useAuth();
-  const [temporalToken, setTemporalToken] = useState(null);
+  const [temporalToken] = useState(null);
   const hasLoaded = !isLoading;
 
   const BREATHECODE_WS = String(BREATHECODE_HOST).replace('https://', '');
@@ -24,12 +24,12 @@ function OnlineContext({ children }) {
   useEffect(() => {
     if (hasLoaded && accessToken) {
       axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
-      setTimeout(() => {
-        bc.auth()?.temporalToken()
-          .then(({ data }) => {
-            setTemporalToken(data);
-          });
-      }, 800);
+      // setTimeout(() => {
+      //   bc.auth()?.temporalToken()
+      //     .then(({ data }) => {
+      //       setTemporalToken(data);
+      //     });
+      // }, 800);
     }
   }, [isLoading, accessToken]);
 
@@ -51,7 +51,7 @@ function OnlineContext({ children }) {
       const client = new W3CWebSocket(`wss://${BREATHECODE_WS}/ws/online?token=${temporalToken.token}`);
 
       client.onopen = () => {
-        console.log('WebSocket Client Connected');
+        log('WebSocket Client Connected');
         setUsersConnected((prev) => ({ ...prev, [temporalToken?.user_id]: true }));
       };
 

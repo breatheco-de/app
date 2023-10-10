@@ -9,9 +9,10 @@ const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
 
 const breathecode = {
-  get: (url) => fetch(url, {
+  get: (url, config) => fetch(url, {
     headers: {
       ...axios.defaults.headers.common,
+      ...config?.headers,
     },
   }).then((res) => res).catch((err) => console.error(err)),
   put: (url, data) => fetch(url, {
@@ -23,6 +24,16 @@ const breathecode = {
     },
     body: JSON.stringify(data),
   }).then((res) => res).catch((err) => console.error(err)),
+  post: (url, data) => fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res).catch((err) => console.error(err)),
+
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -92,16 +103,24 @@ const breathecode = {
           academy,
         },
       }),
+      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+        headers: {
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
+          academy: 4,
+        },
+      }),
     };
   },
 
-  syllabus: () => {
+  syllabus: (query = {}) => {
     const url = `${host}/admissions`;
+    const qs = parseQuerys(query);
     return {
       get: (academyVersion = '4', slug, version = '1') => {
         if (!slug) throw new Error('Missing slug');
         else return axios.get(`${url}/academy/${academyVersion}/syllabus/${slug}/version/${version}`);
       },
+      getPublicVersion: () => axios.get(`${url}/syllabus/version${qs}`),
     };
   },
 
@@ -150,6 +169,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
       takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
@@ -160,7 +180,7 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}`, {
+      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
         headers: academyId && {
           academy: academyId,
         },

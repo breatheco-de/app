@@ -45,7 +45,6 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
-import SimpleModal from '../../../../../common/components/SimpleModal';
 
 function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -77,7 +76,6 @@ function Dashboard() {
   const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
-  const [welcomeModal, setWelcomeModal] = useState(false);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
@@ -198,9 +196,6 @@ function Dashboard() {
     if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
       setIsOpenFinalProject(true);
     }
-    if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
-      setWelcomeModal(true);
-    }
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
@@ -224,8 +219,8 @@ function Dashboard() {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
       .then(async ({ data }) => {
-        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
-        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
+        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
         const planData = currentPlanFinancing || currentSubscription;
         const planSlug = planData?.plans?.[0]?.slug;
         const planOffer = await bc.payment({
@@ -754,33 +749,6 @@ function Dashboard() {
           )}
         </Flex>
       </Container>
-      {showGithubWarning !== 'active' && (
-        <SimpleModal
-          isOpen={welcomeModal}
-          onClose={() => setWelcomeModal(false)}
-          style={{ marginTop: '10vh' }}
-          maxWidth="45rem"
-          borderRadius="13px"
-          headerStyles={{ textAlign: 'center' }}
-          title={t('welcome-modal.title')}
-          bodyStyles={{ padding: 0 }}
-          closeOnOverlayClick={false}
-        >
-          <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
-            <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
-              {t('welcome-modal.description')}
-            </Text>
-          </Box>
-          <Box padding="0 15px 15px">
-            <ReactPlayerV2
-              url="https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba"
-              width="100%"
-              height="100%"
-              iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
-            />
-          </Box>
-        </SimpleModal>
-      )}
       {showGithubWarning === 'active' && (
         <Modal
           isOpen={showWarningModal}

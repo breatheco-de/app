@@ -73,7 +73,7 @@ const privateRoutes = [
   '!src/pages/thumbnail.jsx',
 ];
 
-module.exports = {
+export {
   privateRoutes,
   sitemapTemplate,
   listOfSitemapsTemplate,

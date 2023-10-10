@@ -1,36 +1,18 @@
 /* eslint-disable no-param-reassign */
-const fs = require('fs');
-const { getAsset, getEvents, getLandingTechnologies } = require('../src/utils/requests');
-
-const mapDifficulty = (difficulty) => {
-  switch (difficulty?.toLowerCase()) {
-    case 'junior':
-      return 'easy';
-    case 'semi-senior':
-      return 'intermediate';
-    case 'senior':
-      return 'hard';
-    default:
-      return 'unknown';
-  }
-};
+import fs from 'fs';
+import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
 
 async function getData() {
   console.log('fetching recyclable data for sitemap and redirects...');
 
   console.time('Time fetching data');
 
-  const landingTechnologies = await getLandingTechnologies();
-  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
-  const excersises = await getAsset('exercise');
-  const projects = await getAsset('PROJECT').then((data) => data.map((item) => {
-    item.difficulty = mapDifficulty(item.difficulty);
-    return item;
-  }));
-  const howTos = await getAsset('LESSON,ARTICLE').then(
-    (data) => data.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como'),
-  );
+  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' }, 'lesson');
+  const excersises = await getAsset('EXERCISE', {}, 'excersise');
+  const projects = await getAsset('PROJECT', {}, 'project');
+  const howTos = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
   const events = await getEvents();
+  const landingTechnologies = await getLandingTechnologies([...lessons, ...projects, ...excersises, ...howTos]);
 
   console.timeEnd('Time fetching data');
 
@@ -43,11 +25,12 @@ async function getData() {
     events,
   };
   console.log('Next data has been fetched:\n', {
-    landingTechnologies: landingTechnologies.length,
-    lessons: lessons.length,
-    excersises: excersises.length,
-    projects: projects.length,
-    howTos: howTos.length,
+    landingTechnologies: landingTechnologies?.length,
+    lessons: lessons?.length,
+    excersises: excersises?.length,
+    projects: projects?.length,
+    howTos: howTos?.length,
+    events: events?.length,
   });
 
   // This file is disposable and will disappear at the end of the build process.

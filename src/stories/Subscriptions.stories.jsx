@@ -92,10 +92,12 @@ isFreeTrial.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -195,10 +197,12 @@ isActive.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -299,10 +303,12 @@ isCancelled.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -401,10 +407,12 @@ isPaymentUpToDate.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -503,10 +511,12 @@ PaymentIssue.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {
@@ -605,10 +615,12 @@ FullyPaid.args = {
                     "financing_options": []
                 }
             ],
-            "selected_cohort": {
+            "selected_cohort_set": {
+                "cohorts": [{
                 "id": 426,
                 "slug": "coding-introduction-2",
                 "name": "Coding Introduction 2",
+            }]
             },
             "invoices": [
                 {

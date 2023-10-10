@@ -12,7 +12,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 
 function Module({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
-  isDone, rightItemHandler, link, textWithLink, mandatory,
+  isDone, rightItemHandler, link, textWithLink, mandatory, onDisabledClick,
 }) {
   const { t } = useTranslation('dashboard');
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
@@ -110,6 +110,7 @@ function Module({
           <Link
             href={data.target === 'blank' ? '#_blank' : link}
             onClick={(e) => {
+              onDisabledClick();
               if (data.target === 'blank') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -183,6 +184,7 @@ function Module({
       </Flex>
       <HStack
         // justifyContent="flex-end"
+        flexShrink={0}
         width="auto"
         style={{
           margin: 0,
@@ -207,6 +209,7 @@ Module.propTypes = {
   isDone: PropTypes.bool,
   currIndex: PropTypes.number,
   mandatory: PropTypes.bool,
+  onDisabledClick: PropTypes.func,
 };
 Module.defaultProps = {
   onClickHandler: () => {},
@@ -221,6 +224,7 @@ Module.defaultProps = {
   isDone: false,
   currIndex: null,
   mandatory: false,
+  onDisabledClick: () => {},
 };
 
 export default Module;

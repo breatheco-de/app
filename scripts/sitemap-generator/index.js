@@ -1,9 +1,13 @@
-const fs = require('fs');
-const globby = require('globby');
-
-const {
-  getPrismicPages, getPublicSyllabus,
-} = require('../../src/utils/requests');
+/* eslint-disable no-undef */
+import globby from 'globby';
+import { getPrismicPages, getPublicSyllabus } from '../../src/utils/requests';
+import {
+  privateRoutes,
+  sitemapTemplate,
+  listOfSitemapsTemplate,
+} from './sitemap-config';
+import { isWhiteLabelAcademy } from '../../src/utils/variables';
+import assetLists from '../../src/lib/asset-list.json';
 
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 
@@ -11,18 +15,6 @@ const engLang = {
   en: 'en',
   us: 'en',
 };
-
-const {
-  privateRoutes,
-  sitemapTemplate,
-  listOfSitemapsTemplate,
-} = require('./sitemap-config');
-const { isWhiteLabelAcademy } = require('../_utils');
-const assetLists = require('../../src/lib/asset-list.json');
-
-require('dotenv').config({
-  path: '.env.production',
-});
 
 async function generateSitemap() {
   console.log('Generating sitemaps...');
@@ -189,18 +181,18 @@ async function generateSitemap() {
   const pagesSitemapList = isWhiteLabelAcademy ? whiteLabelAcademySitemapsList : sitemap;
 
   try {
-    fs.writeFileSync('public/pages-sitemap.xml', pagesSitemap);
-    fs.writeFileSync('public/howto-sitemap.xml', howToSitemap);
-    fs.writeFileSync('public/lessons-sitemap.xml', lessonsSitemap);
-    fs.writeFileSync('public/projects-sitemap.xml', projectsSitemap);
-    fs.writeFileSync('public/exercises-sitemap.xml', exercisesSitemap);
-    fs.writeFileSync('public/technologies-sitemap.xml', technologiesSitemap);
-    fs.writeFileSync('public/events-sitemap.xml', eventsSitemap);
+    await Bun.write('public/pages-sitemap.xml', pagesSitemap);
+    await Bun.write('public/howto-sitemap.xml', howToSitemap);
+    await Bun.write('public/lessons-sitemap.xml', lessonsSitemap);
+    await Bun.write('public/projects-sitemap.xml', projectsSitemap);
+    await Bun.write('public/exercises-sitemap.xml', exercisesSitemap);
+    await Bun.write('public/technologies-sitemap.xml', technologiesSitemap);
+    await Bun.write('public/events-sitemap.xml', eventsSitemap);
   } catch (err) {
     console.error("Couldn't write sitemaps files", err);
   }
 
-  fs.writeFileSync('public/sitemap.xml', pagesSitemapList);
+  await Bun.write('public/sitemap.xml', pagesSitemapList);
 
   console.log('Sitemaps generated!');
 }
