@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
@@ -40,6 +41,11 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const isSecondStep = stepIndex === 1; // Choose your class
   const isThirdStep = stepIndex === 2; // Summary
   const isFourthStep = stepIndex === 3; // Payment
+
+  const currencies = {
+    $: 'USD',
+    '€': 'EUR',
+  };
 
   const nextStep = () => dispatch({
     type: NEXT_STEP,
@@ -156,6 +162,16 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             slug: dateProps?.slug,
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
+          });
+
+          const curr = selectedPlanCheckoutData?.priceText.replace(/[0-9]+([,.][0-9]+)?/, '');
+
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'purchase',
+              value: selectedPlanCheckoutData?.price,
+              currency: currencies[curr] || 'USD',
+            },
           });
 
           if (!disableRedirectAfterSuccess) {
@@ -448,6 +464,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     isSecondStep,
     isThirdStep,
     isFourthStep,
+    currencies,
     toggleIfEnrolled,
     nextStep,
     prevStep,

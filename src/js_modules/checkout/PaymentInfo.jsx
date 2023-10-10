@@ -7,6 +7,7 @@ import {
 } from '@chakra-ui/react';
 import { forwardRef, useState } from 'react';
 import PropTypes from 'prop-types';
+import TagManager from 'react-gtm-module';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -42,7 +43,7 @@ function PaymentInfo() {
   const toast = useToast();
 
   const {
-    state, setPaymentInfo, handlePayment, getPaymentText,
+    state, setPaymentInfo, handlePayment, getPaymentText, currencies,
   } = useSignup();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,6 +93,15 @@ function PaymentInfo() {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
+          const curr = state?.selectedPlanCheckoutData?.priceText.replace(/[0-9]+([,.][0-9]+)?/, '');
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'add_payment_info',
+              path: '/checkout',
+              value: state?.selectedPlanCheckoutData?.price,
+              currency: currencies[curr] || 'USD',
+            },
+          });
           handlePayment()
             .finally(() => {
               setIsSubmitting(false);

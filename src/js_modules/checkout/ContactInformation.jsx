@@ -8,6 +8,7 @@ import {
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import TagManager from 'react-gtm-module';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -71,6 +72,12 @@ function ContactInformation({
       body: JSON.stringify(allValues),
     });
     const data = await resp.json();
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'sign_up',
+        method: 'native',
+      },
+    });
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }
