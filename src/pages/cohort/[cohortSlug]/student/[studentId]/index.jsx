@@ -33,6 +33,7 @@ function StudentReport() {
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [studentAssignments, setStudentAssignments] = useState({
     lessons: [],
     projects: [],
@@ -62,10 +63,11 @@ function StudentReport() {
       }).catch((e) => {
         console.log(e);
       });
-    bc.activity({ user_id: studentId }).getActivity(academy)
+    bc.activity({ user_id: studentId }).getMeActivity(academy)
       .then((res) => {
         console.log('res');
         console.log(res);
+        setActivities(res?.data);
       })
       .catch((e) => {
         console.log(e);

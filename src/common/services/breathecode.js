@@ -212,6 +212,7 @@ const breathecode = {
           academy: academyId,
         },
       }),
+      getMeActivity: () => axios.get(`${url}/me/activity`),
     };
   },
 
