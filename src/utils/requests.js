@@ -162,7 +162,7 @@ const getCacheItem = async (key) => {
 const setCacheItem = async (key, value) => {
   try {
     console.log(`Setting up ${key} on cache`);
-    await kv.set(key, value);
+    await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
   } catch (e) {
     console.log(`Failed to set ${key} on cache`);
   }
