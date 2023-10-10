@@ -44,7 +44,7 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getAsset } from '../../../utils/requests';
+import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -68,31 +68,42 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
-    const result = await resp.json();
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
-    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
 
-    if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || !isCurrenLang) {
-      return {
-        notFound: true,
+    if (!result) {
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=EXERCISE`);
+      result = await resp.json();
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+      if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
     }
 
     const {
       title, translations, description, preview,
     } = result;
-    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-    if (markdownResp?.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
-    const markdown = await markdownResp.text();
 
     // in "lesson.translations" rename "us" key to "en" key if exists
     if (result?.translations && result.translations.us) {

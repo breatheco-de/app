@@ -35,9 +35,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const assetList = await import('../../../lib/asset-list.json')
     .then((res) => res.default)
-    .catch(() => []);
+    .catch(() => {});
 
-  const allTechnologiesList = assetList.landingTechnologies;
+  const allTechnologiesList = assetList?.landingTechnologies || [];
   const technologyData = allTechnologiesList.find((tech) => tech.slug === technology && tech.lang === locale);
 
   const dataFiltered = technologyData?.assets?.length > 0 ? technologyData.assets.filter(

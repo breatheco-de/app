@@ -24,7 +24,7 @@ import MktSideRecommendedCourses from '../../../common/components/MktSideRecomme
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
-import { getAsset } from '../../../utils/requests';
+import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('LESSON,ARTICLE', {}, 'how-to');
@@ -46,34 +46,42 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
-    const data = await resp.json();
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
-
-    const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
-
-    if (resp.status >= 400 || !isCurrenLang) {
-      return {
-        notFound: true,
+    let data;
+    let markdown;
+    data = await getCacheItem(slug);
+    if (!data) {
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
+      data = await resp.json();
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
+
+      const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+      if (resp.status >= 400 || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+
+      markdown = await markdownResp.text();
+      await setCacheItem(slug, { ...data, markdown });
+    } else {
+      markdown = data.markdown;
     }
 
     const {
       title, description, translations, preview,
     } = data;
-
-    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-    if (markdownResp?.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
-
-    const markdown = await markdownResp.text();
 
     const ogUrl = {
       en: `/how-to/${slug}`,
@@ -159,7 +167,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 export default function HowToSlug({ data, markdown }) {
-  const { t } = useTranslation('how-to');
+  const { t, lang } = useTranslation('how-to');
   // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -178,6 +186,7 @@ export default function HowToSlug({ data, markdown }) {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     if (!isHowTo) {
@@ -223,7 +232,7 @@ export default function HowToSlug({ data, markdown }) {
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
           <Link
-            href="/how-to"
+            href={`${langPrefix}/how-to`}
             margin="3rem 0 2.375rem 0"
             gridColumn="2 / span 12"
             color={linkColor}
@@ -239,7 +248,7 @@ export default function HowToSlug({ data, markdown }) {
               <TagCapsule
                 variant="rounded"
                 isLink
-                href="/how-to"
+                href={`${langPrefix}/how-to`}
                 tags={data?.technologies}
                 marginY="8px"
                 fontSize="13px"

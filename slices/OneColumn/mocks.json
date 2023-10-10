@@ -1,118 +1,116 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "choice",
-        "type": "Text"
-      },
-      "subtitle": {
-        "__TYPE__": "FieldContent",
-        "value": "silence",
-        "type": "Text"
-      },
-      "description": {
-        "__TYPE__": "StructuredTextContent",
-        "value": [
-          {
-            "type": "paragraph",
-            "content": {
-              "text": "Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi.",
-              "spans": []
-            },
-            "direction": "ltr"
-          }
-        ]
-      },
-      "button_label": {
-        "__TYPE__": "FieldContent",
-        "value": "foot",
-        "type": "Text"
-      },
-      "link_button": {
-        "__TYPE__": "BooleanContent",
-        "value": true
-      },
-      "button_url": {
-        "__TYPE__": "LinkContent",
-        "value": {
-          "__TYPE__": "ExternalLink",
-          "url": "http://twitter.com"
-        }
-      },
-      "kpi_title_1": {
-        "__TYPE__": "FieldContent",
-        "value": "yard",
-        "type": "Text"
-      },
-      "kpi_description_1": {
-        "__TYPE__": "FieldContent",
-        "value": "me",
-        "type": "Text"
-      },
-      "kpi_color_1": {
-        "__TYPE__": "FieldContent",
-        "value": "#8da89b",
-        "type": "Color"
-      },
-      "kpi_title_2": {
-        "__TYPE__": "FieldContent",
-        "value": "bar",
-        "type": "Text"
-      },
-      "kpi_description_2": {
-        "__TYPE__": "FieldContent",
-        "value": "religious",
-        "type": "Text"
-      },
-      "kpi_color_2": {
-        "__TYPE__": "FieldContent",
-        "value": "#25bf6c",
-        "type": "Color"
-      },
-      "kpi_title_3": {
-        "__TYPE__": "FieldContent",
-        "value": "ago",
-        "type": "Text"
-      },
-      "kpi_description_3": {
-        "__TYPE__": "FieldContent",
-        "value": "tried",
-        "type": "Text"
-      },
-      "kpi_color_3": {
-        "__TYPE__": "FieldContent",
-        "value": "#ffb718",
-        "type": "Color"
-      },
-      "background": {
-        "__TYPE__": "FieldContent",
-        "value": "#eef9fe",
-        "type": "Color"
-      },
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "successful",
-        "type": "Text"
-      },
-      "paddingMd": {
-        "__TYPE__": "FieldContent",
-        "type": "Text",
-        "value": "0 70px"
-      },
-      "font_color": {
-        "__TYPE__": "FieldContent",
-        "value": "#000000",
-        "type": "Color"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "choice",
+				"type": "Text"
+			},
+			"subtitle": {
+				"__TYPE__": "FieldContent",
+				"value": "silence",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi. Cupidatat cupidatat dolor do do officia proident enim irure exercitation nisi.",
+							"spans": []
+						},
+						"direction": "ltr"
+					}
+				]
+			},
+			"button_label": {
+				"__TYPE__": "FieldContent",
+				"value": "foot",
+				"type": "Text"
+			},
+			"link_button": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"button_url": {
+				"__TYPE__": "FieldContent",
+				"value": "excited",
+				"type": "Text"
+			},
+			"kpi_title_1": {
+				"__TYPE__": "FieldContent",
+				"value": "yard",
+				"type": "Text"
+			},
+			"kpi_description_1": {
+				"__TYPE__": "FieldContent",
+				"value": "me",
+				"type": "Text"
+			},
+			"kpi_color_1": {
+				"__TYPE__": "FieldContent",
+				"value": "#8da89b",
+				"type": "Color"
+			},
+			"kpi_title_2": {
+				"__TYPE__": "FieldContent",
+				"value": "bar",
+				"type": "Text"
+			},
+			"kpi_description_2": {
+				"__TYPE__": "FieldContent",
+				"value": "religious",
+				"type": "Text"
+			},
+			"kpi_color_2": {
+				"__TYPE__": "FieldContent",
+				"value": "#25bf6c",
+				"type": "Color"
+			},
+			"kpi_title_3": {
+				"__TYPE__": "FieldContent",
+				"value": "ago",
+				"type": "Text"
+			},
+			"kpi_description_3": {
+				"__TYPE__": "FieldContent",
+				"value": "tried",
+				"type": "Text"
+			},
+			"kpi_color_3": {
+				"__TYPE__": "FieldContent",
+				"value": "#ffb718",
+				"type": "Color"
+			},
+			"background": {
+				"__TYPE__": "FieldContent",
+				"value": "#eef9fe",
+				"type": "Color"
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "successful",
+				"type": "Text"
+			},
+			"paddingMd": {
+				"__TYPE__": "FieldContent",
+				"type": "Text",
+				"value": "0 70px"
+			},
+			"font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#000000",
+				"type": "Color"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]

@@ -19,7 +19,7 @@ function ModalInfo({
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
-  maxWidth, forceHandlerAndClose,
+  maxWidth, forceHandlerAndClose, ...rest
 }) {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -56,7 +56,7 @@ function ModalInfo({
 
   return (
     <>
-      <Modal closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose}>
+      <Modal blockScrollOnMount={false} closeOnOverlayClick={!forceHandler} isOpen={isOpen} onClose={onClose} {...rest}>
         <ModalOverlay />
         {/* md */}
         <ModalContent maxWidth={maxWidth || 'md'} borderRadius="6px" style={{ marginTop: '10vh' }}>

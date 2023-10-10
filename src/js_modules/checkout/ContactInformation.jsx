@@ -13,7 +13,7 @@ import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
-import { getQueryString, setStorageItem, slugToTitle } from '../../utils';
+import { getQueryString, getStorageItem, setStorageItem, slugToTitle } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
@@ -39,6 +39,8 @@ function ContactInformation({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const { backgroundColor, featuredColor, hexColor } = useStyle();
+  const redirectStorage = getStorageItem('redirect');
+  const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
 
   const { syllabus } = router.query;
 
@@ -173,7 +175,7 @@ function ContactInformation({
                     <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
                       {t('already-have-account')}
                       {' '}
-                      <NextChakraLink href="/login" redirectAfterLogin fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
+                      <NextChakraLink href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="12px" variant="default">{t('login-here')}</NextChakraLink>
                     </Flex>
                   </Box>
                   <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
@@ -297,7 +299,7 @@ function ContactInformation({
             position="absolute"
             top={0}
             left={0}
-            src="static/images/happy-meeting-3.webp"
+            src="/static/images/happy-meeting-3.webp"
             alt="Get Access"
             height="631px"
             style={{ objectFit: 'cover' }}
