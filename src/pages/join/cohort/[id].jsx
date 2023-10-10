@@ -59,7 +59,7 @@ function Page({ id, syllabus, cohort }) {
   const [isModalToGetAccesOpen, setIsModalToGetAccesOpen] = useState(false);
   const toast = useToast();
   const router = useRouter();
-  const qsForPricing = parseQuerys({ plan: encodeURIComponent(qsPlan) });
+  const qsForPricing = parseQuerys({ plan: qsPlan && encodeURIComponent(qsPlan) });
 
   const redirectTocohort = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
