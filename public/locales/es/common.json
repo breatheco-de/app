@@ -199,7 +199,7 @@
   "bootcamp": {
     "planType": "bootcamp",
     "type": "Bootcamp",
-    "period_label": "Un solo pago",
+    "period_label": "",
     "title": "Programa de Bootcamp",
     "description": "De nada a una carrera en tecnología en solo unos meses, no se requiere experiencia previa.",
     "button": "Solicitar más información",
