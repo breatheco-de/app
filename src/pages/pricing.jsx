@@ -18,7 +18,7 @@ const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
-function PricingPage({ data, isForModal }) {
+function PricingView({ data, isForModal }) {
   const { t, lang } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
@@ -182,12 +182,12 @@ function PricingPage({ data, isForModal }) {
   );
 }
 
-PricingPage.propTypes = {
+PricingView.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
   isForModal: PropTypes.bool,
 };
-PricingPage.defaultProps = {
+PricingView.defaultProps = {
   isForModal: false,
 };
 
-export default PricingPage;
+export default PricingView;
