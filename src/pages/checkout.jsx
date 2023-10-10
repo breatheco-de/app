@@ -327,7 +327,7 @@ function Checkout() {
             />
           </Box>
         )}
-        isOpen={verifyEmailProps.state}
+        isOpen={(isPricingModalOpen && verifyEmailProps.state) || (queryPlanExists && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           const inviteId = verifyEmailProps?.data?.id;
