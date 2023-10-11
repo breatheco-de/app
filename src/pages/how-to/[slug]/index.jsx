@@ -50,6 +50,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let markdown;
     data = await getCacheItem(slug);
     if (!data) {
+      console.log(`${slug} not found on cache`);
       const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
       data = await resp.json();
       const engPrefix = {
