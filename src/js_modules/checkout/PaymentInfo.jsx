@@ -46,8 +46,7 @@ function PaymentInfo() {
     state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
-  console.log('state');
-  console.log(state);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stateCard, setStateCard] = useState({
     card_number: 0,
