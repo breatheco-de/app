@@ -27,7 +27,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', {}, 'how-to');
+  const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
