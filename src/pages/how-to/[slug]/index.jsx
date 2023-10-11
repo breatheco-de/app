@@ -27,7 +27,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', {}, 'how-to');
+  const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -50,6 +50,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let markdown;
     data = await getCacheItem(slug);
     if (!data) {
+      console.log(`${slug} not found on cache`);
       const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
       data = await resp.json();
       const engPrefix = {
