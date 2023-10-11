@@ -42,11 +42,6 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const isThirdStep = stepIndex === 2; // Summary
   const isFourthStep = stepIndex === 3; // Payment
 
-  const currencies = {
-    $: 'USD',
-    '€': 'EUR',
-  };
-
   const nextStep = () => dispatch({
     type: NEXT_STEP,
   });
@@ -164,13 +159,17 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             academy_info: dateProps?.academy,
           });
 
-          const curr = selectedPlanCheckoutData?.priceText.replace(/[0-9]+([,.][0-9]+)?/, '');
+          const currency = cohortPlans[0]?.plan?.currency?.code;
 
           TagManager.dataLayer({
             dataLayer: {
               event: 'purchase',
               value: selectedPlanCheckoutData?.price,
-              currency: currencies[curr] || 'USD',
+              currency,
+              payment_type: 'Credit card',
+              plan: selectedPlanCheckoutData?.slug,
+              period_label: selectedPlanCheckoutData?.period_label,
+              items: cohortPlans,
             },
           });
 
@@ -464,7 +463,6 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     isSecondStep,
     isThirdStep,
     isFourthStep,
-    currencies,
     toggleIfEnrolled,
     nextStep,
     prevStep,

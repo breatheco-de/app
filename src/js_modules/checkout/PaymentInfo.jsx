@@ -43,9 +43,11 @@ function PaymentInfo() {
   const toast = useToast();
 
   const {
-    state, setPaymentInfo, handlePayment, getPaymentText, currencies,
+    state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
-  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
+  console.log('state');
+  console.log(state);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [stateCard, setStateCard] = useState({
     card_number: 0,
@@ -93,13 +95,16 @@ function PaymentInfo() {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
-          const curr = state?.selectedPlanCheckoutData?.priceText.replace(/[0-9]+([,.][0-9]+)?/, '');
+          const currency = cohortPlans[0]?.plan?.currency?.code;
           TagManager.dataLayer({
             dataLayer: {
               event: 'add_payment_info',
               path: '/checkout',
               value: state?.selectedPlanCheckoutData?.price,
-              currency: currencies[curr] || 'USD',
+              currency,
+              payment_type: 'Credit card',
+              plan: state?.selectedPlanCheckoutData?.slug,
+              period_label: state?.selectedPlanCheckoutData?.period_label,
             },
           });
           handlePayment()
