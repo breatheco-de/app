@@ -195,5 +195,53 @@
   "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
   "free": "Gratis",
   "login": "Iniciar sesión",
-  "privacy-policy": "Política de privacidad"
+  "privacy-policy": "Política de privacidad",
+  "bootcamp": {
+    "planType": "bootcamp",
+    "type": "Bootcamp",
+    "period_label": "",
+    "title": "Programa de Bootcamp",
+    "description": "De nada a una carrera en tecnología en solo unos meses, no se requiere experiencia previa.",
+    "button": "Solicitar más información",
+    "button_link": "https://4geeksacademy.com/es/programas",
+    "subtitle": "Programa de Bootcamp",
+    "sub-description": "Únete a una cohorte en un ambiente de aula en vivo y obtén soporte ilimitado hasta que encuentres un trabajo.",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "job-guarantee",
+          "title": "Garantía de trabajo"
+        },
+        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
+      },
+      {
+        "service": {
+          "slug": "lifetime-technical-support",
+          "title": "Soporte técnico de por vida"
+        },
+        "features": [{ "description": "Mentoría técnica 1-1 de por vida, soporte de chat y soporte de IA de nuestro bot interno." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-access-to-community-content",
+          "title": "Acceso ilimitado a la comunidad y al contenido"
+        },
+        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
+      },
+      {
+        "service": {
+          "slug": "full-access-to-community-&-content",
+          "title": "Acceso completo a la comunidad y al contenido"
+        },
+        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
+      },
+      {
+        "service": {
+          "slug": "Soporte profesional de por vida",
+          "title": "Career support for life"
+        },
+        "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
+      }
+    ]
+  }
 }

@@ -171,32 +171,13 @@ const setCacheItem = async (key, value) => {
 // mover a carpeta sitemap-generator
 const getLandingTechnologies = async (assets) => {
   try {
-    const limit = 100;
-    let offset = 0;
-    let res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
-      headers: {
-        Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-        Academy: 4,
-      },
-    });
-    let { results } = res.data;
-    const { count } = res.data;
-
-    while (results.length < count) {
-      offset += limit;
-      res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
-        headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-          Academy: 4,
-        },
+    const results = [];
+    assets.forEach((asset) => {
+      asset.technologies.forEach((tech) => {
+        if (!results.some((result) => result.slug === tech.slug)) results.push({ ...tech });
       });
-
-      if (res.status >= 400) {
-        throw new Error(res.detail);
-      }
-
-      results = results.concat(res.data.results);
-    }
+      asset.technologies = asset.technologies.map((tech) => tech.slug);
+    });
 
     const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
 

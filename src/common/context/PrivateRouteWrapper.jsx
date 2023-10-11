@@ -7,6 +7,7 @@ export const withGuard = (PassedComponent) => {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
     const tokenExists = isWindow && localStorage.getItem('accessToken');
+    const pageToRedirect = '/checkout';
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
     const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -20,7 +21,7 @@ export const withGuard = (PassedComponent) => {
         if (typeof window !== 'undefined') {
           setStorageItem('redirect', window.location.pathname);
         }
-        window.location.href = '/login';
+        window.location.href = pageToRedirect;
       }, 150);
     };
 
@@ -31,7 +32,7 @@ export const withGuard = (PassedComponent) => {
         } else {
           localStorage.setItem('redirect', pathname);
         }
-        window.location.href = '/login';
+        window.location.href = pageToRedirect;
       }
       if (queryTokenExists && isWindow) {
         localStorage.setItem('accessToken', queryToken);
