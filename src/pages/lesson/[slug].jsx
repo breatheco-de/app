@@ -53,6 +53,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
     if (!lesson) {
+      console.log(`${slug} not found on cache`);
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       lesson = await response.json();
 
