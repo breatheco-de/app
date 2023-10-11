@@ -127,8 +127,8 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
             <Heading as="h2" size="26px" display="flex" flexDirection="column">
               {t('join-cohort.description')}
             </Heading>
-            <Button variant="default" onClick={customFunction}>
-              {t('join-cohort.button')}
+            <Button variant="default" width={!externalData?.existsRelatedSubscription && 'fit-content'} onClick={customFunction}>
+              {externalData?.existsRelatedSubscription ? t('join-cohort.button') : t('common:close')}
             </Button>
           </Flex>
         )}

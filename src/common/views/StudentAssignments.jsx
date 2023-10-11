@@ -1,4 +1,5 @@
-import { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useCallback, forwardRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
@@ -14,30 +15,17 @@ import useStyle from '../hooks/useStyle';
 import useFormatTimeString from '../hooks/useFormatTimeString';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../js_modules/assignmentHandler/index';
 import LoaderScreen from '../components/LoaderScreen';
+import InfiniteScroll from '../components/InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
 
-function StudentAssignments({ currentStudentList, updpateAssignment, syllabusData, loadStatus, selectedCohort }) {
+const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCohort, setCurrentTask, setDeliveryUrl }, ref) => {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const { query } = router;
   const { academy } = query;
-  const toast = useToast();
   const { formatTimeString } = useFormatTimeString();
+  const toast = useToast();
   const { hexColor } = useStyle();
-  const [currentTask, setCurrentTask] = useState(null);
-  const [deliveryUrl, setDeliveryUrl] = useState('');
-
-  const lang = {
-    es: '/es/',
-    en: '/',
-  };
-
-  const statusColors = {
-    APPROVED: hexColor.green,
-    REJECTED: hexColor.danger,
-    UNDELIVERED: hexColor.danger,
-    DELIVERED: hexColor.yellowDefault,
-  };
 
   const getStatus = (task) => {
     if (!task) return null;
@@ -81,38 +69,37 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
     }
   };
 
+  const statusColors = {
+    APPROVED: hexColor.green,
+    REJECTED: hexColor.danger,
+    UNDELIVERED: hexColor.danger,
+    DELIVERED: hexColor.yellowDefault,
+  };
   return (
-    <Box
-      minHeight="34vh"
-      borderRadius="3px"
-      margin="0 auto"
-      maxWidth="1012px"
-      flexGrow={1}
-      overflow="auto"
-    >
-      <Flex flexDirection="column" gridGap="18px">
-        {currentStudentList.map((student) => {
-          const { user } = student;
-          const fullname = `${student.user.first_name} ${student.user.last_name}`;
-          const percentage = Math.round((student.tasks.reduce((acum, val) => (val.task_status !== 'PENDING' && val.task_type === 'PROJECT' ? acum + 1 : acum), 0) / syllabusData.assignments.length) * 100);
-          const lastDeliver = student.tasks.reduce((date, val) => {
-            if (date) return date > val ? date : val.updated_at;
-            if (val.updated_at && val.task_status !== 'PENDING' && val.task_type === 'PROJECT') return val.updated_at;
-            return null;
-          }, null);
-          const dots = syllabusData.assignments.map((elem) => {
-            const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
-            const { mandatory } = elem;
-            return {
-              ...elem,
-              ...studentTask,
-              label: elem.title,
-              highlight: mandatory,
-              user,
-              color: statusColors[getStatus(studentTask)] || 'gray',
-            };
-          });
-          return (
+    <>
+      {currentStudentList.map((student) => {
+        const { user } = student;
+        const fullname = `${student.user.first_name} ${student.user.last_name}`;
+        const percentage = Math.round((student.tasks.reduce((acum, val) => (val.task_status !== 'PENDING' && val.task_type === 'PROJECT' ? acum + 1 : acum), 0) / syllabusData.assignments.length) * 100);
+        const lastDeliver = student.tasks.reduce((date, val) => {
+          if (date) return date > val ? date : val.updated_at;
+          if (val.updated_at && val.task_status !== 'PENDING' && val.task_type === 'PROJECT') return val.updated_at;
+          return null;
+        }, null);
+        const dots = syllabusData.assignments.map((elem) => {
+          const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
+          const { mandatory } = elem;
+          return {
+            ...elem,
+            ...studentTask,
+            label: elem.title,
+            highlight: mandatory,
+            user,
+            color: statusColors[getStatus(studentTask)] || 'gray',
+          };
+        });
+        return (
+          <Box ref={ref || null}>
             <DottedTimeline
               key={student.id}
               onClickDots={showSingleTask}
@@ -130,12 +117,63 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
                     <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small>
                   </Box>
                 </Flex>
-                    )}
+                      )}
               dots={dots}
               helpText={`${t('educational-status')}: ${student.educational_status}`}
             />
-          );
-        })}
+          </Box>
+        );
+      })}
+    </>
+  );
+});
+
+function StudentAssignments({ currentStudentList, updpateAssignment, syllabusData, loadStatus, selectedCohort, count, loadStudents }) {
+  const router = useRouter();
+  const [currentTask, setCurrentTask] = useState(null);
+  const [deliveryUrl, setDeliveryUrl] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+  const pageCount = Math.ceil(count / itemsPerPage);
+
+  const hasMore = currentStudentList.length < count && !loadStatus.loading;
+
+  const loadMore = useCallback(async () => {
+    await loadStudents(itemsPerPage, currentStudentList.length, true);
+
+    setCurrentPage((prevPage) => prevPage + 1);
+  }, [currentPage, currentStudentList]);
+
+  const lang = {
+    es: '/es/',
+    en: '/',
+  };
+
+  return (
+    <Box
+      minHeight="34vh"
+      borderRadius="3px"
+      margin="0 auto"
+      maxWidth="1012px"
+      flexGrow={1}
+      overflow="auto"
+    >
+      <Flex flexDirection="column" gridGap="18px">
+        <InfiniteScroll
+          data={currentStudentList}
+          loadMore={loadMore}
+          currentPage={currentPage}
+          pageCount={pageCount}
+          hasMore={hasMore}
+        >
+          <StudentsRows
+            currentStudentList={currentStudentList}
+            syllabusData={syllabusData}
+            selectedCohort={selectedCohort}
+            setCurrentTask={setCurrentTask}
+            setDeliveryUrl={setDeliveryUrl}
+          />
+        </InfiniteScroll>
       </Flex>
       <ReviewModal
         currentTask={currentTask}
@@ -186,10 +224,20 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
 
 StudentAssignments.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
+  loadStudents: PropTypes.func.isRequired,
   syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   loadStatus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   currentStudentList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  count: PropTypes.number.isRequired,
+};
+
+StudentsRows.propTypes = {
+  syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  currentStudentList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  setCurrentTask: PropTypes.func.isRequired,
+  setDeliveryUrl: PropTypes.func.isRequired,
 };
 
 export default StudentAssignments;

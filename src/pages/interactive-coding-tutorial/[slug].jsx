@@ -21,7 +21,7 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
-import { getAsset } from '../../utils/requests';
+import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -51,32 +51,42 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
-    const result = await response.json();
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
 
-    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
-
-    if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
-      return {
-        notFound: true,
+    if (!result) {
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=PROJECT`);
+      result = await response.json();
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
+
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+      if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
     }
 
     const {
       title, description, translations, preview,
     } = result;
-    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-    if (markdownResp.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
-    const markdown = await markdownResp.text();
 
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
     const ogUrl = {

@@ -34,7 +34,7 @@ function OneColumn({ slice }) {
       subTitle={slice.primary.subtitle}
       paddingMd={slice.primary.paddingMd}
       linkButton={slice.primary.link_button}
-      buttonUrl={slice.primary.button_url}
+      buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
       buttonLabel={slice.primary.button_label}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}

@@ -59,7 +59,7 @@ function Page({ id, syllabus, cohort }) {
   const [isModalToGetAccesOpen, setIsModalToGetAccesOpen] = useState(false);
   const toast = useToast();
   const router = useRouter();
-  const qsForPricing = parseQuerys({ plan: encodeURIComponent(qsPlan) });
+  const qsForPricing = parseQuerys({ plan: qsPlan && encodeURIComponent(qsPlan) });
 
   const redirectTocohort = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
@@ -79,46 +79,6 @@ function Page({ id, syllabus, cohort }) {
       selectedProgramSlug: cohortDashboardLink,
     });
     router.push(cohortDashboardLink);
-  };
-  const joinCohort = () => {
-    if (isAuthenticated) {
-      setIsFetching(true);
-      bc.cohort().join(id)
-        .then(async (resp) => {
-          const dataRequested = await resp.json();
-          if (dataRequested?.status === 'ACTIVE') {
-            redirectTocohort();
-          }
-          if (dataRequested?.status_code === 400) {
-            toast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'info',
-              duration: 5000,
-              isClosable: true,
-            });
-            setTimeout(() => {
-              redirectTocohort();
-            }, 600);
-          }
-          if (dataRequested?.status_code > 400) {
-            toast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            });
-            router.push(`/pricing${qsForPricing}`);
-          }
-        })
-        .catch(() => {})
-        .finally(() => {
-          setTimeout(() => {
-            setIsFetching(false);
-          }, 600);
-        });
-    }
   };
 
   useEffect(() => {
@@ -162,6 +122,7 @@ function Page({ id, syllabus, cohort }) {
     }
   }, [cohort?.id]);
 
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const techs = syllabus?.main_technologies?.split(',') || [];
   const handleClick = (e) => {
     if (alreadyHaveCohort) {
@@ -169,13 +130,56 @@ function Page({ id, syllabus, cohort }) {
     }
   };
 
-  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
+  const joinCohort = () => {
+    if (isAuthenticated && existsRelatedSubscription) {
+      setIsFetching(true);
+      bc.cohort().join(id)
+        .then(async (resp) => {
+          const dataRequested = await resp.json();
+          if (dataRequested?.status === 'ACTIVE') {
+            redirectTocohort();
+          }
+          if (dataRequested?.status_code === 400) {
+            toast({
+              position: 'top',
+              title: dataRequested?.detail,
+              status: 'info',
+              duration: 5000,
+              isClosable: true,
+            });
+            setTimeout(() => {
+              redirectTocohort();
+            }, 600);
+          }
+          if (dataRequested?.status_code > 400) {
+            toast({
+              position: 'top',
+              title: dataRequested?.detail,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+            router.push(`/pricing${qsForPricing}`);
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          setTimeout(() => {
+            setIsFetching(false);
+          }, 600);
+        });
+    }
+    if (!existsRelatedSubscription) {
+      setIsModalToGetAccesOpen(false);
+    }
+  };
 
   return cohort?.id && (
     <>
       <ModalToGetAccess
         stage={stageType.isWaitingForCohort}
         isOpen={isModalToGetAccesOpen}
+        externalData={{ existsRelatedSubscription }}
         onClose={() => setIsModalToGetAccesOpen(false)}
         closeOnOverlayClick
         customFunction={joinCohort}

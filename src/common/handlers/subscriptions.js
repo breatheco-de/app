@@ -11,49 +11,6 @@ export const SUBS_STATUS = {
 };
 
 /**
- * Get translations for plan content.
- *
- * @param {Function} t - The translation function
- * @returns {object} - The translations object
- */
-export const getTranslations = (t = () => {}) => {
-  const translations = {
-    one_payment: t('signup:one_payment'),
-    free_trial: t('signup:free_trial'),
-    monthly_payment: t('signup:monthly_payment'),
-    quarterly_payment: t('signup:quarterly_payment'),
-    half_yearly_payment: t('signup:half_yearly_payment'),
-    yearly_payment: t('signup:yearly_payment'),
-    free: t('signup:free'),
-    totally_free: t('signup:totally_free'),
-    free_trial_period: (qty, period) => {
-      const periodValue = period?.toLowerCase();
-      const singularTranslation = {
-        day: t('common:word-connector.day'),
-        week: t('common:word-connector.week'),
-        month: t('common:word-connector.month'),
-        year: t('common:word-connector.year'),
-      };
-      const pluralTranslation = {
-        day: t('common:word-connector.days'),
-        week: t('common:word-connector.weeks'),
-        month: t('common:word-connector.months'),
-        year: t('common:word-connector.years'),
-      };
-      const periodText = qty > 1 ? pluralTranslation[periodValue] : singularTranslation[periodValue];
-      return t('signup:info.free-trial-period', { qty, period: periodText });
-    },
-    monthly: t('signup:info.monthly'),
-    quarterly: t('signup:info.quarterly'),
-    half_yearly: t('signup:info.half-yearly'),
-    yearly: t('signup:info.yearly'),
-    financing: t('signup:info.financing'),
-    many_months_payment: (qty) => t('signup:many_months_payment', { qty }),
-  };
-  return translations;
-};
-
-/**
  * Process the plans data and return the formatted data.
  *
  * @param {object} data - The plans data
@@ -62,7 +19,7 @@ export const getTranslations = (t = () => {}) => {
  * @param {boolean} options.quarterly - Whether to include quarterly plans (default: true)
  * @param {boolean} options.halfYearly - Whether to include half-yearly plans (default: true)
  * @param {boolean} options.yearly - Whether to include yearly plans (default: true)
- * @param {string} options.tag - Tag to be added to the plan data (optional)
+ * @param {string} options.planType - Tag to be added to the plan data (optional)
  * @param {object} translations - Translations for plan content (optional)
  * @returns {Promise<object>} - The processed plans data
  */
@@ -71,7 +28,7 @@ export const processPlans = (data, {
   quarterly = true,
   halfYearly = true,
   yearly = true,
-  tag = '',
+  planType = '',
 } = {}, translations = {}) => bc.payment().getPlanProps(data?.slug)
   .then((resp) => {
     const planPropsData = resp?.data;
@@ -103,7 +60,7 @@ export const processPlans = (data, {
       featured_info: planPropsData || [],
       trial_duration: singlePlan?.trial_duration || 0,
       trial_duration_unit: singlePlan?.trial_duration_unit || '',
-      tag,
+      planType,
     };
 
     const textInfo = {
@@ -229,6 +186,60 @@ export const processPlans = (data, {
   });
 
 /**
+ * @param {String} planSlug // Base plan slug to generate list of prices
+ * @returns {Promise<object>} // Formated object of data with list of prices
+ */
+export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
+  .then(async (resp) => {
+    const data = await processPlans(resp?.data);
+    return data;
+  })
+  .catch(() => ({}));
+
+/**
+ * Get translations for plan content.
+ *
+ * @param {Function} t - The translation function
+ * @returns {object} - The translations object
+ */
+export const getTranslations = (t = () => {}) => {
+  const translations = {
+    one_payment: t('signup:one_payment'),
+    free_trial: t('signup:free_trial'),
+    monthly_payment: t('signup:monthly_payment'),
+    quarterly_payment: t('signup:quarterly_payment'),
+    half_yearly_payment: t('signup:half_yearly_payment'),
+    yearly_payment: t('signup:yearly_payment'),
+    free: t('signup:free'),
+    totally_free: t('signup:totally_free'),
+    free_trial_period: (qty, period) => {
+      const periodValue = period?.toLowerCase();
+      const singularTranslation = {
+        day: t('common:word-connector.day'),
+        week: t('common:word-connector.week'),
+        month: t('common:word-connector.month'),
+        year: t('common:word-connector.year'),
+      };
+      const pluralTranslation = {
+        day: t('common:word-connector.days'),
+        week: t('common:word-connector.weeks'),
+        month: t('common:word-connector.months'),
+        year: t('common:word-connector.years'),
+      };
+      const periodText = qty > 1 ? pluralTranslation[periodValue] : singularTranslation[periodValue];
+      return t('signup:info.free-trial-period', { qty, period: periodText });
+    },
+    monthly: t('signup:info.monthly'),
+    quarterly: t('signup:info.quarterly'),
+    half_yearly: t('signup:info.half-yearly'),
+    yearly: t('signup:info.yearly'),
+    financing: t('signup:info.financing'),
+    many_months_payment: (qty) => t('signup:many_months_payment', { qty }),
+  };
+  return translations;
+};
+
+/**
  * Get the suggested plan based on the provided slug.
  *
  * @param {string} slug - Original plan slug
@@ -256,12 +267,12 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
       const dataForOriginPlan = originalPlan.slug ? await processPlans(originalPlan, {
         quarterly: false,
         halfYearly: false,
-        tag: 'original',
+        planType: 'original',
       }, translations) : {};
       const dataForSuggestedPlan = suggestedPlan.slug ? await processPlans(suggestedPlan, {
         quarterly: false,
         halfYearly: false,
-        tag: 'suggested',
+        planType: 'suggested',
       }, translations) : {};
 
       return ({
@@ -285,6 +296,17 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
 export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
+    if (suggestedPlanData?.status_code === 404) {
+      const plan = await generatePlan(planSlug);
+      return {
+        plans: {
+          original_plan: plan,
+          suggested_plan: {},
+        },
+        details: {},
+        title: '',
+      };
+    }
     return suggestedPlanData;
   } catch (error) {
     console.error(error);
@@ -336,17 +358,6 @@ export const validatePlanExistence = (subscriptions, plan = '') => new Promise((
     });
   }
 });
-
-/**
- * @param {String} planSlug // Base plan slug to generate list of prices
- * @returns {Promise<object>} // Formated object of data with list of prices
- */
-export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
-  .then(async (resp) => {
-    const data = await processPlans(resp?.data);
-    return data;
-  })
-  .catch(() => ({}));
 
 /**
  * @returns {Promise<object>} // List of user subscriptions
