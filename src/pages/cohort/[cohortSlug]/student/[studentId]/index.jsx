@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-curly-brace-presence */
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import {
@@ -572,6 +573,21 @@ function StudentReport() {
           <Flex>
             <Heading color={hexColor.fontColor2} size="m">{t('activities')}</Heading>
           </Flex>
+          <Box padding="20px 10px">
+            <Flex alignItems="center">
+              <Box padding="10px">
+                <Icon icon="login" width="18px" height="18px" />
+              </Box>
+              <Box>
+                <Text color={hexColor.fontColor2} fontWeight="700">
+                  {t('analitics.total-mentorships')}
+                </Text>
+                <Text color={hexColor.fontColor2}>
+                  {'06/12/2023'}
+                </Text>
+              </Box>
+            </Flex>
+          </Box>
         </Box>
       </Flex>
     </Box>
