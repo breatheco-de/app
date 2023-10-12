@@ -85,7 +85,7 @@ function Page({ id, syllabus, cohort }) {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
         const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
-          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
+          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohort?.id);
           return isRelated;
         }) : null;
 
@@ -169,7 +169,7 @@ function Page({ id, syllabus, cohort }) {
           }, 600);
         });
     }
-    if (!existsRelatedSubscription) {
+    if (isAuthenticated && !existsRelatedSubscription) {
       setIsModalToGetAccesOpen(false);
     }
   };
