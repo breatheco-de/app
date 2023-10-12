@@ -12,7 +12,7 @@
   "join-cohort-page": {
     "seo-title": "Join to {{cohortTitle}}",
     "cta-description": "Your current plan does not include access to this cohort, please upgrade to access the content.",
-    "cta-cohort-not-found": "This cohort does not exist or you don't have access to join it with your current plan.",
+    "cta-cohort-not-found": "This cohort does not exist or you don't have access to join.",
     "cta-button": "Review plan",
     "join-next-cohort":"Join next cohort"
   },
@@ -176,7 +176,7 @@
     "no-instructions": ">:warning: No available instruction found for this module"
   },
   "welcome-modal": {
-    "title": "Bienvenido a 4Geeks!",
+    "title": "Welcome to 4Geeks!",
     "description": "Watch this short video that explains how to get the most out of 4Geeks and enhance your learning experience"
   }
 }

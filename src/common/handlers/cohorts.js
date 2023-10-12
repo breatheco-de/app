@@ -25,8 +25,6 @@ export const getCohortSyllabus = (id) => getCohort(id)
     try {
       const resp = await bc.admissions().publicSyllabus(syllabusSlug);
       const data = await resp.json();
-      // const respOfSyllabus = await bc.admissions().syllabus(syllabusSlug, syllabusVersion, syllabusId);
-      // return respOfSyllabus.data;
       return {
         syllabus: data,
         cohort: cohortData || {},
@@ -166,36 +164,33 @@ export const generateCohortSyllabusModules = async (id) => {
     const syllabusData = cohortAndSyllabus?.syllabus;
     const cohortSyllabusList = syllabusData.json?.days || syllabusData.json?.modules;
 
-    if (cohortSyllabusList?.length > 0) {
-      const newModulesStruct = await Promise.all(cohortSyllabusList.map(async (module) => {
-        const relatedAssignments = await processRelatedAssignments(module);
+    const newModulesStruct = cohortSyllabusList ? await Promise.all(cohortSyllabusList.map(async (module) => {
+      const relatedAssignments = await processRelatedAssignments(module);
 
-        const { content, filteredContent, filteredContentByPending } = relatedAssignments;
-        return {
-          id: module?.id,
-          title: module?.label || '',
-          description: module?.description || '',
-          content,
-          exists_activities: content?.length > 0,
-          filteredContent,
-          filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
-          duration_in_days: module?.duration_in_days || null,
-          teacherInstructions: module?.teacher_instructions || '',
-          extendedInstructions: module.extended_instructions || '>:warning: No available instruction found for this module',
-          keyConcepts: module['key-concepts'],
-        };
-      }));
-
-      delete syllabusData.json;
+      const { content, filteredContent, filteredContentByPending } = relatedAssignments;
       return {
-        syllabus: {
-          ...syllabusData,
-          modules: newModulesStruct,
-        },
-        cohort: cohortAndSyllabus?.cohort || {},
+        id: module?.id,
+        title: module?.label || '',
+        description: module?.description || '',
+        content,
+        exists_activities: content?.length > 0,
+        filteredContent,
+        filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
+        duration_in_days: module?.duration_in_days || null,
+        teacherInstructions: module?.teacher_instructions || '',
+        extendedInstructions: module.extended_instructions || '>:warning: No available instruction found for this module',
+        keyConcepts: module['key-concepts'],
       };
-    }
-    return {};
+    })) : [];
+
+    delete syllabusData.json;
+    return {
+      syllabus: {
+        ...syllabusData,
+        modules: newModulesStruct,
+      },
+      cohort: cohortAndSyllabus?.cohort || {},
+    };
   } catch (reqErr) {
     error('generateCohortSyllabusModules:', reqErr);
     return {};

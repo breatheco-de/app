@@ -85,7 +85,7 @@ function Page({ id, syllabus, cohort }) {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
         const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
-          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
+          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohort?.id);
           return isRelated;
         }) : null;
 
@@ -116,6 +116,7 @@ function Page({ id, syllabus, cohort }) {
         position: 'top',
         title: t('join-cohort-page.cta-cohort-not-found'),
         status: 'error',
+        isClosable: true,
         duration: 5000,
       });
       router.push(`/pricing${qsForPricing}`);
@@ -169,7 +170,7 @@ function Page({ id, syllabus, cohort }) {
           }, 600);
         });
     }
-    if (!existsRelatedSubscription) {
+    if (isAuthenticated && !existsRelatedSubscription) {
       setIsModalToGetAccesOpen(false);
     }
   };
@@ -207,7 +208,7 @@ function Page({ id, syllabus, cohort }) {
         <Flex mt="3rem" gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
           <Box flex={{ base: 1, md: 0.75 }}>
             <Heading as="h1" size="xl">
-              {syllabus?.name}
+              {syllabus?.name || cohort?.name}
             </Heading>
             <TagCapsule
               height="30px"
@@ -256,45 +257,47 @@ function Page({ id, syllabus, cohort }) {
               />
             )}
 
-            <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
-              {syllabus?.modules?.length > 0 && syllabus.modules.map((module) => (
-                <Box key={module.slug} id={module.slug}>
-                  <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
-                    <Heading as="h2" fontSize="22px">
-                      {module?.title}
-                    </Heading>
-                    <Heading
-                      as="span"
-                      fontSize="15px"
-                      color={disabledColor2}
-                      fontWeight="normal"
-                      textTransform="uppercase"
-                      textAlign="right"
-                    >
-                      {t('modules.activitiesLength', { count: module?.content?.length || 0 })}
-                    </Heading>
+            {syllabus?.modules?.length > 0 && (
+              <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
+                {syllabus.modules.map((module) => (
+                  <Box key={module.slug} id={module.slug}>
+                    <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
+                      <Heading as="h2" fontSize="22px">
+                        {module?.title}
+                      </Heading>
+                      <Heading
+                        as="span"
+                        fontSize="15px"
+                        color={disabledColor2}
+                        fontWeight="normal"
+                        textTransform="uppercase"
+                        textAlign="right"
+                      >
+                        {t('modules.activitiesLength', { count: module?.content?.length || 0 })}
+                      </Heading>
+                    </Box>
+                    <Text margin="0 0 22px 0px" color={hexColor.fontColor3} size="md">
+                      {module?.description}
+                    </Text>
+
+                    {module?.content?.length > 0 && module.content.map((contentData, index) => {
+                      const cheatedIndex = index;
+
+                      return (
+                        <Module
+                          key={`${module.title}-${cheatedIndex}`}
+                          currIndex={index}
+                          data={contentData}
+                          taskTodo={[]}
+                          isDisabled
+                          onDisabledClick={() => setIsModalToGetAccesOpen(true)}
+                        />
+                      );
+                    })}
                   </Box>
-                  <Text margin="0 0 22px 0px" color={hexColor.fontColor3} size="md">
-                    {module?.description}
-                  </Text>
-
-                  {module?.content?.length > 0 && module.content.map((contentData, index) => {
-                    const cheatedIndex = index;
-
-                    return (
-                      <Module
-                        key={`${module.title}-${cheatedIndex}`}
-                        currIndex={index}
-                        data={contentData}
-                        taskTodo={[]}
-                        isDisabled
-                        onDisabledClick={() => setIsModalToGetAccesOpen(true)}
-                      />
-                    );
-                  })}
-                </Box>
-              ))}
-            </Flex>
+                ))}
+              </Flex>
+            )}
           </Box>
           <Box display={{ base: 'none', md: 'block' }} flex={0.35}>
             {cohort?.kickoff_date && (
