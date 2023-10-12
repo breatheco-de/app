@@ -353,7 +353,7 @@ function chooseProgram() {
         </Box>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
-            url="https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba"
+            url="https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In"
             width="100%"
             height="100%"
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
