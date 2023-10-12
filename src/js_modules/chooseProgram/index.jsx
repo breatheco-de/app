@@ -72,7 +72,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const marketingCourses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.all_subscriptions?.some(
-        (sb) => sb?.selected_cohort_set?.cohorts.some((d) => d?.slug === item?.slug),
+        (sb) => sb?.selected_cohort_set?.slug === item?.slug,
       ),
     ) && item?.course_translation?.title,
   );
