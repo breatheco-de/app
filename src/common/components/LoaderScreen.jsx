@@ -43,12 +43,10 @@ function LoaderScreen({ width, height, ...rest }) {
 LoaderScreen.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
-  rest: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
 };
 LoaderScreen.defaultProps = {
   width: '200px',
   height: '200px',
-  rest: {},
 };
 
 export default LoaderScreen;

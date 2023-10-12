@@ -38,7 +38,7 @@
     "make:redirect": "bun ./scripts/redirects-generator.js",
     "make:syllabus": "bun ./scripts/syllabus.js",
     "make:assets": "bun ./scripts/generate_assets.js",
-    "generate-files": "bun make:assets  && bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict"
+    "generate-files": "bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.19",
@@ -59,6 +59,7 @@
     "@prismicio/slice-simulator-react": "^0.2.3",
     "@reduxjs/toolkit": "^1.9.5",
     "@uiw/react-markdown-editor": "^5.11.1",
+    "@vercel/kv": "^0.2.3",
     "atob": "2.1.2",
     "axios": "1.4.0",
     "cross-env": "^7.0.3",

@@ -10,19 +10,20 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
-    if (haveSession && NAV_ITEMS?.length > 0) {
+    const hasNavItems = NAV_ITEMS?.length > 0;
+
+    if (haveSession && hasNavItems) {
       setPrivateItems(NAV_ITEMS.filter((item) => item.private === true));
     }
   }, [haveSession, NAV_ITEMS]);
 
-  const publicItems = NAV_ITEMS?.length > 0 ? NAV_ITEMS?.filter((item) => item.private !== true) : [];
-
-  const customPublicItems = publicItems;
+  const publicItems = NAV_ITEMS?.filter((item) => !item.private) || [];
+  const customPublicItems = [...publicItems];
   const allItems = [...privateItems, ...customPublicItems];
+  const itemListAsc = allItems.sort((a, b) => a.position - b.position);
 
-  // manage submenus in level 1
   const prepareSubMenuData = (item) => {
-    if (item.slug === 'social-and-live-learning') {
+    if (item.id === 'courses') {
       return extraContent;
     }
     return item?.subMenu;
@@ -30,14 +31,13 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {allItems?.length > 0 && allItems.map((publicItem) => {
+      {itemListAsc.map((publicItem) => {
         const submenuData = prepareSubMenuData(publicItem);
+        const subMenuLength = publicItem?.subMenu?.length || 0;
 
         const data = {
           ...publicItem,
-          subMenu: publicItem?.subMenu?.length > 1
-            ? publicItem?.subMenu
-            : submenuData,
+          subMenu: subMenuLength > 1 ? publicItem.subMenu : submenuData,
         };
 
         return (

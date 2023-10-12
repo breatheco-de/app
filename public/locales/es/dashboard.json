@@ -9,7 +9,18 @@
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡<a class='black-link' href='{{link}}'>Actualiza tu plan</a> para tener acceso ilimitado!",
   "intro-video-title": "Bienvenido a la introducción de codificación",
+  "already-have-this-cohort": "Ya perteneces a esta cohorte",
+  "join-cohort-page": {
+    "seo-title": "Únete a {{cohortTitle}}",
+    "cta-description": "Tu plan actual no incluye acceso a esta cohorte, por favor actualiza para acceder al contenido.",
+    "cta-cohort-not-found": "Esta cohorte no existe o no tienes acceso para unirte con tu plan actual.",
+    "cta-button": "Revisar plan",
+    "join-next-cohort":"Únete a la cohorte"
+  },
   "modules": {
+    "read": "Leer",
+    "start": "Iniciar",
+    "answer": "Responder",
     "target-blank-title": "Abrir en nueva ventana",
     "target-blank-msg": "\"{{title}}\" abrirá la siguiente URL en una nueva ventana",
     "search-not-found": "No se encontraron coincidencias para esta búsqueda",
@@ -31,6 +42,7 @@
   "cohortSideBar": {
     "title": "Acerca de tu cohorte",
     "cohort": "Tu Cohorte",
+    "about-cohort": "Acerca de la cohorte",
     "last-date": "Última fecha:",
     "start-date": "Fecha de inicio:",
     "mainTeacher": "Profesor principal",

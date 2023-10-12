@@ -9,7 +9,7 @@ const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : f
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && (process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production');
+const isDevMode = process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production';
 
 const languageLabel = {
   es: 'spanish',

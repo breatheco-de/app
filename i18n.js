@@ -1,13 +1,14 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile', 'signup'],
+    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile', 'login', 'signup'],
     '/': ['home', 'social'],
     '/login': ['login', 'signup'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard', 'projects', 'profile'],
     '/cohort/[cohortSlug]/assignments': ['assignments'],
     '/cohort/[cohortSlug]/attendance': ['attendance'],
+    '/docs/[syllabusSlug]/[assetSlug]': ['docs'],
     '/interactive-exercises': ['exercises'],
     '/interactive-exercises/technology/[technology]': ['exercises'],
     '/technology/[slug]': ['technologies'],
@@ -33,6 +34,7 @@ module.exports = {
     '/profile/[slug]': ['profile'],
     '/thank-you': ['thank-you'],
     '/workshops/[event_slug]': ['workshops', 'signup'],
+    '/join/cohort/[id]': ['dashboard', 'signup'],
   },
   locales: ['en', 'es'],
   defaultLocale: 'en',

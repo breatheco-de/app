@@ -1,5 +1,6 @@
 {
   "login": "Login",
+  "get-started": "Get Started",
   "logout": "Logout",
   "language": "Language",
   "my-profile": "My Profile",
@@ -11,10 +12,46 @@
       "href": "{{selectedProgramSlug}}"
     },
     {
-      "label": "About us",
-      "href": "/about-us"
+      "id": "courses",
+      "label": "Courses",
+      "icon": "graduationCap",
+      "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
+      "asPath": "/courses",
+      "subMenu": [],
+      "position": 1
     },
     {
+      "id": "bootcamp",
+      "label": "Coding Bootcamp",
+      "href": "https://4geeksacademy.com",
+      "hide_on_auth": true,
+      "position": 2
+    },
+    {
+      "id": "events",
+      "label": "Learn live",
+      "icon": "calendar",
+      "private": true,
+      "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
+      "subMenu": [
+        {
+          "label": "Live events",
+          "slug": "live-events",
+          "asPath": "/workshops",
+          "icon": "live-event",
+          "description": "",
+          "subMenu": [
+            {
+              "href": "/workshops",
+              "label": "Upcoming live events"
+            }
+          ]
+        }
+      ],
+      "position": 3
+    },
+    {
+      "id": "read",
       "label": "Learning library",
       "icon": "book",
       "description": "For all the self-taught geeks out there, here is our content library with most of the learning materials we have produced throughout the years.",
@@ -38,7 +75,6 @@
           "slug": "exercises",
           "subLabel": "",
           "description": "Curated list of small interactive and incremental exercises you can take to get better at any coding skill.",
-          "href": "/interactive-exercises",
           "subMenu": [
             {
               "href": "/interactive-exercises",
@@ -49,7 +85,6 @@
         {
           "label": "Build projects",
           "slug": "projects",
-          "href": "/interactive-coding-tutorials",
           "description": "Curated section of projects to build while learning with simple instructions, videos, solutions, and more.",
           "subMenu": [
             {
@@ -61,7 +96,6 @@
         {
           "label": "How to's?",
           "slug": "how-tos",
-          "href": "/how-to",
           "description": "Guides on different topics related to the technologies that we teach in our courses",
           "subMenu": [
             {
@@ -70,24 +104,17 @@
             }
           ]
         }
-      ]
+      ],
+      "position": 4
     },
     {
-      "label": "Social & live learning",
-      "slug": "social-and-live-learning",
-      "icon": "onlinePeople",
-      "disabled": false,
-      "description": "The most efficient way to learn: Join a cohort with classmates just like you, live streams, impromptu coding sessions, live tutorials with real experts, and stay motivated.",
-      "asPath": "/read",
-      "subMenu": [],
-      "hide_on_auth": true
-    },
-    {
-      "label": "Coding Bootcamp",
-      "href": "https://4geeksacademy.com",
-      "hide_on_auth": true
+      "id": "pricing",
+      "label": "Pricing",
+      "href": "/pricing",
+      "position": 5
     }
   ],
+
   "white-label-version-items": [
     {
       "label": "Dashboard",
