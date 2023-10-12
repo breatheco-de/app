@@ -73,7 +73,7 @@ function chooseProgram() {
   const TwelveHoursInMinutes = 720;
   const welcomeVideoLinks = {
     es: 'https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In',
-    en: 'https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba',
+    en: 'https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In',
   };
 
   const fetchAdmissions = () => bc.admissions().me();
