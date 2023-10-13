@@ -17,7 +17,6 @@ import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestToda
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
-import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
 import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
@@ -63,7 +62,6 @@ function chooseProgram() {
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
-  // const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
