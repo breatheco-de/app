@@ -16,7 +16,7 @@
     "cta-button": "Review plan",
     "join-next-cohort":"Join next cohort"
   },
-  "already-have-this-cohort": "Already have this cohort",
+  "already-have-this-cohort": "You are already a member of this cohort",
   "modules": {
     "read": "Read",
     "start": "Start",
