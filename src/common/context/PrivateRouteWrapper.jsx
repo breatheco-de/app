@@ -7,7 +7,7 @@ export const withGuard = (PassedComponent) => {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
     const tokenExists = isWindow && localStorage.getItem('accessToken');
-    const pageToRedirect = '/checkout';
+    const pageToRedirect = isWindow ? `/checkout${window.location.search}` : '/checkout';
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
     const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -18,8 +18,8 @@ export const withGuard = (PassedComponent) => {
 
     const redirectToLogin = () => {
       setTimeout(() => {
-        if (typeof window !== 'undefined') {
-          setStorageItem('redirect', window.location.pathname);
+        if (isWindow) {
+          setStorageItem('redirect', `${window.location.pathname}${window.location.search}`);
         }
         window.location.href = pageToRedirect;
       }, 150);
