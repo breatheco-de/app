@@ -375,10 +375,6 @@ function chooseProgram() {
                 {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
               </Heading>
 
-              <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
-                {t('read-to-start-learning')}
-              </Text>
-
               {invites?.length > 0 && (
                 <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
                   <Text
