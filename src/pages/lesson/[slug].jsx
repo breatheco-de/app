@@ -22,11 +22,11 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
-import { ORIGIN_HOST } from '../../utils/variables';
+import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
+  const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
