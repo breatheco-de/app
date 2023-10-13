@@ -63,7 +63,7 @@ function chooseProgram() {
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
-  const { lightColor } = useStyle();
+  // const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
