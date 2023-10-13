@@ -62,7 +62,7 @@
   "many_months_payment": "{{qty}} months payment",
   "our_plans": "Our plans",
   "join-cohort": {
-    "description": "Please join the cohort in order to the access the program content.",
+    "description": "Click the button below to join the cohort and access the program's content.",
     "button": "Join cohort"
   },
   "info": {
