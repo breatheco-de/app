@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
+import { kv } from '@vercel/kv';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
@@ -140,35 +141,43 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   return allResults;
 };
 
+/**
+ * @param {String} key The key of the value in redis
+ */
+const getCacheItem = async (key) => {
+  try {
+    console.log(`Fetching ${key} from cache`);
+    const item = await kv.get(key);
+    return item;
+  } catch (e) {
+    console.log(`Failed to fetch ${key} from vercel cache`);
+    return null;
+  }
+};
+
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The value to be stored in the cache
+ */
+const setCacheItem = async (key, value) => {
+  try {
+    console.log(`Setting up ${key} on cache`);
+    await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
+  } catch (e) {
+    console.log(`Failed to set ${key} on cache`);
+  }
+};
+
 // mover a carpeta sitemap-generator
 const getLandingTechnologies = async (assets) => {
   try {
-    const limit = 100;
-    let offset = 0;
-    let res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
-      headers: {
-        Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-        Academy: 4,
-      },
-    });
-    let { results } = res.data;
-    const { count } = res.data;
-
-    while (results.length < count) {
-      offset += limit;
-      res = await axios.get(`${BREATHECODE_HOST}/v1/registry/academy/technology?limit=${limit}&offset=${offset}&academy=${WHITE_LABEL_ACADEMY}`, {
-        headers: {
-          Authorization: `Token ${process.env.BC_ACADEMY_TOKEN}`,
-          Academy: 4,
-        },
+    const results = [];
+    assets.forEach((asset) => {
+      asset.technologies.forEach((tech) => {
+        if (!results.some((result) => result.slug === tech.slug)) results.push({ ...tech });
       });
-
-      if (res.status >= 400) {
-        throw new Error(res.detail);
-      }
-
-      results = results.concat(res.data.results);
-    }
+      asset.technologies = asset.technologies.map((tech) => tech.slug);
+    });
 
     const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
 
@@ -198,6 +207,8 @@ const getLandingTechnologies = async (assets) => {
 
 export {
   getAsset,
+  getCacheItem,
+  setCacheItem,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,

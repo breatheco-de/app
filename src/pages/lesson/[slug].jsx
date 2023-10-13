@@ -23,17 +23,20 @@ import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
-import { getAsset } from '../../utils/requests';
+import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 
-export const getStaticPaths = async ({ locales }) => {
+export const getStaticPaths = async () => {
   const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
 
-  const paths = data.flatMap((res) => locales.map((locale) => ({
-    params: {
-      slug: res.slug,
-    },
-    locale,
-  })));
+  const paths = data.flatMap((res) => {
+    const lang = res?.lang === 'us' ? 'en' : res?.lang;
+    return ({
+      params: {
+        slug: res.slug,
+      },
+      locale: lang,
+    });
+  });
 
   return {
     fallback: false,
@@ -45,27 +48,59 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-    const lesson = await response.json();
+    let lesson;
+    let markdown = '';
+    let ipynbHtml = '';
+    lesson = await getCacheItem(slug);
+    if (!lesson) {
+      console.log(`${slug} not found on cache`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+      lesson = await response.json();
 
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
+      };
+
+      const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
+      if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+      const exensionName = getExtensionName(lesson.readme_url);
+
+      if (exensionName !== 'ipynb') {
+        const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+        if (resp.status >= 400) {
+          return {
+            notFound: true,
+          };
+        }
+        markdown = await resp.text();
+      } else {
+        const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+        const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
+        const resp = await fetch(ipynbHtmlUrl);
+
+        ipynbHtml = {
+          html: await resp.text(),
+          iframe: ipynbIframe,
+          statusText: resp.statusText,
+          status: resp.status,
+        };
+      }
+      await setCacheItem(slug, { ...lesson, markdown, ipynbHtml });
+    } else {
+      markdown = lesson.markdown;
+      ipynbHtml = lesson.ipynbHtml;
+    }
 
     const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
     const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
     const extension = urlPathname ? urlPathname.split('.').pop() : null;
     const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
-
-    const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
-
-    if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
-      return {
-        notFound: true,
-      };
-    }
 
     const ogUrl = {
       en: `/lesson/${slug}`,
@@ -75,30 +110,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const { title, description, translations } = lesson;
     const translationsExists = Object.keys(translations).length > 0;
 
-    const exensionName = getExtensionName(lesson.readme_url);
-    let markdown = '';
-    let ipynbHtml = '';
-
-    if (exensionName !== 'ipynb') {
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-      if (resp.status >= 400) {
-        return {
-          notFound: true,
-        };
-      }
-      markdown = await resp.text();
-    } else {
-      const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
-      const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.html`;
-      const resp = await fetch(ipynbHtmlUrl);
-
-      ipynbHtml = {
-        html: await resp.text(),
-        iframe: ipynbIframe,
-        statusText: resp.statusText,
-        status: resp.status,
-      };
-    }
     const translationArray = [
       {
         value: 'us',
