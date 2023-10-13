@@ -365,7 +365,7 @@ function chooseProgram() {
       <GridContainer gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
         <Box gridColumn="2 / span 8">
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
-            <Box width="100%" flex={{ base: 1, md: 0.7 }}>
+            <Box width="100%" flex={{ base: 1, md: 0.7 }} style={( paddingTop: "24px" }}>
               <Heading
                 fontWeight={800}
                 size="xl"
