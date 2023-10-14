@@ -41,7 +41,11 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
         };
 
         return (
-          <DesktopItem key={publicItem.label} item={data} readSyllabus={syllabusExists ? readSyllabus : []} />
+          <DesktopItem
+            key={publicItem.label}
+            item={data}
+            readSyllabus={syllabusExists ? readSyllabus : []}
+          />
         );
       })}
     </Stack>
