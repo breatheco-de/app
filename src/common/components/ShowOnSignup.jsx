@@ -9,6 +9,8 @@ import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
+import { usePersistent } from '../hooks/usePersistent';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
@@ -22,6 +24,8 @@ function ShowOnSignUp({
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { userSession } = useSession();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
@@ -46,6 +50,7 @@ function ShowOnSignUp({
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
   const handleSubmit = async (actions, allValues) => {
+    const academy = cohortSession?.academy?.slug;
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -56,6 +61,8 @@ function ShowOnSignUp({
         ...allValues,
         ...subscribeValues,
         plan: '4geeks-standard',
+        location: academy,
+        ...userSession,
       }),
     });
 
