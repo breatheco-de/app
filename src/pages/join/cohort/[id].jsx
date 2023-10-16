@@ -35,6 +35,9 @@ export const getServerSideProps = async ({ locale, query }) => {
   }
   const data = await generateCohortSyllabusModules(idInt);
 
+  // const students = await bc.cohort().getStudents(data.cohort.slug, data.cohort.syllabus_version.version, true)
+  // .catch((err) => console.log('err:::', err));
+
   return {
     props: {
       seo: {
@@ -43,6 +46,7 @@ export const getServerSideProps = async ({ locale, query }) => {
       id: idInt,
       syllabus: data.syllabus || null,
       cohort: data.cohort || null,
+      // students: students || null,
     },
   };
 };
