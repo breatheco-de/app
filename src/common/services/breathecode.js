@@ -175,7 +175,6 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-
       getStudents: (cohortId, academyId, withDefaultToken = false) => {
         const headers = cleanObject({
           academy: academyId,
@@ -184,6 +183,16 @@ const breathecode = {
         });
 
         return axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+          headers,
+        });
+      },
+      // get students without academy header
+      getStudents2: (cohortSlug, withDefaultToken = false) => {
+        const headers = cleanObject({
+          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
+          ...axios.defaults.headers.common,
+        });
+        return axios.get(`${host}/admissions/cohort/user?roles=STUDENT&cohorts=${cohortSlug}${qs}`, {
           headers,
         });
       },
