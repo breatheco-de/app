@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
@@ -125,6 +126,12 @@ function Checkout() {
       .then((data) => {
         setDefaultPlanData(data);
       });
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'begin_checkout',
+        path: '/checkout',
+      },
+    });
   }, []);
 
   useEffect(() => {
