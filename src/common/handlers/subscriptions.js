@@ -97,7 +97,7 @@ export const processPlans = (data, {
       how_many_months: item?.how_many_months,
       type: 'PAYMENT',
       show: true,
-    })) : [];
+    })) : [{}];
 
     const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
       ...relevantInfo,
