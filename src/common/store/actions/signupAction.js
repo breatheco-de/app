@@ -12,6 +12,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 
+// eslint-disable-next-line no-unused-vars
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -21,7 +22,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
-  const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -158,16 +159,12 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             academy_info: dateProps?.academy,
           });
 
-          if (!disableRedirectAfterSuccess) {
-            if ((redirectAfterRegister || redirectedFrom)
-              && (redirectAfterRegister?.length > 0 && redirectedFrom.length > 0)) {
-              router.push(redirectAfterRegister);
-              localStorage.removeItem('redirect');
-              localStorage.removeItem('redirected-from');
-              localStorage.removeItem('redirect-after-register');
-            } else {
-              router.push('/choose-program');
-            }
+          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+            router.push(redirect || redirectedFrom);
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirected-from');
+          } else {
+            router.push('/choose-program');
           }
         }
         if (response === undefined || response.status >= 400) {
