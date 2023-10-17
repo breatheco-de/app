@@ -162,6 +162,7 @@
     "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
   },
+  "get-premium": "Obtener Premium",
   "pricing": {
     "already-have-plan": "Ya lo tienes",
     "basic-plan": {
