@@ -16,6 +16,9 @@ function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
 
   useEffect(() => {
+    if (!page?.id) {
+      router.push('/404');
+    }
     if (landingUrl?.length > 0) {
       router.push(landingUrl);
     }
@@ -122,7 +125,7 @@ export async function getStaticProps({ params, locale, previewData }) {
 
   const translationsExists = Object.keys(translations).length > 0;
 
-  const structuredData = {
+  const structuredData = data?.id ? {
     '@context': 'https://schema.org',
     '@type': 'Article',
     mainEntityOfPage: {
@@ -131,7 +134,7 @@ export async function getStaticProps({ params, locale, previewData }) {
     },
     name: data?.title,
     description: data?.description,
-    image: {
+    image: data?.image?.url && {
       '@type': 'ImageObject',
       url: data?.image?.url,
       height: data.image.dimensions?.width,
@@ -153,7 +156,7 @@ export async function getStaticProps({ params, locale, previewData }) {
         height: '220',
       },
     },
-  };
+  } : {};
 
   const cleanedStructuredData = cleanObject(structuredData);
 

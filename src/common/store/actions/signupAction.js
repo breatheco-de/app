@@ -13,6 +13,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 
+// eslint-disable-next-line no-unused-vars
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -22,7 +23,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
-  const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -158,9 +159,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
           });
-
           const currency = cohortPlans[0]?.plan?.currency?.code;
-
           TagManager.dataLayer({
             dataLayer: {
               event: 'purchase',
@@ -173,28 +172,24 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             },
           });
 
-          if (!disableRedirectAfterSuccess) {
-            if ((redirectAfterRegister || redirectedFrom)
-              && (redirectAfterRegister?.length > 0 && redirectedFrom.length > 0)) {
-              router.push(redirectAfterRegister);
-              localStorage.removeItem('redirect');
-              localStorage.removeItem('redirected-from');
-              localStorage.removeItem('redirect-after-register');
-            } else {
-              router.push('/choose-program');
-            }
+          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+            router.push(redirect || redirectedFrom);
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirected-from');
+          } else {
+            router.push('/choose-program');
           }
+          if (response === undefined || response.status >= 400) {
+            toast({
+              position: 'top',
+              title: t('alert-message:payment-error'),
+              status: 'error',
+              duration: 7000,
+              isClosable: true,
+            });
+          }
+          resolve(response);
         }
-        if (response === undefined || response.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:payment-error'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
-        resolve(response);
       })
       .catch(() => {
         reject();
