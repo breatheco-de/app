@@ -12,6 +12,7 @@ function Programs({ item, handleChoose, onOpenModal }) {
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
   const { cohort } = item;
+  const signInDate = item.created_at;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
 
@@ -94,6 +95,8 @@ function Programs({ item, handleChoose, onOpenModal }) {
       isLoadingPageContent={isLoadingPageContent}
       isLoading={currentCohortProps === undefined}
       startsIn={item?.cohort?.kickoff_date}
+      endsAt={item?.cohort?.ending_date}
+      signInDate={signInDate}
       icon="coding"
       subscription={subscription}
       subscriptionStatus={subscription?.status}
