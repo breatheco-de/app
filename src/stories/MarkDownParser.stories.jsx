@@ -1,7 +1,6 @@
-import React,{useState,useEffect} from 'react';
+import React,{useEffect} from 'react';
 import MarkDownParser from '../common/components/MarkDownParser';
 import { ORIGIN_HOST } from '../utils/variables';
-// import getMarkDownContent from '../common/components/MarkDownParser/markdown';
 
 
 const frontMatter = {
@@ -27,35 +26,31 @@ export default {
 };
 
 const Component = (args) => {
- 
-
-const[permission,setPermission]=useState(args.permission);
 
 const renderCodeName = () =>{
-if(permission == "Add code reviews")
+if(args.permission == "Add code reviews")
   return "add_code_review"
 else{
-  return permission?.toLowerCase().split(" ").join("_")
+  return args.permission?.toLowerCase().split(" ").join("_")
 }
+
 }
-
-let data = JSON.stringify(
-  {
-    permissions:[{name:permission,codename: renderCodeName()}],
-    permissionsSlug:[renderCodeName()],
-
-})
-
 
 useEffect(() => {
+  let data = JSON.stringify(
+    {
+      permissions:[{name:args.permission,codename: renderCodeName()}],
+      permissionsSlug:[renderCodeName()],
+  
+  })
 
-  setPermission(args.permission);
-if(args.permission != permission){
-  window.location.reload();
-}
+  let permissionLocalStorage = JSON.parse(localStorage.getItem("profile")).permissions[0].name
+  if(args.permission != permissionLocalStorage){
+    localStorage.setItem("profile",data)
  
+  }
+  
 }, [args.permission]);
-localStorage.setItem("profile", data);
 return <MarkDownParser {...args} />;
 };
 
@@ -98,7 +93,7 @@ BeforeAfter.args = {
   ## Before and After
 
   + Make sure you add image url for before and after
-  <before-after before="https://picsum.photos/200" after="https://picsum.photos/200"/>  
+  <before-after before="https://picsum.photos/id/237/700" after="https://picsum.photos/id/238/700"/>  
 `,
 };
 export const Checkbox = Component.bind({});

@@ -9,8 +9,14 @@
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
   "intro-video-title": "Welcome to coding introduction",
-  "join-next-cohort": "Join next cohort",
-  "join-cohort": "Join to {{cohortTitle}}",
+  "join-cohort-page": {
+    "seo-title": "Join to {{cohortTitle}}",
+    "cta-description": "Your current plan does not include access to this cohort, please upgrade to access the content.",
+    "cta-cohort-not-found": "This cohort does not exist or you don't have access to join.",
+    "cta-button": "Review plan",
+    "join-next-cohort":"Join next cohort"
+  },
+  "already-have-this-cohort": "Already have this cohort",
   "modules": {
     "read": "Read",
     "start": "Start",
@@ -170,7 +176,7 @@
     "no-instructions": ">:warning: No available instruction found for this module"
   },
   "welcome-modal": {
-    "title": "Bienvenido a 4Geeks!",
+    "title": "Welcome to 4Geeks!",
     "description": "Watch this short video that explains how to get the most out of 4Geeks and enhance your learning experience"
   }
 }

@@ -47,7 +47,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function chooseProgram() {
-  const { t } = useTranslation('choose-program');
+  const { t, lang } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [subscriptionProcess] = usePersistent('subscription-process', null);
@@ -70,7 +70,11 @@ function chooseProgram() {
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
-  const TwelveHours = 720;
+  const TwelveHoursInMinutes = 720;
+  const welcomeVideoLinks = {
+    es: 'https://drive.google.com/file/d/1eR95OSZRtPZVHDBVvT16hKB-9xYL0uVw/preview',
+    en: 'https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba',
+  };
 
   const fetchAdmissions = () => bc.admissions().me();
 
@@ -224,13 +228,13 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });
@@ -238,19 +242,21 @@ function chooseProgram() {
   }, []);
 
   useEffect(() => {
+    if (dataQuery?.date_joined) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
+      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
+        setWelcomeModal(true);
+      }
+    }
+  }, [dataQuery]);
+  useEffect(() => {
     if (userID !== undefined) {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
         bc_id: userID,
       });
     }
-
     if (user?.id && !userLoading) {
-      const cohortUserDaysCalculated = calculateDifferenceDays(user?.date_joined);
-      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
-        setWelcomeModal(true);
-      }
-
       ldClient?.identify({
         kind: 'user',
         key: user?.id,
@@ -340,18 +346,18 @@ function chooseProgram() {
         maxWidth="45rem"
         borderRadius="13px"
         headerStyles={{ textAlign: 'center' }}
-        title={t('welcome-modal.title')}
+        title={t('dashboard:welcome-modal.title')}
         bodyStyles={{ padding: 0 }}
         closeOnOverlayClick={false}
       >
         <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
           <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
-            {t('welcome-modal.description')}
+            {t('dashboard:welcome-modal.description')}
           </Text>
         </Box>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
-            url="https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba"
+            url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
             width="100%"
             height="100%"
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}

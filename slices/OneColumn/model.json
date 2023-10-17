@@ -13,24 +13,15 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
+          "config": { "label": "Title", "placeholder": "" }
         },
         "subtitle": {
           "type": "Text",
-          "config": {
-            "label": "SubTitle",
-            "placeholder": ""
-          }
+          "config": { "label": "SubTitle", "placeholder": "" }
         },
         "description": {
           "type": "StructuredText",
@@ -43,10 +34,11 @@
         },
         "button_label": {
           "type": "Text",
-          "config": {
-            "label": "Button label",
-            "placeholder": ""
-          }
+          "config": { "label": "Button label", "placeholder": "" }
+        },
+        "button_url": {
+          "type": "Text",
+          "config": { "label": "Button url", "placeholder": "" }
         },
         "link_button": {
           "type": "Boolean",
@@ -55,14 +47,6 @@
             "placeholder_false": "false",
             "placeholder_true": "true",
             "default_value": false
-          }
-        },
-        "button_url": {
-          "type": "Link",
-          "config": {
-            "label": "Button url",
-            "placeholder": "",
-            "select": null
           }
         },
         "font_color": {
@@ -74,80 +58,47 @@
         },
         "kpi_title_1": {
           "type": "Text",
-          "config": {
-            "label": "KPI Title 1",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Title 1", "placeholder": "" }
         },
         "kpi_description_1": {
           "type": "Text",
-          "config": {
-            "label": "KPI Description 1",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Description 1", "placeholder": "" }
         },
         "kpi_color_1": {
           "type": "Color",
-          "config": {
-            "label": "KPI Color 1",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Color 1", "placeholder": "" }
         },
         "kpi_title_2": {
           "type": "Text",
-          "config": {
-            "label": "KPI Title 2",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Title 2", "placeholder": "" }
         },
         "kpi_description_2": {
           "type": "Text",
-          "config": {
-            "label": "KPI Description 2",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Description 2", "placeholder": "" }
         },
         "kpi_color_2": {
           "type": "Color",
-          "config": {
-            "label": "KPI Color 2",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Color 2", "placeholder": "" }
         },
         "kpi_title_3": {
           "type": "Text",
-          "config": {
-            "label": "KPI Title 3",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Title 3", "placeholder": "" }
         },
         "kpi_description_3": {
           "type": "Text",
-          "config": {
-            "label": "KPI Description 3",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Description 3", "placeholder": "" }
         },
         "kpi_color_3": {
           "type": "Color",
-          "config": {
-            "label": "KPI Color 3",
-            "placeholder": ""
-          }
+          "config": { "label": "KPI Color 3", "placeholder": "" }
         },
         "background": {
           "type": "Color",
-          "config": {
-            "label": "background",
-            "placeholder": ""
-          }
+          "config": { "label": "background", "placeholder": "" }
         },
         "paddingMd": {
           "type": "Text",
-          "config": {
-            "label": "padding-md",
-            "placeholder": ""
-          }
+          "config": { "label": "padding-md", "placeholder": "" }
         },
         "margin": {
           "type": "Text",

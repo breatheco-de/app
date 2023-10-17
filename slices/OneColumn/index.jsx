@@ -7,7 +7,7 @@ import MktOneColumn from '../../src/common/components/MktOneColumn';
  * @typedef {import("@prismicio/react").SliceComponentProps<OneColumnSlice>} OneColumnProps
  * @param { OneColumnProps }
  */
-const OneColumn = ({ slice }) => {
+function OneColumn({ slice }) {
   const items = [
     {
       title: slice?.primary?.kpi_title_1,
@@ -34,12 +34,12 @@ const OneColumn = ({ slice }) => {
       subTitle={slice.primary.subtitle}
       paddingMd={slice.primary.paddingMd}
       linkButton={slice.primary.link_button}
-      buttonUrl={slice.primary.button_url.url}
+      buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
       buttonLabel={slice.primary.button_label}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}
     />
   );
-};
+}
 
 export default OneColumn;
