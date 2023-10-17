@@ -31,7 +31,7 @@
       "id": "events",
       "label": "Aprende en vivo",
       "icon": "calendar",
-      "private": true,
+      "private": false,
       "description": "Únete a nosotros en nuestros talleres gratuitos, webinars y otros eventos para aprender más sobre nuestros programas y comenzar tu camino para convertirte en desarrollador.",
       "subMenu": [
         {

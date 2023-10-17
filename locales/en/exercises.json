@@ -30,7 +30,7 @@
   },
   "clone-modal" : {
     "title": "How to clone a project?",
-    "text-part-one": "We don’t recomend it, but some excerises can be downloaded and runned locally using VSCode and the ",
+    "text-part-one": "We don’t recommend it, but some exercises can be downloaded and run locally using VSCode and the ",
     "text-part-two": ". If you want to do so, you must start by cloning the project into your computer by typing the following command on your terminal:",
     "note": "Note: This will create a new folder “{{folder}}” in your computer with the project code inside.",
     "copy-command": "Command has been copied to the clipboard!",

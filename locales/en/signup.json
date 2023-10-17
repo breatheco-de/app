@@ -50,7 +50,7 @@
   "no-have-account": "You don't have an account?",
   "login-here": "Login here.",
   "register-here": "Register here.",
-  "start-free-course": "Start free course",
+  "start-free-course": "Start Learning",
   "free": "Free",
   "totally_free": "Totally free",
   "free_trial": "Free trial",
@@ -62,7 +62,7 @@
   "many_months_payment": "{{qty}} months payment",
   "our_plans": "Our plans",
   "join-cohort": {
-    "description": "Please join the cohort in order to the access the program content.",
+    "description": "Click the button below to join the cohort and access the program's content.",
     "button": "Join cohort"
   },
   "info": {
@@ -161,6 +161,7 @@
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   },
+  "get-premium": "Get Premium",
   "pricing": {
     "already-have-plan": "You already have it",
     "basic-plan": {
@@ -169,6 +170,7 @@
       "title": "Free Member",
       "description": "All you need to start learning to code",
       "button-title": "Start free"
+
     },
     "premium-plan": {
       "type": "Premium",
