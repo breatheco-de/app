@@ -209,6 +209,7 @@ function Module({
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
           link={shareLink()}
           socials={socials}
+          currentTask={currentTask}
           onlyModal
           withParty
         />

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
@@ -156,6 +157,20 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             slug: dateProps?.slug,
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
+          });
+
+          const currency = cohortPlans[0]?.plan?.currency?.code;
+
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'purchase',
+              value: selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: selectedPlanCheckoutData?.slug,
+              period_label: selectedPlanCheckoutData?.period_label,
+              items: cohortPlans,
+            },
           });
 
           if (!disableRedirectAfterSuccess) {
