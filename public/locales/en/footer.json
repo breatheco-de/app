@@ -62,7 +62,7 @@
       },
       {
         "label": "Social & Live Learning",
-        "href": "#"
+        "href": "/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
       },
       {
         "label": "Code of conduct",
@@ -97,7 +97,7 @@
       "title": "A.I. & machine learning",
       "icon": "machine-learning",
       "text": "Start with Python and Data Science, Machine Learning, Deep Learning, and maintaining a production environment in A.I.",
-      "href": "#"
+      "href": "https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning?lang=en"
     }
   ]
 }
