@@ -18,16 +18,33 @@ const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
+const getYearlyPlans = (originalPlan, suggestedPlan, allFeaturedPlans) => {
+  const existsYearlyInOriginalPlan = originalPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
+  const existsYearlyInSuggestedPlan = suggestedPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
+
+  if (!existsYearlyInOriginalPlan && existsYearlyInSuggestedPlan) {
+    const yearlyPlan = suggestedPlan?.plans?.filter((p) => p?.period === 'YEAR');
+    const freeOrTrialPlan = originalPlan?.plans?.filter((p) => p?.price === 0 || p?.period === 'TRIAL' || p?.period === 'FREE') || [];
+    return [...freeOrTrialPlan, ...yearlyPlan];
+  }
+  return allFeaturedPlans.filter((p) => p?.period === 'YEAR');
+};
+
 function PricingView({ data, isForModal }) {
   const { t, lang } = useTranslation(['signup', 'common']);
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
+  const [allFeaturedPlans, setAllFeaturedPlans] = useState([]);
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
   const queryPlan = getQueryString('plan');
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
   const [isFetching, setIsFetching] = useState(!data?.title);
-  const [principalData, setPrincipalData] = useState(data || {});
+  const [principalData, setPrincipalData] = useState(data);
+  const [paymentTypePlans, setPaymentTypePlans] = useState({
+    monthly: [],
+    yearly: [],
+  });
 
   axiosInstance.defaults.headers.common['Accept-Language'] = lang;
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
@@ -38,56 +55,50 @@ function PricingView({ data, isForModal }) {
       fetchSuggestedPlan(planFormated, translations)
         .then((suggestedPlanData) => {
           setPrincipalData(suggestedPlanData);
-        })
-        .finally(() => {
-          setIsFetching(false);
         });
     }
   }, []);
 
-  const originalPlan = principalData?.plans?.original_plan;
-  const suggestedPlan = principalData?.plans?.suggested_plan;
-  const existsYearlyInOriginalPlan = originalPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
-  const existsYearlyInSuggestedPlan = suggestedPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
+  useEffect(() => {
+    if (principalData?.title) {
+      const originalPlan = principalData?.plans?.original_plan;
+      const suggestedPlan = principalData?.plans?.suggested_plan;
+      const allPlansList = [
+        ...originalPlan?.plans || [],
+        ...suggestedPlan?.plans || [],
+      ];
+      const monthlyPlans = allPlansList?.length > 0
+        ? allPlansList.filter((p) => p?.period !== 'YEAR')
+        : [];
+      const yearlyPlans = allPlansList?.length > 0
+        ? getYearlyPlans(originalPlan, suggestedPlan, allPlansList)
+        : [];
 
-  const allFeaturedPlans = [
-    ...originalPlan?.plans || [],
-    ...suggestedPlan?.plans || [],
-  ];
-
-  const getYearlyPlans = () => {
-    if (!existsYearlyInOriginalPlan && existsYearlyInSuggestedPlan) {
-      const yearlyPlan = suggestedPlan?.plans?.filter((p) => p?.period === 'YEAR');
-      const freeOrTrialPlan = originalPlan?.plans?.filter((p) => p?.price === 0 || p?.period === 'TRIAL' || p?.period === 'FREE') || [];
-      return [...freeOrTrialPlan, ...yearlyPlan];
+      setAllFeaturedPlans(allPlansList);
+      setPaymentTypePlans({
+        monthly: monthlyPlans,
+        yearly: yearlyPlans,
+      });
+      setIsFetching(false);
     }
-    return allFeaturedPlans.filter((p) => p?.period === 'YEAR');
-  };
-
-  const monthlyPlans = allFeaturedPlans?.length > 0
-    ? allFeaturedPlans.filter((p) => p?.period !== 'YEAR')
-    : [];
-  const yearlyPlans = allFeaturedPlans?.length > 0
-    ? getYearlyPlans()
-    : [];
+  }, [principalData?.title]);
 
   const switcherInfo = [
     {
       type: 'monthly',
       name: t('signup:info.monthly'),
-      exists: monthlyPlans.length > 0,
+      exists: paymentTypePlans.monthly.length > 0,
     },
     {
       type: 'yearly',
       name: t('signup:info.yearly'),
-      exists: yearlyPlans.length > 0,
+      exists: paymentTypePlans.yearly.length > 0,
     },
   ];
-
   const existentOptions = switcherInfo.filter((l) => l.exists);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && allFeaturedPlans?.length > 0) {
       bc.payment({
         status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
       }).subscriptions()
@@ -104,7 +115,7 @@ function PricingView({ data, isForModal }) {
           setRelatedSubscription(findPurchasedPlan);
         });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, allFeaturedPlans.length]);
 
   return (
     <>
@@ -148,7 +159,7 @@ function PricingView({ data, isForModal }) {
 
           <Box width="100%" overflowX="auto">
             <Flex width={{ base: 'max-content', md: 'auto' }} justifyContent="center" gridGap="24px" margin="0 auto">
-              {monthlyPlans?.length > 0 && monthlyPlans.map((plan) => (
+              {paymentTypePlans.monthly?.length > 0 && paymentTypePlans.monthly.map((plan) => (
                 <PricingCard
                   key={plan?.plan_id}
                   item={plan}
@@ -158,7 +169,7 @@ function PricingView({ data, isForModal }) {
                 />
               ))}
 
-              {yearlyPlans?.length > 0 && yearlyPlans.map((plan) => (
+              {paymentTypePlans.yearly?.length > 0 && paymentTypePlans.yearly.map((plan) => (
                 <PricingCard
                   key={plan?.plan_id}
                   item={plan}
@@ -183,11 +194,12 @@ function PricingView({ data, isForModal }) {
 }
 
 PricingView.propTypes = {
-  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])).isRequired,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
   isForModal: PropTypes.bool,
 };
 PricingView.defaultProps = {
   isForModal: false,
+  data: {},
 };
 
 export default PricingView;
