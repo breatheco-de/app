@@ -17,7 +17,7 @@ import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, excludeCagetoriesFor } from '../../utils/variables';
 import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
@@ -29,7 +29,7 @@ const fetchLessons = async (lang, page, query) => {
     asset_type: 'LESSON,ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    exclude_category: 'how-to,como',
+    exclude_category: excludeCagetoriesFor.lessons,
     language: lang,
     academy: WHITE_LABEL_ACADEMY,
     limit: contentPerPage,
