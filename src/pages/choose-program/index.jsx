@@ -70,7 +70,6 @@ function chooseProgram() {
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const TwelveHoursInMinutes = 720;
   const welcomeVideoLinks = {
-    // es: 'https://drive.google.com/file/d/1eR95OSZRtPZVHDBVvT16hKB-9xYL0uVw/preview',
     es: 'https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In',
     en: 'https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba',
   };
