@@ -1,9 +1,10 @@
 import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
@@ -19,7 +20,7 @@ import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
@@ -28,6 +29,7 @@ function ShowOnSignUp({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [alreadyLogged, setAlreadyLogged] = useState(false);
   const { t } = useTranslation('workshops');
   const router = useRouter();
   const toast = useToast();
@@ -45,6 +47,16 @@ function ShowOnSignUp({
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
+  useEffect(() => {
+    if (alreadyLogged && !existsConsumables) {
+      const intervalId = setInterval(() => {
+        refetchAfterSuccess();
+      }, 500);
+      return () => clearInterval(intervalId);
+    }
+    return () => {};
+  }, [alreadyLogged, existsConsumables]);
+
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -60,6 +72,13 @@ function ShowOnSignUp({
     });
 
     const data = await resp.json();
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'sign_up',
+        method: 'native',
+      },
+    });
+
     if (data.silent_code === SILENT_CODE.USER_EXISTS
         || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
       setShowAlreadyMember(true);
@@ -78,6 +97,7 @@ function ShowOnSignUp({
     if (data?.access_token) {
       handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
         .finally(() => {
+          setAlreadyLogged(true);
           refetchAfterSuccess();
           setVerifyEmailProps({
             data: {
@@ -94,7 +114,6 @@ function ShowOnSignUp({
         },
       });
     }
-
     if (typeof resp?.status === 'number' && data?.access_token === null) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
@@ -317,7 +336,6 @@ function ShowOnSignUp({
         handlerText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
-          refetchAfterSuccess();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
@@ -343,6 +361,7 @@ ShowOnSignUp.propTypes = {
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
   isLive: PropTypes.bool,
+  existsConsumables: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -360,6 +379,7 @@ ShowOnSignUp.defaultProps = {
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
   isLive: false,
+  existsConsumables: false,
 };
 
 export default ShowOnSignUp;

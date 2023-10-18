@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
@@ -12,6 +13,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 
+// eslint-disable-next-line no-unused-vars
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -21,7 +23,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
-  const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -157,29 +159,37 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
           });
-
-          if (!disableRedirectAfterSuccess) {
-            if ((redirectAfterRegister || redirectedFrom)
-              && (redirectAfterRegister?.length > 0 && redirectedFrom.length > 0)) {
-              router.push(redirectAfterRegister);
-              localStorage.removeItem('redirect');
-              localStorage.removeItem('redirected-from');
-              localStorage.removeItem('redirect-after-register');
-            } else {
-              router.push('/choose-program');
-            }
-          }
-        }
-        if (response === undefined || response.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:payment-error'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
+          const currency = cohortPlans[0]?.plan?.currency?.code;
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'purchase',
+              value: selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: selectedPlanCheckoutData?.slug,
+              period_label: selectedPlanCheckoutData?.period_label,
+              items: cohortPlans,
+            },
           });
+
+          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+            router.push(redirect || redirectedFrom);
+            localStorage.removeItem('redirect');
+            localStorage.removeItem('redirected-from');
+          } else {
+            router.push('/choose-program');
+          }
+          if (response === undefined || response.status >= 400) {
+            toast({
+              position: 'top',
+              title: t('alert-message:payment-error'),
+              status: 'error',
+              duration: 7000,
+              isClosable: true,
+            });
+          }
+          resolve(response);
         }
-        resolve(response);
       })
       .catch(() => {
         reject();

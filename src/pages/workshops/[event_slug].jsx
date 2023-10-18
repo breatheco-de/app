@@ -515,6 +515,7 @@ function Page({ event }) {
           {event?.id && (
             <ShowOnSignUp
               hideForm={finishedEvent}
+              existsConsumables={existsConsumables}
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
               isLive={readyToJoinEvent && !finishedEvent}
               refetchAfterSuccess={() => {

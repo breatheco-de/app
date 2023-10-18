@@ -2,6 +2,7 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import TagManager from 'react-gtm-module';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
@@ -192,6 +193,7 @@ function AuthProvider({ children }) {
       if (payload) {
         const response = await bc.auth().login2(payload, lang);
         const responseData = await response.json();
+        console.log(responseData);
 
         if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({
@@ -230,6 +232,15 @@ function AuthProvider({ children }) {
           } else {
             router.reload();
           }
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'login',
+              path: router.pathname,
+              method: 'native',
+              user_id: responseData.user_id,
+              email: responseData.email,
+            },
+          });
         }
         return response;
       }
@@ -292,7 +303,6 @@ function AuthProvider({ children }) {
       }
     }
     localStorage.removeItem('showGithubWarning');
-    localStorage.removeItem('redirect-after-register');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };

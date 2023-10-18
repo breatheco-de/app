@@ -161,6 +161,7 @@
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
   },
+  "get-premium": "Get Premium",
   "pricing": {
     "already-have-plan": "You already have it",
     "basic-plan": {
@@ -169,6 +170,7 @@
       "title": "Free Member",
       "description": "All you need to start learning to code",
       "button-title": "Start free"
+
     },
     "premium-plan": {
       "type": "Premium",
