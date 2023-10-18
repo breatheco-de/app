@@ -16,7 +16,7 @@
     "cta-button": "Review plan",
     "join-next-cohort":"Join next cohort"
   },
-  "already-have-this-cohort": "Already have this cohort",
+  "already-have-this-cohort": "You are already a member of this cohort",
   "modules": {
     "read": "Read",
     "start": "Start",
@@ -72,7 +72,7 @@
     "no-mentoring-available": "You have no mentorships available.",
     "create-session-text": "Book now",
     "learn-more": "Learn more.",
-    "learn-more-link": "https://4geeks.com/mentorships",
+    "learn-more-link": "https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions",
     "get-more-mentorships": "Get more mentorships",
     "schedule-button": "Schedule a mentoring session",
     "mentors-available": "+{{count}} Mentors available",

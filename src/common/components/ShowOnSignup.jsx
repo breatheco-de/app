@@ -4,6 +4,7 @@ import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
@@ -71,6 +72,13 @@ function ShowOnSignUp({
     });
 
     const data = await resp.json();
+    TagManager.dataLayer({
+      dataLayer: {
+        event: 'sign_up',
+        method: 'native',
+      },
+    });
+
     if (data.silent_code === SILENT_CODE.USER_EXISTS
         || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
       setShowAlreadyMember(true);
