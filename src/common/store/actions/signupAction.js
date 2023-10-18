@@ -127,7 +127,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     return t('signup:info.free-trial-period', { qty, period: periodText });
   };
 
-  const handlePayment = (data) => new Promise((resolve, reject) => {
+  const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -159,12 +159,14 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             academy_info: dateProps?.academy,
           });
 
-          if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-            router.push(redirect || redirectedFrom);
-            localStorage.removeItem('redirect');
-            localStorage.removeItem('redirected-from');
-          } else {
-            router.push('/choose-program');
+          if (!disableRedirects) {
+            if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+              router.push(redirect || redirectedFrom);
+              localStorage.removeItem('redirect');
+              localStorage.removeItem('redirected-from');
+            } else {
+              router.push('/choose-program');
+            }
           }
         }
         if (response === undefined || response.status >= 400) {

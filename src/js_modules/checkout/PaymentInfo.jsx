@@ -5,8 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -15,8 +16,9 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
-import { number2DIgits } from '../../utils';
+import { getStorageItem, number2DIgits } from '../../utils';
 import Text from '../../common/components/Text';
+import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -46,12 +48,16 @@ function PaymentInfo() {
   } = useSignup();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
   });
+  const redirect = getStorageItem('redirect');
+  const redirectedFrom = getStorageItem('redirected-from');
+  const router = useRouter();
 
   const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
@@ -88,13 +94,40 @@ function PaymentInfo() {
       .required(t('validators.cvc-required')),
   });
 
+  useEffect(() => {
+    if (readyToRefetch) {
+      const interval = setInterval(() => {
+        getAllMySubscriptions()
+          .then((subscriptions) => {
+            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
+            if (isPurchasedPlanFound) {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
+              } else {
+                router.push('/choose-program');
+              }
+            }
+          });
+      }, 1500);
+    }
+  }, [readyToRefetch]);
+
   const handleSubmit = (actions, values) => {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
-          handlePayment()
+          handlePayment({}, true)
+            .then((respPayment) => {
+              if (respPayment.data.status === 'FULFILLED') {
+                setReadyToRefetch(true);
+              }
+            })
             .finally(() => {
-              setIsSubmitting(false);
               actions.setSubmitting(false);
             });
         }
