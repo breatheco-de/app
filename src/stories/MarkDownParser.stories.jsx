@@ -44,7 +44,7 @@ useEffect(() => {
   
   })
 
-  let permissionLocalStorage = JSON.parse(localStorage.getItem("profile")).permissions[0].name
+  let permissionLocalStorage = JSON.parse(localStorage.getItem("profile"))?.permissions[0].name
   if(args.permission != permissionLocalStorage){
     localStorage.setItem("profile",data)
  
@@ -113,6 +113,7 @@ Onlyfor.args = {
   content:`
   ## OnlyFor 
 <div class="onlyfor">
+<h3>Select permission on dropdown, and then refresh page to see result</h3>
   <onlyfor  permission="join_mentorship" >If this text shows, assisant role has access to this permission</onlyfor>
   <onlyfor  permission="get_my_certificate" >If this text shows, student role has access to this permission</onlyfor>
   <onlyfor  permission="add_code_review" >If this text shows, teacher role has access to this permission</onlyfor>
