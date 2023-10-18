@@ -8,6 +8,7 @@ import {
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import TagManager from 'react-gtm-module';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -46,7 +47,8 @@ function PaymentInfo() {
   const {
     state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
-  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [stateCard, setStateCard] = useState({
@@ -121,6 +123,18 @@ function PaymentInfo() {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
+          const currency = cohortPlans[0]?.plan?.currency?.code;
+          TagManager.dataLayer({
+            dataLayer: {
+              event: 'add_payment_info',
+              path: '/checkout',
+              value: state?.selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: state?.selectedPlanCheckoutData?.slug,
+              period_label: state?.selectedPlanCheckoutData?.period_label,
+            },
+          });
           handlePayment({}, true)
             .then((respPayment) => {
               if (respPayment.data.status === 'FULFILLED') {

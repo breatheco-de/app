@@ -23,6 +23,7 @@ import CallToAction from '../../../common/components/CallToAction';
 import { getQueryString } from '../../../utils';
 import { parseQuerys } from '../../../utils/url';
 import ModalToGetAccess, { stageType } from '../../../common/components/ModalToGetAccess';
+import { error } from '../../../utils/logging';
 
 export const getServerSideProps = async ({ locale, query }) => {
   const t = await getT(locale, 'dashboard');
@@ -35,6 +36,10 @@ export const getServerSideProps = async ({ locale, query }) => {
   }
   const data = await generateCohortSyllabusModules(idInt);
 
+  const members = await bc.cohort().getStudents2(data.cohort.slug, true)
+    .then((resp) => resp.data)
+    .catch((err) => error('Error fetching cohort users:', err));
+
   return {
     props: {
       seo: {
@@ -43,11 +48,12 @@ export const getServerSideProps = async ({ locale, query }) => {
       id: idInt,
       syllabus: data.syllabus || null,
       cohort: data.cohort || null,
+      members: members || null,
     },
   };
 };
 
-function Page({ id, syllabus, cohort }) {
+function Page({ id, syllabus, cohort, members }) {
   const { disabledColor2, hexColor } = useStyle();
   const { t, lang } = useTranslation('dashboard');
   const qsPlan = getQueryString('plan');
@@ -304,7 +310,7 @@ function Page({ id, syllabus, cohort }) {
               <CohortSideBar
                 cohort={cohort}
                 teacherVersionActive={false}
-                studentAndTeachers={[]}
+                studentAndTeachers={members}
                 cohortCity={cohort?.name}
                 width="100%"
                 isDisabled
@@ -321,9 +327,11 @@ Page.propTypes = {
   id: PropTypes.number,
   syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  members: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Page.defaultProps = {
   id: null,
+  members: [],
 };
 
 export default asPrivate(Page);
