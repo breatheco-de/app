@@ -159,8 +159,10 @@ function Register({ setIsLoggedFromRegister }) {
             body: JSON.stringify({
               ...values,
               plan: '4geeks-standard',
-              location: academy,
-              ...userSession,
+              conversion_info: {
+                ...userSession,
+                location: academy,
+              },
             }),
           });
           const data = await resp.json();

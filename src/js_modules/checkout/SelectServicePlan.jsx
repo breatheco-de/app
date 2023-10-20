@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
+import useSession from '../../common/hooks/useSession';
 import bc from '../../common/services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../utils';
 import LoaderScreen from '../../common/components/LoaderScreen';
@@ -12,6 +13,7 @@ import Icon from '../../common/components/Icon';
 import modifyEnv from '../../../modifyEnv';
 
 function SelectServicePlan() {
+  const { setConversionUrl } = useSession();
   const { t, lang } = useTranslation('signup');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { backgroundColor, hexColor, modal } = useStyle();
@@ -82,6 +84,7 @@ function SelectServicePlan() {
       const qs = parseQuerys({
         ...getServiceSlug(findedPlanCoincidences[0]),
       });
+      setConversionUrl();
       const pageToRedirect = `/${lang}/checkout${qs}`;
       window.location.href = pageToRedirect;
     }
@@ -100,6 +103,7 @@ function SelectServicePlan() {
       ...getServiceSlug(selectedService),
     });
     const pageToRedirect = `/${lang}/checkout${qs}`;
+    setConversionUrl();
     window.location.href = pageToRedirect;
   };
 

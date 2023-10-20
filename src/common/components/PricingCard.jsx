@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { Image } from '@chakra-ui/next-js';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
@@ -11,6 +12,7 @@ import { isWindow, slugToTitle } from '../../utils';
 
 export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
+  const { setConversionUrl } = useSession();
   const { fontColor, hexColor, featuredCard } = useStyle();
   const isBootcampType = item?.type.toLowerCase() === 'bootcamp';
   const utilProps = {
@@ -87,6 +89,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       if (isBootcampType) {
         window.location.href = item?.button_link;
       } else {
+        setConversionUrl();
         window.location.href = `${langPath}/checkout${qs}`;
       }
     }

@@ -4,12 +4,14 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import Link from '../../../common/components/NextChakraLink';
+import useSession from '../../../common/hooks/useSession';
 import profileHandlers from './handlers';
 
 function ButtonHandler({
   translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
 }) {
   const { t } = useTranslation('profile');
+  const { setConversionUrl } = useSession();
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
   const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
@@ -59,7 +61,7 @@ function ButtonHandler({
         },
         isComponent: true,
         component: (
-          <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
+          <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} onClick={setConversionUrl} textAlign="center" margin="auto 0 0 0">
             {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
           </Link>
         ),

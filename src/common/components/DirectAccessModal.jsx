@@ -54,7 +54,7 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
       },
       body: JSON.stringify({
         ...allValues,
-        ...userSession,
+        conversion_info: userSession,
       }),
     });
 

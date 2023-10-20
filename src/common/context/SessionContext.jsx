@@ -47,6 +47,15 @@ function SessionProvider({ children }) {
     handleUserSession();
   }, []);
 
+  const setConversionUrl = () => {
+    const session = {
+      ...userSession,
+      conversion_url: isWindow ? window.location.pathname : undefined,
+    };
+    setUserSession(session);
+    localStorage.setItem('userSession', JSON.stringify(session));
+  };
+
   return (
     <SessionContext.Provider
       // eslint-disable-next-line react/jsx-no-constructed-context-values
@@ -56,6 +65,7 @@ function SessionProvider({ children }) {
           localStorage.setItem('userSession', JSON.stringify(session));
           setUserSession(session);
         },
+        setConversionUrl,
       }}
     >
       {children}

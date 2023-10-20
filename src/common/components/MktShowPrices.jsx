@@ -9,7 +9,6 @@ import profileHandlers from '../../js_modules/profile/Subscriptions/handlers';
 import ShowPrices from './ShowPrices';
 import { parseQuerys } from '../../utils/url';
 import useSession from '../hooks/useSession';
-import { isWindow } from '../../utils';
 import Text from './Text';
 import Icon from './Icon';
 import Heading from './Heading';
@@ -55,7 +54,7 @@ function BulletComponent({ bullet, isString }) {
 
 function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
   const { t } = useTranslation('profile');
-  const { userSession, setUserSession } = useSession();
+  const { setConversionUrl } = useSession();
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
   const {
@@ -149,10 +148,7 @@ function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
             const hasAvailableCohorts = item?.suggested_plan?.has_available_cohorts;
             const period = item?.period;
 
-            setUserSession({
-              ...userSession,
-              conversion_url: isWindow ? window.location.pathname : undefined,
-            });
+            setConversionUrl();
             const querys = parseQuerys({
               plan: item?.suggested_plan?.slug,
               plan_id: item?.plan_id,

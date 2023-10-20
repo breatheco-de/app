@@ -54,7 +54,7 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const data = await startSignup({ ...allValues, ...userSession }, lang);
+    const data = await startSignup({ ...allValues, conversion_info: userSession }, lang);
 
     if (data?.access_token) {
       handleSubscribeToPlan({

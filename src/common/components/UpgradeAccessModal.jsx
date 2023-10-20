@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import Heading from './Heading';
 import Icon from './Icon';
 import financeEN from '../../../public/locales/en/finance.json';
@@ -20,6 +21,7 @@ function UpgradeAccessModal({
   const [selectedProps, setSelectedProps] = useState({});
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
+  const { setConversionUrl } = useSession();
   const courseQuery = router?.query?.course;
   const currLocale = storySettings?.locale || router?.locale;
   const jsonData = currLocale === 'en' ? financeEN : financeES;
@@ -106,13 +108,16 @@ function UpgradeAccessModal({
                 w="fit-content"
                 variant="default"
                 textTransform="uppercase"
-                onClick={() => router.push({
-                  pathname: '/checkout',
-                  query: {
-                    course: currentCourse,
-                    plan: selectedProps?.type,
-                  },
-                })}
+                onClick={() => {
+                  setConversionUrl();
+                  router.push({
+                    pathname: '/checkout',
+                    query: {
+                      course: currentCourse,
+                      plan: selectedProps?.type,
+                    },
+                  });
+                }}
               >
                 {finance?.button?.title}
               </Button>

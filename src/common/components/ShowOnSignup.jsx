@@ -61,8 +61,10 @@ function ShowOnSignUp({
         ...allValues,
         ...subscribeValues,
         plan: '4geeks-standard',
-        location: academy,
-        ...userSession,
+        conversion_info: {
+          location: academy,
+          ...userSession,
+        },
       }),
     });
 

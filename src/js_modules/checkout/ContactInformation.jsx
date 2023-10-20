@@ -72,7 +72,7 @@ function ContactInformation({
         'Content-Type': 'application/json',
         'Accept-Language': router?.locale || 'en',
       },
-      body: JSON.stringify({ ...allValues, ...userSession }),
+      body: JSON.stringify({ ...allValues, conversion_info: userSession }),
     });
     const data = await resp.json();
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
