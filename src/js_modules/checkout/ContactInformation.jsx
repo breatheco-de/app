@@ -7,8 +7,7 @@ import {
   Avatar,
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
-import TagManager from 'react-gtm-module';
+import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -23,6 +22,7 @@ import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function ContactInformation({
   courseChoosed, defaultPlanData, formProps, setFormProps, setVerifyEmailProps,
@@ -64,6 +64,14 @@ function ContactInformation({
     //   .required(t('validators.confirm-email-required')),
   });
 
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_contact_info',
+      },
+    });
+  }, []);
+
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -74,12 +82,7 @@ function ContactInformation({
       body: JSON.stringify(allValues),
     });
     const data = await resp.json();
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'sign_up',
-        method: 'native',
-      },
-    });
+
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }
@@ -101,7 +104,14 @@ function ContactInformation({
         setStorageItem('subscriptionId', data.id);
         router.push('/thank-you');
       }
-
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+        },
+      });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         setVerifyEmailProps({
           data: {

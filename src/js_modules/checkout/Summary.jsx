@@ -9,6 +9,7 @@ import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 
 function Summary() {
   const { t } = useTranslation('signup');
@@ -63,6 +64,14 @@ function Summary() {
   };
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
+
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_summary',
+      },
+    });
+  }, []);
 
   useEffect(() => {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);

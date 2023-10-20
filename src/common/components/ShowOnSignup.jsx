@@ -4,11 +4,11 @@ import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
@@ -61,12 +61,6 @@ function ShowOnSignUp({
     });
 
     const data = await resp.json();
-    TagManager.dataLayer({
-      dataLayer: {
-        event: 'sign_up',
-        method: 'native',
-      },
-    });
 
     if (data.silent_code === SILENT_CODE.USER_EXISTS
         || data.silent_code === SILENT_CODE.USER_INVITE_ACCEPTED_EXISTS) {
@@ -84,6 +78,14 @@ function ShowOnSignUp({
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+        },
+      });
       handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
         .finally(() => {
           refetchAfterSuccess();

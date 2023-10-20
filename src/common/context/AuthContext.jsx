@@ -2,10 +2,10 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import TagManager from 'react-gtm-module';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
@@ -193,7 +193,6 @@ function AuthProvider({ children }) {
       if (payload) {
         const response = await bc.auth().login2(payload, lang);
         const responseData = await response.json();
-        console.log(responseData);
 
         if (responseData?.silent_code === SILENT_CODE.EMAIL_NOT_VALIDATED) {
           setModalState({
@@ -232,7 +231,7 @@ function AuthProvider({ children }) {
           } else {
             router.reload();
           }
-          TagManager.dataLayer({
+          reportDatalayer({
             dataLayer: {
               event: 'login',
               path: router.pathname,

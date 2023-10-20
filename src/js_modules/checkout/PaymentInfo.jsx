@@ -5,9 +5,8 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import TagManager from 'react-gtm-module';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -17,6 +16,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
 import { number2DIgits } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import Text from '../../common/components/Text';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
@@ -90,12 +90,20 @@ function PaymentInfo() {
       .required(t('validators.cvc-required')),
   });
 
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_complete_purchase',
+      },
+    });
+  }, []);
+
   const handleSubmit = (actions, values) => {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
           const currency = cohortPlans[0]?.plan?.currency?.code;
-          TagManager.dataLayer({
+          reportDatalayer({
             dataLayer: {
               event: 'add_payment_info',
               path: '/checkout',

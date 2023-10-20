@@ -1,9 +1,9 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
@@ -12,6 +12,7 @@ import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, g
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
+import { reportDatalayer } from '../../../utils/requests';
 
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
@@ -146,6 +147,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
       };
     };
     const requests = getRequests();
+    console.log('on handle payment');
     bc.payment().pay({
       ...requests,
     })
@@ -160,8 +162,13 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           });
 
           const currency = cohortPlans[0]?.plan?.currency?.code;
+          const simplePlans = cohortPlans.map((cohortPlan) => {
+            const { plan } = cohortPlan;
+            const { service_items, ...restOfPlan } = plan;
+            return { plan: { ...restOfPlan } };
+          });
 
-          TagManager.dataLayer({
+          reportDatalayer({
             dataLayer: {
               event: 'purchase',
               value: selectedPlanCheckoutData?.price,
@@ -169,7 +176,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
               payment_type: 'Credit card',
               plan: selectedPlanCheckoutData?.slug,
               period_label: selectedPlanCheckoutData?.period_label,
-              items: cohortPlans,
+              items: simplePlans,
             },
           });
 
