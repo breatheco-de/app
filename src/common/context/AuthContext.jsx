@@ -168,6 +168,17 @@ function AuthProvider({ children }) {
               ...data,
               permissionsSlug,
             });
+            TagManager.dataLayer({
+              dataLayer: {
+                event: 'session_load',
+                method: 'native',
+                user_id: data.id,
+                email: data.email,
+                first_name: data.first_name,
+                last_name: data.last_name,
+                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
+              },
+            });
             if (data.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
