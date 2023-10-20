@@ -51,7 +51,6 @@ export const processPlans = (data, {
     const financingOptionsOnePayment = financingOptionsOnePaymentExists
       ? data?.financing_options
         .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
-        .sort((a, b) => a.monthly_price - b.monthly_price)
       : [];
 
     const relevantInfo = {
@@ -98,7 +97,7 @@ export const processPlans = (data, {
       how_many_months: item?.how_many_months,
       type: 'PAYMENT',
       show: true,
-    })) : [];
+    })) : [{}];
 
     const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
       ...relevantInfo,
@@ -123,7 +122,7 @@ export const processPlans = (data, {
       period: 'MONTH',
       period_label: textInfo.label.monthly,
       type: 'PAYMENT',
-    } : onePaymentFinancing;
+    } : onePaymentFinancing[0];
 
     const quarterPlan = quarterly && existsAmountPerQuarter ? {
       ...relevantInfo,
@@ -187,11 +186,12 @@ export const processPlans = (data, {
 
 /**
  * @param {String} planSlug // Base plan slug to generate list of prices
+ * @param {Object} translationsObj // Object with translations
  * @returns {Promise<object>} // Formated object of data with list of prices
  */
-export const generatePlan = (planSlug) => bc.payment().getPlan(planSlug)
+export const generatePlan = (planSlug, translationsObj) => bc.payment().getPlan(planSlug)
   .then(async (resp) => {
-    const data = await processPlans(resp?.data);
+    const data = await processPlans(resp?.data, {}, translationsObj);
     return data;
   })
   .catch(() => ({}));
@@ -297,14 +297,14 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
     if (suggestedPlanData?.status_code === 404) {
-      const plan = await generatePlan(planSlug);
+      const plan = await generatePlan(planSlug, translationsObj);
       return {
         plans: {
           original_plan: plan,
           suggested_plan: {},
         },
         details: {},
-        title: '',
+        title: plan?.title || '',
       };
     }
     return suggestedPlanData;

@@ -56,6 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     result = await getCacheItem(slug);
 
     if (!result) {
+      console.log(`${slug} not found on cache`);
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=PROJECT`);
       result = await response.json();
       const engPrefix = {
