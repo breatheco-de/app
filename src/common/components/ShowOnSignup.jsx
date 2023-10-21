@@ -76,6 +76,10 @@ function ShowOnSignUp({
       dataLayer: {
         event: 'sign_up',
         method: 'native',
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        plan: data.plan,
       },
     });
 
