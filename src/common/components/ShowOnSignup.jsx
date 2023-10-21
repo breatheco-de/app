@@ -80,6 +80,7 @@ function ShowOnSignUp({
         first_name: data.first_name,
         last_name: data.last_name,
         plan: data.plan,
+        user_id: data.user
       },
     });
 
