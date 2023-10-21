@@ -84,7 +84,7 @@ function ShowOnSignUp({
         isClosable: true,
         duration: 6000,
       });
-    }else{
+    } else {
       TagManager.dataLayer({
         dataLayer: {
           event: 'sign_up',
