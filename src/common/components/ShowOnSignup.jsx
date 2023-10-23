@@ -58,9 +58,7 @@ function ShowOnSignUp({
   }, [alreadyLogged, existsConsumables]);
 
   const handleSubmit = async (actions, allValues) => {
-
     const defaultPlan = process.env.BASE_PLAN || '4geeks-standard';
-    
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
