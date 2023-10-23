@@ -177,6 +177,7 @@ function AuthProvider({ children }) {
                 first_name: data.first_name,
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
+                language: data.profile?.settings?.lang,
               },
             });
             if (data.github) {

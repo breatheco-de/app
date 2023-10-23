@@ -82,7 +82,6 @@ function ContactInformation({
       body: JSON.stringify(allValues),
     });
     const data = await resp.json();
-
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
       setShowAlreadyMember(true);
     }
@@ -93,6 +92,24 @@ function ContactInformation({
         status: 'error',
         isClosable: true,
         duration: 6000,
+      });
+    } else {
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: data.plan,
+          user_id: data.user,
+          course: allValues.course,
+          country: allValues.country,
+          city: allValues.city,
+          syllabus: allValues.syllabus,
+          cohort: allValues.cohort,
+          language: allValues.language,
+        },
       });
     }
     setStorageItem('subscriptionId', data?.id);
