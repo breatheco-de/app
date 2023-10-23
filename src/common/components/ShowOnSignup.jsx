@@ -58,6 +58,9 @@ function ShowOnSignUp({
   }, [alreadyLogged, existsConsumables]);
 
   const handleSubmit = async (actions, allValues) => {
+
+    const defaultPlan = process.env.BASE_PLAN || '4geeks-standard';
+    
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -67,7 +70,7 @@ function ShowOnSignUp({
       body: JSON.stringify({
         ...allValues,
         ...subscribeValues,
-        plan: '4geeks-standard',
+        plan: defaultPlan,
       }),
     });
 
@@ -95,9 +98,10 @@ function ShowOnSignUp({
           method: 'native',
           user_id: data?.id,
           email: data?.email,
+          plan: defaultPlan,
         },
       });
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
         .finally(() => {
           setAlreadyLogged(true);
           refetchAfterSuccess();
