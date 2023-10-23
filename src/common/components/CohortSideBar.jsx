@@ -396,30 +396,32 @@ function CohortSideBar({
                 ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
                 : t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
             </Tab>
-            <Tab
-              p="0 14px 14px 14px"
-              display="block"
-              textAlign="center"
-              isDisabled={alumniGeeksList?.count === 0 || alumniGeeksList?.count === undefined}
-              textTransform="uppercase"
-              fontWeight="900"
-              fontSize="13px"
-              letterSpacing="0.05em"
-              width="100%"
-              borderBottom="4px solid #C4C4C4"
-              // height="100%"
-              _selected={{
-                color: 'blue.default',
-                borderBottom: '4px solid',
-                borderColor: 'blue.default',
-              }}
-              _disabled={{
-                opacity: 0.5,
-                cursor: 'not-allowed',
-              }}
-            >
-              {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
-            </Tab>
+            {alumniGeeksList?.count && (
+              <Tab
+                p="0 14px 14px 14px"
+                display="block"
+                textAlign="center"
+                isDisabled={alumniGeeksList?.count === 0 || alumniGeeksList?.count === undefined}
+                textTransform="uppercase"
+                fontWeight="900"
+                fontSize="13px"
+                letterSpacing="0.05em"
+                width="100%"
+                borderBottom="4px solid #C4C4C4"
+                // height="100%"
+                _selected={{
+                  color: 'blue.default',
+                  borderBottom: '4px solid',
+                  borderColor: 'blue.default',
+                }}
+                _disabled={{
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }}
+              >
+                {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
+              </Tab>
+            )}
           </TabList>
           <TabPanels p="0">
             <TabPanel p="0">

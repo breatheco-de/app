@@ -129,7 +129,7 @@ function Module({
   };
 
   const changeStatusAssignment = (event, task, taskStatus) => {
-    if (currentTask?.slug) {
+    if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
       setUpdatedTask({
         ...task,
@@ -209,6 +209,7 @@ function Module({
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
           link={shareLink()}
           socials={socials}
+          currentTask={currentTask}
           onlyModal
           withParty
         />
