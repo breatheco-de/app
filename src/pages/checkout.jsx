@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
@@ -29,6 +28,7 @@ import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
+import { reportDatalayer } from '../utils/requests';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import SimpleModal from '../common/components/SimpleModal';
 import PricingView from './pricing';
@@ -126,7 +126,7 @@ function Checkout() {
       .then((data) => {
         setDefaultPlanData(data);
       });
-    TagManager.dataLayer({
+    reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
         path: '/checkout',
