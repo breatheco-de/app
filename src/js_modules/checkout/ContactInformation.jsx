@@ -7,7 +7,7 @@ import {
   Avatar,
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -22,6 +22,7 @@ import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function ContactInformation({
   courseChoosed, defaultPlanData, formProps, setFormProps, setVerifyEmailProps,
@@ -63,6 +64,14 @@ function ContactInformation({
     //   .required(t('validators.confirm-email-required')),
   });
 
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_contact_info',
+      },
+    });
+  }, []);
+
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -84,6 +93,24 @@ function ContactInformation({
         isClosable: true,
         duration: 6000,
       });
+    } else {
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: data.plan,
+          user_id: data.user,
+          course: allValues.course,
+          country: allValues.country,
+          city: allValues.city,
+          syllabus: allValues.syllabus,
+          cohort: allValues.cohort,
+          language: allValues.language,
+        },
+      });
     }
     setStorageItem('subscriptionId', data?.id);
 
@@ -94,7 +121,14 @@ function ContactInformation({
         setStorageItem('subscriptionId', data.id);
         router.push('/thank-you');
       }
-
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+        },
+      });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         setVerifyEmailProps({
           data: {
