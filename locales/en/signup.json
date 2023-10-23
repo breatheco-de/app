@@ -166,10 +166,10 @@
     "already-have-plan": "You already have it",
     "basic-plan": {
       "type": "Basic",
-      "hook-message": "Get ready to meet our academy",
-      "title": "Free Member",
-      "description": "All you need to start learning to code",
-      "button-title": "Start free"
+      "hook-message": "Start learning now without financial commitments",
+      "title": "No credit card required",
+      "description": "Start learning and discover our amazing content and benefits",
+      "button-title": "Start for free"
 
     },
     "premium-plan": {
