@@ -13,6 +13,7 @@ import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import useStyle from '../../common/hooks/useStyle';
+import { reportDatalayer } from '../../utils/requests';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
@@ -50,6 +51,14 @@ function ChooseYourClass({
     GOOGLE_KEY,
     'places',
   );
+
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_choose_your_class',
+      },
+    });
+  }, []);
 
   useEffect(() => {
     setCohortIsLoading(true);

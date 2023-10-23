@@ -2,6 +2,7 @@
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
 import { kv } from '@vercel/kv';
+import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
@@ -22,6 +23,10 @@ const mapDifficulty = (difficulty) => {
     default:
       return 'unknown';
   }
+};
+
+const reportDatalayer = (payload) => {
+  TagManager.dataLayer(payload);
 };
 
 const getPrismicPages = () => {
@@ -207,6 +212,7 @@ const getLandingTechnologies = async (assets) => {
 
 export {
   getAsset,
+  reportDatalayer,
   getCacheItem,
   setCacheItem,
   getPrismicPages,

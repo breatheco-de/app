@@ -9,6 +9,7 @@ import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
+import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../utils';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 
@@ -71,6 +72,14 @@ function Summary() {
   };
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
+
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_summary',
+      },
+    });
+  }, []);
 
   useEffect(() => {
     if (readyToRefetch) {

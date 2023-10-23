@@ -35,6 +35,7 @@ import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
   slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays,
 } from '../../../../../utils/index';
+import { reportDatalayer } from '../../../../../utils/requests';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -255,6 +256,11 @@ function Dashboard() {
       choose, cohortSlug,
     }).then((cohort) => {
       setCurrentCohortProps(cohort);
+      reportDatalayer({
+        dataLayer: {
+          cohort,
+        },
+      });
     });
   }, [cohortSlug]);
 

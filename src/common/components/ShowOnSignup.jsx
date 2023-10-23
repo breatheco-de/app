@@ -4,11 +4,11 @@ import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
@@ -58,6 +58,7 @@ function ShowOnSignUp({
   }, [alreadyLogged, existsConsumables]);
 
   const handleSubmit = async (actions, allValues) => {
+    const defaultPlan = process.env.BASE_PLAN || '4geeks-standard';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -67,7 +68,7 @@ function ShowOnSignUp({
       body: JSON.stringify({
         ...allValues,
         ...subscribeValues,
-        plan: '4geeks-standard',
+        plan: defaultPlan,
       }),
     });
 
@@ -106,7 +107,16 @@ function ShowOnSignUp({
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+          plan: defaultPlan,
+        },
+      });
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
         .finally(() => {
           setAlreadyLogged(true);
           refetchAfterSuccess();
