@@ -129,7 +129,7 @@ function Module({
   };
 
   const changeStatusAssignment = (event, task, taskStatus) => {
-    if (currentTask?.slug) {
+    if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
       setUpdatedTask({
         ...task,
