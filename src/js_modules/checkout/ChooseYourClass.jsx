@@ -152,12 +152,12 @@ function ChooseYourClass({
           });
         }
 
-        geocode({ location: data.location }).then((result) => {
-          let loc = {};
+        geocode({ location: data.location }).then((results) => {
+          const loc = {};
 
-          results[0].address_components.map((comp) => {
-            if (comp.types.includes("locality")) loc.city = comp.long_name;
-            if (comp.types.includes("country")) {
+          results[0].address_components.forEach((comp) => {
+            if (comp.types.includes('locality')) loc.city = comp.long_name;
+            if (comp.types.includes('country')) {
               loc.country = comp.long_name;
               loc.countryShort = comp.short_name;
             }
