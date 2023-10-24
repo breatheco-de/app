@@ -1,18 +1,16 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
 import axios from '../../axios';
 import EventCard from './EventCard';
+import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
-import useGrabToScroll from '../hooks/useGrabToScroll';
 import modifyEnv from '../../../modifyEnv';
 
 function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
-  const scrollContainerRef = useRef(null);
-  const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
   const [events, setEvents] = useState([]);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -47,15 +45,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
-      <Box
-        ref={scrollContainerRef}
-        position="relative"
-        className="hideOverflowX__"
-        overflow="auto"
-        width="100%"
-        onMouseDown={grabToScroll}
-        overflowX="auto"
-      >
+      <DraggableContainer position="relative" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
@@ -72,7 +62,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
             />
           ))}
         </Flex>
-      </Box>
+      </DraggableContainer>
     </GridContainer>
   );
 }
