@@ -62,7 +62,7 @@
       },
       {
         "label": "Social & Live Learning",
-        "href": "#"
+        "href": "/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
       },
       {
         "label": "Code of conduct",
@@ -76,28 +76,28 @@
   },
   "iconogram":[
     {
-      "title": "Intro to coding",
+      "title": "Start coding using Javascript",
+      "icon": "javascript",
+      "text": "Get started in coding with the world's most popular language. Build your first projects with an Excuse Generator, Domain name finder, and more than 300 exercises.",
+      "href": "/start-coding-using-javascript"
+    },
+    {
+      "title": "Full Stack Coding Bootcamp",
       "icon": "coding",
-      "text": "From zero to getting paid as a developer, learn the skills of the present and future. Boost your professional career and get hired by a tech company.",
-      "href": "#"
+      "text": "Become a Full Stack software developer using Python, React and Javascript. The most in-demand skills. Find a job as a developer.",
+      "href": "https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer"
     },
     {
-      "title": "Data Science",
-      "icon": "data-science",
-      "text": "Start a career in data science and analytics. A hands-on approach with interactive exercises, chat support, and access to mentorships.",
-      "href": "#"
+      "title": "Start coding using Python",
+      "icon": "python",
+      "text": "Get started in coding with the world's most popular language. Build your first projects and practice with more than 300 exercises.",
+      "href": "https://4geeks.com/start-coding-using-python"
     },
     {
-      "title": "30daysofgeekcoding",
-      "icon": "geekcoding",
-      "text": "Keep your motivation with this 30-day challenge. Join hundreds of other developers coding a little every day.",
-      "href": "#"
-    },
-    {
-      "title": "A.I. & machine learning",
+      "title": "Data Science and ML",
       "icon": "machine-learning",
-      "text": "Start with Python and Data Science, Machine Learning, Deep Learning, and maintaining a production environment in A.I.",
-      "href": "#"
+      "text": "Learn Python to collect and manage data. Create models and solve problems using Machine Learning, Deep Learning and AI.",
+      "href": "https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning?lang=en"
     }
   ]
 }
