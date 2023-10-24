@@ -9,6 +9,7 @@ function DraggableContainer({ children, ...rest }) {
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const scrollSpeed = 1;
 
   const onMouseDown = (e) => {
     setIsDown(true);
@@ -30,7 +31,7 @@ function DraggableContainer({ children, ...rest }) {
     e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     const x = pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * 3; //scroll-fast
+    const walk = (x - startX) * scrollSpeed; //scroll-fast
     ref.current.scrollLeft = scrollLeft - walk;
   };
 
