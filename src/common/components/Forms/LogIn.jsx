@@ -6,6 +6,7 @@ import {
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
+import { reportDatalayer } from '../../../utils/requests';
 // import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
@@ -66,7 +67,22 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6} justifyContent="space-between">
-            <Button as="a" href={githubLoginUrl} cursor="pointer" variant="outline" weight="700">
+            <Button
+              as="a"
+              href={githubLoginUrl}
+              cursor="pointer"
+              variant="outline"
+              weight="700"
+              onClick={() => {
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'login',
+                    path: '/login',
+                    method: 'github',
+                  },
+                });
+              }}
+            >
               <Icon icon="github" width="18px" height="18px" />
               <Text fontSize="13px" marginLeft="10px" textTransform="uppercase">
                 {t('login:login-with-github')}

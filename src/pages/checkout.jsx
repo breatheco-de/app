@@ -28,6 +28,7 @@ import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
+import { reportDatalayer } from '../utils/requests';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import SimpleModal from '../common/components/SimpleModal';
 import PricingView from './pricing';
@@ -125,6 +126,12 @@ function Checkout() {
       .then((data) => {
         setDefaultPlanData(data);
       });
+    reportDatalayer({
+      dataLayer: {
+        event: 'begin_checkout',
+        path: '/checkout',
+      },
+    });
   }, []);
 
   useEffect(() => {

@@ -1,13 +1,14 @@
 import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
 import useSession from '../hooks/useSession';
 import { usePersistent } from '../hooks/usePersistent';
@@ -21,7 +22,7 @@ import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { userSession } = useSession();
@@ -32,6 +33,7 @@ function ShowOnSignUp({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [alreadyLogged, setAlreadyLogged] = useState(false);
   const { t } = useTranslation('workshops');
   const router = useRouter();
   const toast = useToast();
@@ -49,8 +51,19 @@ function ShowOnSignUp({
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
+  useEffect(() => {
+    if (alreadyLogged && !existsConsumables) {
+      const intervalId = setInterval(() => {
+        refetchAfterSuccess();
+      }, 500);
+      return () => clearInterval(intervalId);
+    }
+    return () => {};
+  }, [alreadyLogged, existsConsumables]);
+
   const handleSubmit = async (actions, allValues) => {
     const academy = cohortSession?.academy?.slug;
+    const defaultPlan = process.env.BASE_PLAN || '4geeks-standard';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -60,7 +73,7 @@ function ShowOnSignUp({
       body: JSON.stringify({
         ...allValues,
         ...subscribeValues,
-        plan: '4geeks-standard',
+        plan: defaultPlan,
         conversion_info: {
           location: academy,
           ...userSession,
@@ -81,12 +94,40 @@ function ShowOnSignUp({
         isClosable: true,
         duration: 6000,
       });
+    } else {
+      TagManager.dataLayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: data.plan,
+          user_id: data.user,
+          course: allValues.course,
+          country: allValues.country,
+          city: allValues.city,
+          syllabus: allValues.syllabus,
+          cohort: allValues.cohort,
+          language: allValues.language,
+        },
+      });
     }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+          plan: defaultPlan,
+        },
+      });
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
         .finally(() => {
+          setAlreadyLogged(true);
           refetchAfterSuccess();
           setVerifyEmailProps({
             data: {
@@ -103,7 +144,6 @@ function ShowOnSignUp({
         },
       });
     }
-
     if (typeof resp?.status === 'number' && data?.access_token === null) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
@@ -326,7 +366,6 @@ function ShowOnSignUp({
         handlerText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
-          refetchAfterSuccess();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,
@@ -352,6 +391,7 @@ ShowOnSignUp.propTypes = {
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
   isLive: PropTypes.bool,
+  existsConsumables: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -369,6 +409,7 @@ ShowOnSignUp.defaultProps = {
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
   isLive: false,
+  existsConsumables: false,
 };
 
 export default ShowOnSignUp;

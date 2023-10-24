@@ -22,11 +22,11 @@ import MktSideRecommendedCourses from '../../common/components/MktSideRecommende
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
-import { ORIGIN_HOST } from '../../utils/variables';
+import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
-  const data = await getAsset('LESSON,ARTICLE', { exclude_category: 'how-to,como' });
+  const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
 
   const paths = data.flatMap((res) => {
     const lang = res?.lang === 'us' ? 'en' : res?.lang;
@@ -53,6 +53,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
     if (!lesson) {
+      console.log(`${slug} not found on cache`);
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       lesson = await response.json();
 

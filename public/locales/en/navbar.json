@@ -31,7 +31,7 @@
       "id": "events",
       "label": "Learn live",
       "icon": "calendar",
-      "private": true,
+      "private": false,
       "description": "Join us for our free workshops, webinars, and other events to learn more about our programs and get started on your journey to becoming a developer.",
       "subMenu": [
         {

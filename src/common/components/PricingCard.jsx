@@ -14,7 +14,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { setConversionUrl } = useSession();
   const { fontColor, hexColor, featuredCard } = useStyle();
-  const isBootcampType = item?.type.toLowerCase() === 'bootcamp';
+  const isBootcampType = item?.type && item?.type.toLowerCase() === 'bootcamp';
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
@@ -72,7 +72,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       },
     },
   };
-  const viewProps = utilProps?.[item?.planType] || utilProps.original;
+  const viewProps = item.price > 0 ? utilProps.suggested : (utilProps?.[item?.planType] || utilProps.original);
   const isOriginalPlan = item?.planType === 'original';
   const border = viewProps?.border;
   const background = viewProps?.background;
