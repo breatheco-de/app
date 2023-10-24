@@ -148,6 +148,14 @@ function chooseProgram() {
     fetchSubscriptions()
       .then((data) => {
         setSubscriptionData(data);
+        reportDatalayer({
+          dataLayer: {
+            event: 'subscriptions_load',
+            method: 'native',
+            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')),
+            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')),
+          },
+        });
       })
       .finally(() => setSubscriptionLoading(false));
   }, []);
