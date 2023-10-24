@@ -142,7 +142,8 @@ function ChooseYourClass({
   }, [isSecondStep, gmapStatus]);
 
   useEffect(() => {
-    if (gmapStatus.loaded && GOOGLE_KEY) {
+    const userLocation = localStorage.getItem('user-location');
+    if (gmapStatus.loaded && GOOGLE_KEY && !userLocation) {
       getNearestLocation(GOOGLE_KEY).then(({ data }) => {
         if (data) {
           setCoords({
@@ -152,12 +153,16 @@ function ChooseYourClass({
         }
 
         geocode({ location: data.location }).then((result) => {
-          setLocation({
+          const loc = {
             country: result[0]?.address_components[6]?.long_name,
             city: result[0]?.address_components[5]?.long_name,
-          });
+          };
+          localStorage.setItem('user-location', JSON.stringify(loc));
+          setLocation(loc);
         });
       });
+    } else if (userLocation) {
+      setLocation(JSON.parse(userLocation));
     }
   }, [gmapStatus]);
 
