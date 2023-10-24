@@ -86,7 +86,7 @@ function ShowOnSignUp({
         duration: 6000,
       });
     } else {
-      TagManager.dataLayer({
+      reportDatalayer({
         dataLayer: {
           event: 'sign_up',
           method: 'native',
