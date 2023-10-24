@@ -413,7 +413,7 @@ function Checkout() {
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            defaultPlanData={defaultPlanData?.plans?.original_plan}
+            defaultPlanData={defaultPlanData?.plans?.suggested_plan}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}
