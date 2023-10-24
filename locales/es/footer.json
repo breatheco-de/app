@@ -62,7 +62,7 @@
       },
       {
         "label": "Aprendizaje social y en vivo",
-        "href": "#"
+        "href": "/es/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
       },
       {
         "label": "¿Código de conducta?",
@@ -76,28 +76,28 @@
   },
   "iconogram":[
     {
-      "title": "Intro al código",
+      "title": "Empieza a programar con Javascript",
+      "icon": "javascript",
+      "text": "Empieza a programar en Javascript utilizando el lenguaje más popular del mundo. Construye tus primeros proyectos: Un generador de excusas y un buscador de dominios. Accede a 300+ ejercicios para practicar.",
+      "href": "es/start-coding-using-javascript"
+    },
+    {
+      "title": "Desarrollador Full Stack",
       "icon": "coding",
-      "text": "De cero a que te paguen como desarrollador, aprende las habilidades del presente y del futuro. Impulsa tu carrera profesional y sé contratado por una empresa tecnológica.",
-      "href": "#"
+      "text": "Convierte en un programador que utiliza las tecnologias más búscadas, mentoria personalizada y un plan de estudios y career support para conseguir tu primer trabajo.",
+      "href": "https://4geeksacademy.com/es/coding-bootcamps/desarrollador-full-stack"
     },
     {
-      "title": "Ciencia de Datos",
-      "icon": "data-science",
-      "text": "Inicie una carrera en ciencia de datos y análisis. Un enfoque práctico con ejercicios interactivos, soporte por chat y acceso a tutorías.",
-      "href": "#"
+      "title": "Empieza a programar con Python",
+      "icon": "python",
+      "text": "Empieza a programar utilizando el lenguaje más popular del mundo, Python. Construye tus primeros proyectos y accede a más de 300 ejercicios para practicar.",
+      "href": "es/start-coding-using-python"
     },
     {
-      "title": "30daysofgeekcoding",
-      "icon": "geekcoding",
-      "text": "Mantén tu motivación con este desafío de 30 días. Únase a cientos de otros desarrolladores programando un poco todos los días.",
-      "href": "#"
-    },
-    {
-      "title": "I.A. y machine learning",
+      "title": "Data Science y Machine Learning",
       "icon": "machine-learning",
-      "text": "Comience con Python y Data Science, Machine Learning, Deep Learning y mantenga un entorno de producción en A.I.",
-      "href": "#"
+      "text": "Conviértete en un científico de datos, desarrolla modelos de predicción y uneté a una de las profesiones mejores pagadas del mundo.",
+      "href": "https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning?lang=es"
     }
   ]
   
