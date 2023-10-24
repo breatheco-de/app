@@ -8,6 +8,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import TagManager from 'react-gtm-module';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
@@ -515,6 +516,7 @@ function Page({ event }) {
           {event?.id && (
             <ShowOnSignUp
               hideForm={finishedEvent}
+              existsConsumables={existsConsumables}
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
               isLive={readyToJoinEvent && !finishedEvent}
               refetchAfterSuccess={() => {
@@ -584,6 +586,15 @@ function Page({ event }) {
                                 title: t('alert-message:success-event-reservation'),
                                 isClosable: true,
                                 duration: 6000,
+                              });
+
+                              TagManager.dataLayer({
+                                dataLayer: {
+                                  event: 'event_order',
+                                  event_id: event.id,
+                                  event_slug: event.slug,
+                                  event_title: event.title,
+                                },
                               });
                             } else {
                               toast({

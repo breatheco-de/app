@@ -2,6 +2,7 @@
 import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
+import { cleanObject } from '../../utils';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
@@ -174,11 +175,27 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
-        headers: academyId && {
+      getStudents: (cohortId, academyId, withDefaultToken = false) => {
+        const headers = cleanObject({
           academy: academyId,
-        },
-      }),
+          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
+          ...axios.defaults.headers.common,
+        });
+
+        return axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+          headers,
+        });
+      },
+      // get students without academy header
+      getStudents2: (cohortSlug, withDefaultToken = false) => {
+        const headers = cleanObject({
+          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
+          ...axios.defaults.headers.common,
+        });
+        return axios.get(`${host}/admissions/cohort/user?roles=STUDENT&cohorts=${cohortSlug}${qs}`, {
+          headers,
+        });
+      },
       getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${qs.replace('?', '&')}`, {
         headers: academyId && {
           academy: academyId,

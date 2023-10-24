@@ -120,21 +120,13 @@ function Subscriptions({ storybookConfig }) {
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
             const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
-            const cohortInfo = subscription?.selected_cohort_set?.cohorts?.length > 0
-              ? subscription?.selected_cohort_set.cohorts?.find((cohort) => cohorts.some((l) => l?.cohort?.slug === cohort?.slug))
-              : [];
-
             const nextPaymentDate = {
               en: format(new Date(subscription?.next_payment_at), 'MMM do'),
               es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
             };
-
             const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
-              && subscription?.plans[0]?.financing_options?.find(
-                (option) => option?.monthly_price === subscription?.monthly_price,
-              );
+              && subscription?.plans[0]?.financing_options[0];
 
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -151,15 +143,12 @@ function Subscriptions({ storybookConfig }) {
                     <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
-                    <Text fontSize="11px" fontWeight="700">
-                      {cohortInfo?.name}
-                    </Text>
                   </Flex>
 
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
                       <Text fontSize="18px" fontWeight="700">
-                        {(invoice?.amount && `${invoice?.amount}`) || t('common:free')}
+                        {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
                       </Text>
                     )}
                     {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (
