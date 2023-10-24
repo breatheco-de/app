@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -28,17 +29,17 @@ function SessionProvider({ children }) {
     if (isWindow) {
       const storedSession = JSON.parse(localStorage.getItem('userSession'));
       const { userAgent } = window.navigator;
-      const { placement, medium, source, term, content } = query;
+      const { utm_placement, utm_medium, utm_source, utm_term, utm_content } = query;
       const landingUrl = userSession?.landing_url ? userSession.landing_url : window.location.pathname;
       setUserSession({
         ...storedSession,
         user_agent: userAgent,
         landing_url: landingUrl,
-        placement,
-        medium,
-        source,
-        term,
-        content,
+        utm_placement,
+        utm_medium,
+        utm_source,
+        utm_term,
+        utm_content,
       });
     }
   };
