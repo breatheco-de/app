@@ -1,15 +1,14 @@
 /* eslint-disable camelcase */
 import React, { createContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { isWindow } from '../../utils';
+import { isWindow, getQueryString } from '../../utils';
 
 const initialState = {
-  placement: '', // the ad placement
-  medium: '', // facebook, tiktok, Instagram, google
-  source: '', // cpc, organic, etc.
-  term: '', // keyword from cpc
-  content: '', // banner or add id
+  utm_placement: '', // the ad placement
+  utm_medium: '', // facebook, tiktok, Instagram, google
+  utm_source: '', // cpc, organic, etc.
+  utm_term: '', // keyword from cpc
+  utm_content: '', // banner or add id
   conversion_url: '', // last URL the user saw before starting the checkout process.
   landing_url: '', // first URL the user saw when coming into the website
   user_agent: '', // front end user agent
@@ -20,8 +19,6 @@ export const SessionContext = createContext({
 });
 
 function SessionProvider({ children }) {
-  const router = useRouter();
-  const { query } = router;
   const [userSession, setUserSession] = useState(initialState);
 
   // validate non authorized and authorized users session information
@@ -29,9 +26,15 @@ function SessionProvider({ children }) {
     if (isWindow) {
       const storedSession = JSON.parse(localStorage.getItem('userSession'));
       const { userAgent } = window.navigator;
-      const { utm_placement, utm_medium, utm_source, utm_term, utm_content } = query;
-      const landingUrl = userSession?.landing_url ? userSession.landing_url : window.location.pathname;
-      setUserSession({
+      const landingUrl = storedSession?.landing_url && storedSession.landing_url !== '' ? storedSession.landing_url : window.location.pathname;
+
+      const utm_placement = getQueryString('utm_placement');
+      const utm_medium = getQueryString('utm_medium');
+      const utm_source = getQueryString('utm_source');
+      const utm_term = getQueryString('utm_term');
+      const utm_content = getQueryString('utm_content');
+
+      const session = {
         ...storedSession,
         user_agent: userAgent,
         landing_url: landingUrl,
@@ -40,7 +43,9 @@ function SessionProvider({ children }) {
         utm_source,
         utm_term,
         utm_content,
-      });
+      };
+      setUserSession(session);
+      localStorage.setItem('userSession', JSON.stringify(session));
     }
   };
 
@@ -49,12 +54,15 @@ function SessionProvider({ children }) {
   }, []);
 
   const setConversionUrl = () => {
-    const session = {
-      ...userSession,
-      conversion_url: isWindow ? window.location.pathname : undefined,
-    };
-    setUserSession(session);
-    localStorage.setItem('userSession', JSON.stringify(session));
+    if (isWindow) {
+      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) return;
+      const session = {
+        ...userSession,
+        conversion_url: window.location.pathname,
+      };
+      setUserSession(session);
+      localStorage.setItem('userSession', JSON.stringify(session));
+    }
   };
 
   return (
