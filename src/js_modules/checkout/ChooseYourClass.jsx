@@ -152,11 +152,16 @@ function ChooseYourClass({
           });
         }
 
-        geocode({ location: data.location }).then((result) => {
-          const loc = {
-            country: result[0]?.address_components[6]?.long_name,
-            city: result[0]?.address_components[5]?.long_name,
-          };
+        geocode({ location: data.location }).then((results) => {
+          const loc = {};
+
+          results[0].address_components.forEach((comp) => {
+            if (comp.types.includes('locality')) loc.city = comp.long_name;
+            if (comp.types.includes('country')) {
+              loc.country = comp.long_name;
+              loc.countryShort = comp.short_name;
+            }
+          });
           localStorage.setItem('user-location', JSON.stringify(loc));
           setLocation(loc);
         });
