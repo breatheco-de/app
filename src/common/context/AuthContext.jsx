@@ -174,6 +174,7 @@ function AuthProvider({ children }) {
                 method: 'native',
                 user_id: data.id,
                 email: data.email,
+                // is_saas: data.roles.filter(r => r.role.toLowerCase() == "student" && r.)
                 first_name: data.first_name,
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,

@@ -120,7 +120,7 @@ function ContactInformation({
     const respPlan = await bc.payment().getPlan(planFormated);
     const dataOfPlan = respPlan?.data;
     if (resp.status < 400 && typeof data?.id === 'number') {
-      if (dataOfPlan?.has_waiting_list === true) {
+      if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
         setStorageItem('subscriptionId', data.id);
         router.push('/thank-you');
       }
@@ -131,6 +131,7 @@ function ContactInformation({
           user_id: data?.id,
           email: data?.email,
           conversion_info: userSession,
+          plan: dataOfPlan?.slug,
         },
       });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
