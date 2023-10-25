@@ -111,6 +111,7 @@ function ContactInformation({
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
+          conversion_info: userSession,
         },
       });
     }
@@ -129,6 +130,7 @@ function ContactInformation({
           method: 'native',
           user_id: data?.id,
           email: data?.email,
+          conversion_info: userSession,
         },
       });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {

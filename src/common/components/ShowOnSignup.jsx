@@ -110,6 +110,7 @@ function ShowOnSignUp({
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
+          conversion_info: userSession,
         },
       });
     }
@@ -123,6 +124,7 @@ function ShowOnSignUp({
           user_id: data?.id,
           email: data?.email,
           plan: defaultPlan,
+          conversion_info: userSession,
         },
       });
       handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
