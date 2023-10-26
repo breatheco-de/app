@@ -6,12 +6,10 @@ import Icon from '../../../common/components/Icon';
 import ShowPrices from '../../../common/components/ShowPrices';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import useSession from '../../../common/hooks/useSession';
 import { parseQuerys } from '../../../utils/url';
 
 function UpgradeModal({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionProps, offerProps }) {
   const { lightColor, modal } = useStyle();
-  const { setConversionUrl } = useSession();
   const { t } = useTranslation('profile');
   const router = useRouter();
   const isTotallyFree = offerProps?.isTotallyFree === true;
@@ -126,7 +124,6 @@ function UpgradeModal({ upgradeModalIsOpen, setUpgradeModalIsOpen, subscriptionP
                   price: item?.price,
                   period,
                 });
-                setConversionUrl();
                 router.push(`/checkout${querys}`);
               }}
               // onSelect={(item) => {}}

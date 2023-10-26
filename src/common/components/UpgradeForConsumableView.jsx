@@ -5,12 +5,10 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
-import useSession from '../hooks/useSession';
 import { setStorageItem, slugToTitle } from '../../utils';
 
 function UpgradeForConsumableView({ externalData }) {
   const { t } = useTranslation('signup');
-  const { setConversionUrl } = useSession();
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
   const { fontColor, featuredColor, hexColor } = useStyle();
@@ -75,7 +73,6 @@ function UpgradeForConsumableView({ externalData }) {
     if (selectedIndex === 1) {
       if (isEventConsumable && findedEventTypeOfPlanCoincidences?.length > 0) {
         setStorageItem('redirected-from', router?.asPath);
-        setConversionUrl();
         router.push({
           pathname: '/checkout',
           query: eventPropsToQueryString,
@@ -83,7 +80,6 @@ function UpgradeForConsumableView({ externalData }) {
       }
       if (!isEventConsumable && coincidencesOfServiceWithOtherSubscriptions?.length > 0) {
         setStorageItem('redirected-from', router?.asPath);
-        setConversionUrl();
         router.push({
           pathname: '/checkout',
           query: mentoryPropsToQueryString,

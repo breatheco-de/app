@@ -4,7 +4,6 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
-import useSession from '../../../common/hooks/useSession';
 import bc from '../../../common/services/breathecode';
 import { toCapitalize, unSlugify } from '../../../utils';
 
@@ -12,7 +11,6 @@ function profileHandlers({
   translations,
 }) {
   const { t } = useTranslation('profile');
-  const { setConversionUrl } = useSession();
   const { reverseFontColor, fontColor, lightColor } = useStyle();
   const subscriptionTR = translations?.subscription;
   const toast = useToast();
@@ -255,7 +253,6 @@ function profileHandlers({
             }
 
             if (data?.show_modal === false && planData && !disableRedirects) {
-              setConversionUrl();
               router.push(`/checkout?plan=${planData?.slug}`);
             }
           } else {
@@ -451,7 +448,6 @@ function profileHandlers({
             }
 
             if (currentOffer?.show_modal === false && offerData && !disableRedirects) {
-              setConversionUrl();
               router.push(`/checkout?plan=${offerData?.slug}`);
             }
           } else {

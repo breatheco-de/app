@@ -9,7 +9,6 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
-import useSession from '../hooks/useSession';
 
 function PlanCard({ item, i, handleSelect, selectedIndex }) {
   const { backgroundColor2 } = useStyle();
@@ -79,7 +78,6 @@ function ShowPrices({
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t, lang } = useTranslation('');
-  const { setConversionUrl } = useSession();
   const { fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
@@ -196,7 +194,6 @@ function ShowPrices({
           isDisabled={!selectedItem && true}
           onClick={() => {
             if (handleUpgrade === false) {
-              setConversionUrl();
               router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
             } else {
               handleUpgrade(selectedItem);

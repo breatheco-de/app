@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import React, { createContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { isWindow, getQueryString } from '../../utils';
 
@@ -20,6 +21,19 @@ export const SessionContext = createContext({
 
 function SessionProvider({ children }) {
   const [userSession, setUserSession] = useState(initialState);
+  const router = useRouter();
+
+  const setConversionUrl = () => {
+    if (isWindow) {
+      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) return;
+      const session = {
+        ...userSession,
+        conversion_url: window.location.pathname,
+      };
+      setUserSession(session);
+      localStorage.setItem('userSession', JSON.stringify(session));
+    }
+  };
 
   // validate non authorized and authorized users session information
   const handleUserSession = () => {
@@ -27,6 +41,10 @@ function SessionProvider({ children }) {
       const storedSession = JSON.parse(localStorage.getItem('userSession'));
       const { userAgent } = window.navigator;
       const landingUrl = storedSession?.landing_url && storedSession.landing_url !== '' ? storedSession.landing_url : window.location.pathname;
+
+      let conversionUrl;
+      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) conversionUrl = storedSession.conversion_url;
+      else conversionUrl = window.location.pathname;
 
       const utm_placement = getQueryString('utm_placement');
       const utm_medium = getQueryString('utm_medium');
@@ -38,6 +56,7 @@ function SessionProvider({ children }) {
         ...storedSession,
         user_agent: userAgent,
         landing_url: landingUrl,
+        conversion_url: conversionUrl,
         utm_placement,
         utm_medium,
         utm_source,
@@ -51,19 +70,7 @@ function SessionProvider({ children }) {
 
   useEffect(() => {
     handleUserSession();
-  }, []);
-
-  const setConversionUrl = () => {
-    if (isWindow) {
-      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) return;
-      const session = {
-        ...userSession,
-        conversion_url: window.location.pathname,
-      };
-      setUserSession(session);
-      localStorage.setItem('userSession', JSON.stringify(session));
-    }
-  };
+  }, [router]);
 
   return (
     <SessionContext.Provider
