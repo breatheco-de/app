@@ -303,7 +303,7 @@ function ContactInformation({
                 <Text size="16px">
                   {t('checkout.description')}
                   {' '}
-                  <NextChakraLink href="/privacy-policy" target="_blank">
+                  <NextChakraLink textDecoration="underline" href="https://4geeksacademy.notion.site/4geeksacademy/Mastering-Technical-Knowledge-984d2df394c44aedb05987311ccfcf06" target="_blank">
                     {t('checkout.read-more')}
                   </NextChakraLink>
                 </Text>
