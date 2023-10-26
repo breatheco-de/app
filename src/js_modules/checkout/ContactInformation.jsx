@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
   Avatar,
+  Tooltip,
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -298,15 +299,22 @@ function ContactInformation({
             {defaultPlanData?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="25px" borderRadius="11px" background={backgroundColor}>
                 <Heading size="26px">
-                  {defaultPlanData.title}
+                  {t('checkout.title')}
                 </Heading>
-                <Text size="16px" color="blue.default">
-                  {t('what-includes')}
+                <Text size="16px">
+                  {t('checkout.description')}
+                  {' '}
+                  <NextChakraLink textDecoration="underline" href="https://4geeksacademy.notion.site/4geeksacademy/Mastering-Technical-Knowledge-984d2df394c44aedb05987311ccfcf06" target="_blank">
+                    {t('checkout.read-more')}
+                  </NextChakraLink>
                 </Text>
+                {/* <Text size="16px" color="blue.default">
+                  {t('what-includes')}
+                </Text> */}
                 <Flex flexDirection="column" gridGap="12px" mt="1rem">
                   {defaultPlanData?.featured_info?.length > 0
                     && defaultPlanData?.featured_info.map((info) => info?.service?.slug && (
-                      <Box display="flex" gridGap="8px">
+                      <Box display="flex" gridGap="8px" alignItems="center">
                         {info?.service?.icon_url
                           ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                           : (
@@ -322,6 +330,11 @@ function ContactInformation({
                             </Text>
                           )} */}
                         </Box>
+                        <Tooltip label={info.features[0]?.description} placement="top">
+                          <Box>
+                            <Icon icon="help" width="15px" height="15px" style={{ alignItems: 'center' }} />
+                          </Box>
+                        </Tooltip>
                       </Box>
                     ))}
                 </Flex>
