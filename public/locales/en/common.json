@@ -216,6 +216,13 @@
       },
       {
         "service": {
+          "slug": "unlimited-human-feedback",
+          "title": "Unlimited human feedback"
+        },
+        "features": [{ "description": "Every project you deliver will be reviewed by one of our mentors, and you will receive relevant feedback." }]
+      },
+      {
+        "service": {
           "slug": "lifetime-technical-support",
           "title": "Lifetime technical support"
         },
