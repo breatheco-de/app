@@ -201,8 +201,9 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           resolve(response);
         }
       })
-      .catch(() => {
-        reject();
+      .catch((error) => {
+        console.error("Error handling payment bc.payment().pay", error);
+        reject(error);
       });
   });
 
