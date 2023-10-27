@@ -37,7 +37,7 @@ export default function Thmbnail() {
   const whiteColor = [1, 3, 5, 6, 7, 8];
 
   const Div = styled.div`
-    background: url("/static/images/thumbnail/random-bg${randomImgNumber}.png");
+    background: url("/static/images/thumbnail/random-bg${randomImgNumber}.webp");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
