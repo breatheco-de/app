@@ -6,6 +6,11 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Bienvenido a:",
+  "checkout": {
+    "title": "El código te hará libre",
+    "description": "El camino hacia la libertad profesional es altamente tutelado, en vivo y en conjunto.",
+    "read-more" :"Lee la ciencia detrás de esto."
+  },
   "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
   "in-waiting-list-title": "Estás en nuestra lista de espera",
