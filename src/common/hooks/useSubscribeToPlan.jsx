@@ -47,8 +47,9 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
                   setIsCheckingSuccess(true);
                 }
               })
-              .catch(() => {
-                reject();
+              .catch((error) => {
+                reject(error);
+                console.error("Error handling payment", error)
                 toast({
                   position: 'top',
                   title: t('alert-message:payment-error'),
@@ -58,8 +59,9 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
                 });
               });
           })
-          .catch(() => {
-            reject();
+          .catch((error) => {
+            reject(error);
+            console.error("Error handling checking", error)
           });
       }).catch(() => reject());
   });
