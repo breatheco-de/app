@@ -161,13 +161,16 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
           });
-          const currency = cohortPlans[0]?.plan?.currency?.code;
-          const simplePlans = cohortPlans.map((cohortPlan) => {
-            const { plan } = cohortPlan;
-            const { service_items, ...restOfPlan } = plan;
-            return { plan: { ...restOfPlan } };
-          });
-
+          let currency = 'USD';
+          let simplePlans = [];
+          if (cohortPlans) {
+            currency = cohortPlans[0]?.plan?.currency?.code || 'USD';
+            simplePlans = cohortPlans.map((cohortPlan) => {
+              const { plan } = cohortPlan;
+              const { service_items, ...restOfPlan } = plan;
+              return { plan: { ...restOfPlan } };
+            });
+          }
           reportDatalayer({
             dataLayer: {
               event: 'purchase',
