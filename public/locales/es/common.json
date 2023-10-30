@@ -197,7 +197,7 @@
   "login": "Iniciar sesión",
   "privacy-policy": "Política de privacidad",
   "bootcamp": {
-    "planType": "bootcamp",
+    "planType": "ilimitado",
     "type": "Ilimitado",
     "period_label": "",
     "title": "Programa de Bootcamp",
