@@ -12,7 +12,7 @@ import { isWindow, slugToTitle } from '../../utils';
 export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard } = useStyle();
-  const isBootcampType = item?.type && item?.type.toLowerCase() === 'unlimited';
+  const isBootcampType = item?.type && item?.type.toLowerCase() === 'bootcamp';
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
