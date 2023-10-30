@@ -197,7 +197,7 @@
   "login": "Login",
   "privacy-policy": "Privacy policy",
   "bootcamp": {
-    "planType": "unlimited",
+    "planType": "bootcamp",
     "type": "Unlimited",
     "period_label": "",
     "title": "Bootcamp Program",
