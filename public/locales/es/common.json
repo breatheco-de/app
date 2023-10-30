@@ -197,8 +197,8 @@
   "login": "Iniciar sesión",
   "privacy-policy": "Política de privacidad",
   "bootcamp": {
-    "planType": "ilimitado",
-    "type": "ilimitado",
+    "planType": "bootcamp",
+    "type": "Ilimitado",
     "period_label": "",
     "title": "Programa de Bootcamp",
     "description": "De nada a una carrera en tecnología en solo unos meses, no se requiere experiencia previa.",
