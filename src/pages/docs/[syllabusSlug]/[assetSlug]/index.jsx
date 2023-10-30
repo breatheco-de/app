@@ -32,7 +32,13 @@ import modifyEnv from '../../../../../modifyEnv';
 function Docs() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
-  const { t } = useTranslation('docs');
+  const { t, lang } = useTranslation('docs');
+  const langsDict = {
+    es: 'es',
+    en: 'us',
+    us: 'us',
+  };
+  const currentLang = langsDict[lang];
   const [syllabusData, setSyllabusData] = useState(null);
   const [asset, setAsset] = useState(null);
   const [open, setOpen] = useState(null);
@@ -186,7 +192,7 @@ function Docs() {
               <Box marginTop="30px" key={`${module.label}-${index}`} borderBottom="1px solid" borderColor={hexColor.featuredColor}>
                 <Box display="flex" alignItems="center" cursor="pointer" onClick={() => handleOpen(index)}>
                   <Text size="md" color={hexColor.fontColor3} fontWeight="700">
-                    {module.label}
+                    {typeof module.label === 'string' ? module.label : module.label[currentLang]}
                   </Text>
                   {open === index ? (
                     <ChevronDownIcon color={hexColor.blueDefault} />
