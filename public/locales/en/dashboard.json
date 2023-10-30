@@ -14,7 +14,9 @@
     "cta-description": "Your current plan does not include access to this cohort, please upgrade to access the content.",
     "cta-cohort-not-found": "This cohort does not exist or you don't have access to join.",
     "cta-button": "Review plan",
-    "join-next-cohort":"Join next cohort"
+    "join-next-cohort":"Join next cohort",
+    "join-more":"Join more than 100 people taking this course right now",
+    "preview-description": "You are reviewing this cohort dashboard on \"preview mode\", in order to start learning and interact with the materials please join the cohort."
   },
   "already-have-this-cohort": "You are already a member of this cohort",
   "modules": {

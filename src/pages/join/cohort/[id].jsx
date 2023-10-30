@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link, useToast } from '@chakra-ui/react';
+import { Box, Flex, Link, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
@@ -11,6 +11,7 @@ import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import { generateCohortSyllabusModules } from '../../../common/handlers/cohorts';
 import Heading from '../../../common/components/Heading';
 import TagCapsule from '../../../common/components/TagCapsule';
+import JoinCohortComponent from '../../../common/components/JoinCohort';
 import useStyle from '../../../common/hooks/useStyle';
 import Text from '../../../common/components/Text';
 import Module from '../../../js_modules/moduleMap/module';
@@ -213,6 +214,31 @@ function Page({ id, syllabus, cohort, members }) {
 
         <Flex mt="3rem" gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
           <Box flex={{ base: 1, md: 0.75 }}>
+            {existsRelatedSubscription ? (
+              <JoinCohortComponent
+                margin="0 0 40px 0"
+                logo={syllabus?.logo}
+                isFetching={isFetching}
+                alreadyHaveCohort={alreadyHaveCohort}
+                joinFunction={joinCohort}
+              />
+            ) : (
+              <CallToAction
+                background="blue.default"
+                buttonStyle={{
+                  backgroundColor: hexColor.backgroundColor,
+                  color: hexColor.blueDefault,
+                  borderColor: hexColor.blueDefault,
+                }}
+                onClick={handleClick}
+                isLoading={alreadyHaveCohort}
+                margin="0 0 40px 0"
+                title={t('join-cohort-page.cta-description')}
+                href={`/pricing${qsForPricing}`}
+                buttonText={t('join-cohort-page.cta-button')}
+                width={{ base: '100%', md: 'fit-content' }}
+              />
+            )}
             <Heading as="h1" size="xl">
               {syllabus?.name || cohort?.name}
             </Heading>
@@ -232,36 +258,6 @@ function Page({ id, syllabus, cohort, members }) {
                 />
               )}
             </Box>
-
-            {existsRelatedSubscription ? (
-              <Button
-                variant="default"
-                isLoading={isFetching || alreadyHaveCohort}
-                isDisabled={!isAuthenticated}
-                onClick={joinCohort}
-                textTransform="uppercase"
-                fontSize="13px"
-                mt="1rem"
-              >
-                {t('join-cohort-page.join-next-cohort')}
-              </Button>
-            ) : (
-              <CallToAction
-                background="blue.default"
-                buttonStyle={{
-                  backgroundColor: hexColor.backgroundColor,
-                  color: hexColor.blueDefault,
-                  borderColor: hexColor.blueDefault,
-                }}
-                onClick={handleClick}
-                isLoading={alreadyHaveCohort}
-                margin="40px 0 auto 0"
-                title={t('join-cohort-page.cta-description')}
-                href={`/pricing${qsForPricing}`}
-                buttonText={t('join-cohort-page.cta-button')}
-                width={{ base: '100%', md: 'fit-content' }}
-              />
-            )}
 
             {syllabus?.modules?.length > 0 && (
               <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
