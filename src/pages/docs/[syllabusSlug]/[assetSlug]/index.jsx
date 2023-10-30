@@ -203,7 +203,7 @@ function Docs() {
                 {open === index && (
                   <Box marginLeft="5px">
                     {module.modules.map((assetModule, i) => (
-                      <Box margin="5px 0" padding="0 15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
+                      <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
                         <Link
                           color={hexColor.fontColor3}
                           href={`/docs/${syllabusSlug}/${assetModule.slug}`}
