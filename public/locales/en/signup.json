@@ -6,6 +6,11 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Welcome to:",
+  "checkout": {
+    "title": "Code will set you free",
+    "description": "The path to professional freedom is highly mentored, live and together.",
+    "read-more" :"Read the science behind it."
+  },
   "what-includes": "What includes?",
   "continue-learning": "Continue learning",
   "in-waiting-list-title": "You are in out waiting list",
@@ -166,10 +171,10 @@
     "already-have-plan": "You already have it",
     "basic-plan": {
       "type": "Basic",
-      "hook-message": "Get ready to meet our academy",
-      "title": "Free Member",
-      "description": "All you need to start learning to code",
-      "button-title": "Start free"
+      "hook-message": "Start learning now without financial commitments",
+      "title": "No credit card required",
+      "description": "Start learning and discover our amazing content and benefits",
+      "button-title": "Start for free"
 
     },
     "premium-plan": {

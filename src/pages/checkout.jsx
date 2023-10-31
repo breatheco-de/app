@@ -9,7 +9,6 @@ import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
@@ -29,7 +28,8 @@ import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import { reportDatalayer } from '../utils/requests';
+import { fetchSuggestedPlan, getTranslations, processPlans } from '../common/handlers/subscriptions';
 import SimpleModal from '../common/components/SimpleModal';
 import PricingView from './pricing';
 
@@ -76,6 +76,7 @@ function Checkout() {
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [defaultPlanData, setDefaultPlanData] = useState({});
+  const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
@@ -122,11 +123,19 @@ function Checkout() {
   useEffect(() => {
     const translations = getTranslations(t);
     const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+    bc.payment().getPlan(defaultPlan).then(async (resp) => {
+      const processedPlan = await processPlans(resp?.data, {
+        quarterly: false,
+        halfYearly: false,
+        planType: 'original',
+      }, translations);
+      setOriginalPlan(processedPlan);
+    });
     fetchSuggestedPlan(defaultPlan, translations)
       .then((data) => {
         setDefaultPlanData(data);
       });
-    TagManager.dataLayer({
+    reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
         path: '/checkout',
@@ -413,7 +422,7 @@ function Checkout() {
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            defaultPlanData={defaultPlanData?.plans?.original_plan}
+            defaultPlanData={originalPlan}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}

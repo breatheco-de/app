@@ -5,9 +5,9 @@ import {
   ModalOverlay, Stack,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import TagManager from 'react-gtm-module';
 import useTranslation from 'next-translate/useTranslation';
 import Confetti from 'react-confetti';
+import { reportDatalayer } from '../../utils/requests';
 import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
@@ -102,7 +102,7 @@ function ShareButton({
                     key={l.name}
                     href={l.href}
                     onClick={() => {
-                      TagManager.dataLayer({
+                      reportDatalayer({
                         dataLayer: {
                           event: 'share',
                           method: l.name,
@@ -132,7 +132,7 @@ function ShareButton({
               <Box style={{ margin: '0px' }} textAlign="center" alignItems="center" display="flex" flexDirection="column" gridGap="6px">
                 <Button
                   onClick={() => {
-                    TagManager.dataLayer({
+                    reportDatalayer({
                       dataLayer: {
                         event: 'share',
                         method: 'copy',
