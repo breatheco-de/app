@@ -38,7 +38,7 @@ function PricingView({ data, isForModal }) {
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
   const queryPlan = getQueryString('plan');
-  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '4geeks-standard';
+  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || 'basic';
   const [isFetching, setIsFetching] = useState(!data?.title);
   const [principalData, setPrincipalData] = useState(data);
   const [paymentTypePlans, setPaymentTypePlans] = useState({

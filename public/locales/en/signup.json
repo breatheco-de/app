@@ -6,6 +6,11 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Welcome to:",
+  "checkout": {
+    "title": "Code will set you free",
+    "description": "The path to professional freedom is highly mentored, live and together.",
+    "read-more" :"Read the science behind it."
+  },
   "what-includes": "What includes?",
   "continue-learning": "Continue learning",
   "in-waiting-list-title": "You are in out waiting list",
