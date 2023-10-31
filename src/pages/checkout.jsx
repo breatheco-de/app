@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
@@ -29,7 +30,7 @@ import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
+import { fetchSuggestedPlan, getTranslations, processPlans } from '../common/handlers/subscriptions';
 import SimpleModal from '../common/components/SimpleModal';
 import PricingView from './pricing';
 
@@ -76,6 +77,7 @@ function Checkout() {
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [defaultPlanData, setDefaultPlanData] = useState({});
+  const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
@@ -89,6 +91,7 @@ function Checkout() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { userSession } = useSession();
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
@@ -122,6 +125,14 @@ function Checkout() {
   useEffect(() => {
     const translations = getTranslations(t);
     const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+    bc.payment().getPlan(defaultPlan).then(async (resp) => {
+      const processedPlan = await processPlans(resp?.data, {
+        quarterly: false,
+        halfYearly: false,
+        planType: 'original',
+      }, translations);
+      setOriginalPlan(processedPlan);
+    });
     fetchSuggestedPlan(defaultPlan, translations)
       .then((data) => {
         setDefaultPlanData(data);
@@ -130,6 +141,7 @@ function Checkout() {
       dataLayer: {
         event: 'begin_checkout',
         path: '/checkout',
+        conversion_info: userSession,
       },
     });
   }, []);
@@ -413,7 +425,7 @@ function Checkout() {
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
-            defaultPlanData={defaultPlanData?.plans?.original_plan}
+            defaultPlanData={originalPlan}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}
