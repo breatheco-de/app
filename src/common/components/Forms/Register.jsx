@@ -77,7 +77,7 @@ function Register({ setIsLoggedFromRegister }) {
             router.push({
               pathname: '/checkout',
               query: {
-                plan: '4geeks-standard',
+                plan: 'basic',
               },
             });
           } else {

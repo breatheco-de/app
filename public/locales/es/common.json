@@ -209,10 +209,38 @@
     "featured_info": [
       {
         "service": {
+          "slug": "join-a-cohort",
+          "title": "Únete a una cohort con un salón en vivo"
+        },
+        "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-human-feedback",
+          "title": "Feedback humano ilimitado"
+        },
+        "features": [{ "description": "Cada proyecto que entregues, será revisado por uno de nuestros mentores y ellos te darán feedback muy relevante relacionado a tu código." }]
+      },
+      {
+        "service": {
+          "slug": "certified-by-us",
+          "title": "Certificados por el Dep. de Educación dee FL, U.S."
+        },
+        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
+      },
+      {
+        "service": {
           "slug": "job-guarantee",
           "title": "Garantía de trabajo"
         },
-        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
+        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; <a href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>se aplican condiciones</a>." }]
+      },
+      {
+        "service": {
+          "slug": "Soporte profesional de por vida",
+          "title": "Career support for life"
+        },
+        "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
       },
       {
         "service": {
@@ -223,24 +251,10 @@
       },
       {
         "service": {
-          "slug": "unlimited-access-to-community-content",
-          "title": "Acceso ilimitado a la comunidad y al contenido"
+          "slug": "access-to-premium-community",
+          "title": "Acceso a la comunidad premium"
         },
-        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
-      },
-      {
-        "service": {
-          "slug": "full-access-to-community-&-content",
-          "title": "Acceso completo a la comunidad y al contenido"
-        },
-        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
-      },
-      {
-        "service": {
-          "slug": "Soporte profesional de por vida",
-          "title": "Career support for life"
-        },
-        "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
+        "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
       }
     ]
   }

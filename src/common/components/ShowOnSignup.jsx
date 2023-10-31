@@ -63,7 +63,7 @@ function ShowOnSignUp({
 
   const handleSubmit = async (actions, allValues) => {
     const academy = cohortSession?.academy?.slug;
-    const defaultPlan = process.env.BASE_PLAN || '4geeks-standard';
+    const defaultPlan = process.env.BASE_PLAN || 'basic';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -146,7 +146,7 @@ function ShowOnSignUp({
         },
       });
     }
-    if (typeof resp?.status === 'number' && data?.access_token === null) {
+    if (typeof resp?.status === 'number' && !data?.access_token) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
