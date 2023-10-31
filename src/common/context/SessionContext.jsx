@@ -46,11 +46,11 @@ function SessionProvider({ children }) {
       if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) conversionUrl = storedSession.conversion_url;
       else conversionUrl = window.location.pathname;
 
-      const utm_placement = getQueryString('utm_placement');
-      const utm_medium = getQueryString('utm_medium');
-      const utm_source = getQueryString('utm_source');
-      const utm_term = getQueryString('utm_term');
-      const utm_content = getQueryString('utm_content');
+      const utm_placement = getQueryString('utm_placement') || storedSession.utm_placement;
+      const utm_medium = getQueryString('utm_medium') || storedSession.utm_medium;
+      const utm_source = getQueryString('utm_source') || storedSession.utm_source;
+      const utm_term = getQueryString('utm_term') || storedSession.utm_term;
+      const utm_content = getQueryString('utm_content') || storedSession.utm_content;
 
       const session = {
         ...storedSession,
