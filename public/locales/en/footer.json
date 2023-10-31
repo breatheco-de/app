@@ -46,6 +46,10 @@
       {
         "label": "how to’s?",
         "href": "/how-to"
+      },
+      {
+        "label": "Knowledge Base",
+        "href": "/docs/knowledge-base-4geeks"
       }
     ]
   },

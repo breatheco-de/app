@@ -33,17 +33,18 @@ export default function Thmbnail() {
     }
   }, [slug]);
 
-  const randomImgNumber = Math.floor(Math.random() * 5) + 1;
+  const randomImgNumber = Math.floor(Math.random() * 10) + 1;
+  const whiteColor = [1, 3, 5, 6, 7, 8];
 
   const Div = styled.div`
-    background: url("/static/images/thumbnail/random-bg${randomImgNumber}.webp");
+    background: url("/static/images/thumbnail/${randomImgNumber}.png");
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: ${(randomImgNumber === 2 || randomImgNumber === 3) ? 'white' : 'black'};
+    color: ${whiteColor.includes(randomImgNumber) ? 'white' : 'black'};
   `;
 
   if (!asset) return null;
