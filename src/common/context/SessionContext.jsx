@@ -40,17 +40,17 @@ function SessionProvider({ children }) {
     if (isWindow) {
       const storedSession = JSON.parse(localStorage.getItem('userSession'));
       const { userAgent } = window.navigator;
-      const landingUrl = storedSession?.landing_url && storedSession.landing_url !== '' ? storedSession.landing_url : window.location.pathname;
+      const landingUrl = storedSession?.landing_url && storedSession?.landing_url !== '' ? storedSession?.landing_url : window.location.pathname;
 
       let conversionUrl;
-      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) conversionUrl = storedSession.conversion_url;
+      if (['/checkout', '/pricing'].some((path) => window.location.pathname.includes(path))) conversionUrl = storedSession?.conversion_url;
       else conversionUrl = window.location.pathname;
 
-      const utm_placement = getQueryString('utm_placement') || storedSession.utm_placement;
-      const utm_medium = getQueryString('utm_medium') || storedSession.utm_medium;
-      const utm_source = getQueryString('utm_source') || storedSession.utm_source;
-      const utm_term = getQueryString('utm_term') || storedSession.utm_term;
-      const utm_content = getQueryString('utm_content') || storedSession.utm_content;
+      const utm_placement = getQueryString('utm_placement') || storedSession?.utm_placement;
+      const utm_medium = getQueryString('utm_medium') || storedSession?.utm_medium;
+      const utm_source = getQueryString('utm_source') || storedSession?.utm_source;
+      const utm_term = getQueryString('utm_term') || storedSession?.utm_term;
+      const utm_content = getQueryString('utm_content') || storedSession?.utm_content;
 
       const session = {
         ...storedSession,
