@@ -209,38 +209,52 @@
     "featured_info": [
       {
         "service": {
+          "slug": "join-a-cohort",
+          "title": "Join a cohort with a live classroom"
+        },
+        "features": [{ "description": "Take part of a group of students learning together with a teacher on weekly live classes." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-human-feedback",
+          "title": "Unlimited human feedback"
+        },
+        "features": [{ "description": "Every project you deliver will be reviewed by one of our mentors, and you will receive relevant feedback." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-live-learning",
+          "title": "Unlimited live learning"
+        },
+        "features": [{ "description": "Get unlimited access to live workshops hosted by expert developers." }]
+      },
+      {
+        "service": {
+          "slug": "certified-by-us",
+          "title": "Certified by U.S. FL Dep. of Education"
+        },
+        "features": [{ "description": "Our bootcamp certificates have a badge certified by the US Florida Dep. of Education." }]
+      },
+      {
+        "service": {
           "slug": "job-guarantee",
           "title": "Job guarantee"
         },
-        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; conditions apply." }]
-      },
-      {
-        "service": {
-          "slug": "lifetime-technical-support",
-          "title": "Lifetime technical support"
-        },
-        "features": [{ "description": "Lifetime 1-1 Technical Mentorship, chat support, and AI support from our internal bot." }]
-      },
-      {
-        "service": {
-          "slug": "unlimited-access-to-community-content",
-          "title": "Unlimited access to community & content"
-        },
-        "features": [{ "description": "Access to hundreds of lessons, practices, and interactive projects." }]
-      },
-      {
-        "service": {
-          "slug": "full-access-to-community-&-content",
-          "title": "Full access to community & content"
-        },
-        "features": [{ "description": "Access to hundreds of lessons, practices, and interactive projects." }]
+        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
       },
       {
         "service": {
           "slug": "career-support-for-life",
           "title": "Career support for life"
         },
-        "features": [{ "description": "Get instant feedback on your performance, request 1-on-1 and group mentorship sessions, expert code reviews, and Q&A chat support." }]
+        "features": [{ "description": "Get instant feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more." }]
+      },
+      {
+        "service": {
+          "slug": "access-to-premium-community",
+          "title": "Access to premium community"
+        },
+        "features": [{ "description": "Our premium community gives you access to office space worldwide, events inside partner companies and employers, job fairs, networking events, an exclusive slack channel, and more perks." }]
       }
     ]
   }
