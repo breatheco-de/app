@@ -29,6 +29,11 @@ import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
 import modifyEnv from '../../../../../modifyEnv';
 
+const redirectLang = {
+  es: 'es/',
+  en: '/',
+};
+
 function Docs() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
@@ -105,7 +110,11 @@ function Docs() {
 
   const getAssetData = async () => {
     try {
-      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((myAsset) => myAsset.slug === assetSlug));
+      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((moduleAsset) => {
+        if (moduleAsset.slug === assetSlug) return true;
+        const translations = Object.values(moduleAsset.translations);
+        return translations.some((translation) => translation.slug === assetSlug);
+      }));
       if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
       const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
@@ -202,20 +211,23 @@ function Docs() {
                 </Box>
                 {open === index && (
                   <Box marginLeft="5px">
-                    {module.modules.map((assetModule, i) => (
-                      <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
-                        <Link
-                          color={hexColor.fontColor3}
-                          href={`/docs/${syllabusSlug}/${assetModule.slug}`}
-                          textDecoration="none"
-                          _hover={{
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {assetModule.title}
-                        </Link>
-                      </Box>
-                    ))}
+                    {module.modules.map((assetModule, i) => {
+                      const assetData = assetModule.translations[langsDict[lang]] || assetModule;
+                      return (
+                        <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetData.slug ? hexColor.blueDefault : borderColor} key={`${assetData.slug}-${i}`}>
+                          <Link
+                            color={hexColor.fontColor3}
+                            href={`${redirectLang[lang]}docs/${syllabusSlug}/${assetData.slug}`}
+                            textDecoration="none"
+                            _hover={{
+                              textDecoration: 'none',
+                            }}
+                          >
+                            {assetData.title}
+                          </Link>
+                        </Box>
+                      );
+                    })}
                   </Box>
                 )}
               </Box>
