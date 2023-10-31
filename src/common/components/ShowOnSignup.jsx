@@ -135,7 +135,7 @@ function ShowOnSignUp({
         },
       });
     }
-    if (typeof resp?.status === 'number' && data?.access_token === null) {
+    if (typeof resp?.status === 'number' && !data?.access_token) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
