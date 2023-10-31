@@ -38,8 +38,8 @@ function UlComponent({ children }) {
 function OlComponent({ children }) {
   return (<ol className="md-bullet">{children}</ol>);
 }
-function ImgComponent({ ...props }) {
-  return (<Img className="MDImg" {...props} />);
+function ImgComponent(props) {
+  return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
 function ParagraphComponent({ ...props }) {
   return (<MDText {...props} />);
