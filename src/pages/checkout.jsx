@@ -148,7 +148,7 @@ function Checkout() {
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
-    if (!queryPlanExists && isAuthenticated) {
+    if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
       setIsPricingModalOpen(true);
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
