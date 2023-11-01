@@ -17,6 +17,7 @@ import PhoneInput from '../../common/components/PhoneInput';
 import { getQueryString, getStorageItem, setStorageItem, slugToTitle } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
+import useSession from '../../common/hooks/useSession';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
@@ -30,6 +31,7 @@ function ContactInformation({
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
+  const { userSession } = useSession();
   const {
     state, nextStep,
   } = useSignup();
@@ -80,7 +82,7 @@ function ContactInformation({
         'Content-Type': 'application/json',
         'Accept-Language': router?.locale || 'en',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({ ...allValues, conversion_info: userSession }),
     });
     const data = await resp.json();
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
@@ -110,6 +112,7 @@ function ContactInformation({
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
+          conversion_info: userSession,
         },
       });
     }
@@ -128,6 +131,7 @@ function ContactInformation({
           method: 'native',
           user_id: data?.id,
           email: data?.email,
+          conversion_info: userSession,
           plan: dataOfPlan?.slug,
         },
       });

@@ -10,6 +10,8 @@ import Text from './Text';
 import FieldForm from './Forms/FieldForm';
 import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
+import { usePersistent } from '../hooks/usePersistent';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
@@ -23,6 +25,8 @@ function ShowOnSignUp({
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { userSession } = useSession();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
@@ -58,6 +62,7 @@ function ShowOnSignUp({
   }, [alreadyLogged, existsConsumables]);
 
   const handleSubmit = async (actions, allValues) => {
+    const academy = cohortSession?.academy?.slug;
     const defaultPlan = process.env.BASE_PLAN || 'basic';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -69,6 +74,10 @@ function ShowOnSignUp({
         ...allValues,
         ...subscribeValues,
         plan: defaultPlan,
+        conversion_info: {
+          location: academy,
+          ...userSession,
+        },
       }),
     });
 
@@ -101,6 +110,7 @@ function ShowOnSignUp({
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
+          conversion_info: userSession,
         },
       });
     }
@@ -114,6 +124,7 @@ function ShowOnSignUp({
           user_id: data?.id,
           email: data?.email,
           plan: defaultPlan,
+          conversion_info: userSession,
         },
       });
       handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
@@ -135,7 +146,7 @@ function ShowOnSignUp({
         },
       });
     }
-    if (typeof resp?.status === 'number' && data?.access_token === null) {
+    if (typeof resp?.status === 'number' && !data?.access_token) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
