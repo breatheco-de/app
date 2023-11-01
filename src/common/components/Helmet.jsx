@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
-  unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
+  unlisted, pathConnector, locales, publishedTime, modifiedTime,
   locale, slug, disableStaticCanonical, eventStartAt,
 }) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
@@ -62,11 +62,6 @@ function Helmet({
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
       {/* <!-- Primary Meta Tags --> */}
-      {Array.isArray(keywords) && keywords.length > 0 && (
-        <meta name="keywords" content={keywords.join(', ')} />
-      )}
-      {typeof keywords === 'string' && keywords.length > 0 && <meta name="keywords" content={keywords} />}
-
       {locales.length > 0 && !translationsExists && !disableStaticCanonical && (
         <link rel="canonical" href={canonicalLink} />
       )}
@@ -166,7 +161,6 @@ Helmet.propTypes = {
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
   modifiedTime: PropTypes.string,
-  keywords: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   card: PropTypes.string,
   locale: PropTypes.string,
   slug: PropTypes.string,
@@ -187,7 +181,6 @@ Helmet.defaultProps = {
   locales: [],
   publishedTime: '',
   modifiedTime: '',
-  keywords: 'programming bootcamp, programming course, professional mentoring',
   card: 'default',
   locale: '',
   slug: '',
