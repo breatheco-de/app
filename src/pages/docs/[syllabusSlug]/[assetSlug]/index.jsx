@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   useColorModeValue,
@@ -30,83 +31,132 @@ import { MDSkeleton } from '../../../../common/components/Skeleton';
 import modifyEnv from '../../../../../modifyEnv';
 
 const redirectLang = {
-  es: 'es/',
+  es: '/es/',
   en: '/',
 };
 
-function Docs() {
+const langsDict = {
+  es: 'es',
+  en: 'us',
+  us: 'us',
+};
+
+const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
+  const {
+    lessons, replits, assignments, quizzes,
+  } = assignment;
+  if (lessons.length > 0 || replits.length > 0 || assignments.length > 0 || quizzes.length > 0) return true;
+  return false;
+}).map((assignment) => {
+  const {
+    id, label, lessons, replits, assignments, quizzes,
+  } = assignment;
+  const nestedAssignments = nestAssignments({
+    id,
+    read: lessons,
+    practice: replits,
+    project: assignments,
+    answer: quizzes,
+  });
+
+  const myModule = {
+    id,
+    label,
+    modules: nestedAssignments.modules,
+  };
+  return myModule;
+});
+
+export const getStaticPaths = async ({ locales }) => {
+  const { data } = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY }).getPublicVersion();
+
+  const formatedData = data.flatMap((syllabus) => {
+    const formated = formatSyllabus(syllabus);
+    const assets = formated.flatMap((elem) => elem.modules.map((module) => module));
+    return assets.map((asset) => ({ ...asset, syllabus }));
+  });
+  const paths = formatedData.flatMap((res) => locales.map((locale) => ({
+    params: {
+      syllabusSlug: res.syllabus.slug,
+      assetSlug: res.translations?.[langsDict[locale]]?.slug || res.slug,
+    },
+    locale,
+  })));
+
+  return {
+    fallback: false,
+    paths,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { syllabusSlug, assetSlug } = params;
+
+  try {
+    const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+    const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+    if (!syllabus) throw new Error('syllabus not found');
+
+    const moduleData = formatSyllabus(syllabus);
+
+    const asset = moduleData.flatMap((syllabusModule) => syllabusModule.modules.map((moduleAsset) => moduleAsset))
+      .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations[locale]?.slug === assetSlug);
+
+    const { translations } = asset;
+
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us?.slug,
+        link: `/docs/${syllabusSlug}/${translations?.us?.slug}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/docs/${syllabusSlug}/${translations?.en?.slug}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es,
+        link: `/es/docs/${syllabusSlug}/${translations?.es?.slug}`,
+      },
+    ].filter((item) => translations?.[item?.value] !== undefined);
+    return {
+      props: {
+        translations: translationArray,
+        syllabusData: syllabus,
+        moduleMap: moduleData,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page for /${locale}/docs/${syllabusSlug}/${assetSlug}`, error);
+    return {
+      notFound: true,
+    };
+  }
+};
+
+function Docs({ syllabusData, moduleMap }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
+  const { syllabusSlug, assetSlug } = router.query;
   const { t, lang } = useTranslation('docs');
-  const langsDict = {
-    es: 'es',
-    en: 'us',
-    us: 'us',
-  };
   const currentLang = langsDict[lang];
-  const [syllabusData, setSyllabusData] = useState(null);
   const [asset, setAsset] = useState(null);
   const [open, setOpen] = useState(null);
-  const [moduleMap, setModuleMap] = useState([]);
   const [loadStatus, setLoadStatus] = useState({
     loading: true,
     status: 'loading',
   });
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { syllabusSlug, assetSlug } = router.query;
   const { hexColor, borderColor, featuredLight, fontColor } = useStyle();
   const currentTheme = useColorModeValue('light', 'dark');
 
   const markdownData = asset?.markdown ? getMarkDownContent(asset.markdown) : '';
   const isIpynb = asset?.ipynbHtml?.statusText === 'OK' || asset?.ipynbHtml?.iframe;
-
-  const getSyllabusData = async () => {
-    try {
-      const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
-      const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
-      if (!syllabus) throw new Error('syllabus not found');
-      setSyllabusData(syllabus);
-
-      const moduleData = syllabus.json.days.filter((assignment) => {
-        const {
-          lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons.length > 0 || replits.length > 0 || assignments.length > 0 || quizzes.length > 0) return true;
-        return false;
-      }).map((assignment, i) => {
-        const {
-          id, label, lessons, replits, assignments, quizzes,
-        } = assignment;
-
-        const nestedAssignments = nestAssignments({
-          id,
-          read: lessons,
-          practice: replits,
-          project: assignments,
-          answer: quizzes,
-        });
-
-        const myModule = {
-          id,
-          label,
-          modules: nestedAssignments.modules,
-        };
-        if (myModule.modules.find((elem) => elem.slug === assetSlug)) setOpen(i);
-        return myModule;
-      });
-      setModuleMap(moduleData);
-      if (!assetSlug) {
-        router.push(`/docs/${syllabusSlug}/${moduleData[0]?.modules[0]?.slug}`);
-        setOpen(0);
-      }
-    } catch (e) {
-      setLoadStatus({
-        loading: false,
-        status: 'not-found',
-      });
-      console.log(e);
-    }
-  };
 
   const getAssetData = async () => {
     try {
@@ -168,7 +218,9 @@ function Docs() {
   };
 
   useEffect(() => {
-    getSyllabusData();
+    moduleMap.forEach((syllabusModule, i) => {
+      if (syllabusModule.modules.find((elem) => elem.slug === assetSlug || elem.translations[langsDict[lang]]?.slug === assetSlug)) setOpen(i);
+    });
   }, []);
 
   useEffect(() => {
@@ -375,5 +427,10 @@ function Docs() {
     </>
   );
 }
+
+Docs.propTypes = {
+  syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  moduleMap: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+};
 
 export default Docs;
