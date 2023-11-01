@@ -121,7 +121,7 @@ function MktTwoColumnSideImage({
         border={border}
         alignItems="center"
         borderRadius="12px"
-        padding={{ base: '20px 10px', md: '0' }}
+        padding={{ base: '20px 10px', md: '24px 0px' }}
         gridGap={gridGap}
         marginTop="20px"
         style={{
