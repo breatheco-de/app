@@ -120,7 +120,7 @@ export const getStaticProps = async ({ params, locale }) => {
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
+        slug: translations?.es?.slug,
         link: `/es/docs/${syllabusSlug}/${translations?.es?.slug}`,
       },
     ].filter((item) => translations?.[item?.value] !== undefined);
