@@ -24,6 +24,7 @@ import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async () => {
   const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
@@ -426,6 +427,13 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </Box>
           )}
         </Box>
+        <RelatedContent
+          type="LESSON,ARTICLE"
+          extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+          technologies={lesson?.technologies}
+          gridColumn="2 / span 10" // fix this
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );
