@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
-import { Button, Flex, Heading } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import { setStorageItem, slugToTitle } from '../../utils';
+import Heading from './Heading';
 
 function UpgradeForConsumableView({ externalData }) {
   const { t } = useTranslation('signup');
@@ -101,28 +102,30 @@ function UpgradeForConsumableView({ externalData }) {
           : t('consumables.ran-out-of-mentorships-text')}
       </Text>
       <Flex flexDirection="column" gridGap="16px">
-        <Button variant="unstyled" isDisabled={alreadySubscribedToAll} _hover={{ background: 'yellow.light' }} display="flex" cursor="pointer" background="yellow.light" onClick={() => setSelectedIndex(0)} border="2px solid" borderColor={selectedIndex === 0 ? hexColor.yellowDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
-          <Flex gridGap="10px" alignItems="center">
-            <Text size="12px" fontWeight={700} padding="4px 10px" background="yellow.default" color="white" borderRadius="18px">
-              {hasBasePlan
-                ? (suggestedPlan?.title || slugToTitle(suggestedPlan?.slug))
-                : (basePlan?.title || slugToTitle(basePlan?.slug))}
-            </Text>
-            {alreadySubscribedToAll && (
-              <Text size="11px">
-                {`(${t('consumables.already-have-it')})`}
+        {!alreadySubscribedToAll && (
+          <Button variant="unstyled" isDisabled={alreadySubscribedToAll} _hover={{ background: 'yellow.light' }} display="flex" cursor="pointer" background="yellow.light" onClick={() => setSelectedIndex(0)} border="2px solid" borderColor={selectedIndex === 0 ? hexColor.yellowDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
+            <Flex gridGap="10px" alignItems="center">
+              <Text size="12px" fontWeight={700} padding="4px 10px" background="yellow.default" color="white" borderRadius="18px">
+                {hasBasePlan
+                  ? (suggestedPlan?.title || slugToTitle(suggestedPlan?.slug))
+                  : (basePlan?.title || slugToTitle(basePlan?.slug))}
               </Text>
-            )}
-          </Flex>
-          <Text size="12px" fontWeight={700} color="black">
-            {t('upgrade-a-plan')}
-          </Text>
-          <Text size="12px" fontWeight={400} color="black">
-            {isEventConsumable
-              ? t('consumables.and-get-event-access')
-              : t('consumables.and-get-mentorship-access')}
-          </Text>
-        </Button>
+              {alreadySubscribedToAll && (
+                <Text size="11px">
+                  {`(${t('consumables.already-have-it')})`}
+                </Text>
+              )}
+            </Flex>
+            <Text size="12px" fontWeight={700} textTransform="uppercase" color="black">
+              {t('upgrade-a-plan')}
+            </Text>
+            <Text size="12px" fontWeight={400} color="black">
+              {isEventConsumable
+                ? t('consumables.and-get-event-access')
+                : t('consumables.and-get-mentorship-access')}
+            </Text>
+          </Button>
+        )}
 
         <Button variant="unstyled" isDisabled={noExistsConsumablesForUserSubscriptions} _hover={{ background: featuredColor }} display="flex" cursor="pointer" background={featuredColor} onClick={() => setSelectedIndex(1)} border="2px solid" borderColor={selectedIndex === 1 ? hexColor.blueDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
           <Flex gridGap="10px" alignItems="center">
@@ -143,7 +146,7 @@ function UpgradeForConsumableView({ externalData }) {
               </>
             )}
           </Flex>
-          <Text size="12px" fontWeight={700} color={fontColor}>
+          <Text size="12px" fontWeight={700} textTransform="uppercase" color={fontColor}>
             {isEventConsumable
               ? t('consumables.purchase-one-or-more-events')
               : t('consumables.purchase-one-or-more-sessions')}
