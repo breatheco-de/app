@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -124,6 +125,15 @@ export const getStaticProps = async ({ params, locale }) => {
         link: `/es/docs/${syllabusSlug}/${translations?.es?.slug}`,
       },
     ].filter((item) => translations && translations?.[item?.value] !== undefined);
+
+    //serialize moduleData removing undefined values
+    moduleData.forEach((moduleSyllabus) => {
+      moduleSyllabus.modules.forEach((mod) => {
+        Object.keys(mod).forEach((key) => {
+          if (mod[key] === undefined) mod[key] = null;
+        });
+      });
+    });
     return {
       props: {
         translations: translationArray,
@@ -162,7 +172,7 @@ function Docs({ syllabusData, moduleMap }) {
     try {
       const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((moduleAsset) => {
         if (moduleAsset.slug === assetSlug) return true;
-        const translations = Object.values(moduleAsset.translations);
+        const translations = moduleAsset.translations ? Object.values(moduleAsset.translations) : [];
         return translations.some((translation) => translation.slug === assetSlug);
       }));
       if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
@@ -219,7 +229,7 @@ function Docs({ syllabusData, moduleMap }) {
 
   useEffect(() => {
     moduleMap.forEach((syllabusModule, i) => {
-      if (syllabusModule.modules.find((elem) => elem.slug === assetSlug || elem.translations[langsDict[lang]]?.slug === assetSlug)) setOpen(i);
+      if (syllabusModule.modules.find((elem) => elem.slug === assetSlug || elem.translations?.[langsDict[lang]]?.slug === assetSlug)) setOpen(i);
     });
   }, []);
 
@@ -264,7 +274,7 @@ function Docs({ syllabusData, moduleMap }) {
                 {open === index && (
                   <Box marginLeft="5px">
                     {module.modules.map((assetModule, i) => {
-                      const assetData = assetModule.translations[langsDict[lang]] || assetModule;
+                      const assetData = assetModule.translations?.[langsDict[lang]] || assetModule;
                       return (
                         <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetData.slug ? hexColor.blueDefault : borderColor} key={`${assetData.slug}-${i}`}>
                           <Link

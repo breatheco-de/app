@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { useEffect } from 'react';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -71,6 +72,15 @@ export const getStaticProps = async ({ params, locale }) => {
     if (!syllabus) throw new Error('syllabus not found');
 
     const moduleData = formatSyllabus(syllabus);
+
+    //serialize moduleData removing undefined values
+    moduleData.forEach((moduleSyllabus) => {
+      moduleSyllabus.modules.forEach((mod) => {
+        Object.keys(mod).forEach((key) => {
+          if (mod[key] === undefined) mod[key] = null;
+        });
+      });
+    });
 
     return {
       props: {
