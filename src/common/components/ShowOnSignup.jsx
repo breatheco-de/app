@@ -127,7 +127,7 @@ function ShowOnSignUp({
           conversion_info: userSession,
         },
       });
-      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token })
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
         .finally(() => {
           setAlreadyLogged(true);
           refetchAfterSuccess();
@@ -198,9 +198,7 @@ function ShowOnSignUp({
                   onClick={() => {
                     setStorageItem('redirect', router?.asPath);
                     setTimeout(() => {
-                      logout(() => {
-                        router.push('/login');
-                      });
+                      logout();
                     }, 150);
                   }}
                 >

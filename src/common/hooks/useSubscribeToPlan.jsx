@@ -21,7 +21,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
   const toast = useToast();
   const [isCheckingSuccess, setIsCheckingSuccess] = useState(false);
 
-  const handleSubscribeToPlan = ({ slug, accessToken, onSubscribedToPlan = () => {} }) => new Promise((resolve, reject) => {
+  const handleSubscribeToPlan = ({ slug, accessToken, onSubscribedToPlan = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
     setIsInProcessOfSubscription(true);
     if (accessToken) {
       axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
@@ -40,7 +40,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
             handlePayment({
               ...respData,
               installments: respData?.how_many_months,
-            })
+            }, disableRedirects)
               .then((respPayment) => {
                 resolve(respPayment.data);
                 if (respPayment.status < 400) {
