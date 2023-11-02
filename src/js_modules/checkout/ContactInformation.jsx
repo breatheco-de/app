@@ -308,7 +308,7 @@ function ContactInformation({
                 <Text size="16px">
                   {t('checkout.description')}
                   {' '}
-                  <NextChakraLink textDecoration="underline" href="https://4geeks.com/mastering-technical-knowledge" target="_blank">
+                  <NextChakraLink textDecoration="underline" href={t('checkout.read-more-link')} target="_blank">
                     {t('checkout.read-more')}
                   </NextChakraLink>
                 </Text>
