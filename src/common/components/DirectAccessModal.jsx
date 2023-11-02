@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import FieldForm from './Forms/FieldForm';
 import Heading from './Heading';
 import modifyEnv from '../../../modifyEnv';
@@ -14,6 +15,7 @@ import { log } from '../../utils/logging';
 
 function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   const { t } = useTranslation('profile');
+  const { userSession } = useSession();
   const {
     modal,
   } = useStyle();
@@ -50,7 +52,10 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({
+        ...allValues,
+        conversion_info: userSession,
+      }),
     });
 
     const data = await resp.json();

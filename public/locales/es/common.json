@@ -209,17 +209,10 @@
     "featured_info": [
       {
         "service": {
-          "slug": "job-guarantee",
-          "title": "Garantía de trabajo"
+          "slug": "join-a-cohort",
+          "title": "Únete a una cohort con un salón en vivo"
         },
-        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
-      },
-      {
-        "service": {
-          "slug": "lifetime-technical-support",
-          "title": "Soporte técnico de por vida"
-        },
-        "features": [{ "description": "Mentoría técnica 1-1 de por vida, soporte de chat y soporte de IA de nuestro bot interno." }]
+        "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
       },
       {
         "service": {
@@ -230,17 +223,17 @@
       },
       {
         "service": {
-          "slug": "unlimited-access-to-community-content",
-          "title": "Acceso ilimitado a la comunidad y al contenido"
+          "slug": "certified-by-us",
+          "title": "Certificados por el Dep. de Educación dee FL, U.S."
         },
-        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
+        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
       },
       {
         "service": {
-          "slug": "full-access-to-community-&-content",
-          "title": "Acceso completo a la comunidad y al contenido"
+          "slug": "job-guarantee",
+          "title": "Garantía de trabajo"
         },
-        "features": [{ "description": "Acceso a cientos de lecciones, prácticas y proyectos interactivos." }]
+        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; <a href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>se aplican condiciones</a>." }]
       },
       {
         "service": {
@@ -248,6 +241,20 @@
           "title": "Career support for life"
         },
         "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
+      },
+      {
+        "service": {
+          "slug": "lifetime-technical-support",
+          "title": "Soporte técnico de por vida"
+        },
+        "features": [{ "description": "Mentoría técnica 1-1 de por vida, soporte de chat y soporte de IA de nuestro bot interno." }]
+      },
+      {
+        "service": {
+          "slug": "access-to-premium-community",
+          "title": "Acceso a la comunidad premium"
+        },
+        "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
       }
     ]
   }
