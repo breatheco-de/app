@@ -100,7 +100,7 @@ export const getStaticProps = async ({ params, locale }) => {
     const moduleData = formatSyllabus(syllabus);
 
     const asset = moduleData.flatMap((syllabusModule) => syllabusModule.modules.map((moduleAsset) => moduleAsset))
-      .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations[locale]?.slug === assetSlug);
+      .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations?.[locale]?.slug === assetSlug);
 
     const { translations } = asset;
 
@@ -123,7 +123,7 @@ export const getStaticProps = async ({ params, locale }) => {
         slug: translations?.es?.slug,
         link: `/es/docs/${syllabusSlug}/${translations?.es?.slug}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => translations && translations?.[item?.value] !== undefined);
     return {
       props: {
         translations: translationArray,
