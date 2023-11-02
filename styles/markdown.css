@@ -2,6 +2,7 @@
   padding: 8px!important;
   display: block;
   margin: auto;
+  max-width: 550px;
 }
 .MDIframe {
   width: 100%;
