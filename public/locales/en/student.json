@@ -1,7 +1,6 @@
 {
   "back-to": "Back to Dashboard",
   "relevant-activities": "Relevant Activities",
-  "activities": "Activities",
   "attendance": "Attendance",
   "deliverables": "Deliverables",
   "deliverables-section": {
@@ -10,6 +9,27 @@
     "exercises": "Completed LearnPack Exercies"
   },
   "educational-status": "Educational Status",
+  "activities-section": {
+    "title": "Actividades",
+    "no-activities": "No activities registered",
+    "activities": {
+      "invite_created": "Inivite created",
+      "invite_status_updated": "Inivite status updated",
+      "survey": "nps survey answered",
+      "login": "Breathecode login",
+      "open_syllabus_module": "Open syllabus module",
+      "read_assignment": "Read assignment",
+      "assignment_review_status_updated": "Assignment review status updated",
+      "assignment_status_updated": "Assignment status updated",
+      "event_checkin_created": "Event chekin created",
+      "event_checkin_assisted": "Event chekin assisted",
+      "bag_created": "Bag created",
+      "checkout_completed": "Checkout completed",
+      "mentoring_session_scheduled": "Mentoring session scheduled",
+      "mentorship_session_checkin": "Mentoring session checkin",
+      "mentorship_session_checkout": "Mentoring session checkout"
+    }
+  },
   "analitics": {
     "total-mentorships": "Total mentorships",
     "projects-completed": "Projects completed",

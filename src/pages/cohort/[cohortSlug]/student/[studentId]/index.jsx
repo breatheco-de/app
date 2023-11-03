@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
   Box,
+  Button,
   Divider,
   useColorModeValue,
   Flex,
@@ -23,6 +24,69 @@ import Text from '../../../../../common/components/Text';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
 import Link from '../../../../../common/components/NextChakraLink';
 
+const activitiesTemplate = {
+  invite_created: {
+    icon: 'registration',
+    label: 'invite_created',
+  },
+  invite_status_updated: {
+    icon: 'change-status',
+    label: 'invite_status_updated',
+  },
+  nps_answered: {
+    icon: 'survey',
+    label: 'survey',
+  },
+  login: {
+    icon: 'login',
+    label: 'login',
+  },
+  open_syllabus_module: {
+    icon: 'open',
+    label: 'open_syllabus_module',
+  },
+  read_assignment: {
+    icon: 'book',
+    label: 'read_assignment',
+  },
+  assignment_review_status_updated: {
+    icon: 'note',
+    label: 'assignment_review_status_updated',
+  },
+  assignment_status_updated: {
+    icon: 'assignments',
+    label: 'assignment_status_updated',
+  },
+  event_checkin_created: {
+    icon: 'onlinePeople',
+    label: 'event_checkin_created',
+  },
+  event_checkin_assisted: {
+    icon: 'attendance',
+    label: 'event_checkin_assisted',
+  },
+  bag_created: {
+    icon: 'underlinedPencil',
+    label: 'bag_created',
+  },
+  checkout_completed: {
+    icon: 'platform-registration',
+    label: 'checkout_completed',
+  },
+  mentoring_session_scheduled: {
+    icon: 'calendar',
+    label: 'mentoring_session_scheduled',
+  },
+  mentorship_session_checkin: {
+    icon: 'chronometer',
+    label: 'mentorship_session_checkin',
+  },
+  mentorship_session_checkout: {
+    icon: 'success',
+    label: 'mentorship_session_checkout',
+  },
+};
+
 function StudentReport() {
   const { t } = useTranslation('student');
   const router = useRouter();
@@ -30,6 +94,7 @@ function StudentReport() {
   const { query } = router;
   const { cohortSlug, studentId, academy } = query;
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
+  const [openFilter, setOpenFilter] = useState(false);
   const [deliveryUrl, setDeliveryUrl] = useState('');
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
@@ -51,9 +116,22 @@ function StudentReport() {
   const { hexColor } = useStyle();
   const linkColor = useColorModeValue('blue.default', 'blue.300');
   const borderColor = useColorModeValue('gray.200', 'gray.500');
+  const activityLabelPrexif = 'activities-section.activities.';
   const lang = {
     es: '/es/',
     en: '/',
+  };
+
+  const processActivities = (data) => {
+    const sortedActivities = {};
+
+    data.forEach((activity) => {
+      const { kind } = activity;
+      if (!sortedActivities[kind]) sortedActivities[kind] = activity;
+      else if (sortedActivities[kind].timestamp < activity.timestamp) sortedActivities[kind] = activity;
+    });
+
+    return Object.values(sortedActivities);
   };
 
   useEffect(() => {
@@ -66,9 +144,8 @@ function StudentReport() {
       });
     bc.activity({ user_id: studentId }).getMeActivity(academy)
       .then((res) => {
-        console.log('res');
-        console.log(res);
-        setActivities(res?.data);
+        const data = processActivities(res?.data);
+        setActivities(data);
       })
       .catch((e) => {
         console.log(e);
@@ -336,7 +413,7 @@ function StudentReport() {
             {selectedCohortUser && (
               <ReactSelect
                 unstyled
-                color="#0097CD"
+                color={hexColor.blueDefault}
                 fontWeight="700"
                 id="cohort-select"
                 fontSize="25px"
@@ -570,23 +647,44 @@ function StudentReport() {
           <Divider border="1px solid" orientation="vertical" color={borderColor} />
         </Box>
         <Box marginTop="2%" padding="0 20px">
-          <Flex>
-            <Heading color={hexColor.fontColor2} size="m">{t('activities')}</Heading>
+          <Flex justifyContent="space-between">
+            <Heading color={hexColor.fontColor2} size="m">{t('activities-section.title')}</Heading>
+            <Button
+              variant="ghost"
+              color={hexColor.blueDefault}
+              leftIcon={<Icon icon="filter" width="20px" height="20px" />}
+              onClick={() => setOpenFilter(true)}
+            >
+              {t('common:filters')}
+            </Button>
           </Flex>
-          <Box padding="20px 10px">
-            <Flex alignItems="center">
-              <Box padding="10px">
-                <Icon icon="login" width="18px" height="18px" />
-              </Box>
-              <Box>
-                <Text color={hexColor.fontColor2} fontWeight="700">
-                  {t('analitics.total-mentorships')}
-                </Text>
-                <Text color={hexColor.fontColor2}>
-                  {'06/12/2023'}
-                </Text>
-              </Box>
-            </Flex>
+          {activities.length === 0 && (
+            <Box width="100%" mt="20px">
+              <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
+                {t('activities-section.no-activities')}
+              </Heading>
+            </Box>
+          )}
+          <Box padding="0 10px">
+            {activities.map((activity) => {
+              const { kind } = activity;
+              const template = activitiesTemplate[kind];
+              return (
+                <Flex my="20px" alignItems="center">
+                  <Box padding="10px">
+                    <Icon icon={template?.icon} width="18px" height="18px" color={hexColor.blueDefault} />
+                  </Box>
+                  <Box>
+                    <Text textTransform="uppercase" color={hexColor.fontColor2} fontWeight="700">
+                      {template?.label ? t(`${activityLabelPrexif}${template.label}`) : kind}
+                    </Text>
+                    <Text color={hexColor.fontColor2}>
+                      {format(new Date(activity.timestamp), 'MM/dd/yyyy')}
+                    </Text>
+                  </Box>
+                </Flex>
+              );
+            })}
           </Box>
         </Box>
       </Flex>
