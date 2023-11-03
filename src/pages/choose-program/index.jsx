@@ -14,10 +14,10 @@ import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
 import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
-import useStyle from '../../common/hooks/useStyle';
 import GridContainer from '../../common/components/GridContainer';
 import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
@@ -47,7 +47,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function chooseProgram() {
-  const { t } = useTranslation('choose-program');
+  const { t, lang } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [subscriptionProcess] = usePersistent('subscription-process', null);
@@ -63,14 +63,17 @@ function chooseProgram() {
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
-  const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
-  const TwelveHours = 720;
+  const TwelveHoursInMinutes = 720;
+  const welcomeVideoLinks = {
+    es: 'https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In',
+    en: 'https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba',
+  };
 
   const fetchAdmissions = () => bc.admissions().me();
 
@@ -109,6 +112,18 @@ function chooseProgram() {
 
       return false;
     });
+    if (cohorts) {
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+      const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
+      const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      reportDatalayer({
+        dataLayer: {
+          available_as_saas: hasAvailableAsSaas,
+          cohorts: cohortsSlugs,
+          academies: cohortsAcademies,
+        },
+      });
+    }
 
     const revalidate = setTimeout(() => {
       if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
@@ -133,6 +148,14 @@ function chooseProgram() {
     fetchSubscriptions()
       .then((data) => {
         setSubscriptionData(data);
+        reportDatalayer({
+          dataLayer: {
+            event: 'subscriptions_load',
+            method: 'native',
+            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+          },
+        });
       })
       .finally(() => setSubscriptionLoading(false));
   }, []);
@@ -224,13 +247,13 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });
@@ -353,7 +376,7 @@ function chooseProgram() {
         </Box>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
-            url="https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba"
+            url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
             width="100%"
             height="100%"
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
@@ -370,10 +393,6 @@ function chooseProgram() {
               >
                 {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
               </Heading>
-
-              <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
-                {t('read-to-start-learning')}
-              </Text>
 
               {invites?.length > 0 && (
                 <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">

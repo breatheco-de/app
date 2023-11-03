@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
@@ -167,6 +168,19 @@ function AuthProvider({ children }) {
               ...data,
               permissionsSlug,
             });
+            reportDatalayer({
+              dataLayer: {
+                event: 'session_load',
+                method: 'native',
+                user_id: data.id,
+                email: data.email,
+                // is_saas: data.roles.filter(r => r.role.toLowerCase() == "student" && r.)
+                first_name: data.first_name,
+                last_name: data.last_name,
+                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
+                language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+              },
+            });
             if (data.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
@@ -230,6 +244,15 @@ function AuthProvider({ children }) {
           } else {
             router.reload();
           }
+          reportDatalayer({
+            dataLayer: {
+              event: 'login',
+              path: router.pathname,
+              method: 'native',
+              user_id: responseData.user_id,
+              email: responseData.email,
+            },
+          });
         }
         return response;
       }
@@ -292,7 +315,6 @@ function AuthProvider({ children }) {
       }
     }
     localStorage.removeItem('showGithubWarning');
-    localStorage.removeItem('redirect-after-register');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };

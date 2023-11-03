@@ -6,6 +6,11 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Bienvenido a:",
+  "checkout": {
+    "title": "El código te hará libre",
+    "description": "El camino hacia la libertad profesional es altamente tutelado, en vivo y en conjunto.",
+    "read-more" :"Lee la ciencia detrás de esto."
+  },
   "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
   "in-waiting-list-title": "Estás en nuestra lista de espera",
@@ -51,7 +56,7 @@
   "no-have-account": "¿No tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
   "register-here": "Regístrate aquí.",
-  "start-free-course": "Comenzar gratuitamente",
+  "start-free-course": "Empieza a aprender",
   "free": "Gratis",
   "totally_free": "Totalmente gratuito",
   "free_trial": "Prueba gratuita",
@@ -162,6 +167,7 @@
     "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
   },
+  "get-premium": "Obtener Premium",
   "pricing": {
     "already-have-plan": "Ya lo tienes",
     "basic-plan": {

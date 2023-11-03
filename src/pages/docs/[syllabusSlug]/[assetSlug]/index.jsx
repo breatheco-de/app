@@ -195,7 +195,7 @@ function Docs() {
                   )}
                 </Box>
                 {open === index && (
-                  <Box marginLeft="15px">
+                  <Box marginLeft="5px">
                     {module.modules.map((assetModule, i) => (
                       <Box margin="5px 0" padding="0 15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
                         <Link

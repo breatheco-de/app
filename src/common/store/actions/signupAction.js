@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
@@ -11,7 +12,9 @@ import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, g
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
+import { reportDatalayer } from '../../../utils/requests';
 
+// eslint-disable-next-line no-unused-vars
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -21,7 +24,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
-  const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -126,7 +129,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     return t('signup:info.free-trial-period', { qty, period: periodText });
   };
 
-  const handlePayment = (data) => new Promise((resolve, reject) => {
+  const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -145,6 +148,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
       };
     };
     const requests = getRequests();
+    console.log('on handle payment');
     bc.payment().pay({
       ...requests,
     })
@@ -157,32 +161,52 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
           });
+          let currency = 'USD';
+          let simplePlans = [];
+          if (cohortPlans) {
+            currency = cohortPlans[0]?.plan?.currency?.code || 'USD';
+            simplePlans = cohortPlans.map((cohortPlan) => {
+              const { plan } = cohortPlan;
+              const { service_items, ...restOfPlan } = plan;
+              return { plan: { ...restOfPlan } };
+            });
+          }
+          reportDatalayer({
+            dataLayer: {
+              event: 'purchase',
+              value: selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: selectedPlanCheckoutData?.slug,
+              period_label: selectedPlanCheckoutData?.period_label,
+              items: simplePlans,
+            },
+          });
 
-          if (!disableRedirectAfterSuccess) {
-            if ((redirectAfterRegister || redirectedFrom)
-              && (redirectAfterRegister?.length > 0 && redirectedFrom.length > 0)) {
-              router.push(redirectAfterRegister);
+          if (!disableRedirects) {
+            if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+              router.push(redirect || redirectedFrom);
               localStorage.removeItem('redirect');
               localStorage.removeItem('redirected-from');
-              localStorage.removeItem('redirect-after-register');
             } else {
               router.push('/choose-program');
             }
           }
+          if (response === undefined || response.status >= 400) {
+            toast({
+              position: 'top',
+              title: t('alert-message:payment-error'),
+              status: 'error',
+              duration: 7000,
+              isClosable: true,
+            });
+          }
+          resolve(response);
         }
-        if (response === undefined || response.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:payment-error'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
-        resolve(response);
       })
-      .catch(() => {
-        reject();
+      .catch((error) => {
+        console.error('Error handling payment bc.payment().pay', error);
+        reject(error);
       });
   });
 

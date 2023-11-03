@@ -5,9 +5,10 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
   Avatar,
+  Tooltip,
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 // import { phone } from '../../utils/regex';
@@ -16,18 +17,21 @@ import PhoneInput from '../../common/components/PhoneInput';
 import { getQueryString, getStorageItem, setStorageItem, slugToTitle } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
+import useSession from '../../common/hooks/useSession';
 import modifyEnv from '../../../modifyEnv';
 import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function ContactInformation({
   courseChoosed, defaultPlanData, formProps, setFormProps, setVerifyEmailProps,
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
+  const { userSession } = useSession();
   const {
     state, nextStep,
   } = useSignup();
@@ -63,6 +67,14 @@ function ContactInformation({
     //   .required(t('validators.confirm-email-required')),
   });
 
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_contact_info',
+      },
+    });
+  }, []);
+
   const handleSubmit = async (actions, allValues) => {
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
@@ -70,7 +82,7 @@ function ContactInformation({
         'Content-Type': 'application/json',
         'Accept-Language': router?.locale || 'en',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({ ...allValues, conversion_info: userSession }),
     });
     const data = await resp.json();
     if (data.silent_code === SILENT_CODE.USER_EXISTS) {
@@ -84,17 +96,45 @@ function ContactInformation({
         isClosable: true,
         duration: 6000,
       });
+    } else {
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: data.plan,
+          user_id: data.user,
+          course: allValues.course,
+          country: allValues.country,
+          city: allValues.city,
+          syllabus: allValues.syllabus,
+          cohort: allValues.cohort,
+          language: allValues.language,
+          conversion_info: userSession,
+        },
+      });
     }
     setStorageItem('subscriptionId', data?.id);
 
     const respPlan = await bc.payment().getPlan(planFormated);
     const dataOfPlan = respPlan?.data;
     if (resp.status < 400 && typeof data?.id === 'number') {
-      if (dataOfPlan?.has_waiting_list === true) {
+      if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
         setStorageItem('subscriptionId', data.id);
         router.push('/thank-you');
       }
-
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          user_id: data?.id,
+          email: data?.email,
+          conversion_info: userSession,
+          plan: dataOfPlan?.slug,
+        },
+      });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         setVerifyEmailProps({
           data: {
@@ -263,15 +303,22 @@ function ContactInformation({
             {defaultPlanData?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="25px" borderRadius="11px" background={backgroundColor}>
                 <Heading size="26px">
-                  {defaultPlanData.title}
+                  {t('checkout.title')}
                 </Heading>
-                <Text size="16px" color="blue.default">
-                  {t('what-includes')}
+                <Text size="16px">
+                  {t('checkout.description')}
+                  {' '}
+                  <NextChakraLink textDecoration="underline" href="https://4geeks.com/mastering-technical-knowledge" target="_blank">
+                    {t('checkout.read-more')}
+                  </NextChakraLink>
                 </Text>
+                {/* <Text size="16px" color="blue.default">
+                  {t('what-includes')}
+                </Text> */}
                 <Flex flexDirection="column" gridGap="12px" mt="1rem">
                   {defaultPlanData?.featured_info?.length > 0
                     && defaultPlanData?.featured_info.map((info) => info?.service?.slug && (
-                      <Box display="flex" gridGap="8px">
+                      <Box display="flex" gridGap="8px" alignItems="center">
                         {info?.service?.icon_url
                           ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                           : (
@@ -287,6 +334,11 @@ function ContactInformation({
                             </Text>
                           )} */}
                         </Box>
+                        <Tooltip label={info.features[0]?.description} placement="top">
+                          <Box>
+                            <Icon icon="help" width="15px" height="15px" style={{ alignItems: 'center' }} />
+                          </Box>
+                        </Tooltip>
                       </Box>
                     ))}
                 </Flex>

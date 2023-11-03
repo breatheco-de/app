@@ -68,7 +68,7 @@ function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslatio
 }
 
 function ProgramCard({
-  programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
+  programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isLoadingPageContent,
@@ -85,6 +85,7 @@ function ProgramCard({
   const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
   const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
+  const isNeverEnding = !endsAt;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
 
@@ -200,7 +201,7 @@ function ProgramCard({
                           fontWeight="400"
                           color={textColor}
                         >
-                          {formatTimeString(new Date(startsIn))}
+                          {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
                         </Text>
                       </Box>
                     </Flex>
@@ -243,7 +244,7 @@ function ProgramCard({
                               fontWeight="400"
                               color={textColor}
                             >
-                              {formatTimeString(new Date(startsIn))}
+                              {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
                             </Text>
                           </Box>
                         </Flex>
@@ -537,6 +538,8 @@ ProgramCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
+  endsAt: PropTypes.instanceOf(Date),
+  signInDate: PropTypes.instanceOf(Date),
   freeTrialExpireDate: PropTypes.instanceOf(Date),
   haveFreeTrial: PropTypes.bool,
   icon: PropTypes.string.isRequired,
@@ -566,6 +569,8 @@ ProgramCard.defaultProps = {
   stTranslation: null,
   programDescription: null,
   startsIn: null,
+  endsAt: null,
+  signInDate: null,
   haveFreeTrial: false,
   syllabusContent: null,
   courseProgress: null,
