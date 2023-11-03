@@ -9,7 +9,8 @@
   "checkout": {
     "title": "Code will set you free",
     "description": "The path to professional freedom is highly mentored, live and together.",
-    "read-more" :"Read the science behind it."
+    "read-more" :"Read the science behind it.",
+    "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
   "what-includes": "What includes?",
   "continue-learning": "Continue learning",
