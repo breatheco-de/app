@@ -595,6 +595,8 @@ function Page({ event }) {
                                   event_slug: event.slug,
                                   event_title: event.title,
                                   event_type: event.event_type?.slug,
+                                  event_starting_at: event.starting_at,
+                                  event_ending_at: event.ending_at,
                                 },
                               });
                             } else {
