@@ -12,6 +12,9 @@
   background-color: #1D1F21;
 }
 
+.katex-display>.katex>.katex-html {
+  padding: 18px 0px;
+}
 .katex {
   color: #FFFFFF;
   font-size: 16px;
