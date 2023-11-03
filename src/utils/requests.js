@@ -99,7 +99,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return data;
     })
     .catch((err) => {
-      console.error(`Error: GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
+      console.error(`Error: GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail || err}`);
       return [];
     });
 
