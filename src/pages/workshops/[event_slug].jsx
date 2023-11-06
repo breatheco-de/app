@@ -204,8 +204,8 @@ function Page({ event }) {
   } : {};
 
   const intercomFormatedDate = {
-    starting_at: format(new Date(event?.starting_at), 'DD/MM/YYYY'),
-    ending_at: format(new Date(event?.ending_at), 'DD/MM/YYYY'),
+    starting_at: format(new Date(event?.starting_at), 'dd/MM/yyyy'),
+    ending_at: format(new Date(event?.ending_at), 'dd/MM/yyyy'),
   };
 
   const eventNotExists = !event?.slug;
