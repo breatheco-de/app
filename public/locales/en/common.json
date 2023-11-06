@@ -18,6 +18,7 @@
     "months": "months",
     "years": "years"
   },
+  "related-content": "Related content",
   "heading": "Welcome to",
   "change-locale": "Change locale",
   "error-with-status": "A {{statusCode}} error occurred on server",

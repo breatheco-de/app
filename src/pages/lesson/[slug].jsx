@@ -428,10 +428,11 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           )}
         </Box>
         <RelatedContent
+          slug={lesson.slug}
           type="LESSON,ARTICLE"
           extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
           technologies={lesson?.technologies}
-          gridColumn="2 / span 10" // fix this
+          gridColumn="2 / span 10"
           maxWidth="1280px"
         />
       </GridContainer>

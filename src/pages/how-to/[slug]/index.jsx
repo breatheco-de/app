@@ -25,6 +25,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
@@ -321,6 +322,15 @@ export default function HowToSlug({ data, markdown }) {
         <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
+
+        <RelatedContent
+          slug={data.slug}
+          type="LESSON,ARTICLE"
+          extraQuerys={{ category: 'how-to,como' }}
+          technologies={data?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

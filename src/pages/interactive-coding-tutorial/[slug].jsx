@@ -23,6 +23,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
+import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('PROJECT', {}, 'project');
@@ -348,6 +349,14 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={project.slug}
+          type="PROJECT"
+          extraQuerys={{}}
+          technologies={project?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

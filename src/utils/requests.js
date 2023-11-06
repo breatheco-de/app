@@ -99,7 +99,8 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return data;
     })
     .catch((err) => {
-      console.error(`Error: GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail}`);
+      console.error(`\nError: GET_ASSET in (/v1/registry/asset${qsRequest}): \n`);
+      console.error(err, '\n\n');
       return [];
     });
 
@@ -129,11 +130,15 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
         return data;
       })
       .catch((err) => {
-        console.error(`Error: GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
+        console.error(`\nError: GET_ASSET in (/v1/registry/asset${newQsRequests}): \n`);
+        console.error(err, '\n\n');
         return [];
       });
-    results = response.results;
-    allResults = allResults.concat(results);
+
+    if (response.results) {
+      results = response.results;
+      allResults = allResults.concat(results);
+    }
   }
 
   if (category === 'project') {

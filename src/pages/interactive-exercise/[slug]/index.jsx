@@ -45,6 +45,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -724,6 +725,14 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={exercise.slug}
+          type="EXERCISE"
+          extraQuerys={{}}
+          technologies={exercise?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
 
       {/* <GridContainer
