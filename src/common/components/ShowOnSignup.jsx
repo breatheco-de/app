@@ -4,12 +4,14 @@ import { Form, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
+import { usePersistent } from '../hooks/usePersistent';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
@@ -23,6 +25,8 @@ function ShowOnSignUp({
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { userSession } = useSession();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
@@ -58,6 +62,8 @@ function ShowOnSignUp({
   }, [alreadyLogged, existsConsumables]);
 
   const handleSubmit = async (actions, allValues) => {
+    const academy = cohortSession?.academy?.slug;
+    const defaultPlan = process.env.BASE_PLAN || 'basic';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -67,7 +73,11 @@ function ShowOnSignUp({
       body: JSON.stringify({
         ...allValues,
         ...subscribeValues,
-        plan: '4geeks-standard',
+        plan: defaultPlan,
+        conversion_info: {
+          location: academy,
+          ...userSession,
+        },
       }),
     });
 
@@ -85,28 +95,29 @@ function ShowOnSignUp({
         duration: 6000,
       });
     } else {
-      TagManager.dataLayer({
+      reportDatalayer({
         dataLayer: {
           event: 'sign_up',
           method: 'native',
           email: data.email,
           first_name: data.first_name,
           last_name: data.last_name,
-          plan: data.plan,
+          plan: defaultPlan,
           user_id: data.user,
           course: allValues.course,
           country: allValues.country,
-          city: allValues.city,
+          city: data.city,
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
+          conversion_info: userSession,
         },
       });
     }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
         .finally(() => {
           setAlreadyLogged(true);
           refetchAfterSuccess();
@@ -125,7 +136,7 @@ function ShowOnSignUp({
         },
       });
     }
-    if (typeof resp?.status === 'number' && data?.access_token === null) {
+    if (typeof resp?.status === 'number' && !data?.access_token) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
@@ -177,9 +188,7 @@ function ShowOnSignUp({
                   onClick={() => {
                     setStorageItem('redirect', router?.asPath);
                     setTimeout(() => {
-                      logout(() => {
-                        router.push('/login');
-                      });
+                      logout();
                     }, 150);
                   }}
                 >

@@ -6,7 +6,7 @@ import {
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
-import TagManager from 'react-gtm-module';
+import { reportDatalayer } from '../../../utils/requests';
 // import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
@@ -41,13 +41,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             actions.setSubmitting(false);
             callBack();
             if (data.status === 200) {
-              TagManager.dataLayer({
-                dataLayer: {
-                  event: 'login',
-                  path: '/login',
-                  method: 'native',
-                },
-              });
               toast({
                 position: 'top',
                 title: t('alert-message:welcome'),
@@ -81,7 +74,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
               variant="outline"
               weight="700"
               onClick={() => {
-                TagManager.dataLayer({
+                reportDatalayer({
                   dataLayer: {
                     event: 'login',
                     path: '/login',

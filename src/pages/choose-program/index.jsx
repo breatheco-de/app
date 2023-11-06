@@ -14,6 +14,7 @@ import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
 import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
@@ -111,6 +112,18 @@ function chooseProgram() {
 
       return false;
     });
+    if (cohorts) {
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+      const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
+      const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      reportDatalayer({
+        dataLayer: {
+          available_as_saas: hasAvailableAsSaas,
+          cohorts: cohortsSlugs,
+          academies: cohortsAcademies,
+        },
+      });
+    }
 
     const revalidate = setTimeout(() => {
       if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
@@ -135,6 +148,14 @@ function chooseProgram() {
     fetchSubscriptions()
       .then((data) => {
         setSubscriptionData(data);
+        reportDatalayer({
+          dataLayer: {
+            event: 'subscriptions_load',
+            method: 'native',
+            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+          },
+        });
       })
       .finally(() => setSubscriptionLoading(false));
   }, []);

@@ -65,7 +65,7 @@ function UpgradeForConsumableView({ externalData }) {
       router.push({
         pathname: '/pricing',
         query: {
-          plan: basePlan?.plans[0]?.slug,
+          plan: basePlan?.slug,
         },
       });
     }

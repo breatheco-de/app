@@ -111,6 +111,7 @@
       "id": "pricing",
       "label": "Precios",
       "href": "/pricing",
+      "hide_on_auth": true,
       "position": 5
     }
   ],

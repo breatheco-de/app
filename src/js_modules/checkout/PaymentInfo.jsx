@@ -8,7 +8,6 @@ import {
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import TagManager from 'react-gtm-module';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -17,6 +16,7 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
+import { reportDatalayer } from '../../utils/requests';
 import { getStorageItem, number2DIgits } from '../../utils';
 import Text from '../../common/components/Text';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
@@ -97,6 +97,14 @@ function PaymentInfo() {
   });
 
   useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_complete_purchase',
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     if (readyToRefetch) {
       const interval = setInterval(() => {
         getAllMySubscriptions()
@@ -124,7 +132,7 @@ function PaymentInfo() {
       .then((resp) => {
         if (resp) {
           const currency = cohortPlans[0]?.plan?.currency?.code;
-          TagManager.dataLayer({
+          reportDatalayer({
             dataLayer: {
               event: 'add_payment_info',
               path: '/checkout',
