@@ -11,12 +11,14 @@ import {
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
 import { isWindow } from '../../utils';
 
 function LanguageSelector({ display, translations }) {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
@@ -29,6 +31,7 @@ function LanguageSelector({ display, translations }) {
   const currentTranslationLanguage = isWindow
     && translationsPropsExists
     && translations?.find((l) => l?.slug === window.location.pathname?.split('/')?.pop());
+  const translationData = (translationsPropsExists && translations) || languagesTR;
 
   return (
     <Popover
@@ -45,6 +48,8 @@ function LanguageSelector({ display, translations }) {
           aria-label="Language Selector"
           textAlign="-webkit-center"
           height="auto"
+          isDisabled={translations?.length === 1}
+          title={translations?.length === 1 && t('no-translation-available')}
           backgroundColor="transparent"
           width="auto"
           alignSelf="center"
@@ -80,9 +85,7 @@ function LanguageSelector({ display, translations }) {
           gridGap="10px"
           padding="12px"
         >
-          {((translationsPropsExists
-            && translations)
-            || languagesTR).map((l) => {
+          {translationData.map((l) => {
             const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
             const value = translationsPropsExists ? lang?.value : l.value;
             const label = translationsPropsExists ? lang?.label : l.label;
