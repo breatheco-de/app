@@ -8,7 +8,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
-import TagManager from 'react-gtm-module';
+import { reportDatalayer } from '../../utils/requests';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
@@ -588,12 +588,13 @@ function Page({ event }) {
                                 duration: 6000,
                               });
 
-                              TagManager.dataLayer({
+                              reportDatalayer({
                                 dataLayer: {
                                   event: 'event_order',
                                   event_id: event.id,
                                   event_slug: event.slug,
                                   event_title: event.title,
+                                  event_type: event.event_type?.slug,
                                 },
                               });
                             } else {
