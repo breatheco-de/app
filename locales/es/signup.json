@@ -9,7 +9,8 @@
   "checkout": {
     "title": "El código te hará libre",
     "description": "El camino hacia la libertad profesional es altamente tutelado, en vivo y en conjunto.",
-    "read-more" :"Lee la ciencia detrás de esto."
+    "read-more" :"Lee la ciencia detrás de esto.",
+    "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
   "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
