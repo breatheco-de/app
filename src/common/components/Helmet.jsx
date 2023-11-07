@@ -57,7 +57,7 @@ function Helmet({
 
   return (
     <Head>
-      <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
+      <title>{title.length > 0 ? title : '4Geeks'}</title>
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
@@ -71,9 +71,9 @@ function Helmet({
       && !translationsExists
       && locales.map((lang) => {
         const locationLang = {
-          us: 'en-US',
-          en: 'en-US',
-          es: 'es-ES',
+          us: 'en',
+          en: 'en',
+          es: 'es',
         };
         return (['default', 'en'].includes(lang) ? (
           <React.Fragment key={`${lang} - ${pathConnector}`}>
@@ -95,15 +95,15 @@ function Helmet({
         const language = lang === 'us' ? 'en' : lang;
 
         const locationLang = {
-          us: 'en-US',
-          en: 'en-US',
-          es: 'es-ES',
+          us: 'en',
+          en: 'en',
+          es: 'es',
         };
         const urlAlternate = `https://4geeks.com/${translation.link}`;
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${urlAlternate}`}>
             <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
-            <link rel="alternate" hrefLang={locationLang[lang] || 'en-US'} href={urlAlternate} />
+            <link rel="alternate" hrefLang={locationLang[lang] || 'en'} href={urlAlternate} />
           </React.Fragment>
         ) : (
           <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />

@@ -24,9 +24,9 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   const pagePath = options?.pagePath || '/';
   const disableLangFilter = options?.disableLangFilter || false;
   const locationLang = {
-    us: 'en-US',
-    en: 'en-US',
-    es: 'es-ES',
+    us: 'en',
+    en: 'en',
+    es: 'es',
   };
 
   const handlePaginationProps = async () => {

@@ -12,9 +12,9 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   const { locales } = router;
   const [currentPage, setCurrentPage] = useState(router?.query?.page ? Number(router.query.page) : 1);
   const locationLang = {
-    us: 'en-US',
-    en: 'en-US',
-    es: 'es-ES',
+    us: 'en',
+    en: 'en',
+    es: 'es',
   };
 
   const pagePath = options?.pagePath;
