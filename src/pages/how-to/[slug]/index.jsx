@@ -25,6 +25,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
@@ -88,27 +89,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: `/how-to/${slug}`,
       us: `/how-to/${slug}`,
     };
-
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/how-to/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/how-to/${translations?.en}`,
+        slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
+        link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/how-to/${translations?.es}`,
+        slug: data?.lang === 'es' ? data.slug : translations?.es,
+        link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
     const eventStructuredData = {
       '@context': 'https://schema.org',
@@ -138,7 +133,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           description: description || '',
           image: preview || staticImage,
           type: 'article',
-          translations,
+          translations: translationArray,
           pathConnector: '/how-to',
           url: ogUrl.en || `/${locale}/how-to/${slug}`,
           slug,
@@ -321,6 +316,15 @@ export default function HowToSlug({ data, markdown }) {
         <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
+
+        <RelatedContent
+          slug={data.slug}
+          type="LESSON,ARTICLE"
+          extraQuerys={{ category: 'how-to,como' }}
+          technologies={data?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

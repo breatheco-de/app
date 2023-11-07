@@ -9,7 +9,13 @@ import { ORIGIN_HOST } from '../../utils/variables';
 
 function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options, count, fetchData, lang }) {
   const router = useRouter();
+  const { locales } = router;
   const [currentPage, setCurrentPage] = useState(router?.query?.page ? Number(router.query.page) : 1);
+  const locationLang = {
+    us: 'en',
+    en: 'en',
+    es: 'es',
+  };
 
   const pagePath = options?.pagePath;
   const pathname = router?.pathname || (isWindow ? window?.location?.pathname : '');
@@ -42,6 +48,14 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
         {currentPage < pageCount && (
           <link rel="next" href={`${pathname}?page=${currentPage + 1}`} />
         )}
+        {locales.map((language) => (['default', 'en'].includes(language) ? (
+          <React.Fragment key={`${language} - ${pathname}`}>
+            <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${pathname}`} />
+            <link rel="alternate" hrefLang={locationLang[language]} href={`https://4geeks.com${pathname}`} />
+          </React.Fragment>
+        ) : (
+          <link key={`${language} - ${pathname} alternate`} rel="alternate" hrefLang={locationLang[language]} href={`https://4geeks.com/${language}${pathname}`} />
+        )))}
       </Head>
 
       <InfiniteScroll

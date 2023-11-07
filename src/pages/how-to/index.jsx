@@ -113,6 +113,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/how-to`,
         pathConnector: '/how-to',
       },

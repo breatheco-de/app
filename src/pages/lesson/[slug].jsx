@@ -24,6 +24,7 @@ import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async () => {
   const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
@@ -101,35 +102,31 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const extension = urlPathname ? urlPathname.split('.').pop() : null;
     const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
+    const { title, description, translations } = lesson;
 
     const ogUrl = {
       en: `/lesson/${slug}`,
       us: `/lesson/${slug}`,
     };
 
-    const { title, description, translations } = lesson;
+    const translationInEnglish = translations?.en || translations?.us;
     const translationsExists = Object.keys(translations).length > 0;
 
+    // if exists translation object but not includes the origin language include it
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/lesson/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/lesson/${translations?.en}`,
+        slug: (lesson?.lang === 'en' || lesson?.lang === 'us') ? lesson?.slug : translationInEnglish,
+        link: `/lesson/${(lesson?.lang === 'en' || lesson?.lang === 'us') ? lesson?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/lesson/${translations?.es}`,
+        slug: lesson?.lang === 'es' ? lesson.slug : translations?.es,
+        link: `/es/lesson/${lesson?.lang === 'es' ? lesson.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
     const eventStructuredData = {
       '@context': 'https://schema.org',
@@ -164,7 +161,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           slug,
           type: 'article',
           card: 'large',
-          translations,
+          translations: translationArray,
           locales,
           locale,
           keywords: lesson?.seo_keywords || '',
@@ -426,6 +423,16 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </Box>
           )}
         </Box>
+        {lesson?.slug && (
+          <RelatedContent
+            slug={lesson?.slug}
+            type="LESSON,ARTICLE"
+            extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+            technologies={lesson?.technologies}
+            gridColumn="2 / span 10"
+            maxWidth="1280px"
+          />
+        )}
       </GridContainer>
     </>
   );

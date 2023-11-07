@@ -19,6 +19,8 @@ const useStyle = () => {
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
   const featuredLight = useColorModeValue('gray.light3', 'featuredDark');
+  const colorMode = useColorModeValue('light', 'dark');
+  const reverseColorMode = useColorModeValue('dark', 'light');
 
   const featuredCard = {
     background: useColorModeValue('white', '#181a1b'),
@@ -82,6 +84,8 @@ const useStyle = () => {
     featuredLight,
     navbarBackground,
     featuredCard,
+    colorMode,
+    reverseColorMode,
   };
 };
 
