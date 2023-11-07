@@ -83,32 +83,32 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
               padding="22px"
             >
               {item.technologies.length >= 1 && (
-              <TagCapsule
-                tags={item.technologies.slice(0, 3)}
-                variant="rounded"
-                borderRadius="10px"
-                marginY="8px"
-                style={{
-                  padding: '4px 10px',
-                  margin: '0',
-                }}
-                gap="10px"
-                paddingX="0"
-                key={`${item.slug}-${item.difficulty}`}
-              />
+                <TagCapsule
+                  tags={item.technologies.slice(0, 3)}
+                  variant="rounded"
+                  borderRadius="10px"
+                  marginY="8px"
+                  style={{
+                    padding: '4px 10px',
+                    margin: '0',
+                  }}
+                  gap="10px"
+                  paddingX="0"
+                  key={`${item.slug}-${item.difficulty}`}
+                />
               )}
               <Heading as="h3">
                 {item.title}
               </Heading>
               {item?.description && (
-              <Text
-                color={fontColor2}
-                textAlign="left"
-                width="100%"
-                size="l"
-              >
-                {item.description}
-              </Text>
+                <Text
+                  color={fontColor2}
+                  textAlign="left"
+                  width="100%"
+                  size="l"
+                >
+                  {item.description}
+                </Text>
               )}
               <NextChakraLink
                 variant="buttonDefault"
