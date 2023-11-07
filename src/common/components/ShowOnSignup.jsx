@@ -34,6 +34,7 @@ function ShowOnSignUp({
   const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const { t } = useTranslation('workshops');
   const router = useRouter();
   const toast = useToast();
@@ -52,10 +53,15 @@ function ShowOnSignUp({
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
   useEffect(() => {
-    if (alreadyLogged && !existsConsumables) {
+    if (alreadyLogged && !existsConsumables && timeElapsed < 10) {
       const intervalId = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
         refetchAfterSuccess();
-      }, 500);
+      }, 1000);
+
+      if (timeElapsed >= 10) {
+        clearInterval(intervalId);
+      }
       return () => clearInterval(intervalId);
     }
     return () => {};
