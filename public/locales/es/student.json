@@ -9,9 +9,13 @@
     "exercises": "Ejercicios de Learnpack completados"
   },
   "educational-status": "Estatus educacional",
+  "filter": {
+    "activity": "Actividad",
+    "date": "Fecha"
+  },
   "activities-section": {
     "title": "Actividades",
-    "no-activities": "No hay actividades registradas",
+    "no-activities": "No hay actividades encontradas",
     "activities": {
       "invite_created": "Inivitación creada",
       "invite_status_updated": "Status de inivitación actualizado",

@@ -8,13 +8,23 @@ import {
   useColorModeValue,
   Flex,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
+import DatePickerField from '../../../../../common/components/Forms/DateField';
 import bc from '../../../../../common/services/breathecode';
 import ReactSelect, { AsyncSelect } from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
@@ -95,6 +105,8 @@ function StudentReport() {
   const { cohortSlug, studentId, academy } = query;
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
   const [openFilter, setOpenFilter] = useState(false);
+  const [activityLabel, setActivityLabel] = useState(null);
+  const [startDate, setStartDate] = useState(null);
   const [deliveryUrl, setDeliveryUrl] = useState('');
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
@@ -121,6 +133,9 @@ function StudentReport() {
     es: '/es/',
     en: '/',
   };
+
+  const activitiesLabels = t('activities-section.activities', {}, { returnObjects: true });
+  const activitiesOptions = Object.keys(activitiesLabels).map((act) => ({ label: activitiesLabels[act], value: act }));
 
   const processActivities = (data) => {
     const sortedActivities = {};
@@ -377,11 +392,25 @@ function StudentReport() {
 
   const onCloseProject = () => setCurrentProject(null);
 
+  const clearFilters = () => {
+    setActivityLabel(null);
+    setStartDate(null);
+  };
+
+  const filteredActivities = activities.filter((act) => {
+    if (!activityLabel && !startDate) return true;
+
+    const filterKind = activityLabel ? act.kind === activityLabel.value : true;
+    const filterDate = startDate ? act.timestamp > startDate.toISOString() : true;
+
+    return filterKind && filterDate;
+  });
+
   return (
     <Box>
       <Box
-        paddingBottom="30px"
-        maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
+        padding="0 10px 30px 10px"
+        maxWidth={{ base: '90%', md: '90%', lg: '1112px' }}
         margin="2% auto 0 auto"
       >
         <Box display="flex" justifyContent="space-between">
@@ -442,10 +471,11 @@ function StudentReport() {
             )}
           </Box>
         )}
-        <Flex marginTop="20px" justify="space-between" gap="20px">
+        <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
           <Box
             borderRadius="17px"
-            width="265px"
+            width={{ base: '100%', md: '100%' }}
+            maxWidth={{ base: 'none', md: '265px' }}
             padding="12px 16px"
             border="3px solid"
             borderColor={hexColor.featuredColor}
@@ -467,7 +497,8 @@ function StudentReport() {
           </Box>
           <Box
             borderRadius="17px"
-            width="265px"
+            width={{ base: '100%', md: '100%' }}
+            maxWidth={{ base: 'none', md: '265px' }}
             padding="12px 16px"
             border="3px solid"
             borderColor={hexColor.featuredColor}
@@ -489,7 +520,8 @@ function StudentReport() {
           </Box>
           <Box
             borderRadius="17px"
-            width="265px"
+            width={{ base: '100%', md: '100%' }}
+            maxWidth={{ base: 'none', md: '265px' }}
             padding="12px 16px"
             border="3px solid"
             borderColor={hexColor.featuredColor}
@@ -511,7 +543,8 @@ function StudentReport() {
           </Box>
           <Box
             borderRadius="17px"
-            width="265px"
+            width={{ base: '100%', md: '100%' }}
+            maxWidth={{ base: 'none', md: '265px' }}
             padding="12px 16px"
             border="3px solid"
             borderColor={hexColor.featuredColor}
@@ -535,8 +568,10 @@ function StudentReport() {
       </Box>
       <Divider borderBottom="1px solid" color={borderColor} />
       <Flex
-        maxWidth={{ base: '90%', md: '90%', lg: '1012px' }}
+        maxWidth={{ base: '90%', md: '90%', lg: '1112px' }}
         margin="auto"
+        wrap={{ base: 'wrap', md: 'nowrap' }}
+        padding="0 10px"
       >
         <Box width="100%" maxWidth="695px" marginTop="2%">
           <Box marginBottom="20px" width="100%">
@@ -643,10 +678,15 @@ function StudentReport() {
             readOnly
           />
         </Box>
-        <Box marginLeft="20px" display={{ base: 'none', md: 'block' }}>
-          <Divider border="1px solid" orientation="vertical" color={borderColor} />
-        </Box>
-        <Box marginTop="2%" padding="0 20px">
+        <Box
+          padding="20px"
+          width="100%"
+          marginLeft={{ base: 'none', md: '20px' }}
+          borderLeftWidth={{ base: 'none', md: '1px' }}
+          borderLeftStyle="solid"
+          borderLeftColor={borderColor}
+          maxWidth={{ base: 'none', md: '300px', lg: '390px' }}
+        >
           <Flex justifyContent="space-between">
             <Heading color={hexColor.fontColor2} size="m">{t('activities-section.title')}</Heading>
             <Button
@@ -658,7 +698,7 @@ function StudentReport() {
               {t('common:filters')}
             </Button>
           </Flex>
-          {activities.length === 0 && (
+          {filteredActivities.length === 0 && (
             <Box width="100%" mt="20px">
               <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
                 {t('activities-section.no-activities')}
@@ -666,7 +706,7 @@ function StudentReport() {
             </Box>
           )}
           <Box padding="0 10px">
-            {activities.map((activity) => {
+            {filteredActivities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
               return (
@@ -688,6 +728,53 @@ function StudentReport() {
           </Box>
         </Box>
       </Flex>
+      <Modal isOpen={openFilter} onClose={() => setOpenFilter(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{t('common:filters')}</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Box marginBottom="10px">
+              <ReactSelect
+                id="activity-select"
+                placeholder={t('filter.activity')}
+                isClearable
+                value={activityLabel || ''}
+                onChange={(selected) => {
+                  setActivityLabel(selected || []);
+                }}
+                options={activitiesOptions}
+              />
+            </Box>
+            <Box position="relative" zIndex="0" marginBottom="10px">
+              <Text fontSize="l" fontWeight="400" marginBottom="10px">
+                {t('filter.date')}
+              </Text>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => {
+                  setStartDate(date);
+                }}
+                inline
+              />
+            </Box>
+          </ModalBody>
+
+          <ModalFooter justifyContent="space-between">
+            <Button
+              color={hexColor.blueDefault}
+              variant="ghost"
+              mr={3}
+              onClick={clearFilters}
+            >
+              {t('common:clear-all')}
+            </Button>
+            {/* <Button colorScheme="blue">
+              {t('common:apply-filters')}
+            </Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }
