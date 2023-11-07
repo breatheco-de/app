@@ -8,6 +8,7 @@ import ProjectList from '../../../js_modules/projects/ProjectList';
 import PageIndexes from './PageIndexes';
 import { getQueryString, isNumber } from '../../../utils';
 import { CardSkeleton } from '../Skeleton';
+import { DOMAIN_NAME } from '../../../utils/variables';
 
 function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFunction, options }) {
   const [data, setData] = useState([]);
@@ -64,7 +65,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
 
   const pageIndexes = getPageIndexes();
   const nextPagePath = pageProps?.pagesArray?.[currentPageIndex];
-  const currentPagePath = pageProps?.pagesArray?.[currentPageIndex - 1];
+  // const currentPagePath = pageProps?.pagesArray?.[currentPageIndex - 1];
   const prevPagePath = pageProps?.pagesArray?.[currentPageIndex - 2];
 
   const indexPageExists = prevPagePath || nextPagePath;
@@ -81,11 +82,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   return isNumber(pageProps?.currentPage) ? (
     <Box>
       <Head>
-        {currentPagePath ? (
-          <link rel="canonical" href={`https://4geeks.com${currentPagePath}`} />
-        ) : (
-          <link rel="canonical" href={`https://4geeks.com${pagePath}`} />
-        )}
+        <link rel="canonical" href={`${DOMAIN_NAME}${pagePath}`} />
         {prevPagePath && (
           <link rel="prev" href={prevPagePath} />
         )}
