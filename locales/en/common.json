@@ -18,6 +18,8 @@
     "months": "months",
     "years": "years"
   },
+  "no-translation-available": "No translation available",
+  "related-content": "Related content",
   "heading": "Welcome to",
   "change-locale": "Change locale",
   "error-with-status": "A {{statusCode}} error occurred on server",
