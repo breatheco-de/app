@@ -14,6 +14,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   const [data, setData] = useState([]);
   const [pageProps, setPageProps] = useState({});
   const router = useRouter();
+  const { locales } = router;
   const locale = storyConfig?.locale || router?.locale || 'en';
   const page = storyConfig?.page || getQueryString('page', 1);
 
@@ -22,6 +23,11 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   const listToBottom = options?.listToBottom || true;
   const pagePath = options?.pagePath || '/';
   const disableLangFilter = options?.disableLangFilter || false;
+  const locationLang = {
+    us: 'en-US',
+    en: 'en-US',
+    es: 'es-ES',
+  };
 
   const handlePaginationProps = async () => {
     const respData = await queryFunction();
@@ -65,7 +71,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
 
   const pageIndexes = getPageIndexes();
   const nextPagePath = pageProps?.pagesArray?.[currentPageIndex];
-  // const currentPagePath = pageProps?.pagesArray?.[currentPageIndex - 1];
+  const currentPagePath = pageProps?.pagesArray?.[currentPageIndex - 1];
   const prevPagePath = pageProps?.pagesArray?.[currentPageIndex - 2];
 
   const indexPageExists = prevPagePath || nextPagePath;
@@ -89,6 +95,14 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
         {nextPagePath && (
           <link rel="next" href={nextPagePath} />
         )}
+        {locales.map((lang) => (['default', 'en'].includes(lang) ? (
+          <React.Fragment key={`${lang} - ${currentPagePath}`}>
+            <link rel="alternate" hrefLang="x-default" href={`https://4geeks.com${currentPagePath}`} />
+            <link rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com${currentPagePath}`} />
+          </React.Fragment>
+        ) : (
+          <link key={`${lang} - ${currentPagePath} alternate`} rel="alternate" hrefLang={locationLang[lang]} href={`https://4geeks.com/${lang}${currentPagePath}`} />
+        )))}
       </Head>
 
       {indexPageExists && listToTop && pageProps?.pages > 0 && pageIndexes?.length > 1 && pageProps?.currentPage && (

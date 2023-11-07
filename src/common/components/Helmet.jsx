@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, modifiedTime,
-  locale, slug, disableStaticCanonical, eventStartAt,
+  locale, slug, disableStaticCanonical, eventStartAt, disableHreflangs,
 }) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
   const translationsArray = translations;
@@ -67,7 +67,7 @@ function Helmet({
       )}
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
-      {locales.length > 0
+      {!disableHreflangs && locales.length > 0
       && !translationsExists
       && locales.map((lang) => {
         const locationLang = {
@@ -90,7 +90,7 @@ function Helmet({
         <link rel="canonical" href={canonicalTranslationsLink} />
       )}
 
-      {translationsExists && translationsArray.length > 1 && translationsArray.map((translation) => {
+      {!disableHreflangs && translationsExists && translationsArray.length > 1 && translationsArray.map((translation) => {
         const lang = translation?.lang;
         const language = lang === 'us' ? 'en' : lang;
 
@@ -165,6 +165,7 @@ Helmet.propTypes = {
   slug: PropTypes.string,
   disableStaticCanonical: PropTypes.bool,
   eventStartAt: PropTypes.string,
+  disableHreflangs: PropTypes.bool,
 };
 
 Helmet.defaultProps = {
@@ -185,6 +186,7 @@ Helmet.defaultProps = {
   slug: '',
   disableStaticCanonical: false,
   eventStartAt: '',
+  disableHreflangs: false,
 };
 
 export default Helmet;
