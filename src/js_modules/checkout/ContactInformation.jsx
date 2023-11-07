@@ -104,14 +104,13 @@ function ContactInformation({
           email: data.email,
           first_name: data.first_name,
           last_name: data.last_name,
-          plan: data.plan,
+          plan: planFormated,
           user_id: data.user,
           course: allValues.course,
           country: allValues.country,
-          city: allValues.city,
+          city: data.city,
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
-          language: allValues.language,
           conversion_info: userSession,
         },
       });
@@ -125,16 +124,6 @@ function ContactInformation({
         setStorageItem('subscriptionId', data.id);
         router.push('/thank-you');
       }
-      reportDatalayer({
-        dataLayer: {
-          event: 'sign_up',
-          method: 'native',
-          user_id: data?.id,
-          email: data?.email,
-          conversion_info: userSession,
-          plan: dataOfPlan?.slug,
-        },
-      });
       if (data?.access_token && !dataOfPlan?.has_waiting_list) {
         setVerifyEmailProps({
           data: {

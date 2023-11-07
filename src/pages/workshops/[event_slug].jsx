@@ -203,6 +203,11 @@ function Page({ event }) {
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
 
+  const unixFormatedDate = {
+    starting_at: isValidDate(event?.starting_at) ? new Date(event?.starting_at).getTime() / 1000 : '',
+    ending_at: isValidDate(event?.ending_at) ? new Date(event?.ending_at).getTime() / 1000 : '',
+  };
+
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
 
@@ -595,6 +600,9 @@ function Page({ event }) {
                                   event_slug: event.slug,
                                   event_title: event.title,
                                   event_type: event.event_type?.slug,
+                                  event_starting_at: unixFormatedDate.starting_at,
+                                  event_ending_at: unixFormatedDate.ending_at,
+                                  event_language: event.lang,
                                 },
                               });
                             } else {
