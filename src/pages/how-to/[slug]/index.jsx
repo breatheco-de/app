@@ -89,27 +89,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: `/how-to/${slug}`,
       us: `/how-to/${slug}`,
     };
-
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/how-to/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/how-to/${translations?.en}`,
+        slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
+        link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/how-to/${translations?.es}`,
+        slug: data?.lang === 'es' ? data.slug : translations?.es,
+        link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
     const eventStructuredData = {
       '@context': 'https://schema.org',
@@ -139,7 +133,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           description: description || '',
           image: preview || staticImage,
           type: 'article',
-          translations,
+          translations: translationArray,
           pathConnector: '/how-to',
           url: ogUrl.en || `/${locale}/how-to/${slug}`,
           slug,

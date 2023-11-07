@@ -9,7 +9,7 @@ function Helmet({
   locale, slug, disableStaticCanonical, eventStartAt,
 }) {
   const ogTitle = title.length > 0 ? title : '4Geeks';
-  const translationsArray = Object.keys(translations);
+  const translationsArray = translations;
   const translationsExists = translationsArray.length > 0;
   const maxCharacters = 155;
   const descriptionCleaned = description.length > maxCharacters
@@ -90,7 +90,8 @@ function Helmet({
         <link rel="canonical" href={canonicalTranslationsLink} />
       )}
 
-      {translationsExists && translationsArray.length > 1 && translationsArray.map((lang) => {
+      {translationsExists && translationsArray.length > 1 && translationsArray.map((translation) => {
+        const lang = translation?.lang;
         const language = lang === 'us' ? 'en' : lang;
 
         const locationLang = {
@@ -98,13 +99,11 @@ function Helmet({
           en: 'en-US',
           es: 'es-ES',
         };
-        const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
-        const defaultUrl = `https://4geeks.com${pathConnector}/${translations?.us || translations?.en}`;
-
+        const urlAlternate = `https://4geeks.com/${translation.link}`;
         return ['default', 'us', 'en'].includes(lang) ? (
-          <React.Fragment key={`${language} - ${defaultUrl}`}>
-            <link rel="alternate" hrefLang="x-default" href={defaultUrl} />
-            <link rel="alternate" hrefLang={locationLang[lang] || 'en-US'} href={defaultUrl} />
+          <React.Fragment key={`${language} - ${urlAlternate}`}>
+            <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
+            <link rel="alternate" hrefLang={locationLang[lang] || 'en-US'} href={urlAlternate} />
           </React.Fragment>
         ) : (
           <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />

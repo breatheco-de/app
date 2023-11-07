@@ -117,26 +117,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: `/interactive-exercise/${slug}`,
       us: `/interactive-exercise/${slug}`,
     };
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-exercise/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-exercise/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-exercise/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-exercise/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-exercise/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
     const eventStructuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
@@ -165,7 +160,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           title,
           image: preview || staticImage,
           description: description || '',
-          translations,
+          translations: translationArray,
           pathConnector: '/interactive-exercise',
           url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
           slug,

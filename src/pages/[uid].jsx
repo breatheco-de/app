@@ -101,27 +101,21 @@ export async function getStaticProps({ params, locale, previewData }) {
   };
 
   const { title, description, image, type } = page.data;
-
+  const translationInEnglish = translations?.en || translations?.us;
   const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/${translations?.en}`,
-    },
     {
       value: 'en',
       lang: 'en',
-      slug: translations?.en,
+      slug: (page?.lang === 'en' || page?.lang === 'us') ? page?.uid : translationInEnglish,
       link: `/${translations?.en}`,
     },
     {
       value: 'es',
       lang: 'es',
-      slug: translations?.es,
-      link: `/es/${translations?.es}`,
+      slug: page?.lang === 'es' ? page.uid : translations?.es,
+      link: `/es/${page?.lang === 'es' ? page.uid : translations?.es}`,
     },
-  ].filter((item) => translations?.[item?.value] !== undefined);
+  ].filter((item) => item?.slug !== undefined);
 
   const translationsExists = Object.keys(translations).length > 0;
 
@@ -173,7 +167,7 @@ export async function getStaticProps({ params, locale, previewData }) {
         pathConnector: translationsExists ? '' : `/${uid}`,
         slug: uid,
         url: `/${uid}`,
-        translations,
+        translations: translationArray,
         locale,
         publishedTime: page?.first_publication_date || '',
         modifiedTime: page?.last_publication_date || '',

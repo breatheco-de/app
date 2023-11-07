@@ -14,7 +14,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
-import { isWindow } from '../../utils';
 
 function LanguageSelector({ display, translations }) {
   const router = useRouter();
@@ -28,9 +27,7 @@ function LanguageSelector({ display, translations }) {
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
   const translationsPropsExists = translations?.length > 0;
-  const currentTranslationLanguage = isWindow
-    && translationsPropsExists
-    && translations?.find((l) => l?.slug === window.location.pathname?.split('/')?.pop());
+  const currentTranslationLanguage = translationsPropsExists && translations?.find((l) => l.lang === locale);
   const translationData = (translationsPropsExists && translations) || languagesTR;
 
   return (
@@ -86,9 +83,9 @@ function LanguageSelector({ display, translations }) {
           padding="12px"
         >
           {translationData.map((l) => {
-            const lang = languagesTR.filter((language) => language?.value === l?.lang)[0];
-            const value = translationsPropsExists ? lang?.value : l.value;
-            const label = translationsPropsExists ? lang?.label : l.label;
+            const currLang = languagesTR.filter((language) => language?.value === l?.lang)[0];
+            const value = translationsPropsExists ? currLang?.value : l.value;
+            const label = translationsPropsExists ? currLang?.label : l.label;
             const path = translationsPropsExists ? l?.link : router.asPath;
 
             const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
