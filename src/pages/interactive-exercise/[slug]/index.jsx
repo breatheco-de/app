@@ -45,6 +45,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -116,26 +117,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: `/interactive-exercise/${slug}`,
       us: `/interactive-exercise/${slug}`,
     };
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-exercise/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-exercise/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-exercise/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-exercise/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-exercise/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
     const eventStructuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
@@ -164,7 +160,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           title,
           image: preview || staticImage,
           description: description || '',
-          translations,
+          translations: translationArray,
           pathConnector: '/interactive-exercise',
           url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
           slug,
@@ -724,6 +720,14 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={exercise.slug}
+          type="EXERCISE"
+          extraQuerys={{}}
+          technologies={exercise?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
 
       {/* <GridContainer

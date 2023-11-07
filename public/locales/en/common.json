@@ -18,6 +18,8 @@
     "months": "months",
     "years": "years"
   },
+  "no-translation-available": "No translation available",
+  "related-content": "Related content",
   "heading": "Welcome to",
   "change-locale": "Change locale",
   "error-with-status": "A {{statusCode}} error occurred on server",
@@ -240,7 +242,7 @@
           "slug": "job-guarantee",
           "title": "Job guarantee"
         },
-        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; conditions apply." }]
+        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
       },
       {
         "service": {

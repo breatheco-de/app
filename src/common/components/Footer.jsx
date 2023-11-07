@@ -31,6 +31,7 @@ function Footer({ pageProps }) {
   const [formStatus, setFormStatus] = useState('');
 
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
+  const actualYear = new Date().getFullYear();
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
   const hideDivider = pageProps?.hideDivider === true;
@@ -329,7 +330,7 @@ function Footer({ pageProps }) {
         // alignItems="center"
         textAlign="center"
       >
-        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName })}</Text>
+        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"

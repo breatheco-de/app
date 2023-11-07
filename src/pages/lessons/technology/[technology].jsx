@@ -62,7 +62,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   return {
     props: {
       seo: {
-        title: technologyData?.title,
+        title: toCapitalize(technologyData?.title),
         description: '',
         image: technologyData?.icon_url || '',
         pathConnector: `/lessons/technology/${technology}`,
@@ -83,8 +83,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 function LessonByTechnology({ lessons, technologyData }) {
   const { t } = useTranslation('lesson');
-
-  // const translations = lessons?.translations || { es: '', en: '', us: '' };
 
   return (
     <Box

@@ -3,22 +3,19 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text, Button,
+  Box, useColorModeValue, Text,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
-import { useState } from 'react';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import GridContainer from '../../common/components/GridContainer';
+import Button from '../../common/components/Button';
 
 function IntroductionSection({
   data, slice, fitContent, ...rest
 }) {
-  const router = useRouter();
-  const [isLoadingContent, setIsLoadingContent] = useState(false);
   const colors = useColorModeValue('#000', '#fff');
 
   const isLeftBigger = slice?.primary?.two_column_size === 'Left is bigger';
@@ -174,11 +171,7 @@ function IntroductionSection({
             minWidth="200px"
             textAlign="center"
             height="52px"
-            isLoading={isLoadingContent}
-            onClick={() => {
-              router.push(slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing');
-              setIsLoadingContent(true);
-            }}
+            to={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing'}
             fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
@@ -189,7 +182,7 @@ function IntroductionSection({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" onClick={() => router.push(data?.callToAction.href)}>
+              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href}>
                 {data?.callToAction.title}
               </Button>
             )}
