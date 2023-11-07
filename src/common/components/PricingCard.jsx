@@ -92,7 +92,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
     }
   };
 
-  const sortPriority = (a, b) => b.sort_priority - a.sort_priority;
+  const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
   return (
     <Flex
