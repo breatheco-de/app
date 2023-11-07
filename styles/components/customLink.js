@@ -1,24 +1,24 @@
 // For more info https://chakra-ui.com/docs/features/style-props
 const bgHoverButtonColor = (props) => {
-  if (props.outline) return 'transparent';
-  return props.colorScheme || '#00A0DA';
+  if (props?.outline) return 'transparent';
+  return props?.colorScheme || '#00A0DA';
 };
 
 const bgButtonColor = (props) => {
-  if (props.outline) return 'transparent';
-  return props.colorScheme || 'blue.default';
+  if (props?.outline) return 'transparent';
+  return props?.colorScheme || 'blue.default';
 };
 
 const borderColor = (props) => {
-  if (props.outline) {
-    if (props.colorScheme) return props.colorScheme;
+  if (props?.outline) {
+    if (props?.colorScheme) return props.colorScheme;
     return '#000000';
   }
   return 'transparent';
 };
 const buttonColor = (props) => {
-  if (props.outline) {
-    if (props.colorScheme) {
+  if (props?.outline) {
+    if (props?.colorScheme) {
       return props.colorScheme;
     }
   }
@@ -26,8 +26,8 @@ const buttonColor = (props) => {
 };
 
 const activeBackgroundColor = (props) => {
-  if (props.outline) {
-    if (props.colorMode === 'light') {
+  if (props?.outline) {
+    if (props?.colorMode === 'light') {
       return 'gray.light';
     }
     return 'gray.700';

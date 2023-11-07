@@ -90,7 +90,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
     e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     const x = pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * 3; //scroll-fast
+    const walk = (x - startX) * 1; //scroll-normal
     ref.current.scrollLeft = scrollLeft - walk;
   };
 

@@ -13,8 +13,8 @@
     "subtitle": "Congratulations on reaching this phase of the program.",
     "description": "We are still learning a lot but this last project will become something to showcase to friends and potential employers.",
     "bullets": [
-      "<a class='link' href='#' target='blank' rel='noopener noreferrer'>Why build a final project?</a>",
-      "<a class='link' href='#' target='blank' rel='noopener noreferrer'>How to pick your final project topic?</a>"
+      "<a class='link' href='https://4geeks.com/docs/knowledge-base-4geeks/why-build-a-final-project' target='blank' rel='noopener noreferrer'>Why build a final project?</a>",
+      "<a class='link' href='https://4geeks.com/docs/knowledge-base-4geeks/pick-your-capstone-project' target='blank' rel='noopener noreferrer'>How to pick your final project topic?</a>"
     ],
     "button": "Upload final project"
   },

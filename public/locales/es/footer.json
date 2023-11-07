@@ -46,6 +46,10 @@
       {
         "label": "Preguntas frecuentes",
         "href": "/how-to"
+      },
+      {
+        "label": "Base de conocimientos",
+        "href": "/docs/knowledge-base-4geeks"
       }
     ]
   },

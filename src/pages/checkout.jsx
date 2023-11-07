@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
@@ -90,6 +91,7 @@ function Checkout() {
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { userSession } = useSession();
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
@@ -139,13 +141,14 @@ function Checkout() {
       dataLayer: {
         event: 'begin_checkout',
         path: '/checkout',
+        conversion_info: userSession,
       },
     });
   }, []);
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
-    if (!queryPlanExists && isAuthenticated) {
+    if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
       setIsPricingModalOpen(true);
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link, useToast } from '@chakra-ui/react';
+import { Box, Flex, Link, useToast, Container } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
@@ -11,6 +11,7 @@ import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import { generateCohortSyllabusModules } from '../../../common/handlers/cohorts';
 import Heading from '../../../common/components/Heading';
 import TagCapsule from '../../../common/components/TagCapsule';
+import JoinCohortComponent from '../../../common/components/JoinCohort';
 import useStyle from '../../../common/hooks/useStyle';
 import Text from '../../../common/components/Text';
 import Module from '../../../js_modules/moduleMap/module';
@@ -191,16 +192,8 @@ function Page({ id, syllabus, cohort, members }) {
         closeOnOverlayClick
         customFunction={joinCohort}
       />
-      <GridContainer
-        withContainer
-        display={{ base: 'flex', md: 'grid' }}
-        flexDirection={{ base: 'column', md: '' }}
-        mt="17px"
-        maxWidth="1280px"
-        padding="0 1rem"
-        gridColumn="1 / span 10"
-      >
-        <Link display="flex" gridGap="4px" variant="default" href="/choose-program">
+      <Container maxWidth="1280px" padding="0 1rem" mt="17px">
+        <Link mb="15px" display="flex" gridGap="4px" variant="default" href="/choose-program">
           <Icon
             icon="arrowLeft"
             width="20px"
@@ -210,18 +203,48 @@ function Page({ id, syllabus, cohort, members }) {
           />
           {t('backToChooseProgram')}
         </Link>
-
-        <Flex mt="3rem" gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
-          <Box flex={{ base: 1, md: 0.75 }}>
-            <Heading as="h1" size="xl">
-              {syllabus?.name || cohort?.name}
-            </Heading>
-            <TagCapsule
-              height="30px"
-              tags={techs}
-            />
-            <Box display={{ base: 'block', md: 'none' }} flex={1}>
-              {cohort?.kickoff_date && (
+        {existsRelatedSubscription ? (
+          <JoinCohortComponent
+            margin="40px 0"
+            logo={syllabus?.logo}
+            isFetching={isFetching}
+            alreadyHaveCohort={alreadyHaveCohort}
+            joinFunction={joinCohort}
+          />
+        ) : (
+          <CallToAction
+            background="blue.default"
+            buttonStyle={{
+              backgroundColor: hexColor.backgroundColor,
+              color: hexColor.blueDefault,
+              borderColor: hexColor.blueDefault,
+            }}
+            onClick={handleClick}
+            isLoading={alreadyHaveCohort}
+            margin="0 0 40px 0"
+            title={t('join-cohort-page.cta-description')}
+            href={`/pricing${qsForPricing}`}
+            buttonText={t('join-cohort-page.cta-button')}
+            width={{ base: '100%', md: 'fit-content' }}
+          />
+        )}
+        <GridContainer
+          withContainer
+          display={{ base: 'flex', md: 'grid' }}
+          flexDirection={{ base: 'column', md: '' }}
+          gridColumn="1 / span 10"
+        >
+          <Flex gridGap={{ base: '1rem', md: '3rem', lg: '4rem' }}>
+            <Box flex={{ base: 1, md: 0.75 }}>
+              <Heading as="h1" size="xl">
+                {syllabus?.name || cohort?.name}
+              </Heading>
+              <TagCapsule
+                height="30px"
+                tags={techs}
+              />
+              <Box display={{ base: 'block', md: 'none' }} flex={1}>
+                {cohort?.kickoff_date && (
                 <CohortSideBar
                   cohort={cohort}
                   teacherVersionActive={false}
@@ -230,40 +253,10 @@ function Page({ id, syllabus, cohort, members }) {
                   width="100%"
                   isDisabled
                 />
-              )}
-            </Box>
+                )}
+              </Box>
 
-            {existsRelatedSubscription ? (
-              <Button
-                variant="default"
-                isLoading={isFetching || alreadyHaveCohort}
-                isDisabled={!isAuthenticated}
-                onClick={joinCohort}
-                textTransform="uppercase"
-                fontSize="13px"
-                mt="1rem"
-              >
-                {t('join-cohort-page.join-next-cohort')}
-              </Button>
-            ) : (
-              <CallToAction
-                background="blue.default"
-                buttonStyle={{
-                  backgroundColor: hexColor.backgroundColor,
-                  color: hexColor.blueDefault,
-                  borderColor: hexColor.blueDefault,
-                }}
-                onClick={handleClick}
-                isLoading={alreadyHaveCohort}
-                margin="40px 0 auto 0"
-                title={t('join-cohort-page.cta-description')}
-                href={`/pricing${qsForPricing}`}
-                buttonText={t('join-cohort-page.cta-button')}
-                width={{ base: '100%', md: 'fit-content' }}
-              />
-            )}
-
-            {syllabus?.modules?.length > 0 && (
+              {syllabus?.modules?.length > 0 && (
               <Flex flexDirection="column" id="module-wrapper" mt="3rem" gridGap="2rem">
                 {syllabus.modules.map((module) => (
                   <Box key={module.slug} id={module.slug}>
@@ -303,10 +296,10 @@ function Page({ id, syllabus, cohort, members }) {
                   </Box>
                 ))}
               </Flex>
-            )}
-          </Box>
-          <Box display={{ base: 'none', md: 'block' }} flex={0.35}>
-            {cohort?.kickoff_date && (
+              )}
+            </Box>
+            <Box display={{ base: 'none', md: 'block' }} flex={0.35}>
+              {cohort?.kickoff_date && (
               <CohortSideBar
                 cohort={cohort}
                 teacherVersionActive={false}
@@ -315,10 +308,12 @@ function Page({ id, syllabus, cohort, members }) {
                 width="100%"
                 isDisabled
               />
-            )}
-          </Box>
-        </Flex>
-      </GridContainer>
+              )}
+            </Box>
+          </Flex>
+        </GridContainer>
+      </Container>
+
     </>
   );
 }

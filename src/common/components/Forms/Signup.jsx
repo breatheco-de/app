@@ -11,6 +11,7 @@ import FieldForm from './FieldForm';
 import PhoneInput from '../PhoneInput';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
+import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
 import { setStorageItem } from '../../../utils';
@@ -20,6 +21,7 @@ import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
 import { generatePlan } from '../../handlers/subscriptions';
 
 function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLoginLink, containerGap }) {
+  const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
   const { featuredColor } = useStyle();
   const [isChecked, setIsChecked] = useState(false);
@@ -52,7 +54,7 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const data = await startSignup(allValues, lang);
+    const data = await startSignup({ ...allValues, conversion_info: userSession }, lang);
 
     if (data?.access_token) {
       handleSubscribeToPlan({
