@@ -115,9 +115,9 @@ const sitemapTemplate = (pages = [], externalContent = '') => `${externalContent
     ...pages,
   ].map(addPage).join('\n')}
 </urlset>`;
-const sitemapTemplateWithHreflang = (pages = [], isPrismicPage) => `<?xml version="1.0" encoding="UTF-8"?>
+const sitemapTemplateWithHreflang = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${pages.map((page, index) => addPageWithHrefLang(page.pathURL, index, page, isPrismicPage)).join('\n')}
+  ${pages.map((page, index) => addPageWithHrefLang(page.pathURL, index, page)).join('\n')}
 </urlset>`;
 
 const listOfSitemapsTemplate = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
