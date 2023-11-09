@@ -55,6 +55,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let result;
     let markdown;
     result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
@@ -113,7 +114,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/interactive-coding-tutorial/${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
       image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
@@ -124,7 +125,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/interactive-coding-tutorial/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
       },
     };
 

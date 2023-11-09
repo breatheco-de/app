@@ -53,11 +53,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let markdown = '';
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
+
     if (!lesson) {
       console.log(`${slug} not found on cache`);
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       lesson = await response.json();
-
       const engPrefix = {
         us: 'en',
         en: 'en',
@@ -127,7 +128,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       '@type': 'Article',
       name: lesson?.title,
       description: lesson?.description,
-      url: `${ORIGIN_HOST}/lesson/${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/lesson/${slug}`,
       image: lesson?.preview || `${ORIGIN_HOST}/static/images/4geeks.png`,
       datePublished: lesson?.published_at,
       dateModified: lesson?.updated_at,
@@ -138,7 +139,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: lesson?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/lesson/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/lesson/${slug}`,
       },
     };
 
