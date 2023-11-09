@@ -50,6 +50,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let data;
     let markdown;
     data = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
     if (!data) {
       console.log(`${slug} not found on cache`);
       const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
@@ -106,7 +107,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       '@type': 'Article',
       name: data?.title,
       description: data?.description,
-      url: `${ORIGIN_HOST}//how-to/${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
       image: preview || staticImage,
       datePublished: data?.published_at,
       dateModified: data?.updated_at,
@@ -117,7 +118,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: data?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/how-to/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
       },
     };
     const cleanedStructuredData = cleanObject(structuredData);

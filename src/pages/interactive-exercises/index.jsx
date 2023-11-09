@@ -41,6 +41,7 @@ const fetchExercises = async (lang, page, query) => {
     difficulty: difficulty[query.difficulty],
     technologies,
     video,
+    like: query?.search,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();

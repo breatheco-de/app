@@ -36,6 +36,7 @@ const fetchLessons = async (lang, page, query) => {
     offset: page ? (page - 1) * contentPerPage : 0,
     technologies,
     video,
+    like: query?.search,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
