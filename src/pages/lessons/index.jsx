@@ -25,6 +25,7 @@ const contentPerPage = 20;
 const fetchLessons = async (lang, page, query) => {
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const like = query?.search;
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
     visibility: 'PUBLIC',
@@ -36,6 +37,7 @@ const fetchLessons = async (lang, page, query) => {
     offset: page ? (page - 1) * contentPerPage : 0,
     technologies,
     video,
+    like,
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
