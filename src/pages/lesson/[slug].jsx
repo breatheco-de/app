@@ -53,11 +53,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let markdown = '';
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
+
     if (!lesson) {
       console.log(`${slug} not found on cache`);
       const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       lesson = await response.json();
-
       const engPrefix = {
         us: 'en',
         en: 'en',
@@ -103,12 +104,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
     const { title, description, translations } = lesson;
-
-    const ogUrl = {
-      en: `/lesson/${slug}`,
-      us: `/lesson/${slug}`,
-    };
-
     const translationInEnglish = translations?.en || translations?.us;
     const translationsExists = Object.keys(translations).length > 0;
 
@@ -128,13 +123,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
     ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: lesson?.title,
       description: lesson?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/lesson/${slug}`,
+      image: lesson?.preview || `${ORIGIN_HOST}/static/images/4geeks.png`,
       datePublished: lesson?.published_at,
       dateModified: lesson?.updated_at,
       author: lesson?.author ? {
@@ -144,20 +139,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: lesson?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/lesson/${slug}`,
       },
     };
 
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
           description: description || '',
-          image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+          image: cleanedStructuredData.image,
           pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
-          url: ogUrl.en || `/${locale}/lesson/${slug}`,
+          url: `/lesson/${slug}`,
           slug,
           type: 'article',
           card: 'large',

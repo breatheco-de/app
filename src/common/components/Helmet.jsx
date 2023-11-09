@@ -99,7 +99,7 @@ function Helmet({
           en: 'en',
           es: 'es',
         };
-        const urlAlternate = `https://4geeks.com/${translation.link}`;
+        const urlAlternate = `https://4geeks.com${translation.link}`;
         return ['default', 'us', 'en'].includes(lang) ? (
           <React.Fragment key={`${language} - ${urlAlternate}`}>
             <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
