@@ -108,11 +108,11 @@ function ShowOnSignUp({
           email: data.email,
           first_name: data.first_name,
           last_name: data.last_name,
-          plan: data.plan,
+          plan: defaultPlan,
           user_id: data.user,
           course: allValues.course,
           country: allValues.country,
-          city: allValues.city,
+          city: data.city,
           syllabus: allValues.syllabus,
           cohort: allValues.cohort,
           language: allValues.language,
@@ -123,16 +123,6 @@ function ShowOnSignUp({
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      reportDatalayer({
-        dataLayer: {
-          event: 'sign_up',
-          method: 'native',
-          user_id: data?.id,
-          email: data?.email,
-          plan: defaultPlan,
-          conversion_info: userSession,
-        },
-      });
       handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
         .finally(() => {
           setAlreadyLogged(true);
