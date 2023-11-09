@@ -6,6 +6,7 @@ import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
+import { log } from './logging';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -29,13 +30,20 @@ const reportDatalayer = (payload) => {
   TagManager.dataLayer(payload);
 };
 
-const getPrismicPages = () => {
-  const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Prismic pages');
-    });
-  return data;
+const getPrismicPages = async () => {
+  try {
+    const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
+    const data = await response.json();
+    log(`\n${data.results.length} pages fetched from Prismic\n`);
+    if (response.status > 400 && response.statusText !== 'OK') {
+      throw new Error('SITEMAP: Error fetching Prismic pages');
+    } else {
+      return data.results;
+    }
+  } catch (msg) {
+    console.error('SITEMAP:', msg);
+    return [];
+  }
 };
 
 const getTechnologyAssets = async (slug) => {

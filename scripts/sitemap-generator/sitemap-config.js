@@ -45,24 +45,44 @@ function addPageWithHrefLang(pagePath, index, data) {
   const path = pagePath.replace('src/pages', '').replace('/index', '').replace('.jsx', '').replace('.js', '');
   const route = path === '/index' ? '' : path;
   const translations = data?.translations || {};
-  const translationInEnglish = translations?.en || translations?.us;
+  const alternateLanguages = Array.isArray(data?.alternate_languages) ? data?.alternate_languages : [];
   const locationLang = {
     us: 'en',
     en: 'en',
     es: 'es',
   };
+
+  const languagesArr = [
+    ...alternateLanguages,
+    {
+      id: data?.id,
+      type: data?.type,
+      lang: data?.lang,
+      uid: data?.uid,
+    },
+  ];
+
+  const translationsArr = languagesArr?.map((tr) => ({
+    [tr.lang.split('-')[0]]: tr.uid,
+  }));
+  const prismicTranslations = {
+    ...translationsArr?.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+  };
+  const translationInEnglish = prismicTranslations?.en || translations?.en || translations?.us;
+  const translationInSpanish = prismicTranslations.es || translations?.es;
+
   const translationArray = [
     {
       value: 'en',
       lang: 'en',
-      slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
-      link: `/${data?.connector}/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
+      slug: (data?.lang === 'en' || data?.lang === 'us') ? (data?.uid || data?.slug) : translationInEnglish,
+      link: `/${data?.connector ? `${data?.connector}/` : ''}${(data?.lang === 'en' || data?.lang === 'us') ? (data?.uid || data?.slug) : translationInEnglish}`,
     },
     {
       value: 'es',
       lang: 'es',
-      slug: data?.lang === 'es' ? data.slug : translations?.es,
-      link: `/es/${data?.connector}/${data?.lang === 'es' ? data.slug : translations?.es}`,
+      slug: data?.lang === 'es' ? (data?.uid || data?.slug) : translationInSpanish,
+      link: `/es/${data?.connector ? `${data?.connector}/` : ''}${data?.lang === 'es' ? (data?.uid || data?.slug) : translationInSpanish}`,
     },
   ].filter((item) => item?.slug !== undefined);
 
