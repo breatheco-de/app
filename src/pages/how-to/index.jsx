@@ -37,6 +37,7 @@ const fetchArticles = async (lang, page, query) => {
   };
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const like = query?.search;
   const querys = parseQuerys({
     asset_type: 'ARTICLE',
     visibility: 'PUBLIC',
@@ -49,6 +50,7 @@ const fetchArticles = async (lang, page, query) => {
     difficulty: difficulty[query.difficulty],
     technologies,
     video,
+    like,
   });
 
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
