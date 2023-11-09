@@ -113,10 +113,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       delete result.translations.us;
     }
 
-    const ogUrl = {
-      en: `/interactive-exercise/${slug}`,
-      us: `/interactive-exercise/${slug}`,
-    };
     const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
       {
@@ -132,13 +128,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         link: `/es/interactive-exercise/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
     ].filter((item) => item?.slug !== undefined);
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}/interactive-exercise/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -148,21 +144,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}/interactive-exercise/${slug}`,
       },
     };
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           type: 'article',
           title,
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           description: description || '',
           translations: translationArray,
           pathConnector: '/interactive-exercise',
-          url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+          url: `/interactive-exercise/${slug}`,
           slug,
           keywords: result?.seo_keywords || '',
           card: 'large',
