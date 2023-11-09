@@ -6,15 +6,18 @@ import PropTypes from 'prop-types';
 import {
   Avatar,
   Tooltip,
+  Spinner,
+  InputGroup,
+  InputRightElement,
   Box, Button, Checkbox, Flex, Image, Skeleton, useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-// import { phone } from '../../utils/regex';
+import { email as emailRe } from '../../utils/regex';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import PhoneInput from '../../common/components/PhoneInput';
-import { getQueryString, getStorageItem, setStorageItem, slugToTitle } from '../../utils';
+import { getQueryString, getStorageItem, setStorageItem, slugToTitle, isWindow } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useSession from '../../common/hooks/useSession';
@@ -42,6 +45,12 @@ function ContactInformation({
   const toast = useToast();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [emailValidation, setEmailValidation] = useState({
+    valid: false,
+    loading: false,
+    error: null,
+  });
+  const [emailValue, setEmailValue] = useState(null);
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
@@ -67,6 +76,55 @@ function ContactInformation({
     //   .required(t('validators.confirm-email-required')),
   });
 
+  const validateEmail = async (email) => {
+    try {
+      if (isWindow && email.toLowerCase().match(emailRe)) {
+        setEmailValidation({
+          valid: false,
+          loading: true,
+          error: null,
+        });
+        const cacheEmail = sessionStorage.getItem(email);
+        let result;
+        if (cacheEmail) {
+          result = JSON.parse(cacheEmail);
+        } else {
+          const response = await bc.post(`${BREATHECODE_HOST}/v1/marketing/app/validateemail`, { email });
+          result = await response.json();
+        }
+
+        sessionStorage.setItem(email, JSON.stringify(result));
+
+        if (result.status_code && result.status_code >= 400) {
+          setEmailValidation({
+            valid: false,
+            loading: false,
+            error: result.detail,
+          });
+        } else {
+          setEmailValidation({
+            valid: true,
+            loading: false,
+            error: null,
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+      setEmailValidation({
+        valid: false,
+        loading: false,
+        error: typeof e === 'string' ? e : e.message,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (!emailValue) return () => {};
+    const timeoutId = setTimeout(() => validateEmail(emailValue), 1000);
+    return () => clearTimeout(timeoutId);
+  }, [emailValue]);
+
   useEffect(() => {
     reportDatalayer({
       dataLayer: {
@@ -76,83 +134,97 @@ function ContactInformation({
   }, []);
 
   const handleSubmit = async (actions, allValues) => {
-    const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept-Language': router?.locale || 'en',
-      },
-      body: JSON.stringify({ ...allValues, conversion_info: userSession }),
-    });
-    const data = await resp.json();
-    if (data.silent_code === SILENT_CODE.USER_EXISTS) {
-      setShowAlreadyMember(true);
-    }
-    if (resp?.status >= 400) {
+    try {
+      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
+        },
+        body: JSON.stringify({ ...allValues, conversion_info: userSession }),
+      });
+      const data = await resp.json();
+      if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+        setShowAlreadyMember(true);
+      }
+      if (resp?.status >= 400) {
+        toast({
+          position: 'top',
+          title: data?.detail,
+          status: 'error',
+          isClosable: true,
+          duration: 6000,
+        });
+      } else {
+        reportDatalayer({
+          dataLayer: {
+            event: 'sign_up',
+            method: 'native',
+            email: data.email,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            plan: planFormated,
+            user_id: data.user,
+            course: allValues.course,
+            country: allValues.country,
+            city: data.city,
+            syllabus: allValues.syllabus,
+            cohort: allValues.cohort,
+            conversion_info: userSession,
+          },
+        });
+      }
+      setStorageItem('subscriptionId', data?.id);
+
+      const respPlan = await bc.payment().getPlan(planFormated);
+      const dataOfPlan = respPlan?.data;
+      if (resp.status < 400 && typeof data?.id === 'number') {
+        if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
+          setStorageItem('subscriptionId', data.id);
+          router.push('/thank-you');
+        }
+        if (data?.access_token && !dataOfPlan?.has_waiting_list) {
+          setVerifyEmailProps({
+            data: {
+              ...allValues,
+              ...data,
+            },
+            state: true,
+          });
+          router.push({
+            query: {
+              ...router.query,
+              token: data.access_token,
+            },
+          });
+          nextStep();
+        }
+      }
+
+      if (resp.status >= 400 && data?.phone) {
+        toast({
+          position: 'top',
+          title: data?.phone[0],
+          status: 'warning',
+          duration: 6000,
+          isClosable: true,
+        });
+      }
+      actions.setSubmitting(false);
+    } catch (e) {
+      console.log(e);
+      actions.setSubmitting(false);
       toast({
         position: 'top',
-        title: data?.detail,
+        title: e.message,
         status: 'error',
         isClosable: true,
         duration: 6000,
       });
-    } else {
-      reportDatalayer({
-        dataLayer: {
-          event: 'sign_up',
-          method: 'native',
-          email: data.email,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          plan: planFormated,
-          user_id: data.user,
-          course: allValues.course,
-          country: allValues.country,
-          city: data.city,
-          syllabus: allValues.syllabus,
-          cohort: allValues.cohort,
-          conversion_info: userSession,
-        },
-      });
     }
-    setStorageItem('subscriptionId', data?.id);
-
-    const respPlan = await bc.payment().getPlan(planFormated);
-    const dataOfPlan = respPlan?.data;
-    if (resp.status < 400 && typeof data?.id === 'number') {
-      if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
-        setStorageItem('subscriptionId', data.id);
-        router.push('/thank-you');
-      }
-      if (data?.access_token && !dataOfPlan?.has_waiting_list) {
-        setVerifyEmailProps({
-          data: {
-            ...allValues,
-            ...data,
-          },
-          state: true,
-        });
-        router.push({
-          query: {
-            ...router.query,
-            token: data.access_token,
-          },
-        });
-        nextStep();
-      }
-    }
-
-    if (resp.status >= 400 && data?.phone) {
-      toast({
-        position: 'top',
-        title: data?.phone[0],
-        status: 'warning',
-        duration: 6000,
-        isClosable: true,
-      });
-    }
-    actions.setSubmitting(false);
   };
+
+  const isDisabled = isChecked === false && !emailValidation.loading && emailValidation.valid;
 
   return (
     <Box display="flex" height="100%" maxWidth="1336px" width="100%" margin={{ base: 'inherit', md: '1rem auto 1rem auto', '2xl': '4rem auto 4rem auto' }}>
@@ -251,13 +323,22 @@ function ContactInformation({
                       fontSize="12px"
                       gridGap="4px"
                     >
-                      <FieldForm
-                        type="email"
-                        name="email"
-                        label={t('common:email')}
-                        formProps={formProps}
-                        setFormProps={setFormProps}
-                      />
+                      <InputGroup>
+                        <FieldForm
+                          type="email"
+                          name="email"
+                          label={t('common:email')}
+                          formProps={formProps}
+                          setFormProps={setFormProps}
+                          handleOnChange={(e) => setEmailValue(e.target.value)}
+                        />
+                        <InputRightElement>
+                          {emailValidation.loading && <Spinner color={hexColor.blueDefault} />}
+                        </InputRightElement>
+                      </InputGroup>
+                      {emailValidation.loading && <Box>{t('validating-email')}</Box>}
+                      {emailValidation.valid && <Box color={hexColor.green}>{t('email-validated')}</Box>}
+                      {emailValidation.error && <Box color={hexColor.danger}>{emailValidation.error}</Box>}
                       <Box color="blue.default2">{t('email-info')}</Box>
                     </Box>
                   </Box>
@@ -276,7 +357,7 @@ function ContactInformation({
                   width="100%"
                   type="submit"
                   variant="default"
-                  isDisabled={isChecked === false}
+                  isDisabled={isDisabled}
                   isLoading={isSubmitting}
                   alignSelf="flex-end"
                 >
