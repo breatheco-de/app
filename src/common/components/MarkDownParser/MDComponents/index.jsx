@@ -362,6 +362,7 @@ export function MDHeading({ children, tagType }) {
     h1: 'sm',
     h2: 'sm',
     h3: '18px',
+    h4: '16px',
   };
   const id = children?.[0]?.props
     ? slugify(String(children?.[0]?.props?.children))
