@@ -55,6 +55,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let result;
     let markdown;
     result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
@@ -91,10 +92,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     } = result;
 
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
-    const ogUrl = {
-      en: `/interactive-coding-tutorial/${slug}`,
-      us: `/interactive-coding-tutorial/${slug}`,
-    };
     const translationInEnglish = translations?.en || translations?.us;
 
     const translationArray = [
@@ -112,13 +109,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
     ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -128,20 +125,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
       },
     };
 
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
-          url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
+          url: `/interactive-coding-tutorial/${slug}`,
           slug,
           description: description || '',
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           translations: translationArray,
           pathConnector: '/interactive-coding-tutorial',
           type: 'article',
