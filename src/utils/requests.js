@@ -112,6 +112,8 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return [];
     });
 
+  console.log(`Generating ${category}: ${response.results.length} recopilated of ${response.count} assets`);
+
   let { results } = response;
   const { count } = response;
   allResults = allResults.concat(results);
@@ -146,6 +148,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     if (response.results) {
       results = response.results;
       allResults = allResults.concat(results);
+      console.log(`Generating ${category}: ${allResults.length} recopilated of ${count} assets`);
     }
   }
 
