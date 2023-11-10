@@ -24,7 +24,7 @@ async function getData() {
     howTos,
     events,
   };
-  console.log('Next data has been fetched:\n', {
+  console.log('\nNext data has been fetched:\n', {
     landingTechnologies: landingTechnologies?.length,
     lessons: lessons?.length,
     excersises: excersises?.length,
