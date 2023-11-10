@@ -50,6 +50,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let data;
     let markdown;
     data = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
     if (!data) {
       console.log(`${slug} not found on cache`);
       const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
@@ -85,10 +86,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       title, description, translations, preview,
     } = data;
 
-    const ogUrl = {
-      en: `/how-to/${slug}`,
-      us: `/how-to/${slug}`,
-    };
     const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
       {
@@ -105,13 +102,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
     ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: data?.title,
       description: data?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+      image: preview || staticImage,
       datePublished: data?.published_at,
       dateModified: data?.updated_at,
       author: data?.author ? {
@@ -121,21 +118,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: data?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
       },
     };
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
           description: description || '',
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           type: 'article',
           translations: translationArray,
           pathConnector: '/how-to',
-          url: ogUrl.en || `/${locale}/how-to/${slug}`,
+          url: `/how-to/${slug}`,
           slug,
           keywords: data?.seo_keywords || '',
           card: 'default',
