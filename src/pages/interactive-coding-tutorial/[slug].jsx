@@ -24,6 +24,7 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('PROJECT', {}, 'project');
@@ -54,12 +55,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   try {
     let result;
     let markdown;
+    const queryString = parseQuerys({ expand: 'technologies' });
     result = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=PROJECT`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
       result = await response.json();
       const engPrefix = {
         us: 'en',
@@ -90,7 +92,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const {
       title, description, translations, preview,
     } = result;
-
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
     const translationInEnglish = translations?.en || translations?.us;
 
@@ -306,8 +307,8 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
-                technologies={project?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
+                technologies={project?.technologies}
               />
             </Box>
           </Box>

@@ -59,7 +59,8 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
     'Accept-Language': lang,
   };
 
-  const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
+  const technologiesList = technologies.map((tech) => tech?.slug || tech);
+  const technologiesArray = typeof technologiesList === 'string' ? technologiesList.split(',') : technologiesList;
 
   const fetchCourses = async () => {
     try {

@@ -25,6 +25,7 @@ import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
+import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async () => {
   const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
@@ -54,10 +55,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
+    const queryString = parseQuerys({ expand: 'technologies' });
 
     if (!lesson) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
       lesson = await response.json();
       const engPrefix = {
         us: 'en',
@@ -183,7 +185,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 };
 
 function LessonSlug({ lesson, markdown, ipynbHtml }) {
-  const { t, lang } = useTranslation('lesson');
+  const { t } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -195,7 +197,6 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { locale } = router;
 
   const isIpynb = ipynbHtml?.statusText === 'OK' || ipynbHtml?.iframe;
-  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
@@ -253,10 +254,9 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           <Box display="grid" gridColumn="2 / span 12">
             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="0 0 1rem 0" gridGap="10px" justifyContent="space-between" position="relative">
               <Box>
-                {lesson?.technologies ? (
+                {lesson?.technologies.length > 0 ? (
                   <TagCapsule
                     isLink
-                    href={`${langPrefix}/lessons`}
                     variant="rounded"
                     tags={lesson?.technologies || ['']}
                     marginY="8px"
@@ -316,8 +316,8 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               <MarkDownParser content={markdownData.content} withToc isPublic />
               <MktRecommendedCourses
                 display={{ base: 'none', md: 'grid' }}
-                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
-                technologies={lesson?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+                technologies={lesson?.technologies}
               />
 
             </Box>

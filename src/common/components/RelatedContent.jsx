@@ -27,7 +27,7 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
     if (type) {
       const data = await getAsset(type, {
         ...extraQuerys,
-        technologies,
+        technologies: technologies.map((tech) => tech?.slug || tech),
         limit: 6,
       });
       const dataFilteredByLang = data.filter((l) => {

@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import { Box, Stack, useColorMode } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Text from './Text';
 import Link from './NextChakraLink';
 
@@ -24,6 +25,8 @@ function TagCapsule({
   ...rest
 }) {
   const { colorMode } = useColorMode();
+  const router = useRouter();
+  const langPrefix = router.locale === 'en' ? '' : `${router.locale}/`;
 
   return tags?.length !== 0 && (
     <Stack
@@ -41,76 +44,83 @@ function TagCapsule({
       gridGap={gap}
       {...rest}
     >
-      {tags.map((tag, i) => (isLink ? (
-        <Link
-          href={`${href}/technology/${tag}`}
-          display="flex"
-          cursor={isLink ? 'pointer' : 'default'}
-          bg={variant === 'rounded' ? background : 'none'}
-          direction="row"
-          padding={variant === 'rounded' ? '0 10px' : '0'}
-          style={style}
-          rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag?.name || `${tag}-${i}`}
-          lineHeight="22px"
-          color={colorMode === 'light' ? 'black' : 'black'}
-        >
-          <Text
-            margin="0"
-            alignSelf="center"
-            letterSpacing="0.05em"
-            textAlign="center"
-            size={fontSize}
-            fontWeight={fontWeight}
-            color="black"
-            textTransform="uppercase"
+      {tags.map((tag, i) => {
+        const isUnlistedTechnology = tag?.visibility === 'UNLISTED';
+        const tagSlug = tag?.slug || tag;
+        const tagTitle = tag?.title || tag?.name;
+
+        return ((!isUnlistedTechnology && isLink) ? (
+          <Link
+            href={`/${langPrefix}technology/${tagSlug}`}
+            display="flex"
+            locale={router.locale}
+            cursor={isLink ? 'pointer' : 'default'}
+            bg={variant === 'rounded' ? background : 'none'}
+            direction="row"
+            padding={variant === 'rounded' ? '0 10px' : '0'}
+            style={style}
+            rounded={variant === 'rounded' ? borderRadius : 'none'}
+            key={tagTitle || `${tag}-${i}`}
+            lineHeight="22px"
+            color={colorMode === 'light' ? 'black' : 'black'}
           >
-            {tag?.name || tag}
-          </Text>
-          {variant === 'slash' && i < tags.length - 1 && (
-            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
-              {separator}
-            </Box>
-          )}
-        </Link>
-      ) : (
-        <Box
-          as="li"
-          display="flex"
-          bg={variant === 'rounded' ? background : 'none'}
-          direction="row"
-          padding={variant === 'rounded' ? '0 10px' : '0'}
-          style={style}
-          rounded={variant === 'rounded' ? borderRadius : 'none'}
-          key={tag?.name || `${tag}-${i}`}
-          lineHeight={lineHeight}
-          color={colorMode === 'light' ? 'black' : 'black'}
-        >
-          {variant === 'slash' && i !== 0 && (
-            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
-              {separator}
-            </Box>
-          )}
-          <Text
-            margin="0"
-            alignSelf="center"
-            letterSpacing="0.05em"
-            textAlign="center"
-            size={fontSize}
-            fontWeight={fontWeight}
-            color={color}
-            textTransform="uppercase"
+            <Text
+              margin="0"
+              alignSelf="center"
+              letterSpacing="0.05em"
+              textAlign="center"
+              size={fontSize}
+              fontWeight={fontWeight}
+              color="black"
+              textTransform="uppercase"
+            >
+              {tagTitle || tag}
+            </Text>
+            {variant === 'slash' && i < tags.length - 1 && (
+              <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+                {separator}
+              </Box>
+            )}
+          </Link>
+        ) : (
+          <Box
+            as="li"
+            display="flex"
+            bg={variant === 'rounded' ? background : 'none'}
+            direction="row"
+            padding={variant === 'rounded' ? '0 10px' : '0'}
+            style={style}
+            rounded={variant === 'rounded' ? borderRadius : 'none'}
+            key={tagTitle || `${tag}-${i}`}
+            lineHeight={lineHeight}
+            color={colorMode === 'light' ? 'black' : 'black'}
           >
-            {tag?.name || tag}
-          </Text>
-          {/* {variant === 'slash' && i < tags.length - 1 && (
-            <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
-              {separator}
-            </Box>
-          )} */}
-        </Box>
-      )
-      ))}
+            {variant === 'slash' && i !== 0 && (
+              <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+                {separator}
+              </Box>
+            )}
+            <Text
+              margin="0"
+              alignSelf="center"
+              letterSpacing="0.05em"
+              textAlign="center"
+              size={fontSize}
+              fontWeight={fontWeight}
+              color={color}
+              textTransform="uppercase"
+            >
+              {tagTitle || tag}
+            </Text>
+            {/* {variant === 'slash' && i < tags.length - 1 && (
+              <Box as="span" alignSelf="center" userSelect="none" fontSize="15px" mx="0.5rem">
+                {separator}
+              </Box>
+            )} */}
+          </Box>
+        )
+        );
+      })}
     </Stack>
   );
 }

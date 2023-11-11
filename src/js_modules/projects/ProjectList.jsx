@@ -27,11 +27,9 @@ const ProjectList = forwardRef(({
     if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     return 'lesson';
   };
-
+  const getArrayOfTechnologies = (technologies) => technologies.map((tech) => tech?.title);
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
-
   const getDifficultyColors = (currDifficulty) => {
-    // 'beginner', 'easy', 'intermediate', 'hard'
     const background = {
       beginner: 'green.light',
       easy: 'green.light',
@@ -69,6 +67,7 @@ const ProjectList = forwardRef(({
           const isExercise = isDynamic && getAssetPath(ex) === 'interactive-exercise';
           const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
+          const tachnologies = ex?.technologies?.length > 0 ? getArrayOfTechnologies(ex.technologies) : [];
 
           const lang = ex?.lang === 'us' ? '' : `/${ex?.lang}`;
           const getLink = () => {
@@ -107,9 +106,9 @@ const ProjectList = forwardRef(({
                 className="masonry-content"
               >
                 <Box display="flex" flexDirection="column">
-                  {ex.technologies.length >= 1 && (
+                  {tachnologies.length >= 1 && (
                     <TagCapsule
-                      tags={ex.technologies.slice(0, 3)}
+                      tags={tachnologies.slice(0, 3)}
                       variant="rounded"
                       borderRadius="10px"
                       marginY="8px"

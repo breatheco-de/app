@@ -42,10 +42,11 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
-import { cleanObject } from '../../../utils';
+import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
+import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -71,12 +72,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   try {
     let result;
     let markdown;
+    const queryString = parseQuerys({ expand: 'technologies' });
     result = await getCacheItem(slug);
-    const langPrefix = locale === 'en' ? '' : `/${result.lang}`;
+    const langPrefix = locale === 'en' ? '' : `/${result?.lang || locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=EXERCISE`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
       result = await resp.json();
       const engPrefix = {
         us: 'en',
@@ -683,8 +685,8 @@ function Exercise({ exercise, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
-              technologies={exercise?.technologies.join(',')}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              technologies={exercise?.technologies}
             />
           </Box>
         </Box>
