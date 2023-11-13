@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, useColorModeValue, Skeleton, ModalOverlay, ModalContent, ModalCloseButton, Button, Tooltip, Modal,
+  Box, useColorModeValue, ModalOverlay, ModalContent, ModalCloseButton, Button, Tooltip, Modal,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -252,23 +252,19 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           <Box display="grid" gridColumn="2 / span 12">
             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="0 0 1rem 0" gridGap="10px" justifyContent="space-between" position="relative">
               <Box>
-                {lesson?.technologies.length > 0 ? (
-                  <TagCapsule
-                    isLink
-                    variant="rounded"
-                    tags={lesson?.technologies || ['']}
-                    marginY="8px"
-                    fontSize="13px"
-                    style={{
-                      padding: '2px 10px',
-                      margin: '0',
-                    }}
-                    gap="10px"
-                    paddingX="0"
-                  />
-                ) : (
-                  <Skeleton width="130px" height="26px" borderRadius="10px" />
-                )}
+                <TagCapsule
+                  isLink
+                  variant="rounded"
+                  tags={lesson?.technologies || ['']}
+                  marginY="8px"
+                  fontSize="13px"
+                  style={{
+                    padding: '2px 10px',
+                    margin: '0',
+                  }}
+                  gap="10px"
+                  paddingX="0"
+                />
               </Box>
               <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'block' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
                 {lesson?.readme_url && (

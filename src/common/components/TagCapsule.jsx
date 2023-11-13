@@ -28,7 +28,7 @@ function TagCapsule({
   const router = useRouter();
   const langPrefix = router.locale === 'en' ? '' : `${router.locale}/`;
 
-  return tags?.length !== 0 && (
+  return tags?.length > 0 && (
     <Stack
       bg={variant === 'rounded' ? 'none' : background}
       as="ul"

@@ -237,21 +237,19 @@ export default function HowToSlug({ data, markdown }) {
             {`← ${t('back-to')}`}
           </Link>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
-            {data?.technologies.length > 0 && (
-              <TagCapsule
-                variant="rounded"
-                isLink
-                tags={data?.technologies}
-                marginY="8px"
-                fontSize="13px"
-                style={{
-                  padding: '2px 10px',
-                  margin: '0',
-                }}
-                gap="10px"
-                paddingX="0"
-              />
-            )}
+            <TagCapsule
+              variant="rounded"
+              isLink
+              tags={data?.technologies}
+              marginY="8px"
+              fontSize="13px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
             <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
