@@ -59,7 +59,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=PROJECT`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       result = await response.json();
       const engPrefix = {
         us: 'en',
@@ -90,7 +90,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const {
       title, description, translations, preview,
     } = result;
-
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
     const translationInEnglish = translations?.en || translations?.us;
 
@@ -306,8 +305,8 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
-                technologies={project?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
+                technologies={project?.technologies}
               />
             </Box>
           </Box>

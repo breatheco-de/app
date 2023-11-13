@@ -132,10 +132,6 @@ async function generateSitemap() {
   const paginatedExercisesRoute = pagination(exercisesPages, 'interactive-exercises');
   const paginatedProjectsRoute = pagination(projectsPages, 'interactive-coding-tutorials');
   const paginatedHowTosRoute = pagination(howTosPages, 'how-to');
-
-  const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology', 'lesson');
-  const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology', 'exercise');
-  const technologyProjectsRoute = generateTechnologySlug(technologyLandingPages, 'interactive-coding-tutorials/technology', 'project');
   const allTechnologiesRoute = generateTechnologySlug(technologyLandingPages, 'technology', 'tech');
 
   // excludes Nextjs files and API routes.
@@ -179,7 +175,7 @@ async function generateSitemap() {
   const lessonsSitemap = sitemapTemplateWithHreflang(lessonsRoute);
   const projectsSitemap = sitemapTemplateWithHreflang(projectsCodingRoute);
   const exercisesSitemap = sitemapTemplateWithHreflang(exercisesRoute);
-  const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
+  const technologiesSitemap = sitemapTemplate(allTechnologiesRoute);
   const eventsSitemap = sitemapTemplate(eventsRoute);
 
   const whiteLabelAcademySitemapsList = listOfSitemapsTemplate([

@@ -108,11 +108,11 @@ function LessonByTechnology({ data, technologyData }) {
         fontWeight="700"
         paddingBottom="6px"
       >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData.title) })}
+        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
       </Text>
       <Box flex="1" pb="2rem">
         <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData.title) })}
+          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
         </Heading>
 
         <Text
@@ -122,7 +122,7 @@ function LessonByTechnology({ data, technologyData }) {
           display="flex"
           textAlign="left"
         >
-          {technologyData?.description || t('description', { technology: technologyData.title })}
+          {technologyData?.description || t('description', { technology: technologyData?.title })}
         </Text>
       </Box>
 
