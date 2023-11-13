@@ -94,6 +94,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     limit,
     offset,
     academy: WHITE_LABEL_ACADEMY,
+    expand: 'technologies',
     ...extraQuerys,
   });
 
@@ -112,6 +113,8 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return [];
     });
 
+  log(`Generating ${category}: ${response.results.length} recopilated of ${response.count} assets`);
+
   let { results } = response;
   const { count } = response;
   allResults = allResults.concat(results);
@@ -125,6 +128,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       limit,
       offset,
       academy: WHITE_LABEL_ACADEMY,
+      expand: 'technologies',
       ...extraQuerys,
     });
 
@@ -146,6 +150,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     if (response.results) {
       results = response.results;
       allResults = allResults.concat(results);
+      log(`Generating ${category}: ${allResults.length} recopilated of ${count} assets`);
     }
   }
 
@@ -192,12 +197,16 @@ const getLandingTechnologies = async (assets) => {
     const results = [];
     assets.forEach((asset) => {
       asset.technologies.forEach((tech) => {
-        if (!results.some((result) => result.slug === tech.slug)) results.push({ ...tech });
+        const alreadyExists = !results.some((result) => result.slug === tech.slug);
+        if (tech.visibility === 'PUBLIC' && alreadyExists) results.push({ ...tech });
       });
-      asset.technologies = asset.technologies.map((tech) => tech.slug);
+      asset.technologies = asset.technologies.map((tech) => tech);
     });
 
-    const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
+    const formatedWithAssets = results.map((tech) => ({
+      ...tech,
+      assets: assets.filter((asset) => asset?.technologies?.some((assetTech) => assetTech?.slug === tech?.slug)),
+    }));
 
     const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
       .map((finalData) => ({

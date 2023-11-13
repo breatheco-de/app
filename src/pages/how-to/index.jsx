@@ -50,6 +50,7 @@ const fetchArticles = async (lang, page, query) => {
     technologies,
     video,
     like: query?.search,
+    expand: 'technologies',
   });
 
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
