@@ -67,7 +67,7 @@ const ProjectList = forwardRef(({
           const isExercise = isDynamic && getAssetPath(ex) === 'interactive-exercise';
           const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
-          const tachnologies = ex?.technologies?.length > 0 ? getArrayOfTechnologies(ex.technologies) : [];
+          const technologies = ex?.technologies?.length > 0 ? getArrayOfTechnologies(ex.technologies) : [];
 
           const lang = ex?.lang === 'us' ? '' : `/${ex?.lang}`;
           const getLink = () => {
@@ -106,9 +106,9 @@ const ProjectList = forwardRef(({
                 className="masonry-content"
               >
                 <Box display="flex" flexDirection="column">
-                  {tachnologies.length >= 1 && (
+                  {technologies.length >= 1 && (
                     <TagCapsule
-                      tags={tachnologies.slice(0, 3)}
+                      tags={technologies.slice(0, 3)}
                       variant="rounded"
                       borderRadius="10px"
                       marginY="8px"

@@ -46,7 +46,6 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -72,13 +71,12 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   try {
     let result;
     let markdown;
-    const queryString = parseQuerys({ expand: 'technologies' });
     result = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${result?.lang || locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       result = await resp.json();
       const engPrefix = {
         us: 'en',

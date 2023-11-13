@@ -25,7 +25,6 @@ import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
-import { parseQuerys } from '../../utils/url';
 
 export const getStaticPaths = async () => {
   const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
@@ -55,11 +54,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let ipynbHtml = '';
     lesson = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
-    const queryString = parseQuerys({ expand: 'technologies' });
 
     if (!lesson) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       lesson = await response.json();
       const engPrefix = {
         us: 'en',

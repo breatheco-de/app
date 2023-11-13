@@ -26,7 +26,6 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import { parseQuerys } from '../../../utils/url';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
@@ -50,12 +49,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   try {
     let data;
     let markdown;
-    const queryString = parseQuerys({ expand: 'technologies' });
     data = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     if (!data) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}${queryString}`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       data = await resp.json();
       const engPrefix = {
         us: 'en',
