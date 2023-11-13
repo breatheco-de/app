@@ -202,7 +202,7 @@ function Content() {
         const assetData = await assetResp.data;
         setCurrentAssetData(assetData);
 
-        if (!assetData?.delivery_formats.includes('url')) {
+        if (!assetData?.delivery_formats?.includes('url')) {
           const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           const respData = await fileResp.data;
           setFileData(respData);
