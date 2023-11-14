@@ -39,7 +39,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const allTechnologiesList = assetList.landingTechnologies;
   const technologyData = allTechnologiesList.find((tech) => tech.slug === slug && tech.lang === locale);
 
-  console.log('technologyData:::', technologyData);
   if (!technologyData?.slug) {
     return {
       notFound: true,
