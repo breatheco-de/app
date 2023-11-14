@@ -36,7 +36,6 @@ function TagCapsule({
       direction="row"
       height="auto"
       style={containerStyle}
-      // minHeight="130px"
       my={marginY}
       width="fit-content"
       px={paddingX}
