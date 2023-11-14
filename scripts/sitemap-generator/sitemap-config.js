@@ -109,14 +109,16 @@ function addSitemap(page, index) {
   </sitemap>`;
 }
 
-const sitemapTemplate = (pages = [], externalContent = '') => `${externalContent}<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+const sitemapTemplate = (pages = [], externalContent = '') => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  ${externalContent}  
   ${[
     ...pages,
   ].map(addPage).join('\n')}
 </urlset>`;
+const sitemapTemplateWithHreflangConnector = (pages = []) => `${pages.map((page, index) => addPageWithHrefLang(page.pathURL, index, page)).join('\n')}`;
 const sitemapTemplateWithHreflang = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   ${pages.map((page, index) => addPageWithHrefLang(page.pathURL, index, page)).join('\n')}
 </urlset>`;
 
@@ -144,5 +146,6 @@ export {
   privateRoutes,
   sitemapTemplate,
   sitemapTemplateWithHreflang,
+  sitemapTemplateWithHreflangConnector,
   listOfSitemapsTemplate,
 };
