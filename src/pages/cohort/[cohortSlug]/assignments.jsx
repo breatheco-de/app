@@ -1,14 +1,10 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
   Divider,
-  Avatar,
-  Flex,
-  useColorModeValue,
   useToast,
   Button,
   ButtonGroup,
@@ -35,18 +31,10 @@ import { usePersistent } from '../../../common/hooks/usePersistent';
 import bc from '../../../common/services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
-import TaskLabel from '../../../common/components/taskLabel';
-import DottedTimeline from '../../../common/components/DottedTimeline';
 import useStyle from '../../../common/hooks/useStyle';
-import { isGithubUrl } from '../../../utils/regex';
-import ButtonHandler, { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../js_modules/assignmentHandler/index';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
-import { isWindow } from '../../../utils';
-// import Image from '../../../common/components/Image';
-import PopoverHandler from '../../../js_modules/assignmentHandler/PopoverHandler';
-import handlers from '../../../common/handlers';
-import LoaderScreen from '../../../common/components/LoaderScreen';
-import { ORIGIN_HOST } from '../../../utils/variables';
+import Projects from '../../../common/views/Projects';
+import StudentAssignments from '../../../common/views/StudentAssignments';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -116,67 +104,36 @@ function Assignments() {
   const { query } = router;
   const { cohortSlug, academy } = query;
   const toast = useToast();
-  const { hexColor } = useStyle();
+  const { hexColor, borderColor2 } = useStyle();
   const { contextState, setContextState } = useAssignments();
   const [cohortSession] = usePersistent('cohortSession', {});
-  const [allCohorts, setAllCohorts] = useState([]);
   const [syllabusData, setSyllabusData] = useState({
-    projects: [],
     assignments: [],
   });
   const [personalCohorts, setPersonalCohorts] = useState([]);
-  // const [allTasksPaginationProps, setAllTasksPaginationProps] = useState({});
-  const [allTasksOffset, setAllTasksOffset] = useState(20);
-  const [isFetching, setIsFetching] = useState(false);
   const [typeLabel, setTypeLabel] = useState(typeList.find((option) => option.value === query.task_type) || {
     label: t('type.project'),
     value: 'PROJECT',
   });
   const [studentLabel, setStudentLabel] = useState(null);
   const [projectLabel, setProjectLabel] = useState(null);
-  const [educationalLabel, setEducationalLabel] = useState(educationalStatusList.find((option) => option.value === query.educational_status) || {
+  const [educationalLabel, setEducationalLabel] = useState(query.educational_status ? educationalStatusList.filter((option) => query.educational_status.toLowerCase().includes(option.value)) : [{
     label: t('educational-list.active'),
     value: 'active',
-  });
+  }]);
   const [statusLabel, setStatusLabel] = useState(statusList.find((option) => option.value === query.status));
   const [openFilter, setOpenFilter] = useState(false);
   const [currentView, setCurrentView] = useState(Number(query.view) || 0);
-  const [currentTask, setCurrentTask] = useState(null);
-  const [deliveryUrl, setDeliveryUrl] = useState('');
   const [sort, setSort] = useState(query.sort || undefined);
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
-  // const [projects, setProjects] = useState([]);
+  const [currentStudentCount, setCurrentStudentCount] = useState(0);
 
-  const [selectedCohort, setSelectedCohort] = useState({});
-  const [selectedCohortSlug, setSelectedCohortSlug] = useState(cohortSlug);
+  const [selectedCohort, setSelectedCohort] = useState(null);
   const [loadStatus, setLoadStatus] = useState({
     loading: true,
     status: 'loading',
   });
-
-  const linkColor = useColorModeValue('blue.default', 'blue.300');
-  const borderColor = useColorModeValue('gray.200', 'gray.500');
-
-  const lang = {
-    es: '/es/',
-    en: '/',
-  };
-
-  const statusColors = {
-    APPROVED: hexColor.green,
-    REJECTED: hexColor.danger,
-    UNDELIVERED: hexColor.danger,
-    DELIVERED: hexColor.yellowDefault,
-  };
-
-  const queryStudentExists = query.student !== undefined && query.student?.length > 0;
-  const queryStatusExists = query.status !== undefined && query.status?.length > 0;
-  const queryProjectExists = query.project !== undefined && query.project?.length > 0;
-
-  const studentDefaultValue = currentStudentList
-    ?.filter((l) => l.user.id === Number(router.query.student))
-    .map((l) => l?.user?.id)[0];
 
   const reverseStatus = (status) => {
     if (status === 'delivered') return { task_status: 'DONE', revision_status: 'PENDING' };
@@ -187,42 +144,28 @@ function Assignments() {
     return {};
   };
 
-  const getFilterAssignments = (cohortId, academyId, studentId) => {
+  const getFilterAssignments = (cohortId, academyId, limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
     bc.todo({
-      limit: 1000,
+      limit,
+      offset,
       task_type: typeLabel?.value || undefined,
-      student: studentId || undefined,
+      student: router.query.student || undefined,
       sort,
+      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
       like: query.project,
       ...reverseStatus(query.status),
     })
       .getAssignments({ id: cohortId, academy: academyId })
       .then((projectList) => {
-        setIsFetching(false);
         const allTasks = projectList.data?.results;
 
         setContextState({
-          allTasks: [...allTasks],
+          allTasks: appendMore ? [...contextState.allTasks, ...allTasks] : [...allTasks],
+          tasksCount: projectList.data?.count,
         });
-
-        // const projectsList = [];
-        // for (let i = 0; i < allTasks.length; i += 1) {
-        //   const isProject = allTasks[i].task_type === 'PROJECT';
-        //   if (
-        //     projectsList.find(
-        //       (p) => allTasks[i] !== 'PROJECT'
-        //         && allTasks[i].associated_slug === p.associated_slug,
-        //     )
-        //   ) {
-        //     continue;
-        //   }
-        //   if (isProject) projectsList.push(allTasks[i]);
-        // }
-        // if (projectsList.length > 0) setProjects(projectsList);
       })
       .catch((error) => {
-        setIsFetching(false);
         toast({
           position: 'top',
           title: t('alert-message:error-fetching-tasks'),
@@ -233,6 +176,24 @@ function Assignments() {
         console.error('There was an error fetching the tasks', error);
       })
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
+  };
+
+  const getDefaultStudent = () => {
+    if (query.student) {
+      bc.cohort({ users: query.student })
+        .getStudentsWithTasks(cohortSlug, academy)
+        .then((res) => {
+          if (res.data?.length > 0) {
+            const filteredStudent = res.data[0];
+            setStudentLabel(filteredStudent && {
+              id: filteredStudent.user.id,
+              value:
+                  `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+            });
+          }
+        });
+    }
   };
 
   useEffect(() => {
@@ -252,6 +213,7 @@ function Assignments() {
         setPersonalCohorts(
           dataStruct.sort((a, b) => a.label.localeCompare(b.label)),
         );
+        setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
       })
       .catch(() => {
         toast({
@@ -262,131 +224,78 @@ function Assignments() {
           isClosable: true,
         });
       });
-    bc.admissions().cohort(cohortSlug, academy)
-      .then(async ({ data }) => {
-        setAllCohorts([{
-          label: data.name,
-          slug: data.slug,
-          value: data.id,
-          academy: data.academy.id,
-        }]);
-        const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
-        if (syllabusInfo?.data) {
-          let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
-          assignments = [].concat(...assignments);
-          const syllabusProjects = syllabusInfo.data.json.days.filter((day) => day.project && typeof day.project === 'object').map(({ project }) => ({ ...project }));
-          if (query.project) {
-            const filteredProject = syllabusProjects.find((project) => project.slug === query.project);
-            setProjectLabel(filteredProject && { label: filteredProject.title, value: filteredProject.slug });
-          }
-          setSyllabusData({
-            projects: syllabusProjects,
-            assignments,
-          });
-        }
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:error-fetching-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
+    getDefaultStudent();
   }, []);
 
-  const loadStudents = () => {
-    const findSelectedCohort = allCohorts.find(
-      (l) => l.slug === selectedCohortSlug,
-    );
-    const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
-
-    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
-    const cohortId = findSelectedCohort?.value || defaultCohort?.value;
-    const currentCohort = findSelectedCohort || defaultCohort;
-
-    if (cohortId) {
-      setSelectedCohort(currentCohort);
-      bc.cohort({ sort, users: query.student, educational_status: educationalLabel?.value })
-        .getStudentsWithTasks(slug, academyId)
-        .then((res) => {
-          const students = res?.data;
-          if (query.student) {
-            const filteredStudent = students.find((student) => student.user.id === Number(query.student));
-            setStudentLabel(filteredStudent && {
-              id: filteredStudent.user.id,
-              value:
-                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
-              label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
+  useEffect(() => {
+    if (selectedCohort) {
+      bc.admissions().cohort(selectedCohort.slug, academy)
+        .then(async ({ data }) => {
+          const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
+          if (syllabusInfo?.data) {
+            let assignments = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+            assignments = [].concat(...assignments);
+            if (query.project) {
+              const filteredProject = assignments.find((project) => project.slug === query.project);
+              if (filteredProject) setProjectLabel({ label: filteredProject.title, value: filteredProject.slug });
+            }
+            setSyllabusData({
+              assignments,
             });
           }
-          setCurrentStudentList(students);
         })
         .catch(() => {
           toast({
             position: 'top',
-            title: t('alert-message:error-fetching-students'),
+            title: t('alert-message:error-fetching-cohorts'),
             status: 'error',
             duration: 7000,
             isClosable: true,
           });
         });
-      getFilterAssignments(cohortId, academyId, router.query.student);
     }
-    if (!cohortId && allCohorts.length > 0) {
-      setLoadStatus({ loading: false, status: 'idle' });
-    }
+  }, [selectedCohort]);
+
+  const loadStudents = (limit = 20, offset = 0, appendMore = false) => {
+    setLoadStatus({ loading: true, status: 'loading' });
+    const academyId = selectedCohort.academy || academy;
+    const { slug } = selectedCohort;
+    bc.cohort({
+      limit,
+      offset,
+      sort,
+      users: query.student,
+      educational_status: educationalLabel.length > 0 ? educationalLabel.map((val) => val.value).join(',').toUpperCase() : undefined,
+    })
+      .getStudentsWithTasks(slug, academyId)
+      .then((res) => {
+        console.log('res');
+        console.log(res);
+        const students = appendMore ? [...currentStudentList, ...res.data.results] : res?.data?.results;
+        setCurrentStudentList(students);
+        setCurrentStudentCount(res?.data?.count);
+      })
+      .catch(() => {
+        toast({
+          position: 'top',
+          title: t('alert-message:error-fetching-students'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      })
+      .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
   };
 
   useEffect(() => {
-    loadStudents();
+    if (selectedCohort) {
+      loadStudents();
+      getFilterAssignments(selectedCohort.value, selectedCohort.academy || academy);
+    }
   }, [
-    allCohorts,
-    selectedCohortSlug,
-    studentDefaultValue,
+    selectedCohort,
     router.query,
   ]);
-
-  const filteredTasks = contextState.allTasks.length > 0
-    ? contextState.allTasks
-      .filter((_, i) => i < allTasksOffset)
-    : [];
-
-  const handleScroll = () => {
-    const scrollTop = isWindow && document.documentElement.scrollTop;
-    const offsetHeight = isWindow && document.documentElement.offsetHeight + 15;
-    const innerHeight = isWindow && window.innerHeight;
-    if (innerHeight + scrollTop <= offsetHeight && !queryStudentExists) return;
-    setIsFetching(true);
-  };
-
-  useEffect(() => {
-    if (allTasksOffset < contextState.allTasks.length) {
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-
-    return () => {};
-  }, [allTasksOffset, contextState]);
-
-  useEffect(() => {
-    if (!isFetching) return;
-    if (queryStudentExists || queryProjectExists || queryStatusExists) {
-      setAllTasksOffset(contextState.allTasks.length);
-      setIsFetching(false);
-    }
-
-    if (filteredTasks && allTasksOffset < contextState.allTasks.length) {
-      if (!queryStudentExists) {
-        setAllTasksOffset(allTasksOffset + 20);
-        setIsFetching(false);
-      }
-    } else {
-      setIsFetching(false);
-    }
-  }, [isFetching, queryStatusExists, queryProjectExists, queryStudentExists]);
 
   const closeFilterModal = () => setOpenFilter(false);
 
@@ -397,7 +306,7 @@ function Assignments() {
     if (studentLabel) filter.student = studentLabel.id;
     if (statusLabel) filter.status = statusLabel.value;
     if (typeLabel) filter.task_type = typeLabel.value;
-    if (educationalLabel) filter.educational_status = educationalLabel.value;
+    if (educationalLabel.length > 0) filter.educational_status = educationalLabel.map((val) => val.value).join(',').toUpperCase();
     router.push({
       query: {
         ...params,
@@ -413,7 +322,7 @@ function Assignments() {
     setStudentLabel(null);
     setStatusLabel(null);
     setTypeLabel(null);
-    setEducationalLabel(null);
+    setEducationalLabel([]);
     router.push({
       query: {
         ...params,
@@ -424,6 +333,7 @@ function Assignments() {
   const updpateAssignment = (taskUpdated) => {
     const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
     setContextState({
+      ...contextState,
       allTasks: [
         ...contextState.allTasks.slice(0, keyIndex), // before keyIndex (inclusive)
         taskUpdated, // key item (updated)
@@ -433,49 +343,16 @@ function Assignments() {
     loadStudents();
   };
 
-  const getStatus = (task) => {
-    if (!task) return null;
-    if (task.task_status === 'DONE' && task.revision_status === 'PENDING') return 'DELIVERED';
-    if (task.task_status === 'PENDING' && task.revision_status === 'PENDING') return 'UNDELIVERED';
-    return task.revision_status;
-  };
-
-  const showSingleTask = async (task) => {
-    try {
-      const status = getStatus(task);
-      let file;
-      const academyId = selectedCohort?.academy || academy || allCohorts.find((l) => l.slug === cohortSlug)?.academy;
-      if (status === 'UNDELIVERED' || status === 'REJECTED') {
-        const { data } = await bc.todo().deliver({
-          id: task.id,
-          academy: academyId,
-        });
-        setDeliveryUrl(data.delivery_url);
-      } else if (status === 'APPROVED' || status === 'DELIVERED') {
-        setIsFetching(true);
-        const assetResp = await bc.lesson().getAsset(task.slug);
-        if (assetResp && assetResp.status < 400) {
-          const dataAsset = assetResp.data;
-          if (!dataAsset?.delivery_formats.includes('url')) {
-            const fileResp = await bc.todo().getFile({ id: task.id, academyId: cohortSession?.academy?.id });
-            if (fileResp && fileResp.status < 400) {
-              file = await fileResp.data;
-            }
-          }
-        }
-        setIsFetching(false);
-      }
-      setCurrentTask({ ...task, status, file });
-    } catch (e) {
-      toast({
-        position: 'top',
-        title: t('alert-message:review-url-error'),
-        status: 'error',
-        duration: 6000,
-        isClosable: true,
-      });
-    }
-  };
+  const getOptionsStudents = (inputValue) => bc.cohort(inputValue ? { like: inputValue, limit: 2000 } : { limit: 2000 })
+    .getStudents(
+      selectedCohort.slug,
+      selectedCohort.academy || academy,
+    )
+    .then((students) => students.data.results.map((student) => ({
+      id: student.user.id,
+      value: student.user.id,
+      label: `${student.user.first_name} ${student.user.last_name}`,
+    })).sort((a, b) => a.label.localeCompare(b.label)));
 
   return (
     <>
@@ -490,7 +367,7 @@ function Assignments() {
         >
           <Link
             href={cohortSession?.selectedProgramSlug || '/choose-program'}
-            color={linkColor}
+            color={hexColor.blueDefault}
             display="inline-block"
             letterSpacing="0.05em"
             fontWeight="700"
@@ -513,34 +390,42 @@ function Assignments() {
             {`${t('title')}:`}
           </Heading>
           {personalCohorts.length > 0 && (
-          <ReactSelect
-            unstyled
-            color="#0097CD"
-            fontWeight="700"
-            id="cohort-select"
-            fontSize="25px"
-            placeholder={t('common:select-cohort')}
-            noOptionsMessage={() => t('common:no-options-message')}
-            defaultInputValue={selectedCohort?.label}
-            onChange={(cohort) => {
-              if (cohort.slug !== selectedCohort.slug) {
-                setCurrentStudentList([]);
-                setContextState({
-                  allTasks: [],
+            <ReactSelect
+              unstyled
+              color="#0097CD"
+              fontWeight="700"
+              id="cohort-select"
+              fontSize="25px"
+              placeholder={t('common:select-cohort')}
+              noOptionsMessage={() => t('common:no-options-message')}
+              value={selectedCohort || ''}
+              onChange={(cohort) => {
+                if (cohort.slug !== selectedCohort?.slug) {
+                  setCurrentStudentList([]);
+                  setCurrentStudentCount(0);
+                  setContextState({
+                    tasksCount: 0,
+                    allTasks: [],
+                  });
+                }
+                setSelectedCohort(cohort);
+                router.push({
+                  query: {
+                    ...router.query,
+                    cohortSlug: cohort.slug,
+                  },
                 });
-              }
-              setSelectedCohortSlug(cohort.slug);
-            }}
-            options={personalCohorts.map((cohort) => ({
-              value: cohort.value,
-              slug: cohort.slug,
-              label: cohort.label,
-            }))}
-          />
+              }}
+              options={personalCohorts.map((cohort) => ({
+                value: cohort.value,
+                slug: cohort.slug,
+                label: cohort.label,
+              }))}
+            />
           )}
         </Box>
       </Box>
-      <Divider borderBottom="1px solid" color={borderColor} />
+      <Divider borderBottom="1px solid" color={borderColor2} />
 
       <Box
         display="flex"
@@ -664,6 +549,27 @@ function Assignments() {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
+            <Box marginBottom="10px">
+              <ReactSelect
+                id="educational-select"
+                placeholder={t('filter.educational-status')}
+                isClearable
+                isMulti
+                value={educationalLabel || ''}
+                onChange={(selected) => {
+                  setEducationalLabel(selected || []);
+                }}
+                options={educationalStatusList.map((stat) => ({
+                  value: stat.value,
+                  label: stat.label,
+                }))}
+                styles={{
+                  multiValue: () => ({
+                    backgroundColor: hexColor.featuredColor,
+                  }),
+                }}
+              />
+            </Box>
             {currentView === 1 && (
               <Box marginBottom="10px">
                 <ReactSelect
@@ -715,37 +621,12 @@ function Assignments() {
                 />
               </Box>
             )}
-            {currentView === 0 && (
-              <Box marginBottom="10px">
-                <ReactSelect
-                  id="educational-select"
-                  placeholder={t('filter.educational-status')}
-                  isClearable
-                  value={educationalLabel || ''}
-                  onChange={(selected) => {
-                    setEducationalLabel(
-                      selected !== null
-                        ? {
-                          value: selected?.value,
-                          label: selected?.label,
-                        }
-                        : null,
-                    );
-                  }}
-                  options={educationalStatusList.map((stat) => ({
-                    value: stat.value,
-                    label: stat.label,
-                  }))}
-                />
-              </Box>
-            )}
             <Box marginBottom="10px">
               <AsyncSelect
                 id="student-select"
                 placeholder={t('filter.student')}
                 isClearable
                 value={studentLabel || ''}
-                // defaultInputValue={defaultStudentLabel}
                 height="50px"
                 fontSize="15px"
                 onChange={(selected) => {
@@ -761,15 +642,7 @@ function Assignments() {
                 }}
                 defaultOptions
                 cacheOptions
-                loadOptions={(inputValue) => handlers
-                  .getStudents(selectedCohortSlug, allCohorts.find((c) => c.slug === selectedCohortSlug)?.id || academy)
-                  .then((students) => students.filter((student) => `${student.user.first_name} ${student.user.last_name}`.toLowerCase().includes(inputValue.toLowerCase()))
-                    .map((student) => ({
-                      id: student.user.id,
-                      value:
-                        `${student.user.first_name}-${student.user.last_name}`?.toLowerCase(),
-                      label: `${student.user.first_name} ${student.user.last_name}`,
-                    })))}
+                loadOptions={getOptionsStudents}
               />
             </Box>
             {currentView === 1 && (
@@ -824,254 +697,23 @@ function Assignments() {
         p="0 0 30px 0"
       >
         {currentView === 1 ? (
-          <Box
-            minHeight="34vh"
-            borderRadius="3px"
-            margin="0 auto"
-            maxWidth="1012px"
-            flexGrow={1}
-            overflow="auto"
-          >
-            <Box
-              display="flex"
-              margin="20px 32px 20px 55px"
-              gridGap="10px"
-              justifyContent="space-between"
-              flexDirection="row"
-              alignItems="center"
-              width={{ base: 'max-content', md: 'auto' }}
-            >
-              <Text
-                size="15px"
-                display="flex"
-                width={{ base: '6.8rem', md: '50%' }}
-                fontWeight="700"
-              >
-                {t('label.status')}
-              </Text>
-              <Text
-                size="15px"
-                display="flex"
-                width={{ base: '13rem', md: '100%' }}
-                fontWeight="700"
-              >
-                {t('label.student-and-assignments')}
-              </Text>
-              <Text
-                size="15px"
-                display="flex"
-                width={{ base: '8.3rem', md: '40%' }}
-                fontWeight="700"
-              >
-                {t('label.link')}
-              </Text>
-              <Text
-                size="15px"
-                display="flex"
-                width={{ base: '25%', md: '25%' }}
-                minWidth="115px"
-                fontWeight="700"
-              >
-                {t('label.actions')}
-              </Text>
-            </Box>
-            <Box display="flex" flexDirection="column" gridGap="18px">
-              {filteredTasks.length > 0 ? (
-                filteredTasks.map((task, i) => {
-                  const index = i;
-                  const githubUrl = task?.github_url;
-                  const haveGithubDomain = githubUrl && isGithubUrl.test(githubUrl);
-                  const fullName = `${task.user.first_name} ${task.user.last_name}`;
-                  const projectLink = `${ORIGIN_HOST}${
-                    lang[router.locale]
-                  }project/${task.associated_slug}`;
-
-                  return (
-                    <Box
-                      key={`${index}-${task.slug}-${task.title}-${fullName}`}
-                      p="18px 28px"
-                      display="flex"
-                      width={{ base: 'max-content', md: '100%' }}
-                      minWidth={{ base: '620px', md: '100%' }}
-                      maxWidth={{ base: '620px', md: '100%' }}
-                      gridGap="10px"
-                      justifyContent="space-between"
-                      flexDirection="row"
-                      alignItems="center"
-                      border="1px solid"
-                      borderColor={borderColor}
-                      borderRadius="17px"
-                    >
-                      <Box
-                        display="flex"
-                        width="auto"
-                        minWidth="calc(160px - 0.5vw)"
-                        // width="153px"
-                      >
-                        <Box width="28px" height="28px" marginRight="15px">
-                          {syllabusData.assignments.find(
-                            (assignment) => assignment.slug === task.associated_slug && assignment.mandatory,
-                          ) && (
-                            <Icon
-                              icon="warning"
-                              color="yellow.default"
-                              width="28px"
-                              height="28px"
-                            />
-                          )}
-                        </Box>
-                        <TaskLabel currentTask={task} t={t} />
-                      </Box>
-
-                      <Box width="35%">
-                        <Text size="15px">{fullName}</Text>
-                        <Link
-                          variant="default"
-                          href={projectLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {task.title}
-                        </Link>
-                      </Box>
-
-                      <PopoverHandler
-                        task={task}
-                        haveGithubDomain={haveGithubDomain}
-                        githubUrl={githubUrl}
-                      />
-
-                      <Box width="auto" minWidth="160px" textAlign="end">
-                        <ButtonHandler
-                          currentTask={task}
-                          cohortSession={cohortSession}
-                          contextState={contextState}
-                          updpateAssignment={updpateAssignment}
-                        />
-                      </Box>
-                    </Box>
-                  );
-                })
-              ) : (
-                <>
-                  {loadStatus.status === 'loading' && (
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      mt="2rem"
-                      mb="5rem"
-                      position="relative"
-                    >
-                      <LoaderScreen width="80px" height="80px" />
-                    </Box>
-                  )}
-                  {loadStatus.loading === false && (
-                    <Text
-                      size="25px"
-                      pt="3rem"
-                      textAlign="center"
-                      display="flex"
-                      width="auto"
-                      margin="0 auto"
-                      fontWeight="700"
-                    >
-                      {t('common:search-not-found')}
-                    </Text>
-                  )}
-                </>
-              )}
-              {allTasksOffset < contextState.allTasks.length !== null
-                && isFetching && (
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    mt="2rem"
-                    mb="5rem"
-                  >
-                    <LoaderScreen width="80px" height="80px" />
-                  </Box>
-              )}
-            </Box>
-          </Box>
+          <Projects
+            updpateAssignment={updpateAssignment}
+            loadStatus={loadStatus}
+            syllabusData={syllabusData}
+            getFilterAssignments={getFilterAssignments}
+            selectedCohort={selectedCohort}
+          />
         ) : (
-          <Box
-            minHeight="34vh"
-            borderRadius="3px"
-            margin="0 auto"
-            maxWidth="1012px"
-            flexGrow={1}
-            overflow="auto"
-          >
-            <Flex flexDirection="column" gridGap="18px">
-              {currentStudentList.map((student) => {
-                const { user } = student;
-                const fullname = `${student.user.first_name} ${student.user.last_name}`;
-                const dots = syllabusData.assignments.map((elem) => {
-                  const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
-                  const { mandatory } = elem;
-                  return {
-                    ...elem,
-                    ...studentTask,
-                    label: elem.title,
-                    highlight: mandatory,
-                    user,
-                    color: statusColors[getStatus(studentTask)] || 'gray',
-                  };
-                });
-                return (
-                  <DottedTimeline
-                    key={student.id}
-                    onClickDots={showSingleTask}
-                    label={(
-                      <Flex gridGap="10px" alignItems="center">
-                        <Avatar
-                          src={student.user.profile?.avatar_url}
-                          width="25px"
-                          height="25px"
-                          style={{ userSelect: 'none' }}
-                        />
-                        <p>{fullname}</p>
-                      </Flex>
-                    )}
-                    dots={dots}
-                    helpText={`${t('educational-status')}: ${student.educational_status}`}
-                  />
-                );
-              })}
-            </Flex>
-            <ReviewModal
-              currentTask={currentTask}
-              projectLink={`${ORIGIN_HOST}${
-                lang[router.locale]
-              }project/${currentTask?.slug}`}
-              updpateAssignment={updpateAssignment}
-              isOpen={currentTask && currentTask.status === 'DELIVERED'}
-              onClose={() => setCurrentTask(null)}
-            />
-            <NoInfoModal
-              isOpen={currentTask && !currentTask.status}
-              onClose={() => setCurrentTask(null)}
-            />
-            <DeliverModal
-              currentTask={currentTask}
-              projectLink={`${ORIGIN_HOST}${
-                lang[router.locale]
-              }project/${currentTask?.slug}`}
-              updpateAssignment={updpateAssignment}
-              isOpen={currentTask && (currentTask.status === 'UNDELIVERED' || currentTask.status === 'REJECTED')}
-              onClose={() => setCurrentTask(null)}
-              deliveryUrl={deliveryUrl}
-            />
-            <DetailsModal
-              currentTask={currentTask}
-              projectLink={`${ORIGIN_HOST}${
-                lang[router.locale]
-              }project/${currentTask?.slug}`}
-              updpateAssignment={updpateAssignment}
-              isOpen={currentTask && currentTask.status === 'APPROVED'}
-              onClose={() => setCurrentTask(null)}
-            />
-          </Box>
+          <StudentAssignments
+            currentStudentList={currentStudentList}
+            loadStatus={loadStatus}
+            selectedCohort={selectedCohort}
+            syllabusData={syllabusData}
+            updpateAssignment={updpateAssignment}
+            count={currentStudentCount}
+            loadStudents={loadStudents}
+          />
         )}
       </Box>
     </>

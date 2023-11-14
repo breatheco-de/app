@@ -1,14 +1,17 @@
-import { Avatar, Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, useColorModeValue, useToast, Checkbox } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Link from './NextChakraLink';
 import Text from './Text';
 import FieldForm from './Forms/FieldForm';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
+import { usePersistent } from '../hooks/usePersistent';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
@@ -18,15 +21,20 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent,
-  readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, ...rest
+  headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { userSession } = useSession();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [alreadyLogged, setAlreadyLogged] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const { t } = useTranslation('workshops');
   const router = useRouter();
   const toast = useToast();
@@ -44,7 +52,24 @@ function ShowOnSignUp({
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
 
+  useEffect(() => {
+    if (alreadyLogged && !existsConsumables && timeElapsed < 10) {
+      const intervalId = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
+        refetchAfterSuccess();
+      }, 1000);
+
+      if (timeElapsed >= 10) {
+        clearInterval(intervalId);
+      }
+      return () => clearInterval(intervalId);
+    }
+    return () => {};
+  }, [alreadyLogged, existsConsumables]);
+
   const handleSubmit = async (actions, allValues) => {
+    const academy = cohortSession?.academy?.slug;
+    const defaultPlan = process.env.BASE_PLAN || 'basic';
     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
       method: 'POST',
       headers: {
@@ -53,7 +78,12 @@ function ShowOnSignUp({
       },
       body: JSON.stringify({
         ...allValues,
-        plan: '4geeks-standard',
+        ...subscribeValues,
+        plan: defaultPlan,
+        conversion_info: {
+          location: academy,
+          ...userSession,
+        },
       }),
     });
 
@@ -70,12 +100,32 @@ function ShowOnSignUp({
         isClosable: true,
         duration: 6000,
       });
+    } else {
+      reportDatalayer({
+        dataLayer: {
+          event: 'sign_up',
+          method: 'native',
+          email: data.email,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          plan: defaultPlan,
+          user_id: data.user,
+          course: allValues.course,
+          country: allValues.country,
+          city: data.city,
+          syllabus: allValues.syllabus,
+          cohort: allValues.cohort,
+          language: allValues.language,
+          conversion_info: userSession,
+        },
+      });
     }
     setStorageItem('subscriptionId', data?.id);
 
     if (data?.access_token) {
-      handleSubscribeToPlan({ slug: '4geeks-standard', accessToken: data?.access_token })
+      handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
         .finally(() => {
+          setAlreadyLogged(true);
           refetchAfterSuccess();
           setVerifyEmailProps({
             data: {
@@ -92,8 +142,7 @@ function ShowOnSignUp({
         },
       });
     }
-
-    if (typeof resp?.status === 'number' && data?.access_token === null) {
+    if (typeof resp?.status === 'number' && !data?.access_token) {
       actions.setSubmitting(false);
       if (resp.status < 400 && typeof data?.id === 'number') {
         setStorageItem('subscriptionId', data.id);
@@ -118,9 +167,9 @@ function ShowOnSignUp({
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding="0 18px 18px">
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
         {title && (
-          <Text size="21px" fontWeight={700} lineHeight="25px">
+          <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
             {title}
           </Text>
         )}
@@ -145,9 +194,7 @@ function ShowOnSignUp({
                   onClick={() => {
                     setStorageItem('redirect', router?.asPath);
                     setTimeout(() => {
-                      logout(() => {
-                        router.push('/login');
-                      });
+                      logout();
                     }, 150);
                   }}
                 >
@@ -207,18 +254,28 @@ function ShowOnSignUp({
                     setFormProps={setFormProps}
                     readOnly={readOnly}
                   />
+                  <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+                    <Text size="10px">
+                      {t('signup:validators.termns-and-conditions-required')}
+                      {' '}
+                      <Link variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                        {t('common:privacy-policy')}
+                      </Link>
+                    </Text>
+                  </Checkbox>
 
                   <Button
                     mt="10px"
                     type="submit"
                     variant="default"
+                    className={isLive ? 'pulse-blue' : ''}
                     isLoading={isSubmitting}
                     title={t('join-workshop')}
-                    isDisabled={readOnly}
+                    isDisabled={!isChecked || readOnly}
                   >
-                    {t('join-workshop')}
+                    {submitText || t('join-workshop')}
                   </Button>
-                  <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                  <Text textAlign="center" size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                     {t('signup:already-have-account')}
                     {' '}
                     <Link redirectAfterLogin variant="default" href="/login" fontSize="13px">
@@ -252,7 +309,7 @@ function ShowOnSignUp({
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/login?tab=login');
+          router.push('/login');
           setShowAlreadyMember(false);
         }}
         handlerText={t('common:login')}
@@ -320,26 +377,36 @@ ShowOnSignUp.propTypes = {
   headContent: PropTypes.node,
   subContent: PropTypes.node,
   title: PropTypes.string,
+  padding: PropTypes.string,
   description: PropTypes.string,
+  submitText: PropTypes.string,
+  subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   readOnly: PropTypes.bool,
   children: PropTypes.node,
   hideForm: PropTypes.bool,
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
+  isLive: PropTypes.bool,
+  existsConsumables: PropTypes.bool,
 };
 
 ShowOnSignUp.defaultProps = {
   headContent: null,
   subContent: null,
   title: '',
+  padding: null,
   description: '',
+  submitText: null,
+  subscribeValues: {},
   readOnly: false,
   children: null,
   hideForm: false,
   childrenDescription: null,
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
+  isLive: false,
+  existsConsumables: false,
 };
 
 export default ShowOnSignUp;

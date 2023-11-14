@@ -225,7 +225,7 @@ function LiveEvent({
           >
             {existsWhiteLabel ? (
               <Image
-                src={logoData?.logo_url}
+                src={logoData?.logo_url || '/static/images/4geeks.png'}
                 width={40}
                 height={40}
                 style={{

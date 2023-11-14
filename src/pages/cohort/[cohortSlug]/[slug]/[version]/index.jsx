@@ -35,6 +35,7 @@ import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
   slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays,
 } from '../../../../../utils/index';
+import { reportDatalayer } from '../../../../../utils/requests';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
@@ -114,6 +115,7 @@ function Dashboard() {
   const TwelveHours = 720;
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
+  const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
 
   if (cohortSession?.academy?.id) {
     axios.defaults.headers.common.Academy = cohortSession.academy.id;
@@ -195,7 +197,6 @@ function Dashboard() {
     if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
       setIsOpenFinalProject(true);
     }
-
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
@@ -219,8 +220,8 @@ function Dashboard() {
       status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
     }).subscriptions()
       .then(async ({ data }) => {
-        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort?.slug === cohortSlug);
-        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort?.slug === cohortSlug);
+        const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
+        const currentSubscription = data?.subscriptions?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
         const planData = currentPlanFinancing || currentSubscription;
         const planSlug = planData?.plans?.[0]?.slug;
         const planOffer = await bc.payment({
@@ -239,6 +240,15 @@ function Dashboard() {
 
         setAllSubscriptions([...planFinancings, ...subscriptions]);
         setSubscriptionData(finalData);
+
+        reportDatalayer({
+          dataLayer: {
+            event: 'subscriptions_load',
+            method: 'native',
+            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+          },
+        });
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
@@ -255,6 +265,11 @@ function Dashboard() {
       choose, cohortSlug,
     }).then((cohort) => {
       setCurrentCohortProps(cohort);
+      reportDatalayer({
+        dataLayer: {
+          cohort,
+        },
+      });
     });
   }, [cohortSlug]);
 
@@ -342,8 +357,6 @@ function Dashboard() {
     });
     return filtered.length !== 0;
   }) : sortedAssignments;
-
-  const cohortUserDaysCalculated = calculateDifferenceDays(cohortSession?.cohort_user?.created_at);
 
   return (
     <>

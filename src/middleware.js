@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import aliasRedirects from '../public/alias-redirects.json';
+import { log } from './utils/logging';
 
 export const config = {
   matcher: [
@@ -37,7 +38,7 @@ async function middleware(req) {
   };
 
   if (conditionalResult()) {
-    console.log(`Middleware: redirecting from ${pathname} → ${currentProject?.destination}`);
+    log(`Middleware: redirecting from ${pathname} → ${currentProject?.destination}`);
     return NextResponse.redirect(`${origin}${currentProject?.destination || ''}`);
   }
   return NextResponse.next();

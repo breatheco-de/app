@@ -1,6 +1,6 @@
 // Function creates an array of icon filename in a .json file (for storybook)
-const fs = require('fs');
-const { walk, success } = require('./_utils');
+import fs from 'fs';
+import { walk, success } from './_utils';
 
 const fileName = 'iconDict';
 

@@ -1,10 +1,11 @@
 import {
+  Box,
+  Button,
   useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { useEffect, useState, memo } from 'react';
-import { useRouter } from 'next/router';
+import { useState, memo } from 'react';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
@@ -12,36 +13,39 @@ import ModuleComponent from '../../common/components/Module';
 import { isWindow } from '../../utils/index';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
+import Icon from '../../common/components/Icon';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, taskTodo, currIndex,
+  data, taskTodo, currIndex, isDisabled, onDisabledClick,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { contextState, setContextState } = useModuleMap();
-  const [currentTask, setCurrentTask] = useState(null);
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const toast = useToast();
-  const router = useRouter();
-  const { locale } = router;
+
+  const currentSlug = data.slug ? data.slug : '';
+  const currentTask = taskTodo?.length > 0 ? taskTodo.find((el) => el?.task_type === data?.task_type
+  && el.associated_slug === currentSlug) : {};
+  const taskTypeLowerCase = data?.task_type.toLowerCase();
 
   const {
     type, title, icon, target, url,
   } = data;
 
   const pathConnector = {
-    lesson: `${locale === 'en' ? '4geeks.com/lesson' : `4geeks.com/${locale}/lesson`}`,
-    exercise: `${locale === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${locale}/interactive-exercise`}`,
-    project: `${locale === 'en' ? '4geeks.com/project' : `4geeks.com/${locale}/project`}`,
+    lesson: `${lang === 'en' ? '4geeks.com/lesson' : `4geeks.com/${lang}/lesson`}`,
+    exercise: `${lang === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${lang}/interactive-exercise`}`,
+    project: `${lang === 'en' ? '4geeks.com/project' : `4geeks.com/${lang}/project`}`,
     quiz: 'https://assessment.4geeks.com/quiz',
   };
 
   const shareLink = () => {
-    if (currentTask) {
+    if (currentTask?.slug) {
       if (target?.toLowerCase() === 'blank') {
         return url;
       }
@@ -59,7 +63,7 @@ function Module({
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[locale])} %23100DaysOfCode%0A%0A${shareLink()}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[lang])} %23100DaysOfCode%0A%0A${shareLink()}`,
       color: '#1DA1F2',
     },
     {
@@ -80,8 +84,8 @@ function Module({
     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp?.status < 400) {
       const assetData = await assetResp.data;
-      if (assetData?.translations[locale]) {
-        const localeResp = await bc.lesson().getAsset(assetResp?.data?.translations[locale]);
+      if (assetData?.translations?.[lang]) {
+        const localeResp = await bc.lesson().getAsset(assetResp?.data?.translations[lang]);
         const localeData = await localeResp.data;
         if (localeResp?.status < 400) {
           setCurrentAssetData(localeData);
@@ -124,20 +128,16 @@ function Module({
     }
   };
 
-  const currentSlug = data.slug ? data.slug : '';
-  useEffect(() => {
-    setCurrentTask(taskTodo.find((el) => el.task_type === data.task_type
-      && el.associated_slug === currentSlug));
-  }, [taskTodo, data.task_type, currentSlug]);
-
   const changeStatusAssignment = (event, task, taskStatus) => {
-    event.preventDefault();
-    setUpdatedTask({
-      ...task,
-    });
-    updateAssignment({
-      t, task, taskStatus, closeSettings, toast, contextState, setContextState,
-    });
+    if (currentTask?.slug || currentTask?.associated_slug) {
+      event.preventDefault();
+      setUpdatedTask({
+        ...task,
+      });
+      updateAssignment({
+        t, task, taskStatus, closeSettings, toast, contextState, setContextState,
+      });
+    }
   };
 
   const sendProject = ({
@@ -152,22 +152,36 @@ function Module({
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
   const isMandatoryTimeOut = data?.task_type === 'PROJECT' && data?.task_status === 'PENDING' && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
 
+  const wordConnector = {
+    lesson: t('modules.read'),
+    exercise: t('modules.start'),
+    project: t('modules.start'),
+    quiz: t('modules.answer'),
+  };
+  const langLink = lang !== 'en' ? `/${lang}` : '';
+  const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
+
+  const link = isDisabled ? '#disabled' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
   return (
     <>
       <ModuleComponent
         mandatory={isMandatoryTimeOut}
         currIndex={currIndex}
         textWithLink
-        link={`${locale !== 'en' ? `/${locale}` : ''}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${currentTask?.associated_slug}`}
+        link={link}
         isDone={isDone}
+        onDisabledClick={onDisabledClick}
+        leftContentStyle={isDisabled ? {
+          textDecoration: 'none',
+        } : {}}
         data={{
           type,
-          title,
+          title: taskTranslations?.title || title,
           icon,
           target,
           url,
         }}
-        rightItemHandler={(
+        rightItemHandler={!isDisabled ? (
           <ButtonHandlerByTaskStatus
             currentTask={currentTask}
             sendProject={sendProject}
@@ -179,6 +193,13 @@ function Module({
             currentAssetData={currentAssetData}
             fileData={fileData}
           />
+        ) : (
+          <Button variant="link" gridGap="4px" onClick={onDisabledClick}>
+            <Icon icon="padlock" width="20px" height="20px" />
+            <Box as="span" display={{ base: 'none', sm: 'initial' }}>
+              {`${wordConnector?.[taskTypeLowerCase]} ${t(`common:${taskTypeLowerCase}`).toLocaleLowerCase()}`}
+            </Box>
+          </Button>
         )}
       />
       {currentTask?.task_status === 'DONE' && showModal && (
@@ -188,6 +209,7 @@ function Module({
           shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
           link={shareLink()}
           socials={socials}
+          currentTask={currentTask}
           onlyModal
           withParty
         />
@@ -200,10 +222,14 @@ Module.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currIndex: PropTypes.number,
   taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
+  isDisabled: PropTypes.bool,
+  onDisabledClick: PropTypes.func,
 };
 Module.defaultProps = {
   data: {},
   currIndex: 0,
+  isDisabled: false,
+  onDisabledClick: () => {},
 };
 
 export default memo(Module);

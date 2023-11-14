@@ -15,7 +15,6 @@ import { es } from 'date-fns/locale';
 import { formatDistanceStrict } from 'date-fns';
 import NextChakraLink from '../NextChakraLink';
 import Icon from '../Icon';
-import bc from '../../services/breathecode';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -24,12 +23,13 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import { getBrowserSize, isWindow } from '../../../utils';
+import { isWindow } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
+import useStyle from '../../hooks/useStyle';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -41,7 +41,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
-  const [cohortsOfUser, setCohortsOfUser] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -49,12 +48,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
-  const commonColors = useColorModeValue('white', 'gray.800');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
-  const colorMode = useColorModeValue('light', 'dark');
+  const { colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
@@ -64,8 +59,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
-  const { width: screenWidth } = getBrowserSize();
-  const isTablet = screenWidth < 996;
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
   const mktQueryString = parseQuerys({
     featured: true,
@@ -120,74 +113,29 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
         const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
-        setMktCourses(filterByTranslations || []);
+        const coursesStruct = filterByTranslations?.map((item) => ({
+          ...item,
+          slug: item?.slug,
+          label: item?.course_translation?.title,
+          asPath: `/course/${item?.slug}`,
+          icon: item?.icon_url,
+          description: item?.course_translation?.description,
+          subMenu: [
+            {
+              href: `/${item?.slug}`,
+              label: t('start-coding'),
+            },
+          ],
+        }));
+
+        setMktCourses(coursesStruct || []);
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
-  useEffect(() => {
-    if (!isLoading && user !== null && mktCourses?.length > 0) {
-      Promise.all([
-        bc.payment({
-          status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-        }).subscriptions(),
-        bc.admissions().me(),
-      ])
-        .then((responses) => {
-          const [subscriptions, userResp] = responses;
-          const subscriptionRespData = subscriptions?.data;
-          const formatedCohortSubscriptions = userResp?.data?.cohorts?.map((value) => ({
-            ...value,
-            name: value.cohort.name,
-            plan_financing: subscriptionRespData?.plan_financings?.find(
-              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
-            ) || null,
-            subscription: subscriptionRespData?.subscriptions?.find(
-              (sub) => sub?.selected_cohort?.slug === value?.cohort?.slug,
-            ) || null,
-            slug: value?.cohort?.slug,
-          }));
-
-          setCohortsOfUser(formatedCohortSubscriptions);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [isLoading, mktCourses]);
-
-  const activeSubscriptionCohorts = cohortsOfUser?.length > 0 ? cohortsOfUser?.filter((item) => {
-    const cohort = item?.cohort;
-    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
-
-    return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false);
-  }) : [];
-
-  const marketingCourses = Array.isArray(mktCourses) && mktCourses.filter(
-    (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.cohort?.syllabus_version?.slug === item?.slug,
-    ) && item?.course_translation?.title,
-  );
-
-  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-    (item) => item?.cohort?.available_as_saas === false,
-  );
-
-  const mktCoursesFormat = marketingCourses.length > 0 ? marketingCourses.map((item) => ({
-    slug: item?.slug,
-    label: item?.course_translation?.title,
-    asPath: `/course/${item?.slug}`,
-    icon: item?.icon_url,
-    description: item?.course_translation?.description,
-    subMenu: [
-      {
-        href: `/${item?.slug}`,
-        label: t('start-coding'),
-      },
-    ],
-  })) : [];
+  const coursesList = mktCourses?.length > 0 ? mktCourses : [];
 
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
@@ -207,12 +155,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   const userImg = user?.profile?.avatar_url || user?.github?.avatar_url;
-  // const getImage = () => {
-  //   if (user && user.github) {
-  //     return user.github.avatar_url;
-  //   }
-  //   return '';
-  // };
 
   const getName = () => {
     if (user && user?.first_name) {
@@ -255,52 +197,50 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         justifyContent="space-between"
         align="center"
       >
-        {isTablet && (
-          <Flex
-            ml={{ base: -2 }}
-            display={{ base: 'flex', xl: 'none' }}
-            gridGap="12px"
-            className="here-2"
-          >
-            <IconButton
-              onClick={onToggle}
-              _hover={{
-                background: commonColors,
-              }}
-              _active={{
-                background: commonColors,
-              }}
-              background={commonColors}
-              color={colorMode === 'light' ? 'black' : 'white'}
-              icon={
-                isOpen ? (
-                  <Icon icon="close2" width="22px" height="22px" />
-                ) : (
-                  <Icon icon="hamburger2" width="22px" height="22px" />
-                )
-              }
-              variant="default"
-              height="auto"
-              aria-label="Toggle Navigation"
-            />
-            <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
-              {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
-                <Image
-                  src={logoData.logo_url}
-                  width={105}
-                  height={35}
-                  style={{
-                    maxHeight: '35px',
-                    minHeight: '35px',
-                    objectFit: 'cover',
-                    filter: imageFilter,
-                  }}
-                  alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
-                />
-              ) : logo}
-            </NextLink>
-          </Flex>
-        )}
+        <Flex
+          ml={{ base: -2 }}
+          display={{ base: 'flex', lg: 'none' }}
+          gridGap="12px"
+          className="here-2"
+        >
+          <IconButton
+            onClick={onToggle}
+            _hover={{
+              background: navbarBackground,
+            }}
+            _active={{
+              background: navbarBackground,
+            }}
+            background={navbarBackground}
+            color={colorMode === 'light' ? 'black' : 'white'}
+            icon={
+              isOpen ? (
+                <Icon icon="close2" width="22px" height="22px" />
+              ) : (
+                <Icon icon="hamburger2" width="22px" height="22px" />
+              )
+            }
+            variant="default"
+            height="auto"
+            aria-label="Toggle Navigation"
+          />
+          <NextLink href={sessionExists ? programSlug : '/'} style={{ minWidth: '105px', alignSelf: 'center', display: 'flex' }}>
+            {pageProps?.existsWhiteLabel && logoData?.logo_url ? (
+              <Image
+                src={logoData.logo_url}
+                width={105}
+                height={35}
+                style={{
+                  maxHeight: '35px',
+                  minHeight: '35px',
+                  objectFit: 'cover',
+                  filter: imageFilter,
+                }}
+                alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
+              />
+            ) : logo}
+          </NextLink>
+        </Flex>
 
         <Flex
           display={{ base: 'none', lg: 'flex' }}
@@ -324,7 +264,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </NextLink>
 
           <Flex display="flex" ml={10}>
-            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={mktCoursesFormat} haveSession={sessionExists} />
+            <DesktopNav NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items} extraContent={coursesList} haveSession={sessionExists} />
           </Flex>
         </Flex>
 
@@ -342,16 +282,16 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             style={{
               margin: 0,
             }}
-            display={isTablet ? 'none' : 'flex'}
+            display={{ base: 'none', lg: 'flex' }}
             height="auto"
             _hover={{
-              background: commonColors,
+              background: navbarBackground,
             }}
             _active={{
-              background: commonColors,
+              background: navbarBackground,
             }}
-            aria-label="Dark mode switch"
-            background={commonColors}
+            aria-label={`Toggle ${reverseColorMode} mode`}
+            background={navbarBackground}
             onClick={() => {
               toggleColorMode();
             }}
@@ -377,6 +317,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   bg="rgba(0,0,0,0)"
                   alignSelf="center"
                   width="20px"
+                  aria-label="User Profile"
                   minWidth="20px"
                   maxWidth="20px"
                   height="30px"
@@ -403,7 +344,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 <PopoverArrow />
                 <Box
                   boxShadow="dark-lg"
-                  bg={popoverContentBgColor}
+                  bg={navbarBackground}
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
@@ -414,7 +355,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     width="100%"
                     borderBottom={2}
                     borderStyle="solid"
-                    borderColor={commonBorderColor}
+                    borderColor={borderColor}
                     display="flex"
                     justifyContent="space-between"
                     padding="12px 1.5rem"
@@ -446,7 +387,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                   textDecoration: 'none',
                                   color: 'blue.default',
                                 }}
-                                color={locale === lang ? 'blue.default' : linkColor}
+                                color={locale === lang ? 'blue.default' : lightColor}
                                 fontWeight={locale === lang ? '700' : '400'}
                                 key={value}
                                 href={link}
@@ -496,7 +437,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={commonBorderColor}
+                      borderColor={borderColor}
                       // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"
@@ -519,7 +460,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={commonBorderColor}
+                      borderColor={borderColor}
                       // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"
@@ -554,52 +495,37 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               </PopoverContent>
             </Popover>
           ) : (
-            <NextChakraLink
-              href="/login"
-              fontWeight="700"
-              style={{
-                margin: '0 0px 0 10px',
-              }}
-              fontSize="13px"
-              lineHeight="22px"
-              _hover={{
-                textDecoration: 'none',
-              }}
-              letterSpacing="0.05em"
-            >
-              <Button
-                display="flex"
-                width="100px"
-                fontWeight={700}
-                lineHeight="0.05em"
-                variant="default"
+            <Box display="flex" gridGap="0px" alignItems="center">
+              <NextChakraLink
+                href="/login"
+                fontWeight="700"
+                fontSize="13px"
+                padding="12px 24px"
+                lineHeight="22px"
+                _hover={{
+                  textDecoration: 'none',
+                }}
+                letterSpacing="0.05em"
               >
                 {t('login')}
-              </Button>
-            </NextChakraLink>
+              </NextChakraLink>
+              <Link variant="buttonDefault" href="/pricing">
+                {t('get-started')}
+              </Link>
+            </Box>
           )}
         </Stack>
       </Flex>
 
       <Collapse display={{ lg: 'block' }} in={isOpen} animateOpacity>
         <MobileNav
-          mktCourses={!isNotAvailableForMktCourses && mktCoursesFormat}
+          mktCourses={coursesList}
           NAV_ITEMS={ITEMS?.length > 0 ? ITEMS : items}
           haveSession={sessionExists}
           translations={translations}
           onClickLink={onToggle}
         />
-        {/* {isBelowTablet && (
-              <MobileNav
-                mktCourses={!isNotAvailableForMktCourses && marketingCouses?.length > 0 ? marketingCouses : []}
-                NAV_ITEMS={ITEMS}
-                haveSession={sessionExists}
-                translations={translations}
-                readSyllabus={readSyllabus}
-                onClickLink={onToggle}
-              />
-            )}
-        */}
+
       </Collapse>
     </Box>
   );

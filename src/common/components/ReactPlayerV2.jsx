@@ -4,7 +4,9 @@ import ReactPlayer from 'react-player';
 function ReactPlayerV2({
   url, controls, className, iframeStyle, ...rest
 }) {
+  const isVideoFromDrive = url && url.includes('drive.google.com');
   const isLoomVideo = url && url.includes('loom.com');
+  const isExternalVideoProvider = isVideoFromDrive || isLoomVideo;
   const getVideo = () => {
     if (isLoomVideo) {
       return url.replace('/share/', '/embed/');
@@ -16,7 +18,7 @@ function ReactPlayerV2({
 
   return (
     <>
-      {url && !isLoomVideo && (
+      {url && !isExternalVideoProvider && (
         <ReactPlayer
           className={`react-player ${className}`}
           url={videoUrl}
@@ -28,7 +30,7 @@ function ReactPlayerV2({
         />
 
       )}
-      {url && isLoomVideo && (
+      {url && isExternalVideoProvider && (
         <div
           className={`lo-emb-vid ${className}`}
           style={{
@@ -41,7 +43,6 @@ function ReactPlayerV2({
             style={{
               position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', ...iframeStyle,
             }}
-            frameBorder="0"
             webkitallowfullscreen
             mozallowfullscreen
             allowFullScreen

@@ -2,13 +2,16 @@
 import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
-import { getQueryString, toCapitalize, unSlugify } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
+import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../utils';
+import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 
 function Summary() {
   const { t } = useTranslation('signup');
@@ -21,6 +24,12 @@ function Summary() {
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const redirect = getStorageItem('redirect');
+  const redirectedFrom = getStorageItem('redirected-from');
+  const router = useRouter();
+
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
@@ -28,7 +37,7 @@ function Summary() {
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
   const periodText = {
-    FREE: t('info.free'),
+    FREE: t('totally_free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
     QUARTER: t('info.quarterly'),
@@ -65,20 +74,53 @@ function Summary() {
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
-    if (planId?.length > 0) {
-      const findPlan = checkoutData?.plans?.find((plan) => plan.plan_id === planId);
-      setSelectedPlanCheckoutData(findPlan);
-      getPlanProps(findPlan);
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_summary',
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (readyToRefetch) {
+      const interval = setInterval(() => {
+        getAllMySubscriptions()
+          .then((subscriptions) => {
+            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
+            if (isPurchasedPlanFound) {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
+              } else {
+                router.push('/choose-program');
+              }
+            }
+          });
+      }, 1500);
+    }
+  }, [readyToRefetch]);
+
+  useEffect(() => {
+    const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
+    if (findedPlan) {
+      if (findedPlan) {
+        setSelectedPlanCheckoutData(findedPlan);
+        getPlanProps(findedPlan);
+      }
     }
 
-    if (!planId && checkoutData?.plans[selectedIndex]) {
+    if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
+    setIsSubmitting(true);
     handleChecking({
       plan: selectedPlanCheckoutData,
     })
@@ -89,7 +131,12 @@ function Summary() {
           handlePayment({
             ...data,
             installments: selectedPlanCheckoutData?.how_many_months,
-          })
+          }, true)
+            .then((resp) => {
+              if (resp.data.status === 'FULFILLED') {
+                setReadyToRefetch(true);
+              }
+            })
             .catch(() => {
               toast({
                 position: 'top',
@@ -299,6 +346,7 @@ function Summary() {
               variant="default"
               width="100%"
               onClick={handleSubmit}
+              isLoading={isSubmitting}
               isDisabled={disableHandler}
               height="45px"
               mt="12px"
@@ -311,6 +359,7 @@ function Summary() {
               width="100%"
               borderColor="blue.200"
               onClick={handleSubmit}
+              isLoading={isSubmitting}
               isDisabled={disableHandler}
               background={featuredBackground}
               _hover={{ background: featuredBackground, opacity: 0.8 }}

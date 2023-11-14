@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react';
-import { Box, ListItem, UnorderedList, useToast, Button } from '@chakra-ui/react';
+import { Box, ListItem, UnorderedList, useToast, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { Image } from '@chakra-ui/next-js';
 import { useRouter } from 'next/router';
-import bc from '../services/breathecode';
 import SimpleModal from '../components/SimpleModal';
 import useSignup from '../store/actions/signupAction';
 import axiosInstance from '../../axios';
@@ -11,8 +9,9 @@ import useStyle from './useStyle';
 import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
+import { generatePlan } from '../handlers/subscriptions';
 
-const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program' } = {}) => {
+const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {
   const { t } = useTranslation(['common']);
   const [planProps, setPlanProps] = useState({});
   const router = useRouter();
@@ -22,64 +21,56 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
   const toast = useToast();
   const [isCheckingSuccess, setIsCheckingSuccess] = useState(false);
 
-  const handleSubscribeToPlan = ({ slug, accessToken }) => new Promise((resolve, reject) => {
+  const handleSubscribeToPlan = ({ slug, accessToken, onSubscribedToPlan = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
     setIsInProcessOfSubscription(true);
     if (accessToken) {
       axiosInstance.defaults.headers.common.Authorization = `Token ${accessToken}`;
     }
+    generatePlan(slug)
+      .then((data) => {
+        onSubscribedToPlan(data);
+        setPlanProps({
+          ...data,
+          title: toCapitalize(unSlugify(data?.slug)),
+          bullets: data?.featured_info || [],
+        });
 
-    bc.payment().getPlan(slug)
-      .then((plan) => {
-        const data = plan?.data;
-        if (data) {
-          bc.payment().getPlanProps(encodeURIComponent(data?.slug))
-            .then((resp) => {
-              const planInfo = resp?.data;
-              if (resp?.status < 400) {
-                setPlanProps({
-                  ...data,
-                  title: toCapitalize(unSlugify(data?.slug)),
-                  bullets: planInfo,
+        handleChecking({ plan: data, token: accessToken })
+          .then((respData) => {
+            handlePayment({
+              ...respData,
+              installments: respData?.how_many_months,
+            }, disableRedirects)
+              .then((respPayment) => {
+                resolve(respPayment.data);
+                if (respPayment.status < 400) {
+                  setIsCheckingSuccess(true);
+                }
+              })
+              .catch((error) => {
+                reject(error);
+                console.error('Error handling payment', error);
+                toast({
+                  position: 'top',
+                  title: t('alert-message:payment-error'),
+                  status: 'error',
+                  duration: 7000,
+                  isClosable: true,
                 });
-
-                handleChecking({ plan: data, token: accessToken })
-                  .then((respData) => {
-                    handlePayment({
-                      ...respData,
-                      installments: respData?.how_many_months,
-                    })
-                      .then((respPayment) => {
-                        resolve(respPayment.data);
-                        if (respPayment.status < 400) {
-                          setIsCheckingSuccess(true);
-                        }
-                      })
-                      .catch(() => {
-                        reject();
-                        toast({
-                          position: 'top',
-                          title: t('alert-message:payment-error'),
-                          status: 'error',
-                          duration: 7000,
-                          isClosable: true,
-                        });
-                      });
-                  })
-                  .catch(() => {
-                    reject();
-                  });
-              }
-            });
-        } else {
-          reject(new Error('Plan not found'));
-        }
-      });
+              });
+          })
+          .catch((error) => {
+            reject(error);
+            console.error('Error handling checking', error);
+          });
+      }).catch(() => reject());
   });
 
   const onClose = () => {
     if (enableRedirectOnCTA === true && redirectTo?.length > 0) {
       router.push(redirectTo);
     } else {
+      onExternalClose();
       setIsCheckingSuccess(false);
     }
   };
@@ -88,7 +79,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
     <SimpleModal
       isOpen={isCheckingSuccess}
       onClose={onClose}
-      style={{ marginTop: '10vh', padding: '16px' }}
+      style={{ marginTop: '10vh', padding: '0px' }}
       maxWidth="45rem"
       bodyStyles={{ padding: '0' }}
       borderRadius="13px"
@@ -96,7 +87,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
     >
       <Box display="flex" gridGap="16px">
         <Box width="100%">
-          <Image src="/static/images/vertical-banner.webp" width={294} height={364} style={{ objectFit: 'cover' }} margin="0 auto" alt="Purchase of standard plan completed" />
+          <Image src="/static/images/vertical-banner.webp" style={{ objectFit: 'cover', borderRadius: '13px 0 0 13px' }} margin="0 auto" alt="Purchase of standard plan completed" />
         </Box>
         <Box display="flex" gridGap="16px" flexDirection="column" justifyContent="center" width="100%" borderRadius="11px" padding="8px 16px" background={modal.featuredBackground}>
           <Heading as="h1" size="xsm" display="flex" flexDirection="column">

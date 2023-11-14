@@ -18,34 +18,53 @@ import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
-export const getStaticProps = async ({ locale, locales }) => {
+const contentPerPage = 20;
+
+const fetchProjects = async (lang, page, query) => {
+  const difficulty = {
+    junior: 'BEGINNER,EASY',
+    'mid-level': 'INTERMEDIATE',
+    senior: 'HARD',
+  };
+  const technologies = query.techs !== '' ? query.techs : undefined;
+  const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const querys = parseQuerys({
+    asset_type: 'PROJECT',
+    visibility: 'PUBLIC',
+    status: 'PUBLISHED',
+    language: lang,
+    academy: WHITE_LABEL_ACADEMY,
+    limit: contentPerPage,
+    offset: page ? (page - 1) * contentPerPage : 0,
+    difficulty: difficulty[query.difficulty],
+    technologies,
+    video,
+    like: query?.search,
+    expand: 'technologies',
+  });
+  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
+  const data = await resp.json();
+  return { resp, data };
+};
+
+export const getServerSideProps = async ({ locale, locales, query }) => {
   const t = await getT(locale, 'projects');
+  const { page } = query;
   const keywords = t('seo.keywords', {}, { returnObjects: true });
   const image = t('seo.image', { domain: ORIGIN_HOST });
   const currentLang = locale === 'en' ? 'us' : 'es';
   const projects = []; // filtered projects after removing repeated
   let arrProjects = []; // incoming projects
-  const querys = parseQuerys({
-    asset_type: 'PROJECT',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
+  const { resp, data } = await fetchProjects(currentLang, page, query);
 
   arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
+    log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
     console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorials`);
   }
-
-  let technologyTags = [];
-  let difficulties = [];
 
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000`,
@@ -56,7 +75,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
   }
@@ -67,40 +86,9 @@ export const getStaticProps = async ({ locale, locales }) => {
       continue;
     }
     projects.push(arrProjects[i]);
-
-    if (typeof arrProjects[i].technology === 'string') technologyTags.push(arrProjects[i].technology);
-    if (Array.isArray(arrProjects[i].technologies)) {
-      technologyTags = technologyTags.concat(arrProjects[i].technologies);
-    }
-
-    if (arrProjects[i].difficulty === null) arrProjects[i].difficulty = 'unknown';
-    if (typeof arrProjects[i].difficulty === 'string' || arrProjects[i].difficulty === null) {
-      if (arrProjects[i].difficulty?.toLowerCase() === 'junior') arrProjects[i].difficulty = 'easy';
-      else if (arrProjects[i].difficulty?.toLowerCase() === 'semi-senior') arrProjects[i].difficulty = 'intermediate';
-      else if (arrProjects[i].difficulty?.toLowerCase() === 'senior') arrProjects[i].difficulty = 'hard';
-
-      difficulties.push(arrProjects[i].difficulty);
-    }
   }
 
-  technologyTags = [...new Set(technologyTags)];
-  difficulties = [...new Set(difficulties)];
-
-  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
-
-  // Verify if difficulty exist in expected position, else fill void array with 'nullString'
-  const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el?.toLowerCase() === difficulty)) {
-      return difficulty;
-    }
-    return 'nullString';
-  };
-
-  // Fill common difficulties in expected position
-  const difficultiesSorted = [];
-  ['beginner', 'easy', 'intermediate', 'hard'].forEach((difficulty) => {
-    difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
-  });
+  const difficulties = ['beginner', 'easy', 'intermediate', 'hard'];
 
   const ogUrl = {
     en: '/interactive-coding-tutorials',
@@ -117,34 +105,32 @@ export const getStaticProps = async ({ locale, locales }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',
       },
 
       fallback: false,
-      projects: projects.filter((project) => project.lang === currentLang).map(
+      count: data?.count,
+      projects: projects.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags,
-      difficulties: difficultiesSorted,
+      technologyTags: technologies,
+      difficulties,
     },
   };
 };
 
-function Projects({ projects, technologyTags, difficulties }) {
-  const { t } = useTranslation('projects');
+function Projects({ projects, technologyTags, difficulties, count }) {
+  const { t, lang } = useTranslation('projects');
   const { filteredBy, setProjectFilters } = useFilter();
   const iconColor = useColorModeValue('#FFF', '#283340');
   const router = useRouter();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const page = getQueryString('page', 1);
   const search = getQueryString('search', '');
   const pageIsEnabled = getQueryString('page', false);
-
-  const contentPerPage = 20;
-  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
   const techsQuery = router.query.techs;
@@ -162,11 +148,10 @@ function Projects({ projects, technologyTags, difficulties }) {
     + videoTutorials;
 
   const queryFunction = async () => {
-    const endIndex = startIndex + contentPerPage;
-    const paginatedResults = projects.slice(startIndex, endIndex);
+    const paginatedResults = projects;
 
     return {
-      count: projects.length,
+      count,
       results: paginatedResults,
     };
   };
@@ -259,7 +244,10 @@ function Projects({ projects, technologyTags, difficulties }) {
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
             articles={projects}
-            itemsPerPage={20}
+            itemsPerPage={contentPerPage}
+            count={count}
+            lang={lang}
+            fetchData={fetchProjects}
             searchQuery={search}
             options={{
               withoutImage: true,
@@ -288,6 +276,7 @@ Projects.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projects: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
+  count: PropTypes.number.isRequired,
 };
 
 export default Projects;

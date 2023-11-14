@@ -6,13 +6,16 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import FieldForm from './Forms/FieldForm';
 import Heading from './Heading';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem, toCapitalize } from '../../utils';
+import { log } from '../../utils/logging';
 
 function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   const { t } = useTranslation('profile');
+  const { userSession } = useSession();
   const {
     modal,
   } = useStyle();
@@ -49,7 +52,10 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(allValues),
+      body: JSON.stringify({
+        ...allValues,
+        conversion_info: userSession,
+      }),
     });
 
     const data = await resp.json();
@@ -70,7 +76,7 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
   };
 
   return (
-    <Modal isOpen={modalIsOpen} size="xl" onClose={() => console.log('clicked to close')}>
+    <Modal isOpen={modalIsOpen} size="xl" onClose={() => log('clicked to close')}>
       <ModalOverlay />
       <ModalContent background={modal.background} margin="9rem 10px 0 10px">
         <ModalCloseButton />
@@ -124,7 +130,7 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
                     variant="default"
                     isLoading={isSubmitting}
                     onClick={() => {
-                      console.log('test');
+                      log('test');
                     }}
                     textTransform="uppercase"
                     fontSize="13px"

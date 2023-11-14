@@ -6,19 +6,10 @@
   "format": "custom",
   "json": {
     "Main": {
-      "uid": {
-        "type": "UID",
-        "config": {
-          "label": "UID",
-          "placeholder": ""
-        }
-      },
+      "uid": { "type": "UID", "config": { "label": "UID", "placeholder": "" } },
       "title": {
         "type": "Text",
-        "config": {
-          "label": "TItle",
-          "placeholder": ""
-        }
+        "config": { "label": "TItle", "placeholder": "" }
       },
       "description": {
         "type": "Text",
@@ -29,11 +20,7 @@
       },
       "image": {
         "type": "Image",
-        "config": {
-          "label": "image",
-          "constraint": {},
-          "thumbnails": []
-        }
+        "config": { "label": "image", "constraint": {}, "thumbnails": [] }
       },
       "type": {
         "type": "Text",
@@ -43,54 +30,26 @@
         }
       },
       "landing_url": {
-        "type": "Link",
-        "config": {
-          "label": "Landing Url",
-          "placeholder": "",
-          "select": null
-        }
+        "type": "Text",
+        "config": { "label": "Landing url", "placeholder": "" }
       },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
-            "title_introduction": {
-              "type": "SharedSlice"
-            },
-            "markdown": {
-              "type": "SharedSlice"
-            },
-            "two_column": {
-              "type": "SharedSlice"
-            },
-            "one_column": {
-              "type": "SharedSlice"
-            },
-            "testimonials": {
-              "type": "SharedSlice"
-            },
-            "show_prices": {
-              "type": "SharedSlice"
-            },
-            "technologies": {
-              "type": "SharedSlice"
-            },
-            "partners": {
-              "type": "SharedSlice"
-            },
-            "road_map": {
-              "type": "SharedSlice"
-            },
-            "recommended_courses": {
-              "type": "SharedSlice"
-            },
-            "technologies_pills": {
-              "type": "SharedSlice"
-            },
-            "event_cards": {
-              "type": "SharedSlice"
-            }
+            "title_introduction": { "type": "SharedSlice" },
+            "markdown": { "type": "SharedSlice" },
+            "two_column": { "type": "SharedSlice" },
+            "one_column": { "type": "SharedSlice" },
+            "testimonials": { "type": "SharedSlice" },
+            "show_prices": { "type": "SharedSlice" },
+            "technologies": { "type": "SharedSlice" },
+            "partners": { "type": "SharedSlice" },
+            "road_map": { "type": "SharedSlice" },
+            "recommended_courses": { "type": "SharedSlice" },
+            "technologies_pills": { "type": "SharedSlice" },
+            "event_cards": { "type": "SharedSlice" }
           }
         }
       }

@@ -18,11 +18,13 @@ const parseQuerys = (query, connector = false) => {
   try {
     Object.keys(query).forEach((key) => {
       // query[key] !== undefined && query[key] !== null
-      if (connector) {
-        queryString += `&${key}=${query[key]}`;
-      }
-      if (!connector && query[key] !== undefined) {
-        queryString += `${queryString ? '&' : '?'}${key}=${query[key]}`;
+      if (query[key] !== undefined) {
+        if (connector) {
+          queryString += `&${key}=${query[key]}`;
+        }
+        if (!connector && query[key] !== undefined) {
+          queryString += `${queryString ? '&' : '?'}${key}=${query[key]}`;
+        }
       }
     });
   } catch (e) {
@@ -31,7 +33,7 @@ const parseQuerys = (query, connector = false) => {
   return queryString;
 };
 
-module.exports = {
+export {
   isAbsoluteUrl,
   getUrlProps,
   urlExists,

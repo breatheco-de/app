@@ -1,4 +1,5 @@
 import { isWindow, removeURLParameter, setStorageItem } from '../../utils';
+import { log } from '../../utils/logging';
 import useAuth from '../hooks/useAuth';
 
 export const withGuard = (PassedComponent) => {
@@ -6,6 +7,7 @@ export const withGuard = (PassedComponent) => {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
     const tokenExists = isWindow && localStorage.getItem('accessToken');
+    const pageToRedirect = isWindow ? `/pricing${window.location.search}` : '/pricing';
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
     const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -16,10 +18,10 @@ export const withGuard = (PassedComponent) => {
 
     const redirectToLogin = () => {
       setTimeout(() => {
-        if (typeof window !== 'undefined') {
-          setStorageItem('redirect', window.location.pathname);
+        if (isWindow) {
+          setStorageItem('redirect', `${window.location.pathname}${window.location.search}`);
         }
-        window.location.href = '/login';
+        window.location.href = pageToRedirect;
       }, 150);
     };
 
@@ -30,7 +32,7 @@ export const withGuard = (PassedComponent) => {
         } else {
           localStorage.setItem('redirect', pathname);
         }
-        window.location.href = '/login';
+        window.location.href = pageToRedirect;
       }
       if (queryTokenExists && isWindow) {
         localStorage.setItem('accessToken', queryToken);
@@ -46,11 +48,11 @@ export const withGuard = (PassedComponent) => {
     if (queryTokenExists === false) {
       if (!tokenExists && isWindow) {
         if (requiresDefaultRedirect) {
-          console.log('redirect choose-program setted');
+          log('redirect choose-program setted');
           localStorage.setItem('redirect', '/choose-program');
           redirectToLogin();
         } else {
-          console.log('redirect setted');
+          log('redirect setted');
           localStorage.setItem('redirect', pathname);
           redirectToLogin();
         }

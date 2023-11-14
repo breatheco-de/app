@@ -13,21 +13,14 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "two_column_size": {
           "type": "Select",
           "config": {
             "label": "Two Column Size",
             "placeholder": "",
-            "options": [
-              "Left is bigger",
-              "Both are equal",
-              "Right is bigger"
-            ]
+            "options": ["Left is bigger", "Both are equal", "Right is bigger"]
           }
         },
         "title": {
@@ -48,12 +41,8 @@
           }
         },
         "button_link": {
-          "type": "Link",
-          "config": {
-            "label": "Button link",
-            "placeholder": "",
-            "select": null
-          }
+          "type": "Text",
+          "config": { "label": "Button link", "placeholder": "" }
         },
         "highlight": {
           "type": "StructuredText",
@@ -69,10 +58,7 @@
           "config": {
             "label": "Highlight Style",
             "placeholder": "",
-            "options": [
-              "Underlined",
-              "Colored"
-            ]
+            "options": ["Underlined", "Colored"]
           }
         },
         "description": {
@@ -97,9 +83,7 @@
           "type": "Image",
           "config": {
             "label": "image",
-            "constraint": {
-              "width": 400
-            },
+            "constraint": { "width": 400 },
             "thumbnails": []
           }
         },

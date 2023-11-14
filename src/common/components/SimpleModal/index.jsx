@@ -4,8 +4,8 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, ...rest }) {
-  const { modal } = useStyle();
+function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, ...rest }) {
+  const { modal, borderColor2 } = useStyle();
 
   const closeHandler = () => {
     if (!forceHandler) {
@@ -14,14 +14,24 @@ function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, f
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeHandler}>
+    <Modal isOpen={isOpen} onClose={closeHandler} closeOnOverlayClick={closeOnOverlayClick}>
       <ModalOverlay />
       <ModalContent
-        {...rest}
         maxWidth={maxWidth}
         background={modal.background2}
+        style={{ marginTop: '10vh' }}
+        {...rest}
       >
-        {title && <ModalHeader>{title}</ModalHeader>}
+        {title && (
+        <ModalHeader
+          borderBottom={1}
+          borderStyle="solid"
+          borderColor={borderColor2}
+          {...headerStyles}
+        >
+          {title}
+        </ModalHeader>
+        )}
         {(!hideCloseButton && !forceHandler) && <ModalCloseButton />}
         <ModalBody {...bodyStyles}>
           {children}
@@ -35,11 +45,13 @@ SimpleModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   title: PropTypes.string,
   children: PropTypes.node.isRequired,
-  onClose: PropTypes.func.isRequired,
+  onClose: PropTypes.func,
   maxWidth: PropTypes.string,
   bodyStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   forceHandler: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
+  headerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  closeOnOverlayClick: PropTypes.bool,
 };
 SimpleModal.defaultProps = {
   title: '',
@@ -47,6 +59,9 @@ SimpleModal.defaultProps = {
   bodyStyles: {},
   forceHandler: false,
   hideCloseButton: false,
+  onClose: () => {},
+  headerStyles: {},
+  closeOnOverlayClick: true,
 };
 
 export default SimpleModal;

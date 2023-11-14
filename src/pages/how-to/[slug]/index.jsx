@@ -22,23 +22,15 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { ORIGIN_HOST } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
-import { parseQuerys } from '../../../utils/url';
+import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
-  const howToData = data.results.filter((l) => l?.category?.slug === 'how-to' || l?.category?.slug === 'como');
+  const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
 
-  const paths = howToData.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -53,114 +45,122 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'how-to');
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
   const { slug } = params;
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
-  const data = await resp.json();
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
 
-  const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+  try {
+    let data;
+    let markdown;
+    data = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
+    if (!data) {
+      console.log(`${slug} not found on cache`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+      data = await resp.json();
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
+      };
 
-  if (resp.status >= 400 || !isCurrenLang) {
+      const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+      if (resp.status >= 400 || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+
+      markdown = await markdownResp.text();
+      await setCacheItem(slug, { ...data, markdown });
+    } else {
+      markdown = data.markdown;
+    }
+
+    const {
+      title, description, translations, preview,
+    } = data;
+
+    const translationInEnglish = translations?.en || translations?.us;
+    const translationArray = [
+      {
+        value: 'en',
+        lang: 'en',
+        slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
+        link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: data?.lang === 'es' ? data.slug : translations?.es,
+        link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
+      },
+    ].filter((item) => item?.slug !== undefined);
+
+    const structuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: data?.title,
+      description: data?.description,
+      url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+      image: preview || staticImage,
+      datePublished: data?.published_at,
+      dateModified: data?.updated_at,
+      author: data?.author ? {
+        '@type': 'Person',
+        name: `${data?.author?.first_name} ${data?.author?.last_name}`,
+      } : null,
+      keywords: data?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+      },
+    };
+    const cleanedStructuredData = cleanObject(structuredData);
+
+    return {
+      props: {
+        seo: {
+          title,
+          description: description || '',
+          image: cleanedStructuredData.image,
+          type: 'article',
+          translations: translationArray,
+          pathConnector: '/how-to',
+          url: `/how-to/${slug}`,
+          slug,
+          keywords: data?.seo_keywords || '',
+          card: 'default',
+          locales,
+          locale,
+          publishedTime: data?.created_at || '',
+          modifiedTime: data?.updated_at || '',
+        },
+        translations: translationArray,
+        // page props
+        fallback: false,
+        data: {
+          ...data,
+          structuredData: cleanedStructuredData,
+        },
+        markdown: markdown || '',
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type HOW-TO for /${locale}/how-to/${slug}`, error);
     return {
       notFound: true,
     };
   }
-
-  const {
-    title, description, translations, preview,
-  } = data;
-
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-  if (markdownResp?.status >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-
-  const markdown = await markdownResp.text();
-
-  const ogUrl = {
-    en: `/how-to/${slug}`,
-    us: `/how-to/${slug}`,
-  };
-
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/how-to/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/how-to/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/how-to/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: data?.title,
-    description: data?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: data?.published_at,
-    dateModified: data?.updated_at,
-    author: data?.author ? {
-      '@type': 'Person',
-      name: `${data?.author?.first_name} ${data?.author?.last_name}`,
-    } : null,
-    keywords: data?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        title,
-        description: description || '',
-        image: preview || staticImage,
-        type: 'article',
-        translations,
-        pathConnector: '/how-to',
-        url: ogUrl.en || `/${locale}/how-to/${slug}`,
-        slug,
-        keywords: data?.seo_keywords || '',
-        card: 'default',
-        locales,
-        locale,
-        publishedTime: data?.created_at || '',
-        modifiedTime: data?.updated_at || '',
-      },
-      translations: translationArray,
-      // page props
-      fallback: false,
-      data: {
-        ...data,
-        structuredData: cleanedStructuredData,
-      },
-      markdown: markdown || '',
-    },
-  };
 };
 
 export default function HowToSlug({ data, markdown }) {
-  const { t } = useTranslation('how-to');
+  const { t, lang } = useTranslation('how-to');
   // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
@@ -179,6 +179,7 @@ export default function HowToSlug({ data, markdown }) {
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
   const isHowTo = data?.category?.slug === 'how-to' || data?.category?.slug === 'como';
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
 
   useEffect(() => {
     if (!isHowTo) {
@@ -224,7 +225,7 @@ export default function HowToSlug({ data, markdown }) {
           borderColor={useColorModeValue('gray.200', 'gray.900')}
         >
           <Link
-            href="/how-to"
+            href={`${langPrefix}/how-to`}
             margin="3rem 0 2.375rem 0"
             gridColumn="2 / span 12"
             color={linkColor}
@@ -236,22 +237,19 @@ export default function HowToSlug({ data, markdown }) {
             {`← ${t('back-to')}`}
           </Link>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
-            {data?.technologies.length > 0 && (
-              <TagCapsule
-                variant="rounded"
-                isLink
-                href="/how-to"
-                tags={data?.technologies}
-                marginY="8px"
-                fontSize="13px"
-                style={{
-                  padding: '2px 10px',
-                  margin: '0',
-                }}
-                gap="10px"
-                paddingX="0"
-              />
-            )}
+            <TagCapsule
+              variant="rounded"
+              isLink
+              tags={data?.technologies}
+              marginY="8px"
+              fontSize="13px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
             <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
@@ -302,9 +300,9 @@ export default function HowToSlug({ data, markdown }) {
             )}
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
-              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
-              technologies={data?.technologies.join(',')}
+              technologies={data?.technologies}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
             />
           </Box>
@@ -312,6 +310,15 @@ export default function HowToSlug({ data, markdown }) {
         <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
+
+        <RelatedContent
+          slug={data.slug}
+          type="LESSON,ARTICLE"
+          extraQuerys={{ category: 'how-to,como' }}
+          technologies={data?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

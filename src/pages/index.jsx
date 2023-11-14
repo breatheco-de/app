@@ -14,8 +14,12 @@ function Page({ page }) {
   const router = useRouter();
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
+  const landingUrl = page?.data?.landing_url;
 
   useEffect(() => {
+    if (landingUrl?.length > 0) {
+      router.push(landingUrl);
+    }
     if (!prismicRef && !prismicApi) {
       router.push('/login');
     }

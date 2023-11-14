@@ -20,47 +20,61 @@ import TitleContent from '../../js_modules/projects/TitleContent';
 import { getQueryString } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
+import { log } from '../../utils/logging';
 
-export const getStaticProps = async ({ locale, locales }) => {
-  const t = await getT(locale, 'how-to');
-  const keywords = t('seo.keywords', {}, { returnObjects: true });
-  const image = t('seo.image', { domain: ORIGIN_HOST });
-  const howTos = []; // filtered howTos after removing repeated
-  let arrHowTos = []; // incoming howTos
+const contentPerPage = 20;
 
+const fetchArticles = async (lang, page, query) => {
+  const categories = {
+    us: 'how-to',
+    en: 'how-to',
+    es: 'como',
+  };
+  const difficulty = {
+    junior: 'BEGINNER,EASY',
+    'mid-level': 'INTERMEDIATE',
+    senior: 'HARD',
+  };
+  const technologies = query.techs !== '' ? query.techs : undefined;
+  const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'ARTICLE',
     visibility: 'PUBLIC',
     status: 'PUBLISHED',
     academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
+    language: lang,
+    limit: contentPerPage,
+    category: categories[lang],
+    offset: page ? (page - 1) * contentPerPage : 0,
+    difficulty: difficulty[query.difficulty],
+    technologies,
+    video,
+    like: query?.search,
+    expand: 'technologies',
   });
 
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
-  // .then((res) => res.json())
-  // .catch((err) => console.log(err));
-  const currentLang = {
-    en: 'us',
-    es: 'es',
-  };
+  return { resp, data };
+};
 
+export const getServerSideProps = async ({ locale, locales, query }) => {
+  const t = await getT(locale, 'how-to');
+  const { page } = query;
+  const keywords = t('seo.keywords', {}, { returnObjects: true });
+  const image = t('seo.image', { domain: ORIGIN_HOST });
+  const currentLang = locale === 'en' ? 'us' : 'es';
+  const howTos = []; // filtered howTos after removing repeated
+  let arrHowTos = []; // incoming howTos
+
+  const { resp, data } = await fetchArticles(currentLang, page, query);
   arrHowTos = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
+    log(`SUCCESS: ${arrHowTos.length} How To's fetched`);
   } else {
     console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
 
-  let technologyTags = [];
-  let difficulties = [];
-
-  // const technologiesResponse = await fetch(
-  //   `${process.env.BREATHECODE_HOST}/v1/registry/technology?asset_type=ARTICLE&limit=1000`,
-  //   {
-  //     Accept: 'application/json, text/plain, */*',
-  //   },
-  // );
   const technologiesResponse = await fetch(
     `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=ARTICLE&limit=1000`,
     {
@@ -70,7 +84,7 @@ export const getStaticProps = async ({ locale, locales }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
   }
@@ -81,36 +95,9 @@ export const getStaticProps = async ({ locale, locales }) => {
       continue;
     }
     howTos.push(arrHowTos[i]);
-
-    if (typeof arrHowTos[i].technology === 'string') technologyTags.push(arrHowTos[i].technology);
-    if (Array.isArray(arrHowTos[i].technologies)) {
-      technologyTags = technologyTags.concat(arrHowTos[i].technologies);
-    }
-
-    if (typeof arrHowTos[i].difficulty === 'string') {
-      if (arrHowTos[i].difficulty === 'BEGINNER') arrHowTos[i].difficulty = 'beginner';
-      difficulties.push(arrHowTos[i].difficulty);
-    }
   }
 
-  technologyTags = [...new Set(technologyTags)];
-  difficulties = [...new Set(difficulties)];
-
-  technologyTags = technologies.filter((technology) => technologyTags.includes(technology.slug.toLowerCase()));
-
-  // Verify if difficulty exist in expected position, else fill void array with 'nullString'
-  const verifyDifficultyExists = (difficultiesArray, difficulty) => {
-    if (difficultiesArray.some((el) => el.toLowerCase() === difficulty)) {
-      return difficulty;
-    }
-    return 'nullString';
-  };
-
-  // Fill common difficulties in expected position
-  const difficultiesSorted = [];
-  ['beginner', 'easy', 'intermediate', 'hard'].forEach((difficulty) => {
-    difficultiesSorted.push(verifyDifficultyExists(difficulties, difficulty));
-  });
+  const difficulties = ['beginner', 'easy', 'intermediate', 'hard'];
 
   const ogUrl = {
     en: '/how-to',
@@ -128,33 +115,32 @@ export const getStaticProps = async ({ locale, locales }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/how-to`,
         pathConnector: '/how-to',
       },
 
       // page props
       fallback: false,
-      data: arrHowTos.filter((l) => l.lang === currentLang[locale] && (l?.category?.slug === 'how-to' || l?.category?.slug === 'como')).map(
+      count: data?.count,
+      data: arrHowTos.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags,
-      difficulties: difficultiesSorted,
+      technologyTags: technologies,
+      difficulties,
     },
   };
 };
 
-export default function HowTo({ data, technologyTags, difficulties }) {
-  const { t } = useTranslation('how-to');
+export default function HowTo({ data, technologyTags, difficulties, count }) {
+  // log(data.filter((l) => l.title === 'How to print in javascript'));
+  const { t, lang } = useTranslation('how-to');
   const router = useRouter();
   const { filteredBy, setHowToFilters } = useFilter();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const iconColor = useColorModeValue('#FFF', '#283340');
-  const page = getQueryString('page', 1);
   const search = getQueryString('search', '');
   const pageIsEnabled = getQueryString('page', false);
-
-  const contentPerPage = 20;
-  const startIndex = (page - 1) * contentPerPage;
 
   const { technologies, difficulty, videoTutorials } = filteredBy.howToOptions;
 
@@ -173,11 +159,10 @@ export default function HowTo({ data, technologyTags, difficulties }) {
     + videoTutorials;
 
   const queryFunction = async () => {
-    const endIndex = startIndex + contentPerPage;
-    const paginatedResults = data.slice(startIndex, endIndex);
+    const paginatedResults = data;
 
     return {
-      count: data.length,
+      count,
       results: paginatedResults,
     };
   };
@@ -267,7 +252,10 @@ export default function HowTo({ data, technologyTags, difficulties }) {
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
             articles={data}
-            itemsPerPage={20}
+            itemsPerPage={contentPerPage}
+            count={count}
+            lang={lang}
+            fetchData={fetchArticles}
             searchQuery={search}
             options={{
               withoutImage: true,
@@ -293,8 +281,9 @@ export default function HowTo({ data, technologyTags, difficulties }) {
 
 HowTo.propTypes = {
   data: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  technologyTags: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.string), PropTypes.objectOf(PropTypes.any)]),
+  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   difficulties: PropTypes.arrayOf(PropTypes.string),
+  count: PropTypes.number.isRequired,
 };
 
 HowTo.defaultProps = {

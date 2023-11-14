@@ -19,39 +19,22 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { parseQuerys } from '../../utils/url';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST } from '../../utils/variables';
+import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import { log } from '../../utils/logging';
+import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const querys = parseQuerys({
-    asset_type: 'PROJECT',
-    visibility: 'PUBLIC',
-    status: 'PUBLISHED',
-    academy: WHITE_LABEL_ACADEMY,
-    limit: 2000,
-  });
-  let projects = [];
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
-  const data = await resp.json();
+  const data = await getAsset('PROJECT', {}, 'project');
 
-  projects = Object.values(data.results);
-  if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${projects.length} Projects fetched for /interactive-coding-tutorial`);
+  if (data?.length) {
+    log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
-    console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorial`);
+    console.error('Error: fetching Projects list for /interactive-coding-tutorial');
   }
 
-  for (let i = 0; i < projects.length; i += 1) {
-    if (projects[i].difficulty === null) projects[i].difficulty = 'unknown';
-    if (typeof projects[i].difficulty === 'string') {
-      if (projects[i].difficulty?.toLowerCase() === 'junior') projects[i].difficulty = 'easy';
-      else if (projects[i].difficulty?.toLowerCase() === 'semi-senior') projects[i].difficulty = 'intermediate';
-      else if (projects[i].difficulty?.toLowerCase() === 'senior') projects[i].difficulty = 'hard';
-    }
-  }
-
-  const paths = projects.flatMap((res) => locales.map((locale) => ({
+  const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
       slug: res.slug,
     },
@@ -67,109 +50,119 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'projects');
   const { slug } = params;
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
-  const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
-  const result = await response.json();
-  const engPrefix = {
-    us: 'en',
-    en: 'en',
-  };
 
-  const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+  try {
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-  if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+    if (!result) {
+      console.log(`${slug} not found on cache`);
+      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
+      result = await response.json();
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
+      };
+
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+      if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
+    }
+
+    const {
+      title, description, translations, preview,
+    } = result;
+    const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
+    const translationInEnglish = translations?.en || translations?.us;
+
+    const translationArray = [
+      {
+        value: 'en',
+        lang: 'en',
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-coding-tutorial/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-coding-tutorial/${result?.lang === 'es' ? result.slug : translations?.es}`,
+      },
+    ].filter((item) => item?.slug !== undefined);
+
+    const structuredData = {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      name: result?.title,
+      description: result?.description,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
+      image: preview || staticImage,
+      datePublished: result?.published_at,
+      dateModified: result?.updated_at,
+      author: result?.author ? {
+        '@type': 'Person',
+        name: `${result?.author?.first_name} ${result?.author?.last_name}`,
+      } : null,
+      keywords: result?.seo_keywords,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
+      },
+    };
+
+    const cleanedStructuredData = cleanObject(structuredData);
+
+    return {
+      props: {
+        seo: {
+          title,
+          url: `/interactive-coding-tutorial/${slug}`,
+          slug,
+          description: description || '',
+          image: cleanedStructuredData.image,
+          translations: translationArray,
+          pathConnector: '/interactive-coding-tutorial',
+          type: 'article',
+          keywords: result?.seo_keywords || '',
+          card: 'large',
+          locales,
+          locale,
+          publishedTime: result?.created_at || '',
+          modifiedTime: result?.updated_at || '',
+        },
+        project: {
+          ...result,
+          difficulty,
+          structuredData: cleanedStructuredData,
+        },
+        markdown,
+        translations: translationArray,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page type PROJECT for /${locale}/interactive-coding-tutorial/${slug}`, error);
     return {
       notFound: true,
     };
   }
-
-  const {
-    title, description, translations, preview,
-  } = result;
-  const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-  if (markdownResp.status >= 400) {
-    return {
-      notFound: true,
-    };
-  }
-  const markdown = await markdownResp.text();
-
-  const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
-  const ogUrl = {
-    en: `/interactive-coding-tutorial/${slug}`,
-    us: `/interactive-coding-tutorial/${slug}`,
-  };
-
-  const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.us,
-      link: `/interactive-coding-tutorial/${translations?.us}`,
-    },
-    {
-      value: 'en',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/interactive-coding-tutorial/${translations?.en}`,
-    },
-    {
-      value: 'es',
-      lang: 'es',
-      slug: translations?.es,
-      link: `/es/interactive-coding-tutorial/${translations?.es}`,
-    },
-  ].filter((item) => translations?.[item?.value] !== undefined);
-
-  const eventStructuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    name: result?.title,
-    description: result?.description,
-    url: `${ORIGIN_HOST}/${slug}`,
-    image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
-    datePublished: result?.published_at,
-    dateModified: result?.updated_at,
-    author: result?.author ? {
-      '@type': 'Person',
-      name: `${result?.author?.first_name} ${result?.author?.last_name}`,
-    } : null,
-    keywords: result?.seo_keywords,
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}/${slug}`,
-    },
-  };
-
-  const cleanedStructuredData = cleanObject(eventStructuredData);
-
-  return {
-    props: {
-      seo: {
-        title,
-        url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
-        slug,
-        description: description || '',
-        image: preview || staticImage,
-        translations,
-        pathConnector: '/interactive-coding-tutorial',
-        type: 'article',
-        keywords: result?.seo_keywords || '',
-        card: 'large',
-        locales,
-        locale,
-        publishedTime: result?.created_at || '',
-        modifiedTime: result?.updated_at || '',
-      },
-      project: {
-        ...result,
-        difficulty,
-        structuredData: cleanedStructuredData,
-      },
-      markdown,
-      translations: translationArray,
-    },
-  };
 };
 
 function TableInfo({ t, project, commonTextColor }) {
@@ -312,8 +305,8 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
-                technologies={project?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
+                technologies={project?.technologies}
               />
             </Box>
           </Box>
@@ -347,6 +340,14 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={project.slug}
+          type="PROJECT"
+          extraQuerys={{}}
+          technologies={project?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

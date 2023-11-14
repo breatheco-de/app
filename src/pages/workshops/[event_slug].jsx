@@ -8,11 +8,12 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import { reportDatalayer } from '../../utils/requests';
 import bc from '../../common/services/breathecode';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -24,7 +25,15 @@ import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
-import useSubscribeToPlan from '../../common/hooks/useSubscribeToPlan';
+import { validatePlanExistence } from '../../common/handlers/subscriptions';
+import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
+
+const arrayOfImages = [
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811551-c4cadebe-9bea-4abe-9d11-4c19d5b66241.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811556-1d9de108-2166-4803-8014-1e1d406066a2.gif',
+  'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811564-e7889add-dd02-4b91-bb0b-91b9e5f843af.gif',
+];
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -113,13 +122,17 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
+  const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
+  const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
+  const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
+  // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
@@ -159,6 +172,18 @@ function Page({ event }) {
     }
   }, [event]);
 
+  useEffect(() => {
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      setRandomImage(arrayOfImages[currentIndex]);
+      currentIndex = (currentIndex + 1) % 4;
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   const limitedUsers = showAll ? users : users.slice(0, 15);
 
   const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
@@ -177,6 +202,11 @@ function Page({ event }) {
     es: format(new Date(event?.starting_at), "EEEE, dd 'de' MMMM - p (OOO)", { timeZone, locale: es }),
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
+
+  const unixFormatedDate = {
+    starting_at: isValidDate(event?.starting_at) ? new Date(event?.starting_at).getTime() / 1000 : '',
+    ending_at: isValidDate(event?.ending_at) ? new Date(event?.ending_at).getTime() / 1000 : '',
+  };
 
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
@@ -229,42 +259,22 @@ function Page({ event }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const arrayOfImages = [
-    '/static/images/person1.webp',
-  ];
   const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
-    const findedPlanCoincidences = subscriptions.filter(
-      (s) => s.selected_event_type_set?.event_types.some(
-        (ev) => ev?.slug === event?.event_type?.slug,
-      ),
-    );
-    const relevantProps = findedPlanCoincidences.map(
-      (subscription) => ({
-        event_type_set_slug: subscription?.selected_event_type_set.slug,
-        plan_slug: subscription?.plans?.[0]?.slug,
-      }),
-    );
-    const propsToQueryString = {
-      event_type_set: relevantProps.map((p) => p.event_type_set_slug).join(','),
-      plans: relevantProps.map((p) => p.plan_slug).join(','),
-    };
-
-    if (findedPlanCoincidences?.length > 0) {
-      setStorageItem('redirected-from', router?.asPath);
-      router.push({
-        pathname: '/checkout',
-        query: propsToQueryString,
-      });
-    } else {
-      handleSubscribeToPlan({ slug: '4geeks-standard' })
-        .finally(() => {
-          getMySubscriptions();
-          getCurrentConsumables();
-          setIsInProcessOfSubscription(false);
+    setIsFetchingDataForModal(true);
+    validatePlanExistence(subscriptions)
+      .then((data) => {
+        setDataToGetAccessModal({
+          ...data,
+          event,
+          academyServiceSlug: '',
         });
-    }
+        setIsModalToGetAccessOpen(true);
+      })
+      .finally(() => {
+        setIsFetchingDataForModal(false);
+      });
   };
 
   const currentConsumable = consumables?.event_type_sets?.find(
@@ -348,6 +358,15 @@ function Page({ event }) {
 
   return (
     <Box as="div">
+      <ModalToGetAccess
+        isOpen={isModalToGetAccessOpen}
+        stage={stageType.outOfConsumables}
+        externalData={dataToGetAccessModal}
+        onClose={() => {
+          setIsModalToGetAccessOpen(false);
+        }}
+      />
+
       <Head>
         <script
           type="application/ld+json"
@@ -502,14 +521,16 @@ function Page({ event }) {
           {event?.id && (
             <ShowOnSignUp
               hideForm={finishedEvent}
+              existsConsumables={existsConsumables}
               hideSwitchUser={!isFreeForConsumables && !existsConsumables}
+              isLive={readyToJoinEvent && !finishedEvent}
               refetchAfterSuccess={() => {
                 getMySubscriptions();
                 getCurrentConsumables();
               }}
               headContent={readyToJoinEvent ? (
                 <Box position="relative" zIndex={1} width="100%" height={177}>
-                  <Image src={arrayOfImages[0]} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
+                  <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                 </Box>
               ) : (
                 <Timer
@@ -538,6 +559,7 @@ function Page({ event }) {
                   mt="10px"
                   type="submit"
                   variant="default"
+                  className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                   background={buttonEnabled ? 'blue.default' : 'gray.350'}
                   textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                   isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
@@ -569,6 +591,19 @@ function Page({ event }) {
                                 title: t('alert-message:success-event-reservation'),
                                 isClosable: true,
                                 duration: 6000,
+                              });
+
+                              reportDatalayer({
+                                dataLayer: {
+                                  event: 'event_order',
+                                  event_id: event.id,
+                                  event_slug: event.slug,
+                                  event_title: event.title,
+                                  event_type: event.event_type?.slug,
+                                  event_starting_at: unixFormatedDate.starting_at,
+                                  event_ending_at: unixFormatedDate.ending_at,
+                                  event_language: event.lang,
+                                },
                               });
                             } else {
                               toast({
@@ -603,7 +638,7 @@ function Page({ event }) {
                     fontSize="14px"
                     fontWeight={700}
                     onClick={handleGetMoreEventConsumables}
-                    isLoading={isInProcessOfSubscription}
+                    isLoading={isFetchingDataForModal}
                     alignItems="center"
                     gridGap="10px"
                     width="100%"

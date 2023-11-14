@@ -6,10 +6,20 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Bienvenido a:",
+  "checkout": {
+    "title": "El código te hará libre",
+    "description": "El camino hacia la libertad profesional es altamente tutelado, en vivo y en conjunto.",
+    "read-more" :"Lee la ciencia detrás de esto.",
+    "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
+  },
+  "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
+  "in-waiting-list-title": "Estás en nuestra lista de espera",
+  "signup-thanks-text": "Gracias por registrarte para probar 4Geeks. Nos pondremos en contacto cuando tu plaza esté lista.",
   "subscriptions": "Suscripciones",
   "go-back": "Volver",
   "next-step": "Siguiente paso",
+  "create-account": "Crear cuenta",
   "payment-info": "Información de pago",
   "select-payment-plan": "Selecciona un plan de pago:",
   "what-you-will-get": "Lo que obtendrás:",
@@ -44,14 +54,24 @@
   "signing-for": "Te estás registrando en",
   "getting-for": "Estas obteniendo",
   "already-have-account": "¿Ya tienes una cuenta?",
+  "no-have-account": "¿No tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
-  "start-free-course": "Comenzar gratuitamente",
+  "register-here": "Regístrate aquí.",
+  "start-free-course": "Empieza a aprender",
+  "free": "Gratis",
+  "totally_free": "Totalmente gratuito",
+  "free_trial": "Prueba gratuita",
   "monthly_payment": "Pago mensual",
   "quarterly_payment": "Pago trimestral",
   "half_yearly_payment": "Pago semestral",
   "yearly_payment": "Pago anual",
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
+  "our_plans": "Nuestros planes",
+  "join-cohort": {
+    "description": "Por favor, únete a la cohorte para acceder al contenido del programa.",
+    "button": "Unirse a la cohorte"
+  },
   "info": {
     "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagarás ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
@@ -62,6 +82,7 @@
     "will-pay-per-half-year": "Te suscribirás y pagarás ${{price}} dólares cada semestre",
     "will-pay-per-year": "Te suscribirás y pagarás ${{price}} dólares cada año",
     "free": "Totalmente gratuito.",
+    "free-trial-period": "Prueba gratuita por {{qty}} {{period}}",
     "trial": "Prueba por 1 mes",
     "trial-week": "Prueba por 1 semana",
     "monthly": "Mensual",
@@ -108,7 +129,23 @@
   "resend": "Reenviar",
   "mentorship-bundle-title": "Paquete de sesiones de tutoría",
   "event-bundle-title": "Paquete de acceso a eventos",
+  "upgrade-a-plan": "Mejora un plan",
+  "take-me-there": "Llévame allí",
   "consumables": {
+    "already-have-it": "Ya lo tienes",
+    "consumable-event-not-available": "Este evento no está disponible para tu suscripción",
+    "consumable-mentorship-not-available": "Esta mentoría no está disponible para tu suscripción",
+    "full-plan": "Plan completo",
+    "basic-plan": "Plan básico",
+    "ran-out-of-events": "Te has quedado sin acceso a eventos",
+    "ran-out-of-events-text": "Puedes comprar un paquete de acceso a eventos o comprar un plan aquí:",
+    "and-get-event-access": "Y únete a más eventos",
+    "purchase-one-or-more-events": "Compra uno o más accesos a eventos",
+    "ran-out-of-mentorships": "Te has quedado sin sesiones de tutoría",
+    "ran-out-of-mentorships-text": "Puedes comprar un paquete de sesiones de tutoría o comprar un plan aquí:",
+    "and-get-mentorship-access": "Y obtén mas tutorías",
+    "purchase-one-or-more-sessions": "Compra una o más sesiones",
+    "avoid-monthly-commitment": "Evita el compromiso mensual",
     "select-bundle": "Selecciona un paquete:",
     "change-my-selection": "Cambiar mi selección",
     "purchase-completed-title": "Haz completado con éxito la compra",
@@ -130,5 +167,23 @@
     "cohort-connector": "Cohorte: {{name}}",
     "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
+  },
+  "get-premium": "Obtener Premium",
+  "pricing": {
+    "already-have-plan": "Ya lo tienes",
+    "basic-plan": {
+      "type": "Básico",
+      "hook-message": "Prepárate para conocer nuestra academia",
+      "title": "Miembro Gratuito",
+      "description": "Todo lo que necesitas para comenzar a aprender a programar",
+      "button-title": "Comenzar gratis"
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
+      "title": "Miembro Premium",
+      "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
+      "button-title": "Obtener Premium"
+    }
   }
 }

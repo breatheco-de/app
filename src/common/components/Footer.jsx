@@ -21,6 +21,8 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
+import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
+import { log } from '../../utils/logging';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
@@ -29,6 +31,7 @@ function Footer({ pageProps }) {
   const [formStatus, setFormStatus] = useState('');
 
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
+  const actualYear = new Date().getFullYear();
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
   const hideDivider = pageProps?.hideDivider === true;
@@ -56,10 +59,10 @@ function Footer({ pageProps }) {
             >
               <Flex justifyContent="space-around">
                 <Link key="github" href="https://github.com/breatheco-de" target="_blank" rel="noopener noreferrer">
-                  <Icon icon="github" width="23px" height="23px" />
+                  <GithubIcon width="23px" height="23px" />
                 </Link>
                 <Link key="youtube" href="https://www.youtube.com/user/alesanchezr" target="_blank" rel="noopener noreferrer">
-                  <Icon icon="youtube" width="23px" height="23px" color={hexColor.black} />
+                  <YoutubeIcon width="23px" height="23px" color={hexColor.black} />
                 </Link>
               </Flex>
             </Box>
@@ -69,7 +72,7 @@ function Footer({ pageProps }) {
               key="logo"
               width={['100%', '50%', '25%', '25%']}
             >
-              <Icon style={{ margin: 'auto' }} icon="4GeeksIcon" width="150px" height="60px" />
+              <LogoIcon style={{ margin: 'auto' }} width="150px" height="60px" />
             </Box>
             <Box
               key="searchbar"
@@ -84,12 +87,12 @@ function Footer({ pageProps }) {
                     e.preventDefault();
                     bc.marketing().lead({ email })
                       .then((success) => {
-                        console.log(success);
+                        log(success);
                         if (success === undefined) setFormStatus('error');
                         else setFormStatus('success');
                       }).catch((err) => {
                         setFormStatus('error');
-                        console.log(err);
+                        log(err);
                       });
                   }}
                 >
@@ -327,7 +330,7 @@ function Footer({ pageProps }) {
         // alignItems="center"
         textAlign="center"
       >
-        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName })}</Text>
+        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"

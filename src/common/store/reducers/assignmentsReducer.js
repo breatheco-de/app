@@ -1,6 +1,7 @@
 const initialState = {
   contextState: {
     allTasks: [],
+    tasksCount: 0,
   },
 };
 

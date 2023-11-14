@@ -101,7 +101,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
-    STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
   },
   publicRuntimeConfig: {
@@ -111,7 +110,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
-    STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
   },
@@ -135,7 +133,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     BC_ACADEMY_TOKEN: process.env.BC_ACADEMY_TOKEN,
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
-    STONLY_ID: process.env.STONLY_ID,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
@@ -144,5 +141,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     PRISMIC_API: process.env.PRISMIC_API,
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
+    BASE_PLAN: process.env.BASE_PLAN,
   },
 })));

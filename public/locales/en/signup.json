@@ -6,14 +6,23 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Welcome to:",
+  "checkout": {
+    "title": "Code will set you free",
+    "description": "The path to professional freedom is highly mentored, live and together.",
+    "read-more" :"Read the science behind it.",
+    "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
+  },
+  "what-includes": "What includes?",
   "continue-learning": "Continue learning",
+  "in-waiting-list-title": "You are in out waiting list",
+  "signup-thanks-text": "Thanks for signing up to try 4Geeks. We'll be in touch when your seat is ready",
   "subscriptions": "Subscriptions",
   "go-back": "Go back",
   "next-step": "Next step",
+  "create-account": "Create account",
   "payment-info": "Payment information",
   "select-payment-plan": "Select your payment plan:",
   "what-you-will-get": "What you will get:",
-  "free-trial": "Free trial",
   "contact-information": "Contact information",
   "choose-your-class": "Choose your class",
   "summary": "Summary",
@@ -44,14 +53,24 @@
   "signing-for": "You are signing up for",
   "getting-for": "You are getting",
   "already-have-account": "Already have an account?",
+  "no-have-account": "You don't have an account?",
   "login-here": "Login here.",
-  "start-free-course": "Start free course",
+  "register-here": "Register here.",
+  "start-free-course": "Start Learning",
+  "free": "Free",
+  "totally_free": "Totally free",
+  "free_trial": "Free trial",
   "monthly_payment": "Monthly payment",
   "quarterly_payment": "Quarterly payment",
   "half_yearly_payment": "Half yearly payment",
   "yearly_payment": "Yearly payment",
   "one_payment": "One payment",
   "many_months_payment": "{{qty}} months payment",
+  "our_plans": "Our plans",
+  "join-cohort": {
+    "description": "Click the button below to join the cohort and access the program's content.",
+    "button": "Join cohort"
+  },
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
@@ -62,6 +81,7 @@
     "will-pay-per-half-year": "You will subscribe and pay ${{price}} dollars every half year",
     "will-pay-per-year": "You will subscribe and pay ${{price}} dollars every year",
     "free": "Totally free",
+    "free-trial-period": "Free trial for {{qty}} {{period}}",
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
@@ -108,7 +128,23 @@
   "resend": "Resend",
   "mentorship-bundle-title": "Mentorship sessions bundle",
   "event-bundle-title": "Event bundle",
+  "upgrade-a-plan": "Upgrade a plan",
+  "take-me-there": "Take me there",
   "consumables": {
+    "already-have-it": "Already have it",
+    "consumable-event-not-available": "This event is not available for your subscription",
+    "consumable-mentorship-not-available": "This mentorship is not available for your subscription",
+    "full-plan": "Full plan",
+    "basic-plan": "Basic plan",
+    "ran-out-of-events": "You ran out of events",
+    "ran-out-of-events-text": "You can purchase a event access bundle or purchase a plan here:",
+    "and-get-event-access": "And join to more events",
+    "purchase-one-or-more-events": "Purchase one or more event access",
+    "ran-out-of-mentorships": "You ran out of mentorships",
+    "ran-out-of-mentorships-text": "You can purchase a mentoring session bundle or purchase a plan here:",
+    "and-get-mentorship-access": "And get more mentorships",
+    "purchase-one-or-more-sessions": "Purchase one or more sessions",
+    "avoid-monthly-commitment": "Avoid monthly commitment",
     "select-bundle": "Select your bundle:",
     "change-my-selection": "Change my selection",
     "purchase-completed-title": "You have successfully completed the purchase",
@@ -130,5 +166,24 @@
     "cohort-connector": "Cohort: {{name}}",
     "subscription-not-found": "Subscription not found",
     "no-plan-found-for-service": "You don't have any subscription related to the following services:"
+  },
+  "get-premium": "Get Premium",
+  "pricing": {
+    "already-have-plan": "You already have it",
+    "basic-plan": {
+      "type": "Basic",
+      "hook-message": "Start learning now without financial commitments",
+      "title": "No credit card required",
+      "description": "Start learning and discover our amazing content and benefits",
+      "button-title": "Start for free"
+
+    },
+    "premium-plan": {
+      "type": "Premium",
+      "hook-message": "Improve your skills with extra challenges and benefits.",
+      "title": "Premium member",
+      "description": "All the content you need to become a hireable developer",
+      "button-title": "Get Premium"
+    }
   }
 }

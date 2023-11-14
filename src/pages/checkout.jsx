@@ -12,6 +12,7 @@ import { useRouter } from 'next/router';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
 import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
@@ -27,7 +28,11 @@ import ServiceSummary from '../js_modules/checkout/ServiceSummary';
 import Text from '../common/components/Text';
 import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
-import { ORIGIN_HOST } from '../utils/variables';
+import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
+import { reportDatalayer } from '../utils/requests';
+import { fetchSuggestedPlan, getTranslations, processPlans } from '../common/handlers/subscriptions';
+import SimpleModal from '../common/components/SimpleModal';
+import PricingView from './pricing';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -71,6 +76,8 @@ function Checkout() {
   const [isPreloading, setIsPreloading] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [defaultPlanData, setDefaultPlanData] = useState({});
+  const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
@@ -78,17 +85,19 @@ function Checkout() {
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps } = state;
   const { backgroundColor3 } = useStyle();
+  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   const cohorts = cohortsData?.cohorts;
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { userSession } = useSession();
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
-  const planFormated = plan && encodeURIComponent(plan);
+  const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
@@ -105,7 +114,7 @@ function Checkout() {
     confirm_email: '',
   });
 
-  const queryPlanExists = planFormated && planFormated?.length > 0;
+  const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
@@ -114,7 +123,34 @@ function Checkout() {
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
+    const translations = getTranslations(t);
+    const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+    bc.payment().getPlan(defaultPlan).then(async (resp) => {
+      const processedPlan = await processPlans(resp?.data, {
+        quarterly: false,
+        halfYearly: false,
+        planType: 'original',
+      }, translations);
+      setOriginalPlan(processedPlan);
+    });
+    fetchSuggestedPlan(defaultPlan, translations)
+      .then((data) => {
+        setDefaultPlanData(data);
+      });
+    reportDatalayer({
+      dataLayer: {
+        event: 'begin_checkout',
+        path: '/checkout',
+        conversion_info: userSession,
+      },
+    });
+  }, []);
+
+  useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
+    if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
+      setIsPricingModalOpen(true);
+    }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
     }
@@ -193,9 +229,8 @@ function Checkout() {
           const existsAmountPerMonth = data?.price_per_month > 0;
           const existsAmountPerQuarter = data?.price_per_quarter > 0;
           const existsAmountPerYear = data?.price_per_year > 0;
-          const fiancioptionsExists = data?.financing_options?.length > 0 && data?.financing_options?.[0]?.monthly_price > 0;
 
-          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear || fiancioptionsExists;
+          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
           if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
             toast({
@@ -292,6 +327,9 @@ function Checkout() {
       {isPreloading && (
         <LoaderScreen />
       )}
+      <SimpleModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} borderRadius="13px" maxWidth="7xl" closeOnOverlayClick={false} hideCloseButton style={{ marginTop: '2rem', position: 'relative' }}>
+        <PricingView data={defaultPlanData} isForModal my="1rem" />
+      </SimpleModal>
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
@@ -308,7 +346,7 @@ function Checkout() {
             />
           </Box>
         )}
-        isOpen={verifyEmailProps.state}
+        isOpen={(isPricingModalOpen && verifyEmailProps.state) || (queryPlanExists && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           const inviteId = verifyEmailProps?.data?.id;
@@ -362,7 +400,7 @@ function Checkout() {
         }}
       />
       {/* Stepper */}
-      {!readyToSelectService && !serviceToRequest?.id && (
+      {!isFirstStep && !readyToSelectService && !serviceToRequest?.id && (
         <Stepper
           stepIndex={stepIndex}
           checkoutData={checkoutData}
@@ -379,14 +417,15 @@ function Checkout() {
         flexDirection="column"
         gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
-        maxWidth={{ base: '100%', md: '900px' }}
-        margin={{ base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
+        maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
+        margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
         {!readyToSelectService && isFirstStep && (
           <ContactInformation
             courseChoosed={courseChoosed}
+            defaultPlanData={originalPlan}
             formProps={formProps}
             setFormProps={setFormProps}
             setVerifyEmailProps={setVerifyEmailProps}

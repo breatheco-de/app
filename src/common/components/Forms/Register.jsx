@@ -25,10 +25,15 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
 import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
+import useSession from '../../hooks/useSession';
+import { usePersistent } from '../../hooks/usePersistent';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
+import { BASE_PLAN } from '../../../utils/variables';
 
 function Register({ setIsLoggedFromRegister }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { userSession } = useSession();
+  const [cohortSession] = usePersistent('cohortSession', {});
   const { t } = useTranslation('login');
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { handleSubscribeToPlan, successModal } = useSubscribeToPlan({ enableRedirectOnCTA: true });
@@ -72,11 +77,11 @@ function Register({ setIsLoggedFromRegister }) {
             router.push({
               pathname: '/checkout',
               query: {
-                plan: '4geeks-standard',
+                plan: 'basic',
               },
             });
           } else {
-            router.push('/login?tab=login');
+            router.push('/login');
             setShowAlreadyMember(false);
           }
         }}
@@ -144,6 +149,7 @@ function Register({ setIsLoggedFromRegister }) {
           // passwordConfirmation: '',
         }}
         onSubmit={async (values, actions) => {
+          const academy = cohortSession?.academy?.slug;
           const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
             method: 'POST',
             headers: {
@@ -153,6 +159,10 @@ function Register({ setIsLoggedFromRegister }) {
             body: JSON.stringify({
               ...values,
               plan: '4geeks-standard',
+              conversion_info: {
+                ...userSession,
+                location: academy,
+              },
             }),
           });
           const data = await resp.json();
@@ -174,7 +184,7 @@ function Register({ setIsLoggedFromRegister }) {
             setIsLoggedFromRegister(true);
 
             handleSubscribeToPlan({
-              slug: '4geeks-standard',
+              slug: BASE_PLAN,
               accessToken: data?.access_token,
             })
               .finally(() => {

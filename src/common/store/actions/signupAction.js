@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
 import { useSelector, useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/react';
@@ -11,7 +12,9 @@ import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, g
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
+import { reportDatalayer } from '../../../utils/requests';
 
+// eslint-disable-next-line no-unused-vars
 const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -21,7 +24,8 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
   const { locale } = router;
   const dispatch = useDispatch();
   const accessToken = getStorageItem('accessToken');
-  const redirectAfterRegister = getStorageItem('redirect-after-register');
+  const redirect = getStorageItem('redirect');
+  const redirectedFrom = getStorageItem('redirected-from');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
@@ -107,7 +111,25 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     payload,
   });
 
-  const handlePayment = (data) => new Promise((resolve, reject) => {
+  const freeTrialPeriod = (qty, period) => {
+    const periodValue = period?.toLowerCase();
+    const singularTranslation = {
+      day: t('common:word-connector.day'),
+      week: t('common:word-connector.week'),
+      month: t('common:word-connector.month'),
+      year: t('common:word-connector.year'),
+    };
+    const pluralTranslation = {
+      day: t('common:word-connector.days'),
+      week: t('common:word-connector.weeks'),
+      month: t('common:word-connector.months'),
+      year: t('common:word-connector.years'),
+    };
+    const periodText = qty > 1 ? pluralTranslation[periodValue] : singularTranslation[periodValue];
+    return t('signup:info.free-trial-period', { qty, period: periodText });
+  };
+
+  const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -126,6 +148,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
       };
     };
     const requests = getRequests();
+    console.log('on handle payment');
     bc.payment().pay({
       ...requests,
     })
@@ -138,30 +161,52 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             plan_slug: dateProps?.plan?.slug,
             academy_info: dateProps?.academy,
           });
+          let currency = 'USD';
+          let simplePlans = [];
+          if (cohortPlans) {
+            currency = cohortPlans[0]?.plan?.currency?.code || 'USD';
+            simplePlans = cohortPlans.map((cohortPlan) => {
+              const { plan } = cohortPlan;
+              const { service_items, ...restOfPlan } = plan;
+              return { plan: { ...restOfPlan } };
+            });
+          }
+          reportDatalayer({
+            dataLayer: {
+              event: 'purchase',
+              value: selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: selectedPlanCheckoutData?.slug,
+              period_label: selectedPlanCheckoutData?.period_label,
+              items: simplePlans,
+            },
+          });
 
-          if (!disableRedirectAfterSuccess) {
-            if (redirectAfterRegister && redirectAfterRegister?.length > 0) {
-              router.push(redirectAfterRegister);
+          if (!disableRedirects) {
+            if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+              router.push(redirect || redirectedFrom);
               localStorage.removeItem('redirect');
-              localStorage.removeItem('redirect-after-register');
+              localStorage.removeItem('redirected-from');
             } else {
               router.push('/choose-program');
             }
           }
+          if (response === undefined || response.status >= 400) {
+            toast({
+              position: 'top',
+              title: t('alert-message:payment-error'),
+              status: 'error',
+              duration: 7000,
+              isClosable: true,
+            });
+          }
+          resolve(response);
         }
-        if (response === undefined || response.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:payment-error'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
-        resolve(response);
       })
-      .catch(() => {
-        reject();
+      .catch((error) => {
+        console.error('Error handling payment bc.payment().pay', error);
+        reject(error);
       });
   });
 
@@ -209,9 +254,12 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           ...singlePlan,
           title: singlePlan?.title ? singlePlan?.title : toCapitalize(unSlugify(String(singlePlan?.slug))),
           price: 0,
-          priceText: isTotallyFree ? 'Free' : t('free-trial'),
+          priceText: isTotallyFree ? t('free') : t('free_trial'),
           plan_id: `p-${singlePlan?.trial_duration}-trial`,
           period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
+          period_label: isTotallyFree
+            ? t('totally_free')
+            : freeTrialPeriod(singlePlan?.trial_duration, singlePlan?.trial_duration_unit),
           type: isTotallyFree ? 'FREE' : 'TRIAL',
         } : {};
 
@@ -222,6 +270,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           priceText: `$${data?.amount_per_month}`,
           plan_id: `p-${data?.amount_per_month}`,
           period: 'MONTH',
+          period_label: t('monthly'),
           type: 'PAYMENT',
         } : {};
         const quarterPlan = existsAmountPerQuarter ? {
@@ -231,6 +280,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           priceText: `$${data?.amount_per_quarter}`,
           plan_id: `p-${data?.amount_per_quarter}`,
           period: 'QUARTER',
+          period_label: t('quarterly'),
           type: 'PAYMENT',
         } : {};
         const halfPlan = existsAmountPerHalf ? {
@@ -240,6 +290,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           priceText: `$${data?.amount_per_half}`,
           plan_id: `p-${data?.amount_per_half}`,
           period: 'HALF',
+          period_label: t('half_yearly'),
           type: 'PAYMENT',
         } : {};
 
@@ -250,6 +301,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           priceText: `$${data?.amount_per_year}`,
           plan_id: `p-${data?.amount_per_year}`,
           period: 'YEAR',
+          period_label: t('yearly'),
           type: 'PAYMENT',
         } : {};
 
@@ -264,6 +316,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
             priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
             plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
             period: 'FINANCING',
+            period_label: t('financing'),
             how_many_months: item?.how_many_months,
             type: 'PAYMENT',
           });

@@ -1,4 +1,25 @@
 {
+  "word-connector": {
+    "and": "y",
+    "or": "o",
+    "to": "a",
+    "from": "de",
+    "of": "de",
+    "in": "en",
+    "on": "en",
+    "with": "con",
+    "for": "para",
+    "day": "día",
+    "week": "semana",
+    "month": "mes",
+    "year": "año",
+    "days": "días",
+    "weeks": "semanas",
+    "months": "meses",
+    "years": "años"
+  },
+  "no-translation-available": "No hay traduccion disponible",
+  "related-content": "Contenido relacionado",
   "heading": "Bienvenido a",
   "change-locale": "Cambiar Idioma",
   "error-with-status": "{{statusCode}} error ocurrió en el servidor",
@@ -168,7 +189,7 @@
   },
   "live-event": {
     "title": "Clases en vivo, sesiones de codificación, talleres y reuniones cada pocas horas.",
-    "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
+    "readMoreUrl": "https://4geeks.com/es/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
   },
   "submit-project": "Enviar proyecto",
   "uploadScreenshot": "Subir captura de pantalla",
@@ -176,5 +197,67 @@
   "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
   "free": "Gratis",
   "login": "Iniciar sesión",
-  "privacy-policy": "Política de privacidad"
+  "privacy-policy": "Política de privacidad",
+  "bootcamp": {
+    "planType": "bootcamp",
+    "type": "Bootcamp",
+    "period_label": "",
+    "title": "Programa de Bootcamp",
+    "description": "De nada a una carrera en tecnología en solo unos meses, no se requiere experiencia previa.",
+    "button": "Solicitar más información",
+    "button_link": "https://4geeksacademy.com/es/programas",
+    "subtitle": "Programa de Bootcamp",
+    "sub-description": "Únete a una cohorte en un ambiente de aula en vivo y obtén soporte ilimitado hasta que encuentres un trabajo.",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "join-a-cohort",
+          "title": "Únete a una cohort con un salón en vivo"
+        },
+        "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
+      },
+      {
+        "service": {
+          "slug": "unlimited-human-feedback",
+          "title": "Feedback humano ilimitado"
+        },
+        "features": [{ "description": "Cada proyecto que entregues, será revisado por uno de nuestros mentores y ellos te darán feedback muy relevante relacionado a tu código." }]
+      },
+      {
+        "service": {
+          "slug": "certified-by-us",
+          "title": "Certificados por el Dep. de Educación dee FL, U.S."
+        },
+        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
+      },
+      {
+        "service": {
+          "slug": "job-guarantee",
+          "title": "Garantía de trabajo"
+        },
+        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
+      },
+      {
+        "service": {
+          "slug": "Soporte profesional de por vida",
+          "title": "Career support for life"
+        },
+        "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
+      },
+      {
+        "service": {
+          "slug": "lifetime-technical-support",
+          "title": "Soporte técnico de por vida"
+        },
+        "features": [{ "description": "Mentoría técnica 1-1 de por vida, soporte de chat y soporte de IA de nuestro bot interno." }]
+      },
+      {
+        "service": {
+          "slug": "access-to-premium-community",
+          "title": "Acceso a la comunidad premium"
+        },
+        "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
+      }
+    ]
+  }
 }

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
 import axios from '../../axios';
 import EventCard from './EventCard';
+import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 
@@ -44,7 +45,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
-      <Box position="relative" className="hideOverflowX__" overflow="auto" width="100%">
+      <DraggableContainer position="relative" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
@@ -61,7 +62,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
             />
           ))}
         </Flex>
-      </Box>
+      </DraggableContainer>
     </GridContainer>
   );
 }

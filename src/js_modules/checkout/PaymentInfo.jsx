@@ -5,8 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
-import { forwardRef, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -15,8 +16,10 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import DatePickerField from '../../common/components/Forms/DateField';
-import { number2DIgits } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
+import { getStorageItem, number2DIgits } from '../../utils';
 import Text from '../../common/components/Text';
+import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -44,14 +47,20 @@ function PaymentInfo() {
   const {
     state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
-  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData } = state;
+  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
   });
+  const redirect = getStorageItem('redirect');
+  const redirectedFrom = getStorageItem('redirected-from');
+  const router = useRouter();
 
   const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
@@ -88,13 +97,62 @@ function PaymentInfo() {
       .required(t('validators.cvc-required')),
   });
 
+  useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_complete_purchase',
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    if (readyToRefetch && timeElapsed < 10) {
+      const interval = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
+        getAllMySubscriptions()
+          .then((subscriptions) => {
+            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
+
+            if (isPurchasedPlanFound && timeElapsed >= 10) {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
+              } else {
+                router.push('/choose-program');
+              }
+            }
+          });
+      }, 1500);
+    }
+  }, [readyToRefetch]);
+
   const handleSubmit = (actions, values) => {
     bc.payment().addCard(values)
       .then((resp) => {
         if (resp) {
-          handlePayment()
+          const currency = cohortPlans[0]?.plan?.currency?.code;
+          reportDatalayer({
+            dataLayer: {
+              event: 'add_payment_info',
+              path: '/checkout',
+              value: state?.selectedPlanCheckoutData?.price,
+              currency,
+              payment_type: 'Credit card',
+              plan: state?.selectedPlanCheckoutData?.slug,
+              period_label: state?.selectedPlanCheckoutData?.period_label,
+            },
+          });
+          handlePayment({}, true)
+            .then((respPayment) => {
+              if (respPayment.data.status === 'FULFILLED') {
+                setReadyToRefetch(true);
+              }
+            })
             .finally(() => {
-              setIsSubmitting(false);
               actions.setSubmitting(false);
             });
         }

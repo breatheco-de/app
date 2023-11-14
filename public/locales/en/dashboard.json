@@ -9,7 +9,20 @@
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
   "intro-video-title": "Welcome to coding introduction",
+  "join-cohort-page": {
+    "seo-title": "Join to {{cohortTitle}}",
+    "cta-description": "Your current plan does not include access to this cohort, please upgrade to access the content.",
+    "cta-cohort-not-found": "This cohort does not exist or you don't have access to join.",
+    "cta-button": "Review plan",
+    "join-next-cohort":"Join next cohort",
+    "join-more":"Join more than 100 people taking this course right now",
+    "preview-description": "You are reviewing this cohort dashboard on \"preview mode\", in order to start learning and interact with the materials please join the cohort."
+  },
+  "already-have-this-cohort": "You are already a member of this cohort",
   "modules": {
+    "read": "Read",
+    "start": "Start",
+    "answer": "Answer",
     "target-blank-title": "Open in new window",
     "target-blank-msg": "\"{{title}}\" will open the following URL on a new window",
     "search-not-found": "No matches found for this search",
@@ -31,6 +44,7 @@
   "cohortSideBar": {
     "title": "About your cohort",
     "cohort": "Your Cohort",
+    "about-cohort": "About cohort",
     "last-date": "Last Date:",
     "start-date": "Start Date:",
     "mainTeacher": "Main teacher",
@@ -60,7 +74,7 @@
     "no-mentoring-available": "You have no mentorships available.",
     "create-session-text": "Book now",
     "learn-more": "Learn more.",
-    "learn-more-link": "https://4geeks.com/mentorships",
+    "learn-more-link": "https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions",
     "get-more-mentorships": "Get more mentorships",
     "schedule-button": "Schedule a mentoring session",
     "mentors-available": "+{{count}} Mentors available",
@@ -162,5 +176,9 @@
     "assignments": "Assignments",
     "teacher-tutorial": "Teacher tutorial",
     "no-instructions": ">:warning: No available instruction found for this module"
+  },
+  "welcome-modal": {
+    "title": "Welcome to 4Geeks!",
+    "description": "Watch this short video that explains how to get the most out of 4Geeks and enhance your learning experience"
   }
 }

@@ -52,10 +52,12 @@ function AddMember({ translation, students, errors, required, hint }) {
     return `${tag}`;
   };
 
+  const isDisabled = students.filter((student) => student.user.id !== user.id).length === 0;
+
   return (
     <Box>
       <TagsInput
-        className={`react-tagsinput ${errors?.members ? 'error' : ''}`}
+        className={`react-tagsinput ${errors?.members || isDisabled ? 'error' : ''}`}
         value={field.value.map((f) => f)}
         onChange={handleAddTag}
         onRemove={handleRemoveTag}
@@ -66,6 +68,7 @@ function AddMember({ translation, students, errors, required, hint }) {
             addTag={addTag}
             students={students}
             handleChange={onChange}
+            disabled={isDisabled}
             {...props}
             placeholder={`${translation?.finalProjectTranslation?.['modal-form']?.['add-participants'] || t('modal-form.add-participants')}${required ? '*' : ''}`}
             className={`${props.className} ${errors?.members ? 'error' : ''}`}
@@ -170,10 +173,11 @@ function AddMember({ translation, students, errors, required, hint }) {
           );
         }}
       />
-      {hint && !errors?.members && (
+      {hint && !errors?.members && !isDisabled && (
         <Box fontSize="sm" color={lightColor} mt={2}>{hint}</Box>
       )}
       {errors?.members && <Box className="error-message">{errors?.members}</Box>}
+      {isDisabled && <Box className="error-message">{t('modal-form.no-students')}</Box>}
     </Box>
   );
 }

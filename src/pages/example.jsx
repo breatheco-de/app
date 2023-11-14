@@ -1,65 +1,79 @@
-import { Box } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
-import KPI from '../common/components/KPI';
-import { H1 } from '../common/styledComponents/Head';
+import { isDevMode } from '../utils';
+import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
+import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
+import useAuth from '../common/hooks/useAuth';
+import bc from '../common/services/breathecode';
 
-export const getStaticProps = () => ({
-  props: {
-    seo: {
-      unlisted: true,
+export const getStaticProps = () => {
+  if (!isDevMode) {
+    return {
+      notFound: true,
+    };
+  }
+  return {
+    props: {
+      seo: {
+        unlisted: true,
+      },
     },
-  },
-});
+  };
+};
 
 export default function Example() {
-  const { t } = useTranslation(['common', 'counter']);
-  const randomLabels = {
-    0: 'Tomatoes',
-    1: 'Apple',
-    2: 'Pears',
-    3: 'Avocado',
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [stage, setStage] = useState('');
+  const { isAuthenticated } = useAuth();
+  const [isFetchingEvent, setIsFetchingEvent] = useState(false);
+  const [planData, setPlanData] = useState();
+
+  const onClick = (value) => {
+    setStage(value);
+    setIsModalOpen(true);
   };
 
-  const [randomRumber, setRandomRumber] = useState('0');
-  const [randomValue, setRandomValue] = useState(0.0001);
-  const [randomLabel, setRandomLabel] = useState('Tomatoes');
-
-  const [randomRumber2, setRandomRumber2] = useState('0');
-  const [randomValue2, setRandomValue2] = useState(0.0001);
-  const [randomLabel2, setRandomLabel2] = useState('Avocado');
-  useEffect(() => {
-    setTimeout(() => {
-      const randomOperator = Math.random() < 0.5 ? '-' : '+';
-      setRandomRumber(`${randomOperator}${(Math.random() * 10).toFixed(1)}`);
-      setRandomValue(((Math.random() * 13) * 12.2).toFixed(2));
-      setRandomLabel(randomLabels[Math.floor(Math.random() * 4)]);
-    }, 3500);
-    setTimeout(() => {
-      const randomOperator = Math.random() < 0.5 ? '-' : '+';
-      setRandomRumber2(`${randomOperator}${(Math.random() * 10).toFixed(1)}`);
-      setRandomValue2(((Math.random() * 12) * 32.2).toFixed(2));
-      setRandomLabel2(randomLabels[Math.floor(Math.random() * 4)]);
-    }, 4500);
-  }, [randomRumber]);
+  const openEventConsumables = () => {
+    if (isAuthenticated) {
+      setIsFetchingEvent(true);
+      bc.public().singleEvent('crea-una-landing-page-con-html-css-789').then((respEvent) => {
+        getSubscriptions().then((subscriptions) => {
+          validatePlanExistence(subscriptions).then((data) => {
+            setPlanData({
+              ...data,
+              event: respEvent?.data,
+              academyServiceSlug: '',
+            });
+            setStage(stageType.outOfConsumables);
+            setIsModalOpen(true);
+          })
+            .finally(() => setIsFetchingEvent(false));
+        });
+      }).catch(() => {
+        setIsFetchingEvent(false);
+      });
+    }
+  };
 
   return (
     <main className={styles.main}>
-      <H1 type="h1" className={styles.title}>
-        {t('common:heading')}
-      </H1>
+      <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
+        Open modal
+      </Button>
+      <Button variant="default" mb="1rem" isDisabled={!isAuthenticated} isLoading={isFetchingEvent} onClick={openEventConsumables}>
+        Open out of Event consumables
+      </Button>
 
-      <Box display="grid" mt="40px" width="100%" padding={{ base: '0 4vw', md: '0 8vw' }} gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))" gridGap="10px">
-        <KPI label={randomLabel} unit="$" value={randomValue} variation={randomRumber} changeWithColor />
-        <KPI label="student rating" icon="smile" value={8.5} max={10} />
-        <KPI label="Total monthly income" unit="$" value={2000} variation="+3.7" />
-        <KPI label="Mentor late arrivals" icon="running" variation="2" value={2} max={10} />
-        <KPI label={randomLabel2} unit="$" value={randomValue2} variation={randomRumber2} />
-        <KPI label="Overtime" icon="chronometer" value={3} max={10} variation="-4" />
-        <KPI label="The student didn't arrive" icon="ghost" value={0} max={10} variation="0" />
-      </Box>
-
+      <ModalToGetAccess
+        isOpen={isModalOpen}
+        stage={stage}
+        externalData={planData}
+        message={stage === stageType.login && 'In order to compile the code you need to register for free.'}
+        onClose={() => {
+          setIsModalOpen(false);
+        }}
+      />
     </main>
   );
 }

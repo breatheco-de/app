@@ -12,7 +12,7 @@ import { ORIGIN_HOST } from '../../utils/variables';
 function PublicCourseCard({
   programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
   stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
-  teacher, isAvailableAsSaas, subscriptionStatus, width, ...rest
+  teacher, isAvailableAsSaas, subscriptionStatus, width, href, onClick, ...rest
 }) {
   const { t, lang } = useTranslation('program-card');
   const { backgroundColor2, hexColor } = useStyle();
@@ -90,7 +90,8 @@ function PublicCourseCard({
           border="1px solid"
           borderRadius="3px"
           borderColor={hexColor.blueDefault}
-          href={`${ORIGIN_HOST}/${programSlug}`}
+          onClick={onClick}
+          href={href || `${ORIGIN_HOST}/${programSlug}`}
           textAlign="center"
           margin="10px auto 0 auto"
           display="block"
@@ -124,6 +125,8 @@ PublicCourseCard.propTypes = {
   isAvailableAsSaas: PropTypes.bool,
   subscriptionStatus: PropTypes.string,
   width: PropTypes.oneOfType([PropTypes.string, PropTypes.objectOf(PropTypes.any)]),
+  href: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 PublicCourseCard.defaultProps = {
@@ -140,6 +143,8 @@ PublicCourseCard.defaultProps = {
   isAvailableAsSaas: true,
   subscriptionStatus: '',
   width: '300px',
+  href: '',
+  onClick: () => {},
 };
 
 export default PublicCourseCard;

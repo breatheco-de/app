@@ -1,17 +1,15 @@
 /* eslint-disable indent */
 import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { parseQuerys } from './url';
 
 const isWindow = typeof window !== 'undefined';
-const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 
 const HAVE_SESSION = isWindow ? localStorage.getItem('accessToken') !== null : false;
 /** @const isDevMode
  * principal use for dibuging for another issues and prevent
  * to create unused console.logs in production
 */
-const isDevMode = isWindow && (process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production');
+const isDevMode = process.env.VERCEL_ENV !== 'production' || process.env.NODE_ENV !== 'production';
 
 const languageLabel = {
   es: 'spanish',
@@ -48,6 +46,17 @@ const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
   (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
 )
   : '');
+
+function slugToTitle(slug) {
+  if (slug === undefined) return '';
+  return slug.split('-').map(
+    (word, i) => {
+      if (i === 0) return word.charAt(0).toUpperCase() + word.slice(1);
+      return word.charAt(0) + word.slice(1);
+    },
+  ).join(' ').replace(/([A-Z])/g, ' $1')
+  .trim();
+}
 
 const cleanQueryStrings = (url) => url.split('?')[0];
 
@@ -312,37 +321,6 @@ function calculateDifferenceDays(date) {
   };
 }
 
-const getAsset = async (type, extraQuerys = {}) => {
-  const qs = parseQuerys(extraQuerys, true);
-  const limit = 100;
-  let offset = 0;
-  let allResults = [];
-
-  let results = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
-    .then((res) => res.json())
-    .then((data) => data.results)
-    .catch(() => {
-      console.error(`PAGE: Error fetching ${type.toUpperCase()} pages`);
-      return [];
-    });
-
-  while (results.length > 0) {
-    allResults = allResults.concat(results);
-    offset += limit;
-
-    // eslint-disable-next-line no-await-in-loop
-    results = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=${type}&limit=${limit}&offset=${offset}${qs}`)
-      .then((res) => res.json())
-      .then((data) => data.results)
-      .catch(() => {
-        console.error(`PAGE: Error fetching ${type.toUpperCase()} pages`);
-        return [];
-      });
-  }
-
-  return allResults;
-};
-
 function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
   const range = max - min;
   const overflow = (number - max) % range;
@@ -419,5 +397,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  getAsset, adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject,
+  adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle,
 };

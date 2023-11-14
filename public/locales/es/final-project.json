@@ -13,8 +13,8 @@
     "subtitle": "Felicitaciones por llegar a esta fase del programa.",
     "description": "Todavía estamos aprendiendo mucho, pero este último proyecto se convertirá en algo para mostrar a amigos y posibles empleadores.",
     "bullets": [
-      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Por qué construir un proyecto final?</a>",
-      "<a class='link' href='/#' target='blank' rel='noopener noreferrer'>¿Cómo elegir el tema de tu proyecto final?</a>"
+      "<a class='link' href='/https://4geeks.com/es/docs/knowledge-base-4geeks/why-build-a-final-project' target='blank' rel='noopener noreferrer'>¿Por qué construir un proyecto final?</a>",
+      "<a class='link' href='/https://4geeks.com/es/docs/knowledge-base-4geeks/pick-your-capstone-project' target='blank' rel='noopener noreferrer'>¿Cómo elegir el tema de tu proyecto final?</a>"
     ],
     "button": "Subir proyecto final"
   },
@@ -32,6 +32,7 @@
     "add-participants": "Añadir miembros",
     "participants-hint": "Estudiantes que participaron en este proyecto.",
     "button": "Subir proyecto final",
+    "no-students": "No se encontraron más estudiantes en esta cohorte, no puedes añadir miembros a este proyecto",
     "confirmation": {
       "title": "¿Estas seguro?",
       "text": "Si te quitas a ti mismo de este proyecto, no tendrás acceso a él, tus compañeros de equipo tendrán que agregarte de nuevo para tener acceso",

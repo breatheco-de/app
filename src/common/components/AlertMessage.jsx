@@ -6,10 +6,11 @@ import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 function AlertMessage({
-  message, type, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
+  message, type, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
 }) {
   const { fontColor } = useStyle();
   const alertColors = {
+    soft: '#FFF4DC',
     warning: '#FFB718',
     success: '#25BF6C',
     error: '#dc3545',
@@ -33,7 +34,9 @@ function AlertMessage({
       {children && children}
       {!children && (
         <>
-          <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+          {!withoutIcon && (
+            <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+          )}
           <Box>
             {title && (
               <Heading size="20px" letterSpacing="0.02em" mb="10px">
@@ -70,6 +73,7 @@ AlertMessage.propTypes = {
   dangerouslySetInnerHTML: PropTypes.bool,
   title: PropTypes.string,
   children: PropTypes.node,
+  withoutIcon: PropTypes.bool,
 };
 
 AlertMessage.defaultProps = {
@@ -82,6 +86,7 @@ AlertMessage.defaultProps = {
   dangerouslySetInnerHTML: false,
   title: '',
   children: null,
+  withoutIcon: false,
 };
 
 export default AlertMessage;

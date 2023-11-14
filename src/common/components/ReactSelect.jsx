@@ -153,7 +153,7 @@ const chakraComponents = {
       m="0.125rem"
       // react-select Fixed Options example: https://react-select.com/home#fixed-options
       variant={data.isFixed ? 'solid' : 'subtle'}
-      colorScheme={data.colorScheme || selectProps.colorScheme}
+      colorScheme={data?.colorScheme || selectProps?.colorScheme}
       size={selectProps.size}
     >
       {children}
