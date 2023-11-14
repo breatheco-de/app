@@ -103,7 +103,7 @@ function LessonByTechnology({ data, technologyData }) {
       alignItems="center"
       pt="3rem"
       maxWidth="1280px"
-      margin="0 auto"
+      margin="3rem auto 0 auto"
       padding="0 10px"
     >
       <Text
