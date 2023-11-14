@@ -104,6 +104,7 @@ function LessonByTechnology({ data, technologyData }) {
       pt="3rem"
       maxWidth="1280px"
       margin="0 auto"
+      padding="0 10px"
     >
       <Text
         as="h1"
