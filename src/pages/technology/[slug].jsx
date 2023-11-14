@@ -3,6 +3,7 @@ import {
   Box, Flex, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 import Text from '../../common/components/Text';
 import { toCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
@@ -38,6 +39,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const allTechnologiesList = assetList.landingTechnologies;
   const technologyData = allTechnologiesList.find((tech) => tech.slug === slug && tech.lang === locale);
 
+  console.log('technologyData:::', technologyData);
   if (!technologyData?.slug) {
     return {
       notFound: true,
@@ -78,7 +80,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         locales,
         locale,
       },
-      fallback: false,
       technologyData,
       data: data.filter((project) => project.lang === currentLang).map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
@@ -89,8 +90,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 function LessonByTechnology({ data, technologyData }) {
   const { t } = useTranslation('technologies');
+  const router = useRouter();
 
-  return (
+  if (!technologyData) {
+    router.push('/404');
+  }
+
+  return technologyData?.slug && (
     <Box
       height="100%"
       flexDirection="column"
