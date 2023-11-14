@@ -84,6 +84,26 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
         destination: '/interactive-exercise/:slug',
         permanent: true,
       },
+      {
+        source: '/lessons/technology/:slug',
+        destination: '/technology/:slug',
+        permanent: true,
+      },
+      {
+        source: '/interactive-exercises/technology/:slug',
+        destination: '/technology/:slug',
+        permanent: true,
+      },
+      {
+        source: '/interactive-coding-tutorials/technology/:slug',
+        destination: '/technology/:slug',
+        permanent: true,
+      },
+      {
+        source: '/how-to/technology/:slug',
+        destination: '/technology/:slug',
+        permanent: true,
+      },
     ];
   },
   // swcMinify: false,
