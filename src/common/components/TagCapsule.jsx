@@ -44,11 +44,11 @@ function TagCapsule({
       {...rest}
     >
       {tags.map((tag, i) => {
-        const isUnlistedTechnology = tag?.visibility === 'UNLISTED';
+        const isPublicTechnology = tag?.visibility === 'PUBLIC';
         const tagSlug = tag?.slug || tag;
         const tagTitle = tag?.title || tag?.name;
 
-        return ((!isUnlistedTechnology && isLink) ? (
+        return ((isPublicTechnology && isLink) ? (
           <Link
             href={`/${langPrefix}technology/${tagSlug}`}
             display="flex"
