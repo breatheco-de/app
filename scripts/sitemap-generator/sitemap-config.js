@@ -116,7 +116,7 @@ const sitemapTemplate = (pages = [], externalContent = '') => `${externalContent
   ].map(addPage).join('\n')}
 </urlset>`;
 const sitemapTemplateWithHreflang = (pages = []) => `<?xml version="1.0" encoding="UTF-8"?>
-  <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   ${pages.map((page, index) => addPageWithHrefLang(page.pathURL, index, page)).join('\n')}
 </urlset>`;
 
