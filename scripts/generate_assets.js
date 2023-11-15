@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import fs from 'fs';
 import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/requests';
-import { excludeCagetoriesFor } from '../src/utils/variables';
+import { categoriesFor, excludeCagetoriesFor } from '../src/utils/variables';
 
 async function getData() {
   console.log('fetching recyclable data for sitemap and redirects...');
@@ -11,7 +11,7 @@ async function getData() {
   const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons, expand: 'technologies' }, 'lesson');
   const excersises = await getAsset('EXERCISE', { expand: 'technologies' }, 'excersise');
   const projects = await getAsset('PROJECT', { expand: 'technologies' }, 'project');
-  const howTos = await getAsset('LESSON,ARTICLE', { category: 'how-to,como', expand: 'technologies' }, 'how-to');
+  const howTos = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo, expand: 'technologies' }, 'how-to');
   const events = await getEvents();
   const landingTechnologies = await getLandingTechnologies([...lessons, ...projects, ...excersises, ...howTos]);
 

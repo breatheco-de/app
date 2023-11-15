@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Text from '../../common/components/Text';
 import { toCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
@@ -24,7 +25,7 @@ export const getStaticPaths = async ({ locales }) => {
   }))) : [];
 
   return {
-    fallback: false,
+    fallback: true,
     paths,
   };
 };
@@ -41,8 +42,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .catch(() => []);
 
   const allTechnologiesList = assetList.landingTechnologies;
-  const technologyData = allTechnologiesList.find((tech) => tech.slug === slug && tech.lang === locale);
-  const data = technologyData.assets.filter((l) => {
+  const technologyData = allTechnologiesList.find((tech) => tech?.slug === slug && tech?.lang === locale) || {};
+  const data = technologyData?.assets?.length > 0 ? technologyData.assets.filter((l) => {
     const assetType = l?.asset_type.toUpperCase();
 
     if (assetType === 'LESSON') return true;
@@ -52,13 +53,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       return l?.category?.slug === 'how-to' || l?.category?.slug === 'como';
     }
     return false;
-  });
+  }) : [];
 
-  if (!technologyData?.slug || data.length === 0) {
-    return {
-      notFound: true,
-    };
-  }
   const ogUrl = {
     en: `/technology/${slug}`,
     us: `/technology/${slug}`,
@@ -68,7 +64,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   return {
     props: {
       seo: {
-        title: technologyData?.title,
+        title: technologyData?.title || '',
         description: '',
         image: technologyData?.icon_url || '',
         pathConnector: `/technology/${slug}`,
@@ -80,7 +76,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       },
       technologyData,
       data: dataByCurrentLanguage.map(
-        (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
+        (l) => ({ ...l, difficulty: l?.difficulty?.toLowerCase() || null }),
       ),
     },
   };
@@ -90,11 +86,13 @@ function LessonByTechnology({ data, technologyData }) {
   const { t } = useTranslation('technologies');
   const router = useRouter();
 
-  if (!technologyData) {
-    router.push('/404');
-  }
+  useEffect(() => {
+    if (!technologyData?.slug || data?.length === 0) {
+      router.push('/');
+    }
+  }, [data]);
 
-  return technologyData?.slug && (
+  return technologyData?.slug && data?.length > 0 && (
     <Box
       height="100%"
       flexDirection="column"
