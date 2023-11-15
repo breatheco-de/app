@@ -1,5 +1,5 @@
 {
-  "copyright": "©{{name}} LLC 2019",
+  "copyright": "©{{name}} LLC {{year}}",
   "search":"Buscar en 4Geeks",
   "subscribe": "¡Suscríbete para más!",
   "newsletter": {
@@ -20,7 +20,7 @@
       },
       {
         "label":"CONTACTO",
-        "href": "#"
+        "href": "mailto:info@4geeks.com"
       },
       {
         "label":"MEDIA KIT",
@@ -66,7 +66,7 @@
       },
       {
         "label": "Aprendizaje social y en vivo",
-        "href": "/es/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
+        "href": "/es/docs/knowledge-base-4geeks/eventos-en-vivo-workshops-y-clases"
       },
       {
         "label": "¿Código de conducta?",

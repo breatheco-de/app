@@ -22,12 +22,13 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { ORIGIN_HOST } from '../../../utils/variables';
+import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
+  const data = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo }, 'how-to');
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -49,9 +50,10 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let data;
     let markdown;
     data = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
     if (!data) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=LESSON,ARTICLE`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       data = await resp.json();
       const engPrefix = {
         us: 'en',
@@ -84,39 +86,29 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       title, description, translations, preview,
     } = data;
 
-    const ogUrl = {
-      en: `/how-to/${slug}`,
-      us: `/how-to/${slug}`,
-    };
-
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/how-to/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/how-to/${translations?.en}`,
+        slug: (data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish,
+        link: `/how-to/${(data?.lang === 'en' || data?.lang === 'us') ? data?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/how-to/${translations?.es}`,
+        slug: data?.lang === 'es' ? data.slug : translations?.es,
+        link: `/es/how-to/${data?.lang === 'es' ? data.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: data?.title,
       description: data?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
+      image: preview || staticImage,
       datePublished: data?.published_at,
       dateModified: data?.updated_at,
       author: data?.author ? {
@@ -126,21 +118,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: data?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/how-to/${slug}`,
       },
     };
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
           description: description || '',
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           type: 'article',
-          translations,
+          translations: translationArray,
           pathConnector: '/how-to',
-          url: ogUrl.en || `/${locale}/how-to/${slug}`,
+          url: `/how-to/${slug}`,
           slug,
           keywords: data?.seo_keywords || '',
           card: 'default',
@@ -245,22 +237,19 @@ export default function HowToSlug({ data, markdown }) {
             {`← ${t('back-to')}`}
           </Link>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="10px" justifyContent="space-between" mb="12px">
-            {data?.technologies.length > 0 && (
-              <TagCapsule
-                variant="rounded"
-                isLink
-                href={`${langPrefix}/how-to`}
-                tags={data?.technologies}
-                marginY="8px"
-                fontSize="13px"
-                style={{
-                  padding: '2px 10px',
-                  margin: '0',
-                }}
-                gap="10px"
-                paddingX="0"
-              />
-            )}
+            <TagCapsule
+              variant="rounded"
+              isLink
+              tags={data?.technologies}
+              marginY="8px"
+              fontSize="13px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
             <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
               <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
@@ -311,9 +300,9 @@ export default function HowToSlug({ data, markdown }) {
             )}
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
-              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               marginBottom="15px"
-              technologies={data?.technologies.join(',')}
+              technologies={data?.technologies}
               endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
             />
           </Box>
@@ -321,6 +310,15 @@ export default function HowToSlug({ data, markdown }) {
         <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
+
+        <RelatedContent
+          slug={data.slug}
+          type="LESSON,ARTICLE"
+          extraQuerys={{ category: categoriesFor.howTo }}
+          technologies={data?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

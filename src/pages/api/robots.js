@@ -9,6 +9,7 @@ Allow: /
 Disallow: /static/
 Disallow: /_next/
 Disallow: /*.json$
+Disallow: /docs/*
 Sitemap: ${ORIGIN_HOST}/sitemap.xml
 Host: ${ORIGIN_HOST}`);
   }

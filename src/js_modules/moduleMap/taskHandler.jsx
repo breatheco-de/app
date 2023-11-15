@@ -132,10 +132,11 @@ export function ButtonHandlerByTaskStatus({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
 
+  const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const regexUrlExists = typeof currentAssetData?.delivery_regex_url === 'string';
   const mimeTypes = currentAssetData?.delivery_formats || 'application/pdf,image/png,image/jpeg,image/jpg,image/gif';
-  const deliveryFormatIsUrl = currentAssetData?.delivery_formats.includes('url');
-  const noDeliveryFormat = currentAssetData?.delivery_formats.includes('no_delivery');
+  const deliveryFormatIsUrl = deliveryFormatExists && currentAssetData?.delivery_formats.includes('url');
+  const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
 

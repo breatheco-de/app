@@ -42,9 +42,10 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
-import { cleanObject } from '../../../utils';
+import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -71,10 +72,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let result;
     let markdown;
     result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${result?.lang || locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=EXERCISE`);
+      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
       result = await resp.json();
       const engPrefix = {
         us: 'en',
@@ -112,37 +114,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       delete result.translations.us;
     }
 
-    const ogUrl = {
-      en: `/interactive-exercise/${slug}`,
-      us: `/interactive-exercise/${slug}`,
-    };
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-exercise/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-exercise/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-exercise/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-exercise/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-exercise/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
-    const eventStructuredData = {
+    ].filter((item) => item?.slug !== undefined);
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-exercise/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -152,21 +145,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-exercise/${slug}`,
       },
     };
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           type: 'article',
           title,
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           description: description || '',
-          translations,
+          translations: translationArray,
           pathConnector: '/interactive-exercise',
-          url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+          url: `/interactive-exercise/${slug}`,
           slug,
           keywords: result?.seo_keywords || '',
           card: 'large',
@@ -690,8 +683,8 @@ function Exercise({ exercise, markdown }) {
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
-              technologies={exercise?.technologies.join(',')}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              technologies={exercise?.technologies}
             />
           </Box>
         </Box>
@@ -724,6 +717,14 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={exercise.slug}
+          type="EXERCISE"
+          extraQuerys={{}}
+          technologies={exercise?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
 
       {/* <GridContainer

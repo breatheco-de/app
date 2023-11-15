@@ -29,6 +29,7 @@ import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
+import useStyle from '../../hooks/useStyle';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -47,12 +48,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
-  const commonColors = useColorModeValue('white', 'gray.800');
-  const popoverContentBgColor = useColorModeValue('white', 'gray.800');
-  const commonBorderColor = useColorModeValue('gray.200', 'gray.700');
-  const linkColor = useColorModeValue('gray.600', 'gray.200');
   const fontColor = useColorModeValue('black', 'gray.200');
-  const colorMode = useColorModeValue('light', 'dark');
+  const { colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
@@ -210,12 +207,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           <IconButton
             onClick={onToggle}
             _hover={{
-              background: commonColors,
+              background: navbarBackground,
             }}
             _active={{
-              background: commonColors,
+              background: navbarBackground,
             }}
-            background={commonColors}
+            background={navbarBackground}
             color={colorMode === 'light' ? 'black' : 'white'}
             icon={
               isOpen ? (
@@ -289,13 +286,13 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
             display={{ base: 'none', lg: 'flex' }}
             height="auto"
             _hover={{
-              background: commonColors,
+              background: navbarBackground,
             }}
             _active={{
-              background: commonColors,
+              background: navbarBackground,
             }}
-            aria-label="Dark mode switch"
-            background={commonColors}
+            aria-label={`Toggle ${reverseColorMode} mode`}
+            background={navbarBackground}
             onClick={() => {
               toggleColorMode();
             }}
@@ -321,6 +318,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   bg="rgba(0,0,0,0)"
                   alignSelf="center"
                   width="20px"
+                  aria-label="User Profile"
                   minWidth="20px"
                   maxWidth="20px"
                   height="30px"
@@ -347,7 +345,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 <PopoverArrow />
                 <Box
                   boxShadow="dark-lg"
-                  bg={popoverContentBgColor}
+                  bg={navbarBackground}
                   rounded="md"
                   width={{ base: '100%', md: 'auto' }}
                   minW={{ base: 'auto', md: 'md' }}
@@ -358,7 +356,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     width="100%"
                     borderBottom={2}
                     borderStyle="solid"
-                    borderColor={commonBorderColor}
+                    borderColor={borderColor}
                     display="flex"
                     justifyContent="space-between"
                     padding="12px 1.5rem"
@@ -390,7 +388,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                   textDecoration: 'none',
                                   color: 'blue.default',
                                 }}
-                                color={locale === lang ? 'blue.default' : linkColor}
+                                color={locale === lang ? 'blue.default' : lightColor}
                                 fontWeight={locale === lang ? '700' : '400'}
                                 key={value}
                                 href={link}
@@ -440,7 +438,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={commonBorderColor}
+                      borderColor={borderColor}
                       // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"
@@ -463,7 +461,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                     <Flex
                       borderTop={2}
                       borderStyle="solid"
-                      borderColor={commonBorderColor}
+                      borderColor={borderColor}
                       // padding="20px 0"
                       alignItems="center"
                       padding="1rem 0rem"

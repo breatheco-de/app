@@ -92,6 +92,8 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
     }
   };
 
+  const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
+
   return (
     <Flex
       maxWidth="410px"
@@ -172,7 +174,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
           </Text>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
-          {item?.featured_info?.map((info) => info?.service?.slug && (
+          {item?.featured_info?.sort(sortPriority).map((info) => info?.service?.slug && (
             <Box display="flex" gridGap="8px">
               {info?.service?.icon_url
                 ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
@@ -184,9 +186,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                   {info?.service?.title || slugToTitle(info?.service?.slug)}
                 </Text>
                 {info.features?.length > 0 && (
-                  <Text size="14px" textAlign="left">
-                    {info.features?.[0]?.description}
-                  </Text>
+                  <Text
+                    size="14px"
+                    textAlign="left"
+                    dangerouslySetInnerHTML={{ __html: info.features?.[0]?.description }}
+                  />
                 )}
               </Box>
             </Box>
@@ -194,7 +198,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         </Flex>
 
         <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
-          {item?.featured_info?.map((info) => info.service.slug && (
+          {item?.featured_info?.sort(sortPriority).map((info) => info.service.slug && (
             <AccordionItem display="flex" flexDirection="column" gridGap="2px" border={0}>
               <AccordionButton padding="8px 0">
                 <Box display="flex" gridGap="10px" flex="1" textAlign="left">

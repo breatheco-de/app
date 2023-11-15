@@ -41,6 +41,8 @@ const fetchProjects = async (lang, page, query) => {
     difficulty: difficulty[query.difficulty],
     technologies,
     video,
+    like: query?.search,
+    expand: 'technologies',
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -103,6 +105,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',
