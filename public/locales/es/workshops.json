@@ -6,6 +6,7 @@
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
   "switch-user-connector": "¿No eres {{name}}?",
+  "starts-in": "El evento empieza en:",
   "form": {
     "title": "Únete a este evento",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",
