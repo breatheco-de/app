@@ -36,6 +36,8 @@
   "available-dates": "Available dates",
   "search-dates": "Search dates",
   "addres-info": "We are not storing your address, but we will use this information to offer the best possible dates and schedules to study.",
+  "validating-email": "We are validating your email...",
+  "email-validated": "Nice email!",
   "email-info": "We will use it to give you access to your account.",
   "phone-info": "We will contact you via phone call only if necessary. (optional)",
   "already-adquired-plan-title": "You already acquired this plan",
