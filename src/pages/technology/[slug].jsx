@@ -31,40 +31,40 @@ export const getStaticPaths = async ({ locales }) => {
 
 export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
-  const currentLang = locale === 'en' ? 'us' : 'es';
+  const langList = {
+    en: 'us',
+    es: 'es',
+  };
+
   const assetList = await import('../../lib/asset-list.json')
     .then((res) => res.default)
     .catch(() => []);
 
   const allTechnologiesList = assetList.landingTechnologies;
   const technologyData = allTechnologiesList.find((tech) => tech.slug === slug && tech.lang === locale);
-
-  if (!technologyData?.slug) {
-    return {
-      notFound: true,
-    };
-  }
-
   const data = technologyData.assets.filter((l) => {
-    if (l?.asset_type.toUpperCase() === 'LESSON') {
-      return true;
-    }
-    if (l?.asset_type.toUpperCase() === 'PROJECT') {
-      return true;
-    }
-    if (l?.asset_type.toUpperCase() === 'EXERCISE') {
-      return true;
-    }
-    if (l?.category) {
+    const assetType = l?.asset_type.toUpperCase();
+
+    if (assetType === 'LESSON') return true;
+    if (assetType === 'PROJECT') return true;
+    if (assetType === 'EXERCISE') return true;
+    if (assetType === 'ARTICLE') return true;
+    if (assetType === 'LESSON' && assetType === 'EXERCISE' && l?.category) {
       return l?.category?.slug === 'how-to' || l?.category?.slug === 'como';
     }
     return false;
   });
 
+  if (!technologyData?.slug || data.length === 0) {
+    return {
+      notFound: true,
+    };
+  }
   const ogUrl = {
     en: `/technology/${slug}`,
     us: `/technology/${slug}`,
   };
+  const dataByCurrentLanguage = data.filter((l) => l?.lang === langList?.[locale] || l.lang === locale);
 
   return {
     props: {
@@ -80,7 +80,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         locale,
       },
       technologyData,
-      data: data.filter((project) => project.lang === currentLang).map(
+      data: dataByCurrentLanguage.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
     },
