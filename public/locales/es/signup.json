@@ -37,6 +37,8 @@
   "available-dates": "Fechas disponibles",
   "search-dates": "Buscar fechas",
   "addres-info": "No estamos almacenando su dirección, pero usaremos esta información para ofrecerte las mejores fechas y horarios posibles para estudiar.",
+  "validating-email": "Estamos validando tu email...",
+  "email-validated": "¡Que buen email!",
   "email-info": "Lo usaremos para darte acceso a la comunidad.",
   "phone-info": "Nos pondremos en contacto contigo a través de una llamada telefónica solo si es necesario. (opcional)",
   "already-adquired-plan-title": "Ya tienes este plan",
