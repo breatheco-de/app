@@ -11,6 +11,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
 import FieldForm from './FieldForm';
+import { email as emailRe } from '../../../utils/regex';
 import useEmailValidation from './useEmailValidation';
 import PhoneInput from '../PhoneInput';
 import Text from '../Text';
@@ -57,7 +58,7 @@ function SignupForm({
       .max(50, t('validators.long-input'))
       .required(t('validators.last-name-required')),
     email: Yup.string()
-      .email(t('validators.invalid-email'))
+      .matches(emailRe, t('validators.invalid-email'))
       .required(t('validators.email-required')),
     phone: Yup.string(),
     // .matches(phone, t('validators.invalid-phone')),
