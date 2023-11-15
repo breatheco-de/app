@@ -26,7 +26,7 @@ import bc from '../../services/breathecode';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps,
-  onHandleSubmit, containerGap, extraFields, columnLayout,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -104,6 +104,7 @@ function SignupForm({
             syllabus: allValues.syllabus,
             cohort: allValues.cohort,
             conversion_info: userSession,
+            conversionTechnologies: conversionTechnologies,
           },
         });
       }
