@@ -378,6 +378,7 @@ SignupForm.propTypes = {
   showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.arrayOf(PropTypes.string),
   columnLayout: PropTypes.bool,
 };
 SignupForm.defaultProps = {
@@ -389,6 +390,7 @@ SignupForm.defaultProps = {
   containerGap: '24px',
   extraFields: [],
   columnLayout: false,
+  conversionTechnologies: null,
 };
 
 export default SignupForm;
