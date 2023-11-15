@@ -22,13 +22,13 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
-import { ORIGIN_HOST } from '../../../utils/variables';
+import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', { category: 'how-to,como' }, 'how-to');
+  const data = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo }, 'how-to');
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -314,7 +314,7 @@ export default function HowToSlug({ data, markdown }) {
         <RelatedContent
           slug={data.slug}
           type="LESSON,ARTICLE"
-          extraQuerys={{ category: 'how-to,como' }}
+          extraQuerys={{ category: categoriesFor.howTo }}
           technologies={data?.technologies}
           gridColumn="2 / span 10"
           maxWidth="1280px"
