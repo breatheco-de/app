@@ -104,7 +104,7 @@ function SignupForm({
             syllabus: allValues.syllabus,
             cohort: allValues.cohort,
             conversion_info: userSession,
-            conversionTechnologies,
+            conversion_technologies: conversionTechnologies,
           },
         });
       }
