@@ -236,6 +236,7 @@ function TabletWithForm({
           padding="0"
           background="none"
           border="none"
+          conversionTechnologies={exercise.technologies}
         >
           <>
             {user && !formSended && (
