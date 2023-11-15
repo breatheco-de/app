@@ -198,6 +198,8 @@ function TabletWithForm({
   const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor } = useStyle();
 
+  let conversionTechnologies = exercise.technologies?.map(item => item?.slug);
+
   const UrlInput = styled.input`
     cursor: pointer;
     background: none;
@@ -236,7 +238,7 @@ function TabletWithForm({
           padding="0"
           background="none"
           border="none"
-          conversionTechnologies={exercise.technologies?.map(item => item?.slug)}
+          conversionTechnologies={conversionTechnologies}
         >
           <>
             {user && !formSended && (
