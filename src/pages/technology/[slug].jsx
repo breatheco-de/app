@@ -48,8 +48,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     if (assetType === 'LESSON') return true;
     if (assetType === 'PROJECT') return true;
     if (assetType === 'EXERCISE') return true;
-    if (assetType === 'ARTICLE') return true;
-    if (assetType === 'LESSON' && assetType === 'EXERCISE' && l?.category) {
+    if (l?.category) {
       return l?.category?.slug === 'how-to' || l?.category?.slug === 'como';
     }
     return false;
