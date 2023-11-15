@@ -236,7 +236,7 @@ function TabletWithForm({
           padding="0"
           background="none"
           border="none"
-          conversionTechnologies={exercise.technologies}
+          conversionTechnologies={exercise.technologies?.map(item => item?.slug)}
         >
           <>
             {user && !formSended && (
