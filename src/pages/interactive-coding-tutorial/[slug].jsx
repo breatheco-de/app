@@ -21,12 +21,13 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('PROJECT', {}, 'project');
+  const assetList = await import('../../lib/asset-list.json');
+  const data = assetList.projects;
 
   if (data?.length) {
     log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
