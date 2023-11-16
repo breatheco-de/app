@@ -23,11 +23,12 @@ import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async () => {
-  const data = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons });
+  const assetList = await import('../../lib/asset-list.json');
+  const data = assetList.lessons;
 
   const paths = data.flatMap((res) => {
     const lang = res?.lang === 'us' ? 'en' : res?.lang;
@@ -163,7 +164,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           publishedTime: lesson?.created_at || '',
           modifiedTime: lesson?.updated_at || '',
         },
-        fallback: false,
         lesson: {
           ...lesson,
           collab_url: finalPathname,

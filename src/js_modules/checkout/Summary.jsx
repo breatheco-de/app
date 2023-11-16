@@ -192,17 +192,15 @@ function Summary() {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
                 <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
                   <Heading size="18px">
                     {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
                 </Box>
                 <Heading
-                  size={selectedPlanCheckoutData?.price > 0 ? 'xl' : 'xsm'}
-                  margin={{ base: '0', md: '0 26px 0 auto' }}
+                  size="xl"
                   color="blue.default"
-                  textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0
