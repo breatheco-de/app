@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import GridContainer from '../common/components/GridContainer';
 import Heading from '../common/components/Heading';
+import Text from '../common/components/Text';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
@@ -31,7 +32,7 @@ const getYearlyPlans = (originalPlan, suggestedPlan, allFeaturedPlans) => {
 };
 
 function PricingView({ data, isForModal }) {
-  const { t, lang } = useTranslation(['signup', 'common']);
+  const { t, lang } = useTranslation('pricing');
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [allFeaturedPlans, setAllFeaturedPlans] = useState([]);
@@ -134,12 +135,13 @@ function PricingView({ data, isForModal }) {
         my={isForModal ? '2rem' : '4rem'}
         padding="0 10px"
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="32px" gridColumn="1 / span 10">
-          <Heading as="h1" textAlign="center">
-            {t('signup:our_plans')}
+        <Box gridGap="32px" gridColumn="1 / span 10">
+          <Heading marginBottom="20px" as="h2">
+            {t('heading')}
           </Heading>
+          <Text marginBottom="15px" fontSize="26px" dangerouslySetInnerHTML={{ __html: t('sub-heading') }} />
           {existentOptions.length > 0 && (
-            <Box display="flex" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
+            <Box width="fit-content" display="flex" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
               {existentOptions.map((info) => (
                 <Box
                   key={info.type}
@@ -157,7 +159,7 @@ function PricingView({ data, isForModal }) {
             </Box>
           )}
 
-          <Box width="100%" overflowX="auto">
+          {/* <Box width="100%" overflowX="auto">
             <Flex width={{ base: 'max-content', md: 'auto' }} justifyContent="center" gridGap="24px" margin="0 auto">
               {paymentTypePlans.monthly?.length > 0 && paymentTypePlans.monthly.map((plan) => (
                 <PricingCard
@@ -186,7 +188,37 @@ function PricingView({ data, isForModal }) {
                 />
               )}
             </Flex>
-          </Box>
+          </Box> */}
+        </Box>
+        <Box width="100%" overflowX="auto" gridGap="32px" gridColumn="1 / span 10">
+          <Flex width={{ base: 'max-content', md: 'auto' }} justifyContent="center" gridGap="24px" margin="0 auto">
+            {paymentTypePlans.monthly?.length > 0 && paymentTypePlans.monthly.map((plan) => (
+              <PricingCard
+                key={plan?.plan_id}
+                item={plan}
+                relatedSubscription={relatedSubscription}
+                width={{ base: '300px', md: '100%' }}
+                display={activeType === switchTypes.monthly ? 'flex' : 'none'}
+              />
+            ))}
+
+            {paymentTypePlans.yearly?.length > 0 && paymentTypePlans.yearly.map((plan) => (
+              <PricingCard
+                key={plan?.plan_id}
+                item={plan}
+                relatedSubscription={relatedSubscription}
+                width={{ base: '300px', md: '100%' }}
+                display={activeType === switchTypes.yearly ? 'flex' : 'none'}
+              />
+            ))}
+            {bootcampInfo?.type && (
+            <PricingCard
+              item={bootcampInfo}
+              width={{ base: '300px', md: '100%' }}
+              display="flex"
+            />
+            )}
+          </Flex>
         </Box>
       </GridContainer>
     </>
