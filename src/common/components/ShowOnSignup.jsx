@@ -115,6 +115,7 @@ function ShowOnSignUp({
               showVerifyEmail={false}
               formProps={formProps}
               setFormProps={setFormProps}
+              subscribeValues={subscribeValues}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .finally(() => {

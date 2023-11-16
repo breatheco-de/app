@@ -229,7 +229,7 @@ function TabletWithForm({
           hideForm={!user && formSended}
           title={!user && t('direct-access-request')}
           submitText={t('get-instant-access')}
-          subscribeValues={{ asset: exercise.id }}
+          subscribeValues={{ asset_slug: exercise.slug }}
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}

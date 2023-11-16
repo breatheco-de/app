@@ -26,7 +26,7 @@ import bc from '../../services/breathecode';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps,
-  onHandleSubmit, containerGap, extraFields, columnLayout,
+  onHandleSubmit, containerGap, extraFields, columnLayout, subscribeValues,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -74,7 +74,7 @@ function SignupForm({
           'Content-Type': 'application/json',
           'Accept-Language': router?.locale || 'en',
         },
-        body: JSON.stringify({ ...allValues, conversion_info: userSession }),
+        body: JSON.stringify({ ...allValues, ...subscribeValues, conversion_info: userSession }),
       });
       const data = await resp.json();
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
@@ -378,6 +378,7 @@ SignupForm.propTypes = {
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
   columnLayout: PropTypes.bool,
+  subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => {},
@@ -388,6 +389,7 @@ SignupForm.defaultProps = {
   containerGap: '24px',
   extraFields: [],
   columnLayout: false,
+  subscribeValues: {},
 };
 
 export default SignupForm;
