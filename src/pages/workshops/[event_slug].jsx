@@ -630,6 +630,7 @@ function Page({ event }) {
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && !existsConsumables}
                   isLive={readyToJoinEvent && !finishedEvent}
+                  subscribeValues={{ event_slug: event.slug }}
                   refetchAfterSuccess={() => {
                     getMySubscriptions();
                     getCurrentConsumables();
