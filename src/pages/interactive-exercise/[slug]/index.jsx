@@ -197,7 +197,7 @@ function TabletWithForm({
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor } = useStyle();
-  const conversionTechnologies = exercise.technologies?.map((item) => item?.slug);
+  const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
 
   const UrlInput = styled.input`
     cursor: pointer;

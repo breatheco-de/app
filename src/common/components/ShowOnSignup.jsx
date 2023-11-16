@@ -231,7 +231,7 @@ ShowOnSignUp.propTypes = {
   refetchAfterSuccess: PropTypes.func,
   isLive: PropTypes.bool,
   existsConsumables: PropTypes.bool,
-  conversionTechnologies: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.string,
 };
 
 ShowOnSignUp.defaultProps = {
