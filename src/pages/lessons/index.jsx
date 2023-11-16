@@ -27,7 +27,6 @@ const fetchLessons = async (lang, page, query) => {
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: excludeCagetoriesFor.lessons,
     language: lang,

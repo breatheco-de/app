@@ -32,7 +32,6 @@ const fetchExercises = async (lang, page, query) => {
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'EXERCISE',
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     language: lang,
     academy: WHITE_LABEL_ACADEMY,
