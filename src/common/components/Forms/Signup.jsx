@@ -378,7 +378,7 @@ SignupForm.propTypes = {
   showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
-  conversionTechnologies: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.string,
   columnLayout: PropTypes.bool,
 };
 SignupForm.defaultProps = {
