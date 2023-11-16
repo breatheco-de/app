@@ -89,7 +89,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
 
   const qsRequest = parseQuerys({
     asset_type: type || undefined,
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     limit,
     offset,
@@ -123,7 +122,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
-      visibility: 'PUBLIC',
       status: 'PUBLISHED',
       limit,
       offset,
