@@ -155,9 +155,13 @@ function Footer({ pageProps }) {
                 <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
                   {t('company.items', {}, { returnObjects: true }).map((item) => (
                     <Box as="li" key={`${item.label}-${item.href}`} pb="6px" role="presentation" display="flex">
-                      <NextChakraLink href={item.href} fontSize="0.875rem">
-                        {item.label.toUpperCase()}
-                      </NextChakraLink>
+                      {item.href === '#' ? (
+                        <Box fontSize="0.875rem" textTransform="uppercase">{item.label}</Box>
+                      ) : (
+                        <NextChakraLink href={item.href} fontSize="0.875rem" textTransform="uppercase">
+                          {item?.label}
+                        </NextChakraLink>
+                      )}
                     </Box>
                   ))}
                 </Box>
