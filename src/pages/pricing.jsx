@@ -1,141 +1,91 @@
 import { Box, Flex, Container, Button, Img } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import Head from 'next/head';
 import NextChakraLink from '../common/components/NextChakraLink';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
-import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
-import axiosInstance from '../axios';
 import PricingCard from '../common/components/PricingCard';
-import { getQueryString } from '../utils';
 import LoaderScreen from '../common/components/LoaderScreen';
 
 const switchTypes = {
   monthly: 'monthly',
   yearly: 'yearly',
 };
-// const getYearlyPlans = (originalPlan, suggestedPlan, allFeaturedPlans) => {
-//   const existsYearlyInOriginalPlan = originalPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
-//   const existsYearlyInSuggestedPlan = suggestedPlan?.plans?.some((p) => p?.price > 0 && p?.period === 'YEAR');
 
-//   if (!existsYearlyInOriginalPlan && existsYearlyInSuggestedPlan) {
-//     const yearlyPlan = suggestedPlan?.plans?.filter((p) => p?.period === 'YEAR');
-//     const freeOrTrialPlan = originalPlan?.plans?.filter((p) => p?.price === 0 || p?.period === 'TRIAL' || p?.period === 'FREE') || [];
-//     return [...freeOrTrialPlan, ...yearlyPlan];
-//   }
-//   return allFeaturedPlans.filter((p) => p?.period === 'YEAR');
-// };
-
-function PricingView({ data, isForModal }) {
-  const { t, lang } = useTranslation('pricing');
+function PricingView() {
+  const { t } = useTranslation('pricing');
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
-  const [allFeaturedPlans, setAllFeaturedPlans] = useState([]);
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
-  const queryPlan = getQueryString('plan');
-  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || 'basic';
-  const [isFetching, setIsFetching] = useState(!data?.title);
-  const [principalData, setPrincipalData] = useState(data);
-  const [paymentTypePlans, setPaymentTypePlans] = useState({
-    monthly: [],
-    yearly: [],
-  });
+  const [isFetching, setIsFetching] = useState(false);
+  const monthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
+  const yearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
+  const allPlansList = [
+    ...monthlyPlans || [],
+    ...yearlyPlans || [],
+  ];
 
-  axiosInstance.defaults.headers.common['Accept-Language'] = lang;
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
-  useEffect(() => {
-    if (!data?.title) {
-      const translations = getTranslations(t);
-      fetchSuggestedPlan(planFormated, translations)
-        .then((suggestedPlanData) => {
-          setPrincipalData(suggestedPlanData);
-        });
-    }
-  }, []);
+  const fetchMySubscriptions = async () => {
+    try {
+      setIsFetching(true);
+      const resp = await bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      }).subscriptions();
 
-  useEffect(() => {
-    if (principalData?.title) {
-      const originalPlan = principalData?.plans?.original_plan;
-      const suggestedPlan = principalData?.plans?.suggested_plan;
-      const allPlansList = [
-        ...originalPlan?.plans || [],
-        ...suggestedPlan?.plans || [],
-      ];
-      // const monthlyPlans = allPlansList?.length > 0
-      //   ? allPlansList.filter((p) => p?.period !== 'YEAR')
-      //   : [];
-      // const yearlyPlans = allPlansList?.length > 0
-      //   ? getYearlyPlans(originalPlan, suggestedPlan, allPlansList)
-      //   : [];
-
-      setAllFeaturedPlans(allPlansList);
-      const monthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
-      const yearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
-      setPaymentTypePlans({
-        monthly: monthlyPlans,
-        yearly: yearlyPlans,
-      });
+      const subscriptions = resp?.data?.subscriptions || [];
+      const planFinancings = resp?.data?.plan_financings || [];
+      const allSubscriptions = [...subscriptions, ...planFinancings];
+      const findPurchasedPlan = allSubscriptions?.length > 0 && allSubscriptions.find(
+        (userPlan) => allPlansList.some(
+          (featuredPlan) => userPlan?.plans[0]?.slug === featuredPlan?.slug
+              && userPlan?.invoices?.[0]?.amount === featuredPlan?.price,
+        ),
+      );
+      setRelatedSubscription(findPurchasedPlan);
+      setIsFetching(false);
+    } catch (e) {
+      console.log(e);
       setIsFetching(false);
     }
-  }, [principalData?.title]);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchMySubscriptions();
+    }
+  }, [isAuthenticated]);
 
   const switcherInfo = [
     {
       type: 'monthly',
       name: t('signup:info.monthly'),
-      exists: paymentTypePlans.monthly.length > 0,
+      exists: monthlyPlans.length > 0,
     },
     {
       type: 'yearly',
       name: t('signup:info.yearly'),
-      exists: paymentTypePlans.yearly.length > 0,
+      exists: yearlyPlans.length > 0,
     },
   ];
   const existentOptions = switcherInfo.filter((l) => l.exists);
 
-  useEffect(() => {
-    if (isAuthenticated && allFeaturedPlans?.length > 0) {
-      bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
-      }).subscriptions()
-        .then((resp) => {
-          const subscriptions = resp?.data?.subscriptions || [];
-          const planFinancings = resp?.data?.plan_financings || [];
-          const allSubscriptions = [...subscriptions, ...planFinancings];
-          const findPurchasedPlan = allSubscriptions?.length > 0 && allSubscriptions.find(
-            (userPlan) => allFeaturedPlans.some(
-              (featuredPlan) => userPlan?.plans[0]?.slug === featuredPlan?.plan_slug
-                && userPlan?.invoices?.[0]?.amount === featuredPlan?.price,
-            ),
-          );
-          setRelatedSubscription(findPurchasedPlan);
-        });
-    }
-  }, [isAuthenticated, allFeaturedPlans.length]);
-
   return (
     <>
       {isFetching && (
-        <LoaderScreen position={isForModal ? 'absolute' : 'fixed'} />
+        <LoaderScreen position="fixed" />
       )}
-      <Head>
-        {principalData?.title && (
-          <title>{`${principalData?.title} | 4Geeks`}</title>
-        )}
-      </Head>
       <Container
         maxWidth="1180px"
         position="relative"
         margin="0 auto"
-        my={isForModal ? '2rem' : '4rem'}
+        my="4rem"
         padding="0 10px"
       >
         <Box marginBottom="20px">
@@ -169,7 +119,7 @@ function PricingView({ data, isForModal }) {
           )}
         </Box>
         <Flex flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin="0 auto">
-          {paymentTypePlans.monthly?.length > 0 && paymentTypePlans.monthly.map((plan) => (
+          {monthlyPlans?.length > 0 && monthlyPlans.map((plan) => (
             <PricingCard
               key={plan?.plan_id}
               item={plan}
@@ -179,7 +129,7 @@ function PricingView({ data, isForModal }) {
             />
           ))}
 
-          {paymentTypePlans.yearly?.length > 0 && paymentTypePlans.yearly.map((plan) => (
+          {yearlyPlans?.length > 0 && yearlyPlans.map((plan) => (
             <PricingCard
               key={plan?.plan_id}
               item={plan}
@@ -237,14 +187,5 @@ function PricingView({ data, isForModal }) {
     </>
   );
 }
-
-PricingView.propTypes = {
-  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
-  isForModal: PropTypes.bool,
-};
-PricingView.defaultProps = {
-  isForModal: false,
-  data: {},
-};
 
 export default PricingView;
