@@ -20,6 +20,7 @@ function Summary() {
 
   const {
     state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
+    setLoader,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
@@ -107,6 +108,7 @@ function Summary() {
   useEffect(() => {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
     if (findedPlan) {
+      setLoader('plan', false);
       if (findedPlan) {
         setSelectedPlanCheckoutData(findedPlan);
         getPlanProps(findedPlan);
@@ -114,6 +116,7 @@ function Summary() {
     }
 
     if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
+      setLoader('plan', false);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }

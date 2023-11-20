@@ -19,6 +19,7 @@ const initialState = {
   planProps: null,
   loader: {
     date: false,
+    plan: true,
   },
   cohortPlans: null,
   alreadyEnrolled: false,
