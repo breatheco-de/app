@@ -46,7 +46,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import { reportDatalayer } from '../../../utils/requests.js';
+import { reportDatalayer } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -205,7 +205,7 @@ function TabletWithForm({
       dataLayer: {
         event: 'open_interactive_tutorial',
         user_id: user.id,
-        vendor,
+        vendor: vendor,
       },
     });
   };
@@ -311,7 +311,7 @@ function TabletWithForm({
               borderColor="blue.default"
               color="blue.default"
               onClick={() => {
-                ReportOpenInProvisioningVendor(vendor = 'local');
+                ReportOpenInProvisioningVendor('local');
                 setShowCloneModal(true);
               }}
             >
@@ -352,7 +352,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor(vendor = 'gitpod');
+                        ReportOpenInProvisioningVendor('gitpod');
                         window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
                       }
                     }}
@@ -376,7 +376,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor(vendor = 'codespaces');
+                        ReportOpenInProvisioningVendor('codespaces');
                         window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
