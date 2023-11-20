@@ -46,7 +46,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import { reportDatalayer } from '../../utils/requests';
+import { reportDatalayer } from '../../../utils/requests.js';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -200,15 +200,15 @@ function TabletWithForm({
   const { hexColor } = useStyle();
   const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
 
-  const ReportOpenInProvisioningVendor = (vendor) => {
+  const ReportOpenInProvisioningVendor = (vendor='') => {
     reportDatalayer({
       dataLayer: {
         event: 'open_interactive_tutorial',
         user_id: user.id,
         vendor,
       },
-    })
-  }
+    });
+  };
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -311,7 +311,7 @@ function TabletWithForm({
               borderColor="blue.default"
               color="blue.default"
               onClick={() => {
-                ReportOpenInProvisioningVendor(vendor='local');
+                ReportOpenInProvisioningVendor(vendor = 'local');
                 setShowCloneModal(true);
               }}
             >
@@ -352,7 +352,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor(vendor='gitpod');
+                        ReportOpenInProvisioningVendor(vendor = 'gitpod');
                         window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
                       }
                     }}
@@ -376,7 +376,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor(vendor='codespaces');
+                        ReportOpenInProvisioningVendor(vendor = 'codespaces');
                         window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
