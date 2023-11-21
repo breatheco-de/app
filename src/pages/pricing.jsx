@@ -76,8 +76,6 @@ function PricingView() {
   ];
   const existentOptions = switcherInfo.filter((l) => l.exists);
 
-  //
-
   return (
     <>
       {isFetching && (
