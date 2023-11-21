@@ -7,3 +7,6 @@ export const isWhiteLabelAcademy = typeof DOMAIN_NAME === 'string' && DOMAIN_NAM
 export const excludeCagetoriesFor = {
   lessons: 'how-to,como,blog-us,blog-es',
 };
+export const categoriesFor = {
+  howTo: 'how-to,como',
+};

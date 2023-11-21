@@ -89,7 +89,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
 
   const qsRequest = parseQuerys({
     asset_type: type || undefined,
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     limit,
     offset,
@@ -123,7 +122,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
-      visibility: 'PUBLIC',
       status: 'PUBLISHED',
       limit,
       offset,
@@ -209,18 +207,42 @@ const getLandingTechnologies = async (assets) => {
     }));
 
     const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
-      .map((finalData) => ({
-        ...finalData,
-        assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
-        lang: 'en',
-      }));
+      .map((finalData) => {
+        const uniqueTypes = new Set();
+        const filteredAssets = finalData.assets.filter((asset) => {
+          const isEnglish = asset?.lang === 'en' || asset?.lang === 'us';
+          if (isEnglish) {
+            uniqueTypes.add(asset.asset_type);
+          }
+          return isEnglish;
+        });
+
+        return ({
+          ...finalData,
+          assets: filteredAssets,
+          assetTypesInTechnology: [...uniqueTypes], // generate unique asset types to use in filters (future implementation)
+          lang: 'en',
+        });
+      });
 
     const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
-      .map((finalData) => ({
-        ...finalData,
-        assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
-        lang: 'es',
-      }));
+      .map((finalData) => {
+        const uniqueTypes = new Set();
+        const filteredAssets = finalData.assets.filter((asset) => {
+          const isSpanish = asset?.lang === 'es';
+          if (isSpanish) {
+            uniqueTypes.add(asset.asset_type);
+          }
+          return isSpanish;
+        });
+
+        return ({
+          ...finalData,
+          assets: filteredAssets,
+          assetTypesInTechnology: [...uniqueTypes], // generate unique asset types to use in filters (future implementation)
+          lang: 'es',
+        });
+      });
 
     const dataEng = technologiesInEnglish;
     const dataEsp = technologiesInSpanish;

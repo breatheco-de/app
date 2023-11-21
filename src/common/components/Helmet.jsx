@@ -155,7 +155,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  translations: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
