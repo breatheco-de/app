@@ -67,10 +67,10 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       border: hexColor.blueDefault,
       featuredFontColor: hexColor.yellowDefault,
       button: {
-        variant: 'outline',
-        color: 'white',
+        variant: 'default',
+        color: hexColor.black,
         borderColor: 'white',
-        background: '',
+        background: featuredCard.background,
         title: t('pricing.premium-plan.button-title'),
       },
     },

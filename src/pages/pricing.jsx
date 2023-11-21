@@ -160,7 +160,7 @@ function PricingView() {
           </Flex>
         </Box>
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
-          <Box color="white" maxWidth="700px" background="#00041A" padding="15px" borderRadius="10px">
+          <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
             <Heading margin="20px 0" size="sm">
               {t('decided.heading')}
             </Heading>
