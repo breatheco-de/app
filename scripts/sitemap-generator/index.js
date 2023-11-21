@@ -6,6 +6,7 @@ import {
   sitemapTemplate,
   listOfSitemapsTemplate,
   sitemapTemplateWithHreflang,
+  sitemapTemplateWithHreflangConnector,
 } from './sitemap-config';
 import { isWhiteLabelAcademy } from '../../src/utils/variables';
 import assetLists from '../../src/lib/asset-list.json';
@@ -160,7 +161,7 @@ async function generateSitemap() {
     'src/pages/thank-you.jsx',
   ];
 
-  const prismicPagesSitemap = sitemapTemplateWithHreflang(prismicTypePages);
+  const prismicPagesSitemap = sitemapTemplateWithHreflangConnector(prismicTypePages);
 
   const pagesSitemap = !isWhiteLabelAcademy
     ? sitemapTemplate([

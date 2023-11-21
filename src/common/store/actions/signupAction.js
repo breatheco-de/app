@@ -337,6 +337,9 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           reject(response);
         }
       })
+      .catch((error) => {
+        reject(error);
+      })
       .finally(() => {
         setLoader('date', false);
       });
