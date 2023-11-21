@@ -65,7 +65,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
 
   if (variant === 'small') {
     return (
-      <Box alignItems={loading && 'center'} minWidth="160px" display="flex" position="relative" zIndex={10} borderRadius="4px" padding={{ base: '18px 24px', md: '0 24px' }} height={{ base: 'auto', md: '177px' }} background="red.light" {...rest}>
+      <Box alignItems={loading && 'center'} minWidth="160px" display="flex" position="relative" zIndex={10} borderRadius="4px" padding={{ base: '18px 24px', md: '0 24px' }} height={{ base: 'auto', md: '177px' }} background="#FFF1D1" {...rest}>
         {loading && <Spinner margin="auto" color="blue.light" opacity={0.9} />}
         <Box filter={loading && 'blur(3px)'} display="flex" gridGap="1px" margin="0 auto" alignItems="center" fontSize="40px">
           {autoRemove && timer?.days <= 0 ? null : (
@@ -88,6 +88,12 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
             <Heading size="18px" fontWeight={700}>
               {timer?.minutes}
             </Heading>
+            {autoRemove && timer?.days <= 0 && (
+              <Heading size="18px" fontWeight={700}>
+                :
+                {timer?.seconds}
+              </Heading>
+            )}
           </>
         </Box>
       </Box>
