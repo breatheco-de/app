@@ -14,7 +14,7 @@ import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
-import CustomTheme from '../../styles/theme';
+import theme from '../../styles/theme';
 import Navbar from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
 import SessionProvider from '../common/context/SessionContext';
@@ -68,7 +68,10 @@ function App({ Component, ...rest }) {
         <Helmet
           {...pageProps.seo}
         />
-        <ChakraProvider resetCSS theme={CustomTheme}>
+        <ChakraProvider
+          resetCSS
+          theme={theme}
+        >
           <AuthProvider>
             <SessionProvider>
               <ConnectionProvider>

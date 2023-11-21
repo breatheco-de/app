@@ -228,7 +228,7 @@ function TabletWithForm({
       >
         <ShowOnSignUp
           hideForm={!user && formSended}
-          title={!user && t('direct-access-request')}
+          title={!user ? t('direct-access-request') : ''}
           submitText={t('get-instant-access')}
           subscribeValues={{ asset: exercise.id }}
           refetchAfterSuccess={() => {
