@@ -11,7 +11,7 @@ function Helmet({
   const ogTitle = (typeof title === 'string' && title?.length > 0) ? title : '4Geeks';
   const translationsArray = translations;
   const translationsExists = translationsArray.length > 0;
-  const maxCharacters = 155;
+  const maxCharacters = 157;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
     : description;
