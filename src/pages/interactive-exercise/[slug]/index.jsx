@@ -44,9 +44,8 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import { getAsset, getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import { reportDatalayer } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const data = await getAsset('EXERCISE', {});
@@ -200,12 +199,12 @@ function TabletWithForm({
   const { hexColor } = useStyle();
   const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
 
-  const ReportOpenInProvisioningVendor = (vendor='') => {
+  const ReportOpenInProvisioningVendor = (vendor = '') => {
     reportDatalayer({
       dataLayer: {
         event: 'open_interactive_tutorial',
         user_id: user.id,
-        vendor: vendor,
+        vendor,
       },
     });
   };
