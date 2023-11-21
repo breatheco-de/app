@@ -202,7 +202,7 @@ function TabletWithForm({
   const ReportOpenInProvisioningVendor = (vendor = '') => {
     reportDatalayer({
       dataLayer: {
-        event: 'open_interactive_tutorial',
+        event: 'open_interactive_exercise',
         user_id: user.id,
         vendor,
       },
