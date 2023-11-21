@@ -67,10 +67,10 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       border: hexColor.blueDefault,
       featuredFontColor: hexColor.yellowDefault,
       button: {
-        variant: 'default',
-        color: 'black',
-        borderColor: '',
-        background: 'white',
+        variant: 'outline',
+        color: 'white',
+        borderColor: 'white',
+        background: '',
         title: t('pricing.premium-plan.button-title'),
       },
     },
@@ -188,7 +188,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
               {info?.service?.icon_url
                 ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                 : (
-                  <Icon icon={info?.service?.icon} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                  <Icon icon={info?.service?.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
                 )}
               <Box>
                 <Text size="16px" fontWeight={700} textAlign="left">
@@ -214,7 +214,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                   {info?.service?.icon_url
                     ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                     : (
-                      <Icon icon={info?.service?.icon} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                      <Icon icon={info?.service?.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
                     )}
                   <Text size="16px" fontWeight={700} textAlign="left">
                     {info?.service?.title || slugToTitle(info?.service?.slug)}
