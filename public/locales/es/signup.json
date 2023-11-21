@@ -183,7 +183,7 @@
       "price": 0,
       "price_text": "Free",
       "period": "FREE",
-      "period_label": "De por vida",
+      "period_label": "",
       "isFree": true,
       "planType": "original",
       "type": "FREE"
@@ -212,7 +212,7 @@
       "price": 0,
       "price_text": "Free",
       "period": "FREE",
-      "period_label": "De por vida",
+      "period_label": "",
       "isFree": true,
       "planType": "original",
       "type": "FREE"
