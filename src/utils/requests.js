@@ -34,7 +34,7 @@ const getPrismicPages = async () => {
   try {
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
-    log(`\n${data.results.length} pages fetched from Prismic\n`);
+    log(`\n${data?.results?.length} pages fetched from Prismic\n`);
     if (response.status > 400 && response.statusText !== 'OK') {
       throw new Error('SITEMAP: Error fetching Prismic pages');
     } else {
