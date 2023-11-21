@@ -196,7 +196,7 @@
       "price": 50,
       "price_text": "$50",
       "period": "MONTH",
-      "period_label": "Monthly",
+      "period_label": "Per month",
       "isFree": false,
       "planType": "suggested",
       "type": "PAYMENT"
@@ -225,7 +225,7 @@
       "price": 580,
       "price_text": "$580",
       "period": "YEAR",
-      "period_label": "Yearly",
+      "period_label": "$48.33 Per month",
       "isFree": false,
       "planType": "suggested",
       "type": "PAYMENT"

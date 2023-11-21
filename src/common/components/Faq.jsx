@@ -22,7 +22,7 @@ function Faq({ items, ...rest }) {
       <Heading textAlign="center" margin="20px 0">
         FAQ
       </Heading>
-      <Accordion padding="20px" allowMultiple background={hexColor.white2}>
+      <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2}>
         {items.map((item) => (
           <AccordionItem borderTop="none" borderBottom="1px solid #DADADA">
             <AccordionButton padding="20px 10px 10px 10px">
