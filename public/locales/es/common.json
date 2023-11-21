@@ -226,7 +226,7 @@
         "service": {
           "slug": "live-classes",
           "title": "Clases en vivo",
-          "icon": "video"
+          "icon": "onlinePeople"
         },
         "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
       },

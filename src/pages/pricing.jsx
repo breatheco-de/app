@@ -10,6 +10,7 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
 import LoaderScreen from '../common/components/LoaderScreen';
+import { isWindow } from '../utils';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -17,7 +18,7 @@ const switchTypes = {
 };
 
 function PricingView() {
-  const { t } = useTranslation('pricing');
+  const { t, lang } = useTranslation('pricing');
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
@@ -150,11 +151,11 @@ function PricingView() {
           <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
           <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
           <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => alert('hi fella')}>
+            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => console.log('hi fella')}>
               {t('learning-code.chat')}
             </Button>
             <Text fontWeight="700" textTransform="uppercase">{t('common:word-connector.or')}</Text>
-            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => alert('hi fella')}>
+            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => console.log('hi fella')}>
               {t('learning-code.survey')}
             </Button>
           </Flex>
@@ -172,7 +173,12 @@ function PricingView() {
             </Text>
             <Button
               variant="default"
-              onClick={() => alert('hi fella')}
+              onClick={() => {
+                if (isWindow) {
+                  const langPath = lang === 'en' ? '' : `/${lang}`;
+                  window.location.href = `${langPath}/checkout?plan=basic&plan_id=p-0-trial`;
+                }
+              }}
               textTransform="uppercase"
               fontSize="13px"
               mt="1rem"
