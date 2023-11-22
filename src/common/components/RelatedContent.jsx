@@ -16,10 +16,10 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
   const { featuredColor, fontColor2 } = useStyle();
 
   const getAssetPath = (asset) => {
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
     if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
     if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
-    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     return 'lesson';
   };
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');

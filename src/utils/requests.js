@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
@@ -97,6 +98,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     ...extraQuerys,
   });
 
+  // let response = fetchWithEncoding(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`, ['br', 'gzip', 'deflate']);
   let response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then(async (res) => {
       const data = await res.json();
@@ -158,8 +160,29 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return item;
     });
   }
+  const translationsObjectsCleaned = allResults.map((item) => {
+    const recopilatedTranslationObject = {};
+    const existentLangs = ['en', 'us', 'es'];
+    for (const index in existentLangs) {
+      // Verify if the asset has a translation in the existentLangs list
+      if (Object.prototype.hasOwnProperty.call(item?.translations, existentLangs[index])) {
+        const lang = existentLangs[index];
+        const existsAsset = allResults.some((result) => result.slug === item?.translations[lang]);
+        if (item?.translations?.[lang] && existsAsset) {
+          recopilatedTranslationObject[lang] = item.translations[lang];
+        }
+        if (!item?.translations?.[lang] && item.lang === lang) {
+          recopilatedTranslationObject[item.lang] = item.slug;
+        }
+      }
+    }
+    return ({
+      ...item,
+      translations: recopilatedTranslationObject,
+    });
+  });
 
-  return allResults;
+  return translationsObjectsCleaned;
 };
 
 /**
