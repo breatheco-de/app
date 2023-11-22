@@ -21,11 +21,17 @@ const ProjectList = forwardRef(({
   const { t } = useTranslation('common');
   const { featuredColor, fontColor2 } = useStyle();
   const getAssetPath = (asset) => {
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
     if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
     if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
-    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     return 'lesson';
+  };
+  const getButtonTitle = (asset) => {
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') {
+      return toCapitalize(t('asset-button.article'));
+    }
+    return toCapitalize(t(`asset-button.${asset.asset_type.toLowerCase()}`));
   };
   const getArrayOfTechnologies = (technologies) => technologies.map((tech) => tech?.title);
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
@@ -173,7 +179,7 @@ const ProjectList = forwardRef(({
                     fontSize="15px"
                     letterSpacing="0.05em"
                   >
-                    {toCapitalize(t(`asset-button.${ex.asset_type.toLowerCase()}`))}
+                    {getButtonTitle(ex)}
                   </Link>
                 </Box>
               </Box>
