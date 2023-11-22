@@ -33,7 +33,7 @@ export default class CustomDocument extends Document {
 
   render() {
     return (
-      <Html style={{ colorScheme: 'dark' }} data-theme="dark">
+      <Html>
         <Head>
           <meta charSet="UTF-8" />
           <meta content="ie=edge" httpEquiv="X-UA-Compatible" />

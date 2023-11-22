@@ -15,7 +15,7 @@ import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, ...rest
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, conversionTechnologies, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
@@ -116,6 +116,7 @@ function ShowOnSignUp({
               formProps={formProps}
               setFormProps={setFormProps}
               subscribeValues={subscribeValues}
+              conversionTechnologies={conversionTechnologies}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .finally(() => {
@@ -231,6 +232,7 @@ ShowOnSignUp.propTypes = {
   refetchAfterSuccess: PropTypes.func,
   isLive: PropTypes.bool,
   existsConsumables: PropTypes.bool,
+  conversionTechnologies: PropTypes.string,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -249,6 +251,7 @@ ShowOnSignUp.defaultProps = {
   refetchAfterSuccess: () => {},
   isLive: false,
   existsConsumables: false,
+  conversionTechnologies: null,
 };
 
 export default ShowOnSignUp;

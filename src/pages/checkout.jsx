@@ -30,9 +30,7 @@ import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
 import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
-import { fetchSuggestedPlan, getTranslations, processPlans } from '../common/handlers/subscriptions';
-import SimpleModal from '../common/components/SimpleModal';
-import PricingView from './pricing';
+import { getTranslations, processPlans } from '../common/handlers/subscriptions';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -73,19 +71,16 @@ function Checkout() {
     loading: true,
   });
   const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
-  const [isPreloading, setIsPreloading] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
-  const [defaultPlanData, setDefaultPlanData] = useState({});
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
-    handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep,
+    handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps } = state;
+  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps, loader } = state;
   const { backgroundColor3 } = useStyle();
-  const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
 
   const cohorts = cohortsData?.cohorts;
 
@@ -133,10 +128,6 @@ function Checkout() {
       }, translations);
       setOriginalPlan(processedPlan);
     });
-    fetchSuggestedPlan(defaultPlan, translations)
-      .then((data) => {
-        setDefaultPlanData(data);
-      });
     reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
@@ -148,14 +139,17 @@ function Checkout() {
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
+    if (!isAuthenticated && !tokenExists) {
+      setLoader('plan', false);
+    }
     if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
-      setIsPricingModalOpen(true);
+      router.push('/pricing');
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
     }
     if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
-      setIsPreloading(true);
+      setLoader('plan', true);
       bc.payment({
         status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
       }).subscriptions()
@@ -214,13 +208,13 @@ function Checkout() {
                 }
               });
           }
+        })
+        .finally(() => {
+          setLoader('plan', false);
         });
-      setTimeout(() => {
-        setIsPreloading(false);
-      }, 2600);
     }
     if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
-      setIsPreloading(true);
+      setLoader('plan', true);
 
       bc.payment().getPlan(planFormated)
         .then((resp) => {
@@ -259,6 +253,9 @@ function Checkout() {
               handleChecking({ ...defaultCohortProps, plan: data })
                 .then(() => {
                   handleStep(2);
+                })
+                .catch(() => {
+                  setLoader('plan', false);
                 });
             }
             if (cohorts.length === 0) {
@@ -268,6 +265,9 @@ function Checkout() {
               handleChecking({ plan: data })
                 .then(() => {
                   handleStep(2);
+                })
+                .catch(() => {
+                  setLoader('plan', false);
                 });
             }
           }
@@ -277,6 +277,7 @@ function Checkout() {
           }
         })
         .catch(() => {
+          setLoader('plan', false);
           toast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
@@ -285,9 +286,6 @@ function Checkout() {
             isClosable: true,
           });
         });
-      setTimeout(() => {
-        setIsPreloading(false);
-      }, 2600);
     }
   }, [cohortsData.loading, accessToken, isAuthenticated]);
 
@@ -323,13 +321,10 @@ function Checkout() {
   };
 
   return (
-    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={isPreloading ? '727px' : 'auto'}>
-      {isPreloading && (
+    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
+      {loader.plan && (
         <LoaderScreen />
       )}
-      <SimpleModal isOpen={isPricingModalOpen} onClose={() => setIsPricingModalOpen(false)} borderRadius="13px" maxWidth="7xl" closeOnOverlayClick={false} hideCloseButton style={{ marginTop: '2rem', position: 'relative' }}>
-        <PricingView data={defaultPlanData} isForModal my="1rem" />
-      </SimpleModal>
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
         title={t('signup:alert-message.validate-email-title')}
@@ -346,7 +341,7 @@ function Checkout() {
             />
           </Box>
         )}
-        isOpen={(isPricingModalOpen && verifyEmailProps.state) || (queryPlanExists && verifyEmailProps.state)}
+        isOpen={(verifyEmailProps.state) || (queryPlanExists && verifyEmailProps.state)}
         buttonHandlerStyles={{ variant: 'default' }}
         actionHandler={() => {
           const inviteId = verifyEmailProps?.data?.id;

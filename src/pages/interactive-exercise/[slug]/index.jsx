@@ -44,11 +44,12 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('EXERCISE', {});
+  const assetList = await import('../../../lib/asset-list.json');
+  const data = assetList.excersises;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -197,6 +198,17 @@ function TabletWithForm({
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor } = useStyle();
+  const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
+
+  const ReportOpenInProvisioningVendor = (vendor = '') => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_interactive_exercise',
+        user_id: user.id,
+        vendor,
+      },
+    });
+  };
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -227,7 +239,7 @@ function TabletWithForm({
       >
         <ShowOnSignUp
           hideForm={!user && formSended}
-          title={!user && t('direct-access-request')}
+          title={!user ? t('direct-access-request') : ''}
           submitText={t('get-instant-access')}
           subscribeValues={{ asset_slug: exercise.slug }}
           refetchAfterSuccess={() => {
@@ -236,6 +248,7 @@ function TabletWithForm({
           padding="0"
           background="none"
           border="none"
+          conversionTechnologies={conversionTechnologies}
         >
           <>
             {user && !formSended && (
@@ -297,7 +310,10 @@ function TabletWithForm({
               textTransform="uppercase"
               borderColor="blue.default"
               color="blue.default"
-              onClick={() => setShowCloneModal(true)}
+              onClick={() => {
+                ReportOpenInProvisioningVendor('local');
+                setShowCloneModal(true);
+              }}
             >
               {t('clone')}
             </Button>
@@ -336,6 +352,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
+                        ReportOpenInProvisioningVendor('gitpod');
                         window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
                       }
                     }}
@@ -359,6 +376,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
+                        ReportOpenInProvisioningVendor('codespaces');
                         window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
@@ -614,17 +632,17 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
           )}
           {exercise?.sub_title && (
-          <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
-            {exercise.sub_title}
-          </Text>
+            <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
+              {exercise.sub_title}
+            </Text>
           )}
           {exercise?.title && (
             <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
           )}
           {exercise?.author && (
-          <Text size="md" textAlign="left" my="10px" px="0px">
-            {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
-          </Text>
+            <Text size="md" textAlign="left" my="10px" px="0px">
+              {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
+            </Text>
           )}
         </GridContainer>
       </Box>
@@ -671,14 +689,14 @@ function Exercise({ exercise, markdown }) {
             borderRadius="3px"
             maxWidth="1012px"
             flexGrow={1}
-          // margin="0 8vw 4rem 8vw"
-          // width={{ base: '34rem', md: '54rem' }}
+            // margin="0 8vw 4rem 8vw"
+            // width={{ base: '34rem', md: '54rem' }}
             width={{ base: 'auto', lg: '60%' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {markdown ? (
               <MarkDownParser content={markdownData.content} />
-            // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
             )}

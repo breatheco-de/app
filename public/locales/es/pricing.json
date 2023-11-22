@@ -1,0 +1,25 @@
+{
+  "heading": "La programación te hará libre",
+  "sub-heading": "Existe un camino comprobado hacia la libertad profesional, con retroalimentación instantánea, altamente asesorado, en vivo y en conjunto.",
+  "read-more" : "Conoce la ciencia detrás de 4Geeks.",
+  "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge",
+  "learning-code": {
+    "title": "¿Qué bloquea el aprendizaje de programacion?",
+    "description": "Todos pueden aprender a codificar, no se requieren habilidades matemáticas, pero dependiendo de la situación, es posible que necesites diferentes opciones.",
+    "chat": "Chatea con un asesor",
+    "survey": "Tomar una encuesta de 30 segundos"
+  },
+  "faq": [{
+    "label": "¿Qué pasa si me consumo todas mis mentorías o accesos a workshops?",
+    "answer": "Si tienes el plan de vuela solo o en vivo y con feedback, y ya te consumiste todas tus sesiones de mentorías o acceso a workshops, entonces puedes comprar más con un precio con descuento por cada uno."
+  }, {
+    "label": "¿En qué tecnologías puedo solicitar una sesión de mentoría?",
+    "answer": "Siempre puedes solicitar mentorías uno a uno en cada uno de los cursos en los que te hayas inscrito. Entonces, no importa si estas haciendo el curso de JavaScript o el de Python, puedes pedir mentorías de cada uno de estos lenguajes."
+  }, {
+    "label": "¿Qué pasa con las mentorías ilimitadas luego de que termine el bootcamp?",
+    "answer": "El acceso a mentorías uno a uno o acceso a workshops de manera ilimitadas es DE POR VIDA siempre y cuando hayas formado parte de una cohort de un bootcamp."
+  }, {
+    "label": "¿Cómo funciona la garantía de trabajo?",
+    "answer": "El contrato de garantía de trabajo funciona solo para bootcamps, y consiste en que si no logras conseguir un trabajo 6 meses después de graduarte, se te devuelve el dinero, <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>ciertas condiciones aplican.</a>."
+  }]
+}

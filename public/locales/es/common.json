@@ -203,60 +203,72 @@
     "type": "Bootcamp",
     "period_label": "",
     "title": "Programa de Bootcamp",
-    "description": "De nada a una carrera en tecnología en solo unos meses, no se requiere experiencia previa.",
+    "description": "Acelera tu cambio de carrera con un Bootcamp",
+    "ask": "Pregunta por el precio",
     "button": "Solicitar más información",
     "button_link": "https://4geeksacademy.com/es/programas",
     "subtitle": "Programa de Bootcamp",
     "sub-description": "Únete a una cohorte en un ambiente de aula en vivo y obtén soporte ilimitado hasta que encuentres un trabajo.",
+    "service_items": {
+      "title": "Todo en vivo y con comentarios más...",
+      "items": [{
+        "label": "Talleres en vivo ilimitados"
+      },
+      {
+        "label": "Sesiones de tutoría individuales ilimitadas"
+      },
+      {
+        "label": "Sesiones de tutoría grupal ilimitadas"
+      }]
+    },
     "featured_info": [
       {
         "service": {
-          "slug": "join-a-cohort",
-          "title": "Únete a una cohort con un salón en vivo"
+          "slug": "live-classes",
+          "title": "Clases en vivo",
+          "icon": "onlinePeople"
         },
         "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
       },
       {
         "service": {
-          "slug": "unlimited-human-feedback",
-          "title": "Feedback humano ilimitado"
+          "slug": "career-support",
+          "title": "Career support",
+          "icon": "support"
         },
-        "features": [{ "description": "Cada proyecto que entregues, será revisado por uno de nuestros mentores y ellos te darán feedback muy relevante relacionado a tu código." }]
-      },
-      {
-        "service": {
-          "slug": "certified-by-us",
-          "title": "Certificados por el Dep. de Educación dee FL, U.S."
-        },
-        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
+        "features": [{ "description": "Obtenga comentarios sobre su currículum, LinkedIn y otros perfiles en línea, y acceda a nuestra amplia red de socios de contratación, oportunidades de pasantías y más." }]
       },
       {
         "service": {
           "slug": "job-guarantee",
-          "title": "Garantía de trabajo"
+          "title": "Garantía de trabajo*",
+          "icon": "briefcase"
         },
         "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
       },
       {
         "service": {
-          "slug": "Soporte profesional de por vida",
-          "title": "Career support for life"
+          "slug": "certified-by-us",
+          "title": "Certificados por el Dep. de Educación dee FL, U.S.",
+          "icon": "certificate"
         },
-        "features": [{ "description": "Obtén comentarios instantáneos sobre tu rendimiento, solicita sesiones de mentoría 1 a 1 y en grupo, revisiones de código expertas y soporte de chat de preguntas y respuestas." }]
-      },
-      {
-        "service": {
-          "slug": "lifetime-technical-support",
-          "title": "Soporte técnico de por vida"
-        },
-        "features": [{ "description": "Mentoría técnica 1-1 de por vida, soporte de chat y soporte de IA de nuestro bot interno." }]
+        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
       },
       {
         "service": {
           "slug": "access-to-premium-community",
-          "title": "Acceso a la comunidad premium"
+          "title": "Acceso a la comunidad premium",
+          "icon": "crown"
         },
         "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
+      },
+      {
+        "service": {
+          "slug": "office-space-world-wide",
+          "title": "Espacio de oficinas en todo el mundo",
+          "icon": "office"
+        },
+        "features": [{ "description": "Obtenga acceso a espacios de oficinas en todo el mundo." }]
       }
     ]
   }

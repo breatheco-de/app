@@ -25,8 +25,8 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import bc from '../../services/breathecode';
 
 function SignupForm({
-  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps,
-  onHandleSubmit, containerGap, extraFields, columnLayout, subscribeValues,
+  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -104,6 +104,7 @@ function SignupForm({
             syllabus: allValues.syllabus,
             cohort: allValues.cohort,
             conversion_info: userSession,
+            conversion_technologies: conversionTechnologies,
           },
         });
       }
@@ -377,6 +378,7 @@ SignupForm.propTypes = {
   showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.string,
   columnLayout: PropTypes.bool,
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
@@ -390,6 +392,7 @@ SignupForm.defaultProps = {
   extraFields: [],
   columnLayout: false,
   subscribeValues: {},
+  conversionTechnologies: null,
 };
 
 export default SignupForm;
