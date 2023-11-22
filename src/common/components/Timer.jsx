@@ -65,37 +65,34 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
 
   if (variant === 'small') {
     return (
-      <Box alignItems={loading && 'center'} minWidth="160px" display="flex" position="relative" zIndex={10} borderRadius="4px" padding={{ base: '18px 24px', md: '0 24px' }} height={{ base: 'auto', md: '177px' }} background="#FFF1D1" {...rest}>
-        {loading && <Spinner margin="auto" color="blue.light" opacity={0.9} />}
-        <Box filter={loading && 'blur(3px)'} display="flex" gridGap="1px" margin="0 auto" alignItems="center" fontSize="40px">
-          {autoRemove && timer?.days <= 0 ? null : (
-            <>
+      <Box alignItems="center" minWidth="160px" display="flex" borderRadius="4px" background="#FFF1D1" {...rest}>
+        {loading ? (
+          <Spinner margin="auto" color="blue.default" />
+        ) : (
+          <Box display="flex" gridGap="1px" margin="0 auto" alignItems="center" fontSize="40px">
+            {autoRemove && timer?.days <= 0 ? null : (
               <Heading size="18px" fontWeight={700}>
                 {timer?.days}
                 :
               </Heading>
-            </>
-          )}
-          {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : (
-            <>
+            )}
+            {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : (
               <Heading size="18px" fontWeight={700}>
                 {timer?.hours}
                 :
               </Heading>
-            </>
-          )}
-          <>
-            <Heading size="18px" fontWeight={700}>
-              {timer?.minutes}
-            </Heading>
-            {autoRemove && timer?.days <= 0 && (
+            )}
+            {autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : (
               <Heading size="18px" fontWeight={700}>
+                {timer?.minutes}
                 :
-                {timer?.seconds}
               </Heading>
             )}
-          </>
-        </Box>
+            <Heading size="18px" fontWeight={700}>
+              {timer?.seconds}
+            </Heading>
+          </Box>
+        )}
       </Box>
     );
   }

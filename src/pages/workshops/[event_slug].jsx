@@ -528,82 +528,22 @@ function Page({ event }) {
         padding="0 10px"
       >
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <MarkDownParser content={event?.description} />
+          </Box>
+          {!eventNotExists && hostUserExists && (
+            <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
+              <Text size="26px" fontWeight={700}>
+                {t('host-label-text')}
+              </Text>
+              <PublicProfile
+                data={event?.host_user}
+              />
+            </Box>
+          )}
           {event?.id && (
             <>
-              <Box display={{ base: isAuth ? 'none' : 'block', md: 'none' }} marginBottom="20px">
-                <ShowOnSignUp
-                  hideForm={finishedEvent}
-                  existsConsumables={existsConsumables}
-                  hideSwitchUser={!isFreeForConsumables && !existsConsumables}
-                  isLive={readyToJoinEvent && !finishedEvent}
-                  subscribeValues={{ event_slug: event.slug }}
-                  refetchAfterSuccess={() => {
-                    getMySubscriptions();
-                    getCurrentConsumables();
-                  }}
-                  title={formInfo?.title}
-                  description={formInfo?.description}
-                  childrenDescription={formInfo?.childrenDescription}
-                  readOnly={!event?.slug}
-                  position="relative"
-                  gridGap={existsConsumables ? '10px' : '16px'}
-                  border="none"
-                >
-                  {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
-                    <Button
-                      mt="10px"
-                      type="submit"
-                      variant="default"
-                      className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
-                      background={buttonEnabled ? 'blue.default' : 'gray.350'}
-                      textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
-                      _disabled={{
-                        background: buttonEnabled ? '' : 'gray.350',
-                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                      }}
-                      _hover={{
-                        background: buttonEnabled ? '' : 'gray.350',
-                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                      }}
-                      _active={{
-                        background: buttonEnabled ? '' : 'gray.350',
-                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                      }}
-                      onClick={handleJoin}
-                    >
-                      {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                      {finishedEvent && t('event-finished')}
-                    </Button>
-                  ) : (
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                      <Avatar
-                        width="85px"
-                        height="85px"
-                        margin="0 0 16px 0"
-                        style={{ userSelect: 'none' }}
-                        src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
-                        alt="No consumables avatar"
-                      />
-                      <Button
-                        display="flex"
-                        variant="default"
-                        fontSize="14px"
-                        fontWeight={700}
-                        onClick={handleGetMoreEventConsumables}
-                        isLoading={isFetchingDataForModal}
-                        alignItems="center"
-                        gridGap="10px"
-                        width="100%"
-                      >
-                        {t('no-consumables.get-more-workshops')}
-                        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                      </Button>
-                    </Box>
-                  )}
-                </ShowOnSignUp>
-              </Box>
-              <Box zIndex="10" background={hexColor.backgroundColor} paddingTop="5px" top="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+              <Box zIndex="10" background={hexColor.backgroundColor} padding="5px" bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
                     {readyToJoinEvent ? (
@@ -688,20 +628,6 @@ function Page({ event }) {
               </Box>
             </>
           )}
-          <Box display="flex" flexDirection="column" gridGap="10px">
-            <MarkDownParser content={event?.description} />
-          </Box>
-
-          {!eventNotExists && hostUserExists && (
-            <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
-              <Text size="26px" fontWeight={700}>
-                {t('host-label-text')}
-              </Text>
-              <PublicProfile
-                data={event?.host_user}
-              />
-            </Box>
-          )}
         </Box>
 
         <Box
@@ -720,7 +646,7 @@ function Page({ event }) {
         >
           {event?.id && (
             <>
-              <Box display={{ base: 'none', md: 'block' }}>
+              <Box display={isAuth ? 'none' : 'block'}>
                 <ShowOnSignUp
                   hideForm={finishedEvent}
                   existsConsumables={existsConsumables}
