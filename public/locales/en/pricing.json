@@ -1,0 +1,31 @@
+{
+  "heading": "Coding skills will set you free",
+  "sub-heading": "There’s a proven path to professional freedom, with instant feedback, highly mentored, live and together.",
+  "read-more" :"Learn the science behind 4Geeks.",
+  "read-more-link": "https://4geeks.com/mastering-technical-knowledge",
+  "learning-code": {
+    "title": "What is blocking from learning code?",
+    "description": "Everyone can learn to code, math skills are not required but depending situation you may need different options.",
+    "chat": "Chat with an advisor",
+    "survey": "Take a 30 seconds survey"
+  },
+  "decided": {
+    "heading": "Haven't you decided yet?",
+    "sub_heading": "You can try 4Geeks on a free plan",
+    "description": "We have a free plan for you, with it you can enjoy many of our benefits, including a free feedback session.",
+    "button": "join for free"
+  },
+  "faq": [{
+    "label": "What happens if I consume all my mentorships or workshop access?",
+    "answer": "If you have the fly solo plan or the live and with feedback plan, and you consume all your mentorships or workshop access, then you can always buy more for a discounted price for each."
+  }, {
+    "label": "On which technologies can I ask for mentoring sessions?",
+    "answer": "You can always ask for one-on-one mentoring sessions on every course that you have access to. So whether you are doing a JavaScript course or a Python one, you can ask for mentoring sessions."
+  }, {
+    "label": "Are the unlimited mentoring sessions over after I finish the bootcamp?",
+    "answer": "The unlimited access to technical and career mentoring sessions, or unlimited access to workshops, is for life as long as you take part in one of our bootcamps."
+  }, {
+    "label": "How does the Job Guarantee work?",
+    "answer": "The Job Guarantee contract, is only for bootcamps, and it consists of returning your money back if you can't find a job after 6 months, some <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>."
+  }]
+}

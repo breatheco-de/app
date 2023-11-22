@@ -13,7 +13,7 @@ import { getStorageItem, setStorageItem, slugToTitle } from '../../utils';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
-import useSignup from '../../common/store/actions/signupAction';
+// import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -24,9 +24,6 @@ function ContactInformation({
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
-  const {
-    nextStep,
-  } = useSignup();
   const router = useRouter();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const { backgroundColor, featuredColor, hexColor } = useStyle();
@@ -69,7 +66,6 @@ function ContactInformation({
               formProps={formProps}
               setFormProps={setFormProps}
               onHandleSubmit={(data) => {
-                nextStep();
                 setVerifyEmailProps({
                   data,
                   state: true,

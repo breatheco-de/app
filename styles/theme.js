@@ -2,7 +2,7 @@ import { extendTheme } from '@chakra-ui/react';
 import Button from './components/customButton';
 import Link from './components/customLink';
 
-const CustomTheme = extendTheme({
+const theme = extendTheme({
   fonts: {
     heading: 'Lato',
     body: 'Lato',
@@ -106,6 +106,10 @@ const CustomTheme = extendTheme({
     Button,
     Link,
   },
+  config: {
+    useSystemColorMode: true,
+    initialColorMode: 'system',
+  },
 });
 
-export default CustomTheme;
+export default theme;

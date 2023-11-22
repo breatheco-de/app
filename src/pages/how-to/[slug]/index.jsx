@@ -24,11 +24,12 @@ import MktSideRecommendedCourses from '../../../common/components/MktSideRecomme
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
-import { getAsset, getCacheItem, setCacheItem } from '../../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo }, 'how-to');
+  const assetList = await import('../../../lib/asset-list.json');
+  const data = assetList.howTos;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {

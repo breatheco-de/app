@@ -44,11 +44,12 @@ import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
+import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('EXERCISE', {});
+  const assetList = await import('../../../lib/asset-list.json');
+  const data = assetList.excersises;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -238,9 +239,9 @@ function TabletWithForm({
       >
         <ShowOnSignUp
           hideForm={!user && formSended}
-          title={!user && t('direct-access-request')}
+          title={!user ? t('direct-access-request') : ''}
           submitText={t('get-instant-access')}
-          subscribeValues={{ asset: exercise.id }}
+          subscribeValues={{ asset_slug: exercise.slug }}
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}

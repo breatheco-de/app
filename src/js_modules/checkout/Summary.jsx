@@ -20,6 +20,7 @@ function Summary() {
 
   const {
     state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
+    setLoader,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
@@ -107,6 +108,7 @@ function Summary() {
   useEffect(() => {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
     if (findedPlan) {
+      setLoader('plan', false);
       if (findedPlan) {
         setSelectedPlanCheckoutData(findedPlan);
         getPlanProps(findedPlan);
@@ -114,6 +116,7 @@ function Summary() {
     }
 
     if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
+      setLoader('plan', false);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }
@@ -192,17 +195,15 @@ function Summary() {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
                 <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
                   <Heading size="18px">
                     {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
                 </Box>
                 <Heading
-                  size={selectedPlanCheckoutData?.price > 0 ? 'xl' : 'xsm'}
-                  margin={{ base: '0', md: '0 26px 0 auto' }}
+                  size="xl"
                   color="blue.default"
-                  textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0

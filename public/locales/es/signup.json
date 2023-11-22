@@ -173,19 +173,139 @@
   "get-premium": "Obtener Premium",
   "pricing": {
     "already-have-plan": "Ya lo tienes",
+    "monthly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-50",
+      "title": "Monthly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 50,
+      "price_text": "$50",
+      "discount_text": "$60",
+      "period": "MONTH",
+      "period_label": "Al mes",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
+    "yearly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-580",
+      "title": "Yearly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 580,
+      "price_text": "$48.33",
+      "period": "YEAR",
+      "period_label": "Al mes",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
     "basic-plan": {
-      "type": "Básico",
+      "type": "Vuela solo",
       "hook-message": "Prepárate para conocer nuestra academia",
       "title": "Miembro Gratuito",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
-      "button-title": "Comenzar gratis"
+      "button-title": "Comenzar gratis",
+      "service_items": {
+        "items": [{
+          "label": "1 Taller en vivo"
+        },
+        {
+          "label": "1 Sesión de tutoría individual"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "full-access-to-content",
+          "title": "Acceso completo al contenido",
+          "icon": "content"
+        },
+        "features": [{ "description": "Cientos de ejercicios, proyectos y lecciones interactivos están disponibles gracias a <a style=\"text-decoration: underline;\" target=\"__blank\" href='https://learnpack.co' >LearnPack</a>, nuestro motor interactivo." }]
+      },{
+        "service": {
+          "slug": "access-to-courses",
+          "title": "Acceso a cursos",
+          "icon": "courses"
+        },
+        "features": [{ "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándole oportunidades para mejorar sus habilidades existentes o profundizar en otras nuevas." }]
+      }]
     },
     "premium-plan": {
       "type": "Premium",
       "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
       "title": "Miembro Premium",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Premium"
+      "button-title": "Obtener Premium",
+      "service_items": {
+        "title": "Todo en Vuela Solo más...",
+        "items": [{
+          "label": "10 Talleres en vivo p/mes"
+        },
+        {
+          "label": "2 Sesiones de mentoría individuales p/mes"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "live-learning",
+          "title": "Aprendizaje en vivo",
+          "icon": "video"
+        },
+        "features": [{ "description": "Contamos con muchos talleres y eventos en vivo organizados por expertos cada semana." }]
+      },{
+        "service": {
+          "slug": "ai-feedback-support",
+          "title": "Comentarios y soporte de IA",
+          "icon": "message"
+        },
+        "features": [{ "description": "Nuestros modelos de IA entrenados internamente revisarán constantemente su código y le brindarán comentarios, consejos mientras codifica y más. Además contamos con un chat de soporte técnico 24/7." }]
+      },{
+        "service": {
+          "slug": "access-to-community",
+          "title": "Acceso a la comunidad",
+          "icon": "community"
+        },
+        "features": [{ "description": "Contamos con muchos talleres y eventos en vivo organizados por expertos cada semana." }]
+      },{
+        "service": {
+          "slug": "course-certificates",
+          "title": "Certificados del curso",
+          "icon": "certificate"
+        },
+        "features": [{ "description": "Obtenga certificados verificables a medida que complete cada uno de los cursos." }]
+      }]
     }
   }
 }
