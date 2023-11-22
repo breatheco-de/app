@@ -174,7 +174,7 @@ function PricingView() {
               onClick={() => reportDatalayer({
                 dataLayer: {
                   event: 'open_pricing_survey',
-                  } })}
+                } })}
             >
               {t('learning-code.survey')}
             </Button>
