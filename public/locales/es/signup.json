@@ -174,7 +174,7 @@
   "pricing": {
     "already-have-plan": "Ya lo tienes",
     "monthly-plans": [{
-      "slug": "basic",
+      "plan_slug": "basic",
       "plan_id": "p-0-trial",
       "title": "Basic",
       "currency": {"code": "USD", "name": "US Dollar"},
@@ -188,7 +188,7 @@
       "planType": "original",
       "type": "FREE"
     },{
-      "slug": "with-feedback",
+      "plan_slug": "with-feedback",
       "plan_id": "p-50",
       "title": "Monthly payment",
       "currency": {"code": "USD", "name": "US Dollar"},
@@ -204,7 +204,7 @@
       "type": "PAYMENT"
     }],
     "yearly-plans": [{
-      "slug": "basic",
+      "plan_slug": "basic",
       "plan_id": "p-0-trial",
       "title": "Basic",
       "currency": {"code": "USD", "name": "US Dollar"},
@@ -218,7 +218,7 @@
       "planType": "original",
       "type": "FREE"
     },{
-      "slug": "with-feedback",
+      "plan_slug": "with-feedback",
       "plan_id": "p-580",
       "title": "Yearly payment",
       "currency": {"code": "USD", "name": "US Dollar"},

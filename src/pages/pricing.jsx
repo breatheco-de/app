@@ -23,7 +23,7 @@ function PricingView() {
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor } = useStyle();
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const monthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const yearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
   const allPlansList = [
@@ -35,7 +35,6 @@ function PricingView() {
 
   const fetchMySubscriptions = async () => {
     try {
-      setIsFetching(true);
       const resp = await bc.payment({
         status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
       }).subscriptions();
@@ -45,7 +44,7 @@ function PricingView() {
       const allSubscriptions = [...subscriptions, ...planFinancings];
       const findPurchasedPlan = allSubscriptions?.length > 0 && allSubscriptions.find(
         (userPlan) => allPlansList.some(
-          (featuredPlan) => userPlan?.plans[0]?.slug === featuredPlan?.slug
+          (featuredPlan) => userPlan?.plans[0]?.slug === featuredPlan?.plan_slug
               && userPlan?.invoices?.[0]?.amount === featuredPlan?.price,
         ),
       );
@@ -60,7 +59,7 @@ function PricingView() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
-    }
+    } else setIsFetching(false);
   }, [isAuthenticated]);
 
   const switcherInfo = [
