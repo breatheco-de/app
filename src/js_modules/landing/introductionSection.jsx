@@ -196,7 +196,7 @@ function IntroductionSection({
           <Box display="flex" height="fit-content" justifyContent="center">
             <Image
               src={slice.primary.image.url}
-              alt={slice.primary.image.alt}
+              alt={slice.primary.image.alt || 'Introduction avatars'}
               width={slice.primary.image.dimensions?.width}
               height={slice.primary.image.dimensions?.height}
               style={{ borderRadius: '7px' }}

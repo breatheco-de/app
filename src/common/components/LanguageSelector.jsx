@@ -46,7 +46,7 @@ function LanguageSelector({ display, translations }) {
           textAlign="-webkit-center"
           height="auto"
           isDisabled={translations?.length === 1}
-          title={translations?.length === 1 && t('no-translation-available')}
+          title={translations?.length === 1 ? t('no-translation-available') : ''}
           backgroundColor="transparent"
           width="auto"
           alignSelf="center"

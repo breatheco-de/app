@@ -8,10 +8,10 @@ function Helmet({
   unlisted, pathConnector, locales, publishedTime, modifiedTime,
   locale, slug, disableStaticCanonical, eventStartAt, disableHreflangs,
 }) {
-  const ogTitle = title.length > 0 ? title : '4Geeks';
+  const ogTitle = (typeof title === 'string' && title?.length > 0) ? title : '4Geeks';
   const translationsArray = translations;
   const translationsExists = translationsArray.length > 0;
-  const maxCharacters = 155;
+  const maxCharacters = 157;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
     : description;
@@ -57,7 +57,7 @@ function Helmet({
 
   return (
     <Head>
-      <title>{title.length > 0 ? title : '4Geeks'}</title>
+      <title>{ogTitle}</title>
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
@@ -155,7 +155,7 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  translations: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,

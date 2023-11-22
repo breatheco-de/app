@@ -11,6 +11,8 @@ import { components } from '../../slices';
 import { cleanObject } from '../utils';
 import { ORIGIN_HOST } from '../utils/variables';
 
+const usedPageId = ['home'];
+
 function Page({ page }) {
   const router = useRouter();
   const landingUrl = page?.data?.landing_url;
@@ -72,8 +74,9 @@ export async function getStaticProps({ params, locale, previewData }) {
     .catch(() => null);
 
   const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+  const alreadyUsedPageId = usedPageId.includes(page.uid);
 
-  if (!page || !isCurrenLang) {
+  if (!page || !isCurrenLang || alreadyUsedPageId) {
     return {
       notFound: true,
     };
@@ -183,8 +186,11 @@ export async function getStaticPaths() {
   const client = createClient();
 
   const documents = await client.getAllByType('page', { lang: '*' });
+  const pagePaths = documents.filter((doc) => !usedPageId.includes(doc.uid))
+    .map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] }));
+
   return {
-    paths: documents.map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] })),
+    paths: pagePaths,
     fallback: true,
   };
 }

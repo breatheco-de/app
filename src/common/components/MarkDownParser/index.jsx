@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
 import {
-  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
+  Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -205,6 +205,7 @@ function MarkDownParser({
         remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
+          div: Wrapper,
           a: MDLink,
           code: Code,
           h1: MarkdownH2Heading,
