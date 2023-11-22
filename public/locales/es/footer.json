@@ -33,23 +33,23 @@
     "items":[
       {
         "label": "Lecturas",
-        "href": "/lessons"
+        "href": "/es/lessons"
       },
       {
         "label": "Ejercicios de práctica",
-        "href": "/interactive-exercises"
+        "href": "/es/interactive-exercises"
       },
       {
         "label": "Realiza proyectos",
-        "href": "/interactive-coding-tutorials"
+        "href": "/es/interactive-coding-tutorials"
       },
       {
         "label": "Preguntas frecuentes",
-        "href": "/how-to"
+        "href": "/es/how-to"
       },
       {
         "label": "Base de conocimientos",
-        "href": "/docs/knowledge-base-4geeks"
+        "href": "/es/docs/knowledge-base-4geeks"
       }
     ]
   },
@@ -83,7 +83,7 @@
       "title": "Empieza a programar con Javascript",
       "icon": "javascript",
       "text": "Empieza a programar en Javascript utilizando el lenguaje más popular del mundo. Construye tus primeros proyectos: Un generador de excusas y un buscador de dominios. Accede a 300+ ejercicios para practicar.",
-      "href": "es/start-coding-using-javascript"
+      "href": "/es/start-coding-using-javascript"
     },
     {
       "title": "Desarrollador Full Stack",
@@ -95,7 +95,7 @@
       "title": "Empieza a programar con Python",
       "icon": "python",
       "text": "Empieza a programar utilizando el lenguaje más popular del mundo, Python. Construye tus primeros proyectos y accede a más de 300 ejercicios para practicar.",
-      "href": "es/start-coding-using-python"
+      "href": "/es/start-coding-using-python"
     },
     {
       "title": "Data Science y Machine Learning",

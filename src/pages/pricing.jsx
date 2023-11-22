@@ -186,7 +186,7 @@ function PricingView() {
               {t('decided.button')}
             </Button>
           </Box>
-          <Img src="/static/images/women-laptop-people.png" />
+          <Img margin="auto" width="235px" src="/static/images/women-laptop-people.png" />
         </Flex>
         <Faq marginTop="40px" items={t('faq', {}, { returnObjects: true })} />
       </Container>

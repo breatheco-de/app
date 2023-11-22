@@ -27,7 +27,7 @@ import bc from '../../services/breathecode';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps,
-  onHandleSubmit, containerGap, extraFields, columnLayout,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -105,6 +105,7 @@ function SignupForm({
             syllabus: allValues.syllabus,
             cohort: allValues.cohort,
             conversion_info: userSession,
+            conversion_technologies: conversionTechnologies,
           },
         });
       }
@@ -378,6 +379,7 @@ SignupForm.propTypes = {
   showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.string,
   columnLayout: PropTypes.bool,
 };
 SignupForm.defaultProps = {
@@ -389,6 +391,7 @@ SignupForm.defaultProps = {
   containerGap: '24px',
   extraFields: [],
   columnLayout: false,
+  conversionTechnologies: null,
 };
 
 export default SignupForm;
