@@ -8,11 +8,8 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
-import Icon from './Icon';
-import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 
 function Faq({ items, ...rest }) {
@@ -33,9 +30,10 @@ function Faq({ items, ...rest }) {
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel pb={4}>
+            <AccordionPanel pb={4} dangerouslySetInnerHTML={{ __html: item.answer }} />
+            {/* <AccordionPanel pb={4}>
               {item.answer}
-            </AccordionPanel>
+            </AccordionPanel> */}
           </AccordionItem>
         ))}
       </Accordion>

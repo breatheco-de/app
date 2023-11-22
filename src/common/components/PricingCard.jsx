@@ -86,7 +86,6 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
     const langPath = lang === 'en' ? '' : `/${lang}`;
     const qs = parseQuerys({
       plan: item?.plan_slug,
-      plan_id: item?.plan_id,
     });
 
     if (isWindow) {
