@@ -1,0 +1,31 @@
+{
+  "heading": "Coding skills will set you free",
+  "sub-heading": "There’s a proven path to professional freedom, with instant feedback, highly mentored, live and together.",
+  "read-more" :"Learn the science behind 4Geeks.",
+  "read-more-link": "https://4geeks.com/mastering-technical-knowledge",
+  "learning-code": {
+    "title": "What is blocking from learning code?",
+    "description": "Everyone can learn to code, math skills are not required but depending situation you may need different options.",
+    "chat": "Chat with an advisor",
+    "survey": "Take a 30 seconds survey"
+  },
+  "decided": {
+    "heading": "Haven't you decided yet?",
+    "sub_heading": "You can try 4Geeks on a free plan",
+    "description": "We have a free plan for you, with it you can enjoy many of our benefits, including a free feedback session.",
+    "button": "join for free"
+  },
+  "faq": [{
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }]
+}

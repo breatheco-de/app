@@ -200,63 +200,75 @@
   "privacy-policy": "Privacy policy",
   "bootcamp": {
     "planType": "bootcamp",
-    "type": "Bootcamp",
+    "type": "Unlimited Experience",
     "period_label": "",
     "title": "Bootcamp Program",
-    "description": "From nothing to a career in tech in just a few months, no previous experience required.",
+    "description": "Fast track your career change with a Bootcamp",
+    "ask": "Ask for pricing",
     "button": "Request More Info",
     "button_link": "https://4geeksacademy.com/programs",
     "subtitle": "Bootcamp Program",
     "sub-description": "Join a cohort in a live classroom environment and  unlimited support until you find a job.",
+    "service_items": {
+      "title": "Everything on Live & with Feedback plus...",
+      "items": [{
+        "label": "Unlimited live workshops "
+      },
+      {
+        "label": "Unlimited one-on-one mentoring sessions"
+      },
+      {
+        "label": "Unlimited group mentoring sessions"
+      }]
+    },
     "featured_info": [
       {
         "service": {
-          "slug": "join-a-cohort",
-          "title": "Join a cohort with a live classroom"
+          "slug": "live-classes",
+          "title": "Live classes",
+          "icon": "onlinePeople"
         },
         "features": [{ "description": "Take part of a group of students learning together with a teacher on weekly live classes." }]
       },
       {
         "service": {
-          "slug": "unlimited-human-feedback",
-          "title": "Unlimited human feedback"
+          "slug": "carrer-support",
+          "title": "Career support",
+          "icon": "support"
         },
-        "features": [{ "description": "Every project you deliver will be reviewed by one of our mentors, and you will receive relevant feedback." }]
+        "features": [{ "description": "Get feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more." }]
       },
       {
         "service": {
-          "slug": "unlimited-live-learning",
-          "title": "Unlimited live learning"
+          "slug": "job-guarantee",
+          "title": "Job guarantee*",
+          "icon": "briefcase"
         },
-        "features": [{ "description": "Get unlimited access to live workshops hosted by expert developers." }]
+        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
       },
       {
         "service": {
           "slug": "certified-by-us",
-          "title": "Certified by U.S. FL Dep. of Education"
+          "title": "Certified by U.S. FL Dep. of Education",
+          "icon": "certificate"
         },
         "features": [{ "description": "Our bootcamp certificates have a badge certified by the US Florida Dep. of Education." }]
       },
       {
         "service": {
-          "slug": "job-guarantee",
-          "title": "Job guarantee"
-        },
-        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
-      },
-      {
-        "service": {
-          "slug": "career-support-for-life",
-          "title": "Career support for life"
-        },
-        "features": [{ "description": "Get instant feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more." }]
-      },
-      {
-        "service": {
           "slug": "access-to-premium-community",
-          "title": "Access to premium community"
+          "title": "Access to premium community",
+          "icon": "crown"
         },
         "features": [{ "description": "Our premium community gives you access to office space worldwide, events inside partner companies and employers, job fairs, networking events, an exclusive slack channel, and more perks." }]
+      },
+      {
+        "service": {
+          "slug": "office-space-world-wide",
+          "title": "Office space world-wide",
+          "icon": "office"
+        },
+        "features": [{ "description": "Get access to office space world-wide." }]
       }
     ]
   }

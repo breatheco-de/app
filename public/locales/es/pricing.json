@@ -1,0 +1,25 @@
+{
+  "heading": "La programación te hará libre",
+  "sub-heading": "Existe un camino comprobado hacia la libertad profesional, con retroalimentación instantánea, altamente asesorado, en vivo y en conjunto.",
+  "read-more" : "Conoce la ciencia detrás de 4Geeks.",
+  "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge",
+  "learning-code": {
+    "title": "¿Qué bloquea el aprendizaje de programacion?",
+    "description": "Todos pueden aprender a codificar, no se requieren habilidades matemáticas, pero dependiendo de la situación, es posible que necesites diferentes opciones.",
+    "chat": "Chatea con un asesor",
+    "survey": "Tomar una encuesta de 30 segundos"
+  },
+  "faq": [{
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }, {
+    "label": "This is a question?",
+    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+  }]
+}
