@@ -530,7 +530,7 @@ function Page({ event }) {
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
           {event?.id && (
             <>
-              <Box display={{ base: isAuth ? 'none' : 'block', md: 'none' }}>
+              <Box display={{ base: isAuth ? 'none' : 'block', md: 'none' }} marginBottom="20px">
                 <ShowOnSignUp
                   hideForm={finishedEvent}
                   existsConsumables={existsConsumables}
@@ -541,31 +541,13 @@ function Page({ event }) {
                     getMySubscriptions();
                     getCurrentConsumables();
                   }}
-                  headContent={readyToJoinEvent ? (
-                    <Box position="relative" zIndex={1} width="100%" height={177}>
-                      <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
-                    </Box>
-                  ) : (
-                    <Timer
-                      autoRemove
-                      startingAt={event?.starting_at}
-                      onFinish={handleOnReadyToStart}
-                      background="transparent"
-                      color="white"
-                      height="177px"
-                    />
-                  )}
-                  subContent={!readyToJoinEvent && (
-                    <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
-                      <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
-                    </Box>
-                  )}
                   title={formInfo?.title}
                   description={formInfo?.description}
                   childrenDescription={formInfo?.childrenDescription}
                   readOnly={!event?.slug}
                   position="relative"
                   gridGap={existsConsumables ? '10px' : '16px'}
+                  border="none"
                 >
                   {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                     <Button
@@ -640,7 +622,7 @@ function Page({ event }) {
                           variant="small"
                           startingAt={event?.starting_at}
                           onFinish={handleOnReadyToStart}
-                          color={hexColor.fontColor2}
+                          color="gray.dark"
                           height="40px"
                         />
                       </Box>
