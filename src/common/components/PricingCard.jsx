@@ -126,11 +126,13 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
               {!isOriginalPlan ? (
                 <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
                   <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                    {`$${item.price}`}
+                    {item.price_text}
                   </Box>
-                  <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
-                    {`$${Math.floor(item.price * 1.2)}`}
-                  </Box>
+                  {/* {item.discount_text && (
+                    <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
+                      {item.discount_text}
+                    </Box>
+                  )} */}
                 </Box>
               ) : (
                 <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
@@ -141,7 +143,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
           ) : (
             <>
               <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-                <Box lineHeight="48px" color={color} fontSize="var(--heading-l)" fontWeight={700} textAlign="center">
+                <Box lineHeight="48px" color={color} fontSize="var(--heading-m)" fontWeight={700} textAlign="center">
                   {`${item.ask}`}
                 </Box>
               </Box>
