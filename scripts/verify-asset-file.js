@@ -8,7 +8,7 @@ function verifyAssetsFile() {
       generateAssetFile();
       return;
     }
-    console.log('\nINFO: asset-list.json file already exists, if you want to see the latest assets, please run\n\nbun run generate_assets\n\n');
+    console.log('\nINFO: asset-list.json file already exists, if you want to see the latest assets, please run:\n\n-- bun run generate_assets --\n\n');
   });
 }
 

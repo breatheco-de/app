@@ -16,16 +16,16 @@
     "button": "join for free"
   },
   "faq": [{
-    "label": "This is a question?",
-    "answer": "<a target='__blank' style='color:#0097CD;' href='https://www.google.com'>Lorem ipsum dolor sit amet</a>, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+    "label": "What happens if I consume all my mentorships or workshop access?",
+    "answer": "If you have the fly solo plan or the live and with feedback plan, and you consume all your mentorships or workshop access, then you can always buy more for a discounted price for each."
   }, {
-    "label": "This is a question?",
-    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+    "label": "On which technologies can I ask for mentoring sessions?",
+    "answer": "You can always ask for one-on-one mentoring sessions on every course that you have access to. So whether you are doing a JavaScript course or a Python one, you can ask for mentoring sessions."
   }, {
-    "label": "This is a question?",
-    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+    "label": "Are the unlimited mentoring sessions over after I finish the bootcamp?",
+    "answer": "The unlimited access to technical and career mentoring sessions, or unlimited access to workshops, is for life as long as you take part in one of our bootcamps."
   }, {
-    "label": "This is a question?",
-    "answer": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu,"
+    "label": "How does the Job Guarantee work?",
+    "answer": "The Job Guarantee contract, is only for bootcamps, and it consists of returning your money back if you can't find a job after 6 months, some <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>."
   }]
 }

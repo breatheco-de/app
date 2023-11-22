@@ -71,8 +71,8 @@ function chooseProgram() {
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const TwelveHoursInMinutes = 720;
   const welcomeVideoLinks = {
-    es: 'https://www.youtube.com/embed/MjKrSHRIOeI?si=7ti1S-yjSMQe-8In',
-    en: 'https://www.loom.com/embed/9fbe5af774ff40fdafb0a3693abc85ba',
+    es: 'https://www.youtube.com/embed/TgkIpTZ75NM',
+    en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
   };
 
   const fetchAdmissions = () => bc.admissions().me();

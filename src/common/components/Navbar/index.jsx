@@ -534,7 +534,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 
 NavbarWithSubNavigation.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
-  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.bool])),
 };
 NavbarWithSubNavigation.defaultProps = {
   translations: undefined,

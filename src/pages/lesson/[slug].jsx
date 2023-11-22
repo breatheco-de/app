@@ -52,7 +52,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   try {
     let lesson;
     let markdown = '';
-    let ipynbHtml = '';
+    let ipynbHtml = {};
     lesson = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 

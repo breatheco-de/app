@@ -5,6 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import getT from 'next-translate/getT';
 import Text from '../../common/components/Text';
 import { toCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
@@ -31,6 +32,7 @@ export const getStaticPaths = async ({ locales }) => {
 };
 
 export const getStaticProps = async ({ params, locale, locales }) => {
+  const t = await getT(locale, 'technologies');
   const { slug } = params;
   const langList = {
     en: 'us',
@@ -65,7 +67,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     props: {
       seo: {
         title: technologyData?.title || '',
-        description: '',
+        description: t('seo.description', { technology: technologyData?.title }),
         image: technologyData?.icon_url || '',
         pathConnector: `/technology/${slug}`,
         url: ogUrl.en,
