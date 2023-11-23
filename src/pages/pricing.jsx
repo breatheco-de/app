@@ -11,6 +11,7 @@ import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
 import LoaderScreen from '../common/components/LoaderScreen';
 import { isWindow } from '../utils';
+import { reportDatalayer } from '../utils/requests';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -150,11 +151,31 @@ function PricingView() {
           <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
           <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
           <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => console.log('hi fella')}>
+            <Button
+              width={{ base: '100%', sm: 'fit-content' }}
+              variant="outline"
+              textTransform="uppercase"
+              color={hexColor.blueDefault}
+              borderColor={hexColor.blueDefault}
+              onClick={() => reportDatalayer({
+                dataLayer: {
+                  event: 'open_pricing_chat',
+                } })}
+            >
               {t('learning-code.chat')}
             </Button>
             <Text fontWeight="700" textTransform="uppercase">{t('common:word-connector.or')}</Text>
-            <Button width={{ base: '100%', sm: 'fit-content' }} variant="outline" textTransform="uppercase" color={hexColor.blueDefault} borderColor={hexColor.blueDefault} onClick={() => console.log('hi fella')}>
+            <Button
+              width={{ base: '100%', sm: 'fit-content' }}
+              variant="outline"
+              textTransform="uppercase"
+              color={hexColor.blueDefault}
+              borderColor={hexColor.blueDefault}
+              onClick={() => reportDatalayer({
+                dataLayer: {
+                  event: 'open_pricing_survey',
+                } })}
+            >
               {t('learning-code.survey')}
             </Button>
           </Flex>
