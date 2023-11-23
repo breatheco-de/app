@@ -646,7 +646,7 @@ function Page({ event }) {
         >
           {event?.id && (
             <>
-              <Box display={isAuth ? 'none' : 'block'}>
+              <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
                   hideForm={finishedEvent}
                   existsConsumables={existsConsumables}
