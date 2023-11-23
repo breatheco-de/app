@@ -109,7 +109,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
     const { title, description, translations } = lesson;
     const translationInEnglish = translations?.en || translations?.us;
-    const translationsExists = Object.keys(translations).length > 0;
 
     // if exists translation object but not includes the origin language include it
     const translationArray = [
@@ -155,7 +154,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           title,
           description: description || '',
           image: cleanedStructuredData.image,
-          pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
+          pathConnector: '/lesson',
           url: `/lesson/${slug}`,
           slug,
           type: 'article',

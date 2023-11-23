@@ -154,12 +154,6 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
     }
   }
 
-  if (category === 'project') {
-    return allResults.map((item) => {
-      item.difficulty = mapDifficulty(item.difficulty);
-      return item;
-    });
-  }
   const translationsObjectsCleaned = allResults.map((item) => {
     const recopilatedTranslationObject = {};
     const existentLangs = ['en', 'us', 'es'];
@@ -181,6 +175,13 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       translations: recopilatedTranslationObject,
     });
   });
+
+  if (category === 'project') {
+    return translationsObjectsCleaned.map((item) => {
+      item.difficulty = mapDifficulty(item.difficulty);
+      return item;
+    });
+  }
 
   return translationsObjectsCleaned;
 };
