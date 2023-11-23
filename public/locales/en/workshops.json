@@ -7,6 +7,7 @@
   "greetings": "Hello {{name}} 👋",
   "switch-user-connector": "You are not {{name}}?",
   "starts-in": "Event Starts In:",
+  "in-person": "In person event",
   "form": {
     "title": "Join this event",
     "description": "Sign in to join other coders live solving technical or career challenges.",
