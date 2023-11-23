@@ -172,20 +172,139 @@
   "get-premium": "Get Premium",
   "pricing": {
     "already-have-plan": "You already have it",
+    "monthly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-50",
+      "title": "Monthly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 50,
+      "price_text": "$50",
+      "discount_text": "$60",
+      "period": "MONTH",
+      "period_label": "Per month",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
+    "yearly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-580",
+      "title": "Yearly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 580,
+      "price_text": "$48.33",
+      "period": "YEAR",
+      "period_label": "Per month",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
     "basic-plan": {
-      "type": "Basic",
-      "hook-message": "Start learning now without financial commitments",
+      "type": "Fly Solo",
+      "hook-message": "Start learning or improving your skills for free",
       "title": "No credit card required",
       "description": "Start learning and discover our amazing content and benefits",
-      "button-title": "Start for free"
-
+      "button-title": "Start for free",
+      "service_items": {
+        "items": [{
+          "label": "1 Live workshop"
+        },
+        {
+          "label": "1 One-on-one mentoring session"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "full-access-to-content",
+          "title": "Full access to content",
+          "icon": "content"
+        },
+        "features": [{ "description": "Hundreds of interactive exercises, projects, and lessons are available thanks to <a style=\"text-decoration: underline;\" target=\"__blank\" href='https://learnpack.co' >LearnPack</a>, our interactive engine." }]
+      },{
+        "service": {
+          "slug": "access-to-courses",
+          "title": "Access to courses",
+          "icon": "courses"
+        },
+        "features": [{ "description": "We offer a diverse range of courses across various technologies, providing you with opportunities to enhance your existing skills or delve into new ones." }]
+      }]
     },
     "premium-plan": {
-      "type": "Premium",
-      "hook-message": "Improve your skills with extra challenges and benefits.",
+      "type": "Live & with feedback",
+      "hook-message": "Learn at your own pace with feedback and live events",
       "title": "Premium member",
       "description": "All the content you need to become a hireable developer",
-      "button-title": "Get Premium"
+      "button-title": "Get Premium",
+      "service_items": {
+        "title": "Everything on Fly Solo plus...",
+        "items": [{
+          "label": "10 Live workshops p/mo"
+        },
+        {
+          "label": "2 One-on-one Mentoring sessions p/mo"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "live-learning",
+          "title": "Live learning",
+          "icon": "video"
+        },
+        "features": [{ "description": "We have many workshops and Live Events hosted by experts every week." }]
+      },{
+        "service": {
+          "slug": "ai-feedback-support",
+          "title": "AI Feedback & support",
+          "icon": "message"
+        },
+        "features": [{ "description": "Our internally trained AI models will constantly review your code and give you feedback, advice as you code and more. Plus we have a technical support chat 24/7." }]
+      },{
+        "service": {
+          "slug": "access-to-community",
+          "title": "Access to community",
+          "icon": "community"
+        },
+        "features": [{ "description": "We have many workshops and Live Events hosted by experts every week." }]
+      },{
+        "service": {
+          "slug": "course-certificates",
+          "title": "Course certificates",
+          "icon": "certificate"
+        },
+        "features": [{ "description": "Earn verifiable certificates as you complete each of the courses." }]
+      }]
     }
   }
 }

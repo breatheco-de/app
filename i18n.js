@@ -24,7 +24,7 @@ module.exports = {
     '/survey/[surveyId]': ['survey'],
     '/mentorship': ['mentorship'],
     '/how-to': ['how-to'],
-    '/pricing': ['signup'],
+    '/pricing': ['pricing', 'signup'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],
     '/profile/[slug]': ['profile'],
