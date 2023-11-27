@@ -133,7 +133,7 @@ function Page({ event }) {
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
   // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
-  const { featuredColor, hexColor } = useStyle();
+  const { featuredColor, hexColor, featuredCard } = useStyle();
 
   useEffect(() => {
     if (event?.id) {
@@ -301,6 +301,24 @@ function Page({ event }) {
           <Text size="14px" fontWeight={700} lineHeight="18px">
             {t('no-consumables.description')}
           </Text>
+        ),
+      });
+    }
+    if (!event?.online_event && isAuth && (!alreadyApplied && !readyToJoinEvent)) {
+      return ({
+        title: '',
+        childrenDescription: (
+          <Box>
+            <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+              <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
+              <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                {event?.venue?.street_address}
+              </Text>
+            </Box>
+            <Text size="14px" fontWeight={700} lineHeight="18px">
+              {t('suggest-join-in-person-event')}
+            </Text>
+          </Box>
         ),
       });
     }
@@ -507,9 +525,17 @@ function Page({ event }) {
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
             <Box display="flex" flexDirection="column" gridGap="9px" id="event-info">
+              {!event?.online_event && (
+                <Box display="flex" gridGap="10px">
+                  <Icon icon="location" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                  <Text size="14px" fontWeight={700} width="fit-content">
+                    {event?.venue?.street_address}
+                  </Text>
+                </Box>
+              )}
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
+                  <Icon icon="calendar" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
                   <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
                     {capitalizeFirstLetter(formatedDate[locale])}
                   </Text>
@@ -517,7 +543,7 @@ function Page({ event }) {
               )}
               {duration?.hours > 0 && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.blueDefault} />
+                  <Icon icon="chronometer-full" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
                   <Text size="sm" lineHeight="20px">
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
