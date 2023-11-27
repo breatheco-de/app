@@ -218,13 +218,13 @@
       "type": "FREE"
     },{
       "plan_slug": "with-feedback",
-      "plan_id": "p-580",
+      "plan_id": "p-480",
       "title": "Yearly payment",
       "currency": {"code": "USD", "name": "US Dollar"},
       "trial_duration": 0,
       "trial_duration_unit": "MONTH",
-      "price": 580,
-      "price_text": "$48.33",
+      "price": 480,
+      "price_text": "$40",
       "period": "YEAR",
       "period_label": "Per month",
       "isFree": false,
