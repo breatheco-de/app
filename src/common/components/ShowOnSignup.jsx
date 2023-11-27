@@ -15,7 +15,8 @@ import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, conversionTechnologies, ...rest
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
+  conversionTechnologies, setNoConsumablesFound, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
@@ -46,6 +47,7 @@ function ShowOnSignUp({
       }, 1000);
 
       if (timeElapsed >= 10) {
+        setNoConsumablesFound(true);
         clearInterval(intervalId);
       }
       return () => clearInterval(intervalId);
@@ -230,6 +232,7 @@ ShowOnSignUp.propTypes = {
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
+  setNoConsumablesFound: PropTypes.func,
   isLive: PropTypes.bool,
   existsConsumables: PropTypes.bool,
   conversionTechnologies: PropTypes.string,
@@ -249,6 +252,7 @@ ShowOnSignUp.defaultProps = {
   childrenDescription: null,
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
+  setNoConsumablesFound: () => {},
   isLive: false,
   existsConsumables: false,
   conversionTechnologies: null,
