@@ -83,7 +83,7 @@ const getEvents = async (extraQuerys = {}) => {
  * @param {string} category Category of the asset for filter purposes
  * @returns {Promise} Array of objects with the assets
  */
-const getAsset = async (type = '', extraQuerys = {}, category = '') => {
+const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFetch = false) => {
   const limit = 100;
   let offset = 0;
   let allResults = [];
@@ -120,7 +120,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
   const { count } = response;
   allResults = allResults.concat(results);
 
-  while (results.length + offset < count) {
+  while (!onlyFirstFetch && (results.length + offset < count)) {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
