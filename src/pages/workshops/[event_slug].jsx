@@ -616,11 +616,20 @@ function Page({ event }) {
                         />
                       </Box>
                     )}
+                    {!event?.online_event && (
+                      <Box display="flex" gridGap="10px" justifyContent="center">
+                        <Icon icon="location" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                        <Text size="14px" fontWeight={700} width="fit-content">
+                          {event?.venue?.street_address}
+                        </Text>
+                      </Box>
+                    )}
                     {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                       <Button
                         fontSize="17px"
                         variant="default"
                         width="100%"
+                        display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                         isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
                         _disabled={{
                           background: buttonEnabled ? '' : 'gray.350',
