@@ -304,31 +304,47 @@ function Page({ event }) {
         ),
       });
     }
-    if (!event?.online_event && isAuth && (!alreadyApplied && !readyToJoinEvent)) {
-      return ({
-        title: '',
-        childrenDescription: (
-          <Box>
-            <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
-              <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
-              <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
-                {event?.venue?.street_address}
+    if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
+      if (!event?.online_event) {
+        return ({
+          title: '',
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+              <Text size="14px" fontWeight={700} lineHeight="18px">
+                {t('suggest-join-in-person-event')}
               </Text>
             </Box>
-            <Text size="14px" fontWeight={700} lineHeight="18px">
-              {t('suggest-join-in-person-event')}
-            </Text>
-          </Box>
-        ),
-      });
-    }
-    if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
+          ),
+        });
+      }
       return ({
         title: t('greetings', { name: user?.first_name }),
         description: t('suggest-join-event'),
       });
     }
     if (isAuth) {
+      if (!event?.online_event) {
+        return ({
+          title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
+          description: !readyToJoinEvent && t('form.joined-description-in-person'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      }
       return ({
         title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
         description: readyToJoinEvent ? t('form.ready-to-join-description-logged') : t('form.joined-description'),
@@ -721,6 +737,7 @@ function Page({ event }) {
                       mt="10px"
                       type="submit"
                       variant="default"
+                      display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? 'blue.default' : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
