@@ -13,7 +13,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-import { location, toCapitalize, unSlugify } from '../../../utils';
+import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
@@ -31,9 +31,9 @@ function Subscriptions({ storybookConfig }) {
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
 
-  const cohortProps = subscriptionProps?.selected_cohort_set?.cohorts?.find(
-    (cohort) => cohortsState.some((l) => l?.cohort?.slug === cohort?.slug),
-  );
+  // const cohortProps = subscriptionProps?.selected_cohort_set?.cohorts?.find(
+  //   (cohort) => cohortsState.some((l) => l?.cohort?.slug === cohort?.slug),
+  // );
 
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
@@ -266,7 +266,7 @@ function Subscriptions({ storybookConfig }) {
           <ModalInfo
             isOpen={cancelModalIsOpen}
             title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
-            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', cohortProps?.name) || t('subscription.cancel-modal.description', { cohort: cohortProps?.name })}
+            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', slugToTitle(subscriptionProps?.slug)) || t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
             closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
             handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
             headerStyles={{ textAlign: 'center' }}
