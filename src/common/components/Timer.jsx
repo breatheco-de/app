@@ -67,7 +67,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
     return (
       <Box alignItems="center" minWidth="160px" display="flex" borderRadius="4px" background="#FFF1D1" {...rest}>
         {loading ? (
-          <Spinner margin="auto" color="blue.default" />
+          <Spinner margin="auto" color={rest.color || 'blue.default'} />
         ) : (
           <Box display="flex" gridGap="1px" margin="0 auto" alignItems="center" fontSize="40px">
             {autoRemove && timer?.days <= 0 ? null : (

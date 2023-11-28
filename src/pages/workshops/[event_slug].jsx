@@ -613,16 +613,10 @@ function Page({ event }) {
                   </ModalFooter>
                 </ModalContent>
               </Modal>
-              <Box zIndex="10" background={hexColor.backgroundColor} padding="5px" bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
-                    {readyToJoinEvent ? (
-                      <Box marginBottom="10px">
-                        <Heading textAlign="center" size="sm">
-                          {t('common:live-now')}
-                        </Heading>
-                      </Box>
-                    ) : (
+                    {!readyToJoinEvent && (
                       <Box marginBottom="10px" display="flex" gap="5px" justifyContent="space-between" alignItems="center">
                         <Heading size="sm">
                           {t('starts-in')}
@@ -632,43 +626,56 @@ function Page({ event }) {
                           variant="small"
                           startingAt={event?.starting_at}
                           onFinish={handleOnReadyToStart}
-                          color="gray.dark"
+                          color="white"
+                          background="blue.900"
                           height="40px"
                         />
                       </Box>
                     )}
                     {!event?.online_event && (
-                      <Box display="flex" gridGap="10px" justifyContent="center">
-                        <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
+                      <Box display="flex" gridGap="10px" justifyContent="center" marginBottom="10px">
+                        <Icon icon="location" width="20px" height="20px" color="white" />
                         <Text size="14px" fontWeight={700} width="fit-content">
                           {event?.venue?.street_address}
                         </Text>
                       </Box>
                     )}
                     {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
-                      <Button
-                        fontSize="17px"
-                        variant="default"
-                        width="100%"
-                        display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                        isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
-                        _disabled={{
-                          background: buttonEnabled ? '' : 'gray.350',
-                          cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                        }}
-                        _hover={{
-                          background: buttonEnabled ? '' : 'gray.350',
-                          cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                        }}
-                        _active={{
-                          background: buttonEnabled ? '' : 'gray.350',
-                          cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                        }}
-                        onClick={handleJoin}
-                      >
-                        {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                        {finishedEvent && t('event-finished')}
-                      </Button>
+                      <Box display="flex" gap="10px">
+                        <Button
+                          fontSize="17px"
+                          color="blue.default"
+                          background="white"
+                          width="100%"
+                          display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
+                          isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
+                          _disabled={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          _hover={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          _active={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          onClick={() => {
+                            if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                            else handleJoin();
+                          }}
+                        >
+                          {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                          {finishedEvent && t('event-finished')}
+                        </Button>
+                        {readyToJoinEvent && (
+                          <Box display="flex" gap="10px" alignItems="center" height="40px" fontWeight="700" color="gray.dark" textTransform="uppercase" background="red.light" borderRadius="4px" padding="10px">
+                            {t('common:live')}
+                            <Icon className="pulse-red" icon="dot" color={hexColor.danger} width="8px" height="8px" borderRadius="50px" />
+                          </Box>
+                        )}
+                      </Box>
                     ) : (
                       <Box display="flex" flexDirection="column" alignItems="center">
                         <Text marginBottom="10px" size="14px" fontWeight={700} lineHeight="18px">
