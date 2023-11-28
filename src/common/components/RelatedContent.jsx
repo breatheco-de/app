@@ -32,8 +32,11 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
       }, '', true);
       const dataFilteredByLang = data.filter((l) => {
         const isOriginContent = l.slug === slug;
-        if (!isOriginContent && ((lang === 'en' && l.lang === 'us') || l.lang === lang)) return true;
-        if (!isOriginContent && lang === l.lang) return true;
+        const isCurrentLang = l.lang === lang;
+        const isEnglishLang = lang === 'en' && l.lang === 'us';
+
+        if (!isOriginContent && (isEnglishLang || isCurrentLang)) return true;
+        if (!isOriginContent && isCurrentLang) return true;
         return false;
       });
       setContentList(dataFilteredByLang);
