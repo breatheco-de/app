@@ -115,7 +115,7 @@ function PaymentInfo() {
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
 
-            if (isPurchasedPlanFound && timeElapsed >= 10) {
+            if (isPurchasedPlanFound) {
               clearInterval(interval);
               if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
                 router.push(redirect || redirectedFrom);

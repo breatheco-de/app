@@ -12,7 +12,7 @@ import useStyle from '../hooks/useStyle';
 // import { parseQuerys } from '../../utils/url';
 // import modifyEnv from '../../../modifyEnv';
 
-function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
+function EventCard({ id, language, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2, featuredColor } = useStyle();
@@ -33,6 +33,7 @@ function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, s
     start: startingAtDate,
     end: endingAtDate,
   });
+  const languageConnector = (language === 'us' || language === 'en' || language === null) ? '' : `/${language}`;
 
   const formatTimeString = (start) => {
     const isValidDates = isValidDate(start);
@@ -169,7 +170,7 @@ function EventCard({ id, slug, title, ignoreDynamicHandler, description, host, s
       {(ignoreDynamicHandler || startedButRemain) ? (
         <Link
           margin="auto 0 0 0"
-          href={`/${lang}/workshops/${slug}`}
+          href={`${languageConnector}/workshops/${slug}`}
           color="blue.default"
           target="_blank"
           rel="noopener noreferrer"
@@ -201,6 +202,7 @@ EventCard.propTypes = {
   id: PropTypes.number.isRequired,
   slug: PropTypes.string.isRequired,
   ignoreDynamicHandler: PropTypes.bool,
+  language: PropTypes.string,
 };
 
 EventCard.defaultProps = {
@@ -211,6 +213,7 @@ EventCard.defaultProps = {
   host: '',
   stTranslation: null,
   ignoreDynamicHandler: false,
+  language: '',
 };
 
 export default EventCard;

@@ -10,10 +10,9 @@ import Head from 'next/head';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-import { location, toCapitalize, unSlugify } from '../../../utils';
+import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
@@ -25,15 +24,10 @@ function Subscriptions({ storybookConfig }) {
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
-  const [cohortsState, setCohortsState] = useState([]);
   const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
-
-  const cohortProps = subscriptionProps?.selected_cohort_set?.cohorts?.find(
-    (cohort) => cohortsState.some((l) => l?.cohort?.slug === cohort?.slug),
-  );
 
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
@@ -45,6 +39,10 @@ function Subscriptions({ storybookConfig }) {
     setUpgradeModalIsOpen(true);
   };
 
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
+
   const {
     statusStyles, statusLabel, getLocaleDate, payUnitString,
   } = profileHandlers({
@@ -54,31 +52,7 @@ function Subscriptions({ storybookConfig }) {
 
   const { blueDefault } = hexColor;
 
-  useEffect(() => {
-    bc.admissions().me()
-      .then(({ data }) => {
-        setCohortsState(data?.cohorts);
-      });
-    fetchSubscriptions();
-  }, []);
-
-  const cohorts = storybookConfig?.cohorts || cohortsState;
   const subscriptionData = storybookConfig?.subscriptionData || subscriptionDataState;
-
-  const cohortsExist = cohorts?.length > 0;
-  const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
-    && subscriptionData.subscriptions.some((subscription) => {
-      const exists = cohorts.some((l) => (subscription?.selected_cohort_set?.cohorts?.length > 0 ? subscription?.selected_cohort_set?.cohorts?.some(
-        (c) => l?.cohort?.slug === c?.slug,
-      ) : []));
-      return exists;
-    })) || (subscriptionData?.plan_financings?.length > 0
-      && subscriptionData.plan_financings.some((subscription) => {
-        const exists = cohorts.some((l) => (subscription?.selected_cohort_set?.cohorts?.length > 0 ? subscription?.selected_cohort_set?.cohorts?.some(
-          (c) => l?.cohort?.slug === c?.slug,
-        ) : []));
-        return exists;
-      }));
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
@@ -105,7 +79,7 @@ function Subscriptions({ storybookConfig }) {
         {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
       </Text>
 
-      {(subscriptionsExist && cohortsExist) ? (
+      {subscriptionFiltered?.length > 0 ? (
         <Grid
           gridTemplateColumns={{
             base: 'repeat(auto-fill, minmax(15rem, 1fr))',
@@ -266,7 +240,7 @@ function Subscriptions({ storybookConfig }) {
           <ModalInfo
             isOpen={cancelModalIsOpen}
             title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
-            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', cohortProps?.name) || t('subscription.cancel-modal.description', { cohort: cohortProps?.name })}
+            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', slugToTitle(subscriptionProps?.slug)) || t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
             closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
             handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
             headerStyles={{ textAlign: 'center' }}

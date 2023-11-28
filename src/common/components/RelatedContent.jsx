@@ -2,25 +2,21 @@ import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import { es, enUS } from 'date-fns/locale';
+import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import { getAsset } from '../../utils/requests';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
-import TagCapsule from './TagCapsule';
 import Text from './Text';
 import NextChakraLink from './NextChakraLink';
-import { toCapitalize } from '../../utils';
+import { isValidDate } from '../../utils';
 
 function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficulty, projectPath, ...rest }) {
   const { t, lang } = useTranslation('common');
   const [contentList, setContentList] = useState([]);
-  const { featuredColor, fontColor2 } = useStyle();
-
-  const getButtonTitle = (asset) => {
-    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') {
-      return toCapitalize(t('asset-button.article'));
-    }
-    return toCapitalize(t(`asset-button.${asset.asset_type.toLowerCase()}`));
-  };
+  const { fontColor2 } = useStyle();
+  const router = useRouter();
   const getAssetPath = (asset) => {
     if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
@@ -35,11 +31,16 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
         ...extraQuerys,
         technologies: technologies.map((tech) => tech?.slug || tech),
         limit: 6,
-      });
+      }, '', true);
+
       const dataFilteredByLang = data.filter((l) => {
         const isOriginContent = l.slug === slug;
-        if (!isOriginContent && ((lang === 'en' && l.lang === 'us') || l.lang === lang)) return true;
-        if (!isOriginContent && lang === l.lang) return true;
+        const isCurrentLang = l.lang === lang;
+        const isEnglishLang = lang === 'en' && l.lang === 'us';
+
+        if (isOriginContent) return false;
+        if ((isEnglishLang || isCurrentLang)) return true;
+        if (isCurrentLang) return true;
         return false;
       });
       setContentList(dataFilteredByLang);
@@ -47,20 +48,25 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
   };
   useEffect(() => {
     getRelatedContent();
-  }, []);
+  }, [router.asPath]);
 
   return type && contentList.length > 0 && (
     <Flex flexDirection="column" gridGap="20px" {...rest}>
-      <Heading as="h2">
-        {t('related-content')}
+      <Heading as="h2" size="24px" fontWeight={700}>
+        {t('read-next')}
       </Heading>
-      <Flex as="section" flexWrap="wrap" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" width="100%">
+      <Flex as="ul" flexDirection="column" gridGap="20px" width="100%">
         {contentList.map((item) => {
           const isLesson = getAssetPath(item) === 'lesson';
           const isExercise = getAssetPath(item) === 'interactive-exercise';
           const isProject = getAssetPath(item) === 'interactive-coding-tutorial';
           const isHowTo = getAssetPath(item) === 'how-to';
           const prefixLang = item?.lang === 'us' ? '' : `/${item?.lang}`;
+          const date = new Date(item?.published_at);
+          const dateCreated = isValidDate(item?.published_at) ? {
+            es: format(date, "d 'de' MMM yyyy", { locale: es }),
+            en: format(date, 'MMM d yyyy', { locale: enUS }),
+          } : {};
 
           const getLink = () => {
             if (isLesson) {
@@ -79,56 +85,25 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
           };
           return (
             <Flex
-              gridGap="15px"
-              flex={contentList.length !== 1 && '1 0 calc(33.33% - 10px)'}
+              as="li"
+              gridGap="4px"
               flexDirection="column"
-              role="group"
-              width={contentList.length === 1 && '50%'}
               borderRadius="10px"
-              background={featuredColor}
-              padding="22px"
             >
-              {item.technologies.length >= 1 && (
-                <TagCapsule
-                  tags={item.technologies.slice(0, 3)}
-                  variant="rounded"
-                  borderRadius="10px"
-                  marginY="8px"
-                  style={{
-                    padding: '4px 10px',
-                    margin: '0',
-                  }}
-                  gap="10px"
-                  paddingX="0"
-                  key={`${item.slug}-${item.difficulty}`}
-                />
-              )}
-              <Heading as="h3">
+              <NextChakraLink href={getLink()} fontSize="22px" fontWeight={700} opacity={0.7} _hover={{ textDecoration: 'underline' }}>
                 {item.title}
-              </Heading>
-              {item?.description && (
+              </NextChakraLink>
+              {item?.category?.title && (
                 <Text
                   color={fontColor2}
                   textAlign="left"
                   width="100%"
                   size="l"
+                  opacity={0.7}
                 >
-                  {item.description}
+                  {`${item?.category?.title} - ${dateCreated[lang]}`}
                 </Text>
               )}
-              <NextChakraLink
-                variant="buttonDefault"
-                mt="13px"
-                width="fit-content"
-                href={getLink()}
-                display="inline-block"
-                zIndex={1}
-                padding="6px 15px"
-                fontSize="15px"
-                letterSpacing="0.05em"
-              >
-                {getButtonTitle(item)}
-              </NextChakraLink>
             </Flex>
           );
         })}
