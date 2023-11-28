@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { es, enUS } from 'date-fns/locale';
 import { format } from 'date-fns';
+import { useRouter } from 'next/router';
 import { getAsset } from '../../utils/requests';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
@@ -15,6 +16,7 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
   const { t, lang } = useTranslation('common');
   const [contentList, setContentList] = useState([]);
   const { fontColor2 } = useStyle();
+  const router = useRouter();
   const getAssetPath = (asset) => {
     if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
@@ -46,7 +48,7 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
   };
   useEffect(() => {
     getRelatedContent();
-  }, []);
+  }, [router.asPath]);
 
   return type && contentList.length > 0 && (
     <Flex flexDirection="column" gridGap="20px" {...rest}>
