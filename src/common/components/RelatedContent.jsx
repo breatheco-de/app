@@ -30,13 +30,15 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
         technologies: technologies.map((tech) => tech?.slug || tech),
         limit: 6,
       }, '', true);
+
       const dataFilteredByLang = data.filter((l) => {
         const isOriginContent = l.slug === slug;
         const isCurrentLang = l.lang === lang;
         const isEnglishLang = lang === 'en' && l.lang === 'us';
 
-        if (!isOriginContent && (isEnglishLang || isCurrentLang)) return true;
-        if (!isOriginContent && isCurrentLang) return true;
+        if (isOriginContent) return false;
+        if ((isEnglishLang || isCurrentLang)) return true;
+        if (isCurrentLang) return true;
         return false;
       });
       setContentList(dataFilteredByLang);
