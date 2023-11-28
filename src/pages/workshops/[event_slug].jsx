@@ -133,7 +133,7 @@ function Page({ event }) {
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
   // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
-  const { featuredColor, hexColor, featuredCard } = useStyle();
+  const { featuredColor, hexColor } = useStyle();
 
   useEffect(() => {
     if (event?.id) {
@@ -311,7 +311,7 @@ function Page({ event }) {
           childrenDescription: (
             <Box>
               <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
-                <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
+                <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
                 <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
                   {event?.venue?.street_address}
                 </Text>
@@ -336,7 +336,7 @@ function Page({ event }) {
           childrenDescription: (
             <Box>
               <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
-                <Icon icon="location" width="20px" height="20px" color={featuredCard.blueDark} />
+                <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
                 <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
                   {event?.venue?.street_address}
                 </Text>
@@ -453,14 +453,14 @@ function Page({ event }) {
         />
       </Head>
       <Box
-        background={event?.online_event ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('green.light', 'gray.dark')}
+        background={useColorModeValue('featuredLight', 'featuredDark')}
         marginBottom="37px"
         position="relative"
         overflowX="hidden"
       >
         <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
           <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill={event?.online_event ? hexColor.blueDefault : hexColor.greenLight} />
+            <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill={hexColor.blueDefault} />
           </svg>
         </Box>
 
@@ -469,7 +469,7 @@ function Page({ event }) {
             <ellipse cx="285.5" cy="99" rx="9.5" ry="9" fill="#FFA600" />
             <ellipse cx="324.5" cy="99" rx="9.5" ry="9" fill="#EB5757" />
             <ellipse cx="246.5" cy="99" rx="9.5" ry="9" fill="#0097CF" />
-            <path d="M461.466 161.21L416.074 212.971L395 237L416.074 237L436.534 237L503 161.21L436.717 89L416.074 89L395.183 89L416.074 111.759L461.466 161.21Z" fill={event?.online_event ? hexColor.blueDefault : hexColor.greenLight} />
+            <path d="M461.466 161.21L416.074 212.971L395 237L416.074 237L436.534 237L503 161.21L436.717 89L416.074 89L395.183 89L416.074 111.759L461.466 161.21Z" fill={hexColor.blueDefault} />
             <path d="M71.5644 129.587L70.6552 130.607L71.5873 131.607L151.023 216.809L185.231 253.5L152.121 253.5L116.648 253.5L2.02928 130.561L116.988 1.50002L152.121 1.50003L185.655 1.50003L151 40.4036L152.121 41.4013L151 40.4037L71.5644 129.587Z" stroke="#25BF6C" strokeWidth="3" />
           </svg>
         </Box>
@@ -486,7 +486,7 @@ function Page({ event }) {
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
               {event?.event_type?.name && (
-                <Text size="12px" color={event?.online_event ? 'black' : 'white'} fontWeight={700} background={event?.online_event ? 'yellow.light' : 'blue.900'} borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+                <Text size="12px" color="black" fontWeight={700} background="yellow.light" borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
                   {event.event_type.name}
                 </Text>
               )}
@@ -543,7 +543,7 @@ function Page({ event }) {
             <Box display="flex" flexDirection="column" gridGap="9px" id="event-info">
               {!event?.online_event && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="location" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                  <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
                   <Text size="14px" fontWeight={700} width="fit-content">
                     {event?.venue?.street_address}
                   </Text>
@@ -551,7 +551,7 @@ function Page({ event }) {
               )}
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="calendar" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                  <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
                   <Text withTooltip size="14px" label={capitalizeFirstLetter(countryOfDate)} fontWeight={700} width="fit-content">
                     {capitalizeFirstLetter(formatedDate[locale])}
                   </Text>
@@ -559,7 +559,7 @@ function Page({ event }) {
               )}
               {duration?.hours > 0 && (
                 <Box display="flex" gridGap="10px">
-                  <Icon icon="chronometer-full" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                  <Icon icon="chronometer-full" width="20px" height="20px" color={hexColor.blueDefault} />
                   <Text size="sm" lineHeight="20px">
                     {t('duration-hours', { hours: duration.hours })}
                   </Text>
@@ -618,7 +618,7 @@ function Page({ event }) {
                     )}
                     {!event?.online_event && (
                       <Box display="flex" gridGap="10px" justifyContent="center">
-                        <Icon icon="location" width="20px" height="20px" color={event?.online_event ? hexColor.blueDefault : featuredCard.blueDark} />
+                        <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
                         <Text size="14px" fontWeight={700} width="fit-content">
                           {event?.venue?.street_address}
                         </Text>
