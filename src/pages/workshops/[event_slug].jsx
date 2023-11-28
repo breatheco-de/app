@@ -1,5 +1,11 @@
 import {
   Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -122,6 +128,7 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
+  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -430,6 +437,7 @@ function Page({ event }) {
               });
             }
           });
+        setIsModalConfirmOpen(false);
       }
     }
   };
@@ -592,6 +600,19 @@ function Page({ event }) {
           )}
           {event?.id && (
             <>
+              <Modal isOpen={isModalConfirmOpen} onClose={() => setIsModalConfirmOpen(false)}>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader marginTop="15px">{t('in-person-confirm', { address: event?.venue?.street_address })}</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalFooter>
+                    <Button background={hexColor.blueDefault} color="white" mr={3} onClick={handleJoin}>
+                      {t('confirm-attendance')}
+                    </Button>
+                    <Button variant="ghost" onClick={() => setIsModalConfirmOpen(false)}>{t('deny-attendance')}</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
               <Box zIndex="10" background={hexColor.backgroundColor} padding="5px" bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
@@ -763,7 +784,10 @@ function Page({ event }) {
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
-                      onClick={handleJoin}
+                      onClick={() => {
+                        if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                        else handleJoin();
+                      }}
                     >
                       {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
                       {finishedEvent && t('event-finished')}

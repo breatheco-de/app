@@ -9,6 +9,9 @@
   "switch-user-connector": "¿No eres {{name}}?",
   "starts-in": "El evento empieza en:",
   "in-person": "Evento en persona",
+  "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
+  "confirm-attendance": "Si, si asistiré",
+  "deny-attendance" : "No, no asistiré",
   "form": {
     "title": "Únete a este evento",
     "description": "Inicia sesión para unirte a otros programadores en vivo resolviendo desafíos técnicos o profesionales.",

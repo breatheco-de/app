@@ -9,6 +9,9 @@
   "switch-user-connector": "You are not {{name}}?",
   "starts-in": "Event Starts In:",
   "in-person": "In person event",
+  "in-person-confirm": "This is an in-person event that will take place in {{address}}. Do you still want to confirm your attendance?",
+  "confirm-attendance": "Yes, I will be there",
+  "deny-attendance" : "No, I will not attend",
   "form": {
     "title": "Join this event",
     "description": "Sign in to join other coders live solving technical or career challenges.",
