@@ -50,7 +50,7 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort 
           {t('join-cohort-page.join-next-cohort')}
         </Button>
       </Box>
-      <Img display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
+      <Img maxWidth="420px" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
     </Flex>
   );
 }

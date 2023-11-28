@@ -139,6 +139,7 @@ const privateRoutes = [
   '!src/pages/example{.js,.jsx}',
   '!src/pages/mentorship{.js,.jsx}',
   '!src/pages/slice-simulator.jsx',
+  '!src/pages/**/[id]{.js,.jsx}',
   '!src/pages/thumbnail.jsx',
 ];
 

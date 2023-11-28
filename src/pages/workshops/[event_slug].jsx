@@ -95,7 +95,7 @@ export const getStaticProps = async ({ params, locale }) => {
         description: data?.excerpt || '',
         image: data?.banner || '',
         pathConnector: '/workshops',
-        url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
+        url: `/workshops/${slug}`,
         slug,
         type: 'event',
         card: 'large',
@@ -129,6 +129,7 @@ function Page({ event }) {
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
+  const [noConsumablesFound, setNoConsumablesFound] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
@@ -296,7 +297,7 @@ function Page({ event }) {
         description: t('form.finished-description'),
       });
     }
-    if (!finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
+    if (noConsumablesFound && !finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
       return ({
         title: '',
         childrenDescription: (
@@ -740,8 +741,9 @@ function Page({ event }) {
                 <ShowOnSignUp
                   hideForm={finishedEvent}
                   existsConsumables={existsConsumables}
-                  hideSwitchUser={!isFreeForConsumables && !existsConsumables}
+                  hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
                   isLive={readyToJoinEvent && !finishedEvent}
+                  setNoConsumablesFound={setNoConsumablesFound}
                   subscribeValues={{ event_slug: event.slug }}
                   refetchAfterSuccess={() => {
                     getMySubscriptions();
@@ -771,7 +773,7 @@ function Page({ event }) {
                   childrenDescription={formInfo?.childrenDescription}
                   readOnly={!event?.slug}
                   position="relative"
-                  gridGap={existsConsumables ? '10px' : '16px'}
+                  gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
                 >
                   {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                     <Button
@@ -804,30 +806,36 @@ function Page({ event }) {
                       {finishedEvent && t('event-finished')}
                     </Button>
                   ) : (
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                      <Avatar
-                        width="85px"
-                        height="85px"
-                        margin="0 0 16px 0"
-                        style={{ userSelect: 'none' }}
-                        src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
-                        alt="No consumables avatar"
-                      />
-                      <Button
-                        display="flex"
-                        variant="default"
-                        fontSize="14px"
-                        fontWeight={700}
-                        onClick={handleGetMoreEventConsumables}
-                        isLoading={isFetchingDataForModal}
-                        alignItems="center"
-                        gridGap="10px"
-                        width="100%"
-                      >
-                        {t('no-consumables.get-more-workshops')}
-                        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                      </Button>
-                    </Box>
+                    <>
+                      {noConsumablesFound ? (
+                        <Box display="flex" flexDirection="column" alignItems="center">
+                          <Avatar
+                            width="85px"
+                            height="85px"
+                            margin="0 0 16px 0"
+                            style={{ userSelect: 'none' }}
+                            src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+                            alt="No consumables avatar"
+                          />
+                          <Button
+                            display="flex"
+                            variant="default"
+                            fontSize="14px"
+                            fontWeight={700}
+                            onClick={handleGetMoreEventConsumables}
+                            isLoading={isFetchingDataForModal}
+                            alignItems="center"
+                            gridGap="10px"
+                            width="100%"
+                          >
+                            {t('no-consumables.get-more-workshops')}
+                            <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Skeleton marginTop="10px" width="100%" height="40px" borderRadius="4px" />
+                      )}
+                    </>
                   )}
                 </ShowOnSignUp>
               </Box>

@@ -58,15 +58,18 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
     if (!lesson) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-      lesson = await response.json();
+      const assetList = await import('../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      lesson = assetList.lessons.find((l) => l?.slug === slug);
+
       const engPrefix = {
         us: 'en',
         en: 'en',
       };
 
       const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
-      if (response?.status >= 400 || response?.status_code >= 400 || !['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
+      if (!['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
         return {
           notFound: true,
         };
@@ -106,7 +109,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
     const { title, description, translations } = lesson;
     const translationInEnglish = translations?.en || translations?.us;
-    const translationsExists = Object.keys(translations).length > 0;
 
     // if exists translation object but not includes the origin language include it
     const translationArray = [
@@ -152,7 +154,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
           title,
           description: description || '',
           image: cleanedStructuredData.image,
-          pathConnector: translationsExists ? '/lesson' : `/lesson/${slug}`,
+          pathConnector: '/lesson',
           url: `/lesson/${slug}`,
           slug,
           type: 'article',

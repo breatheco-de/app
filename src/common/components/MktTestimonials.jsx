@@ -1,10 +1,11 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Avatar,
+  Box,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Text from './Text';
@@ -28,7 +29,7 @@ function TestimonialBox({ picture, name, rating, description }) {
       padding="15px"
       textAlign="center"
     >
-      <Avatar width="65px" height="65px" name={name} src={picture} />
+      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={{ borderRadius: '50%', margin: '0 auto' }} />
       <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
         {name}
       </Text>
