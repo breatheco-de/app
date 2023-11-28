@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { Box, Flex, Grid } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
@@ -23,7 +23,7 @@ function Subscriptions({ storybookConfig }) {
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [subscriptionProps, setSubscriptionProps] = useState({});
-  const { state, cancelSubscription } = useSubscriptionsHandler();
+  const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
@@ -38,6 +38,10 @@ function Subscriptions({ storybookConfig }) {
     setOfferProps(data);
     setUpgradeModalIsOpen(true);
   };
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   const {
     statusStyles, statusLabel, getLocaleDate, payUnitString,
