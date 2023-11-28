@@ -543,7 +543,7 @@ function Page({ event }) {
           )}
           {event?.id && (
             <>
-              <Box zIndex="10" background={hexColor.backgroundColor} padding="5px" bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding="5px" bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
                     {readyToJoinEvent ? (
@@ -562,7 +562,8 @@ function Page({ event }) {
                           variant="small"
                           startingAt={event?.starting_at}
                           onFinish={handleOnReadyToStart}
-                          color="gray.dark"
+                          color="white"
+                          background="blue.900"
                           height="40px"
                         />
                       </Box>
@@ -570,7 +571,8 @@ function Page({ event }) {
                     {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                       <Button
                         fontSize="17px"
-                        variant="default"
+                        color="blue.default"
+                        background="white"
                         width="100%"
                         isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
                         _disabled={{
