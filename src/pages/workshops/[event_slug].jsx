@@ -94,7 +94,7 @@ export const getStaticProps = async ({ params, locale }) => {
         description: data?.excerpt || '',
         image: data?.banner || '',
         pathConnector: '/workshops',
-        url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
+        url: `/workshops/${slug}`,
         slug,
         type: 'event',
         card: 'large',

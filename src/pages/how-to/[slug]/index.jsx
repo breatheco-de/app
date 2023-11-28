@@ -54,8 +54,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     if (!data) {
       console.log(`${slug} not found on cache`);
-      const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}`);
-      data = await resp.json();
+      const assetList = await import('../../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      data = assetList.howTos.find((l) => l?.slug === slug);
+
       const engPrefix = {
         us: 'en',
         en: 'en',
@@ -63,7 +66,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
       const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
 
-      if (resp.status >= 400 || !isCurrenLang) {
+      if (!isCurrenLang) {
         return {
           notFound: true,
         };
