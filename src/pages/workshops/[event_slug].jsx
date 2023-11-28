@@ -140,7 +140,7 @@ function Page({ event }) {
     if (event?.id) {
       const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
       if (eventLang !== locale) {
-        window.location.href = `/${eventLang}/workshops/${event?.slug}`;
+        window.location.href = '/404';
       }
       bc.events().getUsers(event?.id)
         .then((resp) => {
