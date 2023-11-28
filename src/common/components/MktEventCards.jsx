@@ -50,6 +50,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
           {events.map((event) => (
             <EventCard
               key={event?.id}
+              language={event.lang}
               id={event?.id}
               slug={event?.slug}
               title={event?.title}
