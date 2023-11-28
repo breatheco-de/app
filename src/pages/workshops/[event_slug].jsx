@@ -1,11 +1,5 @@
 import {
   Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalCloseButton,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -24,6 +18,7 @@ import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
@@ -128,7 +123,7 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
-  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
+  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(true);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -600,19 +595,28 @@ function Page({ event }) {
           )}
           {event?.id && (
             <>
-              <Modal isOpen={isModalConfirmOpen} onClose={() => setIsModalConfirmOpen(false)}>
-                <ModalOverlay />
-                <ModalContent>
-                  <ModalHeader marginTop="15px">{t('in-person-confirm', { address: event?.venue?.street_address })}</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalFooter>
-                    <Button background={hexColor.blueDefault} color="white" mr={3} onClick={handleJoin}>
-                      {t('confirm-attendance')}
-                    </Button>
-                    <Button variant="ghost" onClick={() => setIsModalConfirmOpen(false)}>{t('deny-attendance')}</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </Modal>
+              <ModalInfo
+                isOpen={isModalConfirmOpen}
+                onClose={() => setIsModalConfirmOpen(false)}
+                headerStyles={{ textAlign: 'center' }}
+                title={t('in-person')}
+                childrenDescription={(
+                  <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+                    <Text
+                      size="14px"
+                      textAlign="center"
+                    >
+                      {t('in-person-confirm', { address: event?.venue?.street_address })}
+                    </Text>
+                  </Box>
+                )}
+                closeText={t('deny-attendance')}
+                closeButtonVariant="outline"
+                closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
+                buttonHandlerStyles={{ variant: 'default' }}
+                actionHandler={handleJoin}
+                handlerText={t('confirm-attendance')}
+              />
               <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
