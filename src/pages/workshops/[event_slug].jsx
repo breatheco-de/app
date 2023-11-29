@@ -123,7 +123,7 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
-  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(true);
+  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
