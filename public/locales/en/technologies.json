@@ -2,7 +2,7 @@
   "seo": {
     "title": "{{technology}} | 4Geeks",
     "keywords": ["Lesson"],
-    "description": "4Geeks's mission is to accelerate the way software developers learn and evolve.",
+    "description": "Unlock the power of {{technology}} programming with deep lessons, exercises, and real projects. Master {{technology}} at 4Geeks.com.",
     "image": "{{domain}}/static/images/image1.png"
   },
   "backToLessons": "Back to Lessons",

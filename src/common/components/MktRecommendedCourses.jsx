@@ -36,21 +36,31 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   const headers = {
     'Accept-Language': lang,
   };
+  const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
 
   const getCourses = async () => {
     try {
       if (typeof technologies === 'string' && technologies.length > 0) {
         const qsConnector = parseQuerys({
-          technologies,
-          featured: true,
           academy: WHITE_LABEL_ACADEMY,
+          featured: true,
         });
         const res = await fetch(`${endpoint || defaultHostAndEndpoint}${qsConnector}`, { headers });
         const data = await res.json();
-        const filteredData = data.filter((course) => course.course_translation).slice(0, coursesLimit);
-        if (filteredData.length > 0) {
+
+        if (res?.status < 400 && data.length > 0) {
+          const coursesSorted = [];
+          for (let i = 0; i < technologiesArray.length; i += 1) {
+            const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]));
+            const alreadyExists = coursesSorted.some((c) => c?.slug === course?.slug);
+
+            if (course && !alreadyExists) {
+              coursesSorted.push(course);
+            }
+          }
+          const list = coursesSorted?.length > 0 ? coursesSorted : data;
+          const filteredData = list.filter((course) => course.course_translation).slice(0, coursesLimit);
           setCourses(filteredData);
-          return;
         }
       } else {
         const res = await fetch(`${endpoint || defaultHostAndEndpoint}${deafultQuerystring}`, { headers });
@@ -90,7 +100,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
     e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     const x = pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * 3; //scroll-fast
+    const walk = (x - startX) * 1; //scroll-normal
     ref.current.scrollLeft = scrollLeft - walk;
   };
 

@@ -21,11 +21,13 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
-import { getAsset, getCacheItem, setCacheItem } from '../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
+import RelatedContent from '../../common/components/RelatedContent';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('PROJECT', {}, 'project');
+  const assetList = await import('../../lib/asset-list.json');
+  const data = assetList.projects;
 
   if (data?.length) {
     log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
@@ -54,11 +56,15 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     let result;
     let markdown;
     result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
     if (!result) {
       console.log(`${slug} not found on cache`);
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=PROJECT`);
-      result = await response.json();
+      const assetList = await import('../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      result = assetList.projects.find((l) => l?.slug === slug);
+
       const engPrefix = {
         us: 'en',
         en: 'en',
@@ -66,7 +72,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
       const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
 
-      if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
+      if (result.asset_type !== 'PROJECT' || !isCurrenLang) {
         return {
           notFound: true,
         };
@@ -88,41 +94,31 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const {
       title, description, translations, preview,
     } = result;
-
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
-    const ogUrl = {
-      en: `/interactive-coding-tutorial/${slug}`,
-      us: `/interactive-coding-tutorial/${slug}`,
-    };
+    const translationInEnglish = translations?.en || translations?.us;
 
     const translationArray = [
       {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-coding-tutorial/${translations?.us}`,
-      },
-      {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-coding-tutorial/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-coding-tutorial/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-coding-tutorial/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-coding-tutorial/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -132,21 +128,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
       },
     };
 
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
-          url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
+          url: `/interactive-coding-tutorial/${slug}`,
           slug,
           description: description || '',
-          image: preview || staticImage,
-          translations,
+          image: cleanedStructuredData.image,
+          translations: translationArray,
           pathConnector: '/interactive-coding-tutorial',
           type: 'article',
           keywords: result?.seo_keywords || '',
@@ -313,8 +309,8 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
-                technologies={project?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
+                technologies={project?.technologies}
               />
             </Box>
           </Box>
@@ -348,6 +344,14 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={project.slug}
+          type="PROJECT"
+          extraQuerys={{}}
+          technologies={project?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
     </>
   );

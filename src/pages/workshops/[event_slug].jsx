@@ -94,7 +94,7 @@ export const getStaticProps = async ({ params, locale }) => {
         description: data?.excerpt || '',
         image: data?.banner || '',
         pathConnector: '/workshops',
-        url: `${lang === 'en' ? '' : `/${lang}`}/workshops/${slug}`,
+        url: `/workshops/${slug}`,
         slug,
         type: 'event',
         card: 'large',
@@ -127,6 +127,7 @@ function Page({ event }) {
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
+  const [noConsumablesFound, setNoConsumablesFound] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
@@ -202,6 +203,11 @@ function Page({ event }) {
     es: format(new Date(event?.starting_at), "EEEE, dd 'de' MMMM - p (OOO)", { timeZone, locale: es }),
     en: format(new Date(event?.starting_at), 'EEEE, MMMM do - p (OOO)', { timeZone }),
   } : {};
+
+  const unixFormatedDate = {
+    starting_at: isValidDate(event?.starting_at) ? new Date(event?.starting_at).getTime() / 1000 : '',
+    ending_at: isValidDate(event?.ending_at) ? new Date(event?.ending_at).getTime() / 1000 : '',
+  };
 
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
@@ -289,7 +295,7 @@ function Page({ event }) {
         description: t('form.finished-description'),
       });
     }
-    if (!finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
+    if (noConsumablesFound && !finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
       return ({
         title: '',
         childrenDescription: (
@@ -517,8 +523,9 @@ function Page({ event }) {
             <ShowOnSignUp
               hideForm={finishedEvent}
               existsConsumables={existsConsumables}
-              hideSwitchUser={!isFreeForConsumables && !existsConsumables}
+              hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
               isLive={readyToJoinEvent && !finishedEvent}
+              setNoConsumablesFound={setNoConsumablesFound}
               refetchAfterSuccess={() => {
                 getMySubscriptions();
                 getCurrentConsumables();
@@ -547,7 +554,7 @@ function Page({ event }) {
               childrenDescription={formInfo?.childrenDescription}
               readOnly={!event?.slug}
               position="relative"
-              gridGap={existsConsumables ? '10px' : '16px'}
+              gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
             >
               {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                 <Button
@@ -595,8 +602,9 @@ function Page({ event }) {
                                   event_slug: event.slug,
                                   event_title: event.title,
                                   event_type: event.event_type?.slug,
-                                  event_starting_at: event.starting_at,
-                                  event_ending_at: event.ending_at,
+                                  event_starting_at: unixFormatedDate.starting_at,
+                                  event_ending_at: unixFormatedDate.ending_at,
+                                  event_language: event.lang,
                                 },
                               });
                             } else {
@@ -617,30 +625,36 @@ function Page({ event }) {
                   {finishedEvent && t('event-finished')}
                 </Button>
               ) : (
-                <Box display="flex" flexDirection="column" alignItems="center">
-                  <Avatar
-                    width="85px"
-                    height="85px"
-                    margin="0 0 16px 0"
-                    style={{ userSelect: 'none' }}
-                    src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
-                    alt="No consumables avatar"
-                  />
-                  <Button
-                    display="flex"
-                    variant="default"
-                    fontSize="14px"
-                    fontWeight={700}
-                    onClick={handleGetMoreEventConsumables}
-                    isLoading={isFetchingDataForModal}
-                    alignItems="center"
-                    gridGap="10px"
-                    width="100%"
-                  >
-                    {t('no-consumables.get-more-workshops')}
-                    <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                  </Button>
-                </Box>
+                <>
+                  {noConsumablesFound ? (
+                    <Box display="flex" flexDirection="column" alignItems="center">
+                      <Avatar
+                        width="85px"
+                        height="85px"
+                        margin="0 0 16px 0"
+                        style={{ userSelect: 'none' }}
+                        src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+                        alt="No consumables avatar"
+                      />
+                      <Button
+                        display="flex"
+                        variant="default"
+                        fontSize="14px"
+                        fontWeight={700}
+                        onClick={handleGetMoreEventConsumables}
+                        isLoading={isFetchingDataForModal}
+                        alignItems="center"
+                        gridGap="10px"
+                        width="100%"
+                      >
+                        {t('no-consumables.get-more-workshops')}
+                        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Skeleton marginTop="10px" width="100%" height="40px" borderRadius="4px" />
+                  )}
+                </>
               )}
             </ShowOnSignUp>
           )}

@@ -27,7 +27,6 @@ const fetchLessons = async (lang, page, query) => {
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     exclude_category: excludeCagetoriesFor.lessons,
     language: lang,
@@ -36,6 +35,8 @@ const fetchLessons = async (lang, page, query) => {
     offset: page ? (page - 1) * contentPerPage : 0,
     technologies,
     video,
+    like: query?.search,
+    expand: 'technologies',
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -98,6 +99,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/lessons`,
         pathConnector: '/lessons',
         card: 'default',

@@ -51,6 +51,7 @@ function PaymentInfo() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -105,13 +106,15 @@ function PaymentInfo() {
   }, []);
 
   useEffect(() => {
-    if (readyToRefetch) {
+    if (readyToRefetch && timeElapsed < 10) {
       const interval = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
+
             if (isPurchasedPlanFound) {
               clearInterval(interval);
               if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {

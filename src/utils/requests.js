@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
@@ -6,6 +7,7 @@ import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
+import { log } from './logging';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -29,13 +31,20 @@ const reportDatalayer = (payload) => {
   TagManager.dataLayer(payload);
 };
 
-const getPrismicPages = () => {
-  const data = axios.get(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`)
-    .then((res) => res.data.results)
-    .catch(() => {
-      console.error('SITEMAP: Error fetching Prismic pages');
-    });
-  return data;
+const getPrismicPages = async () => {
+  try {
+    const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
+    const data = await response.json();
+    log(`\n${data?.results?.length} pages fetched from Prismic\n`);
+    if (response.status > 400 && response.statusText !== 'OK') {
+      throw new Error('SITEMAP: Error fetching Prismic pages');
+    } else {
+      return data.results;
+    }
+  } catch (msg) {
+    console.error('SITEMAP:', msg);
+    return [];
+  }
 };
 
 const getTechnologyAssets = async (slug) => {
@@ -74,21 +83,22 @@ const getEvents = async (extraQuerys = {}) => {
  * @param {string} category Category of the asset for filter purposes
  * @returns {Promise} Array of objects with the assets
  */
-const getAsset = async (type = '', extraQuerys = {}, category = '') => {
+const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFetch = false) => {
   const limit = 100;
   let offset = 0;
   let allResults = [];
 
   const qsRequest = parseQuerys({
     asset_type: type || undefined,
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     limit,
     offset,
     academy: WHITE_LABEL_ACADEMY,
+    expand: 'technologies',
     ...extraQuerys,
   });
 
+  // let response = fetchWithEncoding(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`, ['br', 'gzip', 'deflate']);
   let response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`)
     .then(async (res) => {
       const data = await res.json();
@@ -99,23 +109,26 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
       return data;
     })
     .catch((err) => {
-      console.error(`Error: GET_ASSET (/v1/registry/asset${qsRequest}): ${err.detail || err}`);
+      console.error(`\nError: GET_ASSET in (/v1/registry/asset${qsRequest}): \n`);
+      console.error(err, '\n\n');
       return [];
     });
+
+  log(`Generating ${category}: ${response.results.length} recopilated of ${response.count} assets`);
 
   let { results } = response;
   const { count } = response;
   allResults = allResults.concat(results);
 
-  while (results.length + offset < count) {
+  while (!onlyFirstFetch && (results.length + offset < count)) {
     offset += limit;
     const newQsRequests = parseQuerys({
       asset_type: type === null ? undefined : type,
-      visibility: 'PUBLIC',
       status: 'PUBLISHED',
       limit,
       offset,
       academy: WHITE_LABEL_ACADEMY,
+      expand: 'technologies',
       ...extraQuerys,
     });
 
@@ -129,21 +142,48 @@ const getAsset = async (type = '', extraQuerys = {}, category = '') => {
         return data;
       })
       .catch((err) => {
-        console.error(`Error: GET_ASSET in (/v1/registry/asset${qsRequest}): ${err.detail}`);
+        console.error(`\nError: GET_ASSET in (/v1/registry/asset${newQsRequests}): \n`);
+        console.error(err, '\n\n');
         return [];
       });
-    results = response.results;
-    allResults = allResults.concat(results);
+
+    if (response.results) {
+      results = response.results;
+      allResults = allResults.concat(results);
+      log(`Generating ${category}: ${allResults.length} recopilated of ${count} assets`);
+    }
   }
 
+  const translationsObjectsCleaned = allResults.map((item) => {
+    const recopilatedTranslationObject = {};
+    const existentLangs = ['en', 'us', 'es'];
+    for (const index in existentLangs) {
+      // Verify if the asset has a translation in the existentLangs list
+      if (Object.prototype.hasOwnProperty.call(item?.translations, existentLangs[index])) {
+        const lang = existentLangs[index];
+        const existsAsset = allResults.some((result) => result.slug === item?.translations[lang]);
+        if (item?.translations?.[lang] && existsAsset) {
+          recopilatedTranslationObject[lang] = item.translations[lang];
+        }
+        if (!item?.translations?.[lang] && item.lang === lang) {
+          recopilatedTranslationObject[item.lang] = item.slug;
+        }
+      }
+    }
+    return ({
+      ...item,
+      translations: recopilatedTranslationObject,
+    });
+  });
+
   if (category === 'project') {
-    return allResults.map((item) => {
+    return translationsObjectsCleaned.map((item) => {
       item.difficulty = mapDifficulty(item.difficulty);
       return item;
     });
   }
 
-  return allResults;
+  return translationsObjectsCleaned;
 };
 
 /**
@@ -179,26 +219,54 @@ const getLandingTechnologies = async (assets) => {
     const results = [];
     assets.forEach((asset) => {
       asset.technologies.forEach((tech) => {
-        if (!results.some((result) => result.slug === tech.slug)) results.push({ ...tech });
+        const alreadyExists = !results.some((result) => result.slug === tech.slug);
+        if (tech.visibility === 'PUBLIC' && alreadyExists) results.push({ ...tech });
       });
-      asset.technologies = asset.technologies.map((tech) => tech.slug);
+      asset.technologies = asset.technologies.map((tech) => tech);
     });
 
-    const formatedWithAssets = results.map((tech) => ({ ...tech, assets: assets.filter((asset) => asset?.technologies?.includes(tech?.slug)) }));
+    const formatedWithAssets = results.map((tech) => ({
+      ...tech,
+      assets: assets.filter((asset) => asset?.technologies?.some((assetTech) => assetTech?.slug === tech?.slug)),
+    }));
 
     const technologiesInEnglish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech?.assets?.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'))
-      .map((finalData) => ({
-        ...finalData,
-        assets: finalData.assets.filter((asset) => asset?.lang === 'en' || asset?.lang === 'us'),
-        lang: 'en',
-      }));
+      .map((finalData) => {
+        const uniqueTypes = new Set();
+        const filteredAssets = finalData.assets.filter((asset) => {
+          const isEnglish = asset?.lang === 'en' || asset?.lang === 'us';
+          if (isEnglish) {
+            uniqueTypes.add(asset.asset_type);
+          }
+          return isEnglish;
+        });
+
+        return ({
+          ...finalData,
+          assets: filteredAssets,
+          assetTypesInTechnology: [...uniqueTypes], // generate unique asset types to use in filters (future implementation)
+          lang: 'en',
+        });
+      });
 
     const technologiesInSpanish = formatedWithAssets.filter((tech) => tech?.assets?.length > 0 && tech.assets?.some((asset) => asset?.lang === 'es'))
-      .map((finalData) => ({
-        ...finalData,
-        assets: finalData.assets.filter((asset) => asset?.lang === 'es'),
-        lang: 'es',
-      }));
+      .map((finalData) => {
+        const uniqueTypes = new Set();
+        const filteredAssets = finalData.assets.filter((asset) => {
+          const isSpanish = asset?.lang === 'es';
+          if (isSpanish) {
+            uniqueTypes.add(asset.asset_type);
+          }
+          return isSpanish;
+        });
+
+        return ({
+          ...finalData,
+          assets: filteredAssets,
+          assetTypesInTechnology: [...uniqueTypes], // generate unique asset types to use in filters (future implementation)
+          lang: 'es',
+        });
+      });
 
     const dataEng = technologiesInEnglish;
     const dataEsp = technologiesInSpanish;

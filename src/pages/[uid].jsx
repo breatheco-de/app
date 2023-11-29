@@ -11,6 +11,8 @@ import { components } from '../../slices';
 import { cleanObject } from '../utils';
 import { ORIGIN_HOST } from '../utils/variables';
 
+const usedPageId = ['home'];
+
 function Page({ page }) {
   const router = useRouter();
   const landingUrl = page?.data?.landing_url;
@@ -72,8 +74,9 @@ export async function getStaticProps({ params, locale, previewData }) {
     .catch(() => null);
 
   const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
+  const alreadyUsedPageId = usedPageId.includes(page.uid);
 
-  if (!page || !isCurrenLang) {
+  if (!page || !isCurrenLang || alreadyUsedPageId) {
     return {
       notFound: true,
     };
@@ -101,27 +104,21 @@ export async function getStaticProps({ params, locale, previewData }) {
   };
 
   const { title, description, image, type } = page.data;
-
+  const translationInEnglish = translations?.en || translations?.us;
   const translationArray = [
-    {
-      value: 'us',
-      lang: 'en',
-      slug: translations?.en,
-      link: `/${translations?.en}`,
-    },
     {
       value: 'en',
       lang: 'en',
-      slug: translations?.en,
+      slug: (page?.lang === 'en' || page?.lang === 'us') ? page?.uid : translationInEnglish,
       link: `/${translations?.en}`,
     },
     {
       value: 'es',
       lang: 'es',
-      slug: translations?.es,
-      link: `/es/${translations?.es}`,
+      slug: page?.lang === 'es' ? page.uid : translations?.es,
+      link: `/es/${page?.lang === 'es' ? page.uid : translations?.es}`,
     },
-  ].filter((item) => translations?.[item?.value] !== undefined);
+  ].filter((item) => item?.slug !== undefined);
 
   const translationsExists = Object.keys(translations).length > 0;
 
@@ -173,7 +170,7 @@ export async function getStaticProps({ params, locale, previewData }) {
         pathConnector: translationsExists ? '' : `/${uid}`,
         slug: uid,
         url: `/${uid}`,
-        translations,
+        translations: translationArray,
         locale,
         publishedTime: page?.first_publication_date || '',
         modifiedTime: page?.last_publication_date || '',
@@ -189,8 +186,11 @@ export async function getStaticPaths() {
   const client = createClient();
 
   const documents = await client.getAllByType('page', { lang: '*' });
+  const pagePaths = documents.filter((doc) => !usedPageId.includes(doc.uid))
+    .map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] }));
+
   return {
-    paths: documents.map((doc) => ({ params: { uid: doc.uid }, locale: doc.lang.split('-')[0] })),
+    paths: pagePaths,
     fallback: true,
   };
 }

@@ -1,43 +1,52 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { Avatar, Box, Button, Checkbox, Flex, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Checkbox, useToast,
+  Spinner,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import Heading from '../Heading';
 import NextChakraLink from '../NextChakraLink';
 import FieldForm from './FieldForm';
+import useEmailValidation from './useEmailValidation';
 import PhoneInput from '../PhoneInput';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
-import { setStorageItem } from '../../../utils';
-import { startSignup, typeError } from '../../handlers/signup';
+import { setStorageItem, getQueryString } from '../../../utils';
+import { reportDatalayer } from '../../../utils/requests';
+import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
-import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
-import { generatePlan } from '../../handlers/subscriptions';
+import bc from '../../services/breathecode';
 
-function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLoginLink, containerGap }) {
+function SignupForm({
+  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
+}) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
-  const { featuredColor } = useStyle();
+  const { emailValidation, thriggerValidation } = useEmailValidation();
+  const { hexColor } = useStyle();
+  const plan = getQueryString('plan') || planSlug;
+  const planFormated = plan ? encodeURIComponent(plan) : BASE_PLAN;
+  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [isChecked, setIsChecked] = useState(false);
-  const { handleSubscribeToPlan } = useSubscribeToPlan({ enableRedirectOnCTA: false, onClose });
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
-  const [formProps, setFormProps] = useState({
-    first_name: '',
-    last_name: '',
-    phone: '',
-    email: '',
-    confirm_email: '',
-  });
+  const {
+    state,
+  } = useSignup();
+  const { dateProps, location } = state;
   const toast = useToast();
   const router = useRouter();
 
-  const defaultPlanSlug = planSlug || BASE_PLAN;
+  const { syllabus } = router.query;
+
+  // const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
       .min(2, t('validators.short-input'))
@@ -51,65 +60,111 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
       .email(t('validators.invalid-email'))
       .required(t('validators.email-required')),
     phone: Yup.string(),
+    // .matches(phone, t('validators.invalid-phone')),
+    // confirm_email: Yup.string()
+    //   .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
+    //   .required(t('validators.confirm-email-required')),
   });
 
   const handleSubmit = async (actions, allValues) => {
-    const data = await startSignup({ ...allValues, conversion_info: userSession }, lang);
-
-    if (data?.access_token) {
-      handleSubscribeToPlan({
-        slug: defaultPlanSlug,
-        accessToken: data?.access_token,
-        onSubscribedToPlan: (generatedPlan) => {
-          onSubscribed(generatedPlan);
+    try {
+      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/subscribe/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': router?.locale || 'en',
         },
-      })
-        .finally(() => {
-          actions.setSubmitting(false);
-        });
-
-      router.push({
-        query: {
-          token: data.access_token,
-        },
+        body: JSON.stringify({ ...allValues, ...subscribeValues, conversion_info: userSession }),
       });
-    } else {
-      generatePlan(defaultPlanSlug)
-        .then((generatedPlan) => {
-          onWaitingList(generatedPlan);
+      const data = await resp.json();
+      if (data.silent_code === SILENT_CODE.USER_EXISTS) {
+        setShowAlreadyMember(true);
+      }
+      if (resp?.status >= 400) {
+        toast({
+          position: 'top',
+          title: data?.detail,
+          status: 'error',
+          isClosable: true,
+          duration: 6000,
         });
-      actions.setSubmitting(false);
-    }
+      } else {
+        reportDatalayer({
+          dataLayer: {
+            event: 'sign_up',
+            method: 'native',
+            email: data.email,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            plan: planFormated,
+            user_id: data.user,
+            course: allValues.course,
+            country: allValues.country,
+            city: data.city,
+            syllabus: allValues.syllabus,
+            cohort: allValues.cohort,
+            conversion_info: userSession,
+            conversion_technologies: conversionTechnologies,
+          },
+        });
+      }
+      setStorageItem('subscriptionId', data?.id);
 
-    if (data.silent_code === SILENT_CODE.USER_EXISTS) {
-      setShowAlreadyMember(true);
-    }
-    if (data.error_type === typeError.common) {
+      const respPlan = await bc.payment().getPlan(planFormated);
+      const dataOfPlan = respPlan?.data;
+      if (resp.status < 400 && typeof data?.id === 'number') {
+        if (dataOfPlan?.has_waiting_list === true || data?.status === 'WAITING_LIST') {
+          setStorageItem('subscriptionId', data.id);
+          router.push('/thank-you');
+        }
+        if (data?.access_token && !dataOfPlan?.has_waiting_list) {
+          setVerifyEmailProps({
+            data: {
+              ...allValues,
+              ...data,
+            },
+            state: true,
+          });
+          router.push({
+            query: {
+              ...router.query,
+              token: data.access_token,
+            },
+          });
+          onHandleSubmit({
+            ...allValues,
+            ...data,
+          });
+        }
+      }
+
+      if (resp.status >= 400 && data?.phone) {
+        toast({
+          position: 'top',
+          title: data?.phone[0],
+          status: 'warning',
+          duration: 6000,
+          isClosable: true,
+        });
+      }
+      actions.setSubmitting(false);
+    } catch (e) {
+      console.log(e);
+      actions.setSubmitting(false);
       toast({
         position: 'top',
-        title: data?.detail,
+        title: e.message,
         status: 'error',
         isClosable: true,
         duration: 6000,
       });
     }
-    setStorageItem('subscriptionId', data?.id);
-
-    if (data.error_type === typeError.phone) {
-      toast({
-        position: 'top',
-        title: data?.phone[0],
-        status: 'warning',
-        duration: 6000,
-        isClosable: true,
-      });
-    }
-    // handleSubmit(actions, allValues);
   };
+
+  const isDisabled = !isChecked || emailValidation.loading || !emailValidation.valid;
 
   return (
     <>
-      {/* {successModal} */}
       <Formik
         initialValues={{
           first_name: '',
@@ -121,7 +176,13 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
           const allValues = {
             ...values,
             phone: values?.phone.includes('undefined') ? '' : values?.phone,
-            plan: defaultPlanSlug,
+            course: courseChoosed,
+            country: location?.country,
+            cohort: dateProps?.id,
+            syllabus,
+            city: location?.city,
+            plan: planFormated,
+            language: lang,
           };
           handleSubmit(actions, allValues);
         }}
@@ -135,19 +196,9 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
               gridGap: containerGap,
             }}
           >
-            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap="24px">
-              <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between">
-                <Heading size="21px">{t('about-you')}</Heading>
-                <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
-                  {t('already-have-account')}
-                  {' '}
-                  {externalLoginLink || (
-                    <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
-                  )}
-                </Flex>
-              </Box>
+            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap={columnLayout ? '18px' : '24px'}>
               <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
-                <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px" flex={1}>
+                <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
                   <FieldForm
                     type="text"
                     name="first_name"
@@ -164,23 +215,25 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
                   />
                 </Box>
               </Box>
-              <Box
-                display="flex"
-                flex={1}
-                flexDirection="column"
-                fontSize="12px"
-                color="blue.default2"
-                gridGap="4px"
-              >
-                <PhoneInput
-                  inputStyle={{ height: '50px' }}
-                  setVal={setFormProps}
-                  placeholder={t('common:phone')}
-                  formData={formProps}
-                  required={false}
-                />
-                {t('phone-info')}
-              </Box>
+              {extraFields.includes('phone') && (
+                <Box
+                  display="flex"
+                  flex={1}
+                  flexDirection="column"
+                  fontSize="12px"
+                  color="blue.default2"
+                  gridGap="4px"
+                >
+                  <PhoneInput
+                    inputStyle={{ height: '50px' }}
+                    setVal={setFormProps}
+                    placeholder={t('common:phone')}
+                    formData={formProps}
+                    required={false}
+                  />
+                  {t('phone-info')}
+                </Box>
+              )}
               <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
                 <Box
                   display="flex"
@@ -189,13 +242,22 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
                   fontSize="12px"
                   gridGap="4px"
                 >
-                  <FieldForm
-                    type="email"
-                    name="email"
-                    label={t('common:email')}
-                    formProps={formProps}
-                    setFormProps={setFormProps}
-                  />
+                  <InputGroup>
+                    <FieldForm
+                      type="email"
+                      name="email"
+                      label={t('common:email')}
+                      formProps={formProps}
+                      setFormProps={setFormProps}
+                      handleOnChange={thriggerValidation}
+                    />
+                    <InputRightElement top="50%" transform="translate(0,-50%)">
+                      {emailValidation.loading && <Spinner color={hexColor.blueDefault} />}
+                    </InputRightElement>
+                  </InputGroup>
+                  {emailValidation.loading && <Box>{t('validating-email')}</Box>}
+                  {emailValidation.valid && <Box color={hexColor.green}>{t('email-validated')}</Box>}
+                  {emailValidation.error && <Box color={hexColor.danger}>{emailValidation.error}</Box>}
                   <Box color="blue.default2">{t('email-info')}</Box>
                 </Box>
               </Box>
@@ -214,7 +276,7 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
               width="100%"
               type="submit"
               variant="default"
-              isDisabled={isChecked === false}
+              isDisabled={isDisabled}
               isLoading={isSubmitting}
               alignSelf="flex-end"
             >
@@ -249,26 +311,88 @@ function SignupView({ planSlug, onClose, onSubscribed, onWaitingList, externalLo
         }}
         handlerText={t('common:login')}
       />
-    </>
 
+      {showVerifyEmail && (
+        <ModalInfo
+          headerStyles={{ textAlign: 'center' }}
+          title={t('signup:alert-message.validate-email-title')}
+          footerStyle={{ flexDirection: 'row-reverse' }}
+          closeButtonVariant="outline"
+          closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
+          childrenDescription={(
+            <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+              <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
+              <Text
+                size="14px"
+                textAlign="center"
+                dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
+              />
+            </Box>
+          )}
+          isOpen={verifyEmailProps.state}
+          buttonHandlerStyles={{ variant: 'default' }}
+          actionHandler={() => {
+            const inviteId = verifyEmailProps?.data?.id;
+            bc.auth().resendConfirmationEmail(inviteId)
+              .then((resp) => {
+                const data = resp?.data;
+                if (data === undefined) {
+                  toast({
+                    position: 'top',
+                    status: 'info',
+                    title: t('signup:alert-message.email-already-sent'),
+                    isClosable: true,
+                    duration: 6000,
+                  });
+                } else {
+                  toast({
+                    position: 'top',
+                    status: 'success',
+                    title: t('signup:alert-message.email-sent-to', { email: data?.email }),
+                    isClosable: true,
+                    duration: 6000,
+                  });
+                }
+              });
+          }}
+          handlerText={t('signup:resend')}
+          forceHandlerAndClose
+          onClose={() => {
+            setVerifyEmailProps({
+              ...verifyEmailProps,
+              state: false,
+            });
+          }}
+        />
+      )}
+    </>
   );
 }
 
-SignupView.propTypes = {
-  onClose: PropTypes.func,
+SignupForm.propTypes = {
+  onHandleSubmit: PropTypes.func,
   planSlug: PropTypes.string,
-  onWaitingList: PropTypes.func,
-  onSubscribed: PropTypes.func,
-  externalLoginLink: PropTypes.node,
+  courseChoosed: PropTypes.string,
+  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  setFormProps: PropTypes.func,
+  showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
+  extraFields: PropTypes.arrayOf(PropTypes.string),
+  conversionTechnologies: PropTypes.string,
+  columnLayout: PropTypes.bool,
+  subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-SignupView.defaultProps = {
-  onClose: () => {},
-  planSlug: '',
-  onWaitingList: () => {},
-  onSubscribed: () => {},
-  externalLoginLink: null,
+SignupForm.defaultProps = {
+  onHandleSubmit: () => {},
+  planSlug: null,
+  courseChoosed: '',
+  setFormProps: () => {},
+  showVerifyEmail: true,
   containerGap: '24px',
+  extraFields: [],
+  columnLayout: false,
+  subscribeValues: {},
+  conversionTechnologies: null,
 };
 
-export default SignupView;
+export default SignupForm;
