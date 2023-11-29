@@ -357,6 +357,50 @@ function Page({ event }) {
     eventStatus: 'https://schema.org/EventScheduled',
   };
 
+  const handleJoin = () => {
+    if (!finishedEvent) {
+      if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
+      }
+      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
+        bc.events().applyEvent(event?.id)
+          .then((resp) => {
+            if (resp !== undefined) {
+              setApplied(true);
+              toast({
+                position: 'top',
+                status: 'success',
+                title: t('alert-message:success-event-reservation'),
+                isClosable: true,
+                duration: 6000,
+              });
+
+              reportDatalayer({
+                dataLayer: {
+                  event: 'event_order',
+                  event_id: event.id,
+                  event_slug: event.slug,
+                  event_title: event.title,
+                  event_type: event.event_type?.slug,
+                  event_starting_at: unixFormatedDate.starting_at,
+                  event_ending_at: unixFormatedDate.ending_at,
+                  event_language: event.lang,
+                },
+              });
+            } else {
+              toast({
+                position: 'top',
+                status: 'info',
+                title: t('alert-message:event-access-error'),
+                isClosable: true,
+                duration: 6000,
+              });
+            }
+          });
+      }
+    }
+  };
+
   return (
     <Box as="div">
       <ModalToGetAccess
@@ -432,9 +476,9 @@ function Page({ event }) {
                 {event?.title && !eventNotExists ? (
                   <Heading
                     as="h1"
-                    size="50px"
+                    size={{ base: '26px', md: '50px' }}
                     fontWeight="700"
-                    lineHeight="52px"
+                    lineHeight={{ base: '31px', md: '52px' }}
                     textTransform="capitalize"
                     color={useColorModeValue('black', 'white')}
                   >
@@ -485,11 +529,9 @@ function Page({ event }) {
         padding="0 10px"
       >
         <Box display={{ base: 'block', lg: 'flex' }} gridGap="30px" flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 8' }}>
-
           <Box display="flex" flexDirection="column" gridGap="10px">
             <MarkDownParser content={event?.description} />
           </Box>
-
           {!eventNotExists && hostUserExists && (
             <Box display="flex" flexDirection="column" gridGap="12px" mb="31px">
               <Text size="26px" fontWeight={700}>
@@ -500,9 +542,97 @@ function Page({ event }) {
               />
             </Box>
           )}
-          {/* <Text size="26px" fontWeight={700}>
-            We will be coding the following project
-          </Text> */}
+          {event?.id && (
+            <>
+              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+                {!finishedEvent ? (
+                  <>
+                    {!readyToJoinEvent && (
+                      <Box marginBottom="10px" display="flex" gap="5px" justifyContent="space-between" alignItems="center">
+                        <Heading size="sm">
+                          {t('starts-in')}
+                        </Heading>
+                        <Timer
+                          autoRemove
+                          variant="small"
+                          startingAt={event?.starting_at}
+                          onFinish={handleOnReadyToStart}
+                          color="white"
+                          background="blue.900"
+                          height="40px"
+                        />
+                      </Box>
+                    )}
+                    {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
+                      <Box display="flex" gap="10px">
+                        <Button
+                          fontSize="17px"
+                          color="blue.default"
+                          background="white"
+                          width="100%"
+                          isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
+                          _disabled={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          _hover={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          _active={{
+                            background: buttonEnabled ? '' : 'gray.350',
+                            cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                          }}
+                          onClick={handleJoin}
+                        >
+                          {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                          {finishedEvent && t('event-finished')}
+                        </Button>
+                        {readyToJoinEvent && (
+                          <Box display="flex" gap="10px" alignItems="center" height="40px" fontWeight="700" color="gray.dark" textTransform="uppercase" background="red.light" borderRadius="4px" padding="10px">
+                            {t('common:live')}
+                            <Icon className="pulse-red" icon="dot" color={hexColor.danger} width="8px" height="8px" borderRadius="50px" />
+                          </Box>
+                        )}
+                      </Box>
+                    ) : (
+                      <Box display="flex" flexDirection="column" alignItems="center">
+                        <Text marginBottom="10px" size="14px" fontWeight={700} lineHeight="18px">
+                          {t('no-consumables.description')}
+                        </Text>
+                        <Button
+                          display="flex"
+                          variant="default"
+                          fontSize="14px"
+                          fontWeight={700}
+                          onClick={handleGetMoreEventConsumables}
+                          isLoading={isFetchingDataForModal}
+                          alignItems="center"
+                          gridGap="10px"
+                          width="100%"
+                        >
+                          {t('no-consumables.get-more-workshops')}
+                          <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                        </Button>
+                      </Box>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Box marginBottom="10px" padding="5px" textAlign="center">
+                      <Heading size="sm">
+                        {formInfo?.title}
+                      </Heading>
+                      <Text>
+                        {formInfo?.description}
+                      </Text>
+                    </Box>
+                  </>
+                )}
+
+              </Box>
+            </>
+          )}
         </Box>
 
         <Box
@@ -520,143 +650,106 @@ function Page({ event }) {
           overflow={{ base: 'inherit', md: 'hidden' }}
         >
           {event?.id && (
-            <ShowOnSignUp
-              hideForm={finishedEvent}
-              existsConsumables={existsConsumables}
-              hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
-              isLive={readyToJoinEvent && !finishedEvent}
-              setNoConsumablesFound={setNoConsumablesFound}
-              refetchAfterSuccess={() => {
-                getMySubscriptions();
-                getCurrentConsumables();
-              }}
-              headContent={readyToJoinEvent ? (
-                <Box position="relative" zIndex={1} width="100%" height={177}>
-                  <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
-                </Box>
-              ) : (
-                <Timer
-                  autoRemove
-                  startingAt={event?.starting_at}
-                  onFinish={handleOnReadyToStart}
-                  background="transparent"
-                  color="white"
-                  height="177px"
-                />
-              )}
-              subContent={!readyToJoinEvent && (
-                <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
-                  <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
-                </Box>
-              )}
-              title={formInfo?.title}
-              description={formInfo?.description}
-              childrenDescription={formInfo?.childrenDescription}
-              readOnly={!event?.slug}
-              position="relative"
-              gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
-            >
-              {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
-                <Button
-                  mt="10px"
-                  type="submit"
-                  variant="default"
-                  className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
-                  background={buttonEnabled ? 'blue.default' : 'gray.350'}
-                  textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                  isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
-                  _disabled={{
-                    background: buttonEnabled ? '' : 'gray.350',
-                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+            <>
+              <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
+                <ShowOnSignUp
+                  hideForm={finishedEvent}
+                  existsConsumables={existsConsumables}
+                  hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
+                  isLive={readyToJoinEvent && !finishedEvent}
+                  setNoConsumablesFound={setNoConsumablesFound}
+                  subscribeValues={{ event_slug: event.slug }}
+                  refetchAfterSuccess={() => {
+                    getMySubscriptions();
+                    getCurrentConsumables();
                   }}
-                  _hover={{
-                    background: buttonEnabled ? '' : 'gray.350',
-                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                  }}
-                  _active={{
-                    background: buttonEnabled ? '' : 'gray.350',
-                    cursor: buttonEnabled ? 'pointer' : 'not-allowed',
-                  }}
-                  onClick={() => {
-                    if (!finishedEvent) {
-                      if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
-                        router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
-                      }
-                      if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-                        bc.events().applyEvent(event?.id)
-                          .then((resp) => {
-                            if (resp !== undefined) {
-                              setApplied(true);
-                              toast({
-                                position: 'top',
-                                status: 'success',
-                                title: t('alert-message:success-event-reservation'),
-                                isClosable: true,
-                                duration: 6000,
-                              });
-
-                              reportDatalayer({
-                                dataLayer: {
-                                  event: 'event_order',
-                                  event_id: event.id,
-                                  event_slug: event.slug,
-                                  event_title: event.title,
-                                  event_type: event.event_type?.slug,
-                                  event_starting_at: unixFormatedDate.starting_at,
-                                  event_ending_at: unixFormatedDate.ending_at,
-                                  event_language: event.lang,
-                                },
-                              });
-                            } else {
-                              toast({
-                                position: 'top',
-                                status: 'info',
-                                title: t('alert-message:event-access-error'),
-                                isClosable: true,
-                                duration: 6000,
-                              });
-                            }
-                          });
-                      }
-                    }
-                  }}
-                >
-                  {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                  {finishedEvent && t('event-finished')}
-                </Button>
-              ) : (
-                <>
-                  {noConsumablesFound ? (
-                    <Box display="flex" flexDirection="column" alignItems="center">
-                      <Avatar
-                        width="85px"
-                        height="85px"
-                        margin="0 0 16px 0"
-                        style={{ userSelect: 'none' }}
-                        src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
-                        alt="No consumables avatar"
-                      />
-                      <Button
-                        display="flex"
-                        variant="default"
-                        fontSize="14px"
-                        fontWeight={700}
-                        onClick={handleGetMoreEventConsumables}
-                        isLoading={isFetchingDataForModal}
-                        alignItems="center"
-                        gridGap="10px"
-                        width="100%"
-                      >
-                        {t('no-consumables.get-more-workshops')}
-                        <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                      </Button>
+                  headContent={readyToJoinEvent ? (
+                    <Box position="relative" zIndex={1} width="100%" height={177}>
+                      <Image src={randomImage} width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" alt="head banner" />
                     </Box>
                   ) : (
-                    <Skeleton marginTop="10px" width="100%" height="40px" borderRadius="4px" />
+                    <Timer
+                      autoRemove
+                      startingAt={event?.starting_at}
+                      onFinish={handleOnReadyToStart}
+                      background="transparent"
+                      color="white"
+                      height="177px"
+                    />
                   )}
-                </>
-              )}
-            </ShowOnSignUp>
+                  subContent={!readyToJoinEvent && (
+                    <Box position="absolute" top="0px" left="0px" zIndex={1} width="100%" height={177}>
+                      <Image src="/static/videos/bubbles_2.gif" width="100%" height={177} style={{ borderTopLeftRadius: '16px', borderTopRightRadius: '16px' }} objectFit="cover" />
+                    </Box>
+                  )}
+                  title={formInfo?.title}
+                  description={formInfo?.description}
+                  childrenDescription={formInfo?.childrenDescription}
+                  readOnly={!event?.slug}
+                  position="relative"
+                  gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
+                >
+                  {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
+                    <Button
+                      mt="10px"
+                      type="submit"
+                      variant="default"
+                      className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
+                      background={buttonEnabled ? 'blue.default' : 'gray.350'}
+                      textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
+                      isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                      _disabled={{
+                        background: buttonEnabled ? '' : 'gray.350',
+                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                      }}
+                      _hover={{
+                        background: buttonEnabled ? '' : 'gray.350',
+                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                      }}
+                      _active={{
+                        background: buttonEnabled ? '' : 'gray.350',
+                        cursor: buttonEnabled ? 'pointer' : 'not-allowed',
+                      }}
+                      onClick={handleJoin}
+                    >
+                      {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
+                      {finishedEvent && t('event-finished')}
+                    </Button>
+                  ) : (
+                    <>
+                      {noConsumablesFound ? (
+                        <Box display="flex" flexDirection="column" alignItems="center">
+                          <Avatar
+                            width="85px"
+                            height="85px"
+                            margin="0 0 16px 0"
+                            style={{ userSelect: 'none' }}
+                            src={`${BREATHECODE_HOST}/static/img/avatar-7.png`}
+                            alt="No consumables avatar"
+                          />
+                          <Button
+                            display="flex"
+                            variant="default"
+                            fontSize="14px"
+                            fontWeight={700}
+                            onClick={handleGetMoreEventConsumables}
+                            isLoading={isFetchingDataForModal}
+                            alignItems="center"
+                            gridGap="10px"
+                            width="100%"
+                          >
+                            {t('no-consumables.get-more-workshops')}
+                            <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                          </Button>
+                        </Box>
+                      ) : (
+                        <Skeleton marginTop="10px" width="100%" height="40px" borderRadius="4px" />
+                      )}
+                    </>
+                  )}
+                </ShowOnSignUp>
+              </Box>
+            </>
           )}
 
           {users?.length > 0 && (
