@@ -383,8 +383,8 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <GridContainer gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
-        <Box gridColumn="2 / span 8">
+      <GridContainer display={{ base: 'flex', md: 'grid' }} flexFlow={{ base: 'column-reverse', md: '' }} gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
+        <Box gridColumn="2 / span 6">
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
               <Heading
@@ -471,19 +471,6 @@ function chooseProgram() {
                 </NextChakraLink>
               )}
             </Box>
-            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
-              {flags?.appReleaseEnableLiveEvents && (
-                <LiveEvent
-                  featureLabel={t('common:live-event.title')}
-                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                  otherEvents={events}
-                  maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
-                  minWidth={{ base: '100%', sm: '500px', md: '340px' }}
-                  margin="0 auto"
-                />
-              )}
-            </Box>
           </Flex>
 
           <Box>
@@ -537,6 +524,21 @@ function chooseProgram() {
               ))}
             </Box>
           )}
+        </Box>
+        <Box gridColumn="8 / span 3">
+          <Box flex={1} zIndex={10}>
+            {flags?.appReleaseEnableLiveEvents && (
+              <LiveEvent
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                otherEvents={events}
+                maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                // minWidth={{ base: '100%', sm: '500px', md: '340px' }}
+                margin="0 auto"
+              />
+            )}
+          </Box>
         </Box>
       </GridContainer>
     </Flex>
