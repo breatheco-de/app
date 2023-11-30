@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-curly-brace-presence */
 /* eslint-disable no-unused-vars */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import {
   Box,
   Button,
@@ -15,12 +15,14 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Input,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
-import DatePicker from 'react-datepicker';
+import { Form, Formik } from 'formik';
 import 'react-datepicker/dist/react-datepicker.css';
+import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
@@ -734,30 +736,36 @@ function StudentReport() {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Box marginBottom="10px">
-              <ReactSelect
-                id="activity-select"
-                placeholder={t('filter.activity')}
-                isClearable
-                value={activityLabel || ''}
-                onChange={(selected) => {
-                  setActivityLabel(selected || []);
-                }}
-                options={activitiesOptions}
-              />
-            </Box>
-            <Box position="relative" zIndex="0" marginBottom="10px">
-              <Text fontSize="l" fontWeight="400" marginBottom="10px">
-                {t('filter.date')}
-              </Text>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => {
-                  setStartDate(date);
-                }}
-                inline
-              />
-            </Box>
+            <Formik>
+              <Form>
+                <Box marginBottom="10px">
+                  <ReactSelect
+                    id="activity-select"
+                    placeholder={t('filter.activity')}
+                    isClearable
+                    value={activityLabel || ''}
+                    onChange={(selected) => {
+                      setActivityLabel(selected || []);
+                    }}
+                    options={activitiesOptions}
+                  />
+                </Box>
+                <Box position="relative" zIndex="0" marginBottom="10px">
+                  <Text fontSize="l" fontWeight="400" marginBottom="10px">
+                    {t('filter.date')}
+                  </Text>
+                  <DatePicker
+                    calendarClassName="centerMonth"
+                    selected={startDate}
+                    onChange={(date) => {
+                      setStartDate(date);
+                    }}
+                    inline
+                  />
+                </Box>
+              </Form>
+            </Formik>
+
           </ModalBody>
 
           <ModalFooter justifyContent="space-between">
