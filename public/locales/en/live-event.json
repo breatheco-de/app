@@ -24,5 +24,9 @@
     "workshop": "Workshop",
     "will-start-soon": "Will start soon",
     "time-duration": "{{time}} duration",
-    "join-event": "Join Event"
+    "join-event": "Join Event",
+    "filters": {
+        "language": "Language",
+        "event-type": "Event Type"
+    }
 }
