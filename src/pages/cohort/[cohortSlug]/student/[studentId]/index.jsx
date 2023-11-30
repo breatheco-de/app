@@ -473,7 +473,7 @@ function StudentReport() {
             )}
           </Box>
         )}
-        <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
+        {/* <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
           <Box
             borderRadius="17px"
             width={{ base: '100%', md: '100%' }}
@@ -566,7 +566,7 @@ function StudentReport() {
               </Text>
             </Box>
           </Box>
-        </Flex>
+        </Flex> */}
       </Box>
       <Divider borderBottom="1px solid" color={borderColor} />
       <Flex
