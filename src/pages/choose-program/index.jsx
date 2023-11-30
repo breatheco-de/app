@@ -70,6 +70,7 @@ function chooseProgram() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const TwelveHoursInMinutes = 720;
+  const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const welcomeVideoLinks = {
     es: 'https://www.youtube.com/embed/TgkIpTZ75NM',
     en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
@@ -482,7 +483,7 @@ function chooseProgram() {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="4rem"
               gridRowGap="3rem"
               height="auto"
@@ -505,7 +506,7 @@ function chooseProgram() {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="4rem"
               gridRowGap="3rem"
               height="auto"
