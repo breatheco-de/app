@@ -200,7 +200,7 @@ function LiveEvent({
     });
   };
 
-  return (
+  return (mainClasses?.length > 0 || otherEvents?.length > 0) && (
     <>
       <Box
         background="yellow.light"
