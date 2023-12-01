@@ -8,7 +8,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
-import { getStorageItem, lengthOfString, syncInterval } from '../../../utils';
+import { getStorageItem, lengthOfString } from '../../../utils';
 
 function MainEvent({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
@@ -20,6 +20,9 @@ function MainEvent({
   const eventTitle = event?.cohort_name || event?.title;
   const titleLength = lengthOfString(eventTitle);
   const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
+  const now = new Date();
+  const secondsToNextMinute = 60 - now.getSeconds();
+  let intervalVar;
 
   const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
@@ -31,15 +34,13 @@ function MainEvent({
   useEffect(() => {
     setTime(textTime(liveStartsAtDate, liveEndsAtDate));
 
-    syncInterval(() => {
-      setTime(textTime(liveStartsAtDate, liveEndsAtDate));
-    });
-    // const interval = setInterval(() => {
-    //   setTime(textTime(liveStartsAtDate, liveEndsAtDate));
-    // }, 60000);
-    // return () => {
-    //   clearInterval(interval);
-    // };
+    setTimeout(() => {
+      intervalVar = setInterval(setTime(textTime(liveStartsAtDate, liveEndsAtDate)), 60 * 1000);
+    }, secondsToNextMinute * 1000);
+
+    return () => {
+      clearInterval(intervalVar);
+    };
   }, []);
 
   return (

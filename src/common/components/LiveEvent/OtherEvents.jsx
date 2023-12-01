@@ -19,6 +19,8 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
   // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const limit = 40;
   const [timeList, setTimeList] = useState({});
+  const now = new Date();
+  const secondsToNextMinute = 60 - now.getSeconds();
 
   useEffect(() => {
     let intervalVar;
@@ -36,9 +38,6 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
     };
 
     updateTimes();
-    const now = new Date();
-    const secondsToNextMinute = 60 - now.getSeconds();
-
     setTimeout(() => {
       updateTimes();
       intervalVar = setInterval(updateTimes(), 60 * 1000);
