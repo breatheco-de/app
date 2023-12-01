@@ -5,7 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
 // import modifyEnv from '../../../../modifyEnv';
-import { lengthOfString, syncInterval } from '../../../utils';
+import { lengthOfString } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -18,28 +18,42 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
   // const accessToken = getStorageItem('accessToken');
   // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const limit = 40;
+  const [timeList, setTimeList] = useState({});
+
+  useEffect(() => {
+    let intervalVar;
+    const updateTimes = () => {
+      if (events?.length > 0) {
+        const newTimes = {};
+        events.forEach((event) => {
+          const startsAt = event?.starting_at && new Date(event.starting_at);
+          const endsAt = event?.ending_at && new Date(event.ending_at);
+
+          newTimes[event.id] = textTime(startsAt, endsAt);
+        });
+        setTimeList(newTimes);
+      }
+    };
+
+    updateTimes();
+    const now = new Date();
+    const secondsToNextMinute = 60 - now.getSeconds();
+
+    setTimeout(() => {
+      updateTimes();
+      intervalVar = setInterval(updateTimes(), 60 * 1000);
+    }, secondsToNextMinute * 1000);
+
+    return () => clearInterval(intervalVar);
+  }, [events]);
 
   return events.map((event) => {
-    const [time, setTime] = useState('');
     const titleLength = lengthOfString(event?.title);
+    const time = timeList[event?.id];
     const startsAt = event?.starting_at && new Date(event.starting_at);
     const endsAt = event?.ending_at && new Date(event.ending_at);
     const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
     const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
-
-    useEffect(() => {
-      setTime(textTime(startsAt, endsAt));
-
-      syncInterval(() => {
-        setTime(textTime(startsAt, endsAt));
-      });
-      // const interval = setInterval(() => {
-      //   setTime(textTime(startsAt, endsAt));
-      // }, 60000);
-      // return () => {
-      //   clearInterval(interval);
-      // };
-    }, []);
 
     return (
       <Box
@@ -154,6 +168,7 @@ const OtherEvents = ({ events, isLiveOrStarting, isLive, textTime, subLabel, stT
               color={disabledColor}
               marginBottom="0"
               marginTop="0"
+              title={time}
             >
               {truncatedTime}
             </Text>
