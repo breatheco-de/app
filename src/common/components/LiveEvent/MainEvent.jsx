@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import { useEffect, useState } from 'react';
 import { Box, Divider, Tag, TagLabel } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -12,36 +11,20 @@ import { getStorageItem, lengthOfString } from '../../../utils';
 
 function MainEvent({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, textTime, subLabel, isWorkshop, limitOfText,
+  isLive, stTranslation, mainClasses, currentDateText, subLabel, isWorkshop, limitOfText,
 }) {
-  const [time, setTime] = useState('');
   const { t, lang } = useTranslation('live-event');
   const limit = limitOfText || 40;
   const eventTitle = event?.cohort_name || event?.title;
   const titleLength = lengthOfString(eventTitle);
   const truncatedText = titleLength > limit ? `${eventTitle?.substring(0, limit)}...` : eventTitle;
-  const now = new Date();
-  const secondsToNextMinute = 60 - now.getSeconds();
-  let intervalVar;
 
-  const truncatedTime = lengthOfString(time) >= 16 ? `${time?.substring(0, 15)}...` : time;
+  const truncatedTime = lengthOfString(currentDateText) >= 16 ? `${currentDateText?.substring(0, 15)}...` : currentDateText;
   const { fontColor, disabledColor, backgroundColor2, hexColor } = useStyle();
 
   const accessToken = getStorageItem('accessToken');
   const liveStartsAtDate = new Date(event?.starting_at);
   const liveEndsAtDate = new Date(event?.ending_at);
-
-  useEffect(() => {
-    setTime(textTime(liveStartsAtDate, liveEndsAtDate));
-
-    setTimeout(() => {
-      intervalVar = setInterval(setTime(textTime(liveStartsAtDate, liveEndsAtDate)), 60 * 1000);
-    }, secondsToNextMinute * 1000);
-
-    return () => {
-      clearInterval(intervalVar);
-    };
-  }, []);
 
   return (
     <>
@@ -171,7 +154,7 @@ function MainEvent({
                 color={disabledColor}
                 marginBottom="0"
                 marginTop="0"
-                title={time}
+                title={currentDateText}
               >
                 {truncatedTime}
               </Text>
@@ -194,7 +177,7 @@ MainEvent.propTypes = {
   host: PropTypes.string.isRequired,
   nearestEvent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   isLive: PropTypes.func.isRequired,
-  textTime: PropTypes.func.isRequired,
+  currentDateText: PropTypes.string,
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   mainClasses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subLabel: PropTypes.string,
@@ -203,6 +186,7 @@ MainEvent.propTypes = {
 };
 MainEvent.defaultProps = {
   subLabel: '',
+  currentDateText: '',
   isWorkshop: false,
   limitOfText: 40,
 };

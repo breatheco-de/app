@@ -32,6 +32,7 @@ function LiveEvent({
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
+  const [mainEventTimes, setMainEventTimes] = useState({});
   const [filterSelection, setFilterSelection] = useState({
     lang: '',
     eventType: '',
@@ -57,6 +58,8 @@ function LiveEvent({
   const otherEventsSorted = liveEvent.other?.length > 0 ? liveEvent.other.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at)) : [];
   const nearestEvent = otherEventsSorted[0];
   const restOfEvents = otherEventsSorted.slice(1);
+  const now = new Date();
+  const secondsToNextMinute = 60 - now.getSeconds();
 
   const mainEvents = liveEvent.main.length === 0 && nearestEvent ? [nearestEvent] : [...liveEvent.main];
 
@@ -200,6 +203,32 @@ function LiveEvent({
     });
   };
 
+  useEffect(() => {
+    let intervalVar;
+    const updateTimes = () => {
+      if (mainEvents?.length > 0) {
+        const newTimes = {};
+        mainEvents.forEach((event) => {
+          const startsAt = event?.starting_at && new Date(event.starting_at);
+          const endsAt = event?.ending_at && new Date(event.ending_at);
+
+          newTimes[event.id] = textTime(startsAt, endsAt);
+        });
+        setMainEventTimes(newTimes);
+      }
+    };
+
+    updateTimes();
+    setTimeout(() => {
+      updateTimes();
+      intervalVar = setInterval(updateTimes(), 60 * 1000);
+    }, secondsToNextMinute * 1000);
+
+    return () => {
+      clearInterval(intervalVar);
+    };
+  }, [mainClasses]);
+
   return (mainClasses?.length > 0 || otherEvents?.length > 0) && (
     <>
       <Box
@@ -311,6 +340,7 @@ function LiveEvent({
             {mainEvents.map((event, index) => (
               <MainEvent
                 key={event.id}
+                currentDateText={mainEventTimes[event.id]}
                 index={index}
                 event={event}
                 mainEvents={mainEvents}
