@@ -24,6 +24,7 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -182,6 +183,12 @@ function TableInfo({ t, project, commonTextColor }) {
         <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
           {t('table.description')}
         </Text>
+        <ReactPlayerV2
+          title="Video tutorial"
+          withModal
+          url={project?.solution_video_url}
+          withThumbnail
+        />
         <SimpleTable
           href="/interactive-coding-tutorials"
           difficulty={typeof project.difficulty === 'string' ? project.difficulty.toLowerCase() : 'unknown'}
@@ -344,14 +351,16 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
-        <RelatedContent
-          slug={project.slug}
-          type="PROJECT"
-          extraQuerys={{}}
-          technologies={project?.technologies}
-          gridColumn="2 / span 10"
-          maxWidth="1280px"
-        />
+        {project?.slug && (
+          <RelatedContent
+            slug={project.slug}
+            type="PROJECT"
+            extraQuerys={{}}
+            technologies={project?.technologies}
+            gridColumn="2 / span 10"
+            maxWidth="1280px"
+          />
+        )}
       </GridContainer>
     </>
   );
