@@ -475,3 +475,31 @@ featured {
   border-bottom-left-radius: 17px;
   border-bottom-right-radius: 17px;
 }
+
+.video-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+}
+
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 1140px;
+  height: auto;
+  aspect-ratio: 16/9;
+  transition: all 0.5s ease;
+}
+
+/* Transición para expandir y contraer */
+.video-container {
+  transform: scale(0);
+}
+.video-overlay .video-container {
+  transform: scale(1);
+}
