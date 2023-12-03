@@ -56,8 +56,9 @@ function ReactPlayerV2({
             background="black"
             onClick={handleButtonClick}
             cursor="pointer"
+            backgroundPosition="center center"
             backgroundImage={`url(${thumbnail || videoThumbnail || ''})`}
-            borderRadius="3px"
+            borderRadius="4px"
           >
             <IconButton
               aria-label="Play video"
@@ -84,10 +85,11 @@ function ReactPlayerV2({
                 playing={showVideo}
                 controls={controls}
                 width="100%"
-                height="-webkit-fill-available"
+                height="auto"
                 aspectRatio="16/9"
                 style={{
                   background: 'black',
+                  borderRadius: '4px',
                   ...iframeStyle,
                 }}
                 {...rest}

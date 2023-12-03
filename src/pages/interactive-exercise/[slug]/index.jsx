@@ -46,6 +46,7 @@ import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
+import ReactPlayerV2 from '../../../common/components/ReactPlayerV2';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -240,6 +241,14 @@ function TabletWithForm({
         borderColor={commonBorderColor}
       >
         <ShowOnSignUp
+          headContent={exercise?.solution_video_url && (
+            <ReactPlayerV2
+              title="Video tutorial"
+              withModal
+              url={exercise?.solution_video_url}
+              withThumbnail
+            />
+          )}
           hideForm={!user && formSended}
           title={!user ? t('direct-access-request') : ''}
           submitText={t('get-instant-access')}

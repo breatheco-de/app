@@ -75,7 +75,9 @@ featured {
 
 .react-player {
   aspect-ratio: 16/9;
-  border-radius: 3px;
+}
+.react-player iframe {
+  border-radius: 4px;
 }
 
 @keyframes bounce {
