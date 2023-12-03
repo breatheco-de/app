@@ -485,6 +485,7 @@ featured {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  z-index: 999;
 }
 
 .video-container {
