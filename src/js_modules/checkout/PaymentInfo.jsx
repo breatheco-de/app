@@ -147,7 +147,6 @@ function PaymentInfo() {
           });
           handlePayment({}, true)
             .then((respPayment) => {
-              console.log('respPayment:::', respPayment);
               if (respPayment.data.status === 'FULFILLED') {
                 setReadyToRefetch(true);
               }
