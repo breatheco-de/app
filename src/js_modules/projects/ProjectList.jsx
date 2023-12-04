@@ -147,7 +147,7 @@ const ProjectList = forwardRef(({
                           fontWeight={700}
                         />
                       </Box>
-                      {ex?.intro_video_url && (
+                      {ex?.solution_video_url && (
                         <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
                           <Icon icon="camera" width="22px" height="22px" />
                         </Box>
