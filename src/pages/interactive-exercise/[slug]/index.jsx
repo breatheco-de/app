@@ -241,11 +241,11 @@ function TabletWithForm({
         borderColor={commonBorderColor}
       >
         <ShowOnSignUp
-          headContent={exercise?.solution_video_url && (
+          headContent={exercise?.intro_video_url && (
             <ReactPlayerV2
               title="Video tutorial"
               withModal
-              url={exercise?.solution_video_url}
+              url={exercise?.intro_video_url}
               withThumbnail
             />
           )}
