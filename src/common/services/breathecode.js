@@ -230,6 +230,11 @@ const breathecode = {
         },
       }),
       getMeActivity: () => axios.get(`${url}/me/activity`),
+      getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
+        headers: academyId && {
+          academy: academyId,
+        },
+      }),
     };
   },
 

@@ -34,6 +34,7 @@ import Heading from '../../../../../common/components/Heading';
 import Icon from '../../../../../common/components/Icon';
 import Text from '../../../../../common/components/Text';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
+import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 
 const activitiesTemplate = {
@@ -114,6 +115,7 @@ function StudentReport() {
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [report, setReport] = useState([]);
   const [studentAssignments, setStudentAssignments] = useState({
     lessons: [],
     projects: [],
@@ -151,6 +153,20 @@ function StudentReport() {
     return Object.values(sortedActivities);
   };
 
+  const attendanceStyles = {
+    ATTENDED: hexColor.green,
+    ABSENT: hexColor.danger,
+    'NO-INFO': hexColor.yellowDefault,
+    'NOT-TAKEN': hexColor.fontColor3,
+  };
+
+  const getAttendanceStatus = (day) => {
+    if (!day) return 'NOT-TAKEN';
+    if (day.attendance_ids.includes(Number(studentId))) return 'ATTENDED';
+    if (day.unattendance_ids.includes(Number(studentId))) return 'ABSENT';
+    return 'NO-INFO';
+  };
+
   useEffect(() => {
     bc.admissions({ users: studentId }).cohortUsers(academy)
       .then((res) => {
@@ -159,7 +175,7 @@ function StudentReport() {
       }).catch((e) => {
         console.log(e);
       });
-    bc.activity({ user_id: studentId }).getMeActivity(academy)
+    bc.activity({ user_id: studentId }).getActivity(academy)
       .then((res) => {
         const data = processActivities(res?.data);
         setActivities(data);
@@ -171,6 +187,17 @@ function StudentReport() {
 
   useEffect(() => {
     if (selectedCohortUser) {
+      const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'] } };
+      const projectsQueryObject = {
+        filter: {
+          'meta.task_type': 'PROJECT',
+          'meta.revision_status': 'APPROVED',
+          'meta.user_email': selectedCohortUser.user.email,
+          kind: 'assignment_review_status_updated',
+          'meta.cohort': selectedCohortUser.cohort.id,
+        },
+        grouping_function: { count: ['kind'] },
+      };
       Promise.all([
         bc
           .cohort({ academy })
@@ -184,6 +211,8 @@ function StudentReport() {
           })
           .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
+        bc.activity({ query: JSON.stringify(mentorshipQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
+        bc.activity({ query: JSON.stringify(projectsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
       ])
         .then(async (res) => {
           const currentDaysLog = res[0].data;
@@ -201,8 +230,9 @@ function StudentReport() {
           });
           const syllabusInfo = await bc.admissions().syllabus(res[2].data.syllabus_version.slug, res[2].data.syllabus_version.version, academy);
 
+          let projects;
           if (syllabusInfo?.data) {
-            let projects = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
+            projects = syllabusInfo.data.json.days.filter((obj) => obj.assignments && Array.isArray(obj.assignments) && obj.assignments.length > 0 && typeof obj.assignments[0] === 'object').map((obj) => obj.assignments);
             projects = [].concat(...projects);
             let lessons = syllabusInfo.data.json.days.filter((obj) => obj.lessons && Array.isArray(obj.lessons) && obj.lessons.length > 0 && typeof obj.lessons[0] === 'object').map((obj) => obj.lessons);
             lessons = [].concat(...lessons);
@@ -214,6 +244,27 @@ function StudentReport() {
               exercises,
             });
           }
+          const [,,, resMentorships, resProjects] = res;
+
+          const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
+          const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
+          setReport([{
+            label: t('analitics.total-mentorships'),
+            icon: 'book',
+            variationColor: hexColor.blueDefault,
+            value: resMentorships.data?.find((obj) => obj.kind === 'mentoring_session_scheduled')?.count__kind,
+          }, {
+            label: t('analitics.projects-completed'),
+            icon: 'bookClosed',
+            variationColor: hexColor.blueDefault,
+            value: resProjects.data?.find((obj) => obj.kind === 'assignment_review_status_updated')?.count__kind,
+            max: projects?.length,
+          }, {
+            label: t('analitics.percentage-attendance'),
+            icon: 'list',
+            variationColor: hexColor.blueDefault,
+            value: `${(attendancePresent.length * 100) / attendanceTaken.length}%`,
+          }]);
         })
         .catch((e) => {
           console.log(e);
@@ -251,20 +302,6 @@ function StudentReport() {
     if (project.revision_status === 'REJECTED') return 'REJECTED';
     if (project.task_status === 'DONE' && project.revision_status === 'PENDING') return 'DELIVERED';
     return 'UNDELIVERED';
-  };
-
-  const attendanceStyles = {
-    ATTENDED: hexColor.green,
-    ABSENT: hexColor.danger,
-    'NO-INFO': hexColor.yellowDefault,
-    'NOT-TAKEN': hexColor.fontColor3,
-  };
-
-  const getAttendanceStatus = (day) => {
-    if (!day) return 'NOT-TAKEN';
-    if (day.attendance_ids.includes(Number(studentId))) return 'ATTENDED';
-    if (day.unattendance_ids.includes(Number(studentId))) return 'ABSENT';
-    return 'NO-INFO';
   };
 
   const exerciseStyles = {
@@ -473,100 +510,17 @@ function StudentReport() {
             )}
           </Box>
         )}
-        {/* <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
-          <Box
-            borderRadius="17px"
-            width={{ base: '100%', md: '100%' }}
-            maxWidth={{ base: 'none', md: '265px' }}
-            padding="12px 16px"
-            border="3px solid"
-            borderColor={hexColor.featuredColor}
-          >
-            <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.total-mentorships')}
-            </Text>
-            <Box display="flex" gap="10px" alignItems="center">
-              <Icon
-                icon="book"
-                color={hexColor.blueDefault}
-                width="24px"
-                height="24px"
-              />
-              <Text color={hexColor.fontColor3} size="30px" fontWeight="700">
-                100
-              </Text>
-            </Box>
-          </Box>
-          <Box
-            borderRadius="17px"
-            width={{ base: '100%', md: '100%' }}
-            maxWidth={{ base: 'none', md: '265px' }}
-            padding="12px 16px"
-            border="3px solid"
-            borderColor={hexColor.featuredColor}
-          >
-            <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.projects-completed')}
-            </Text>
-            <Box display="flex" gap="10px" alignItems="center">
-              <Icon
-                icon="bookClosed"
-                color={hexColor.blueDefault}
-                width="24px"
-                height="24px"
-              />
-              <Text color={hexColor.fontColor3} size="30px" fontWeight="700">
-                100
-              </Text>
-            </Box>
-          </Box>
-          <Box
-            borderRadius="17px"
-            width={{ base: '100%', md: '100%' }}
-            maxWidth={{ base: 'none', md: '265px' }}
-            padding="12px 16px"
-            border="3px solid"
-            borderColor={hexColor.featuredColor}
-          >
-            <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.percentage-attendance')}
-            </Text>
-            <Box display="flex" gap="10px" alignItems="center">
-              <Icon
-                icon="list"
-                color={hexColor.blueDefault}
-                width="24px"
-                height="24px"
-              />
-              <Text color={hexColor.fontColor3} size="30px" fontWeight="700">
-                100
-              </Text>
-            </Box>
-          </Box>
-          <Box
-            borderRadius="17px"
-            width={{ base: '100%', md: '100%' }}
-            maxWidth={{ base: 'none', md: '265px' }}
-            padding="12px 16px"
-            border="3px solid"
-            borderColor={hexColor.featuredColor}
-          >
-            <Text color={hexColor.fontColor2} fontWeight="700">
-              {t('analitics.completed-learnpack')}
-            </Text>
-            <Box display="flex" gap="10px" alignItems="center">
-              <Icon
-                icon="smile"
-                color={hexColor.green}
-                width="24px"
-                height="24px"
-              />
-              <Text color={hexColor.fontColor3} size="30px" fontWeight="700">
-                100
-              </Text>
-            </Box>
-          </Box>
-        </Flex> */}
+        <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
+          {report.map((elem) => (
+            <KPI
+              label={elem.label}
+              icon={elem.icon}
+              variationColor={elem.variationColor}
+              value={elem.value}
+              {...elem}
+            />
+          ))}
+        </Flex>
       </Box>
       <Divider borderBottom="1px solid" color={borderColor} />
       <Flex
