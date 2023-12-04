@@ -32,7 +32,7 @@ function LiveEvent({
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   const [openFilter, setOpenFilter] = useState(false);
-  const [mainEventTimes, setMainEventTimes] = useState({});
+  const [eventTimeTexts, setEventTimeTexts] = useState({});
   const [filterSelection, setFilterSelection] = useState({
     lang: '',
     eventType: '',
@@ -188,13 +188,13 @@ function LiveEvent({
     const eventTyleHasSelected = filterSelection.eventType.length > 0;
     const langHasSelected = filterSelection.lang.length > 0;
 
-    const filteredMainEvents = mainClasses.filter((item) => (
+    const filteredMainEvents = mainClasses?.length > 0 ? mainClasses?.filter((item) => (
       eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
-      && (langHasSelected ? item.lang === filterSelection.lang : true));
+      && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
 
-    const filteredOtherEvents = otherEvents.filter((item) => (
+    const filteredOtherEvents = otherEvents?.length > 0 ? otherEvents?.filter((item) => (
       eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
-      && (langHasSelected ? item.lang === filterSelection.lang : true));
+      && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
 
     setOpenFilter(false);
     setLiveEvent({
@@ -202,35 +202,46 @@ function LiveEvent({
       other: filteredOtherEvents,
     });
   };
+  const updateTimes = () => {
+    const otherEventsList = mainEvents.length !== 0 && liveEvent.main.length !== 0 ? otherEventsSorted : restOfEvents;
+    const mainTimeEventsText = {};
+    const otherTimeEventsText = {};
+    if (mainEvents?.length > 0) {
+      mainEvents.forEach((event) => {
+        const startsAt = event?.starting_at && new Date(event.starting_at);
+        const endsAt = event?.ending_at && new Date(event.ending_at);
+        mainTimeEventsText[event.id] = textTime(startsAt, endsAt);
+      });
+    }
+    if (otherEventsList?.length > 0) {
+      otherEventsList.forEach((event) => {
+        const startsAt = event?.starting_at && new Date(event.starting_at);
+        const endsAt = event?.ending_at && new Date(event.ending_at);
+        otherTimeEventsText[event.id] = textTime(startsAt, endsAt);
+      });
+    }
+    setEventTimeTexts({
+      ...mainTimeEventsText,
+      ...otherTimeEventsText,
+    });
+  };
 
   useEffect(() => {
     let intervalVar;
-    const updateTimes = () => {
-      if (mainEvents?.length > 0) {
-        const newTimes = {};
-        mainEvents.forEach((event) => {
-          const startsAt = event?.starting_at && new Date(event.starting_at);
-          const endsAt = event?.ending_at && new Date(event.ending_at);
-
-          newTimes[event.id] = textTime(startsAt, endsAt);
-        });
-        setMainEventTimes(newTimes);
-      }
-    };
-
+    applyFilters();
     updateTimes();
+
     setTimeout(() => {
       updateTimes();
       intervalVar = setInterval(updateTimes(), 60 * 1000);
     }, secondsToNextMinute * 1000);
-
     return () => {
       clearInterval(intervalVar);
     };
-  }, [mainClasses]);
+  }, [mainClasses, otherEvents]);
 
   return (mainClasses?.length > 0 || otherEvents?.length > 0) && (
-    <>
+    <Box>
       <Box
         background="yellow.light"
         padding="6px 8px"
@@ -340,7 +351,7 @@ function LiveEvent({
             {mainEvents.map((event, index) => (
               <MainEvent
                 key={event.id}
-                currentDateText={mainEventTimes[event.id]}
+                currentDateText={eventTimeTexts?.[event.id]}
                 index={index}
                 event={event}
                 mainEvents={mainEvents}
@@ -429,6 +440,7 @@ function LiveEvent({
           <Box marginTop="10px" maxHeight="450px" overflow="auto">
             <OtherEvents
               events={mainEvents.length !== 0 && liveEvent.main.length !== 0 ? otherEventsSorted : restOfEvents}
+              dateTextObj={eventTimeTexts}
               isLiveOrStarting={isLiveOrStarting}
               isLive={isLive}
               subLabel={t('workshop')}
@@ -470,7 +482,7 @@ function LiveEvent({
           </Button>
         )}
       </Box>
-    </>
+    </Box>
   );
 }
 
