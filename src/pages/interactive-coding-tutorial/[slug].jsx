@@ -186,7 +186,7 @@ function TableInfo({ t, project, commonTextColor }) {
         <ReactPlayerV2
           title="Video tutorial"
           withModal
-          url={project?.solution_video_url}
+          url={project?.intro_video_url}
           withThumbnail
         />
         <SimpleTable
@@ -194,7 +194,7 @@ function TableInfo({ t, project, commonTextColor }) {
           difficulty={typeof project.difficulty === 'string' ? project.difficulty.toLowerCase() : 'unknown'}
           repository={project?.url}
           duration={project.duration}
-          videoAvailable={project.solution_video_url}
+          videoAvailable={project.intro_video_url}
           technologies={project.technologies}
           liveDemoAvailable={project.intro_video_url}
         />
