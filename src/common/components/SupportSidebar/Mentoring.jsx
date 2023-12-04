@@ -3,6 +3,7 @@ import {
   memo, useState, useEffect,
 } from 'react';
 import {
+  Box,
   useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -127,7 +128,10 @@ function Mentoring({
   );
 
   return !isLoading && user?.id && (
-    <>
+    <Box>
+      <Box fontSize="16px" padding="10px 16px" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
+        {t('supportSideBar.mentoring-label')}
+      </Box>
       {isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
         <MentoringConsumables
           {...{
@@ -175,7 +179,7 @@ function Mentoring({
           }}
         />
       )}
-    </>
+    </Box>
   );
 }
 

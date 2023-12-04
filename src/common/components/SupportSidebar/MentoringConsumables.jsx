@@ -164,7 +164,6 @@ function MentoringConsumables({
   return (
     <Box
       position="relative"
-      backgroundColor={useColorModeValue('yellow.light', 'featuredDark')}
       width={width}
       height="auto"
       borderWidth="0px"
@@ -225,7 +224,7 @@ function MentoringConsumables({
                 {t('supportSideBar.mentors-available', { count: 3 })}
               </Text>
             </Box>
-            <Button variant="default" onClick={() => setOpen(true)}>
+            <Button variant="link" fontSize="14px" onClick={() => setOpen(true)}>
               {t('supportSideBar.schedule-button')}
               <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
             </Button>

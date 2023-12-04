@@ -47,7 +47,6 @@ function LiveEvent({
   });
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-  const bgColor = useColorModeValue('white', 'gray.900');
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
@@ -249,6 +248,7 @@ function LiveEvent({
         textAlign="center"
         borderRadius="17px"
         mb="1rem"
+        fontWeight={700}
       >
         {t('choose-program:sidebar.live-events-title')}
 
@@ -303,10 +303,6 @@ function LiveEvent({
 
       <Box
         padding="10px"
-        background={bgColor}
-        border="1px solid"
-        borderColor="#DADADA"
-        borderRadius="11px"
         maxWidth="100%"
         {...rest}
       >
