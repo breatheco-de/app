@@ -18,6 +18,7 @@ import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
 import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
@@ -122,6 +123,7 @@ function Page({ event }) {
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState([]);
   const [myCohorts, setMyCohorts] = useState([]);
+  const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -306,12 +308,46 @@ function Page({ event }) {
       });
     }
     if (isAuth && (!alreadyApplied && !readyToJoinEvent)) {
+      if (!event?.online_event) {
+        return ({
+          title: '',
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+              <Text size="14px" fontWeight={700} lineHeight="18px">
+                {t('suggest-join-in-person-event')}
+              </Text>
+            </Box>
+          ),
+        });
+      }
       return ({
         title: t('greetings', { name: user?.first_name }),
         description: t('suggest-join-event'),
       });
     }
     if (isAuth) {
+      if (!event?.online_event) {
+        return ({
+          title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
+          description: !readyToJoinEvent && t('form.joined-description-in-person'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      }
       return ({
         title: readyToJoinEvent ? t('form.ready-to-join-title') : t('form.joined-title'),
         description: readyToJoinEvent ? t('form.ready-to-join-description-logged') : t('form.joined-description'),
@@ -397,6 +433,7 @@ function Page({ event }) {
               });
             }
           });
+        setIsModalConfirmOpen(false);
       }
     }
   };
@@ -427,7 +464,7 @@ function Page({ event }) {
       >
         <Box display={{ base: 'none', md: 'block' }} filter={{ base: 'blur(6px)', md: 'blur(0px)' }} position="absolute" top="104px" left="-40px" zIndex={1}>
           <svg width="110" height="151" viewBox="0 0 110 151" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill="#0097CF" />
+            <path d="M42.3031 77.3264L88.5358 24.5161L110 0H88.5358H67.6969L0 77.3264L67.5109 151H88.5358H109.814L88.5358 127.78L42.3031 77.3264Z" fill={hexColor.blueDefault} />
           </svg>
         </Box>
 
@@ -436,7 +473,7 @@ function Page({ event }) {
             <ellipse cx="285.5" cy="99" rx="9.5" ry="9" fill="#FFA600" />
             <ellipse cx="324.5" cy="99" rx="9.5" ry="9" fill="#EB5757" />
             <ellipse cx="246.5" cy="99" rx="9.5" ry="9" fill="#0097CF" />
-            <path d="M461.466 161.21L416.074 212.971L395 237L416.074 237L436.534 237L503 161.21L436.717 89L416.074 89L395.183 89L416.074 111.759L461.466 161.21Z" fill="#0097CF" />
+            <path d="M461.466 161.21L416.074 212.971L395 237L416.074 237L436.534 237L503 161.21L436.717 89L416.074 89L395.183 89L416.074 111.759L461.466 161.21Z" fill={hexColor.blueDefault} />
             <path d="M71.5644 129.587L70.6552 130.607L71.5873 131.607L151.023 216.809L185.231 253.5L152.121 253.5L116.648 253.5L2.02928 130.561L116.988 1.50002L152.121 1.50003L185.655 1.50003L151 40.4036L152.121 41.4013L151 40.4037L71.5644 129.587Z" stroke="#25BF6C" strokeWidth="3" />
           </svg>
         </Box>
@@ -474,16 +511,23 @@ function Page({ event }) {
             {event?.slug ? (
               <>
                 {event?.title && !eventNotExists ? (
-                  <Heading
-                    as="h1"
-                    size={{ base: '26px', md: '50px' }}
-                    fontWeight="700"
-                    lineHeight={{ base: '31px', md: '52px' }}
-                    textTransform="capitalize"
-                    color={useColorModeValue('black', 'white')}
-                  >
-                    {event.title}
-                  </Heading>
+                  <>
+                    <Heading
+                      as="h1"
+                      size={{ base: '26px', md: '50px' }}
+                      fontWeight="700"
+                      lineHeight={{ base: '31px', md: '52px' }}
+                      textTransform="capitalize"
+                      color={useColorModeValue('black', 'white')}
+                    >
+                      {event.title}
+                    </Heading>
+                    {!event?.online_event && (
+                      <Text size="12px" color="white" fontWeight={700} background={hexColor.blueDefault} borderRadius="20px" alignItems="center" width="fit-content" padding="4px 10px">
+                        {t('in-person')}
+                      </Text>
+                    )}
+                  </>
                 ) : (
                   <Heading
                     as="h1"
@@ -501,6 +545,14 @@ function Page({ event }) {
               <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
             )}
             <Box display="flex" flexDirection="column" gridGap="9px" id="event-info">
+              {!event?.online_event && (
+                <Box display="flex" gridGap="10px">
+                  <Icon icon="location" width="20px" height="20px" color={hexColor.blueDefault} />
+                  <Text size="14px" fontWeight={700} width="fit-content">
+                    {event?.venue?.street_address}
+                  </Text>
+                </Box>
+              )}
               {formatedDate[locale] && (
                 <Box display="flex" gridGap="10px">
                   <Icon icon="calendar" width="20px" height="20px" color={hexColor.blueDefault} />
@@ -544,6 +596,28 @@ function Page({ event }) {
           )}
           {event?.id && (
             <>
+              <ModalInfo
+                isOpen={isModalConfirmOpen}
+                onClose={() => setIsModalConfirmOpen(false)}
+                headerStyles={{ textAlign: 'center' }}
+                title={t('in-person')}
+                childrenDescription={(
+                  <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+                    <Text
+                      size="14px"
+                      textAlign="center"
+                    >
+                      {t('in-person-confirm', { address: event?.venue?.street_address })}
+                    </Text>
+                  </Box>
+                )}
+                closeText={t('deny-attendance')}
+                closeButtonVariant="outline"
+                closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
+                buttonHandlerStyles={{ variant: 'default' }}
+                actionHandler={handleJoin}
+                handlerText={t('confirm-attendance')}
+              />
               <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
@@ -563,6 +637,14 @@ function Page({ event }) {
                         />
                       </Box>
                     )}
+                    {!event?.online_event && (
+                      <Box display="flex" gridGap="10px" justifyContent="center" marginBottom="10px">
+                        <Icon icon="location" width="20px" height="20px" color="white" />
+                        <Text size="14px" fontWeight={700} width="fit-content">
+                          {event?.venue?.street_address}
+                        </Text>
+                      </Box>
+                    )}
                     {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                       <Box display="flex" gap="10px">
                         <Button
@@ -570,6 +652,7 @@ function Page({ event }) {
                           color="blue.default"
                           background="white"
                           width="100%"
+                          display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                           isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
@@ -583,7 +666,10 @@ function Page({ event }) {
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
-                          onClick={handleJoin}
+                          onClick={() => {
+                            if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                            else handleJoin();
+                          }}
                         >
                           {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
                           {finishedEvent && t('event-finished')}
@@ -694,6 +780,7 @@ function Page({ event }) {
                       mt="10px"
                       type="submit"
                       variant="default"
+                      display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? 'blue.default' : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
@@ -710,7 +797,10 @@ function Page({ event }) {
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
-                      onClick={handleJoin}
+                      onClick={() => {
+                        if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                        else handleJoin();
+                      }}
                     >
                       {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
                       {finishedEvent && t('event-finished')}
