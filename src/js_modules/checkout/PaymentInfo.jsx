@@ -15,9 +15,8 @@ import useSignup from '../../common/store/actions/signupAction';
 import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
-import DatePickerField from '../../common/components/Forms/DateField';
 import { reportDatalayer } from '../../utils/requests';
-import { getStorageItem, number2DIgits } from '../../utils';
+import { getStorageItem } from '../../utils';
 import Text from '../../common/components/Text';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 
@@ -89,11 +88,11 @@ function PaymentInfo() {
       .max(20)
       .required(t('validators.card_number-required')),
     exp: Yup.string()
-      .min(4)
+      .min(5, t('validators.exp-min'))
       .required(t('validators.exp-required')),
     cvc: Yup.string()
       .min(3)
-      .max(3)
+      .max(4)
       .required(t('validators.cvc-required')),
   });
 
@@ -148,6 +147,7 @@ function PaymentInfo() {
           });
           handlePayment({}, true)
             .then((respPayment) => {
+              console.log('respPayment:::', respPayment);
               if (respPayment.data.status === 'FULFILLED') {
                 setReadyToRefetch(true);
               }
@@ -311,8 +311,9 @@ function PaymentInfo() {
           }}
           onSubmit={(values, actions) => {
             setIsSubmitting(true);
-            const expMonth = number2DIgits(values.exp?.getMonth() + 1);
-            const expYear = number2DIgits(values.exp?.getFullYear() - 2000);
+            const monthAndYear = values.exp?.split('/');
+            const expMonth = monthAndYear[0];
+            const expYear = monthAndYear[1];
 
             const allValues = {
               card_number: stateCard.card_number,
@@ -364,16 +365,25 @@ function PaymentInfo() {
               <Box display="flex" gridGap="18px">
                 <Box display="flex" gridGap="18px" flex={1}>
                   <Box display="flex" flexDirection="column" flex={0.5}>
-                    <DatePickerField
+                    <FieldForm
+                      style={{ flex: 0.5 }}
                       type="text"
                       name="exp"
-                      wrapperClassName="datePicker"
-                      onChange={(date) => {
-                        setPaymentInfo('exp', date);
+                      externValue={paymentInfo.exp}
+                      maxLength={3}
+                      handleOnChange={(e) => {
+                        let { value } = e.target;
+                        if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
+                          value += '/';
+                        } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
+                          value = value.slice(0, 1);
+                        }
+                        value = value.substring(0, 5);
+
+                        setPaymentInfo('exp', value);
                       }}
-                      customInput={<CustomDateInput />}
-                      dateFormat="MM/yy"
-                      showMonthYearPicker
+                      pattern="[0-9]*"
+                      label={t('exp')}
                     />
                   </Box>
                   <FieldForm
@@ -384,8 +394,8 @@ function PaymentInfo() {
                     maxLength={3}
                     handleOnChange={(e) => {
                       const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                      const newValue = value.replace(/(.{3})/g, '$1 ').trim();
-                      e.target.value = newValue.slice(0, 3);
+                      const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                      e.target.value = newValue.slice(0, 4);
 
                       setPaymentInfo('cvc', e.target.value);
                     }}

@@ -98,6 +98,7 @@
     "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
     "exp-required": "La fecha de expiración es requerida",
+    "exp-min": "Por favor, ingrese una fecha de expiración válida",
     "cvc-required": "El CVC es requerido",
     "short-input": "¡Demasiado corto!",
     "long-input": "¡Demasiado largo!",
