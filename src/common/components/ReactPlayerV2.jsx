@@ -57,12 +57,13 @@ function ReactPlayerV2({
             onClick={handleButtonClick}
             cursor="pointer"
             backgroundPosition="center center"
+            backgroundSize="cover"
             backgroundImage={`url(${thumbnail || videoThumbnail || ''})`}
             borderRadius="4px"
           >
             <IconButton
               aria-label="Play video"
-              icon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background={hexColor.featuredColor} borderRadius="6px" padding="4px" />}
+              icon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background="darkTheme" borderRadius="6px" padding="4px" />}
             />
           </Flex>
 
