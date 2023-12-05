@@ -4,6 +4,7 @@ import { Avatar, Box, Button, Checkbox, useToast,
   Spinner,
   InputGroup,
   InputRightElement,
+  Flex,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -27,12 +28,12 @@ import bc from '../../services/breathecode';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
-  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
   const { emailValidation, thriggerValidation } = useEmailValidation();
-  const { hexColor } = useStyle();
+  const { hexColor, featuredColor } = useStyle();
   const plan = getQueryString('plan') || planSlug;
   const planFormated = plan ? encodeURIComponent(plan) : BASE_PLAN;
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
@@ -272,6 +273,13 @@ function SignupForm({
                   .
                 </Text>
               </Checkbox>
+              {showLoginLink && (
+                <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
+                  {t('already-have-account')}
+                  {' '}
+                  <NextChakraLink href="/login" fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+                </Flex>
+              )}
             </Box>
             <Button
               width="100%"
@@ -382,6 +390,7 @@ SignupForm.propTypes = {
   conversionTechnologies: PropTypes.string,
   columnLayout: PropTypes.bool,
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  showLoginLink: PropTypes.bool,
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => {},
@@ -394,6 +403,7 @@ SignupForm.defaultProps = {
   columnLayout: false,
   subscribeValues: {},
   conversionTechnologies: null,
+  showLoginLink: false,
 };
 
 export default SignupForm;
