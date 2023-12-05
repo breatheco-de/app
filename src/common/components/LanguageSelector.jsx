@@ -14,10 +14,13 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
+import bc from '../services/breathecode';
+import useAuth from '../hooks/useAuth';
 
 function LanguageSelector({ display, translations }) {
   const router = useRouter();
   const { t } = useTranslation('common');
+  const { isAuthenticated } = useAuth();
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
@@ -29,6 +32,17 @@ function LanguageSelector({ display, translations }) {
   const translationsPropsExists = translations?.length > 0;
   const currentTranslationLanguage = translationsPropsExists && translations?.find((l) => l.lang === locale);
   const translationData = (translationsPropsExists && translations) || languagesTR;
+
+  const updateSettingsLang = async (lang) => {
+    try {
+      if (isAuthenticated) {
+        await bc.auth().updateSettings({ lang });
+        alert(lang);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <Popover
@@ -107,6 +121,9 @@ function LanguageSelector({ display, translations }) {
                 opacity={locale === value ? 1 : 0.75}
                 _hover={{
                   opacity: 1,
+                }}
+                onClick={async () => {
+                  await updateSettingsLang(l.value);
                 }}
               >
                 <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
