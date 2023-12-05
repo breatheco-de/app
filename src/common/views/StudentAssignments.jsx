@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'next/router';
 import bc from '../services/breathecode';
 import DottedTimeline from '../components/DottedTimeline';
+import NextChakraLink from '../components/NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import useFormatTimeString from '../hooks/useFormatTimeString';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../js_modules/assignmentHandler/index';
@@ -22,7 +23,7 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const { query } = router;
-  const { academy } = query;
+  const { academy, cohortSlug } = query;
   const { formatTimeString } = useFormatTimeString();
   const toast = useToast();
   const { hexColor } = useStyle();
@@ -112,7 +113,9 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
                     style={{ userSelect: 'none' }}
                   />
                   <Box>
-                    <p>{fullname}</p>
+                    <p>
+                      <NextChakraLink textDecoration="underline" href={`/cohort/${cohortSlug}/student/${student.user.id}?academy=${academy}`}>{fullname}</NextChakraLink>
+                    </p>
                     <small>{`${percentage}${t('delivered-percentage')} - `}</small>
                     <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small>
                   </Box>
