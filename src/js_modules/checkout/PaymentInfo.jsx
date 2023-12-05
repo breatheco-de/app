@@ -122,7 +122,6 @@ function PaymentInfo() {
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
-
             if (isPurchasedPlanFound) {
               clearInterval(interval);
               if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
