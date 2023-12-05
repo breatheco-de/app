@@ -239,6 +239,29 @@ function Docs({ syllabusData, moduleMap }) {
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
 
+  const getPrevArticle = () => {
+    if (Number.isNaN(open)) return null;
+    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
+    const nextAsset = moduleMap[open]?.modules[currentIndex - 1];
+    if (nextAsset) return nextAsset;
+    const prevModule = moduleMap[open - 1];
+    if (prevModule && prevModule.modules.length > 0) return prevModule.modules[prevModule.modules.length - 1];
+    return null;
+  };
+
+  const getNextArticle = () => {
+    if (Number.isNaN(open)) return null;
+    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
+    const nextAsset = moduleMap[open]?.modules[currentIndex + 1];
+    if (nextAsset) return nextAsset;
+    const nextModule = moduleMap[open + 1];
+    if (nextModule && nextModule.modules.length > 0) return nextModule.modules[0];
+    return null;
+  };
+
+  const prevArticle = getPrevArticle();
+  const nextArticle = getNextArticle();
+
   return (
     <>
       {!loadStatus.loading && loadStatus.status === 'not-found' && (
@@ -333,8 +356,7 @@ function Docs({ syllabusData, moduleMap }) {
 
           {asset?.markdown && !isIpynb && (
             <Box
-              height="100%"
-              margin="0 rem auto 0 auto"
+              margin="0 auto"
               // display="grid"
               gridColumn="2 / span 12"
               transition="background 0.2s ease-in-out"
@@ -432,6 +454,47 @@ function Docs({ syllabusData, moduleMap }) {
               )}
             </Box>
           )}
+          <Box margin="0 auto" display="flex" justifyContent="flex-end" gap="20px">
+            {prevArticle && (
+              <Link
+                href={`/docs/${syllabusSlug}/${prevArticle.slug}`}
+                fontWeight="700"
+                fontSize="15px"
+                variant="default"
+                display="flex"
+                alignItems="center"
+                gridGap="10px"
+                onClick={() => {
+                  if (!moduleMap[open].modules.find((elem) => elem.slug === prevArticle.slug)) {
+                    setOpen(open - 1);
+                  }
+                }}
+              >
+                <Icon icon="arrowLeft2" width="18px" height="10px" />
+                {t('previous-article')}
+              </Link>
+            )}
+
+            {nextArticle && (
+              <Link
+                href={`/docs/${syllabusSlug}/${nextArticle.slug}`}
+                fontWeight="700"
+                fontSize="15px"
+                variant="default"
+                display="flex"
+                alignItems="center"
+                gridGap="10px"
+                onClick={() => {
+                  if (!moduleMap[open].modules.find((elem) => elem.slug === nextArticle.slug)) {
+                    setOpen(open + 1);
+                  }
+                }}
+              >
+                {t('next-article')}
+                <Icon style={{ transform: 'rotate(180deg)' }} icon="arrowLeft2" width="18px" height="10px" />
+              </Link>
+            )}
+          </Box>
         </Box>
       </GridContainer>
     </>
