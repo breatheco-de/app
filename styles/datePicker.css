@@ -211,6 +211,12 @@ div.react-datepicker__current-month {
   margin: 0 12px 8px 12px;
 }
 
+.centerMonth .react-datepicker__current-month  {
+  text-align: center;
+  font-size: 18px;
+  margin: 0 12px 8px 12px;
+}
+
 .react-datepicker-time__header {
   text-overflow: ellipsis;
   white-space: nowrap;

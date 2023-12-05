@@ -7,6 +7,7 @@ import { cleanObject } from '../../utils';
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
+const hostV2 = `${BREATHECODE_HOST}/v2`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -94,6 +95,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       syllabus: (slug, version, academy) => axios.get(`${url}/syllabus/${slug}/version/${version}${qs}`, {
         headers: academy && {
           academy,
@@ -209,6 +215,25 @@ const breathecode = {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
+        },
+      }),
+    };
+  },
+  activity: (query = {}) => {
+    const url = `${hostV2}/activity`;
+    const qs = parseQuerys(query);
+    return {
+      getActivity: (academyId) => axios({
+        method: 'get',
+        url: `${url}/academy/activity${qs}`,
+        headers: {
+          academy: academyId,
+        },
+      }),
+      getMeActivity: () => axios.get(`${url}/me/activity`),
+      getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
+        headers: academyId && {
+          academy: academyId,
         },
       }),
     };
