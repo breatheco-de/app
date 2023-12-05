@@ -37,7 +37,6 @@ function LanguageSelector({ display, translations }) {
     try {
       if (isAuthenticated) {
         await bc.auth().updateSettings({ lang });
-        alert(lang);
       }
     } catch (e) {
       console.log(e);
