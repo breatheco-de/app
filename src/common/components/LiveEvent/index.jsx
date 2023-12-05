@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { useEffect, useState } from 'react';
 import {
-  Box, useColorModeValue, Button, Popover, PopoverTrigger, PopoverContent, Select, Flex, IconButton, Divider,
+  Box, useColorModeValue, Button,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import PropTypes from 'prop-types';
@@ -18,7 +18,6 @@ import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
 import logoData from '../../../../public/logo.json';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
-import useStyle from '../../hooks/useStyle';
 
 function LiveEvent({
   mainClasses,
@@ -31,16 +30,16 @@ function LiveEvent({
 }) {
   const { t, lang } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
-  const [openFilter, setOpenFilter] = useState(false);
+  // const [openFilter, setOpenFilter] = useState(false);
   const [eventTimeTexts, setEventTimeTexts] = useState({});
-  const [filterSelection, setFilterSelection] = useState({
-    lang: '',
-    eventType: '',
-  });
-  const [filterValues, setFilterValues] = useState({
-    langs: [],
-    eventTypes: [],
-  });
+  // const [filterSelection, setFilterSelection] = useState({
+  //   lang: '',
+  //   eventType: '',
+  // });
+  // const [filterValues, setFilterValues] = useState({
+  //   langs: [],
+  //   eventTypes: [],
+  // });
   const [liveEvent, setLiveEvent] = useState({
     main: [],
     other: [],
@@ -50,7 +49,7 @@ function LiveEvent({
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');
   const textGrayColor = useColorModeValue('gray.600', 'gray.350');
-  const { bordercolor, fontColor, backgroundColor } = useStyle();
+  // const { bordercolor, fontColor, backgroundColor } = useStyle();
   const whiteLabelAcademy = WHITE_LABEL_ACADEMY;
   const existsWhiteLabel = typeof whiteLabelAcademy === 'string' && whiteLabelAcademy.length > 0;
 
@@ -161,46 +160,46 @@ function LiveEvent({
         other: otherEvents,
       });
       // recopilate all lang and event_type values from events main and other objects
-      const allLangs = [...new Set([
-        ...mainClasses.map((event) => (event?.lang !== null ? event?.lang : undefined)),
-        ...otherEvents.map((event) => (event?.lang !== null ? event?.lang : undefined)),
-      ])];
-      const allEventTypes = [...new Set([
-        ...mainClasses.map((event) => ({
-          title: event.event_type.name,
-          slug: event.event_type.slug,
-        })),
-        ...otherEvents.map((event) => ({
-          title: event.event_type.name,
-          slug: event.event_type.slug,
-        })),
-      ])];
+      // const allLangs = [...new Set([
+      //   ...mainClasses.map((event) => (event?.lang !== null ? event?.lang : undefined)),
+      //   ...otherEvents.map((event) => (event?.lang !== null ? event?.lang : undefined)),
+      // ])];
+      // const allEventTypes = [...new Set([
+      //   ...mainClasses.map((event) => ({
+      //     title: event.event_type.name,
+      //     slug: event.event_type.slug,
+      //   })),
+      //   ...otherEvents.map((event) => ({
+      //     title: event.event_type.name,
+      //     slug: event.event_type.slug,
+      //   })),
+      // ])];
 
-      setFilterValues({
-        langs: allLangs,
-        eventTypes: allEventTypes,
-      });
+      // setFilterValues({
+      //   langs: allLangs,
+      //   eventTypes: allEventTypes,
+      // });
     }
   }, [mainClasses, otherEvents]);
 
-  const applyFilters = () => {
-    const eventTyleHasSelected = filterSelection.eventType.length > 0;
-    const langHasSelected = filterSelection.lang.length > 0;
+  // const applyFilters = () => {
+  //   const eventTyleHasSelected = filterSelection.eventType.length > 0;
+  //   const langHasSelected = filterSelection.lang.length > 0;
 
-    const filteredMainEvents = mainClasses?.length > 0 ? mainClasses?.filter((item) => (
-      eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
-      && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
+  //   const filteredMainEvents = mainClasses?.length > 0 ? mainClasses?.filter((item) => (
+  //     eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
+  //     && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
 
-    const filteredOtherEvents = otherEvents?.length > 0 ? otherEvents?.filter((item) => (
-      eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
-      && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
+  //   const filteredOtherEvents = otherEvents?.length > 0 ? otherEvents?.filter((item) => (
+  //     eventTyleHasSelected ? item.event_type.slug === filterSelection.eventType : true)
+  //     && (langHasSelected ? item.lang === filterSelection.lang : true)) : [];
 
-    setOpenFilter(false);
-    setLiveEvent({
-      main: filteredMainEvents,
-      other: filteredOtherEvents,
-    });
-  };
+  //   setOpenFilter(false);
+  //   setLiveEvent({
+  //     main: filteredMainEvents,
+  //     other: filteredOtherEvents,
+  //   });
+  // };
   const updateTimes = () => {
     const otherEventsList = mainEvents.length !== 0 && liveEvent.main.length !== 0 ? otherEventsSorted : restOfEvents;
     const mainTimeEventsText = {};
@@ -227,7 +226,7 @@ function LiveEvent({
 
   useEffect(() => {
     let intervalVar;
-    applyFilters();
+    // applyFilters();
     updateTimes();
 
     setTimeout(() => {
@@ -241,7 +240,7 @@ function LiveEvent({
 
   return (mainClasses?.length > 0 || otherEvents?.length > 0) && (
     <Box>
-      <Box
+      {/* <Box
         background="yellow.light"
         padding="6px 8px"
         color="black"
@@ -299,7 +298,7 @@ function LiveEvent({
             </Flex>
           </PopoverContent>
         </Popover>
-      </Box>
+      </Box> */}
 
       <Box
         padding="10px"
