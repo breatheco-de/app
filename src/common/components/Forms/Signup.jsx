@@ -80,7 +80,7 @@ function SignupForm({
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       }
-      if (resp?.status >= 400) {
+      if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
         toast({
           position: 'top',
           title: data?.detail,
