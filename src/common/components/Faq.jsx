@@ -21,7 +21,7 @@ function Faq({ items, ...rest }) {
       </Heading>
       <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2}>
         {items.map((item) => (
-          <AccordionItem borderTop="none" borderBottom="1px solid #DADADA">
+          <AccordionItem key={item.label} borderTop="none" borderBottom="1px solid #DADADA">
             <AccordionButton padding="20px 10px 10px 10px">
               <Box as="span" flex="1" textAlign="left">
                 <Heading size="sm">

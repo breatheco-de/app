@@ -1,4 +1,6 @@
 {
   "not-found": "Lo sentimos, este programa de estudios no esta disponible en esta seccion",
-  "wrong-asset": "Esta leccion no es parte de este programa de estudios"
+  "wrong-asset": "Esta leccion no es parte de este programa de estudios",
+  "next-article": "Siguiente articulo",
+  "previous-article": "Articulo anterior"
 }

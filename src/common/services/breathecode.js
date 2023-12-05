@@ -53,6 +53,7 @@ const breathecode = {
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
+      updateSettings: (arg) => axios.put(`${url}/user/me/settings`, { ...arg }),
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),

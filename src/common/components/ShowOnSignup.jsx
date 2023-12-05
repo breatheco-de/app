@@ -114,6 +114,7 @@ function ShowOnSignUp({
           <Box>
             <Signup
               columnLayout
+              showLoginLink
               showVerifyEmail={false}
               formProps={formProps}
               setFormProps={setFormProps}
