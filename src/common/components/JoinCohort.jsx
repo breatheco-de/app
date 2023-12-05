@@ -17,7 +17,7 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort 
   const { isAuthenticated } = useAuth();
   return (
     <Flex gap="30px" margin={margin} mt={{ base: '4rem', md: '5rem', lg: '50px' }} alignItems="center" justifyContent="space-between" position="relative">
-      <Box position="relative" flex={0.5} background={hexColor.featuredColor} padding="47px 16px" borderRadius="10px">
+      <Box position="relative" flex={{ base: 1, lg: 0.5 }} background={hexColor.featuredColor} padding="47px 16px" borderRadius="10px">
         {logo && isAbsoluteUrl(logo) ? (
           <Box position="relative" top="-30px">
             <Image src={logo} width="44px" height="44px" alt="Course logo" style={{ minWidth: '33px', minHeight: '33px' }} />
@@ -49,7 +49,7 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort 
           {t('join-cohort-page.join-next-cohort')}
         </Button>
       </Box>
-      <Img maxWidth="420px" flex={0.5} flexShrink={0} zIndex={10} margin="0 auto" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
+      <Img maxWidth="420px" flex={{ base: 1, lg: 0.5 }} flexShrink={0} zIndex={10} margin="0 auto" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
     </Flex>
   );
 }
