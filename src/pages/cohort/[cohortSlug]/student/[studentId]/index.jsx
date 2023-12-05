@@ -187,7 +187,7 @@ function StudentReport() {
 
   useEffect(() => {
     if (selectedCohortUser) {
-      const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'] } };
+      const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
       const projectsQueryObject = {
         filter: {
           'meta.task_type': 'PROJECT',
@@ -264,6 +264,12 @@ function StudentReport() {
             icon: 'list',
             variationColor: hexColor.blueDefault,
             value: `${(attendancePresent.length * 100) / attendanceTaken.length}%`,
+          }, {
+            label: t('analitics.nps'),
+            icon: 'smile',
+            variationColor: hexColor.green,
+            value: resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score,
+            max: 10,
           }]);
         })
         .catch((e) => {

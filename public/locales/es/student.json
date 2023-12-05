@@ -38,7 +38,8 @@
     "total-mentorships": "Total de mentorias",
     "projects-completed": "Projectos completados",
     "percentage-attendance": "% de asistencia",
-    "completed-learnpack": "Ejercicios de Learnpack completados"
+    "completed-learnpack": "Ejercicios de Learnpack completados",
+    "nps": "NPS"
   },
   "project-status": {
     "approved": "Aprovado",
