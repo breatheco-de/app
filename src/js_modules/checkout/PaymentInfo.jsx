@@ -110,11 +110,6 @@ function PaymentInfo() {
         event: 'checkout_complete_purchase',
       },
     });
-    setOpenDeclinedModal(true);
-    setDeclinedModalProps({
-      title: t('transaction-denied'),
-      description: t('payment-not-processed'),
-    });
   }, []);
 
   useEffect(() => {
@@ -191,7 +186,6 @@ function PaymentInfo() {
                   });
                 }
               }
-
               if (respPayment.status === 'FULFILLED') {
                 setReadyToRefetch(true);
               }
