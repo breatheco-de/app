@@ -3,11 +3,12 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Input, useColorModeValue, useToast,
+  Box, Button, Flex, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -19,6 +20,8 @@ import { reportDatalayer } from '../../utils/requests';
 import { getStorageItem } from '../../utils';
 import Text from '../../common/components/Text';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
+import { SILENT_CODE } from '../../lib/types';
+import SimpleModal from '../../common/components/SimpleModal';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -49,6 +52,11 @@ function PaymentInfo() {
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+  const [declinedModalProps, setDeclinedModalProps] = useState({
+    title: '',
+    description: '',
+  });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [stateCard, setStateCard] = useState({
@@ -102,11 +110,17 @@ function PaymentInfo() {
         event: 'checkout_complete_purchase',
       },
     });
+    setOpenDeclinedModal(true);
+    setDeclinedModalProps({
+      title: t('transaction-denied'),
+      description: t('payment-not-processed'),
+    });
   }, []);
 
   useEffect(() => {
+    let interval;
     if (readyToRefetch && timeElapsed < 10) {
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
@@ -126,6 +140,10 @@ function PaymentInfo() {
             }
           });
       }, 1500);
+    }
+    if (readyToRefetch === false) {
+      setTimeElapsed(0);
+      clearInterval(interval);
     }
   }, [readyToRefetch]);
 
@@ -147,7 +165,34 @@ function PaymentInfo() {
           });
           handlePayment({}, true)
             .then((respPayment) => {
-              if (respPayment.data.status === 'FULFILLED') {
+              const silentCode = respPayment?.silent_code;
+              if (silentCode) {
+                setReadyToRefetch(false);
+
+                if (silentCode === SILENT_CODE.CARD_ERROR) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('card-declined'),
+                  });
+                }
+                if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('payment-not-processed'),
+                  });
+                }
+                if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('payment-error'),
+                  });
+                }
+              }
+
+              if (respPayment.status === 'FULFILLED') {
                 setReadyToRefetch(true);
               }
             })
@@ -182,6 +227,56 @@ function PaymentInfo() {
 
   return (
     <Box display="flex" gridGap="30px" flexDirection={{ base: 'column', md: 'row' }} position="relative">
+      <SimpleModal
+        isOpen={openDeclinedModal}
+        headerStyles={{
+          padding: '0 0 16px 0',
+          textAlign: 'center',
+        }}
+        maxWidth="510px"
+        onClose={() => setOpenDeclinedModal(false)}
+        title={declinedModalProps.title}
+        padding="16px 0"
+        gridGap="24px"
+        bodyStyles={{
+          display: 'flex',
+          gridGap: '24px',
+          padding: '0',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Image src="/static/images/avatar-for-transaction-failed.png" width={80} height={80} />
+
+        <Text fontSize="18px" fontWeight="700" textAlign="center">
+          {declinedModalProps.description}
+        </Text>
+
+        <Flex gridGap="24px">
+          <Button variant="outline" onClick={() => setOpenDeclinedModal(false)} borderColor="blue.default" color="blue.default">
+            {t('common:close')}
+          </Button>
+          <Button
+            isLoading={isSubmitting}
+            variant="default"
+            onClick={() => {
+              setIsSubmitting(true);
+              handlePayment({}, true)
+                .then((resp) => {
+                  if (resp.status === 'FULFILLED') {
+                    setReadyToRefetch(true);
+                  }
+                })
+                .catch(() => {
+                  setIsSubmitting(false);
+                });
+            }}
+          >
+            {t('common:try-again')}
+          </Button>
+        </Flex>
+      </SimpleModal>
       <Box background={backgroundColor} flex={0.5} p={{ base: '20px 22px', md: '14px 23px' }} height="100%" borderRadius="15px">
         <Box
           display="flex"
