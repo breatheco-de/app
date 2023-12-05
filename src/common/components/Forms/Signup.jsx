@@ -20,7 +20,7 @@ import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
-import { setStorageItem, getQueryString } from '../../../utils';
+import { getStorageItem, setStorageItem, getQueryString } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
@@ -39,6 +39,8 @@ function SignupForm({
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [isChecked, setIsChecked] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const redirectStorage = getStorageItem('redirect');
+  const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
   const {
     state,
   } = useSignup();
@@ -277,7 +279,7 @@ function SignupForm({
                 <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
                   {t('already-have-account')}
                   {' '}
-                  <NextChakraLink href="/login" fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+                  <NextChakraLink onClick={() => setStorageItem('redirect', router?.asPath)} href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
                 </Flex>
               )}
             </Box>
