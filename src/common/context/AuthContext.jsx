@@ -19,6 +19,12 @@ const initialState = {
   user: null,
 };
 
+const langHelper = {
+  us: 'en',
+  en: 'en',
+  es: 'es',
+};
+
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
@@ -111,7 +117,7 @@ export const AuthContext = createContext({
   ...initialState,
 });
 
-function AuthProvider({ children }) {
+function AuthProvider({ children, pageProps }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
@@ -163,6 +169,8 @@ function AuthProvider({ children }) {
               payload: { user: data, isAuthenticated: true, isLoading: false },
             });
             const permissionsSlug = data.permissions.map((l) => l.codename);
+            const settingsLang = data?.settings.lang;
+
             setProfile({
               ...profile,
               ...data,
@@ -186,6 +194,7 @@ function AuthProvider({ children }) {
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
             }
+            if (!pageProps.disableLangSwitcher && langHelper[lang] !== settingsLang) router.push(router.asPath, '', { locale: settingsLang });
           })
           .catch(() => {
             handleSession(null);
@@ -394,6 +403,7 @@ function AuthProvider({ children }) {
 
 AuthProvider.propTypes = {
   children: PropTypes.node,
+  pageProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 AuthProvider.defaultProps = {

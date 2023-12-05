@@ -72,7 +72,7 @@ function App({ Component, ...rest }) {
           resetCSS
           theme={theme}
         >
-          <AuthProvider>
+          <AuthProvider pageProps={pageProps}>
             <SessionProvider>
               <ConnectionProvider>
                 <Fragment key="load-on-client-side">
