@@ -262,7 +262,7 @@ function SignupForm({
                 </Box>
               </Box>
               <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
-                <Text size="10px">
+                <Text size="10px" textAlign="left">
                   {t('validators.termns-and-conditions-required')}
                   {' '}
                   <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
