@@ -18,7 +18,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, programServices, subscriptions, subscriptionData, flags,
+  width, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -132,7 +132,7 @@ function Mentoring({
       <Box fontSize="16px" padding="10px 16px" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
         {t('supportSideBar.mentoring-label')}
       </Box>
-      {isAvailableForConsumables && flags?.appReleaseShowConsumedMentorships ? (
+      {isAvailableForConsumables ? (
         <MentoringConsumables
           {...{
             mentoryProps,
@@ -186,7 +186,6 @@ function Mentoring({
 Mentoring.propTypes = {
   programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
   width: PropTypes.string,
-  flags: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.object])).isRequired,
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };

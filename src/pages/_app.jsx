@@ -3,7 +3,6 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query';
-import { withLDProvider } from 'launchdarkly-react-client-sdk';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
@@ -111,9 +110,4 @@ App.propTypes = {
   Component: PropTypes.elementType.isRequired,
 };
 
-export default withLDProvider({
-  clientSideID: process.env.LD_CLIENT_ID,
-  options: {
-    bootstrap: 'localStorage',
-  },
-})(App);
+export default App;
