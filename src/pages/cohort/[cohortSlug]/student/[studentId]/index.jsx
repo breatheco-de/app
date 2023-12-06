@@ -248,6 +248,8 @@ function StudentReport() {
 
           const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
           const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
+
+          const attendancePercentage = (attendancePresent.length * 100) / attendanceTaken.length;
           setReport([{
             label: t('analitics.total-mentorships'),
             icon: 'book',
@@ -263,7 +265,7 @@ function StudentReport() {
             label: t('analitics.percentage-attendance'),
             icon: 'list',
             variationColor: hexColor.blueDefault,
-            value: `${(attendancePresent.length * 100) / attendanceTaken.length}%`,
+            value: `${Math.round(attendancePercentage * 100) / 100}%`,
           }, {
             label: t('analitics.nps'),
             icon: 'smile',
