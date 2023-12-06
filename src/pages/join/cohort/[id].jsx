@@ -210,6 +210,7 @@ function Page({ id, syllabus, cohort, members }) {
             isFetching={isFetching}
             alreadyHaveCohort={alreadyHaveCohort}
             joinFunction={joinCohort}
+            cohort={cohort}
           />
         ) : (
           <CallToAction

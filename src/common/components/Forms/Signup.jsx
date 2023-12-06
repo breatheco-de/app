@@ -4,6 +4,7 @@ import { Avatar, Box, Button, Checkbox, useToast,
   Spinner,
   InputGroup,
   InputRightElement,
+  Flex,
 } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import { useState } from 'react';
@@ -19,7 +20,7 @@ import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
-import { setStorageItem, getQueryString } from '../../../utils';
+import { getStorageItem, setStorageItem, getQueryString } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
@@ -27,17 +28,19 @@ import bc from '../../services/breathecode';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
-  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies,
+  onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
   const { emailValidation, thriggerValidation } = useEmailValidation();
-  const { hexColor } = useStyle();
+  const { hexColor, featuredColor } = useStyle();
   const plan = getQueryString('plan') || planSlug;
   const planFormated = plan ? encodeURIComponent(plan) : BASE_PLAN;
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [isChecked, setIsChecked] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
+  const redirectStorage = getStorageItem('redirect');
+  const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
   const {
     state,
   } = useSignup();
@@ -272,6 +275,13 @@ function SignupForm({
                   .
                 </Text>
               </Checkbox>
+              {showLoginLink && (
+                <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
+                  {t('already-have-account')}
+                  {' '}
+                  <NextChakraLink onClick={() => setStorageItem('redirect', router?.asPath)} href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+                </Flex>
+              )}
             </Box>
             <Button
               width="100%"
@@ -382,6 +392,7 @@ SignupForm.propTypes = {
   conversionTechnologies: PropTypes.string,
   columnLayout: PropTypes.bool,
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  showLoginLink: PropTypes.bool,
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => {},
@@ -394,6 +405,7 @@ SignupForm.defaultProps = {
   columnLayout: false,
   subscribeValues: {},
   conversionTechnologies: null,
+  showLoginLink: false,
 };
 
 export default SignupForm;

@@ -68,11 +68,11 @@ function App({ Component, pageProps }) {
         resetCSS
         theme={theme}
       >
-        <AuthProvider>
+        <AuthProvider pageProps={pageProps}>
           <SessionProvider>
             <ConnectionProvider>
               <Fragment key="load-on-client-side">
-                <Navbar pageProps={pagePropsData} translations={pagePropsData?.translations} />
+                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
                 {isEnvModified && (
                 <AlertMessage
                   full
