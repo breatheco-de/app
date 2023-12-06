@@ -32,5 +32,9 @@
   },
   "roles-info": "Los Roles solo se muestran en el modo de desarrollo",
   "launch-program": "Elegir este programa",
-  "description": "Estos son los programas en los que estás participando actualmente, selecciona el curso en el que quieras entrar:"
+  "description": "Estos son los programas en los que estás participando actualmente, selecciona el curso en el que quieras entrar:",
+  "sidebar": {
+    "live-events-title": "Aprende en vivo",
+    "join-our-community": "Únete a nuestra comunidad"
+  }
 }
