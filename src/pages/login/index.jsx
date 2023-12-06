@@ -56,7 +56,7 @@ function LoginView({ existsWhiteLabel }) {
   return (
     <Stack minH={{ base: 'auto', md: '93vh' }} direction={{ md: 'row' }}>
       <Flex p="5vw 0 20px 0" flex={1} justify="center">
-        <Stack spacing={10} w="full" maxW="md">
+        <Stack spacing={10} w="full" maxW="md" padding="1.5rem 10px">
           <Box display={{ base: 'none', md: 'block' }} align="center" justify="center">
             {existsWhiteLabel ? (
               <Image

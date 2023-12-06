@@ -152,8 +152,9 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
     bc.payment().pay({
       ...requests,
     })
-      .then((response) => {
-        if (response?.data?.status === 'FULFILLED') {
+      .then(async (response) => {
+        const transactionData = await response.json();
+        if (transactionData?.status === 'FULFILLED') {
           setSubscriptionProcess({
             status: PREPARING_FOR_COHORT,
             id: dateProps?.id,
@@ -192,7 +193,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
               router.push('/choose-program');
             }
           }
-          if (response === undefined || response.status >= 400) {
+          if (transactionData === undefined || transactionData.status >= 400) {
             toast({
               position: 'top',
               title: t('alert-message:payment-error'),
@@ -201,7 +202,9 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
               isClosable: true,
             });
           }
-          resolve(response);
+          resolve(transactionData);
+        } else {
+          resolve(transactionData);
         }
       })
       .catch((error) => {

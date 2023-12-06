@@ -73,6 +73,10 @@
     "description": "Click the button below to join the cohort and access the program's content.",
     "button": "Join cohort"
   },
+  "transaction-denied": "Transaction denied",
+  "payment-not-processed": "Payment could not be processed",
+  "card-declined": "The card was declined, please try again with another card or contact your bank",
+  "payment-error": "An unexpected error occurred during the payment process, please contact support",
   "info": {
     "this-plan-includes": "This plan includes",
     "will-pay-monthly": "You will pay ${{price}} dollars {{qty_months}} times, for a total of ${{total_amount}}. The first payment will be today and the next payment will be {{next_month}}.",
@@ -97,6 +101,7 @@
     "owner_name-min": "Owner name is too short",
     "card_number-required": "Card number is required",
     "exp-required": "Expiration date is required",
+    "exp-min": "Please specify a valid expiration date",
     "cvc-required": "CVC is required",
     "short-input": "Too Short!",
     "long-input": "Too Long!",
