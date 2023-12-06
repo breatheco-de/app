@@ -12,7 +12,7 @@ import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import { isAbsoluteUrl } from '../../utils/url';
 
-function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort }) {
+function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort, cohort }) {
   const { t } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const { isAuthenticated } = useAuth();
@@ -47,7 +47,7 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort 
           fontSize="13px"
           mt="1rem"
         >
-          {t('join-cohort-page.join-next-cohort')}
+          {cohort?.never_ends ? t('join-cohort-page.start-course') : t('join-cohort-page.join-next-cohort')}
         </Button>
       </Box>
       <Img maxWidth="420px" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
@@ -61,6 +61,7 @@ JoinCohort.propTypes = {
   joinFunction: PropTypes.func.isRequired,
   isFetching: PropTypes.bool.isRequired,
   alreadyHaveCohort: PropTypes.bool.isRequired,
+  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 JoinCohort.defaultProps = {
   margin: null,
