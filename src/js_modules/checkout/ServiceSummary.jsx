@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { useState, forwardRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Input, Link, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
@@ -12,30 +12,10 @@ import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import Text from '../../common/components/Text';
 import FieldForm from '../../common/components/Forms/FieldForm';
-import { formatPrice, number2DIgits, getStorageItem } from '../../utils';
-import DatePickerField from '../../common/components/Forms/DateField';
+import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
-
-const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
-  const { t } = useTranslation('signup');
-  const { input } = useStyle();
-  const inputBorderColor = input.borderColor;
-
-  return (
-    <Input
-      {...rest}
-      placeholder={t('expiration-date')}
-      onClick={onClick}
-      height="50px"
-      borderRadius="3px"
-      borderColor={inputBorderColor}
-      ref={ref}
-      value={value}
-    />
-  );
-});
 
 function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -68,11 +48,11 @@ function ServiceSummary({ service }) {
       .max(20)
       .required(t('validators.card_number-required')),
     exp: Yup.string()
-      .min(4)
+      .min(5, t('validators.exp-min'))
       .required(t('validators.exp-required')),
     cvc: Yup.string()
       .min(3)
-      .max(3)
+      .max(4)
       .required(t('validators.cvc-required')),
   });
 
@@ -377,12 +357,10 @@ function ServiceSummary({ service }) {
                       cvc: '',
                     }}
                     onSubmit={(values, actions) => {
-                      const expMonthValue = values.exp?.getMonth() || 0;
-                      const expYearValue = values.exp?.getFullYear() || 0;
-
                       setIsSubmitting(true);
-                      const expMonth = number2DIgits(expMonthValue + 1);
-                      const expYear = number2DIgits(expYearValue - 2000);
+                      const monthAndYear = values.exp?.split('/');
+                      const expMonth = monthAndYear[0];
+                      const expYear = monthAndYear[1];
 
                       const allValues = {
                         card_number: stateCard.card_number,
@@ -434,16 +412,25 @@ function ServiceSummary({ service }) {
                         <Box display="flex" gridGap="18px">
                           <Box display="flex" gridGap="18px" flex={1}>
                             <Box display="flex" flexDirection="column" flex={0.5}>
-                              <DatePickerField
+                              <FieldForm
+                                style={{ flex: 0.5 }}
                                 type="text"
                                 name="exp"
-                                wrapperClassName="datePicker"
-                                onChange={(date) => {
-                                  setPaymentInfo('exp', date);
+                                externValue={paymentInfo.exp}
+                                maxLength={3}
+                                handleOnChange={(e) => {
+                                  let { value } = e.target;
+                                  if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
+                                    value += '/';
+                                  } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
+                                    value = value.slice(0, 1);
+                                  }
+                                  value = value.substring(0, 5);
+
+                                  setPaymentInfo('exp', value);
                                 }}
-                                customInput={<CustomDateInput />}
-                                dateFormat="MM/yy"
-                                showMonthYearPicker
+                                pattern="[0-9]*"
+                                label={t('exp')}
                               />
                             </Box>
                             <FieldForm
@@ -454,8 +441,8 @@ function ServiceSummary({ service }) {
                               maxLength={3}
                               handleOnChange={(e) => {
                                 const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                                const newValue = value.replace(/(.{3})/g, '$1 ').trim();
-                                e.target.value = newValue.slice(0, 3);
+                                const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                                e.target.value = newValue.slice(0, 4);
 
                                 setPaymentInfo('cvc', e.target.value);
                               }}

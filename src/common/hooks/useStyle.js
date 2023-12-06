@@ -38,6 +38,7 @@ const useStyle = () => {
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
     fontColor3: useColorModeValue('#606060', '#EBEBEB'),
+    borderColor: useColorModeValue('#DADADA', '#4A5568'),
     backgroundColor: useColorModeValue('#ffffff', '#17202A'),
     featuredColor: useColorModeValue('#EEF9FE', '#283340'),
     lightColor: useColorModeValue('#F5F5F5', '#4A5568'),

@@ -45,11 +45,12 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
-      <DraggableContainer position="relative" width="100%">
+      <DraggableContainer className="hideOverflowX__" overflow="auto" position="relative" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
               key={event?.id}
+              language={event.lang}
               id={event?.id}
               slug={event?.slug}
               title={event?.title}

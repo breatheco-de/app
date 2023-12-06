@@ -28,17 +28,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const { featuredColor } = useStyle();
   const router = useRouter();
 
-  useEffect(() => {
-    axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  }, [router.locale]);
-
-  useEffect(() => {
-    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
-      .then(({ data }) => {
-        setMarketingCursesList(data);
-      });
-  }, [router?.locale]);
-
+  const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const activeSubscriptionCohorts = activeCohorts.length > 0 ? activeCohorts.map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
@@ -81,6 +71,17 @@ function ChooseProgram({ chooseList, handleChoose }) {
     (item) => item?.cohort?.available_as_saas === false,
   );
 
+  useEffect(() => {
+    axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+  }, [router.locale]);
+
+  useEffect(() => {
+    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
+      .then(({ data }) => {
+        setMarketingCursesList(data);
+      });
+  }, [router?.locale]);
+
   return (
     <>
       {activeSubscriptionCohorts.length > 0 && (
@@ -98,7 +99,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
       {activeSubscriptionCohorts.length > 0 && (
         <Box
           display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+          gridTemplateColumns={{ base: activeSubscriptionCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
           height="auto"
           gridGap="4rem"
         >
@@ -123,7 +124,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
           </Box>
           <Box
             display="grid"
-            gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+            gridTemplateColumns={cardColumnSize}
             height="auto"
             gridGap="4rem"
           >
@@ -189,7 +190,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="5rem"
               gridRowGap="3rem"
               height="auto"

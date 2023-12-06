@@ -34,6 +34,8 @@ function DottedTimeline({ label, dots, helpText, width, onClickDots }) {
                   onClick={() => onClickDots && onClickDots(dot, i)}
                   cursor={onClickDots && 'pointer'}
                   background={dot.color}
+                  border={dot.borderColor && '2px solid'}
+                  borderColor={dot.borderColor}
                   borderRadius="50%"
                   width="10px"
                   minW="10px"

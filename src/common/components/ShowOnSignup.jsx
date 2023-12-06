@@ -15,11 +15,12 @@ import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
-  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables, conversionTechnologies, ...rest
+  subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
+  conversionTechnologies, setNoConsumablesFound, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
-  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
+  const { handleSubscribeToPlan } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
@@ -46,6 +47,7 @@ function ShowOnSignUp({
       }, 1000);
 
       if (timeElapsed >= 10) {
+        setNoConsumablesFound(true);
         clearInterval(intervalId);
       }
       return () => clearInterval(intervalId);
@@ -112,6 +114,7 @@ function ShowOnSignUp({
           <Box>
             <Signup
               columnLayout
+              showLoginLink
               showVerifyEmail={false}
               formProps={formProps}
               setFormProps={setFormProps}
@@ -158,8 +161,6 @@ function ShowOnSignUp({
         }}
         handlerText={t('common:login')}
       />
-
-      {successModal}
 
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
@@ -230,6 +231,7 @@ ShowOnSignUp.propTypes = {
   childrenDescription: PropTypes.node,
   hideSwitchUser: PropTypes.bool,
   refetchAfterSuccess: PropTypes.func,
+  setNoConsumablesFound: PropTypes.func,
   isLive: PropTypes.bool,
   existsConsumables: PropTypes.bool,
   conversionTechnologies: PropTypes.string,
@@ -249,6 +251,7 @@ ShowOnSignUp.defaultProps = {
   childrenDescription: null,
   hideSwitchUser: false,
   refetchAfterSuccess: () => {},
+  setNoConsumablesFound: () => {},
   isLive: false,
   existsConsumables: false,
   conversionTechnologies: null,

@@ -74,6 +74,10 @@
     "description": "Por favor, únete a la cohorte para acceder al contenido del programa.",
     "button": "Unirse a la cohorte"
   },
+  "transaction-denied": "Transacción denegada",
+  "payment-not-processed": "El pago no pudo ser procesado",
+  "card-declined": "La tarjeta fue rechazada, por favor intenta de nuevo con otra tarjeta o contacta a tu banco",
+  "payment-error": "Se produjo un error inesperado durante el proceso de pago, por favor contacta al soporte",
   "info": {
     "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagarás ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
@@ -98,6 +102,7 @@
     "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
     "exp-required": "La fecha de expiración es requerida",
+    "exp-min": "Por favor, ingrese una fecha de expiración válida",
     "cvc-required": "El CVC es requerido",
     "short-input": "¡Demasiado corto!",
     "long-input": "¡Demasiado largo!",

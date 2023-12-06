@@ -176,7 +176,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             {viewProps.service_items.title}
           </Text>
           {viewProps.service_items.items.map((serviceItem) => (
-            <Text gap="5px" display="flex" alignItems="center" size="14px" width="100%">
+            <Text key={serviceItem.label} gap="5px" display="flex" alignItems="center" size="14px" width="100%">
               <Icon icon="checked2" color={hexColor.blueDefault} width="15px" height="10px" />
               {serviceItem.label}
             </Text>
@@ -185,11 +185,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         <Divider margin="15px 0" border={`2px solid ${hexColor.lightColor}`} />
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
           {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
-            <Box display="flex" gridGap="8px">
+            <Box key={info.service.slug} display="flex" gridGap="8px">
               {info?.service?.icon_url
                 ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                 : (
-                  <Icon icon={info?.service?.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                  <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
                 )}
               <Box>
                 <Text size="16px" fontWeight={700} textAlign="left">
@@ -209,7 +209,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
 
         <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
           {featuredInfo.sort(sortPriority).map((info) => info.service.slug && (
-            <AccordionItem display="flex" flexDirection="column" gridGap="2px" border={0}>
+            <AccordionItem key={`responsive-${info.service.slug}`} display="flex" flexDirection="column" gridGap="2px" border={0}>
               <AccordionButton padding="8px 0">
                 <Box display="flex" gridGap="10px" flex="1" textAlign="left">
                   {info?.service?.icon_url
