@@ -85,6 +85,7 @@ function MktTwoColumnSideImage({
         titleLineHeight: '1.2',
         subtitleSize: '21px',
         descriptionSize: '18px',
+        padding: '24px 0px',
       };
     }
     if (informationSize === SIZES.LARGE) {
@@ -101,6 +102,7 @@ function MktTwoColumnSideImage({
       titleLineHeight: '1.2',
       subtitleSize: '14px',
       descriptionSize: '12px',
+      padding: '24px 0px',
     };
   };
   const prismicStyles = prisimicStyles();
@@ -119,7 +121,7 @@ function MktTwoColumnSideImage({
         border={border}
         alignItems="center"
         borderRadius="12px"
-        padding={{ base: '20px 10px', md: '0' }}
+        padding={{ base: '20px 10px', md: '24px 0px' }}
         gridGap={gridGap}
         marginTop="20px"
         style={{

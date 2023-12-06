@@ -18,6 +18,8 @@
     "months": "months",
     "years": "years"
   },
+  "no-translation-available": "No translation available",
+  "read-next": "Read next",
   "heading": "Welcome to",
   "change-locale": "Change locale",
   "error-with-status": "A {{statusCode}} error occurred on server",
@@ -37,6 +39,7 @@
   "filters": "Filters",
   "sort": "Sort",
   "close": "Close",
+  "try-again": "Try again",
   "continue": "Continue",
   "confirm": "Confirm",
   "submit": "Submit",
@@ -73,6 +76,7 @@
   "not-available": "Not available",
   "live-demo": "Live demo",
   "live-now": "Live Now!",
+  "live": "Live",
   "technologies": "Technologies",
   "full-screen": "Full screen",
   "no-title": "No title 🙂",
@@ -152,7 +156,7 @@
     "pay-per-month": "Pay {{value}} month",
     "pay-per-half": "Pay {{value}} half"
   },
-  "upgrade": "upgrade",
+  "upgrade": "Upgrade",
   "go-back": "Go back",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "By entering your data you will unlock the interactive content of \"{{title}}\" and many more",
@@ -187,7 +191,7 @@
   },
   "live-event": {
     "title": "Live classes, coding sessions, workshops and hangouts every few hours.",
-    "readMoreUrl": "https://4geeks.com/lesson/live-events-workshops-and-classes"
+    "readMoreUrl": "https://4geeks.com/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
   },
   "submit-project": "Submit project",
   "uploadScreenshot": "Upload screenshot",
@@ -195,5 +199,79 @@
   "logout-and-switch-user": "Logout and switch user",
   "free": "Free",
   "login": "Login",
-  "privacy-policy": "Privacy policy"
+  "privacy-policy": "Privacy policy",
+  "bootcamp": {
+    "planType": "bootcamp",
+    "type": "Unlimited Experience",
+    "period_label": "",
+    "title": "Bootcamp Program",
+    "description": "Fast track your career change with a Bootcamp",
+    "ask": "Ask for pricing",
+    "button": "Request More Info",
+    "button_link": "https://4geeksacademy.com/programs",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and  unlimited support until you find a job.",
+    "service_items": {
+      "title": "Everything on Live & with Feedback plus...",
+      "items": [{
+        "label": "Unlimited live workshops "
+      },
+      {
+        "label": "Unlimited one-on-one mentoring sessions"
+      },
+      {
+        "label": "Unlimited group mentoring sessions"
+      }]
+    },
+    "featured_info": [
+      {
+        "service": {
+          "slug": "live-classes",
+          "title": "Live classes",
+          "icon": "onlinePeople"
+        },
+        "features": [{ "description": "Take part of a group of students learning together with a teacher on weekly live classes." }]
+      },
+      {
+        "service": {
+          "slug": "carrer-support",
+          "title": "Career support",
+          "icon": "support"
+        },
+        "features": [{ "description": "Get feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more." }]
+      },
+      {
+        "service": {
+          "slug": "job-guarantee",
+          "title": "Job guarantee*",
+          "icon": "briefcase"
+        },
+        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
+      },
+      {
+        "service": {
+          "slug": "certified-by-us",
+          "title": "Certified by U.S. FL Dep. of Education",
+          "icon": "certificate"
+        },
+        "features": [{ "description": "Our bootcamp certificates have a badge certified by the US Florida Dep. of Education." }]
+      },
+      {
+        "service": {
+          "slug": "access-to-premium-community",
+          "title": "Access to premium community",
+          "icon": "crown"
+        },
+        "features": [{ "description": "Our premium community gives you access to office space worldwide, events inside partner companies and employers, job fairs, networking events, an exclusive slack channel, and more perks." }]
+      },
+      {
+        "service": {
+          "slug": "office-space-world-wide",
+          "title": "Office space world-wide",
+          "icon": "office"
+        },
+        "features": [{ "description": "Get access to office space world-wide." }]
+      }
+    ]
+  }
 }

@@ -28,17 +28,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
   const { featuredColor } = useStyle();
   const router = useRouter();
 
-  useEffect(() => {
-    axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
-  }, [router.locale]);
-
-  useEffect(() => {
-    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
-      .then(({ data }) => {
-        setMarketingCursesList(data);
-      });
-  }, [router?.locale]);
-
+  const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const activeSubscriptionCohorts = activeCohorts.length > 0 ? activeCohorts.map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
@@ -71,14 +61,26 @@ function ChooseProgram({ chooseList, handleChoose }) {
 
   const marketingCourses = marketingCursesList && marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.subscription?.plans[0]?.slug === item?.slug
-        || activeCohort?.plan_financing?.plans[0]?.slug === item?.slug,
+      (activeCohort) => activeCohort?.all_subscriptions?.some(
+        (sb) => sb?.selected_cohort_set?.slug === item?.slug,
+      ),
     ) && item?.course_translation?.title,
   );
 
   const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
     (item) => item?.cohort?.available_as_saas === false,
   );
+
+  useEffect(() => {
+    axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
+  }, [router.locale]);
+
+  useEffect(() => {
+    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
+      .then(({ data }) => {
+        setMarketingCursesList(data);
+      });
+  }, [router?.locale]);
 
   return (
     <>
@@ -97,7 +99,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
       {activeSubscriptionCohorts.length > 0 && (
         <Box
           display="grid"
-          gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+          gridTemplateColumns={{ base: activeSubscriptionCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
           height="auto"
           gridGap="4rem"
         >
@@ -112,17 +114,17 @@ function ChooseProgram({ chooseList, handleChoose }) {
         </Box>
       )}
 
-      {!isNotAvailableForMktCourses && marketingCourses.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
+      {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-              {t('available-courses')}
+              {t('available-programs')}
             </Heading>
             <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
           </Box>
           <Box
             display="grid"
-            gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+            gridTemplateColumns={cardColumnSize}
             height="auto"
             gridGap="4rem"
           >
@@ -188,7 +190,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="5rem"
               gridRowGap="3rem"
               height="auto"

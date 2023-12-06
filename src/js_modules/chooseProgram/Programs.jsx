@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import ProgramCard from '../../common/components/ProgramCard';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
@@ -9,8 +9,10 @@ import useProgramList from '../../common/store/actions/programListAction';
 
 function Programs({ item, handleChoose, onOpenModal }) {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
   const { cohort } = item;
+  const signInDate = item.created_at;
   const { version, slug, name } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
 
@@ -29,6 +31,7 @@ function Programs({ item, handleChoose, onOpenModal }) {
     onOpenModal();
   };
   const onClickHandler = () => {
+    setIsLoadingPageContent(true);
     handleChoose({
       version,
       slug,
@@ -89,8 +92,11 @@ function Programs({ item, handleChoose, onOpenModal }) {
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
+      isLoadingPageContent={isLoadingPageContent}
       isLoading={currentCohortProps === undefined}
       startsIn={item?.cohort?.kickoff_date}
+      endsAt={item?.cohort?.ending_date}
+      signInDate={signInDate}
       icon="coding"
       subscription={subscription}
       subscriptionStatus={subscription?.status}

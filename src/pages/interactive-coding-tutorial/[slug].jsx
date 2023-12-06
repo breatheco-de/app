@@ -21,13 +21,17 @@ import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
-import { getAsset } from '../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../utils/requests';
+import { log } from '../../utils/logging';
+import RelatedContent from '../../common/components/RelatedContent';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('PROJECT', {}, 'project');
+  const assetList = await import('../../lib/asset-list.json');
+  const data = assetList.projects;
 
   if (data?.length) {
-    console.log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
+    log(`SUCCESS: ${data?.length} Projects fetched for /interactive-coding-tutorial`);
   } else {
     console.error('Error: fetching Projects list for /interactive-coding-tutorial');
   }
@@ -50,67 +54,72 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=project`);
-    const result = await response.json();
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+    if (!result) {
+      console.log(`${slug} not found on cache`);
+      const assetList = await import('../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      result = assetList.projects.find((l) => l?.slug === slug);
 
-    if (response.status > 400 || result.asset_type !== 'PROJECT' || !isCurrenLang) {
-      return {
-        notFound: true,
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
+
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+      if (result.asset_type !== 'PROJECT' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
     }
 
     const {
       title, description, translations, preview,
     } = result;
-    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-    if (markdownResp.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
-    const markdown = await markdownResp.text();
-
     const difficulty = typeof result.difficulty === 'string' ? result.difficulty.toLowerCase() : 'unknown';
-    const ogUrl = {
-      en: `/interactive-coding-tutorial/${slug}`,
-      us: `/interactive-coding-tutorial/${slug}`,
-    };
+    const translationInEnglish = translations?.en || translations?.us;
 
     const translationArray = [
       {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-coding-tutorial/${translations?.us}`,
-      },
-      {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-coding-tutorial/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-coding-tutorial/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-coding-tutorial/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-coding-tutorial/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
+    ].filter((item) => item?.slug !== undefined);
 
-    const eventStructuredData = {
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -120,21 +129,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-coding-tutorial/${slug}`,
       },
     };
 
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           title,
-          url: ogUrl.en || `/${locale}/interactive-coding-tutorial/${slug}`,
+          url: `/interactive-coding-tutorial/${slug}`,
           slug,
           description: description || '',
-          image: preview || staticImage,
-          translations,
+          image: cleanedStructuredData.image,
+          translations: translationArray,
           pathConnector: '/interactive-coding-tutorial',
           type: 'article',
           keywords: result?.seo_keywords || '',
@@ -174,6 +183,12 @@ function TableInfo({ t, project, commonTextColor }) {
         <Text size="md" color={commonTextColor} textAlign="center" my="10px" px="0px">
           {t('table.description')}
         </Text>
+        <ReactPlayerV2
+          title="Video tutorial"
+          withModal
+          url={project?.intro_video_url}
+          withThumbnail
+        />
         <SimpleTable
           href="/interactive-coding-tutorials"
           difficulty={typeof project.difficulty === 'string' ? project.difficulty.toLowerCase() : 'unknown'}
@@ -181,7 +196,7 @@ function TableInfo({ t, project, commonTextColor }) {
           duration={project.duration}
           videoAvailable={project.solution_video_url}
           technologies={project.technologies}
-          liveDemoAvailable={project.intro_video_url}
+          liveDemoAvailable={project.solution_video_url}
         />
       </Box>
     </>
@@ -301,8 +316,8 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
-                technologies={project?.technologies.join(',')}
+                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
+                technologies={project?.technologies}
               />
             </Box>
           </Box>
@@ -336,6 +351,16 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        {project?.slug && (
+          <RelatedContent
+            slug={project.slug}
+            type="PROJECT"
+            extraQuerys={{}}
+            technologies={project?.technologies}
+            gridColumn="2 / span 10"
+            maxWidth="1280px"
+          />
+        )}
       </GridContainer>
     </>
   );

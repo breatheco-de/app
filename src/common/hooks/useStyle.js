@@ -19,9 +19,12 @@ const useStyle = () => {
   const lightColor = useColorModeValue('gray.600', 'gray.200');
   const tooltipBackground = useColorModeValue('gray.dark', 'gray.dark');
   const featuredLight = useColorModeValue('gray.light3', 'featuredDark');
+  const colorMode = useColorModeValue('light', 'dark');
+  const reverseColorMode = useColorModeValue('dark', 'light');
 
   const featuredCard = {
     background: useColorModeValue('white', '#181a1b'),
+    blueDark: useColorModeValue('#01455E', '#27b1e4'),
     blue: {
       background: useColorModeValue('blue.default', '#157497'),
       featured: useColorModeValue('blue.light', '#092835'),
@@ -35,6 +38,7 @@ const useStyle = () => {
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
     fontColor3: useColorModeValue('#606060', '#EBEBEB'),
+    borderColor: useColorModeValue('#DADADA', '#4A5568'),
     backgroundColor: useColorModeValue('#ffffff', '#17202A'),
     featuredColor: useColorModeValue('#EEF9FE', '#283340'),
     lightColor: useColorModeValue('#F5F5F5', '#4A5568'),
@@ -81,6 +85,8 @@ const useStyle = () => {
     featuredLight,
     navbarBackground,
     featuredCard,
+    colorMode,
+    reverseColorMode,
   };
 };
 

@@ -68,10 +68,10 @@ function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslatio
 }
 
 function ProgramCard({
-  programName, programDescription, haveFreeTrial, startsIn, icon, iconBackground, stTranslation,
+  programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isLoadingPageContent,
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -85,6 +85,7 @@ function ProgramCard({
   const isFreeTrial = isAvailableAsSaas && subscriptionStatus === 'FREE_TRIAL';
   const isCancelled = isAvailableAsSaas && (subscriptionStatus === 'CANCELLED' || subscriptionStatus === 'PAYMENT_ISSUE');
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
+  const isNeverEnding = !endsAt;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
 
@@ -200,7 +201,7 @@ function ProgramCard({
                           fontWeight="400"
                           color={textColor}
                         >
-                          {formatTimeString(new Date(startsIn))}
+                          {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
                         </Text>
                       </Box>
                     </Flex>
@@ -243,7 +244,7 @@ function ProgramCard({
                               fontWeight="400"
                               color={textColor}
                             >
-                              {formatTimeString(new Date(startsIn))}
+                              {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
                             </Text>
                           </Box>
                         </Flex>
@@ -349,6 +350,7 @@ function ProgramCard({
                       whiteSpace="normal"
                       variant="default"
                       onClick={handleChoose}
+                      isLoading={isLoadingPageContent}
                     >
                       {programCardTR?.['start-course'] || t('start-course')}
                     </Button>
@@ -418,7 +420,7 @@ function ProgramCard({
                     {!isExpired && (
                       <>
                         {(courseProgress > 0 && !isCancelled) ? (
-                          <Button variant="link" onClick={handleChoose} gridGap="6px" fontWeight={700}>
+                          <Button variant="link" onClick={handleChoose} isLoading={isLoadingPageContent} gridGap="6px" fontWeight={700}>
                             {isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
                               : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
@@ -435,6 +437,7 @@ function ProgramCard({
                               variant="default"
                               mb={isAvailableAsSaas && !statusActive && '10px'}
                               onClick={handleChoose}
+                              isLoading={isLoadingPageContent}
                             >
                               {programCardTR?.['start-course'] || t('start-course')}
                             </Button>
@@ -502,6 +505,7 @@ function ProgramCard({
                 variant="default"
                 mt="20px"
                 onClick={handleChoose}
+                isLoading={isLoadingPageContent}
               >
                 {t('learn-more')}
               </Button>
@@ -534,6 +538,8 @@ ProgramCard.propTypes = {
   programName: PropTypes.string.isRequired,
   programDescription: PropTypes.string,
   startsIn: PropTypes.instanceOf(Date),
+  endsAt: PropTypes.instanceOf(Date),
+  signInDate: PropTypes.instanceOf(Date),
   freeTrialExpireDate: PropTypes.instanceOf(Date),
   haveFreeTrial: PropTypes.bool,
   icon: PropTypes.string.isRequired,
@@ -556,12 +562,15 @@ ProgramCard.propTypes = {
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   bullets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
+  isLoadingPageContent: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
   stTranslation: null,
   programDescription: null,
   startsIn: null,
+  endsAt: null,
+  signInDate: null,
   haveFreeTrial: false,
   syllabusContent: null,
   courseProgress: null,
@@ -581,6 +590,7 @@ ProgramCard.defaultProps = {
   subscription: {},
   bullets: [],
   background: '',
+  isLoadingPageContent: false,
 };
 
 export default memo(ProgramCard);

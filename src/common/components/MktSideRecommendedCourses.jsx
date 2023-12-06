@@ -11,10 +11,11 @@ import { CardSkeleton } from './Skeleton';
 import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
-import { getBrowserSize } from '../../utils';
+import { getBrowserSize, setStorageItem } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
+import { error } from '../../utils/logging';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -58,7 +59,8 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
     'Accept-Language': lang,
   };
 
-  const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
+  const technologiesList = technologies.map((tech) => tech?.slug || tech);
+  const technologiesArray = typeof technologiesList === 'string' ? technologiesList.split(',') : technologiesList;
 
   const fetchCourses = async () => {
     try {
@@ -82,7 +84,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
         setCourses(list?.filter((course) => course?.course_translation).slice(0, coursesLimit));
       }
     } catch (e) {
-      console.log(e);
+      error(e);
     }
   };
 
@@ -91,7 +93,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   }, []);
 
   return courses?.length > 0 && (
-    <Box minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
+    <Box as="aside" minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
       {title && (
         <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
           {title || t('continue-learning-course')}
@@ -100,10 +102,13 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
       {!isLoading && courses?.length > 0 ? (
         <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
           {courses.map((course) => {
+            const courseLink = course?.course_translation?.landing_url;
+            const link = courseLink || `${ORIGIN_HOST}${langConnector}/${course?.slug}`;
             // const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
             //   ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
             //   : [];
-            const tags = ['Free course'];
+            const tags = [];
+            // const tags = ['Free course'];
 
             return (
               <Container key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius} padding={containerPadding}>
@@ -120,27 +125,22 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                   {course?.course_translation?.short_description || course?.course_translation?.description}
                 </Text>
                 <Link
-                  display={{ base: 'none', md: 'flex' }}
-                  variant="buttonDefault"
-                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
+                  variant={{ base: '', md: 'buttonDefault' }}
+                  onClick={() => {
+                    setStorageItem('redirected-from', link);
+                  }}
+                  href={link}
                   alignItems="center"
-                  colorScheme="success"
+                  display="flex"
+                  colorScheme={{ base: 'default', md: 'success' }}
                   width="auto"
+                  color={{ base: 'green.light', md: 'white' }}
                   gridGap="10px"
                   margin="0 20px"
                 >
-                  {t('learn-more')}
-                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                </Link>
-                <Link
-                  display={{ base: 'flex', md: 'none' }}
-                  href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`}
-                  alignItems="center"
-                  width="auto"
-                  color="green.light"
-                  gridGap="10px"
-                  margin="0 20px"
-                >
+                  <Box as="span" display={{ base: 'none', md: 'flex' }}>
+                    {t('learn-more')}
+                  </Box>
                   <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
                 </Link>
               </Container>

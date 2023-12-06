@@ -14,9 +14,10 @@ import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
 import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
-import CustomTheme from '../../styles/theme';
+import theme from '../../styles/theme';
 import Navbar from '../common/components/Navbar';
 import AuthProvider from '../common/context/AuthContext';
+import SessionProvider from '../common/context/SessionContext';
 import ConnectionProvider from '../common/context/ConnectionContext';
 import Footer from '../common/components/Footer';
 import Helmet from '../common/components/Helmet';
@@ -67,32 +68,36 @@ function App({ Component, ...rest }) {
         <Helmet
           {...pageProps.seo}
         />
-        <ChakraProvider resetCSS theme={CustomTheme}>
-          <AuthProvider>
-            <ConnectionProvider>
+        <ChakraProvider
+          resetCSS
+          theme={theme}
+        >
+          <AuthProvider pageProps={pageProps}>
+            <SessionProvider>
+              <ConnectionProvider>
+                <Fragment key="load-on-client-side">
+                  <Navbar pageProps={pageProps} translations={pageProps?.translations} />
+                  {isEnvModified && (
+                    <AlertMessage
+                      full
+                      type="warning"
+                      message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
+                      borderRadius="0px"
+                      justifyContent="center"
+                    />
+                  )}
+                  <InterceptionLoader />
 
-              <Fragment key="load-on-client-side">
-                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                {isEnvModified && (
-                  <AlertMessage
-                    full
-                    type="warning"
-                    message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                    borderRadius="0px"
-                    justifyContent="center"
-                  />
-                )}
-                <InterceptionLoader />
+                  <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                    <PrismicPreview repositoryName={repositoryName}>
+                      <Component {...pageProps} />
+                    </PrismicPreview>
+                  </PrismicProvider>
 
-                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                  <PrismicPreview repositoryName={repositoryName}>
-                    <Component {...pageProps} />
-                  </PrismicPreview>
-                </PrismicProvider>
-
-                <Footer pageProps={pageProps} />
-              </Fragment>
-            </ConnectionProvider>
+                  <Footer pageProps={pageProps} />
+                </Fragment>
+              </ConnectionProvider>
+            </SessionProvider>
           </AuthProvider>
         </ChakraProvider>
       </Provider>

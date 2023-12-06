@@ -5,6 +5,8 @@ import {
   privateRoutes,
   sitemapTemplate,
   listOfSitemapsTemplate,
+  sitemapTemplateWithHreflang,
+  sitemapTemplateWithHreflangConnector,
 } from './sitemap-config';
 import { isWhiteLabelAcademy } from '../../src/utils/variables';
 import assetLists from '../../src/lib/asset-list.json';
@@ -44,12 +46,20 @@ async function generateSitemap() {
     return paginated;
   };
 
-  const generateSlugByLang = (data, conector, withDifficulty) => {
+  const generateSlugByLang = (data, connector, needsHreflang = false) => {
     const filteredBySlug = data.filter((f) => f?.slug);
 
-    return filteredBySlug.map((l) => (withDifficulty
-      ? `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.difficulty ? l?.difficulty?.toLowerCase() : 'unknown'}/${l?.slug}`
-      : `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${conector ? `/${conector}` : ''}/${l?.slug}`));
+    return filteredBySlug.map((l) => {
+      const pathURL = `${engLang[l.lang] !== 'en' ? `${l?.lang ? `/${l?.lang}` : ''}` : ''}${connector ? `/${connector}` : ''}/${l?.slug}`;
+      if (needsHreflang) {
+        return ({
+          ...l,
+          connector,
+          pathURL,
+        });
+      }
+      return pathURL;
+    });
   };
   const generateSlug = (data, conector) => data.map((l) => `${conector ? `/${conector}` : ''}/${l?.slug}`);
 
@@ -97,34 +107,32 @@ async function generateSitemap() {
   };
 
   const generatePrismicSlugByLang = (data) => {
-    const typePage = data?.length > 0 && data.filter((p) => p.type === 'page');
+    const typePage = data?.length > 0 && data.filter((p) => p.type === 'page' && p.uid !== 'home');
 
     const routesList = data?.length > 0 ? typePage.map((l) => {
       const lang = l.lang.split('-')[0];
-      if (lang !== 'en') {
-        return `/${lang}/${l?.uid}`;
-      }
-      return `/${l?.uid}`;
+      const pathURL = lang !== 'en' ? `/${lang}/${l?.uid}` : `/${l?.uid}`;
+      return ({
+        ...l,
+        lang,
+        pathURL,
+      });
     }) : [];
     return routesList;
   };
 
   const prismicTypePages = generatePrismicSlugByLang(prismicPages);
   const readRoute = generateSlug(readPages, 'read');
-  const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson');
-  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise');
-  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial');
-  const howTosRoute = generateSlugByLang(howTosPages, 'how-to');
+  const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson', true);
+  const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise', true);
+  const projectsCodingRoute = generateSlugByLang(projectsPages, 'interactive-coding-tutorial', true);
+  const howTosRoute = generateSlugByLang(howTosPages, 'how-to', true);
   const eventsRoute = generateSlugByLang(eventsPages, 'workshops');
 
   const paginatedLessonsRoute = pagination(lessonsPages, 'lessons');
   const paginatedExercisesRoute = pagination(exercisesPages, 'interactive-exercises');
   const paginatedProjectsRoute = pagination(projectsPages, 'interactive-coding-tutorials');
   const paginatedHowTosRoute = pagination(howTosPages, 'how-to');
-
-  const technologyLessonsRoute = generateTechnologySlug(technologyLandingPages, 'lessons/technology', 'lesson');
-  const technologyExercisesRoute = generateTechnologySlug(technologyLandingPages, 'interactive-exercises/technology', 'exercise');
-  const technologyProjectsRoute = generateTechnologySlug(technologyLandingPages, 'interactive-coding-tutorials/technology', 'project');
   const allTechnologiesRoute = generateTechnologySlug(technologyLandingPages, 'technology', 'tech');
 
   // excludes Nextjs files and API routes.
@@ -138,6 +146,8 @@ async function generateSitemap() {
     '!src/pages/**/**/[technology]{.js,.jsx}',
     '!src/pages/**/[technology]/*{.js,.jsx}',
     '!src/pages/edit-markdown.jsx',
+    '!src/pages/docs/[syllabusSlug]/[assetSlug]/*{.js,.jsx}',
+    '!src/pages/docs/[syllabusSlug]/*{.js,.jsx}',
     ...privateRoutes,
     '!src/pages/**/_*{.js,.jsx}',
     '!src/pages/api',
@@ -151,20 +161,22 @@ async function generateSitemap() {
     'src/pages/thank-you.jsx',
   ];
 
+  const prismicPagesSitemap = sitemapTemplateWithHreflangConnector(prismicTypePages);
+
   const pagesSitemap = !isWhiteLabelAcademy
     ? sitemapTemplate([
-      ...pages, ...readRoute, ...prismicTypePages, ...paginatedLessonsRoute,
+      ...pages, ...readRoute, ...paginatedLessonsRoute,
       ...paginatedExercisesRoute, ...paginatedProjectsRoute, ...paginatedHowTosRoute,
-    ])
+    ], prismicPagesSitemap)
     : sitemapTemplate([
-      ...whiteLabelPages, ...prismicTypePages,
-    ]);
+      ...whiteLabelPages,
+    ], prismicPagesSitemap);
 
-  const howToSitemap = sitemapTemplate(howTosRoute);
-  const lessonsSitemap = sitemapTemplate(lessonsRoute);
-  const projectsSitemap = sitemapTemplate(projectsCodingRoute);
-  const exercisesSitemap = sitemapTemplate(exercisesRoute);
-  const technologiesSitemap = sitemapTemplate([...technologyLessonsRoute, ...technologyExercisesRoute, ...technologyProjectsRoute, ...allTechnologiesRoute]);
+  const howToSitemap = sitemapTemplateWithHreflang(howTosRoute);
+  const lessonsSitemap = sitemapTemplateWithHreflang(lessonsRoute);
+  const projectsSitemap = sitemapTemplateWithHreflang(projectsCodingRoute);
+  const exercisesSitemap = sitemapTemplateWithHreflang(exercisesRoute);
+  const technologiesSitemap = sitemapTemplate(allTechnologiesRoute);
   const eventsSitemap = sitemapTemplate(eventsRoute);
 
   const whiteLabelAcademySitemapsList = listOfSitemapsTemplate([

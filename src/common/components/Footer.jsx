@@ -22,6 +22,7 @@ import useStyle from '../hooks/useStyle';
 import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
+import { log } from '../../utils/logging';
 
 function Footer({ pageProps }) {
   const { t } = useTranslation('footer');
@@ -30,6 +31,7 @@ function Footer({ pageProps }) {
   const [formStatus, setFormStatus] = useState('');
 
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
+  const actualYear = new Date().getFullYear();
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
   const hideDivider = pageProps?.hideDivider === true;
@@ -85,12 +87,12 @@ function Footer({ pageProps }) {
                     e.preventDefault();
                     bc.marketing().lead({ email })
                       .then((success) => {
-                        console.log(success);
+                        log(success);
                         if (success === undefined) setFormStatus('error');
                         else setFormStatus('success');
                       }).catch((err) => {
                         setFormStatus('error');
-                        console.log(err);
+                        log(err);
                       });
                   }}
                 >
@@ -153,9 +155,13 @@ function Footer({ pageProps }) {
                 <Box as="ul" role="presentation" textAlign={{ base: 'left', md: 'center' }}>
                   {t('company.items', {}, { returnObjects: true }).map((item) => (
                     <Box as="li" key={`${item.label}-${item.href}`} pb="6px" role="presentation" display="flex">
-                      <NextChakraLink href={item.href} fontSize="0.875rem">
-                        {item.label.toUpperCase()}
-                      </NextChakraLink>
+                      {item.href === '#' ? (
+                        <Box fontSize="0.875rem" textTransform="uppercase">{item.label}</Box>
+                      ) : (
+                        <NextChakraLink href={item.href} fontSize="0.875rem" textTransform="uppercase">
+                          {item?.label}
+                        </NextChakraLink>
+                      )}
                     </Box>
                   ))}
                 </Box>
@@ -328,7 +334,7 @@ function Footer({ pageProps }) {
         // alignItems="center"
         textAlign="center"
       >
-        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName })}</Text>
+        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent="center"

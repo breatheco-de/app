@@ -7,13 +7,14 @@ import {
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Confetti from 'react-confetti';
+import { reportDatalayer } from '../../utils/requests';
 import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 
 function ShareButton({
-  variant, title, shareText, message, link, socials, withParty, onlyModal,
+  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask,
 }) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
@@ -96,7 +97,31 @@ function ShareButton({
             <Stack display={socialList.length <= 2 ? 'flex' : 'grid'} gridTemplateColumns="repeat(auto-fill, minmax(7rem, 1fr))" justifyItems="center" justifyContent={socialList.length <= 2 && 'center'} flexDirection={socialList.length <= 2 && 'row'} gridGap={socialList.length <= 2 && '3rem'}>
               {socialList.map((l) => (
                 <Box key={l?.name} style={{ margin: '0px' }} textAlign="center" display="flex" flexDirection="column" gridGap="6px">
-                  <Link display="flex" key={l.name} href={l.href} onClick={() => l.target === 'popup' && window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no')} target={l.target === 'popup' ? 'popup' : '_blank'} rel="noopener noreferrer" minWidth="68px" minHeight="68px" alignItems="center" justifyContent="center" borderRadius="35px" backgroundColor={featuredBackground} style={{ margin: '0px' }}>
+                  <Link
+                    display="flex"
+                    key={l.name}
+                    href={l.href}
+                    onClick={() => {
+                      reportDatalayer({
+                        dataLayer: {
+                          event: 'share',
+                          method: l.name,
+                          content_type: currentTask?.task_type || 'CERTIFICATE',
+                          item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                        },
+                      });
+                      if (l.target === 'popup') window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no');
+                    }}
+                    target={l.target === 'popup' ? 'popup' : '_blank'}
+                    rel="noopener noreferrer"
+                    minWidth="68px"
+                    minHeight="68px"
+                    alignItems="center"
+                    justifyContent="center"
+                    borderRadius="35px"
+                    backgroundColor={featuredBackground}
+                    style={{ margin: '0px' }}
+                  >
                     <Icon icon={l.name} color={l.color} width="36px" height="36px" />
                   </Link>
                   <Text size="12px">
@@ -105,7 +130,27 @@ function ShareButton({
                 </Box>
               ))}
               <Box style={{ margin: '0px' }} textAlign="center" alignItems="center" display="flex" flexDirection="column" gridGap="6px">
-                <Button onClick={() => onCopy()} backgroundColor={featuredBackground} width="68px" height="68px" style={{ margin: '0', padding: '0' }} _hover={{ backgroundColor: hoverBackground }} _active={{ backgroundColor: hoverBackground }} borderRadius="35px" margin="0">
+                <Button
+                  onClick={() => {
+                    reportDatalayer({
+                      dataLayer: {
+                        event: 'share',
+                        method: 'copy',
+                        content_type: currentTask?.task_type || 'CERTIFICATE',
+                        item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                      },
+                    });
+                    onCopy();
+                  }}
+                  backgroundColor={featuredBackground}
+                  width="68px"
+                  height="68px"
+                  style={{ margin: '0', padding: '0' }}
+                  _hover={{ backgroundColor: hoverBackground }}
+                  _active={{ backgroundColor: hoverBackground }}
+                  borderRadius="35px"
+                  margin="0"
+                >
                   <Box padding="10px" backgroundColor="blue.default" borderRadius="35px">
                     <Icon icon="copy" width="22px" height="22px" />
                   </Box>
@@ -154,6 +199,7 @@ ShareButton.propTypes = {
   variant: PropTypes.string,
   onlyModal: PropTypes.bool,
   title: PropTypes.string,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   socials: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
@@ -170,6 +216,7 @@ ShareButton.defaultProps = {
   onlyModal: false,
   variant: 'default',
   title: '',
+  currentTask: null,
   socials: [],
   shareText: '',
   message: '',

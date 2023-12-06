@@ -6,10 +6,20 @@
     "image": "{{domain}}/static/images/4geeks.png"
   },
   "welcome-to": "Bienvenido a:",
+  "checkout": {
+    "title": "El código te hará libre",
+    "description": "El camino hacia la libertad profesional es altamente tutelado, en vivo y en conjunto.",
+    "read-more" :"Lee la ciencia detrás de esto.",
+    "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
+  },
+  "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
+  "in-waiting-list-title": "Estás en nuestra lista de espera",
+  "signup-thanks-text": "Gracias por registrarte para probar 4Geeks. Nos pondremos en contacto cuando tu plaza esté lista.",
   "subscriptions": "Suscripciones",
   "go-back": "Volver",
   "next-step": "Siguiente paso",
+  "create-account": "Crear cuenta",
   "payment-info": "Información de pago",
   "select-payment-plan": "Selecciona un plan de pago:",
   "what-you-will-get": "Lo que obtendrás:",
@@ -27,6 +37,8 @@
   "available-dates": "Fechas disponibles",
   "search-dates": "Buscar fechas",
   "addres-info": "No estamos almacenando su dirección, pero usaremos esta información para ofrecerte las mejores fechas y horarios posibles para estudiar.",
+  "validating-email": "Estamos validando tu email...",
+  "email-validated": "¡Que buen email!",
   "email-info": "Lo usaremos para darte acceso a la comunidad.",
   "phone-info": "Nos pondremos en contacto contigo a través de una llamada telefónica solo si es necesario. (opcional)",
   "already-adquired-plan-title": "Ya tienes este plan",
@@ -44,9 +56,12 @@
   "signing-for": "Te estás registrando en",
   "getting-for": "Estas obteniendo",
   "already-have-account": "¿Ya tienes una cuenta?",
+  "no-have-account": "¿No tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
-  "start-free-course": "Comenzar gratuitamente",
-  "free": "Totalmente gratuito.",
+  "register-here": "Regístrate aquí.",
+  "start-free-course": "Empieza a aprender",
+  "free": "Gratis",
+  "totally_free": "Totalmente gratuito",
   "free_trial": "Prueba gratuita",
   "monthly_payment": "Pago mensual",
   "quarterly_payment": "Pago trimestral",
@@ -55,6 +70,14 @@
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
   "our_plans": "Nuestros planes",
+  "join-cohort": {
+    "description": "Por favor, únete a la cohorte para acceder al contenido del programa.",
+    "button": "Unirse a la cohorte"
+  },
+  "transaction-denied": "Transacción denegada",
+  "payment-not-processed": "El pago no pudo ser procesado",
+  "card-declined": "La tarjeta fue rechazada, por favor intenta de nuevo con otra tarjeta o contacta a tu banco",
+  "payment-error": "Se produjo un error inesperado durante el proceso de pago, por favor contacta al soporte",
   "info": {
     "this-plan-includes": "Este plan incluye",
     "will-pay-monthly": "Pagarás ${{price}} dólares {{qty_months}} veces, por un total de ${{total_amount}}. El primer pago será hoy y el próximo el {{next_month}}.",
@@ -79,6 +102,7 @@
     "owner_name-min": "El nombre del propietario es demasiado corto",
     "card_number-required": "El número de tarjeta es requerido",
     "exp-required": "La fecha de expiración es requerida",
+    "exp-min": "Por favor, ingrese una fecha de expiración válida",
     "cvc-required": "El CVC es requerido",
     "short-input": "¡Demasiado corto!",
     "long-input": "¡Demasiado largo!",
@@ -112,7 +136,23 @@
   "resend": "Reenviar",
   "mentorship-bundle-title": "Paquete de sesiones de tutoría",
   "event-bundle-title": "Paquete de acceso a eventos",
+  "upgrade-a-plan": "Mejora un plan",
+  "take-me-there": "Llévame allí",
   "consumables": {
+    "already-have-it": "Ya lo tienes",
+    "consumable-event-not-available": "Este evento no está disponible para tu suscripción",
+    "consumable-mentorship-not-available": "Esta mentoría no está disponible para tu suscripción",
+    "full-plan": "Plan completo",
+    "basic-plan": "Plan básico",
+    "ran-out-of-events": "Te has quedado sin acceso a eventos",
+    "ran-out-of-events-text": "Puedes comprar un paquete de acceso a eventos o comprar un plan aquí:",
+    "and-get-event-access": "Y únete a más eventos",
+    "purchase-one-or-more-events": "Compra uno o más accesos a eventos",
+    "ran-out-of-mentorships": "Te has quedado sin sesiones de tutoría",
+    "ran-out-of-mentorships-text": "Puedes comprar un paquete de sesiones de tutoría o comprar un plan aquí:",
+    "and-get-mentorship-access": "Y obtén mas tutorías",
+    "purchase-one-or-more-sessions": "Compra una o más sesiones",
+    "avoid-monthly-commitment": "Evita el compromiso mensual",
     "select-bundle": "Selecciona un paquete:",
     "change-my-selection": "Cambiar mi selección",
     "purchase-completed-title": "Haz completado con éxito la compra",
@@ -135,21 +175,142 @@
     "subscription-not-found": "Suscripción no encontrada",
     "no-plan-found-for-service": "No tienes ninguna suscripción relacionado con el siguiente servicio:"
   },
+  "get-premium": "Obtener Premium",
   "pricing": {
     "already-have-plan": "Ya lo tienes",
+    "monthly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-50",
+      "title": "Monthly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 50,
+      "price_text": "$50",
+      "discount_text": "$60",
+      "period": "MONTH",
+      "period_label": "Al mes",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
+    "yearly-plans": [{
+      "plan_slug": "basic",
+      "plan_id": "p-0-trial",
+      "title": "Basic",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 0,
+      "price_text": "Free",
+      "period": "FREE",
+      "period_label": "",
+      "isFree": true,
+      "planType": "original",
+      "type": "FREE"
+    },{
+      "plan_slug": "with-feedback",
+      "plan_id": "p-580",
+      "title": "Yearly payment",
+      "currency": {"code": "USD", "name": "US Dollar"},
+      "trial_duration": 0,
+      "trial_duration_unit": "MONTH",
+      "price": 580,
+      "price_text": "$48.33",
+      "period": "YEAR",
+      "period_label": "Al mes",
+      "isFree": false,
+      "planType": "suggested",
+      "type": "PAYMENT"
+    }],
     "basic-plan": {
-      "type": "Básico",
+      "type": "Vuela solo",
       "hook-message": "Prepárate para conocer nuestra academia",
       "title": "Miembro Gratuito",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
-      "button-title": "Comenzar gratis"
+      "button-title": "Comenzar gratis",
+      "service_items": {
+        "items": [{
+          "label": "1 Taller en vivo"
+        },
+        {
+          "label": "1 Sesión de tutoría individual"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "full-access-to-content",
+          "title": "Acceso completo al contenido",
+          "icon": "content"
+        },
+        "features": [{ "description": "Cientos de ejercicios, proyectos y lecciones interactivos están disponibles gracias a <a style=\"text-decoration: underline;\" target=\"__blank\" href='https://learnpack.co' >LearnPack</a>, nuestro motor interactivo." }]
+      },{
+        "service": {
+          "slug": "access-to-courses",
+          "title": "Acceso a cursos",
+          "icon": "courses"
+        },
+        "features": [{ "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándole oportunidades para mejorar sus habilidades existentes o profundizar en otras nuevas." }]
+      }]
     },
     "premium-plan": {
       "type": "Premium",
       "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
       "title": "Miembro Premium",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Premium"
+      "button-title": "Obtener Premium",
+      "service_items": {
+        "title": "Todo en Vuela Solo más...",
+        "items": [{
+          "label": "10 Talleres en vivo p/mes"
+        },
+        {
+          "label": "2 Sesiones de mentoría individuales p/mes"
+        }]
+      },
+      "featured_info": [{
+        "service": {
+          "slug": "live-learning",
+          "title": "Aprendizaje en vivo",
+          "icon": "video"
+        },
+        "features": [{ "description": "Contamos con muchos talleres y eventos en vivo organizados por expertos cada semana." }]
+      },{
+        "service": {
+          "slug": "ai-feedback-support",
+          "title": "Comentarios y soporte de IA",
+          "icon": "message"
+        },
+        "features": [{ "description": "Nuestros modelos de IA entrenados internamente revisarán constantemente su código y le brindarán comentarios, consejos mientras codifica y más. Además contamos con un chat de soporte técnico 24/7." }]
+      },{
+        "service": {
+          "slug": "access-to-community",
+          "title": "Acceso a la comunidad",
+          "icon": "community"
+        },
+        "features": [{ "description": "Contamos con muchos talleres y eventos en vivo organizados por expertos cada semana." }]
+      },{
+        "service": {
+          "slug": "course-certificates",
+          "title": "Certificados del curso",
+          "icon": "certificate"
+        },
+        "features": [{ "description": "Obtenga certificados verificables a medida que complete cada uno de los cursos." }]
+      }]
     }
   }
 }

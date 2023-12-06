@@ -1,0 +1,67 @@
+{
+  "back-to": "Volver al Dashboard",
+  "relevant-activities": "Actividades relevantes",
+  "attendance": "Asistencia",
+  "deliverables": "Entregables",
+  "deliverables-section": {
+    "lessons": "Lecciones completadas",
+    "projects": "Proyectos completados",
+    "exercises": "Ejercicios de Learnpack completados"
+  },
+  "educational-status": "Estatus educacional",
+  "filter": {
+    "activity": "Actividad",
+    "date": "Fecha"
+  },
+  "activities-section": {
+    "title": "Actividades",
+    "no-activities": "No hay actividades encontradas",
+    "activities": {
+      "invite_created": "Inivitación creada",
+      "invite_status_updated": "Status de inivitación actualizado",
+      "survey": "Encuesta nps contestada",
+      "login": "Breathecode login",
+      "open_syllabus_module": "Módulo syllabus abierto",
+      "read_assignment": "Asignación leída",
+      "assignment_review_status_updated": "Actualizacion de estatus de revisión de asignación",
+      "assignment_status_updated": "Actualizacion de estatus de asignación",
+      "event_checkin_created": "Chekin de evento creado",
+      "event_checkin_assisted": "Chekin de evento asistido",
+      "bag_created": "Bag creado",
+      "checkout_completed": "Checkout completado",
+      "mentoring_session_scheduled": "sesión de mentoría programada",
+      "mentorship_session_checkin": "Registro de sesión de mentoría",
+      "mentorship_session_checkout": "Checkout de sesión de mentoría"
+    }
+  },
+  "analitics": {
+    "total-mentorships": "Total de mentorias",
+    "projects-completed": "Projectos completados",
+    "percentage-attendance": "% de asistencia",
+    "completed-learnpack": "Ejercicios de Learnpack completados",
+    "nps": "NPS"
+  },
+  "project-status": {
+    "approved": "Aprovado",
+    "pending": "Pendiente",
+    "ignored": "Ignorado",
+    "rejected": "Rejechazado"
+  },
+  "lesson-status": {
+    "completed": "Completado",
+    "unread": "Sin leer",
+    "started": "Empezado",
+    "not-opened": "Sin abrir"
+  },
+  "attendance-status": {
+    "attended": "Presente",
+    "absent": "Ausente",
+    "not-taken": "No fue tomada",
+    "no-info": "Sin información"
+  },
+  "exercise-status": {
+    "completed": "Marcado como completado",
+    "not-opened": "Sin abrir",
+    "not-started": "Sin empezar"
+  }
+}

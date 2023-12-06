@@ -1,5 +1,7 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Box,
   useColorModeValue,
@@ -27,64 +29,154 @@ import getMarkDownContent from '../../../../common/components/MarkDownParser/mar
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
+import modifyEnv from '../../../../../modifyEnv';
 
-function Docs() {
+const redirectLang = {
+  es: '/es/',
+  en: '/',
+};
+
+const langsDict = {
+  es: 'es',
+  en: 'us',
+  us: 'us',
+};
+
+const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
+  const {
+    lessons, replits, assignments, quizzes,
+  } = assignment;
+  if (lessons.length > 0 || replits.length > 0 || assignments.length > 0 || quizzes.length > 0) return true;
+  return false;
+}).map((assignment) => {
+  const {
+    id, label, lessons, replits, assignments, quizzes,
+  } = assignment;
+  const nestedAssignments = nestAssignments({
+    id,
+    read: lessons,
+    practice: replits,
+    project: assignments,
+    answer: quizzes,
+  });
+
+  const myModule = {
+    id,
+    label,
+    modules: nestedAssignments.modules,
+  };
+  return myModule;
+});
+
+export const getStaticPaths = async ({ locales }) => {
+  const { data } = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY }).getPublicVersion();
+
+  const formatedData = data.flatMap((syllabus) => {
+    const formated = formatSyllabus(syllabus);
+    const assets = formated.flatMap((elem) => elem.modules.map((module) => module));
+    return assets.map((asset) => ({ ...asset, syllabus }));
+  });
+  const paths = formatedData.flatMap((res) => locales.map((locale) => ({
+    params: {
+      syllabusSlug: res.syllabus.slug,
+      assetSlug: res.translations?.[langsDict[locale]]?.slug || res.slug,
+    },
+    locale,
+  })));
+
+  return {
+    fallback: false,
+    paths,
+  };
+};
+
+export const getStaticProps = async ({ params, locale }) => {
+  const { syllabusSlug, assetSlug } = params;
+
+  try {
+    const result = await bc.syllabus({ is_documentation: 'True', version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
+    const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
+    if (!syllabus) throw new Error('syllabus not found');
+
+    const moduleData = formatSyllabus(syllabus);
+
+    const asset = moduleData.flatMap((syllabusModule) => syllabusModule.modules.map((moduleAsset) => moduleAsset))
+      .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations?.[locale]?.slug === assetSlug);
+
+    const { translations } = asset;
+
+    const translationArray = [
+      {
+        value: 'us',
+        lang: 'en',
+        slug: translations?.us?.slug,
+        link: `/docs/${syllabusSlug}/${translations?.us?.slug}`,
+      },
+      {
+        value: 'en',
+        lang: 'en',
+        slug: translations?.en,
+        link: `/docs/${syllabusSlug}/${translations?.en?.slug}`,
+      },
+      {
+        value: 'es',
+        lang: 'es',
+        slug: translations?.es?.slug,
+        link: `/es/docs/${syllabusSlug}/${translations?.es?.slug}`,
+      },
+    ].filter((item) => translations && translations?.[item?.value] !== undefined);
+
+    //serialize moduleData removing undefined values
+    moduleData.forEach((moduleSyllabus) => {
+      moduleSyllabus.modules.forEach((mod) => {
+        Object.keys(mod).forEach((key) => {
+          if (mod[key] === undefined) mod[key] = null;
+        });
+      });
+    });
+    return {
+      props: {
+        translations: translationArray,
+        syllabusData: syllabus,
+        moduleMap: moduleData,
+      },
+    };
+  } catch (error) {
+    console.error(`Error fetching page for /${locale}/docs/${syllabusSlug}/${assetSlug}`, error);
+    return {
+      notFound: true,
+    };
+  }
+};
+
+function Docs({ syllabusData, moduleMap }) {
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
-  const { t } = useTranslation('common');
-  const [syllabusData, setSyllabusData] = useState(null);
+  const { syllabusSlug, assetSlug } = router.query;
+  const { t, lang } = useTranslation('docs');
+  const currentLang = langsDict[lang];
   const [asset, setAsset] = useState(null);
   const [open, setOpen] = useState(null);
-  const [moduleMap, setModuleMap] = useState([]);
+  const [loadStatus, setLoadStatus] = useState({
+    loading: true,
+    status: 'loading',
+  });
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const { syllabusSlug, assetSlug } = router.query;
   const { hexColor, borderColor, featuredLight, fontColor } = useStyle();
   const currentTheme = useColorModeValue('light', 'dark');
 
   const markdownData = asset?.markdown ? getMarkDownContent(asset.markdown) : '';
   const isIpynb = asset?.ipynbHtml?.statusText === 'OK' || asset?.ipynbHtml?.iframe;
 
-  const getSyllabusData = async () => {
-    try {
-      const result = await bc.syllabus({ version: 1, academy: WHITE_LABEL_ACADEMY, slug: syllabusSlug }).getPublicVersion();
-      const syllabus = result.data.find((syll) => syll.slug === syllabusSlug);
-      setSyllabusData(syllabus);
-
-      const moduleData = syllabus.json.days.filter((assignment) => {
-        const {
-          lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons.length > 0 || replits.length > 0 || assignments.length > 0 || quizzes.length > 0) return true;
-        return false;
-      }).map((assignment, i) => {
-        const {
-          id, label, lessons, replits, assignments, quizzes,
-        } = assignment;
-
-        const nestedAssignments = nestAssignments({
-          id,
-          read: lessons,
-          practice: replits,
-          project: assignments,
-          answer: quizzes,
-        });
-
-        const myModule = {
-          id,
-          label,
-          modules: nestedAssignments.modules,
-        };
-        if (myModule.modules.find((elem) => elem.slug === assetSlug)) setOpen(i);
-        return myModule;
-      });
-      setModuleMap(moduleData);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   const getAssetData = async () => {
     try {
-      const response = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
+      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((moduleAsset) => {
+        if (moduleAsset.slug === assetSlug) return true;
+        const translations = moduleAsset.translations ? Object.values(moduleAsset.translations) : [];
+        return translations.some((translation) => translation.slug === assetSlug);
+      }));
+      if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
+      const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
 
       const urlPathname = assetData?.readme_url ? assetData?.readme_url.split('https://github.com')[1] : null;
@@ -98,14 +190,14 @@ function Docs() {
       let ipynbHtml = '';
 
       if (exensionName !== 'ipynb') {
-        const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
+        const resp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
         if (resp.status >= 400) {
           throw new Error('markdown not found');
         }
         markdown = await resp.text();
       } else {
-        const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
-        const ipynbHtmlUrl = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
+        const ipynbIframe = `${BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
+        const ipynbHtmlUrl = `${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
         const resp = await fetch(ipynbHtmlUrl);
 
         ipynbHtml = {
@@ -122,23 +214,63 @@ function Docs() {
         ipynbHtml,
         collab_url: finalPathname,
       });
+      setLoadStatus({
+        loading: false,
+        status: 'done',
+      });
     } catch (e) {
+      setLoadStatus({
+        loading: false,
+        status: '',
+      });
       console.log(e);
     }
   };
 
   useEffect(() => {
-    getSyllabusData();
+    moduleMap.forEach((syllabusModule, i) => {
+      if (syllabusModule.modules.find((elem) => elem.slug === assetSlug || elem.translations?.[langsDict[lang]]?.slug === assetSlug)) setOpen(i);
+    });
   }, []);
 
   useEffect(() => {
-    getAssetData();
-  }, [assetSlug]);
+    if (moduleMap.length > 0 && assetSlug) getAssetData();
+  }, [assetSlug, moduleMap]);
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
 
+  const getPrevArticle = () => {
+    if (Number.isNaN(open)) return null;
+    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
+    const nextAsset = moduleMap[open]?.modules[currentIndex - 1];
+    if (nextAsset) return nextAsset;
+    const prevModule = moduleMap[open - 1];
+    if (prevModule && prevModule.modules.length > 0) return prevModule.modules[prevModule.modules.length - 1];
+    return null;
+  };
+
+  const getNextArticle = () => {
+    if (Number.isNaN(open)) return null;
+    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
+    const nextAsset = moduleMap[open]?.modules[currentIndex + 1];
+    if (nextAsset) return nextAsset;
+    const nextModule = moduleMap[open + 1];
+    if (nextModule && nextModule.modules.length > 0) return nextModule.modules[0];
+    return null;
+  };
+
+  const prevArticle = getPrevArticle();
+  const nextArticle = getNextArticle();
+
   return (
     <>
+      {!loadStatus.loading && loadStatus.status === 'not-found' && (
+        <Box height="50vh">
+          <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">
+            {t('not-found')}
+          </Heading>
+        </Box>
+      )}
       <GridContainer
         maxWidth="1228px"
         margin="28px auto 0 auto"
@@ -154,7 +286,7 @@ function Docs() {
               <Box marginTop="30px" key={`${module.label}-${index}`} borderBottom="1px solid" borderColor={hexColor.featuredColor}>
                 <Box display="flex" alignItems="center" cursor="pointer" onClick={() => handleOpen(index)}>
                   <Text size="md" color={hexColor.fontColor3} fontWeight="700">
-                    {module.label}
+                    {typeof module.label === 'string' ? module.label : module.label[currentLang]}
                   </Text>
                   {open === index ? (
                     <ChevronDownIcon color={hexColor.blueDefault} />
@@ -163,21 +295,24 @@ function Docs() {
                   )}
                 </Box>
                 {open === index && (
-                  <Box marginLeft="15px">
-                    {module.modules.map((assetModule, i) => (
-                      <Box margin="5px 0" padding="0 15px" borderLeft="2px solid" borderColor={assetSlug === assetModule.slug ? hexColor.blueDefault : borderColor} key={`${assetModule.slug}-${i}`}>
-                        <Link
-                          color={hexColor.fontColor3}
-                          href={`/docs/${syllabusSlug}/${assetModule.slug}`}
-                          textDecoration="none"
-                          _hover={{
-                            textDecoration: 'none',
-                          }}
-                        >
-                          {assetModule.title}
-                        </Link>
-                      </Box>
-                    ))}
+                  <Box marginLeft="5px">
+                    {module.modules.map((assetModule, i) => {
+                      const assetData = assetModule.translations?.[langsDict[lang]] || assetModule;
+                      return (
+                        <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetData.slug ? hexColor.blueDefault : borderColor} key={`${assetData.slug}-${i}`}>
+                          <Link
+                            color={hexColor.fontColor3}
+                            href={`${redirectLang[lang]}docs/${syllabusSlug}/${assetData.slug}`}
+                            textDecoration="none"
+                            _hover={{
+                              textDecoration: 'none',
+                            }}
+                          >
+                            {assetData.title}
+                          </Link>
+                        </Box>
+                      );
+                    })}
                   </Box>
                 )}
               </Box>
@@ -186,7 +321,7 @@ function Docs() {
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
-            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="0 0 1rem 0" gridGap="10px" justifyContent="space-between" position="relative">
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin={{ base: '1.5rem 0', md: '0 0 1rem 0' }} gridGap="10px" justifyContent="space-between" position="relative">
               <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: 'static', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
                 {asset?.readme_url && (
                   <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${asset?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
@@ -215,10 +350,13 @@ function Docs() {
             </Heading>
           )}
 
-          {asset?.markdown && !isIpynb ? (
+          {loadStatus.loading && (
+            <MDSkeleton />
+          )}
+
+          {asset?.markdown && !isIpynb && (
             <Box
-              height="100%"
-              margin="0 rem auto 0 auto"
+              margin="0 auto"
               // display="grid"
               gridColumn="2 / span 12"
               transition="background 0.2s ease-in-out"
@@ -230,12 +368,6 @@ function Docs() {
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
             </Box>
-          ) : (
-            <>
-              {!isIpynb && (
-                <MDSkeleton />
-              )}
-            </>
           )}
 
           {isIpynb && asset?.markdown === '' && asset?.ipynbHtml?.html && (
@@ -322,10 +454,56 @@ function Docs() {
               )}
             </Box>
           )}
+          <Box margin="0 auto" display="flex" justifyContent="flex-end" gap="20px">
+            {prevArticle && (
+              <Link
+                href={`/docs/${syllabusSlug}/${prevArticle.slug}`}
+                fontWeight="700"
+                fontSize="15px"
+                variant="default"
+                display="flex"
+                alignItems="center"
+                gridGap="10px"
+                onClick={() => {
+                  if (!moduleMap[open].modules.find((elem) => elem.slug === prevArticle.slug)) {
+                    setOpen(open - 1);
+                  }
+                }}
+              >
+                <Icon icon="arrowLeft2" width="18px" height="10px" />
+                {t('previous-article')}
+              </Link>
+            )}
+
+            {nextArticle && (
+              <Link
+                href={`/docs/${syllabusSlug}/${nextArticle.slug}`}
+                fontWeight="700"
+                fontSize="15px"
+                variant="default"
+                display="flex"
+                alignItems="center"
+                gridGap="10px"
+                onClick={() => {
+                  if (!moduleMap[open].modules.find((elem) => elem.slug === nextArticle.slug)) {
+                    setOpen(open + 1);
+                  }
+                }}
+              >
+                {t('next-article')}
+                <Icon style={{ transform: 'rotate(180deg)' }} icon="arrowLeft2" width="18px" height="10px" />
+              </Link>
+            )}
+          </Box>
         </Box>
       </GridContainer>
     </>
   );
 }
+
+Docs.propTypes = {
+  syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  moduleMap: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+};
 
 export default Docs;

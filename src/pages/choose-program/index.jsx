@@ -13,12 +13,11 @@ import asPrivate from '../../common/context/PrivateRouteWrapper';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
-import useStyle from '../../common/hooks/useStyle';
-import GridContainer from '../../common/components/GridContainer';
 import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -26,6 +25,9 @@ import useProgramList from '../../common/store/actions/programListAction';
 import handlers from '../../common/handlers';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import { PREPARING_FOR_COHORT } from '../../common/store/types';
+import SimpleModal from '../../common/components/SimpleModal';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import useStyle from '../../common/hooks/useStyle';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -45,7 +47,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function chooseProgram() {
-  const { t } = useTranslation('choose-program');
+  const { t, lang } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [subscriptionProcess] = usePersistent('subscription-process', null);
@@ -59,15 +61,21 @@ function chooseProgram() {
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
+  const [welcomeModal, setWelcomeModal] = useState(false);
   const { isLoading: userLoading, user, choose } = useAuth();
-  const { lightColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const ldClient = useLDClient();
   const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
-  const TwelveHours = 720;
+  const { hexColor } = useStyle();
+  const TwelveHoursInMinutes = 720;
+  const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
+  const welcomeVideoLinks = {
+    es: 'https://www.youtube.com/embed/TgkIpTZ75NM',
+    en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
+  };
 
   const fetchAdmissions = () => bc.admissions().me();
 
@@ -106,6 +114,18 @@ function chooseProgram() {
 
       return false;
     });
+    if (cohorts) {
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+      const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
+      const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      reportDatalayer({
+        dataLayer: {
+          available_as_saas: hasAvailableAsSaas,
+          cohorts: cohortsSlugs,
+          academies: cohortsAcademies,
+        },
+      });
+    }
 
     const revalidate = setTimeout(() => {
       if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
@@ -130,6 +150,14 @@ function chooseProgram() {
     fetchSubscriptions()
       .then((data) => {
         setSubscriptionData(data);
+        reportDatalayer({
+          dataLayer: {
+            event: 'subscriptions_load',
+            method: 'native',
+            plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+          },
+        });
       })
       .finally(() => setSubscriptionLoading(false));
   }, []);
@@ -148,10 +176,10 @@ function chooseProgram() {
           ...cohortTasks[value.cohort.slug],
           name: value.cohort.name,
           plan_financing: subscriptionData?.plan_financings?.find(
-            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
           ) || null,
           subscription: subscriptionData?.subscriptions?.find(
-            (sub) => sub.selected_cohort?.slug === value.cohort.slug,
+            (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.cohort.slug),
           ) || null,
           all_subscriptions: allSubscriptions,
           slug: value.cohort.slug,
@@ -221,13 +249,13 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });
@@ -235,13 +263,20 @@ function chooseProgram() {
   }, []);
 
   useEffect(() => {
+    if (dataQuery?.date_joined) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
+      if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
+        setWelcomeModal(true);
+      }
+    }
+  }, [dataQuery]);
+  useEffect(() => {
     if (userID !== undefined) {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
         bc_id: userID,
       });
     }
-
     if (user?.id && !userLoading) {
       ldClient?.identify({
         kind: 'user',
@@ -325,8 +360,33 @@ function chooseProgram() {
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
-      <GridContainer gridTemplateColumns="repeat(10, 1fr)" width="100%" margin="0 auto">
-        <Box gridColumn="2 / span 8">
+      <SimpleModal
+        isOpen={welcomeModal}
+        onClose={() => setWelcomeModal(false)}
+        style={{ marginTop: '10vh' }}
+        maxWidth="45rem"
+        borderRadius="13px"
+        headerStyles={{ textAlign: 'center' }}
+        title={t('dashboard:welcome-modal.title')}
+        bodyStyles={{ padding: 0 }}
+        closeOnOverlayClick={false}
+      >
+        <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
+          <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
+            {t('dashboard:welcome-modal.description')}
+          </Text>
+        </Box>
+        <Box padding="0 15px 15px">
+          <ReactPlayerV2
+            url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
+            width="100%"
+            height="100%"
+            iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+          />
+        </Box>
+      </SimpleModal>
+      <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+        <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
               <Heading
@@ -335,10 +395,6 @@ function chooseProgram() {
               >
                 {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
               </Heading>
-
-              <Text size="18px" color={lightColor} fontWeight={500} letterSpacing="0.02em" p="12px 0 30px 0">
-                {t('read-to-start-learning')}
-              </Text>
 
               {invites?.length > 0 && (
                 <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
@@ -417,19 +473,6 @@ function chooseProgram() {
                 </NextChakraLink>
               )}
             </Box>
-            <Box flex={{ base: 1, md: 0.3 }} zIndex={10} position={{ base: 'inherit', md: 'absolute' }} right={0} top={0}>
-              {flags?.appReleaseEnableLiveEvents && (
-                <LiveEvent
-                  featureLabel={t('common:live-event.title')}
-                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                  otherEvents={events}
-                  maxWidth={{ base: '100%', sm: '500px', md: '340px' }}
-                  minWidth={{ base: '100%', sm: '500px', md: '340px' }}
-                  margin="0 auto"
-                />
-              )}
-            </Box>
           </Flex>
 
           <Box>
@@ -441,7 +484,7 @@ function chooseProgram() {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="4rem"
               gridRowGap="3rem"
               height="auto"
@@ -464,7 +507,7 @@ function chooseProgram() {
             <Box
               display="grid"
               mt="1rem"
-              gridTemplateColumns="repeat(auto-fill, minmax(15rem, 1fr))"
+              gridTemplateColumns={cardColumnSize}
               gridColumnGap="4rem"
               gridRowGap="3rem"
               height="auto"
@@ -484,7 +527,29 @@ function chooseProgram() {
             </Box>
           )}
         </Box>
-      </GridContainer>
+        <Box flex={{ base: 1, md: 0.3 }}>
+          <Box flex={1} zIndex={10}>
+            {flags?.appReleaseEnableLiveEvents && (
+              <LiveEvent
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                otherEvents={events}
+                margin="0 auto"
+              />
+            )}
+          </Box>
+          <Box display="flex" alignItems="center" gridGap="30px" padding="1.2rem" mt="2rem" borderRadius="17px" border="1px solid" borderColor={hexColor.borderColor}>
+            <Icon icon="slack" width="20px" height="20px" />
+            <Text size="15px" fontWeight={700}>
+              {t('sidebar.join-our-community')}
+            </Text>
+            <NextChakraLink href="https://4geeksacademy.slack.com/" aria-label="4Geeks Academy community" target="blank" rel="noopener noreferrer">
+              <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
+            </NextChakraLink>
+          </Box>
+        </Box>
+      </Flex>
     </Flex>
   );
 }

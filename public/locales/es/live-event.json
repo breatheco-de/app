@@ -24,5 +24,9 @@
     "workshop": "Taller",
     "will-start-soon": "Empezará pronto",
     "time-duration": "{{time}} de duración",
-    "join-event": "Unirse al evento"
+    "join-event": "Unirse al evento",
+    "filters": {
+        "language": "Idioma",
+        "event-type": "Tipo de evento"
+    }
 }

@@ -4,8 +4,8 @@
 import { memo, useState, useEffect } from 'react';
 // import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
-  Box, Heading, Divider, Grid, useColorMode, Tabs,
-  TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery,
+  Box, Heading, Divider, Grid, Tabs,
+  TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -213,14 +213,13 @@ function ProfilesSection({
 }
 
 function CohortSideBar({
-  title, teacherVersionActive, cohort, cohortCity, background, width, containerStyle,
-  studentAndTeachers,
+  title, teacherVersionActive, cohort, cohortCity, width, containerStyle,
+  studentAndTeachers, isDisabled,
 }) {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
-  const { colorMode } = useColorMode();
   const [alumniGeeksList, setAlumniGeeksList] = useState({});
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
@@ -234,7 +233,7 @@ function CohortSideBar({
   );
 
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
-  const { lightColor, borderColor } = useStyle();
+  const { featuredColor, hexColor, lightColor, borderColor } = useStyle();
 
   const kickoffDate = {
     en: format(new Date(cohort.kickoff_date), 'MMM do'),
@@ -308,54 +307,61 @@ function CohortSideBar({
       transition="background 0.2s ease-in-out"
       width={width}
       style={containerStyle}
-      borderWidth="1px"
-      borderRadius="lg"
+      borderRadius="16px"
       overflow="hidden"
-      bg={colorMode === 'light' ? background || 'blue.light' : 'featuredDark'}
+      border={`1.5px solid ${hexColor.blueDefault}`}
     >
-      <Box padding="22px 26px">
-        <Heading
-          as="h4"
-          fontSize={15}
-          fontWeight="900"
-          margin={0}
-          lineHeight="18px"
-          letterSpacing="0.05em"
-          marginBottom={18}
-          textTransform="uppercase"
-        >
-          {t('cohortSideBar.title')}
-        </Heading>
-        <Box d="flex" alignItems="center">
-          <Icon icon="group" width="41px" height="41px" />
-          <Box id="cohort-dates" marginLeft={13}>
-            <Heading as="h4" color={lightColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
-              {(`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
-            </Heading>
-            <Text size="l" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
-              {cohortCity}
-            </Text>
-            {cohort.ending_date !== null && (
-              <>
-                <Text pt="4px" size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
-                  {t('cohortSideBar.last-date')}
-                  {' '}
-                  <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
-                    {endingDate[router.locale]}
-                  </Text>
-                </Text>
-                <Text size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
-                  {t('cohortSideBar.start-date')}
-                  {' '}
-                  <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
-                    {kickoffDate[router.locale]}
-                  </Text>
-                </Text>
-              </>
-            )}
-          </Box>
+      <Heading
+        as="h4"
+        width="100%"
+        padding="16px 21px"
+        background={featuredColor}
+        fontSize="16px"
+        fontWeight="900"
+        margin={0}
+        letterSpacing="0.05em"
+        textAlign="center"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        gridGap="10px"
+      >
+        <Icon icon="group2" width="26px" height="26px" color="#000" />
+        <Box as="p">
+          {isDisabled ? t('cohortSideBar.about-cohort') : t('cohortSideBar.title')}
         </Box>
-      </Box>
+      </Heading>
+      <Flex padding="24px 26px" alignItems="center">
+        <Icon icon="group" width="41px" height="41px" />
+        <Box id="cohort-dates" marginLeft={13}>
+          <Heading as="h4" color={lightColor} fontSize={15} fontWeight="700" lineHeight="18px" margin={0}>
+            {isDisabled
+              ? t('cohortSideBar.about-cohort')
+              : (`${t('cohortSideBar.cohort')} ${teacherVersionActive ? ` | ${router.locale === 'en' ? 'Day' : 'Día'} ${cohort.current_day}` : ''}`) || title}
+          </Heading>
+          <Text size="l" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
+            {cohortCity}
+          </Text>
+          {cohort.ending_date !== null && (
+            <>
+              <Text pt="4px" size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
+                {t('cohortSideBar.last-date')}
+                {' '}
+                <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
+                  {endingDate[router.locale]}
+                </Text>
+              </Text>
+              <Text size="sm" color={lightColor} fontWeight="700" lineHeight="18px" margin={0}>
+                {t('cohortSideBar.start-date')}
+                {' '}
+                <Text as="span" size="sm" color={lightColor} fontWeight="400" lineHeight="18px" margin={0}>
+                  {kickoffDate[router.locale]}
+                </Text>
+              </Text>
+            </>
+          )}
+        </Box>
+      </Flex>
       <Divider margin={0} style={{ borderColor }} />
       <Box id="cohort-students" display="flex" flexDirection="column" gridGap="20px" padding="18px 26px">
         {teacherAssistants.length > 0 && (
@@ -394,30 +400,32 @@ function CohortSideBar({
                 ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
                 : t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
             </Tab>
-            <Tab
-              p="0 14px 14px 14px"
-              display="block"
-              textAlign="center"
-              isDisabled={false}
-              textTransform="uppercase"
-              fontWeight="900"
-              fontSize="13px"
-              letterSpacing="0.05em"
-              width="100%"
-              borderBottom="4px solid #C4C4C4"
-              // height="100%"
-              _selected={{
-                color: 'blue.default',
-                borderBottom: '4px solid',
-                borderColor: 'blue.default',
-              }}
-              _disabled={{
-                opacity: 0.5,
-                cursor: 'not-allowed',
-              }}
-            >
-              {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
-            </Tab>
+            {alumniGeeksList?.count && (
+              <Tab
+                p="0 14px 14px 14px"
+                display="block"
+                textAlign="center"
+                isDisabled={alumniGeeksList?.count === 0 || alumniGeeksList?.count === undefined}
+                textTransform="uppercase"
+                fontWeight="900"
+                fontSize="13px"
+                letterSpacing="0.05em"
+                width="100%"
+                borderBottom="4px solid #C4C4C4"
+                // height="100%"
+                _selected={{
+                  color: 'blue.default',
+                  borderBottom: '4px solid',
+                  borderColor: 'blue.default',
+                }}
+                _disabled={{
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }}
+              >
+                {t('cohortSideBar.alumni-geeks', { studentsLength: alumniGeeksList?.count || 0 })}
+              </Tab>
+            )}
           </TabList>
           <TabPanels p="0">
             <TabPanel p="0">
@@ -490,7 +498,7 @@ CohortSideBar.propTypes = {
   studentAndTeachers: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   cohortCity: PropTypes.string,
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  background: PropTypes.string,
+  isDisabled: PropTypes.bool,
   // handleStudySession: PropTypes.func,
 };
 CohortSideBar.defaultProps = {
@@ -554,7 +562,7 @@ CohortSideBar.defaultProps = {
   ],
   cohortCity: 'Miami Downtown',
   cohort: {},
-  background: '',
+  isDisabled: false,
   // handleStudySession: () => {},
 };
 

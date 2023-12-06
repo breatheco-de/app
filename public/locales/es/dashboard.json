@@ -9,7 +9,21 @@
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡<a class='black-link' href='{{link}}'>Actualiza tu plan</a> para tener acceso ilimitado!",
   "intro-video-title": "Bienvenido a la introducción de codificación",
+  "already-have-this-cohort": "Ya perteneces a esta cohorte",
+  "join-cohort-page": {
+    "seo-title": "Únete a {{cohortTitle}}",
+    "cta-description": "Tu plan actual no incluye acceso a esta cohorte, por favor actualiza para acceder al contenido.",
+    "cta-cohort-not-found": "Esta cohorte no existe o no tienes acceso para unirte.",
+    "cta-button": "Revisar plan",
+    "join-next-cohort":"Únete a la cohorte",
+    "start-course":"Empezar este curso",
+    "join-more":"Únete a más de 100 personas que toman este curso ahora mismo",
+    "preview-description": "Estás revisando esta cohorte en \"modo de vista previa\". Para comenzar a aprender e interactuar con el material, únete a la cohorte."
+  },
   "modules": {
+    "read": "Leer",
+    "start": "Iniciar",
+    "answer": "Responder",
     "target-blank-title": "Abrir en nueva ventana",
     "target-blank-msg": "\"{{title}}\" abrirá la siguiente URL en una nueva ventana",
     "search-not-found": "No se encontraron coincidencias para esta búsqueda",
@@ -31,6 +45,7 @@
   "cohortSideBar": {
     "title": "Acerca de tu cohorte",
     "cohort": "Tu Cohorte",
+    "about-cohort": "Acerca de la cohorte",
     "last-date": "Última fecha:",
     "start-date": "Fecha de inicio:",
     "mainTeacher": "Profesor principal",
@@ -54,13 +69,14 @@
     "no-mentor-link": "No hay enlace para crear sesión con este mentor",
     "search-mentor": "Buscar mentor por nombre",
     "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
+    "mentoring-label": "Mentoría",
     "mentoring": "Programe una sesión de tutoría 1-1.",
     "select-type": "Seleccione un tipo de tutoría",
     "mentoring-available": "Tutorías disponibles",
     "no-mentoring-available": "No tienes tutorías disponibles.",
     "create-session-text": "Agendar ahora",
     "learn-more": "Aprender mas.",
-    "learn-more-link": "https://4geeks.com/es/mentorships",
+    "learn-more-link": "https://4geeks.com/es/docs/knowledge-base-4geeks/mentoring-sessions",
     "get-more-mentorships": "Consigue más mentorías",
     "schedule-button": "Programar una sesión de tutoría",
     "mentors-available": "+{{count}} Mentores disponibles",
@@ -164,7 +180,7 @@
     "no-instructions": ">:warning: No se encontró instrucción disponible para este módulo"
   },
   "welcome-modal": {
-    "title": "Welcome to 4Geeks!",
+    "title": "Bienvenido a 4Geeks!",
     "description": "Mira este breve video que explica cómo aprovechar al máximo 4Geeks y mejorar tu experiencia de aprendizaje"
   }
 }

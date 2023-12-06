@@ -37,6 +37,7 @@ import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../../../../utils/variables';
+import { log } from '../../../../../utils/logging';
 
 function Content() {
   const { t } = useTranslation('syllabus');
@@ -165,7 +166,7 @@ function Content() {
             updateTasks[index].opened_at = result.data.opened_at;
             setTaskTodo([...updateTasks]);
           }
-        }).catch((e) => console.log(e));
+        }).catch((e) => log('update_task_error:', e));
     }
   }, [currentTask]);
 
@@ -201,7 +202,7 @@ function Content() {
         const assetData = await assetResp.data;
         setCurrentAssetData(assetData);
 
-        if (!assetData?.delivery_formats.includes('url')) {
+        if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
           const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           const respData = await fileResp.data;
           setFileData(respData);
@@ -791,6 +792,7 @@ function Content() {
                   shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
                   link={shareLink}
                   socials={socials}
+                  currentTask={currentTask}
                   onlyModal
                   withParty
                 />

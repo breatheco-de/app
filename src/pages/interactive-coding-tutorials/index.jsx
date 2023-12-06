@@ -18,6 +18,7 @@ import PaginatedView from '../../common/components/PaginationView';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
 
@@ -31,7 +32,6 @@ const fetchProjects = async (lang, page, query) => {
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'PROJECT',
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
     language: lang,
     academy: WHITE_LABEL_ACADEMY,
@@ -40,6 +40,8 @@ const fetchProjects = async (lang, page, query) => {
     difficulty: difficulty[query.difficulty],
     technologies,
     video,
+    like: query?.search,
+    expand: 'technologies',
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -58,7 +60,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
 
   arrProjects = Object.values(data.results);
   if (resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrProjects.length} Projects fetched`);
+    log(`SUCCESS: ${arrProjects.length} Projects fetched`);
   } else {
     console.error(`Error ${resp.status}: fetching Projects list for /interactive-coding-tutorials`);
   }
@@ -72,7 +74,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /interactive-coding-tutorials`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /interactive-coding-tutorials`);
   }
@@ -102,6 +104,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/interactive-coding-tutorials`,
         pathConnector: '/interactive-coding-tutorials',
         card: 'default',

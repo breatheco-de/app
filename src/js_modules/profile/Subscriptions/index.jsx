@@ -10,10 +10,9 @@ import Head from 'next/head';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import bc from '../../../common/services/breathecode';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
-import { location, toCapitalize, unSlugify } from '../../../utils';
+import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
@@ -25,13 +24,11 @@ function Subscriptions({ storybookConfig }) {
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
-  const [cohortsState, setCohortsState] = useState([]);
   const [offerProps, setOfferProps] = useState({});
 
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
 
-  const cohortProps = subscriptionProps.selected_cohort;
   const profileTranslations = storybookConfig?.translations?.profile;
   const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
@@ -42,6 +39,10 @@ function Subscriptions({ storybookConfig }) {
     setUpgradeModalIsOpen(true);
   };
 
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
+
   const {
     statusStyles, statusLabel, getLocaleDate, payUnitString,
   } = profileHandlers({
@@ -51,27 +52,7 @@ function Subscriptions({ storybookConfig }) {
 
   const { blueDefault } = hexColor;
 
-  useEffect(() => {
-    bc.admissions().me()
-      .then(({ data }) => {
-        setCohortsState(data?.cohorts);
-      });
-    fetchSubscriptions();
-  }, []);
-
-  const cohorts = storybookConfig?.cohorts || cohortsState;
   const subscriptionData = storybookConfig?.subscriptionData || subscriptionDataState;
-
-  const cohortsExist = cohorts?.length > 0;
-  const subscriptionsExist = (subscriptionData?.subscriptions?.length > 0
-    && subscriptionData.subscriptions.some((subscription) => {
-      const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
-      return exists;
-    })) || (subscriptionData?.plan_financings?.length > 0
-      && subscriptionData.plan_financings.some((subscription) => {
-        const exists = cohorts.some((l) => l?.cohort?.slug === subscription?.selected_cohort?.slug);
-        return exists;
-      }));
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
@@ -98,7 +79,7 @@ function Subscriptions({ storybookConfig }) {
         {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
       </Text>
 
-      {(subscriptionsExist && cohortsExist) ? (
+      {subscriptionFiltered?.length > 0 ? (
         <Grid
           gridTemplateColumns={{
             base: 'repeat(auto-fill, minmax(15rem, 1fr))',
@@ -113,18 +94,13 @@ function Subscriptions({ storybookConfig }) {
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
             const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
             const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-
             const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
-
             const nextPaymentDate = {
               en: format(new Date(subscription?.next_payment_at), 'MMM do'),
               es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
             };
-
             const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
-              && subscription?.plans[0]?.financing_options?.find(
-                (option) => option?.monthly_price === subscription?.monthly_price,
-              );
+              && subscription?.plans[0]?.financing_options[0];
 
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -141,15 +117,12 @@ function Subscriptions({ storybookConfig }) {
                     <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
-                    <Text fontSize="11px" fontWeight="700">
-                      {subscription?.selected_cohort?.name}
-                    </Text>
                   </Flex>
 
                   <Flex alignItems="center" gridGap="10px">
                     {!isFreeTrial && (
                       <Text fontSize="18px" fontWeight="700">
-                        {(invoice?.amount && `${invoice?.amount}`) || t('common:free')}
+                        {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
                       </Text>
                     )}
                     {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (
@@ -267,7 +240,7 @@ function Subscriptions({ storybookConfig }) {
           <ModalInfo
             isOpen={cancelModalIsOpen}
             title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
-            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', cohortProps?.name) || t('subscription.cancel-modal.description', { cohort: cohortProps?.name })}
+            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', slugToTitle(subscriptionProps?.slug)) || t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
             closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
             handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
             headerStyles={{ textAlign: 'center' }}

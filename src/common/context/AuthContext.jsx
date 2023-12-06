@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { isWindow, removeURLParameter } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
@@ -16,6 +17,12 @@ const initialState = {
   isLoading: true,
   isAuthenticated: false,
   user: null,
+};
+
+const langHelper = {
+  us: 'en',
+  en: 'en',
+  es: 'es',
 };
 
 const reducer = (state, action) => {
@@ -110,7 +117,7 @@ export const AuthContext = createContext({
   ...initialState,
 });
 
-function AuthProvider({ children }) {
+function AuthProvider({ children, pageProps }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
@@ -162,16 +169,32 @@ function AuthProvider({ children }) {
               payload: { user: data, isAuthenticated: true, isLoading: false },
             });
             const permissionsSlug = data.permissions.map((l) => l.codename);
+            const settingsLang = data?.settings.lang;
+
             setProfile({
               ...profile,
               ...data,
               permissionsSlug,
+            });
+            reportDatalayer({
+              dataLayer: {
+                event: 'session_load',
+                method: 'native',
+                user_id: data.id,
+                email: data.email,
+                // is_saas: data.roles.filter(r => r.role.toLowerCase() == "student" && r.)
+                first_name: data.first_name,
+                last_name: data.last_name,
+                avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
+                language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+              },
             });
             if (data.github) {
               localStorage.setItem('showGithubWarning', 'closed');
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
             }
+            if (!pageProps.disableLangSwitcher && langHelper[lang] !== settingsLang) router.push(router.asPath, '', { locale: settingsLang });
           })
           .catch(() => {
             handleSession(null);
@@ -186,7 +209,7 @@ function AuthProvider({ children }) {
     authHandler();
   }, [router]);
 
-  const login = async (payload = null) => {
+  const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');
     try {
       if (payload) {
@@ -219,13 +242,26 @@ function AuthProvider({ children }) {
             type: 'LOGIN',
             payload: responseData,
           });
-          if (redirect && redirect.length > 0) {
-            router.push(redirect);
-            localStorage.removeItem('redirect');
+          if (!disableRedirect) {
+            if (redirect && redirect.length > 0) {
+              router.push(redirect);
+              localStorage.removeItem('redirect');
+            } else {
+              router.push('/choose-program');
+              localStorage.removeItem('redirect');
+            }
           } else {
-            router.push('/choose-program');
-            localStorage.removeItem('redirect');
+            router.reload();
           }
+          reportDatalayer({
+            dataLayer: {
+              event: 'login',
+              path: router.pathname,
+              method: 'native',
+              user_id: responseData.user_id,
+              email: responseData.email,
+            },
+          });
         }
         return response;
       }
@@ -288,7 +324,6 @@ function AuthProvider({ children }) {
       }
     }
     localStorage.removeItem('showGithubWarning');
-    localStorage.removeItem('redirect-after-register');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
   };
@@ -368,6 +403,7 @@ function AuthProvider({ children }) {
 
 AuthProvider.propTypes = {
   children: PropTypes.node,
+  pageProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 AuthProvider.defaultProps = {

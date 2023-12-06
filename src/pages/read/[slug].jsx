@@ -259,7 +259,7 @@ function Read({ data }) {
               <Grid
                 background={useColorModeValue('featuredLight', 'featuredDark')}
                 gridRowGap="10px"
-                gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(2, 1fr)' }}
+                gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: 'repeat(1, 1fr)' }}
                 padding="22px 30px"
                 borderRadius="18px"
               >

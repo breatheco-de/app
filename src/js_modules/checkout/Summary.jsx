@@ -1,25 +1,44 @@
 /* eslint-disable no-restricted-globals */
-import { Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment, useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
-import { getQueryString, toCapitalize, unSlugify } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
+import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../utils';
+import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
+import { SILENT_CODE } from '../../lib/types';
+import SimpleModal from '../../common/components/SimpleModal';
 
 function Summary() {
   const { t } = useTranslation('signup');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
 
   const {
     state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
+    setLoader,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+  const [declinedModalProps, setDeclinedModalProps] = useState({
+    title: '',
+    description: '',
+  });
+  const redirect = getStorageItem('redirect');
+  const redirectedFrom = getStorageItem('redirected-from');
+  const router = useRouter();
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
@@ -28,7 +47,7 @@ function Summary() {
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
   const periodText = {
-    FREE: t('free'),
+    FREE: t('totally_free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
     QUARTER: t('info.quarterly'),
@@ -65,8 +84,46 @@ function Summary() {
   const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'checkout_summary',
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    let interval;
+    if (readyToRefetch && timeElapsed < 10) {
+      interval = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
+        getAllMySubscriptions()
+          .then((subscriptions) => {
+            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
+            if (isPurchasedPlanFound) {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
+              } else {
+                router.push('/choose-program');
+              }
+            }
+          });
+      }, 1500);
+    }
+    if (readyToRefetch === false) {
+      setTimeElapsed(0);
+      clearInterval(interval);
+    }
+  }, [readyToRefetch]);
+
+  useEffect(() => {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
     if (findedPlan) {
+      setLoader('plan', false);
       if (findedPlan) {
         setSelectedPlanCheckoutData(findedPlan);
         getPlanProps(findedPlan);
@@ -74,12 +131,14 @@ function Summary() {
     }
 
     if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
+      setLoader('plan', false);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
       getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
   const handleSubmit = () => {
+    setIsSubmitting(true);
     handleChecking({
       plan: selectedPlanCheckoutData,
     })
@@ -90,7 +149,38 @@ function Summary() {
           handlePayment({
             ...data,
             installments: selectedPlanCheckoutData?.how_many_months,
-          })
+          }, true)
+            .then((respPayment) => {
+              const silentCode = respPayment?.silent_code;
+              if (silentCode) {
+                setReadyToRefetch(false);
+
+                if (silentCode === SILENT_CODE.CARD_ERROR) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('card-declined'),
+                  });
+                }
+                if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('payment-not-processed'),
+                  });
+                }
+                if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+                  setOpenDeclinedModal(true);
+                  setDeclinedModalProps({
+                    title: t('transaction-denied'),
+                    description: t('payment-error'),
+                  });
+                }
+              }
+              if (respPayment.status === 'FULFILLED') {
+                setReadyToRefetch(true);
+              }
+            })
             .catch(() => {
               toast({
                 position: 'top',
@@ -120,6 +210,48 @@ function Summary() {
       gridGap="30px"
       mb="1rem"
     >
+      <SimpleModal
+        isOpen={openDeclinedModal}
+        headerStyles={{
+          padding: '0 0 16px 0',
+          textAlign: 'center',
+        }}
+        maxWidth="510px"
+        onClose={() => setOpenDeclinedModal(false)}
+        title={declinedModalProps.title}
+        padding="16px 0"
+        gridGap="24px"
+        bodyStyles={{
+          display: 'flex',
+          gridGap: '24px',
+          padding: '0',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Image src="/static/images/avatar-for-transaction-failed.png" width={80} height={80} />
+
+        <Text fontSize="18px" fontWeight="700" textAlign="center">
+          {declinedModalProps.description}
+        </Text>
+
+        <Flex gridGap="24px">
+          <Button variant="outline" onClick={() => setOpenDeclinedModal(false)} borderColor="blue.default" color="blue.default">
+            {t('common:close')}
+          </Button>
+          <Button
+            isLoading={isSubmitting}
+            variant="default"
+            onClick={() => {
+              setIsSubmitting(true);
+              handleSubmit();
+            }}
+          >
+            {t('common:try-again')}
+          </Button>
+        </Flex>
+      </SimpleModal>
       <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem" background={backgroundColor} p={{ base: '20px 22px', md: '14px 23px' }} height="100%" borderRadius="15px">
         <Box
           display="flex"
@@ -146,17 +278,15 @@ function Summary() {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
+              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
                 <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
                   <Heading size="18px">
                     {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
                 </Box>
                 <Heading
-                  size={selectedPlanCheckoutData?.price > 0 ? 'xl' : 'xsm'}
-                  margin={{ base: '0', md: '0 26px 0 auto' }}
+                  size="xl"
                   color="blue.default"
-                  textAlign={{ base: 'start', md: 'end' }}
                   width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0
@@ -300,6 +430,7 @@ function Summary() {
               variant="default"
               width="100%"
               onClick={handleSubmit}
+              isLoading={isSubmitting}
               isDisabled={disableHandler}
               height="45px"
               mt="12px"
@@ -312,6 +443,7 @@ function Summary() {
               width="100%"
               borderColor="blue.200"
               onClick={handleSubmit}
+              isLoading={isSubmitting}
               isDisabled={disableHandler}
               background={featuredBackground}
               _hover={{ background: featuredBackground, opacity: 0.8 }}

@@ -2,15 +2,18 @@
 import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
+import { cleanObject } from '../../utils';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
+const hostV2 = `${BREATHECODE_HOST}/v2`;
 
 const breathecode = {
-  get: (url) => fetch(url, {
+  get: (url, config) => fetch(url, {
     headers: {
       ...axios.defaults.headers.common,
+      ...config?.headers,
     },
   }).then((res) => res).catch((err) => console.error(err)),
   put: (url, data) => fetch(url, {
@@ -22,6 +25,16 @@ const breathecode = {
     },
     body: JSON.stringify(data),
   }).then((res) => res).catch((err) => console.error(err)),
+  post: (url, data) => fetch(url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      ...axios.defaults.headers.common,
+    },
+    body: JSON.stringify(data),
+  }).then((res) => res).catch((err) => console.error(err)),
+
   auth: () => {
     const url = `${host}/auth`;
     return {
@@ -40,6 +53,7 @@ const breathecode = {
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
+      updateSettings: (arg) => axios.put(`${url}/user/me/settings`, { ...arg }),
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
@@ -82,9 +96,20 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       syllabus: (slug, version, academy) => axios.get(`${url}/syllabus/${slug}/version/${version}${qs}`, {
         headers: academy && {
           academy,
+        },
+      }),
+      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+        headers: {
+          Authorization: `Token ${BC_ACADEMY_TOKEN}`,
+          academy: 4,
         },
       }),
     };
@@ -147,6 +172,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
+      join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
       takeAttendance: (id, activities) => axios.put(`${url}/cohort/${id}/log${qs}`, activities),
       getAttendance: (id) => axios.get(`${url}/cohort/${id}/log${qs}`),
       getPublic: (id) => axios.get(`${url}/cohort/${id}`, {
@@ -157,11 +183,27 @@ const breathecode = {
       }),
       getFilterStudents: () => axios.get(`${url}/cohort/user${qs}`),
       getMembers: () => axios.get(`${url}/cohort/user${qs}`),
-      getStudents: (cohortId, academyId) => axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}`, {
-        headers: academyId && {
+      getStudents: (cohortId, academyId, withDefaultToken = false) => {
+        const headers = cleanObject({
           academy: academyId,
-        },
-      }),
+          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
+          ...axios.defaults.headers.common,
+        });
+
+        return axios.get(`${url}/cohort/user?roles=STUDENT&cohorts=${cohortId}${parseQuerys(query, true)}`, {
+          headers,
+        });
+      },
+      // get students without academy header
+      getStudents2: (cohortSlug, withDefaultToken = false) => {
+        const headers = cleanObject({
+          Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
+          ...axios.defaults.headers.common,
+        });
+        return axios.get(`${host}/admissions/cohort/user?roles=STUDENT&cohorts=${cohortSlug}${qs}`, {
+          headers,
+        });
+      },
       getStudentsWithTasks: (cohortId, academyId) => axios.get(`${url}/cohort/user?tasks=True&roles=STUDENT&cohorts=${cohortId}${qs.replace('?', '&')}`, {
         headers: academyId && {
           academy: academyId,
@@ -174,6 +216,25 @@ const breathecode = {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
+        },
+      }),
+    };
+  },
+  activity: (query = {}) => {
+    const url = `${hostV2}/activity`;
+    const qs = parseQuerys(query);
+    return {
+      getActivity: (academyId) => axios({
+        method: 'get',
+        url: `${url}/academy/activity${qs}`,
+        headers: {
+          academy: academyId,
+        },
+      }),
+      getMeActivity: () => axios.get(`${url}/me/activity`),
+      getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
+        headers: academyId && {
+          academy: academyId,
         },
       }),
     };
@@ -246,7 +307,7 @@ const breathecode = {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
       courses: () => axios.get(`${host}/marketing/course${qs}`),
-      pay: (data) => axios.post(`${url}/pay${qs}`, data),
+      pay: (data) => breathecode.post(`${url}/pay${qs}`, data),
       addCard: (data) => axios.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),

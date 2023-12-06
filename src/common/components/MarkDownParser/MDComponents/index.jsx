@@ -13,7 +13,17 @@ import { slugify } from '../../../../utils';
 import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
+import { log } from '../../../../utils/logging';
 
+export function Wrapper({ children, ...rest }) {
+  const style = rest.style || {};
+
+  return (
+    <Box style={style}>
+      {children}
+    </Box>
+  );
+}
 export function MDLink({ children, href }) {
   const includesProtocol = href.startsWith('http');
   const protocol = includesProtocol ? '' : 'https://';
@@ -361,8 +371,11 @@ export function MDHeading({ children, tagType }) {
     h1: 'sm',
     h2: 'sm',
     h3: '18px',
+    h4: '16px',
   };
-  const id = slugify(String(children));
+  const id = children?.[0]?.props
+    ? slugify(String(children?.[0]?.props?.children))
+    : slugify(String(children));
 
   return (
     <Heading
@@ -487,7 +500,7 @@ export function OnlyForBanner({
   children, permission, cohortSession, profile,
 }) {
   const capabilities = (permission || '')?.split(',');
-  console.log('md_permissions:', capabilities);
+  log('md_permissions:', capabilities);
 
   return (
     <OnlyFor
@@ -502,6 +515,9 @@ export function OnlyForBanner({
   );
 }
 
+Wrapper.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 Code.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,

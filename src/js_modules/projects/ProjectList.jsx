@@ -21,17 +21,21 @@ const ProjectList = forwardRef(({
   const { t } = useTranslation('common');
   const { featuredColor, fontColor2 } = useStyle();
   const getAssetPath = (asset) => {
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
     if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
     if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
-    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
     return 'lesson';
   };
-
+  const getButtonTitle = (asset) => {
+    if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') {
+      return toCapitalize(t('asset-button.article'));
+    }
+    return toCapitalize(t(`asset-button.${asset.asset_type.toLowerCase()}`));
+  };
+  const getArrayOfTechnologies = (technologies) => technologies.map((tech) => tech?.title);
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
-
   const getDifficultyColors = (currDifficulty) => {
-    // 'beginner', 'easy', 'intermediate', 'hard'
     const background = {
       beginner: 'green.light',
       easy: 'green.light',
@@ -69,6 +73,7 @@ const ProjectList = forwardRef(({
           const isExercise = isDynamic && getAssetPath(ex) === 'interactive-exercise';
           const isProject = isDynamic && getAssetPath(ex) === 'interactive-coding-tutorial';
           const isHowTo = isDynamic && getAssetPath(ex) === 'how-to';
+          const technologies = ex?.technologies?.length > 0 ? getArrayOfTechnologies(ex.technologies) : [];
 
           const lang = ex?.lang === 'us' ? '' : `/${ex?.lang}`;
           const getLink = () => {
@@ -107,9 +112,9 @@ const ProjectList = forwardRef(({
                 className="masonry-content"
               >
                 <Box display="flex" flexDirection="column">
-                  {ex.technologies.length >= 1 && (
+                  {technologies.length >= 1 && (
                     <TagCapsule
-                      tags={ex.technologies.slice(0, 3)}
+                      tags={technologies.slice(0, 3)}
                       variant="rounded"
                       borderRadius="10px"
                       marginY="8px"
@@ -142,7 +147,7 @@ const ProjectList = forwardRef(({
                           fontWeight={700}
                         />
                       </Box>
-                      {ex.solution_video_url && (
+                      {ex?.solution_video_url && (
                         <Box background={featuredColor} borderRadius="15px" padding="6px 12px">
                           <Icon icon="camera" width="22px" height="22px" />
                         </Box>
@@ -174,7 +179,7 @@ const ProjectList = forwardRef(({
                     fontSize="15px"
                     letterSpacing="0.05em"
                   >
-                    {toCapitalize(t(`asset-button.${ex.asset_type.toLowerCase()}`))}
+                    {getButtonTitle(ex)}
                   </Link>
                 </Box>
               </Box>

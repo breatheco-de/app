@@ -13,7 +13,7 @@ import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
 import {
-  BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
+  Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
@@ -32,14 +32,19 @@ function MarkdownH3Heading({ ...props }) {
     <MDHeading tagType="h3" {...props} />
   );
 }
+function MarkdownH4Heading({ ...props }) {
+  return (
+    <MDHeading tagType="h4" {...props} />
+  );
+}
 function UlComponent({ children }) {
   return (<ul className="md-bullet">{children}</ul>);
 }
 function OlComponent({ children }) {
   return (<ol className="md-bullet">{children}</ol>);
 }
-function ImgComponent({ ...props }) {
-  return (<Img className="MDImg" {...props} />);
+function ImgComponent(props) {
+  return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
 function ParagraphComponent({ ...props }) {
   return (<MDText {...props} />);
@@ -200,11 +205,13 @@ function MarkDownParser({
         remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
+          div: Wrapper,
           a: MDLink,
           code: Code,
           h1: MarkdownH2Heading,
           h2: MarkdownH2Heading,
           h3: MarkdownH3Heading,
+          h4: MarkdownH4Heading,
           ul: UlComponent,
           ol: OlComponent,
           img: ImgComponent,

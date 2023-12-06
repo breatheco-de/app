@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 
 function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
-  unlisted, pathConnector, locales, publishedTime, keywords, modifiedTime,
-  locale, slug, disableStaticCanonical, eventStartAt,
+  unlisted, pathConnector, locales, publishedTime, modifiedTime,
+  locale, slug, disableStaticCanonical, eventStartAt, disableHreflangs,
 }) {
-  const ogTitle = title.length > 0 ? title : '4Geeks';
-  const translationsArray = Object.keys(translations);
+  const ogTitle = (typeof title === 'string' && title?.length > 0) ? title : '4Geeks';
+  const translationsArray = translations;
   const translationsExists = translationsArray.length > 0;
-  const maxCharacters = 155;
+  const maxCharacters = 157;
   const descriptionCleaned = description.length > maxCharacters
     ? `${description.substring(0, maxCharacters)}...`
     : description;
@@ -57,28 +57,23 @@ function Helmet({
 
   return (
     <Head>
-      <title>{title.length > 0 ? `${title} | 4Geeks` : '4Geeks'}</title>
+      <title>{ogTitle}</title>
       <meta name="description" content={descriptionCleaned} />
       {unlisted === true && <meta name="robots" content="noindex" />}
       <link rel="icon" href="/4Geeks.ico" />
       {/* <!-- Primary Meta Tags --> */}
-      {Array.isArray(keywords) && keywords.length > 0 && (
-        <meta name="keywords" content={keywords.join(', ')} />
-      )}
-      {typeof keywords === 'string' && keywords.length > 0 && <meta name="keywords" content={keywords} />}
-
       {locales.length > 0 && !translationsExists && !disableStaticCanonical && (
         <link rel="canonical" href={canonicalLink} />
       )}
 
       {/* <---------------- Single web pages (ex: /projects) ----------------> */}
-      {locales.length > 0
+      {!disableHreflangs && locales.length > 0
       && !translationsExists
       && locales.map((lang) => {
         const locationLang = {
-          us: 'en-US',
-          en: 'en-US',
-          es: 'es-ES',
+          us: 'en',
+          en: 'en',
+          es: 'es',
         };
         return (['default', 'en'].includes(lang) ? (
           <React.Fragment key={`${lang} - ${pathConnector}`}>
@@ -95,21 +90,20 @@ function Helmet({
         <link rel="canonical" href={canonicalTranslationsLink} />
       )}
 
-      {translationsExists && translationsArray.length > 1 && translationsArray.map((lang) => {
+      {!disableHreflangs && translationsExists && translationsArray.length > 1 && translationsArray.map((translation) => {
+        const lang = translation?.lang;
         const language = lang === 'us' ? 'en' : lang;
 
         const locationLang = {
-          us: 'en-US',
-          en: 'en-US',
-          es: 'es-ES',
+          us: 'en',
+          en: 'en',
+          es: 'es',
         };
-        const urlAlternate = `https://4geeks.com/${language}${pathConnector}/${translations[lang]}`;
-        const defaultUrl = `https://4geeks.com${pathConnector}/${translations?.us || translations?.en}`;
-
+        const urlAlternate = `https://4geeks.com${translation.link}`;
         return ['default', 'us', 'en'].includes(lang) ? (
-          <React.Fragment key={`${language} - ${defaultUrl}`}>
-            <link rel="alternate" hrefLang="x-default" href={defaultUrl} />
-            <link rel="alternate" hrefLang={locationLang[lang] || 'en-US'} href={defaultUrl} />
+          <React.Fragment key={`${language} - ${urlAlternate}`}>
+            <link rel="alternate" hrefLang="x-default" href={urlAlternate} />
+            <link rel="alternate" hrefLang={locationLang[lang] || 'en'} href={urlAlternate} />
           </React.Fragment>
         ) : (
           <link key={`${language} - ${urlAlternate}`} rel="alternate" hrefLang={locationLang[lang]} href={urlAlternate} />
@@ -161,17 +155,17 @@ Helmet.propTypes = {
   type: PropTypes.string,
   twitterUser: PropTypes.string,
   unlisted: PropTypes.bool,
-  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  translations: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
   pathConnector: PropTypes.string,
   locales: PropTypes.arrayOf(PropTypes.string),
   publishedTime: PropTypes.string,
   modifiedTime: PropTypes.string,
-  keywords: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
   card: PropTypes.string,
   locale: PropTypes.string,
   slug: PropTypes.string,
   disableStaticCanonical: PropTypes.bool,
   eventStartAt: PropTypes.string,
+  disableHreflangs: PropTypes.bool,
 };
 
 Helmet.defaultProps = {
@@ -187,12 +181,12 @@ Helmet.defaultProps = {
   locales: [],
   publishedTime: '',
   modifiedTime: '',
-  keywords: 'programming bootcamp, programming course, professional mentoring',
   card: 'default',
   locale: '',
   slug: '',
   disableStaticCanonical: false,
   eventStartAt: '',
+  disableHreflangs: false,
 };
 
 export default Helmet;

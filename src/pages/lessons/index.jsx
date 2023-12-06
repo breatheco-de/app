@@ -17,7 +17,8 @@ import PaginatedView from '../../common/components/PaginationView';
 import { getQueryString, isWindow } from '../../utils';
 import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, excludeCagetoriesFor } from '../../utils/variables';
+import { log } from '../../utils/logging';
 
 const contentPerPage = 20;
 
@@ -26,15 +27,16 @@ const fetchLessons = async (lang, page, query) => {
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
-    visibility: 'PUBLIC',
     status: 'PUBLISHED',
-    exclude_category: 'how-to,como',
+    exclude_category: excludeCagetoriesFor.lessons,
     language: lang,
     academy: WHITE_LABEL_ACADEMY,
     limit: contentPerPage,
     offset: page ? (page - 1) * contentPerPage : 0,
     technologies,
     video,
+    like: query?.search,
+    expand: 'technologies',
   });
   const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
@@ -53,7 +55,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
 
   arrLessons = Object.values(data?.results);
   if (resp.status !== undefined && resp.status >= 200 && resp.status < 400) {
-    console.log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
+    log(`SUCCESS: ${arrLessons.length} Lessons fetched for /lessons`);
   } else {
     console.error(`Error ${resp.status}: fetching Lessons list for /lessons`);
   }
@@ -67,7 +69,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    console.log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
+    log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /lessons`);
   }
@@ -97,6 +99,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
         locales,
         locale,
         disableStaticCanonical: true,
+        disableHreflangs: true,
         url: ogUrl.en || `/${locale}/lessons`,
         pathConnector: '/lessons',
         card: 'default',

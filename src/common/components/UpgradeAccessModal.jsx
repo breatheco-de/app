@@ -106,13 +106,15 @@ function UpgradeAccessModal({
                 w="fit-content"
                 variant="default"
                 textTransform="uppercase"
-                onClick={() => router.push({
-                  pathname: '/checkout',
-                  query: {
-                    course: currentCourse,
-                    plan: selectedProps?.type,
-                  },
-                })}
+                onClick={() => {
+                  router.push({
+                    pathname: '/checkout',
+                    query: {
+                      course: currentCourse,
+                      plan: selectedProps?.type,
+                    },
+                  });
+                }}
               >
                 {finance?.button?.title}
               </Button>

@@ -42,12 +42,15 @@ import GridContainer from '../../../common/components/GridContainer';
 import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
-import { cleanObject } from '../../../utils';
+import { cleanObject, unSlugifyCapitalize } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getAsset } from '../../../utils/requests';
+import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
+import RelatedContent from '../../../common/components/RelatedContent';
+import ReactPlayerV2 from '../../../common/components/ReactPlayerV2';
 
 export const getStaticPaths = async ({ locales }) => {
-  const data = await getAsset('EXERCISE', {});
+  const assetList = await import('../../../lib/asset-list.json');
+  const data = assetList.excersises;
 
   const paths = data.flatMap((res) => locales.map((locale) => ({
     params: {
@@ -68,31 +71,46 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}?asset_type=exercise`);
-    const result = await resp.json();
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
-    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
+    const langPrefix = locale === 'en' ? '' : `/${result?.lang || locale}`;
 
-    if (resp.status >= 400 || result.asset_type !== 'EXERCISE' || !isCurrenLang) {
-      return {
-        notFound: true,
+    if (!result) {
+      console.log(`${slug} not found on cache`);
+      const assetList = await import('../../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      result = assetList.excersises.find((l) => l?.slug === slug);
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+      if (result.asset_type !== 'EXERCISE' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
     }
 
     const {
       title, translations, description, preview,
     } = result;
-    const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-    if (markdownResp?.status >= 400) {
-      return {
-        notFound: true,
-      };
-    }
-    const markdown = await markdownResp.text();
 
     // in "lesson.translations" rename "us" key to "en" key if exists
     if (result?.translations && result.translations.us) {
@@ -100,37 +118,28 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       delete result.translations.us;
     }
 
-    const ogUrl = {
-      en: `/interactive-exercise/${slug}`,
-      us: `/interactive-exercise/${slug}`,
-    };
+    const translationInEnglish = translations?.en || translations?.us;
     const translationArray = [
-      {
-        value: 'us',
-        lang: 'en',
-        slug: translations?.us,
-        link: `/interactive-exercise/${translations?.us}`,
-      },
       {
         value: 'en',
         lang: 'en',
-        slug: translations?.en,
-        link: `/interactive-exercise/${translations?.en}`,
+        slug: (result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish,
+        link: `/interactive-exercise/${(result?.lang === 'en' || result?.lang === 'us') ? result?.slug : translationInEnglish}`,
       },
       {
         value: 'es',
         lang: 'es',
-        slug: translations?.es,
-        link: `/es/interactive-exercise/${translations?.es}`,
+        slug: result?.lang === 'es' ? result.slug : translations?.es,
+        link: `/es/interactive-exercise/${result?.lang === 'es' ? result.slug : translations?.es}`,
       },
-    ].filter((item) => translations?.[item?.value] !== undefined);
-    const eventStructuredData = {
+    ].filter((item) => item?.slug !== undefined);
+    const structuredData = {
       '@context': 'https://schema.org',
       '@type': 'Article',
       name: result?.title,
       description: result?.description,
-      url: `${ORIGIN_HOST}/${slug}`,
-      image: `${ORIGIN_HOST}/thumbnail?slug=${slug}`,
+      url: `${ORIGIN_HOST}${langPrefix}/interactive-exercise/${slug}`,
+      image: preview || staticImage,
       datePublished: result?.published_at,
       dateModified: result?.updated_at,
       author: result?.author ? {
@@ -140,21 +149,21 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       keywords: result?.seo_keywords,
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `${ORIGIN_HOST}/${slug}`,
+        '@id': `${ORIGIN_HOST}${langPrefix}/interactive-exercise/${slug}`,
       },
     };
-    const cleanedStructuredData = cleanObject(eventStructuredData);
+    const cleanedStructuredData = cleanObject(structuredData);
 
     return {
       props: {
         seo: {
           type: 'article',
           title,
-          image: preview || staticImage,
+          image: cleanedStructuredData.image,
           description: description || '',
-          translations,
+          translations: translationArray,
           pathConnector: '/interactive-exercise',
-          url: ogUrl.en || `/${locale}/interactive-exercise/${slug}`,
+          url: `/interactive-exercise/${slug}`,
           slug,
           keywords: result?.seo_keywords || '',
           card: 'large',
@@ -192,6 +201,17 @@ function TabletWithForm({
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor } = useStyle();
+  const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
+
+  const ReportOpenInProvisioningVendor = (vendor = '') => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_interactive_exercise',
+        user_id: user.id,
+        vendor,
+      },
+    });
+  };
 
   const UrlInput = styled.input`
     cursor: pointer;
@@ -221,16 +241,25 @@ function TabletWithForm({
         borderColor={commonBorderColor}
       >
         <ShowOnSignUp
+          headContent={exercise?.intro_video_url && (
+            <ReactPlayerV2
+              title="Video tutorial"
+              withModal
+              url={exercise?.intro_video_url}
+              withThumbnail
+            />
+          )}
           hideForm={!user && formSended}
-          title={!user && t('direct-access-request')}
+          title={!user ? t('direct-access-request') : ''}
           submitText={t('get-instant-access')}
-          subscribeValues={{ asset: exercise.id }}
+          subscribeValues={{ asset_slug: exercise.slug }}
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}
           padding="0"
           background="none"
           border="none"
+          conversionTechnologies={conversionTechnologies}
         >
           <>
             {user && !formSended && (
@@ -292,7 +321,10 @@ function TabletWithForm({
               textTransform="uppercase"
               borderColor="blue.default"
               color="blue.default"
-              onClick={() => setShowCloneModal(true)}
+              onClick={() => {
+                ReportOpenInProvisioningVendor('local');
+                setShowCloneModal(true);
+              }}
             >
               {t('clone')}
             </Button>
@@ -331,6 +363,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
+                        ReportOpenInProvisioningVendor('gitpod');
                         window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
                       }
                     }}
@@ -354,6 +387,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
+                        ReportOpenInProvisioningVendor('codespaces');
                         window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
@@ -609,17 +643,17 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
           )}
           {exercise?.sub_title && (
-          <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
-            {exercise.sub_title}
-          </Text>
+            <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
+              {exercise.sub_title}
+            </Text>
           )}
           {exercise?.title && (
             <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
           )}
           {exercise?.author && (
-          <Text size="md" textAlign="left" my="10px" px="0px">
-            {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
-          </Text>
+            <Text size="md" textAlign="left" my="10px" px="0px">
+              {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
+            </Text>
           )}
         </GridContainer>
       </Box>
@@ -666,20 +700,20 @@ function Exercise({ exercise, markdown }) {
             borderRadius="3px"
             maxWidth="1012px"
             flexGrow={1}
-          // margin="0 8vw 4rem 8vw"
-          // width={{ base: '34rem', md: '54rem' }}
+            // margin="0 8vw 4rem 8vw"
+            // width={{ base: '34rem', md: '54rem' }}
             width={{ base: 'auto', lg: '60%' }}
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {markdown ? (
               <MarkDownParser content={markdownData.content} />
-            // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
             )}
             <MktRecommendedCourses
-              title={t('common:continue-learning', { technologies: exercise?.technologies.slice(0, 4).join(', ') })}
-              technologies={exercise?.technologies.join(',')}
+              title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+              technologies={exercise?.technologies}
             />
           </Box>
         </Box>
@@ -712,6 +746,14 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
+        <RelatedContent
+          slug={exercise.slug}
+          type="EXERCISE"
+          extraQuerys={{}}
+          technologies={exercise?.technologies}
+          gridColumn="2 / span 10"
+          maxWidth="1280px"
+        />
       </GridContainer>
 
       {/* <GridContainer
