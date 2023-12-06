@@ -20,7 +20,7 @@ function ShowOnSignUp({
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
-  const { handleSubscribeToPlan, successModal } = useSubscribeToPlan();
+  const { handleSubscribeToPlan } = useSubscribeToPlan();
   const { backgroundColor, featuredColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
@@ -160,8 +160,6 @@ function ShowOnSignUp({
         }}
         handlerText={t('common:login')}
       />
-
-      {successModal}
 
       <ModalInfo
         headerStyles={{ textAlign: 'center' }}
