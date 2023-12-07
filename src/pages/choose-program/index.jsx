@@ -58,6 +58,7 @@ function chooseProgram() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
+  const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
   const { user, choose } = useAuth();
@@ -111,9 +112,10 @@ function chooseProgram() {
       return false;
     });
     if (cohorts) {
-      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
           available_as_saas: hasAvailableAsSaas,
@@ -427,8 +429,17 @@ function chooseProgram() {
                 );
               })}
 
-              {!isLoading && dataQuery?.cohorts > 0 && (
-                <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
+              {!isLoading && dataQuery?.cohorts.length > 0 && (
+                <NextChakraLink
+                  variant="buttonDefault"
+                  href={hasCohortWithAvailableAsSaas ? 'https://4geeks.slack.com' : 'https://4geeksacademy.slack.com'}
+                  target="blank"
+                  rel="noopener noreferrer"
+                  display="flex"
+                  gridGap="10px"
+                  width="fit-content"
+                  padding="0.5rem 6px 0.5rem 8px"
+                >
                   {t('join-our-community')}
                   <Icon icon="slack" width="20px" height="20px" color="currentColor" />
                 </NextChakraLink>
