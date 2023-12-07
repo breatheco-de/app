@@ -5,11 +5,10 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
-import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
-import bc from '../../common/services/breathecode';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
+import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
@@ -18,7 +17,6 @@ import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
-import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
@@ -62,11 +60,9 @@ function chooseProgram() {
   const [cohortTasks, setCohortTasks] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
-  const { isLoading: userLoading, user, choose } = useAuth();
+  const { user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
-  const ldClient = useLDClient();
-  const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
@@ -277,22 +273,6 @@ function chooseProgram() {
         bc_id: userID,
       });
     }
-    if (user?.id && !userLoading) {
-      ldClient?.identify({
-        kind: 'user',
-        key: user?.id,
-        firstName: user?.first_name,
-        lastName: user?.last_name,
-        name: `${user?.first_name} ${user?.last_name}`,
-        email: user?.email,
-        id: user?.id,
-        language: router?.locale,
-        screenWidth: window?.screen?.width,
-        screenHeight: window?.screen?.height,
-        device: navigator?.userAgent,
-        version: packageJson.version,
-      });
-    }
   }, [userID]);
 
   useEffect(() => {
@@ -337,25 +317,6 @@ function chooseProgram() {
 
   const handleChoose = (cohort) => {
     choose(cohort);
-    ldClient?.identify({
-      kind: 'user',
-      key: user?.id,
-      firstName: user?.first_name,
-      lastName: user?.last_name,
-      name: `${user?.first_name} ${user?.last_name}`,
-      email: user?.email,
-      id: user?.id,
-      language: router?.locale,
-      screenWidth: window?.screen?.width,
-      screenHeight: window?.screen?.height,
-      device: navigator?.userAgent,
-      version: packageJson.version,
-      cohort: cohort?.cohort_name,
-      cohortSlug: cohort?.cohort_slug,
-      cohortId: cohort?.id,
-      cohortStage: cohort?.stage,
-      academy: cohort?.academy_id,
-    });
   };
 
   return (
@@ -529,15 +490,13 @@ function chooseProgram() {
         </Box>
         <Box flex={{ base: 1, md: 0.3 }}>
           <Box flex={1} zIndex={10}>
-            {flags?.appReleaseEnableLiveEvents && (
-              <LiveEvent
-                featureLabel={t('common:live-event.title')}
-                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                otherEvents={events}
-                margin="0 auto"
-              />
-            )}
+            <LiveEvent
+              featureLabel={t('common:live-event.title')}
+              featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+              mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+              otherEvents={events}
+              margin="0 auto"
+            />
           </Box>
           <Box display="flex" alignItems="center" gridGap="30px" padding="1.2rem" mt="2rem" borderRadius="17px" border="1px solid" borderColor={hexColor.borderColor}>
             <Icon icon="slack" width="20px" height="20px" />

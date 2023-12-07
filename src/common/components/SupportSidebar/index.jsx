@@ -3,7 +3,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -13,7 +12,6 @@ function SupportSidebar({ subscriptions, subscriptionData }) {
   const { t } = useTranslation();
   const toast = useToast();
   const [programServices, setProgramServices] = usePersistent('programServices', []);
-  const flags = useFlags();
 
   useEffect(() => {
     bc.mentorship().getService().then(({ data }) => {
@@ -37,7 +35,6 @@ function SupportSidebar({ subscriptions, subscriptionData }) {
       programServices={programServices}
       subscriptions={subscriptions}
       subscriptionData={subscriptionData}
-      flags={flags}
     />
   );
 }
