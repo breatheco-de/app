@@ -348,7 +348,7 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+      <Flex minHeight="81lvh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
@@ -432,7 +432,7 @@ function chooseProgram() {
               {!isLoading && dataQuery?.cohorts.length > 0 && (
                 <NextChakraLink
                   variant="buttonDefault"
-                  href={hasCohortWithAvailableAsSaas ? 'https://4geeks.slack.com' : 'https://4geeksacademy.slack.com'}
+                  href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
                   target="blank"
                   rel="noopener noreferrer"
                   display="flex"
@@ -509,15 +509,29 @@ function chooseProgram() {
               margin="0 auto"
             />
           </Box>
-          <Box display="flex" alignItems="center" gridGap="30px" padding="1.2rem" mt="2rem" borderRadius="17px" border="1px solid" borderColor={hexColor.borderColor}>
-            <Icon icon="slack" width="20px" height="20px" />
-            <Text size="15px" fontWeight={700}>
-              {t('sidebar.join-our-community')}
-            </Text>
-            <NextChakraLink href="https://4geeksacademy.slack.com/" aria-label="4Geeks Academy community" target="blank" rel="noopener noreferrer">
-              <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
-            </NextChakraLink>
-          </Box>
+          <NextChakraLink
+            href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
+            aria-label="4Geeks Academy community"
+            target="blank"
+            rel="noopener noreferrer"
+            display="flex"
+            alignItems="center"
+            gridGap="30px"
+            padding="1.2rem"
+            mt="2rem"
+            borderRadius="17px"
+            border="1px solid"
+            justifyContent="space-between"
+            borderColor={hexColor.borderColor}
+          >
+            <Flex gridGap="30px">
+              <Icon icon="slack" width="20px" height="20px" />
+              <Text size="15px" fontWeight={700}>
+                {t('sidebar.join-our-community')}
+              </Text>
+            </Flex>
+            <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
+          </NextChakraLink>
         </Box>
       </Flex>
     </Flex>
