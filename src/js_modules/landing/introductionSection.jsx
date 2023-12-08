@@ -69,15 +69,12 @@ function IntroductionSection({
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
-              <PrismicRichText
+              <PrismicTextComponent
                 field={slice?.primary?.title}
-                components={{
-                  heading1: ({ children }) => (
-                    <Box as="h1" fontSize="48px" fontWeight="700" display="initial">
-                      {children}
-                    </Box>
-                  ),
-                }}
+                display="initial"
+                size="48px"
+                fontWeight={700}
+                lineHeight="inherit"
               />
               {slice?.primary?.highlight && (
                 <PrismicRichText
