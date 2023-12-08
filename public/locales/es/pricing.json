@@ -9,6 +9,12 @@
     "chat": "Chatea con un asesor",
     "survey": "Tomar una encuesta de 30 segundos"
   },
+  "decided": {
+    "heading": "¿No te has decidido todavía?",
+    "sub_heading": "Puedes probar 4Geeks en un plan gratuito",
+    "description": "Tenemos un plan gratis para ti, con él puedes acceder de forma limitada a todos los servicios, incluyendo mentorías y workshops gratis.",
+    "button": "Únete gratis"
+  },
   "faq": [{
     "label": "¿Qué opciones de pago aceptamos?",
     "answer": "Actualmente aceptamos pagos con tarjetas de crédito y débito. Nos esforzamos por hacer el proceso de suscripción conveniente para nuestros usuarios."
