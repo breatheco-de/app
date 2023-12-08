@@ -164,20 +164,6 @@ function PricingView() {
             >
               {t('learning-code.chat')}
             </Button>
-            <Text fontWeight="700" textTransform="uppercase">{t('common:word-connector.or')}</Text>
-            <Button
-              width={{ base: '100%', sm: 'fit-content' }}
-              variant="outline"
-              textTransform="uppercase"
-              color={hexColor.blueDefault}
-              borderColor={hexColor.blueDefault}
-              onClick={() => reportDatalayer({
-                dataLayer: {
-                  event: 'open_pricing_survey',
-                } })}
-            >
-              {t('learning-code.survey')}
-            </Button>
           </Flex>
         </Box>
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
