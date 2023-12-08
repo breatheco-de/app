@@ -110,11 +110,16 @@ function StudentReport() {
   const [openFilter, setOpenFilter] = useState(false);
   const [activityLabel, setActivityLabel] = useState(null);
   const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [deliveryUrl, setDeliveryUrl] = useState('');
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [fetchMoreActivities, setFetchMoreActivities] = useState(true);
+  const [paramsActivities, setParamsActivities] = useState({
+    page: 1,
+  });
   const [report, setReport] = useState([]);
   const [studentAssignments, setStudentAssignments] = useState({
     lessons: [],
@@ -140,18 +145,7 @@ function StudentReport() {
 
   const activitiesLabels = t('activities-section.activities', {}, { returnObjects: true });
   const activitiesOptions = Object.keys(activitiesLabels).map((act) => ({ label: activitiesLabels[act], value: act }));
-
-  const processActivities = (data) => {
-    const sortedActivities = {};
-
-    data.forEach((activity) => {
-      const { kind } = activity;
-      if (!sortedActivities[kind]) sortedActivities[kind] = activity;
-      else if (sortedActivities[kind].timestamp < activity.timestamp) sortedActivities[kind] = activity;
-    });
-
-    return Object.values(sortedActivities);
-  };
+  const limit = 10;
 
   const attendanceStyles = {
     ATTENDED: hexColor.green,
@@ -167,6 +161,19 @@ function StudentReport() {
     return 'NO-INFO';
   };
 
+  const fetchActivities = async () => {
+    try {
+      const res = await bc.activity({ user_id: studentId, limit, ...paramsActivities }).getActivity(academy);
+      const newActivities = res?.data || [];
+      setFetchMoreActivities(limit === newActivities.length);
+
+      if (paramsActivities.append) setActivities([...activities, ...newActivities]);
+      else setActivities(newActivities);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     bc.admissions({ users: studentId }).cohortUsers(academy)
       .then((res) => {
@@ -175,15 +182,11 @@ function StudentReport() {
       }).catch((e) => {
         console.log(e);
       });
-    bc.activity({ user_id: studentId }).getActivity(academy)
-      .then((res) => {
-        const data = processActivities(res?.data);
-        setActivities(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   }, []);
+
+  useEffect(() => {
+    fetchActivities();
+  }, [paramsActivities]);
 
   useEffect(() => {
     if (selectedCohortUser) {
@@ -442,16 +445,11 @@ function StudentReport() {
   const clearFilters = () => {
     setActivityLabel(null);
     setStartDate(null);
+    setEndDate(null);
+    setParamsActivities({ page: 1 });
+    setActivities([]);
+    setOpenFilter(false);
   };
-
-  const filteredActivities = activities.filter((act) => {
-    if (!activityLabel && !startDate) return true;
-
-    const filterKind = activityLabel ? act.kind === activityLabel.value : true;
-    const filterDate = startDate ? act.timestamp > startDate.toISOString() : true;
-
-    return filterKind && filterDate;
-  });
 
   return (
     <Box>
@@ -538,7 +536,7 @@ function StudentReport() {
         wrap={{ base: 'wrap', md: 'nowrap' }}
         padding="0 10px"
       >
-        <Box width="100%" maxWidth="695px" marginTop="2%">
+        <Box width="100%" maxWidth="695px" marginTop="2%" overflow="hidden">
           <Box marginBottom="20px" width="100%">
             <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
             <Box marginTop="20px">
@@ -663,7 +661,7 @@ function StudentReport() {
               {t('common:filters')}
             </Button>
           </Flex>
-          {filteredActivities.length === 0 && (
+          {activities.length === 0 && (
             <Box width="100%" mt="20px">
               <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
                 {t('activities-section.no-activities')}
@@ -671,7 +669,7 @@ function StudentReport() {
             </Box>
           )}
           <Box padding="0 10px">
-            {filteredActivities.map((activity) => {
+            {activities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
               return (
@@ -691,6 +689,21 @@ function StudentReport() {
               );
             })}
           </Box>
+          {activities.length > 0 && fetchMoreActivities && (
+            <Button
+              width="100%"
+              color={hexColor.blueDefault}
+              onClick={() => {
+                setParamsActivities({
+                  ...paramsActivities,
+                  page: paramsActivities.page + 1,
+                  append: true,
+                });
+              }}
+            >
+              {t('common:load-more')}
+            </Button>
+          )}
         </Box>
       </Flex>
       <Modal isOpen={openFilter} onClose={() => setOpenFilter(false)}>
@@ -699,35 +712,35 @@ function StudentReport() {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Formik>
-              <Form>
-                <Box marginBottom="10px">
-                  <ReactSelect
-                    id="activity-select"
-                    placeholder={t('filter.activity')}
-                    isClearable
-                    value={activityLabel || ''}
-                    onChange={(selected) => {
-                      setActivityLabel(selected || []);
-                    }}
-                    options={activitiesOptions}
-                  />
-                </Box>
-                <Box position="relative" zIndex="0" marginBottom="10px">
-                  <Text fontSize="l" fontWeight="400" marginBottom="10px">
-                    {t('filter.date')}
-                  </Text>
-                  <DatePicker
-                    calendarClassName="centerMonth"
-                    selected={startDate}
-                    onChange={(date) => {
-                      setStartDate(date);
-                    }}
-                    inline
-                  />
-                </Box>
-              </Form>
-            </Formik>
+            <Box marginBottom="10px">
+              <ReactSelect
+                id="activity-select"
+                placeholder={t('filter.activity')}
+                isClearable
+                value={activityLabel || ''}
+                onChange={(selected) => {
+                  setActivityLabel(selected || []);
+                }}
+                options={activitiesOptions}
+              />
+            </Box>
+            <Box position="relative" zIndex="0" marginBottom="10px">
+              <Text fontSize="l" fontWeight="400" marginBottom="10px">
+                {t('filter.date')}
+              </Text>
+              <DatePicker
+                calendarClassName="centerMonth"
+                startDate={startDate}
+                endDate={endDate}
+                onChange={(dates) => {
+                  const [start, end] = dates;
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+                selectsRange
+                inline
+              />
+            </Box>
 
           </ModalBody>
 
@@ -740,9 +753,20 @@ function StudentReport() {
             >
               {t('common:clear-all')}
             </Button>
-            {/* <Button colorScheme="blue">
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                setParamsActivities({
+                  page: 1,
+                  start_date: startDate ? startDate.toISOString() : undefined,
+                  end_date: endDate ? endDate.toISOString() : undefined,
+                  kind: activityLabel?.value || undefined,
+                });
+                // setOpenFilter(false);
+              }}
+            >
               {t('common:apply-filters')}
-            </Button> */}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
