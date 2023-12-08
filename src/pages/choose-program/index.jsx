@@ -58,6 +58,7 @@ function chooseProgram() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
+  const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
   const { user, choose } = useAuth();
@@ -111,9 +112,10 @@ function chooseProgram() {
       return false;
     });
     if (cohorts) {
-      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
           available_as_saas: hasAvailableAsSaas,
@@ -346,7 +348,7 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+      <Flex minHeight="81lvh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
@@ -426,13 +428,6 @@ function chooseProgram() {
                   />
                 );
               })}
-
-              {!isLoading && dataQuery?.cohorts > 0 && (
-                <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
-                  {t('join-our-community')}
-                  <Icon icon="slack" width="20px" height="20px" color="currentColor" />
-                </NextChakraLink>
-              )}
             </Box>
           </Flex>
 
@@ -498,15 +493,31 @@ function chooseProgram() {
               margin="0 auto"
             />
           </Box>
-          <Box display="flex" alignItems="center" gridGap="30px" padding="1.2rem" mt="2rem" borderRadius="17px" border="1px solid" borderColor={hexColor.borderColor}>
-            <Icon icon="slack" width="20px" height="20px" />
-            <Text size="15px" fontWeight={700}>
-              {t('sidebar.join-our-community')}
-            </Text>
-            <NextChakraLink href="https://4geeksacademy.slack.com/" aria-label="4Geeks Academy community" target="blank" rel="noopener noreferrer">
+          {dataQuery?.cohorts.length > 0 && (
+            <NextChakraLink
+              href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
+              aria-label="4Geeks Academy community"
+              target="blank"
+              rel="noopener noreferrer"
+              display="flex"
+              alignItems="center"
+              gridGap="30px"
+              padding="1.2rem"
+              mt="2rem"
+              borderRadius="17px"
+              border="1px solid"
+              justifyContent="space-between"
+              borderColor={hexColor.borderColor}
+            >
+              <Flex gridGap="30px">
+                <Icon icon="slack" width="20px" height="20px" />
+                <Text size="15px" fontWeight={700}>
+                  {t('sidebar.join-our-community')}
+                </Text>
+              </Flex>
               <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
             </NextChakraLink>
-          </Box>
+          )}
         </Box>
       </Flex>
     </Flex>
