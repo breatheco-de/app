@@ -124,7 +124,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           subMenu: [
             {
               href: `/${item?.slug}`,
-              label: t('start-coding'),
+              label: t('course-details'),
             },
           ],
         }));
