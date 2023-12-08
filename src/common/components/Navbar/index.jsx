@@ -498,6 +498,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           ) : (
             <Box display="flex" gridGap="0px" alignItems="center">
               <NextChakraLink
+                display={{ base: 'none', md: 'block' }}
                 href="/login"
                 fontWeight="700"
                 fontSize="13px"

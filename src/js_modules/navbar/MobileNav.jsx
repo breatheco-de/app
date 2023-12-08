@@ -1,16 +1,18 @@
 import {
   Box,
   IconButton,
-  Stack,
   useColorModeValue,
   useColorMode,
+  Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
 import syllabusList from '../../../public/syllabus.json';
+import NextChakraLink from '../../common/components/NextChakraLink';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 function MobileNav({
@@ -19,6 +21,7 @@ function MobileNav({
 }) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
+  const { t } = useTranslation('navbar');
   const commonColors = useColorModeValue('white', 'gray.800');
   const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
@@ -45,10 +48,12 @@ function MobileNav({
   };
 
   return (
-    <Stack
+    <Flex
+      flexDirection="column"
       position="absolute"
       width="100%"
       zIndex="99"
+      gridGap="8px"
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
       // display={{ md: 'none' }}
@@ -89,6 +94,21 @@ function MobileNav({
         </Box>
       )} */}
 
+      <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0" mb="1rem">
+        <NextChakraLink
+          href="/login"
+          fontSize="16px"
+          lineHeight="22px"
+          margin="0"
+          _hover={{
+            textDecoration: 'none',
+            color: 'blue.default',
+          }}
+          letterSpacing="0.05em"
+        >
+          {t('login')}
+        </NextChakraLink>
+      </Box>
       <Box
         borderTop={1}
         borderStyle="solid"
@@ -120,7 +140,7 @@ function MobileNav({
         />
         <LanguageSelector display="block" translations={translations} />
       </Box>
-    </Stack>
+    </Flex>
   );
 }
 
