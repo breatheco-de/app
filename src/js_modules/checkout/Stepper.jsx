@@ -6,128 +6,88 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 
-function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
+function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');
   const { fontColor, disabledColor2 } = useStyle();
+  const maxItemsCount = typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial ? 4 : 3;
+  const totalCountListBasedInHidenList = maxItemsCount - hideIndexList.length;
+  const position = stepIndex > totalCountListBasedInHidenList ? totalCountListBasedInHidenList : stepIndex;
 
   return (
     <>
       <Box display={{ base: 'none', md: 'flex' }} gridGap="38px" justifyContent="center" overflow="auto">
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 0 && 'gray.350'}
-        >
-          {(isSecondStep || isThirdStep || isFourthStep) ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
-            <Heading
-              as="span"
-              size="sm"
-              p={isFirstStep ? '3px 8px' : '2px 5px'}
-              mr={isFirstStep && '4px'}
-              background={isFirstStep && 'blue.default'}
-              color={isFirstStep && 'white'}
-              borderRadius="3px"
-              fontWeight="700"
-            >
-              1.
-            </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isFirstStep ? '700' : '500'}
-            color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
+        {!hideIndexList.includes(0) && (
+          <Box
+            display="flex"
+            gridGap="8px"
+            alignItems="center"
+            color={stepIndex !== 0 && 'gray.350'}
           >
-            {t('contact-information')}
-          </Heading>
-        </Box>
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 1 && 'gray.350'}
-        >
-          {(isThirdStep || isFourthStep) ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
+            {(isSecondStep || isThirdStep || isFourthStep) && (
+              <Icon icon="verified" width="30px" height="30px" />
+            )}
             <Heading
-              as="span"
               size="sm"
-              p={isSecondStep ? '3px 8px' : '2px 5px'}
-              mr={isSecondStep && '4px'}
-              background={isSecondStep && 'blue.default'}
-              color={isSecondStep && 'white'}
-              borderRadius="3px"
-              fontWeight="500"
+              fontWeight={isFirstStep ? '700' : '500'}
+              color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
             >
-              2.
+              {t('contact-information')}
             </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isSecondStep ? '700' : '500'}
-            color={(isThirdStep || isFourthStep) && 'success'}
-          >
-            {t('choose-your-class')}
-          </Heading>
-        </Box>
+          </Box>
+        )}
 
-        <Box
-          display="flex"
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 2 && 'gray.350'}
-        >
-          {isFourthStep ? (
-            <Icon icon="verified" width="30px" height="30px" />
-          ) : (
+        {!hideIndexList.includes(1) && (
+          <Box
+            display="flex"
+            gridGap="8px"
+            alignItems="center"
+            color={stepIndex !== 1 && 'gray.350'}
+          >
+            {(isThirdStep || isFourthStep) && (
+              <Icon icon="verified" width="30px" height="30px" />
+            )}
             <Heading
-              as="span"
               size="sm"
-              p={isThirdStep ? '3px 8px' : '2px 5px'}
-              mr={isThirdStep && '4px'}
-              background={isThirdStep && 'blue.default'}
-              color={isThirdStep && 'white'}
-              borderRadius="3px"
-              fontWeight="500"
+              fontWeight={isSecondStep ? '700' : '500'}
+              color={(isThirdStep || isFourthStep) && 'success'}
             >
-              3.
+              {t('choose-your-class')}
             </Heading>
-          )}
-          <Heading
-            size="sm"
-            fontWeight={isThirdStep ? '700' : '500'}
-            color={(isFourthStep) && 'success'}
-          >
-            {t('summary')}
-          </Heading>
-        </Box>
+          </Box>
+        )}
 
-        <Box
-          display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
-          gridGap="8px"
-          alignItems="center"
-          color={stepIndex !== 3 && 'gray.350'}
-        >
-          <Heading
-            as="span"
-            size="sm"
-            p={isFourthStep ? '3px 8px' : '2px 5px'}
-            mr={isFourthStep && '4px'}
-            background={isFourthStep && 'blue.default'}
-            color={isFourthStep && 'white'}
-            borderRadius="3px"
-            fontWeight="500"
+        {!hideIndexList.includes(2) && (
+          <Box
+            display="flex"
+            gridGap="8px"
+            alignItems="center"
+            color={stepIndex !== 2 && 'gray.350'}
           >
-            {/* {!isPreview ? '4.' : '3.'} */}
-            4.
-          </Heading>
-          <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
-            {t('payment')}
-          </Heading>
-        </Box>
+            {isFourthStep && (
+              <Icon icon="verified" width="30px" height="30px" />
+            )}
+            <Heading
+              size="sm"
+              fontWeight={isThirdStep ? '700' : '500'}
+              color={(isFourthStep) && 'success'}
+            >
+              {t('summary')}
+            </Heading>
+          </Box>
+        )}
+
+        {!hideIndexList.includes(3) && (
+          <Box
+            display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
+            gridGap="8px"
+            alignItems="center"
+            color={stepIndex !== 3 && 'gray.350'}
+          >
+            <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
+              {t('payment')}
+            </Heading>
+          </Box>
+        )}
       </Box>
 
       {typeof handleGoBack === 'function' && (
@@ -158,11 +118,11 @@ function Stepper({ stepIndex, checkoutData, isFirstStep, isSecondStep, isThirdSt
           </Box>
           <Flex fontSize="24px" gridGap="3px" color={disabledColor2} fontWeight={700}>
             <Text size="24px" color="blue.default">
-              {(stepIndex + 1) || 1}
+              {(position) || 1}
             </Text>
             /
             <Text size="24px">
-              {typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial ? 4 : 3}
+              {totalCountListBasedInHidenList}
             </Text>
           </Flex>
         </Box>
@@ -181,11 +141,13 @@ Stepper.propTypes = {
   isThirdStep: PropTypes.bool.isRequired,
   isFourthStep: PropTypes.bool.isRequired,
   handleGoBack: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
+  hideIndexList: PropTypes.arrayOf(PropTypes.number),
 };
 
 Stepper.defaultProps = {
   checkoutData: {},
   handleGoBack: null,
+  hideIndexList: [],
 };
 
 export default Stepper;
