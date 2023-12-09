@@ -15,25 +15,24 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Input,
+  Spinner,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
-import { Form, Formik } from 'formik';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import DatePickerField from '../../../../../common/components/Forms/DateField';
 import bc from '../../../../../common/services/breathecode';
-import ReactSelect, { AsyncSelect } from '../../../../../common/components/ReactSelect';
+import ReactSelect from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Icon from '../../../../../common/components/Icon';
 import Text from '../../../../../common/components/Text';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 
@@ -117,6 +116,8 @@ function StudentReport() {
   const [attendance, setAttendance] = useState([]);
   const [activities, setActivities] = useState([]);
   const [fetchMoreActivities, setFetchMoreActivities] = useState(true);
+  const [isFetchingActivities, setIsFetchingActivities] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
   const [paramsActivities, setParamsActivities] = useState({
     page: 1,
   });
@@ -163,13 +164,17 @@ function StudentReport() {
 
   const fetchActivities = async () => {
     try {
+      setIsFetchingActivities(true);
       const res = await bc.activity({ user_id: studentId, limit, ...paramsActivities }).getActivity(academy);
       const newActivities = res?.data || [];
       setFetchMoreActivities(limit === newActivities.length);
 
       if (paramsActivities.append) setActivities([...activities, ...newActivities]);
       else setActivities(newActivities);
+
+      setIsFetchingActivities(false);
     } catch (e) {
+      setIsFetchingActivities(false);
       console.log(e);
     }
   };
@@ -190,6 +195,7 @@ function StudentReport() {
 
   useEffect(() => {
     if (selectedCohortUser) {
+      setIsFetching(true);
       const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
       const projectsQueryObject = {
         filter: {
@@ -276,8 +282,11 @@ function StudentReport() {
             value: resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score,
             max: 10,
           }]);
+
+          setIsFetching(false);
         })
         .catch((e) => {
+          setIsFetching(false);
           console.log(e);
         });
     }
@@ -517,7 +526,10 @@ function StudentReport() {
           </Box>
         )}
         <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
-          {report.map((elem) => (
+          {isFetching && [...Array(4).keys()].map(() => (
+            <SimpleSkeleton height="108px" width="100%" />
+          ))}
+          {!isFetching && report.map((elem) => (
             <KPI
               label={elem.label}
               icon={elem.icon}
@@ -556,58 +568,62 @@ function StudentReport() {
               />
             </Box>
           </Box>
-          <Box width="100%">
-            <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
-            <Box marginTop="20px">
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="book"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.lessons')}</p>
-                  </Flex>
-                )}
-                dots={lessonsDots}
-              />
+          {isFetching ? (
+            <DottedTimelineSkeleton />
+          ) : (
+            <Box width="100%">
+              <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="book"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.lessons')}</p>
+                    </Flex>
+                  )}
+                  dots={lessonsDots}
+                />
+              </Box>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  onClickDots={showSingleTask}
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="laptop-code"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.projects')}</p>
+                    </Flex>
+                  )}
+                  dots={projectDots}
+                />
+              </Box>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="learnpack"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.exercises')}</p>
+                    </Flex>
+                  )}
+                  dots={exerciseDots}
+                />
+              </Box>
             </Box>
-            <Box marginTop="20px">
-              <DottedTimeline
-                onClickDots={showSingleTask}
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="laptop-code"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.projects')}</p>
-                  </Flex>
-                )}
-                dots={projectDots}
-              />
-            </Box>
-            <Box marginTop="20px">
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="learnpack"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.exercises')}</p>
-                  </Flex>
-                )}
-                dots={exerciseDots}
-              />
-            </Box>
-          </Box>
+          )}
           <ReviewModal
             currentTask={currentProject}
             projectLink={`https://4geeks.com${
@@ -661,7 +677,7 @@ function StudentReport() {
               {t('common:filters')}
             </Button>
           </Flex>
-          {activities.length === 0 && (
+          {!isFetching && activities.length === 0 && (
             <Box width="100%" mt="20px">
               <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
                 {t('activities-section.no-activities')}
@@ -689,6 +705,11 @@ function StudentReport() {
               );
             })}
           </Box>
+          {isFetchingActivities && (
+            <Box marginTop="15px" display="flex" justifyContent="center">
+              <Spinner color={hexColor.blueDefault} />
+            </Box>
+          )}
           {activities.length > 0 && fetchMoreActivities && (
             <Button
               width="100%"
