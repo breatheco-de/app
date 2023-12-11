@@ -277,8 +277,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </Flex>
         </Flex>
 
-        <Stack justify="flex-end" direction="row" gridGap="20px">
-          <Flex gridGap="14px">
+        <Stack justify="flex-end" direction="row" gridGap={hasPaidSubscription ? '15px' : '20px'}>
+          <Flex gridGap={hasPaidSubscription ? '22.5px' : '14px'}>
             {disableLangSwitcher !== true && (
               <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} minWidth="unset" />
             )}
