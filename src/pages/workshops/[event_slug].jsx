@@ -22,6 +22,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
+import DraggableContainer from '../../common/components/DraggableContainer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
@@ -37,6 +38,12 @@ const arrayOfImages = [
 ];
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+const langsDict = {
+  es: 'es',
+  en: 'us',
+  us: 'us',
+};
 
 export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.public().events();
@@ -88,6 +95,12 @@ export const getStaticProps = async ({ params, locale }) => {
     [lang]: data?.slug,
   };
 
+  let asset;
+  if (data?.asset_slug) {
+    const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+    asset = assetResp?.data;
+  }
+
   return ({
     props: {
       seo: {
@@ -108,11 +121,12 @@ export const getStaticProps = async ({ params, locale }) => {
       translations: translationArray,
       disableLangSwitcher: true,
       event: data,
+      asset,
     },
   });
 };
 
-function Page({ event }) {
+function Page({ event, asset }) {
   const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
@@ -594,6 +608,45 @@ function Page({ event }) {
               />
             </Box>
           )}
+          {asset && (
+            <Box background={featuredColor} padding="16px" borderRadius="11px" mb="31px">
+              <Text size="26px" fontWeight={700} mb="10px">
+                {t('documents')}
+              </Text>
+              <DraggableContainer>
+                <Box gap="16px" display="flex">
+                  {asset?.assets_related?.map((relatedAsset) => {
+                    let assetType;
+                    if (relatedAsset.asset_type === 'LESSON') assetType = 'lesson';
+                    else if (relatedAsset.asset_type === 'PROJECT') assetType = 'interactive-coding-tutorial';
+                    else assetType = 'interactive-exercise';
+                    return (
+                      <Box
+                        background={hexColor.backgroundColor}
+                        width="210px"
+                        border="1px solid"
+                        borderColor={hexColor.borderColor}
+                        borderRadius="10px"
+                        padding="16px"
+                        cursor="pointer"
+                        flexShrink="0"
+                        onClick={() => {
+                          window.open(`${langsDict[assetType.lang || 'us']}/${assetType}/${relatedAsset.slug}`);
+                        }}
+                      >
+                        <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
+                          <Text size="md" fontWeight="700">
+                            {relatedAsset.title}
+                          </Text>
+                          <Icon icon="arrowRight" color="" width="16px" height="10px" />
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </Box>
+              </DraggableContainer>
+            </Box>
+          )}
           {event?.id && (
             <>
               <ModalInfo
@@ -885,9 +938,11 @@ function Page({ event }) {
 
 Page.propTypes = {
   event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Page.defaultProps = {
   event: {},
+  asset: null,
 };
 
 export default Page;
