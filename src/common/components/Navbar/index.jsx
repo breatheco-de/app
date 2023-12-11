@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button, Link,
+  PopoverContent, PopoverArrow, Button, Link, Divider,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -30,6 +30,8 @@ import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
+import UpgradeExperience from '../UpgradeExperience';
+import { getAllMySubscriptions } from '../../handlers/subscriptions';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -43,13 +45,14 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const [mktCourses, setMktCourses] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [hasPaidSubscription, setHasPaidSubscription] = useState(false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
-  const { colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
+  const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
@@ -65,13 +68,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
   });
-
-  useEffect(() => {
-    // verify if accessToken exists
-    if (!isLoading && isAuthenticated) {
-      setHaveSession(true);
-    }
-  }, [isLoading]);
 
   const {
     languagesTR,
@@ -109,6 +105,18 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       { addSuffix: true, locale: es },
     )}`,
   };
+
+  useEffect(() => {
+    // verify if accessToken exists
+    if (!isLoading && isAuthenticated) {
+      setHaveSession(true);
+      getAllMySubscriptions()
+        .then((subscriptions) => {
+          const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
+          setHasPaidSubscription(existsPaidSubscription);
+        });
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
@@ -269,41 +277,47 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </Flex>
         </Flex>
 
-        <Stack justify="flex-end" direction="row" gridGap="5px">
-          {/* {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && (
-            <Box display={{ base: 'none', md: 'block' }}>
-              <UpgradeExperience data={marketingCourses} />
-            </Box>
-          )} */}
+        <Stack justify="flex-end" direction="row" gridGap="20px">
+          <Flex gridGap="14px">
+            {disableLangSwitcher !== true && (
+              <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} minWidth="unset" />
+            )}
+            <IconButton
+              style={{
+                margin: 0,
+                minWidth: 'unset',
+              }}
+              display={{ base: 'none', lg: 'flex' }}
+              height="auto"
+              _hover={{
+                background: navbarBackground,
+              }}
+              _active={{
+                background: navbarBackground,
+              }}
+              aria-label={`Toggle ${reverseColorMode} mode`}
+              background={navbarBackground}
+              onClick={() => {
+                toggleColorMode();
+              }}
+              icon={
+                colorMode === 'light' ? (
+                  <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
+                ) : (
+                  <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
+                )
+              }
+            />
+          </Flex>
+          {!hasPaidSubscription && (
+            <>
+              <Box style={{ margin: 0 }}>
+                <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
+              </Box>
 
-          {disableLangSwitcher !== true && (
-            <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+              <UpgradeExperience />
+            </>
           )}
-          <IconButton
-            style={{
-              margin: 0,
-            }}
-            display={{ base: 'none', lg: 'flex' }}
-            height="auto"
-            _hover={{
-              background: navbarBackground,
-            }}
-            _active={{
-              background: navbarBackground,
-            }}
-            aria-label={`Toggle ${reverseColorMode} mode`}
-            background={navbarBackground}
-            onClick={() => {
-              toggleColorMode();
-            }}
-            icon={
-              colorMode === 'light' ? (
-                <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
-              ) : (
-                <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
-              )
-            }
-          />
 
           {sessionExists ? (
             <Popover
@@ -325,7 +339,13 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   borderRadius="30px"
                   onClick={() => setSettingsOpen(!settingsOpen)}
                   title="Profile"
+                  position="relative"
                 >
+                  {hasPaidSubscription && (
+                    <Box position="absolute" top="-12px" right="-2px" display="flex" alignItems="center" height="100%" zIndex={10}>
+                      <Icon icon="crown" width="16px" height="22px" color="" style={{ transform: 'rotate(35deg)' }} />
+                    </Box>
+                  )}
                   <Avatar
                     width="30px"
                     marginY="auto"
