@@ -14,6 +14,7 @@ import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { error } from '../../utils/logging';
 import { setStorageItem } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 
 const coursesLimit = 2;
 
@@ -165,6 +166,14 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
               iconBackground="#25BF6C"
               onClick={() => {
                 setStorageItem('redirected-from', course?.course_translation?.landing_url);
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'ad_interaction',
+                    course_slug: course.slug,
+                    course_title: course.title,
+                    ad_position: 'bottom-center',
+                  },
+                });
               }}
               href={course?.course_translation?.landing_url}
               programName={course.course_translation.title}
