@@ -309,16 +309,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               }
             />
           </Flex>
+          <Box style={{ margin: 0 }}>
+            <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
+          </Box>
           {!hasPaidSubscription && (
-            <>
-              <Box style={{ margin: 0 }}>
-                <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
-              </Box>
-
-              <UpgradeExperience />
-            </>
+            <UpgradeExperience />
           )}
-
           {sessionExists ? (
             <Popover
               id="Avatar-Hover"
@@ -340,6 +336,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   onClick={() => setSettingsOpen(!settingsOpen)}
                   title="Profile"
                   position="relative"
+                  style={{ margin: 0 }}
                 >
                   {hasPaidSubscription && (
                     <Box position="absolute" top="-12px" right="-2px" display="flex" alignItems="center" height="100%" zIndex={10}>
