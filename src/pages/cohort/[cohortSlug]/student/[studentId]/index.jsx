@@ -779,8 +779,8 @@ function StudentReport() {
               onClick={() => {
                 setParamsActivities({
                   page: 1,
-                  start_date: startDate ? startDate.toISOString() : undefined,
-                  end_date: endDate ? endDate.toISOString() : undefined,
+                  date_start: startDate ? startDate.toISOString() : undefined,
+                  date_end: endDate ? endDate.toISOString() : undefined,
                   kind: activityLabel?.value || undefined,
                 });
                 setOpenFilter(false);
