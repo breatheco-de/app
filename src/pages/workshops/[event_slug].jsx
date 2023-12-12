@@ -104,7 +104,7 @@ export const getStaticProps = async ({ params, locale }) => {
     [lang]: data?.slug,
   };
 
-  let asset;
+  let asset = null;
   if (data?.asset_slug) {
     const assetResp = await bc.lesson().getAsset(data?.asset_slug);
     asset = assetResp?.data;
