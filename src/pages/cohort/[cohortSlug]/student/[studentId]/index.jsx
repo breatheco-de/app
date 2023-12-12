@@ -783,7 +783,7 @@ function StudentReport() {
                   end_date: endDate ? endDate.toISOString() : undefined,
                   kind: activityLabel?.value || undefined,
                 });
-                // setOpenFilter(false);
+                setOpenFilter(false);
               }}
             >
               {t('common:apply-filters')}
