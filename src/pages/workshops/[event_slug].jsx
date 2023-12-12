@@ -630,7 +630,7 @@ function Page({ event, asset }) {
             <>
               <Box mb="20px">
                 <Text size="26px" fontWeight={700} mb="10px">
-                  {t('workshop-asset')}
+                  {finishedEvent ? t('workshop-asset-ended') : t('workshop-asset-upcoming')}
                 </Text>
                 <Link display="block" href={`/${langsDict[asset.lang || 'en']}/${getAssetType(asset)}/${asset.slug}`} width="fit-content">
                   <Box
@@ -643,7 +643,7 @@ function Page({ event, asset }) {
                   >
                     <Box display="flex" justifyContent="space-between" marginBottom="20px">
                       <TagCapsule padding="0" margin="0" tags={asset.technologies?.slice(0, 1) || []} variant="rounded" />
-                      <Text fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                      <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
                         {format(new Date(asset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
                       </Text>
                     </Box>
@@ -656,49 +656,51 @@ function Page({ event, asset }) {
                   </Box>
                 </Link>
               </Box>
-              <Box background={hexColor.lightColor} padding="16px" borderRadius="11px" mb="31px">
-                <Text size="26px" fontWeight={700} mb="10px">
-                  {t('documents')}
-                </Text>
-                <DraggableContainer>
-                  <Box gap="16px" display="flex">
-                    {asset?.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug))
-                      .map((relatedAsset) => {
-                        const assetType = getAssetType(relatedAsset);
-                        return (
-                          <Link href={`/${langsDict[assetType.lang || 'en']}/${assetType}/${relatedAsset.slug}`}>
-                            <Box
-                              background={hexColor.backgroundColor}
-                              width="210px"
-                              border="1px solid"
-                              borderColor={hexColor.borderColor}
-                              borderRadius="10px"
-                              padding="16px"
-                              cursor="pointer"
-                              minHeight="135px"
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="space-between"
-                            >
-                              <Box display="flex" justifyContent="space-between" marginBottom="20px">
-                                <TagCapsule padding="0" margin="0" tags={relatedAsset?.technologies?.slice(0, 1) || []} variant="rounded" />
-                                <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
-                                  {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
-                                </Text>
+              {!finishedEvent && asset.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
+                <Box background={hexColor.lightColor} padding="16px" borderRadius="11px" mb="31px">
+                  <Text size="26px" fontWeight={700} mb="10px">
+                    {t('documents')}
+                  </Text>
+                  <DraggableContainer>
+                    <Box gap="16px" display="flex">
+                      {asset?.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug))
+                        .map((relatedAsset) => {
+                          const assetType = getAssetType(relatedAsset);
+                          return (
+                            <Link href={`/${langsDict[assetType.lang || 'en']}/${assetType}/${relatedAsset.slug}`}>
+                              <Box
+                                background={hexColor.backgroundColor}
+                                width="210px"
+                                border="1px solid"
+                                borderColor={hexColor.borderColor}
+                                borderRadius="10px"
+                                padding="16px"
+                                cursor="pointer"
+                                minHeight="135px"
+                                display="flex"
+                                flexDirection="column"
+                                justifyContent="space-between"
+                              >
+                                <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                                  <TagCapsule padding="0" margin="0" tags={relatedAsset?.technologies?.slice(0, 1) || []} variant="rounded" />
+                                  <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                                    {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
+                                  </Text>
+                                </Box>
+                                <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
+                                  <Text size="md" fontWeight="700">
+                                    {relatedAsset.title}
+                                  </Text>
+                                  <Icon icon="arrowRight" color="" width="20px" height="14px" />
+                                </Box>
                               </Box>
-                              <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
-                                <Text size="md" fontWeight="700">
-                                  {relatedAsset.title}
-                                </Text>
-                                <Icon icon="arrowRight" color="" width="20px" height="14px" />
-                              </Box>
-                            </Box>
-                          </Link>
-                        );
-                      })}
-                  </Box>
-                </DraggableContainer>
-              </Box>
+                            </Link>
+                          );
+                        })}
+                    </Box>
+                  </DraggableContainer>
+                </Box>
+              )}
             </>
           )}
           {event?.id && (
