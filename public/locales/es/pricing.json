@@ -9,17 +9,26 @@
     "chat": "Chatea con un asesor",
     "survey": "Tomar una encuesta de 30 segundos"
   },
+  "decided": {
+    "heading": "¿No te has decidido todavía?",
+    "sub_heading": "Puedes probar 4Geeks en un plan gratuito",
+    "description": "Tenemos un plan gratis para ti, con él puedes acceder de forma limitada a todos los servicios, incluyendo mentorías y workshops gratis.",
+    "button": "Únete gratis"
+  },
   "faq": [{
-    "label": "¿Qué pasa si me consumo todas mis mentorías o accesos a workshops?",
-    "answer": "Si tienes el plan de vuela solo o en vivo y con feedback, y ya te consumiste todas tus sesiones de mentorías o acceso a workshops, entonces puedes comprar más con un precio con descuento por cada uno."
+    "label": "¿Qué opciones de pago aceptamos?",
+    "answer": "Actualmente aceptamos pagos con tarjetas de crédito y débito. Nos esforzamos por hacer el proceso de suscripción conveniente para nuestros usuarios."
   }, {
-    "label": "¿En qué tecnologías puedo solicitar una sesión de mentoría?",
-    "answer": "Siempre puedes solicitar mentorías uno a uno en cada uno de los cursos en los que te hayas inscrito. Entonces, no importa si estas haciendo el curso de JavaScript o el de Python, puedes pedir mentorías de cada uno de estos lenguajes."
+    "label": "¿Ofrecemos pruebas gratuitas?",
+    "answer": "Ofrecemos un plan básico gratuito que otorga acceso a todas las funcionalidades de manera limitada, permitiéndote explorar y experimentar nuestra plataforma. Este plan ofrece una versión limitada de nuestros servicios, brindándote la oportunidad de probar nuestras características y recursos de primera mano. Es una excelente manera de tener una idea de lo que ofrecemos antes de decidir sobre un plan que se ajuste mejor a tus necesidades."
   }, {
-    "label": "¿Qué pasa con las mentorías ilimitadas luego de que termine el bootcamp?",
-    "answer": "El acceso a mentorías uno a uno o acceso a workshops de manera ilimitadas es DE POR VIDA siempre y cuando hayas formado parte de una cohort de un bootcamp."
+    "label": "¿Puedo cancelar mi suscripción en cualquier momento?",
+    "answer": "¡Por supuesto! En 4Geeks.com, con nuestro Plan con Feedback, tienes la flexibilidad de cancelar tu suscripción en cualquier momento."
   }, {
-    "label": "¿Cómo funciona la garantía de trabajo?",
-    "answer": "El contrato de garantía de trabajo funciona solo para bootcamps, y consiste en que si no logras conseguir un trabajo 6 meses después de graduarte, se te devuelve el dinero, <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>ciertas condiciones aplican.</a>."
+    "label": "¿Qué tipo de soporte está disponible para los estudiantes?",
+    "answer": "Tendrás acceso a sesiones de tutoría personalizada realizadas por expertos en la tecnología. Además, nuestra plataforma ofrece retroalimentación por inteligencia artificial en los proyectos que envíes, asistencia con ejercicios y respuestas a cualquier pregunta que puedas tener durante tu aprendizaje. Esta combinación de tutoría personalizada y soporte impulsado por inteligencia artificial asegura que recibas orientación y ayuda siempre que lo necesites, mejorando tu experiencia de aprendizaje en general."
+  }, {
+    "label": "¿Los cursos son a tu propio ritmo o dirigidos por un instructor?",
+    "answer": "Nuestros Planes Básico y con Feedback permiten a los estudiantes participar en los cursos a su propio ritmo, brindando una experiencia de aprendizaje a su propio ritmo con el respaldo de expertos o inteligencia artificial cuando lo necesite. Por otro lado, si optas por nuestro bootcamp, las sesiones de aprendizaje son dirigidas por un instructor."
   }]
 }
