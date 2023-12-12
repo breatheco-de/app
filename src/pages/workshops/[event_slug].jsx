@@ -22,6 +22,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
+import TagCapsule from '../../common/components/TagCapsule';
 import Link from '../../common/components/NextChakraLink';
 import { categoriesFor } from '../../utils/variables';
 import DraggableContainer from '../../common/components/DraggableContainer';
@@ -640,7 +641,8 @@ function Page({ event, asset }) {
                     cursor="pointer"
                     minHeight="135px"
                   >
-                    <Box marginBottom="20px">
+                    <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                      <TagCapsule padding="0" margin="0" tags={asset.technologies.slice(0, 1)} variant="rounded" />
                       <Text fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
                         {format(new Date(asset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
                       </Text>
@@ -673,8 +675,10 @@ function Page({ event, asset }) {
                               borderRadius="10px"
                               padding="16px"
                               cursor="pointer"
-                            // flexShrink="0"
                               minHeight="135px"
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="space-between"
                             >
                               <Box marginBottom="20px">
                                 <Text fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
