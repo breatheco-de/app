@@ -631,7 +631,7 @@ function Page({ event, asset }) {
                 <Text size="26px" fontWeight={700} mb="10px">
                   {t('workshop-asset')}
                 </Text>
-                <Link href={`/${langsDict[asset.lang || 'en']}/${getAssetType(asset)}/${asset.slug}`}>
+                <Link display="block" href={`/${langsDict[asset.lang || 'en']}/${getAssetType(asset)}/${asset.slug}`} width="fit-content">
                   <Box
                     background={featuredColor}
                     width="210px"
