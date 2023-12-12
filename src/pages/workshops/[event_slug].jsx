@@ -680,7 +680,8 @@ function Page({ event, asset }) {
                               flexDirection="column"
                               justifyContent="space-between"
                             >
-                              <Box marginBottom="20px">
+                              <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                                <TagCapsule padding="0" margin="0" tags={relatedAsset.technologies.slice(0, 1)} variant="rounded" />
                                 <Text fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
                                   {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
                                 </Text>
