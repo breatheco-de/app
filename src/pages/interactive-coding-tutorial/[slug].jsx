@@ -340,7 +340,7 @@ function ProjectSlug({ project, markdown }) {
         >
           {project && project?.difficulty ? (
             <>
-              <Box d="flex" justifyContent="center">
+              <Box display="flex" justifyContent="center">
                 <Icon icon="sideSupport" width="300px" height="70px" />
               </Box>
               <Box px="22px" pb="30px" pt="20px">
