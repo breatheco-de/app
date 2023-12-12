@@ -45,7 +45,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const [mktCourses, setMktCourses] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [hasPaidSubscription, setHasPaidSubscription] = useState(false);
+  const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
@@ -277,8 +277,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </Flex>
         </Flex>
 
-        <Stack justify="flex-end" direction="row" gridGap={hasPaidSubscription ? '15px' : '20px'}>
-          <Flex gridGap={hasPaidSubscription ? '22.5px' : '14px'}>
+        <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
+          <Flex gridGap="18px">
             {disableLangSwitcher !== true && (
               <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} minWidth="unset" />
             )}
@@ -309,10 +309,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               }
             />
           </Flex>
-          <Box style={{ margin: 0 }}>
+          <Box height="35px" style={{ margin: 0 }}>
             <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
           </Box>
-          {!hasPaidSubscription && (
+          {isAuthenticated && !hasPaidSubscription && (
             <UpgradeExperience />
           )}
           {sessionExists ? (
@@ -339,8 +339,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   style={{ margin: 0 }}
                 >
                   {hasPaidSubscription && (
-                    <Box position="absolute" top="-12px" right="-2px" display="flex" alignItems="center" height="100%" zIndex={10}>
-                      <Icon icon="crown" width="16px" height="22px" color="" style={{ transform: 'rotate(35deg)' }} />
+                    <Box position="absolute" top="-14px" right="-6px" display="flex" alignItems="center" height="100%" zIndex={10}>
+                      <Icon icon="crown" width="20px" height="26px" color="" style={{ transform: 'rotate(35deg)' }} />
                     </Box>
                   )}
                   <Avatar
@@ -513,13 +513,13 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               </PopoverContent>
             </Popover>
           ) : (
-            <Box display="flex" gridGap="0px" alignItems="center">
+            <Box display="flex" gridGap="24px" style={{ margin: 0 }} alignItems="center">
               <NextChakraLink
                 display={{ base: 'none', md: 'block' }}
                 href="/login"
                 fontWeight="700"
                 fontSize="13px"
-                padding="12px 24px"
+                padding="12px 0"
                 lineHeight="22px"
                 _hover={{
                   textDecoration: 'none',
