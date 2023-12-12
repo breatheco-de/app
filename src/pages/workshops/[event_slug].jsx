@@ -22,6 +22,8 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
+import Link from '../../common/components/NextChakraLink';
+import { categoriesFor } from '../../utils/variables';
 import DraggableContainer from '../../common/components/DraggableContainer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -41,8 +43,15 @@ const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREAT
 
 const langsDict = {
   es: 'es',
-  en: 'us',
-  us: 'us',
+  en: 'en',
+  us: 'en',
+};
+
+const assetTypeDict = {
+  ARTICLE: 'lesson',
+  LESSON: 'lesson',
+  PROJECT: 'interactive-coding-tutorial',
+  EXERCISE: 'interactive-exercise',
 };
 
 export const getStaticPaths = async ({ locales }) => {
@@ -615,34 +624,39 @@ function Page({ event, asset }) {
               </Text>
               <DraggableContainer>
                 <Box gap="16px" display="flex">
-                  {asset?.assets_related?.map((relatedAsset) => {
-                    let assetType;
-                    if (relatedAsset.asset_type === 'LESSON') assetType = 'lesson';
-                    else if (relatedAsset.asset_type === 'PROJECT') assetType = 'interactive-coding-tutorial';
-                    else assetType = 'interactive-exercise';
-                    return (
-                      <Box
-                        background={hexColor.backgroundColor}
-                        width="210px"
-                        border="1px solid"
-                        borderColor={hexColor.borderColor}
-                        borderRadius="10px"
-                        padding="16px"
-                        cursor="pointer"
-                        flexShrink="0"
-                        onClick={() => {
-                          window.open(`${langsDict[assetType.lang || 'us']}/${assetType}/${relatedAsset.slug}`);
-                        }}
-                      >
-                        <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
-                          <Text size="md" fontWeight="700">
-                            {relatedAsset.title}
-                          </Text>
-                          <Icon icon="arrowRight" color="" width="16px" height="10px" />
-                        </Box>
-                      </Box>
-                    );
-                  })}
+                  {asset?.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug))
+                    .map((relatedAsset) => {
+                      let assetType;
+                      if (categoriesFor.howTo.split(',').includes(relatedAsset.category.slug)) assetType = 'how-to';
+                      else assetType = assetTypeDict[relatedAsset.asset_type];
+                      return (
+                        <Link href={`/${langsDict[assetType.lang || 'en']}/${assetType}/${relatedAsset.slug}`}>
+                          <Box
+                            background={hexColor.backgroundColor}
+                            width="210px"
+                            border="1px solid"
+                            borderColor={hexColor.borderColor}
+                            borderRadius="10px"
+                            padding="16px"
+                            cursor="pointer"
+                            // flexShrink="0"
+                            minHeight="135px"
+                          >
+                            <Box marginBottom="20px">
+                              <Text fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                                {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
+                              </Text>
+                            </Box>
+                            <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
+                              <Text size="md" fontWeight="700">
+                                {relatedAsset.title}
+                              </Text>
+                              <Icon icon="arrowRight" color="" width="20px" height="14px" />
+                            </Box>
+                          </Box>
+                        </Link>
+                      );
+                    })}
                 </Box>
               </DraggableContainer>
             </Box>
