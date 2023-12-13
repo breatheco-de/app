@@ -13,11 +13,13 @@ import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
 import syllabusList from '../../../public/syllabus.json';
 import NextChakraLink from '../../common/components/NextChakraLink';
+import UpgradeExperience from '../../common/components/UpgradeExperience';
+import useStyle from '../../common/hooks/useStyle';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 function MobileNav({
   // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink,
+  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink, isAuthenticated, hasPaidSubscription,
 }) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -26,6 +28,7 @@ function MobileNav({
   const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
+  const { borderColor } = useStyle();
 
   useEffect(() => {
     const hasNavItems = NAV_ITEMS?.length > 0;
@@ -94,7 +97,7 @@ function MobileNav({
         </Box>
       )} */}
 
-      <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0" mb="1rem">
+      <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0">
         <NextChakraLink
           href="/login"
           fontSize="16px"
@@ -109,12 +112,24 @@ function MobileNav({
           {t('login')}
         </NextChakraLink>
       </Box>
+
+      {isAuthenticated && !hasPaidSubscription && (
+        <Box
+          margin="0 0 1rem 0"
+          borderTop={1}
+          borderStyle="solid"
+          padding="1.45rem 0 0 0"
+          borderColor={borderColor}
+        >
+          <UpgradeExperience width="100%" display={{ base: 'flex', sm: 'none' }} />
+        </Box>
+      )}
       <Box
         borderTop={1}
         borderStyle="solid"
+        borderColor={borderColor}
         display="flex"
         padding="14px 0 0 0"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
         justifyContent="center"
         gridGap="20px"
       >
@@ -150,6 +165,8 @@ MobileNav.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   onClickLink: PropTypes.func.isRequired,
   mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  isAuthenticated: PropTypes.bool.isRequired,
+  hasPaidSubscription: PropTypes.bool.isRequired,
 };
 
 MobileNav.defaultProps = {

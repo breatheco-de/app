@@ -3,7 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Icon from './Icon';
 
-function UpgradeExperience() {
+function UpgradeExperience({ ...rest }) {
   const { t, lang } = useTranslation('navbar');
   const router = useRouter();
 
@@ -24,6 +24,7 @@ function UpgradeExperience() {
       gridGap="0.5rem"
       margin="0px"
       style={{ padding: '0 1rem 0', margin: 0 }}
+      {...rest}
     >
       <Box position="relative" display="flex" alignItems="center" height="100%">
         <Icon icon="rocket" width="14px" height="21px" color="#fff" style={{ transform: 'rotate(35deg)' }} />

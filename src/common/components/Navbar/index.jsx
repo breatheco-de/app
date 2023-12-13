@@ -280,7 +280,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
           <Flex gridGap="18px">
             {disableLangSwitcher !== true && (
-              <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} minWidth="unset" />
+              <LanguageSelector display={{ base: 'none ', lg: 'block' }} translations={translations} minWidth="unset" />
             )}
             <IconButton
               style={{
@@ -309,11 +309,16 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               }
             />
           </Flex>
-          <Box height="35px" style={{ margin: 0 }}>
+          <Box display={{ base: 'none', lg: 'inherit' }} height="35px" style={{ margin: 0 }}>
             <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
           </Box>
           {isAuthenticated && !hasPaidSubscription && (
-            <UpgradeExperience />
+            <UpgradeExperience display={{ base: 'none', sm: 'flex' }} />
+          )}
+          {hasPaidSubscription && (
+            <Box display="flex" alignItems="center" height="100%" zIndex={10}>
+              <Icon icon="crown" width="20px" height="26px" color="" />
+            </Box>
           )}
           {sessionExists ? (
             <Popover
@@ -338,11 +343,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   position="relative"
                   style={{ margin: 0 }}
                 >
-                  {hasPaidSubscription && (
-                    <Box position="absolute" top="-14px" right="-6px" display="flex" alignItems="center" height="100%" zIndex={10}>
-                      <Icon icon="crown" width="20px" height="26px" color="" style={{ transform: 'rotate(35deg)' }} />
-                    </Box>
-                  )}
                   <Avatar
                     width="30px"
                     marginY="auto"
@@ -543,6 +543,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           haveSession={sessionExists}
           translations={translations}
           onClickLink={onToggle}
+          isAuthenticated={isAuthenticated}
+          hasPaidSubscription={hasPaidSubscription}
         />
 
       </Collapse>
