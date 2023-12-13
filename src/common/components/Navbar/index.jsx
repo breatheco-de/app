@@ -32,6 +32,7 @@ import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
 import UpgradeExperience from '../UpgradeExperience';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
+import bc from '../../services/breathecode';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -106,15 +107,20 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     )}`,
   };
 
+  const verifyIfHasPaidSubscription = async () => {
+    const respCohorts = await bc.admissions().me();
+    const subscriptions = await getAllMySubscriptions();
+
+    const existsCohortWithoutAvailableAsSaas = respCohorts.data?.cohorts?.length > 0 && respCohorts.data.cohorts.some((c) => c?.cohort?.available_as_saas === false);
+    const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
+    setHasPaidSubscription(existsCohortWithoutAvailableAsSaas || existsPaidSubscription);
+  };
+
   useEffect(() => {
     // verify if accessToken exists
     if (!isLoading && isAuthenticated) {
       setHaveSession(true);
-      getAllMySubscriptions()
-        .then((subscriptions) => {
-          const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
-          setHasPaidSubscription(existsPaidSubscription);
-        });
+      verifyIfHasPaidSubscription();
     }
   }, [isLoading]);
 
