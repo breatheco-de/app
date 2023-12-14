@@ -43,7 +43,7 @@ function SimpleModal({ isOpen, title, children, onClose, maxWidth, bodyStyles, f
 
 SimpleModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  title: PropTypes.string,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
   maxWidth: PropTypes.string,
