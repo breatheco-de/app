@@ -79,6 +79,7 @@ function Checkout() {
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
+  const [showChooseClass, setShowChooseClass] = useState(true);
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps, loader } = state;
   const { backgroundColor3 } = useStyle();
 
@@ -147,8 +148,12 @@ function Checkout() {
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
       setReadyToSelectService(true);
+      setShowChooseClass(false);
     }
+
+    // Prepare service data to get consumables
     if (!queryPlanExists && tokenExists && isAuthenticated && !isAvailableToSelectPlan) {
+      setShowChooseClass(false);
       setLoader('plan', true);
       bc.payment({
         status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
@@ -188,6 +193,7 @@ function Checkout() {
               .then(async (resp) => {
                 const respData = await resp.json();
                 if (resp.status > 400) {
+                  setShowChooseClass(true);
                   toast({
                     title: respData.detail,
                     status: 'error',
@@ -215,7 +221,7 @@ function Checkout() {
     }
     if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
       setLoader('plan', true);
-
+      setShowChooseClass(false);
       bc.payment().getPlan(planFormated)
         .then((resp) => {
           const data = resp?.data;
@@ -227,6 +233,7 @@ function Checkout() {
           const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
           if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
+            setShowChooseClass(true);
             toast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
@@ -273,6 +280,7 @@ function Checkout() {
           }
 
           if (data?.is_renewable === false || data?.is_renewable === undefined) {
+            setShowChooseClass(false);
             handleStep(1);
           }
         })
@@ -397,6 +405,7 @@ function Checkout() {
       {/* Stepper */}
       {!isFirstStep && !readyToSelectService && !serviceToRequest?.id && (
         <Stepper
+          hideIndexList={showChooseClass ? [] : [1]}
           stepIndex={stepIndex}
           checkoutData={checkoutData}
           isFirstStep={isFirstStep}
@@ -428,7 +437,7 @@ function Checkout() {
         )}
 
         {/* Second step */}
-        {!readyToSelectService && (
+        {!readyToSelectService && showChooseClass && (
           <ChooseYourClass setCohorts={setCohortsData} />
         )}
 

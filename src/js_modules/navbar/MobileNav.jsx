@@ -1,28 +1,34 @@
 import {
   Box,
   IconButton,
-  Stack,
   useColorModeValue,
   useColorMode,
+  Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
 import syllabusList from '../../../public/syllabus.json';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import UpgradeExperience from '../../common/components/UpgradeExperience';
+import useStyle from '../../common/hooks/useStyle';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
 function MobileNav({
   // eslint-disable-next-line no-unused-vars
-  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink,
+  NAV_ITEMS, haveSession, translations, mktCourses, onClickLink, isAuthenticated, hasPaidSubscription,
 }) {
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
+  const { t } = useTranslation('navbar');
   const commonColors = useColorModeValue('white', 'gray.800');
   const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
+  const { borderColor } = useStyle();
 
   useEffect(() => {
     const hasNavItems = NAV_ITEMS?.length > 0;
@@ -45,10 +51,12 @@ function MobileNav({
   };
 
   return (
-    <Stack
+    <Flex
+      flexDirection="column"
       position="absolute"
       width="100%"
       zIndex="99"
+      gridGap="8px"
       bg={useColorModeValue('white', 'gray.800')}
       p={4}
       // display={{ md: 'none' }}
@@ -89,12 +97,39 @@ function MobileNav({
         </Box>
       )} */}
 
+      <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0">
+        <NextChakraLink
+          href="/login"
+          fontSize="16px"
+          lineHeight="22px"
+          margin="0"
+          _hover={{
+            textDecoration: 'none',
+            color: 'blue.default',
+          }}
+          letterSpacing="0.05em"
+        >
+          {t('login')}
+        </NextChakraLink>
+      </Box>
+
+      {isAuthenticated && !hasPaidSubscription && (
+        <Box
+          margin="0 0 1rem 0"
+          borderTop={1}
+          borderStyle="solid"
+          padding="1.45rem 0 0 0"
+          borderColor={borderColor}
+        >
+          <UpgradeExperience width="100%" display={{ base: 'flex', sm: 'none' }} />
+        </Box>
+      )}
       <Box
         borderTop={1}
         borderStyle="solid"
+        borderColor={borderColor}
         display="flex"
         padding="14px 0 0 0"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
         justifyContent="center"
         gridGap="20px"
       >
@@ -120,7 +155,7 @@ function MobileNav({
         />
         <LanguageSelector display="block" translations={translations} />
       </Box>
-    </Stack>
+    </Flex>
   );
 }
 
@@ -130,6 +165,8 @@ MobileNav.propTypes = {
   translations: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.arrayOf(PropTypes.any)]),
   onClickLink: PropTypes.func.isRequired,
   mktCourses: PropTypes.oneOfType([PropTypes.array, PropTypes.bool]),
+  isAuthenticated: PropTypes.bool.isRequired,
+  hasPaidSubscription: PropTypes.bool.isRequired,
 };
 
 MobileNav.defaultProps = {
