@@ -17,7 +17,7 @@ import navbarTR from '../translations/navbar';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 
-function LanguageSelector({ display, translations }) {
+function LanguageSelector({ display, translations, ...rest }) {
   const router = useRouter();
   const { t } = useTranslation('common');
   const { isAuthenticated } = useAuth();
@@ -70,6 +70,7 @@ function LanguageSelector({ display, translations }) {
             background: 'transparent',
           }}
           onClick={() => setLanguagesOpen(!languagesOpen)}
+          {...rest}
         >
           <Box
             className={`${styles.flag} ${styles[currentTranslationLanguage?.lang || currentLanguage?.value]}`}

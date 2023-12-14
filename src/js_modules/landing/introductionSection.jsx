@@ -12,6 +12,7 @@ import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import GridContainer from '../../common/components/GridContainer';
 import Button from '../../common/components/Button';
+import PrismicTextComponent from '../../common/components/PrismicTextComponent';
 
 function IntroductionSection({
   data, slice, fitContent, ...rest
@@ -68,15 +69,12 @@ function IntroductionSection({
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
-              <PrismicRichText
+              <PrismicTextComponent
                 field={slice?.primary?.title}
-                components={{
-                  heading1: ({ children }) => (
-                    <Box as="h1" fontSize="48px" fontWeight="700" display="initial">
-                      {children}
-                    </Box>
-                  ),
-                }}
+                display="initial"
+                size="48px"
+                fontWeight={700}
+                lineHeight="inherit"
               />
               {slice?.primary?.highlight && (
                 <PrismicRichText
@@ -129,7 +127,7 @@ function IntroductionSection({
 
         {slice?.primary?.description.length > 0 ? (
           <Text as="div" fontSize="21px" fontWeight={700} pt="16px">
-            <PrismicRichText field={slice?.primary?.description} />
+            <PrismicTextComponent field={slice?.primary?.description} fontSize="21px" lineHeight="inherit" />
           </Text>
         ) : data?.description && (
           <Text fontSize="21px" fontWeight={700} pt="16px">

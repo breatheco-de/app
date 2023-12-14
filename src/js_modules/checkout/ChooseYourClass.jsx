@@ -11,17 +11,23 @@ import { getQueryString, getTimeProps } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
-import LoaderScreen from '../../common/components/LoaderScreen';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
+import { CardSkeleton } from '../../common/components/Skeleton';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
 
   return cohortIsLoading ? (
-    <Box display="flex" justifyContent="center" mt="4rem" mb="8rem" position="relative">
-      <LoaderScreen width="130px" height="130px" />
-    </Box>
+    <CardSkeleton
+      quantity={2}
+      display="flex"
+      gridGap="40px"
+      flexDirection="column"
+      width="100%"
+      cardWidth="100%"
+      cardHeight="140px"
+    />
   ) : (
     <AlertMessage type="info" message={t('no-date-available')} />
   );

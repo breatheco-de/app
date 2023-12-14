@@ -129,7 +129,7 @@ function Mentoring({
 
   return !isLoading && user?.id && (
     <Box>
-      <Box fontSize="16px" padding="10px 16px" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
+      <Box fontSize="16px" padding="10px 16px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
         {t('supportSideBar.mentoring-label')}
       </Box>
       {isAvailableForConsumables ? (
