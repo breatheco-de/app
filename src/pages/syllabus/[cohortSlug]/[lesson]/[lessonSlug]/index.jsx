@@ -171,9 +171,10 @@ function Content() {
   }, [currentTask]);
 
   useEffect(() => {
+    const assetSlug = currentData?.translations?.us || currentData?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-      && el.associated_slug === lessonSlug));
+      && el.associated_slug === assetSlug));
     }
   }, [taskTodo, lessonSlug, lesson]);
 
