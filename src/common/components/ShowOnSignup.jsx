@@ -40,20 +40,20 @@ function ShowOnSignUp({
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   useEffect(() => {
+    const isLogged = alreadyLogged || isAuthenticated;
+    let intervalId;
     if (alreadyLogged && !existsConsumables && timeElapsed < 10) {
-      const intervalId = setInterval(() => {
+      intervalId = setInterval(() => {
         setTimeElapsed((prevTime) => prevTime + 1);
         refetchAfterSuccess();
       }, 1000);
-
-      if (timeElapsed >= 10) {
-        setNoConsumablesFound(true);
-        clearInterval(intervalId);
-      }
-      return () => clearInterval(intervalId);
     }
-    return () => {};
-  }, [alreadyLogged, existsConsumables]);
+    if (isLogged && ((!existsConsumables && typeof intervalId === 'undefined') || timeElapsed >= 10)) {
+      setNoConsumablesFound(true);
+    }
+
+    return () => clearInterval(intervalId);
+  }, [timeElapsed, alreadyLogged, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
