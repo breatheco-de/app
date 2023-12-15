@@ -1214,6 +1214,66 @@ export type TitleIntroductionSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *TrustCards → Primary*
+ */
+export interface TrustCardsSliceDefaultPrimary {
+  /**
+   * title field in *TrustCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: trust_cards.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *TrustCards → Items*
+ */
+export interface TrustCardsSliceDefaultItem {
+  /**
+   * description field in *TrustCards → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: trust_cards.items[].description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for TrustCards Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TrustCardsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<TrustCardsSliceDefaultPrimary>,
+  Simplify<TrustCardsSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TrustCards*
+ */
+type TrustCardsSliceVariation = TrustCardsSliceDefault;
+
+/**
+ * TrustCards Shared Slice
+ *
+ * - **API ID**: `trust_cards`
+ * - **Description**: TrustCards
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TrustCardsSlice = prismic.SharedSlice<
+  "trust_cards",
+  TrustCardsSliceVariation
+>;
+
+/**
  * Primary content in *TwoColumn → Primary*
  */
 export interface TwoColumnSliceDefaultPrimary {
@@ -1487,6 +1547,11 @@ declare module "@prismicio/client" {
       TitleIntroductionSliceDefaultPrimary,
       TitleIntroductionSliceVariation,
       TitleIntroductionSliceDefault,
+      TrustCardsSlice,
+      TrustCardsSliceDefaultPrimary,
+      TrustCardsSliceDefaultItem,
+      TrustCardsSliceVariation,
+      TrustCardsSliceDefault,
       TwoColumnSlice,
       TwoColumnSliceDefaultPrimary,
       TwoColumnSliceVariation,
