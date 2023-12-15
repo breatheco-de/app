@@ -116,8 +116,14 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
                     <p>
                       <NextChakraLink textDecoration="underline" href={`/cohort/${cohortSlug}/student/${student.user.id}?academy=${academy}`}>{fullname}</NextChakraLink>
                     </p>
-                    <small>{`${percentage}${t('delivered-percentage')} - `}</small>
-                    <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small>
+                    <small>{`${percentage}${t('delivered-percentage')}`}</small>
+                    {/* <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small> */}
+                    {lastDeliver && (
+                      <small>
+                        {' - '}
+                        {t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) })}
+                      </small>
+                    )}
                   </Box>
                 </Flex>
                       )}
