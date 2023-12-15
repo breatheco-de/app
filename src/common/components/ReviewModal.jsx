@@ -1,18 +1,11 @@
 import PropTypes from 'prop-types';
-// import { Box, Divider } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import { Box, Divider } from '@chakra-ui/react';
 import SimpleModal from './SimpleModal';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
-// import MarkDownParser from './MarkDownParser';
-
-const MarkdownEditor = dynamic(
-  () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
-  { ssr: false },
-);
+import MarkDownParser from './MarkDownParser';
 
 function ReviewModal({ isOpen, onClose, ...rest }) {
   const [repoData, setRepoData] = useState({
@@ -71,28 +64,14 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
       {...rest}
     >
       <Box flex={0.65} overflow="auto">
-        <MarkdownEditor
-          value={code}
-          style={{ height: '93vh', minWidth: '100%' }}
-          visible={false}
-          // onChange={(value) => {
-          //   setMarkdownValue(value);
-          //   // setMarkdownSaved(value);
-          // }}
-          // enableScroll
-          renderPreview={() => null}
-          toolbars={['codeBlock']}
-        />
-      </Box>
-
-      {/* <Box flex={0.65} overflow="auto">
         {repoData.isFetching
           ? 'Loading...' : (
             <MarkDownParser
               content={code}
+              fontSize="14px"
             />
           )}
-      </Box> */}
+      </Box>
       <Box>
         <Divider orientation="vertical" />
       </Box>
