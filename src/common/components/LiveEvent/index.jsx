@@ -240,7 +240,7 @@ function LiveEvent({
 
   return (
     <Box>
-      {/* <Box
+      <Box
         background="yellow.light"
         padding="6px 8px"
         color="black"
@@ -251,7 +251,7 @@ function LiveEvent({
       >
         {t('choose-program:sidebar.live-events-title')}
 
-        <Popover
+        {/* <Popover
           isOpen={openFilter}
           onOpen={() => setOpenFilter(true)}
           onClose={() => setOpenFilter(false)}
@@ -297,8 +297,8 @@ function LiveEvent({
               </Button>
             </Flex>
           </PopoverContent>
-        </Popover>
-      </Box> */}
+        </Popover> */}
+      </Box>
 
       <Box
         padding="10px"

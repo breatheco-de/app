@@ -4,7 +4,7 @@ import {
 } from 'react';
 import {
   Box,
-  useToast,
+  // useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -29,7 +29,7 @@ function Mentoring({
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
   const { isLoading, user } = useAuth();
-  const toast = useToast();
+  // const toast = useToast();
   const { slug } = router.query;
 
   const [searchProps, setSearchProps] = useState({
@@ -80,26 +80,22 @@ function Mentoring({
   const step1 = !mentoryProps?.service;
   const step2 = mentoryProps?.service && !mentoryProps?.date;
 
-  const getAllMentorsAvailable = () => {
+  const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.map((service) => service?.slug);
 
     if (servicesSlugs.length > 0) {
-      return bc.mentorship({
-        services: servicesSlugs.toString(),
+      const mentors = programServices.map((service) => bc.mentorship({
+        services: service?.slug,
         status: 'ACTIVE',
         syllabus: slug,
+        academy: service.academy.id,
       }).getMentor()
-        .then((res) => res?.data)
-        .catch(() => {
-          toast({
-            position: 'top',
-            title: 'Error',
-            description: t('alert-message:error-finding-mentors'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        });
+        .then((res) => {
+          const allMentors = res?.data;
+          return allMentors;
+        }));
+      const mentorsList = await Promise.all(mentors);
+      console.log('mentorsList:::', mentorsList);
     }
 
     return [];

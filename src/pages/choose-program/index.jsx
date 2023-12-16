@@ -26,6 +26,7 @@ import { PREPARING_FOR_COHORT } from '../../common/store/types';
 import SimpleModal from '../../common/components/SimpleModal';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
+import SupportSidebar from '../../common/components/SupportSidebar';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -61,6 +62,10 @@ function chooseProgram() {
   const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
+  const [mentorshipServices, setMentorshipServices] = useState({
+    isLoading: true,
+    data: [],
+  });
   const { user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
@@ -98,10 +103,41 @@ function chooseProgram() {
     return members;
   };
 
+  const getServices = async (cohorts = []) => {
+    if (cohorts?.length) {
+      const mentorshipPromises = cohorts.map((cohort) => bc.mentorship({ academy: cohort?.cohort?.academy?.id }, true).getService()
+        .then(({ data }) => data)
+        // ...data.map((service) => ({
+        //   ...service,
+        //   cohort: {
+        //     ...cohort?.cohort,
+        //   },
+        // })),
+        .catch((error) => {
+          console.error('error_getting_mentorship_services', error);
+          return [];
+        }));
+      const mentorshipResults = await Promise.all(mentorshipPromises);
+      const recopilatedServices = mentorshipResults.flat();
+
+      setMentorshipServices({
+        isLoading: false,
+        data: recopilatedServices,
+      });
+    } else {
+      setMentorshipServices({
+        isLoading: false,
+        data: [],
+      });
+    }
+  };
+
   useEffect(() => {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
+    getServices(cohorts);
+
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -111,10 +147,11 @@ function chooseProgram() {
 
       return false;
     });
-    if (cohorts) {
+    if (cohorts?.length > 0) {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+
       setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
@@ -493,7 +530,16 @@ function chooseProgram() {
               margin="0 auto"
             />
           </Box>
-          {dataQuery?.cohorts.length > 0 && (
+          <Box flex={1} zIndex={10}>
+            {!mentorshipServices.isLoading && (
+              <SupportSidebar
+                services={mentorshipServices.data}
+                subscriptions={allSubscriptions}
+              />
+            )}
+          </Box>
+
+          {dataQuery?.cohorts?.length > 0 && (
             <NextChakraLink
               href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
               aria-label="4Geeks Academy community"
