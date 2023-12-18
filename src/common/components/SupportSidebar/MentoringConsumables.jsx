@@ -105,12 +105,16 @@ function MentoringConsumables({
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [consumableOfService, setConsumableOfService] = useState({});
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
 
-  const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
-  const existConsumablesOnCurrentService = consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+  const mentorshipBalance = mentorshipService?.balance?.unit || mentorshipService?.balance || consumableOfService?.balance?.unit;
+  const currentBalance = Number(mentorshipBalance && mentorshipBalance);
+  const existConsumablesOnCurrentService = consumableOfService?.balance
+    ? consumableOfService?.balance?.unit
+    : consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -128,7 +132,9 @@ function MentoringConsumables({
       academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
+        const relatedConsumables = consumables?.mentorship_service_sets?.find((c) => c?.slug === service?.slug);
         setProgramMentors(res.data);
+        setConsumableOfService(relatedConsumables);
         setTimeout(() => {
           setMentoryProps({ ...mentoryProps, service });
           setSavedChanges({ ...savedChanges, service });
@@ -151,11 +157,12 @@ function MentoringConsumables({
     const academyService = mentoryProps?.service?.slug
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
+
     validatePlanExistence(allSubscriptions).then((data) => {
       setDataToGetAccessModal({
         ...data,
         event: '',
-        academyServiceSlug: academyService?.slug,
+        academyService,
       });
       setIsModalToGetAccessOpen(true);
     })

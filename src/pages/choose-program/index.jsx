@@ -106,13 +106,19 @@ function chooseProgram() {
   const getServices = async (cohorts = []) => {
     if (cohorts?.length) {
       const mentorshipPromises = cohorts.map((cohort) => bc.mentorship({ academy: cohort?.cohort?.academy?.id }, true).getService()
-        .then(({ data }) => data)
-        // ...data.map((service) => ({
-        //   ...service,
-        //   cohort: {
-        //     ...cohort?.cohort,
-        //   },
-        // })),
+        .then(({ data }) => {
+          if (data !== undefined && data.length > 0) {
+            return data.map((service) => {
+              const allSubscriptions = [...(subscriptionData?.subscriptions || []), ...(subscriptionData?.plan_financings || [])];
+              const subscription = allSubscriptions?.find((sub) => sub?.selected_mentorship_service_set?.slug === service?.slug) || {};
+              return ({
+                ...service,
+                subscription,
+              });
+            });
+          }
+          return [];
+        })
         .catch((error) => {
           console.error('error_getting_mentorship_services', error);
           return [];
@@ -520,8 +526,8 @@ function chooseProgram() {
             </Box>
           )}
         </Box>
-        <Box flex={{ base: 1, md: 0.3 }}>
-          <Box flex={1} zIndex={10}>
+        <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
+          <Box zIndex={10}>
             <LiveEvent
               featureLabel={t('common:live-event.title')}
               featureReadMoreUrl={t('common:live-event.readMoreUrl')}
@@ -530,9 +536,10 @@ function chooseProgram() {
               margin="0 auto"
             />
           </Box>
-          <Box flex={1} zIndex={10}>
-            {!mentorshipServices.isLoading && (
+          <Box zIndex={10}>
+            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
+                allCohorts={dataQuery?.cohorts}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
@@ -549,7 +556,6 @@ function chooseProgram() {
               alignItems="center"
               gridGap="30px"
               padding="1.2rem"
-              mt="2rem"
               borderRadius="17px"
               border="1px solid"
               justifyContent="space-between"
@@ -564,7 +570,7 @@ function chooseProgram() {
               <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
             </NextChakraLink>
           )}
-        </Box>
+        </Flex>
       </Flex>
     </Flex>
   );

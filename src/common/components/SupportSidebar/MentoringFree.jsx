@@ -71,6 +71,7 @@ function MentoringFree({
       services: service.slug,
       status: 'ACTIVE',
       syllabus: slug,
+      academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
         setProgramMentors(res.data);

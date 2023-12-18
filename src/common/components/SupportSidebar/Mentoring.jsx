@@ -18,7 +18,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, programServices, subscriptions, subscriptionData,
+  width, allCohorts, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -28,6 +28,7 @@ function Mentoring({
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
+  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState([]);
   const { isLoading, user } = useAuth();
   // const toast = useToast();
   const { slug } = router.query;
@@ -40,10 +41,22 @@ function Mentoring({
   const servicesFiltered = programServices.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
-  const suscriptionServicesFiltered = subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0
-    ? subscriptionData?.selected_mentorship_service_set?.mentorship_services?.filter(
-      (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
-    ) : [];
+
+  const filterServices = () => {
+    if (subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0) {
+      return subscriptionData?.selected_mentorship_service_set?.mentorship_services?.filter(
+        (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+      );
+    }
+    if (programServices?.length > 0) {
+      return programServices?.filter(
+        (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+      );
+    }
+
+    return [];
+  };
+  const suscriptionServicesFiltered = filterServices();
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
@@ -94,8 +107,8 @@ function Mentoring({
           const allMentors = res?.data;
           return allMentors;
         }));
-      const mentorsList = await Promise.all(mentors);
-      console.log('mentorsList:::', mentorsList);
+      const mentorsList = (await Promise.all(mentors)).flat();
+      return mentorsList;
     }
 
     return [];
@@ -108,8 +121,6 @@ function Mentoring({
 
     setConsumables(allConsumables);
     setAllMentorsAvailable(mentors);
-    // setServiceMentoring(allConsumables);
-    // setAllMentorsAvailable(mentors);
   };
 
   useEffect(() => {
@@ -118,7 +129,14 @@ function Mentoring({
     }
   }, [programServices]);
 
-  const isAvailableForConsumables = cohortSession?.available_as_saas === true;
+  useEffect(() => {
+    if (allCohorts.length > 0) {
+      setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
+    } else {
+      setIsAvailableForConsumables(cohortSession?.available_as_saas === true);
+    }
+  }, [allCohorts]);
+
   const mentorshipService = consumables?.mentorship_service_sets?.find(
     (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
   );
@@ -136,9 +154,9 @@ function Mentoring({
             consumables,
             mentorshipService,
             setMentoryProps,
-            programServices: subscriptionData?.selected_mentorship_service_set?.mentorship_services,
-            dateFormated,
+            programServices: programServices?.length > 0 ? programServices : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
             servicesFiltered: suscriptionServicesFiltered,
+            dateFormated,
             searchProps,
             setSearchProps,
             setProgramMentors,
@@ -184,11 +202,13 @@ Mentoring.propTypes = {
   width: PropTypes.string,
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  allCohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Mentoring.defaultProps = {
   width: '100%',
   subscriptions: [],
+  allCohorts: [],
 };
 
 export default memo(Mentoring);
