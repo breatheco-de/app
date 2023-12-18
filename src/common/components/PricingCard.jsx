@@ -127,11 +127,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                   <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
                     {item.price_text}
                   </Box>
-                  {/* {item.discount_text && (
+                  {item.discount_text && (
                     <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}
                     </Box>
-                  )} */}
+                  )}
                 </Box>
               ) : (
                 <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">

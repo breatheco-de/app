@@ -1,6 +1,9 @@
 {
   "no-event-found": "No hay eventos disponibles con esta URL 😕",
   "host-label-text": "Anfitrión para este evento",
+  "workshop-asset-ended": "El siguiente proyecto fue realizado durante el workshop",
+  "workshop-asset-upcoming": "Durante el workshop completaremos el siguiente proyecto",
+  "documents": "Preparate para el workshop",
   "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
   "suggest-join-in-person-event": "Este es un evento presencial en vivo, puedes reservar tu lugar aquí",
   "reserv-button-text": "Reservar lugar",
