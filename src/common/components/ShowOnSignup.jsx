@@ -53,7 +53,7 @@ function ShowOnSignUp({
     }
 
     return () => clearInterval(intervalId);
-  }, [timeElapsed, alreadyLogged, existsConsumables]);
+  }, [isAuthenticated, timeElapsed, alreadyLogged, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
