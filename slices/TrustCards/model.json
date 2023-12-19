@@ -1,0 +1,28 @@
+{
+  "id": "trust_cards",
+  "type": "SharedSlice",
+  "name": "TrustCards",
+  "description": "TrustCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "title", "placeholder": "" }
+        }
+      },
+      "items": {
+        "description": {
+          "type": "Text",
+          "config": { "label": "description", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}
