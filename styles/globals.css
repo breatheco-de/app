@@ -506,3 +506,25 @@ featured {
 .video-overlay .video-container {
   transform: scale(1);
 }
+
+.hide-preview .md-editor-toolbar-warp {
+  display: none;
+}
+.hide-preview .md-editor-content-editor {
+  width: 100% !important;
+}
+.hide-preview .cm-gutterElement {
+  user-select: none;
+}
+.hide-preview .md-editor-preview {
+  display: none;
+}
+.react-syntax-highlighter-line-number {
+  padding: 0 16px;
+  text-align: right;
+  display: block;
+  min-width: 4.25em;
+  text-align: right;
+  user-select: none;
+  color: rgb(153, 153, 153);
+}

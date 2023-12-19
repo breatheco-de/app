@@ -1,28 +1,46 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Box, Divider } from '@chakra-ui/react';
+import { Box, Divider, Flex } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import SimpleModal from './SimpleModal';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
-import MarkDownParser from './MarkDownParser';
+import Text from './Text';
+import useStyle from '../hooks/useStyle';
+import Icon from './Icon';
+
+const MarkdownEditor = dynamic(
+  () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
+  { ssr: false },
+);
 
 function ReviewModal({ isOpen, onClose, ...rest }) {
+  const [selectedText, setSelectedText] = useState('');
+  const { hexColor } = useStyle();
   const [repoData, setRepoData] = useState({
     isFetching: true,
   });
 
+  const handleSelectedText = () => {
+    const text = window.getSelection().toString();
+    if (text.length > 0) {
+      setSelectedText(text);
+    }
+  };
+
   const fetchRawRepositroy = async (githubUrl) => {
-    console.log('fetching raw repository');
-    // get the raw file from github
     try {
-      // link must be replace from https://github.com/breatheco-de/app/blob/main/src/common/services/breathecode.js to https://raw.githubusercontent.com/breatheco-de/app/main/src/common/services/breathecode.js
       const pathname = new URL(githubUrl)?.pathname.replace('/blob', '');
       const rawUrl = githubUrl.replace('https://github.com', 'https://raw.githubusercontent.com').replace('/blob', '');
       const response = await fetch(rawUrl);
       const data = await response.text();
+      const extensionLanguage = pathname.split('.').pop();
+      const codeRaw = `\`\`\`${extensionLanguage}\n${data}\n\`\`\``;
+      // const codeRaw = data;
       setRepoData({
-        raw: data,
+        raw: codeRaw,
+        extensionLanguage,
         pathname,
         url: githubUrl,
         error: false,
@@ -37,17 +55,24 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
       });
     }
   };
+
   useEffect(() => {
     if (isOpen) {
-      fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/src/common/services/breathecode.js');
+      // fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/src/common/services/breathecode.js');
+      fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/styles/theme.js');
     }
   }, [isOpen]);
 
-  console.log('repoData.raw:::', repoData.raw);
-  // add triple backticks to the text
-  const code = `\`\`\`jsx\n${repoData.raw}\n\`\`\``;
+  const handleKeyUp = () => {
+    handleSelectedText();
+  };
 
-  // ```jsx mdx:preview
+  useEffect(() => {
+    document.addEventListener('keyup', handleKeyUp);
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   return (
     <SimpleModal
@@ -60,26 +85,50 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
       bodyStyles={{
         display: 'flex',
         gridGap: '20px',
+        padding: '0.5rem 16px',
       }}
       {...rest}
     >
-      <Box flex={0.65} overflow="auto">
+      <Box flex={0.65} overflow="auto" onMouseOver={handleSelectedText}>
         {repoData.isFetching
           ? 'Loading...' : (
-            <MarkDownParser
-              content={code}
-              fontSize="14px"
+            <MarkdownEditor
+              className="hide-preview"
+              value={repoData.raw}
+              style={{ height: '93vh', minWidth: '100%' }}
+              visible={false}
+              enableScroll
+              renderPreview={() => null}
+              hideToolbar
+              toolbars={[]}
             />
           )}
       </Box>
       <Box>
         <Divider orientation="vertical" />
       </Box>
-      <Box flex={0.35}>
+      <Box maxWidth="24.5rem" flex={0.35}>
         <Box padding="9px 8px" borderRadius="8px" overflow="auto">
-          <span>
-            {repoData.pathname}
-          </span>
+          <Text fontSize="14px" mb="8px">
+            Code Review
+          </Text>
+          <Flex gridGap="10px" alignItems="center">
+            <Icon icon="arrowLeft" width="17px" height="11px" color={hexColor.black} />
+            <Flex alignItems="center" gridGap="9px" padding="9px 8px" border="1px solid" borderColor={hexColor.borderColor} borderRadius="8px">
+              <Icon icon="file2" width="14px" height="14px" color={hexColor.black} />
+              <span>
+                {repoData.pathname}
+              </span>
+            </Flex>
+          </Flex>
+
+          <Box fontSize="13px" mt="2rem" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
+            <pre>
+              <code className="language-bash">
+                {selectedText}
+              </code>
+            </pre>
+          </Box>
         </Box>
       </Box>
     </SimpleModal>
