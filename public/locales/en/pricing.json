@@ -16,16 +16,19 @@
     "button": "join for free"
   },
   "faq": [{
-    "label": "What happens if I consume all my mentorships or workshop access?",
-    "answer": "If you have the fly solo plan or the live and with feedback plan, and you consume all your mentorships or workshop access, then you can always buy more for a discounted price for each."
+    "label": "What payment options do we accept?",
+    "answer": "At 4Geeks.com, we currently accept payments via credit and debit cards. We strive to make the subscription process convenient for our users, and as such, we support major credit and debit card providers for seamless transactions."
   }, {
-    "label": "On which technologies can I ask for mentoring sessions?",
-    "answer": "You can always ask for one-on-one mentoring sessions on every course that you have access to. So whether you are doing a JavaScript course or a Python one, you can ask for mentoring sessions."
+    "label": "Do we offer any free trials or demos?",
+    "answer": "At 4Geeks.com, we provide a free basic plan that grants access to all functionalities, allowing you to explore and experience our platform. This plan offers a limited version of our services, giving you the opportunity to test our features and resources firsthand. It's an excellent way to get a feel for our offerings before deciding on a plan that best suits your needs."
   }, {
-    "label": "Are the unlimited mentoring sessions over after I finish the bootcamp?",
-    "answer": "The unlimited access to technical and career mentoring sessions, or unlimited access to workshops, is for life as long as you take part in one of our bootcamps."
+    "label": "Can I cancel my subscription at any time?",
+    "answer": "Certainly! At 4Geeks.com, with our Plan with Feedback, you have the flexibility to cancel your subscription at any time."
   }, {
-    "label": "How does the Job Guarantee work?",
-    "answer": "The Job Guarantee contract, is only for bootcamps, and it consists of returning your money back if you can't find a job after 6 months, some <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>."
+    "label": "What kind of support is available to learners?",
+    "answer": "WYou'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience."
+  }, {
+    "label": "Are the courses self-paced or instructor-led?",
+    "answer": "Our Basic and With Feedback Plans empower learners to engage with courses at their preferred pace, providing a self-paced learning experience with support from experts or AI when needed. However, if you opt for our bootcamp, the learning sessions are instructor-led."
   }]
 }

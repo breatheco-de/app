@@ -13,6 +13,9 @@ const initialState = {
   conversion_url: '', // last URL the user saw before starting the checkout process.
   landing_url: '', // first URL the user saw when coming into the website
   user_agent: '', // front end user agent
+  internal_cta_placement: '',
+  internal_cta_content: '',
+  internal_cta_campaign: '',
 };
 
 export const SessionContext = createContext({
@@ -51,6 +54,9 @@ function SessionProvider({ children }) {
       const utm_source = getQueryString('utm_source') || storedSession?.utm_source;
       const utm_term = getQueryString('utm_term') || storedSession?.utm_term;
       const utm_content = getQueryString('utm_content') || storedSession?.utm_content;
+      const internal_cta_placement = getQueryString('internal_cta_placement') || storedSession?.internal_cta_placement;
+      const internal_cta_content = getQueryString('internal_cta_content') || storedSession?.internal_cta_content;
+      const internal_cta_campaign = getQueryString('internal_cta_campaign') || storedSession?.internal_cta_campaign;
 
       const session = {
         ...storedSession,
@@ -62,6 +68,9 @@ function SessionProvider({ children }) {
         utm_source,
         utm_term,
         utm_content,
+        internal_cta_placement,
+        internal_cta_content,
+        internal_cta_campaign,
       };
       setUserSession(session);
       localStorage.setItem('userSession', JSON.stringify(session));
