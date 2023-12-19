@@ -246,7 +246,7 @@ function LiveEvent({
         color="black"
         textAlign="center"
         borderRadius="17px"
-        mb="1rem"
+        mb="10px"
         fontWeight={700}
       >
         {t('choose-program:sidebar.live-events-title')}
