@@ -112,9 +112,13 @@ function MentoringConsumables({
 
   const mentorshipBalance = mentorshipService?.balance?.unit || mentorshipService?.balance || consumableOfService?.balance?.unit;
   const currentBalance = Number(mentorshipBalance && mentorshipBalance);
-  const existConsumablesOnCurrentService = consumableOfService?.balance
-    ? consumableOfService?.balance?.unit
-    : consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+
+  const calculateExistenceOfConsumable = () => {
+    if (consumableOfService.available_as_saas === false) return true;
+    if (consumableOfService?.balance) return consumableOfService?.balance?.unit > 0;
+    return consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+  };
+  const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -134,7 +138,13 @@ function MentoringConsumables({
       .then((res) => {
         const relatedConsumables = consumables?.mentorship_service_sets?.find((c) => c?.slug === service?.slug);
         setProgramMentors(res.data);
-        setConsumableOfService(relatedConsumables);
+        setConsumableOfService({
+          ...relatedConsumables,
+          balance: {
+            unit: service?.cohort?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+          },
+          available_as_saas: service?.cohort?.available_as_saas,
+        });
         setTimeout(() => {
           setMentoryProps({ ...mentoryProps, service });
           setSavedChanges({ ...savedChanges, service });
@@ -276,8 +286,8 @@ function MentoringConsumables({
                     <Image
                       src={mentoryProps.mentor?.user.profile?.avatar_url}
                       alt={`selected ${mentoryProps.mentor?.user?.first_name} ${mentoryProps.mentor?.user?.last_name}`}
-                      width="40px"
-                      height="40px"
+                      width={40}
+                      height={40}
                       objectFit="cover"
                       style={{ minWidth: '40px', width: '40px !important', height: '40px !important' }}
                       styleImg={{ borderRadius: '50px' }}
@@ -340,8 +350,8 @@ function MentoringConsumables({
                               <Image
                                 src={mentor?.user.profile?.avatar_url}
                                 alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
-                                width="78px"
-                                height="78px"
+                                width={78}
+                                height={78}
                                 objectFit="cover"
                                 style={{ minWidth: '78px', width: '78px !important', height: '78px !important' }}
                                 styleImg={{ borderRadius: '50px' }}

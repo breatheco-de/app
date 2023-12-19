@@ -114,6 +114,7 @@ function chooseProgram() {
               return ({
                 ...service,
                 subscription,
+                cohort: cohort?.cohort,
               });
             });
           }
