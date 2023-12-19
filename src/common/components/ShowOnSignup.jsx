@@ -49,12 +49,11 @@ function ShowOnSignUp({
       }, 1000);
     }
     if (isLogged && ((!existsConsumables && typeof intervalId === 'undefined') || timeElapsed >= 10)) {
-      console.log('executed!!!');
       setNoConsumablesFound(true);
     }
 
     return () => clearInterval(intervalId);
-  }, [timeElapsed, alreadyLogged, existsConsumables]);
+  }, [isAuthenticated, timeElapsed, alreadyLogged, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
