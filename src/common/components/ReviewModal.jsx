@@ -87,9 +87,13 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
         gridGap: '20px',
         padding: '0.5rem 16px',
       }}
+      headerStyles={{
+        userSelect: 'none',
+      }}
+      onMouseUp={handleSelectedText}
       {...rest}
     >
-      <Box flex={0.65} overflow="auto" onMouseOver={handleSelectedText}>
+      <Box flex={0.65} overflow="auto">
         {repoData.isFetching
           ? 'Loading...' : (
             <MarkdownEditor
@@ -108,11 +112,11 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
         <Divider orientation="vertical" />
       </Box>
       <Box maxWidth="24.5rem" flex={0.35}>
-        <Box padding="9px 8px" borderRadius="8px" overflow="auto">
-          <Text fontSize="14px" mb="8px">
+        <Box padding="9px 0" borderRadius="8px" overflow="auto">
+          <Text fontSize="14px" mb="8px" userSelect="none">
             Code Review
           </Text>
-          <Flex gridGap="10px" alignItems="center">
+          <Flex gridGap="10px" alignItems="center" userSelect="none">
             <Icon icon="arrowLeft" width="17px" height="11px" color={hexColor.black} />
             <Flex alignItems="center" gridGap="9px" padding="9px 8px" border="1px solid" borderColor={hexColor.borderColor} borderRadius="8px">
               <Icon icon="file2" width="14px" height="14px" color={hexColor.black} />
@@ -122,13 +126,15 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
             </Flex>
           </Flex>
 
-          <Box fontSize="13px" mt="2rem" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
-            <pre>
-              <code className="language-bash">
-                {selectedText}
-              </code>
-            </pre>
-          </Box>
+          {selectedText.length > 0 && (
+            <Box fontSize="13px" color="#fff" userSelect="none" mt="2rem" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
+              <pre>
+                <code className="language-bash">
+                  {selectedText}
+                </code>
+              </pre>
+            </Box>
+          )}
         </Box>
       </Box>
     </SimpleModal>
