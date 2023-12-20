@@ -66,7 +66,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { user, choose } = useAuth();
+  const { isAuthenticated, user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -104,12 +104,12 @@ function chooseProgram() {
   };
 
   const getServices = async (cohorts = []) => {
-    if (cohorts?.length) {
+    const allSubscriptions = [...(subscriptionData?.subscriptions || []), ...(subscriptionData?.plan_financings || [])];
+    if (cohorts?.length > 0) {
       const mentorshipPromises = cohorts.map((cohort) => bc.mentorship({ academy: cohort?.cohort?.academy?.id }, true).getService()
         .then(({ data }) => {
           if (data !== undefined && data.length > 0) {
             return data.map((service) => {
-              const allSubscriptions = [...(subscriptionData?.subscriptions || []), ...(subscriptionData?.plan_financings || [])];
               const subscription = allSubscriptions?.find((sub) => sub?.selected_mentorship_service_set?.slug === service?.slug) || {};
               return ({
                 ...service,
@@ -131,10 +131,32 @@ function chooseProgram() {
         isLoading: false,
         data: recopilatedServices,
       });
-    } else {
+    }
+
+    if (isAuthenticated && user?.roles?.length > 0) {
+      const mentorshipPromises = await bc.mentorship({ academy: user?.roles?.[0]?.academy.id }, true).getService()
+        .then(({ data }) => {
+          if (data !== undefined && data.length > 0) {
+            return data.map((service) => {
+              const subscription = allSubscriptions?.find((sub) => sub?.selected_mentorship_service_set?.slug === service?.slug) || {};
+              return ({
+                ...service,
+                subscription,
+                cohort: {
+                  academy: {
+                    id: user?.roles?.[0]?.academy.id,
+                  },
+                },
+              });
+            });
+          }
+          return [];
+        });
+      const mentorshipResults = await Promise.all(mentorshipPromises);
+      const recopilatedServices = mentorshipResults.flat();
       setMentorshipServices({
         isLoading: false,
-        data: [],
+        data: recopilatedServices,
       });
     }
   };
@@ -185,7 +207,7 @@ function chooseProgram() {
     }, 2000);
 
     return () => clearTimeout(revalidate);
-  }, [dataQuery?.cohorts]);
+  }, [isAuthenticated, dataQuery?.cohorts]);
 
   useEffect(() => {
     setSubscriptionLoading(true);
@@ -232,8 +254,6 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
-  // console.log('cohorts', dataQuery?.cohorts);
-  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
