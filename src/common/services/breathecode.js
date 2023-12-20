@@ -258,7 +258,7 @@ const breathecode = {
     const qs = parseQuerys(query, connector);
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE${qs}`),
-      getServiceSet: (mentorshipServiceSetId) => axios.get(`${url}/payments/mentorshipserviceset/${mentorshipServiceSetId}`),
+      getServiceSet: (mentorshipServiceSetId) => axios.get(`${host}/payments/mentorshipserviceset/${mentorshipServiceSetId}`),
       getMentor: () => axios.get(`${url}/mentor${qs}`),
       getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session${qs}`),
     };

@@ -133,7 +133,7 @@ function chooseProgram() {
       });
     }
 
-    if (isAuthenticated && user?.roles?.length > 0) {
+    if (cohorts?.length === 0 && isAuthenticated && user?.roles?.length > 0) {
       const mentorshipPromises = await bc.mentorship({ academy: user?.roles?.[0]?.academy.id }, true).getService()
         .then(({ data }) => {
           if (data !== undefined && data.length > 0) {
@@ -165,7 +165,6 @@ function chooseProgram() {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
-    getServices(cohorts);
 
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
@@ -177,6 +176,7 @@ function chooseProgram() {
       return false;
     });
     if (cohorts?.length > 0) {
+      getServices(cohorts);
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');

@@ -136,7 +136,7 @@ function MentoringConsumables({
       academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
-        const relatedConsumables = consumables?.mentorship_service_sets?.find((c) => c?.slug === service?.slug);
+        const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
         setProgramMentors(res.data);
         setConsumableOfService({
           ...relatedConsumables,
