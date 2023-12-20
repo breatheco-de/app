@@ -269,8 +269,6 @@ function Assignments() {
     })
       .getStudentsWithTasks(slug, academyId)
       .then((res) => {
-        console.log('res');
-        console.log(res);
         const students = appendMore ? [...currentStudentList, ...res.data.results] : res?.data?.results;
         setCurrentStudentList(students);
         setCurrentStudentCount(res?.data?.count);
