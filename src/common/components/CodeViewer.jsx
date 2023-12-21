@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import {
   Button,
@@ -7,6 +8,7 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import Editor from '@monaco-editor/react';
 import { setStorageItem } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
@@ -22,6 +24,8 @@ function CodeViewer({ languages }) {
   const { isAuthenticated } = useAuth();
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [codeValue, setCodeValue] = useState('console.log(1)');
+  const [outPut, setOutPut] = useState(null);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const run = () => {
@@ -30,6 +34,18 @@ function CodeViewer({ languages }) {
     } else {
       setShowModal(true);
     }
+  };
+
+  const handleEditorDidMount = (editor, monaco) => {
+    monaco.editor.defineTheme('my-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00041A',
+      },
+    });
+    monaco.editor.setTheme('my-theme');
   };
 
   return (
@@ -52,10 +68,25 @@ function CodeViewer({ languages }) {
           bg="blue.500"
           borderRadius="1px"
         />
-
         <TabPanels>
           {languages.map(({ code }) => (
-            <TabPanel>{code}</TabPanel>
+            <TabPanel height="290px" overflow="hidden" padding="0" borderRadius="0 0 4px 4px">
+              <Editor
+                theme="my-theme"
+                value={codeValue}
+                onChange={(value) => setCodeValue(value)}
+                defaultLanguage="javascript"
+                height="300px"
+                options={{
+                  borderRadius: '4px',
+                  minimap: {
+                    enabled: false,
+                  },
+                  cursorStyle: 'line',
+                }}
+                onMount={handleEditorDidMount}
+              />
+            </TabPanel>
           ))}
         </TabPanels>
       </Tabs>
