@@ -1,7 +1,7 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile', 'login', 'signup'],
+    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile', 'login', 'signup', 'code-viewer'],
     '/': ['home', 'social'],
     '/login': ['login', 'signup'],
     '/example': ['counter'],
