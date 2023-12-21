@@ -243,6 +243,7 @@ const breathecode = {
     const url = `${host}/assignment`;
     return {
       get: () => axios.get(`${url}/user/me/task`),
+      files: (taskId) => axios.get(`${url}/me/task/${taskId}/commitfile`),
     };
   },
   feedback: () => {

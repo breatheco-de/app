@@ -513,9 +513,6 @@ featured {
 .hide-preview .md-editor-content-editor {
   width: 100% !important;
 }
-.hide-preview .cm-gutterElement {
-  user-select: none;
-}
 .hide-preview .md-editor-preview {
   display: none;
 }
