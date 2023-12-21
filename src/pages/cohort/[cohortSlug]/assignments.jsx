@@ -289,6 +289,8 @@ function Assignments() {
     if (selectedCohort) {
       loadStudents();
       getFilterAssignments(selectedCohort.value, selectedCohort.academy || academy);
+    } else {
+      setLoadStatus({ loading: false, status: 'idle' });
     }
   }, [
     selectedCohort,
