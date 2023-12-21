@@ -141,9 +141,9 @@ function MentoringConsumables({
         setConsumableOfService({
           ...relatedConsumables,
           balance: {
-            unit: service?.cohort?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+            unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
           },
-          available_as_saas: service?.cohort?.available_as_saas,
+          available_as_saas: service?.academy?.available_as_saas,
         });
         setTimeout(() => {
           setMentoryProps({ ...mentoryProps, service });

@@ -28,7 +28,7 @@ function Mentoring({
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
-  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState([]);
+  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
   const { isLoading, user } = useAuth();
   // const toast = useToast();
   const { slug } = router.query;
@@ -136,12 +136,15 @@ function Mentoring({
   }, [programServices]);
 
   useEffect(() => {
-    if (allCohorts?.length === 0) {
-      setIsAvailableForConsumables(true);
-    } else if (allCohorts.length > 0) {
-      setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
-    } else {
-      setIsAvailableForConsumables(cohortSession?.available_as_saas === true);
+    const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
+
+    if (existsCohortSession) {
+      setIsAvailableForConsumables(cohortSession?.available_as_saas);
+    }
+    if (!existsCohortSession) {
+      if (allCohorts.length > 0) {
+        setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
+      }
     }
   }, [allCohorts]);
 
