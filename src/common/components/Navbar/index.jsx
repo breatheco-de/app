@@ -1,7 +1,7 @@
 import {
   Box, Flex, IconButton, Avatar, Stack, Collapse, useColorModeValue,
   useDisclosure, useColorMode, Popover, PopoverTrigger,
-  PopoverContent, PopoverArrow, Button, Link,
+  PopoverContent, PopoverArrow, Button, Link, Divider,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import {
@@ -30,6 +30,9 @@ import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
+import UpgradeExperience from '../UpgradeExperience';
+import { getAllMySubscriptions } from '../../handlers/subscriptions';
+import bc from '../../services/breathecode';
 // import UpgradeExperience from '../UpgradeExperience';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -43,13 +46,14 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const [mktCourses, setMktCourses] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
 
   const { t } = useTranslation('navbar');
   const router = useRouter();
   const { isOpen, onToggle } = useDisclosure();
   const { toggleColorMode } = useColorMode();
   const fontColor = useColorModeValue('black', 'gray.200');
-  const { colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
+  const { hexColor, colorMode, reverseColorMode, borderColor, lightColor, navbarBackground } = useStyle();
 
   const disableLangSwitcher = pageProps?.disableLangSwitcher || false;
   const langs = ['en', 'es'];
@@ -65,13 +69,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
   });
-
-  useEffect(() => {
-    // verify if accessToken exists
-    if (!isLoading && isAuthenticated) {
-      setHaveSession(true);
-    }
-  }, [isLoading]);
 
   const {
     languagesTR,
@@ -110,6 +107,23 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     )}`,
   };
 
+  const verifyIfHasPaidSubscription = async () => {
+    const respCohorts = await bc.admissions().me();
+    const subscriptions = await getAllMySubscriptions();
+
+    const existsCohortWithoutAvailableAsSaas = respCohorts.data?.cohorts?.length > 0 && respCohorts.data.cohorts.some((c) => c?.cohort?.available_as_saas === false);
+    const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
+    setHasPaidSubscription(existsCohortWithoutAvailableAsSaas || existsPaidSubscription);
+  };
+
+  useEffect(() => {
+    // verify if accessToken exists
+    if (!isLoading && isAuthenticated) {
+      setHaveSession(true);
+      verifyIfHasPaidSubscription();
+    }
+  }, [isLoading]);
+
   useEffect(() => {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
@@ -124,7 +138,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           subMenu: [
             {
               href: `/${item?.slug}`,
-              label: t('start-coding'),
+              label: t('course-details'),
             },
           ],
         }));
@@ -269,42 +283,49 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           </Flex>
         </Flex>
 
-        <Stack justify="flex-end" direction="row" gridGap="5px">
-          {/* {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && (
-            <Box display={{ base: 'none', md: 'block' }}>
-              <UpgradeExperience data={marketingCourses} />
-            </Box>
-          )} */}
-
-          {disableLangSwitcher !== true && (
-            <LanguageSelector display={{ base: 'none ', md: 'block' }} translations={translations} />
+        <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
+          <Flex gridGap="18px">
+            {disableLangSwitcher !== true && (
+              <LanguageSelector display={{ base: 'none ', lg: 'block' }} translations={translations} minWidth="unset" />
+            )}
+            <IconButton
+              style={{
+                margin: 0,
+                minWidth: 'unset',
+              }}
+              display={{ base: 'none', lg: 'flex' }}
+              height="auto"
+              _hover={{
+                background: navbarBackground,
+              }}
+              _active={{
+                background: navbarBackground,
+              }}
+              aria-label={`Toggle ${reverseColorMode} mode`}
+              background={navbarBackground}
+              onClick={() => {
+                toggleColorMode();
+              }}
+              icon={
+                colorMode === 'light' ? (
+                  <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
+                ) : (
+                  <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
+                )
+              }
+            />
+          </Flex>
+          <Box display={{ base: 'none', lg: 'inherit' }} height="35px" style={{ margin: 0 }}>
+            <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
+          </Box>
+          {isAuthenticated && !hasPaidSubscription && (
+            <UpgradeExperience display={{ base: 'none', sm: 'flex' }} />
           )}
-          <IconButton
-            style={{
-              margin: 0,
-            }}
-            display={{ base: 'none', lg: 'flex' }}
-            height="auto"
-            _hover={{
-              background: navbarBackground,
-            }}
-            _active={{
-              background: navbarBackground,
-            }}
-            aria-label={`Toggle ${reverseColorMode} mode`}
-            background={navbarBackground}
-            onClick={() => {
-              toggleColorMode();
-            }}
-            icon={
-              colorMode === 'light' ? (
-                <Icon icon="light" id="light-button-desktop" width="25px" height="23px" color="black" />
-              ) : (
-                <Icon icon="dark" id="dark-button-desktop" width="20px" height="20px" />
-              )
-            }
-          />
-
+          {hasPaidSubscription && (
+            <Box display="flex" alignItems="center" height="100%" zIndex={10}>
+              <Icon icon="crown" width="20px" height="26px" color="" />
+            </Box>
+          )}
           {sessionExists ? (
             <Popover
               id="Avatar-Hover"
@@ -325,6 +346,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                   borderRadius="30px"
                   onClick={() => setSettingsOpen(!settingsOpen)}
                   title="Profile"
+                  position="relative"
+                  style={{ margin: 0 }}
                 >
                   <Avatar
                     width="30px"
@@ -496,12 +519,13 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               </PopoverContent>
             </Popover>
           ) : (
-            <Box display="flex" gridGap="0px" alignItems="center">
+            <Box display="flex" gridGap="24px" style={{ margin: 0 }} alignItems="center">
               <NextChakraLink
+                display={{ base: 'none', md: 'block' }}
                 href="/login"
                 fontWeight="700"
                 fontSize="13px"
-                padding="12px 24px"
+                padding="12px 0"
                 lineHeight="22px"
                 _hover={{
                   textDecoration: 'none',
@@ -525,6 +549,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           haveSession={sessionExists}
           translations={translations}
           onClickLink={onToggle}
+          isAuthenticated={isAuthenticated}
+          hasPaidSubscription={hasPaidSubscription}
         />
 
       </Collapse>

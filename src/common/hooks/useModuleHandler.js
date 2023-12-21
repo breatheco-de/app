@@ -60,6 +60,7 @@ export const updateAssignment = ({
       task_status: taskStatus || toggleStatus,
       github_url: projectUrl,
       revision_status: 'PENDING',
+      delivered_at: new Date(),
     };
 
     bc.todo({}).update(taskToUpdate).then(({ data }) => {

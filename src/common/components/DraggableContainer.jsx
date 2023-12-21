@@ -38,6 +38,7 @@ function DraggableContainer({ children, ...rest }) {
   return (
     <Container
       ref={ref}
+      padding="0"
       cursor="grab"
       maxW="container.xl"
       width="100%"

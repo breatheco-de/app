@@ -238,20 +238,20 @@ function LiveEvent({
     };
   }, [mainClasses, otherEvents]);
 
-  return (mainClasses?.length > 0 || otherEvents?.length > 0) && (
+  return (
     <Box>
-      {/* <Box
+      <Box
         background="yellow.light"
         padding="6px 8px"
         color="black"
         textAlign="center"
         borderRadius="17px"
-        mb="1rem"
+        mb="10px"
         fontWeight={700}
       >
         {t('choose-program:sidebar.live-events-title')}
 
-        <Popover
+        {/* <Popover
           isOpen={openFilter}
           onOpen={() => setOpenFilter(true)}
           onClose={() => setOpenFilter(false)}
@@ -297,8 +297,8 @@ function LiveEvent({
               </Button>
             </Flex>
           </PopoverContent>
-        </Popover>
-      </Box> */}
+        </Popover> */}
+      </Box>
 
       <Box
         padding="10px"

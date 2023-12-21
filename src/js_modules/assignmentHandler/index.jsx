@@ -149,7 +149,8 @@ export function DetailsModal({
                       isClosable: true,
                     });
                   })
-                  .catch(() => {
+                  .catch((e) => {
+                    console.log(e);
                     toast({
                       position: 'top',
                       title: t('alert-message:review-assignment-error'),
@@ -308,7 +309,8 @@ export function DeliverModal({
                     setOpenIgnoreTask(false);
                     onClose();
                   })
-                  .catch(() => {
+                  .catch((e) => {
+                    console.log(e);
                     toast({
                       position: 'top',
                       title: t('alert-message:review-assignment-error'),
@@ -368,7 +370,8 @@ function DeliverHandler({
               onOpen();
               setIsLoading(false);
             })
-            .catch(() => {
+            .catch((e) => {
+              console.log(e);
               toast({
                 position: 'top',
                 title: t('alert-message:review-url-error'),
@@ -486,7 +489,8 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
                 });
                 onClose();
               })
-              .catch(() => {
+              .catch((e) => {
+                console.log(e);
                 toast({
                   position: 'top',
                   title: t('alert-message:review-assignment-error'),
@@ -694,7 +698,8 @@ function ButtonHandler({
                     isClosable: true,
                   });
                 })
-                .catch(() => {
+                .catch((e) => {
+                  console.log(e);
                   toast({
                     position: 'top',
                     title: t('alert-message:review-assignment-error'),

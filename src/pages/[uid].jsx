@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
-import { cleanObject } from '../utils';
+import { cleanObject, isDevMode } from '../utils';
 import { ORIGIN_HOST } from '../utils/variables';
 
 const usedPageId = ['home'];
@@ -76,7 +76,7 @@ export async function getStaticProps({ params, locale, previewData }) {
   const isCurrenLang = page?.lang?.split('-')?.[0] === locale;
   const alreadyUsedPageId = usedPageId.includes(page.uid);
 
-  if (!page || !isCurrenLang || alreadyUsedPageId) {
+  if (isDevMode === false && (!page || !isCurrenLang || alreadyUsedPageId)) {
     return {
       notFound: true,
     };

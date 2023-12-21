@@ -5,11 +5,10 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
-import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
-import bc from '../../common/services/breathecode';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
+import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
@@ -18,7 +17,6 @@ import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
-import packageJson from '../../../package.json';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
@@ -28,6 +26,7 @@ import { PREPARING_FOR_COHORT } from '../../common/store/types';
 import SimpleModal from '../../common/components/SimpleModal';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
+import SupportSidebar from '../../common/components/SupportSidebar';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -60,13 +59,16 @@ function chooseProgram() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
+  const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
-  const { isLoading: userLoading, user, choose } = useAuth();
+  const [mentorshipServices, setMentorshipServices] = useState({
+    isLoading: true,
+    data: [],
+  });
+  const { user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
-  const ldClient = useLDClient();
-  const flags = useFlags();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
@@ -101,10 +103,48 @@ function chooseProgram() {
     return members;
   };
 
+  const getServices = async (cohorts = []) => {
+    if (cohorts?.length) {
+      const mentorshipPromises = cohorts.map((cohort) => bc.mentorship({ academy: cohort?.cohort?.academy?.id }, true).getService()
+        .then(({ data }) => {
+          if (data !== undefined && data.length > 0) {
+            return data.map((service) => {
+              const allSubscriptions = [...(subscriptionData?.subscriptions || []), ...(subscriptionData?.plan_financings || [])];
+              const subscription = allSubscriptions?.find((sub) => sub?.selected_mentorship_service_set?.slug === service?.slug) || {};
+              return ({
+                ...service,
+                subscription,
+                cohort: cohort?.cohort,
+              });
+            });
+          }
+          return [];
+        })
+        .catch((error) => {
+          console.error('error_getting_mentorship_services', error);
+          return [];
+        }));
+      const mentorshipResults = await Promise.all(mentorshipPromises);
+      const recopilatedServices = mentorshipResults.flat();
+
+      setMentorshipServices({
+        isLoading: false,
+        data: recopilatedServices,
+      });
+    } else {
+      setMentorshipServices({
+        isLoading: false,
+        data: [],
+      });
+    }
+  };
+
   useEffect(() => {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
+    getServices(cohorts);
+
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -114,10 +154,12 @@ function chooseProgram() {
 
       return false;
     });
-    if (cohorts) {
-      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas);
+    if (cohorts?.length > 0) {
+      const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+
+      setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
           available_as_saas: hasAvailableAsSaas,
@@ -277,22 +319,6 @@ function chooseProgram() {
         bc_id: userID,
       });
     }
-    if (user?.id && !userLoading) {
-      ldClient?.identify({
-        kind: 'user',
-        key: user?.id,
-        firstName: user?.first_name,
-        lastName: user?.last_name,
-        name: `${user?.first_name} ${user?.last_name}`,
-        email: user?.email,
-        id: user?.id,
-        language: router?.locale,
-        screenWidth: window?.screen?.width,
-        screenHeight: window?.screen?.height,
-        device: navigator?.userAgent,
-        version: packageJson.version,
-      });
-    }
   }, [userID]);
 
   useEffect(() => {
@@ -337,25 +363,6 @@ function chooseProgram() {
 
   const handleChoose = (cohort) => {
     choose(cohort);
-    ldClient?.identify({
-      kind: 'user',
-      key: user?.id,
-      firstName: user?.first_name,
-      lastName: user?.last_name,
-      name: `${user?.first_name} ${user?.last_name}`,
-      email: user?.email,
-      id: user?.id,
-      language: router?.locale,
-      screenWidth: window?.screen?.width,
-      screenHeight: window?.screen?.height,
-      device: navigator?.userAgent,
-      version: packageJson.version,
-      cohort: cohort?.cohort_name,
-      cohortSlug: cohort?.cohort_slug,
-      cohortId: cohort?.id,
-      cohortStage: cohort?.stage,
-      academy: cohort?.academy_id,
-    });
   };
 
   return (
@@ -385,7 +392,7 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+      <Flex minHeight="81lvh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
@@ -465,13 +472,6 @@ function chooseProgram() {
                   />
                 );
               })}
-
-              {!isLoading && dataQuery?.cohorts > 0 && (
-                <NextChakraLink variant="buttonDefault" href="https://4geeksacademy.slack.com/" target="blank" rel="noopener noreferrer" display="flex" gridGap="10px" width="fit-content" padding="0.5rem 6px 0.5rem 8px">
-                  {t('join-our-community')}
-                  <Icon icon="slack" width="20px" height="20px" color="currentColor" />
-                </NextChakraLink>
-              )}
             </Box>
           </Flex>
 
@@ -527,28 +527,51 @@ function chooseProgram() {
             </Box>
           )}
         </Box>
-        <Box flex={{ base: 1, md: 0.3 }}>
-          <Box flex={1} zIndex={10}>
-            {flags?.appReleaseEnableLiveEvents && (
-              <LiveEvent
-                featureLabel={t('common:live-event.title')}
-                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                otherEvents={events}
-                margin="0 auto"
+        <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
+          <Box zIndex={10}>
+            <LiveEvent
+              featureLabel={t('common:live-event.title')}
+              featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+              mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+              otherEvents={events}
+              margin="0 auto"
+            />
+          </Box>
+          <Box zIndex={10}>
+            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+              <SupportSidebar
+                allCohorts={dataQuery?.cohorts}
+                services={mentorshipServices.data}
+                subscriptions={allSubscriptions}
               />
             )}
           </Box>
-          <Box display="flex" alignItems="center" gridGap="30px" padding="1.2rem" mt="2rem" borderRadius="17px" border="1px solid" borderColor={hexColor.borderColor}>
-            <Icon icon="slack" width="20px" height="20px" />
-            <Text size="15px" fontWeight={700}>
-              {t('sidebar.join-our-community')}
-            </Text>
-            <NextChakraLink href="https://4geeksacademy.slack.com/" aria-label="4Geeks Academy community" target="blank" rel="noopener noreferrer">
+
+          {dataQuery?.cohorts?.length > 0 && (
+            <NextChakraLink
+              href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
+              aria-label="4Geeks Academy community"
+              target="blank"
+              rel="noopener noreferrer"
+              display="flex"
+              alignItems="center"
+              gridGap="30px"
+              padding="1.2rem"
+              borderRadius="17px"
+              border="1px solid"
+              justifyContent="space-between"
+              borderColor={hexColor.borderColor}
+            >
+              <Flex gridGap="30px">
+                <Icon icon="slack" width="20px" height="20px" />
+                <Text size="15px" fontWeight={700}>
+                  {t('sidebar.join-our-community')}
+                </Text>
+              </Flex>
               <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
             </NextChakraLink>
-          </Box>
-        </Box>
+          )}
+        </Flex>
       </Flex>
     </Flex>
   );

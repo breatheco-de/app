@@ -230,7 +230,7 @@ const breathecode = {
           academy: academyId,
         },
       }),
-      getMeActivity: () => axios.get(`${url}/me/activity`),
+      getMeActivity: () => axios.get(`${url}/me/activity${qs}`),
       getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
         headers: academyId && {
           academy: academyId,
@@ -252,12 +252,12 @@ const breathecode = {
       sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
     };
   },
-  mentorship: (query = {}) => {
+  mentorship: (query = {}, connector = false) => {
     const url = `${host}/mentorship/academy`;
     const urlNoAcademy = `${host}/mentorship`;
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, connector);
     return {
-      getService: () => axios.get(`${url}/service?status=ACTIVE`),
+      getService: () => axios.get(`${url}/service?status=ACTIVE${qs}`),
       getMentor: () => axios.get(`${url}/mentor${qs}`),
       getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session${qs}`),
     };

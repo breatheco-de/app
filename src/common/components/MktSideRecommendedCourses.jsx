@@ -138,7 +138,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                       },
                     });
                   }}
-                  href={link}
+                  href={`${link}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${course?.slug}&internal_cta_campaign=null`}
                   alignItems="center"
                   display="flex"
                   colorScheme={{ base: 'default', md: 'success' }}

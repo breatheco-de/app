@@ -1,6 +1,9 @@
 {
   "no-event-found": "No event available with this URL 😕",
   "host-label-text": "Host for this event",
+  "workshop-asset-ended": "The following project was built during this workshop",
+  "workshop-asset-upcoming": "During this workshop we will be building the following project",
+  "documents": "Prepare yourself for this workshop",
   "suggest-join-event": "Click below to confirm your participation and save your spot for this event",
   "suggest-join-in-person-event": "This is a live in-person event, you can reserve your spot here",
   "reserv-button-text": "Reserve your spot",

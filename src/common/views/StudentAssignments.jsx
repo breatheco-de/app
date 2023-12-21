@@ -83,8 +83,8 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
         const fullname = `${student.user.first_name} ${student.user.last_name}`;
         const percentage = Math.round((student.tasks.reduce((acum, val) => (val.task_status !== 'PENDING' && val.task_type === 'PROJECT' ? acum + 1 : acum), 0) / syllabusData.assignments.length) * 100);
         const lastDeliver = student.tasks.reduce((date, val) => {
-          if (date) return date > val ? date : val.updated_at;
-          if (val.updated_at && val.task_status !== 'PENDING' && val.task_type === 'PROJECT') return val.updated_at;
+          if (date) return date > val.delivered_at ? date : val.delivered_at;
+          if (val.delivered_at && val.task_type === 'PROJECT') return val.delivered_at;
           return null;
         }, null);
         const dots = syllabusData.assignments.map((elem) => {
@@ -116,8 +116,14 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
                     <p>
                       <NextChakraLink textDecoration="underline" href={`/cohort/${cohortSlug}/student/${student.user.id}?academy=${academy}`}>{fullname}</NextChakraLink>
                     </p>
-                    <small>{`${percentage}${t('delivered-percentage')} - `}</small>
-                    <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small>
+                    <small>{`${percentage}${t('delivered-percentage')}`}</small>
+                    {/* <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small> */}
+                    {lastDeliver && (
+                      <small>
+                        {' - '}
+                        {t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) })}
+                      </small>
+                    )}
                   </Box>
                 </Flex>
                       )}

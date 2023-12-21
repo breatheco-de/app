@@ -156,7 +156,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
-    LD_CLIENT_ID: process.env.LD_CLIENT_ID,
     PRISMIC_REF: process.env.PRISMIC_REF,
     PRISMIC_API: process.env.PRISMIC_API,
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
