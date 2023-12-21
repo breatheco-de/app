@@ -60,7 +60,7 @@ export default function Example() {
   return (
     <main className={styles.main}>
       <Box width="600px" className="container">
-        <CodeViewer languages={[{ label: 'JS', code: 'console.log(1)' }, { label: 'Python', code: 'print(1)' }]} />
+        <CodeViewer languagesData={[{ label: 'JS', language: 'javascript', code: 'console.log(1)' }, { label: 'Python', language: 'python', code: 'print(1)' }]} marginBottom="10px" />
       </Box>
       <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
         Open modal
