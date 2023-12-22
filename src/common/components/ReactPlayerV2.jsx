@@ -43,7 +43,7 @@ function ReactPlayerV2({
     getThumbnail();
   }, []);
 
-  return (
+  return videoUrl?.length > 0 && (
     <>
       {withModal && !isExternalVideoProvider ? (
         <>
