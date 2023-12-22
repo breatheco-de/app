@@ -16,7 +16,7 @@
       "id": "courses",
       "label": "Courses",
       "icon": "graduationCap",
-      "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
+      "description": "Explora nuestra extensa colección de cursos diseñados para ayudarte a dominar varios temas y habilidades. Ya seas un principiante o un aprendiz avanzado, aquí hay algo para todos.",
       "asPath": "/courses",
       "subMenu": [],
       "position": 1
