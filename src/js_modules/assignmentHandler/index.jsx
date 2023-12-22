@@ -1,18 +1,19 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, Textarea, useToast, useColorModeValue, useDisclosure,
+  Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 // import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import {
-  memo, useEffect, useState, useRef, Fragment,
+  memo, useEffect, useState, useRef,
 } from 'react';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
+import ReviewModalComponent from '../../common/components/ReviewModal';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
@@ -428,189 +429,92 @@ export function NoInfoModal({ isOpen, onClose }) {
   );
 }
 
-export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly }) {
-  const { t } = useTranslation('assignments');
-  const { hexColor } = useStyle();
-  const toast = useToast();
-  const [comment, setComment] = useState('');
-  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
-  const fontColor = useColorModeValue('gra.dark', 'gray.250');
+// eslint-disable-next-line no-unused-vars
+export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) {
+  // const { t } = useTranslation('assignments');
+  // const toast = useToast();
+  // const [comment, setComment] = useState('');
 
-  function ReviewButton({ type }) {
-    const statusColor = {
-      approve: 'success',
-      reject: 'error',
-    };
-    const buttonColor = {
-      approve: 'success',
-      reject: 'danger',
-    };
-    const buttonText = {
-      approve: t('review-assignment.approve'),
-      reject: t('review-assignment.reject'),
-    };
-    const revisionStatus = {
-      approve: 'APPROVED',
-      reject: 'REJECTED',
-    };
-    const alertStatus = {
-      approve: t('alert-message:review-assignment-approve'),
-      reject: t('alert-message:review-assignment-reject'),
-    };
-    return (
-      <Button
-        background={buttonColor[type]}
-        _hover={{ background: buttonColor[type] }}
-        onClick={() => {
-          if (revisionStatus[type] !== undefined) {
-            bc.todo()
-              .update({
-                id: currentTask.id,
-                revision_status: revisionStatus[type],
-                description: comment,
-              })
-              .then(() => {
-                toast({
-                  position: 'top',
-                  title: alertStatus[type],
-                  status: statusColor[type],
-                  duration: 5000,
-                  isClosable: true,
-                });
-                updpateAssignment({
-                  ...currentTask,
-                  id: currentTask.id,
-                  revision_status: revisionStatus[type],
-                  description: comment,
-                });
-                onClose();
-              })
-              .catch(() => {
-                toast({
-                  position: 'top',
-                  title: t('alert-message:review-assignment-error'),
-                  status: 'error',
-                  duration: 5000,
-                  isClosable: true,
-                });
-              });
-          }
-        }}
-        color="white"
-        fontSize="13px"
-        textTransform="uppercase"
-      >
-        {buttonText[type]}
-      </Button>
-    );
-  }
+  // function ReviewButton({ type }) {
+  //   const statusColor = {
+  //     approve: 'success',
+  //     reject: 'error',
+  //   };
+  //   const buttonColor = {
+  //     approve: 'success',
+  //     reject: 'danger',
+  //   };
+  //   const buttonText = {
+  //     approve: t('review-assignment.approve'),
+  //     reject: t('review-assignment.reject'),
+  //   };
+  //   const revisionStatus = {
+  //     approve: 'APPROVED',
+  //     reject: 'REJECTED',
+  //   };
+  //   const alertStatus = {
+  //     approve: t('alert-message:review-assignment-approve'),
+  //     reject: t('alert-message:review-assignment-reject'),
+  //   };
+  //   return (
+  //     <Button
+  //       background={buttonColor[type]}
+  //       _hover={{ background: buttonColor[type] }}
+  //       onClick={() => {
+  //         if (revisionStatus[type] !== undefined) {
+  //           bc.todo()
+  //             .update({
+  //               id: currentTask.id,
+  //               revision_status: revisionStatus[type],
+  //               description: comment,
+  //             })
+  //             .then(() => {
+  //               toast({
+  //                 position: 'top',
+  //                 title: alertStatus[type],
+  //                 status: statusColor[type],
+  //                 duration: 5000,
+  //                 isClosable: true,
+  //               });
+  //               updpateAssignment({
+  //                 ...currentTask,
+  //                 id: currentTask.id,
+  //                 revision_status: revisionStatus[type],
+  //                 description: comment,
+  //               });
+  //               onClose();
+  //             })
+  //             .catch(() => {
+  //               toast({
+  //                 position: 'top',
+  //                 title: t('alert-message:review-assignment-error'),
+  //                 status: 'error',
+  //                 duration: 5000,
+  //                 isClosable: true,
+  //               });
+  //             });
+  //         }
+  //       }}
+  //       color="white"
+  //       fontSize="13px"
+  //       textTransform="uppercase"
+  //     >
+  //       {buttonText[type]}
+  //     </Button>
+  //   );
+  // }
 
-  ReviewButton.propTypes = {
-    type: PropTypes.string.isRequired,
-  };
+  // ReviewButton.propTypes = {
+  //   type: PropTypes.string.isRequired,
+  // };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="lg">
-      <ModalOverlay />
-      <ModalContent borderRadius="17px" marginTop="10%">
-        <ModalHeader
-          fontSize="15px"
-          color="gray.600"
-          textAlign="center"
-          letterSpacing="0.05em"
-          borderBottom="1px solid"
-          borderColor={commonBorderColor}
-          fontWeight="bold"
-          textTransform="uppercase"
-        >
-          {t('review-assignment.title')}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={6} px={{ base: '10px', md: '35px' }}>
-          <Box display="flex" flexDirection="column" pt={4} pb={5}>
-            <Text>{fullName}</Text>
-            <Link
-              href={projectLink}
-              fontWeight="700"
-              width="fit-content"
-              letterSpacing="0.05em"
-              target="_blank"
-              rel="noopener noreferrer"
-              color="blue.default"
-            >
-              {currentTask?.title}
-            </Link>
-          </Box>
-          {currentTask?.github_url && (
-            <Box pb={6}>
-              <Text color={fontColor}>{t('review-assignment.github-url')}</Text>
-              <Link
-                variant="default"
-                width="100%"
-                href={currentTask.github_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {currentTask.github_url}
-              </Link>
-
-            </Box>
-          )}
-          {currentTask?.file && Array.isArray(currentTask.file) && (
-            <Box pb={6}>
-              <Text color={fontColor}>{t('review-assignment.files')}</Text>
-              {currentTask.file.map((file) => {
-                const extension = file.name.split('.').pop();
-                return (
-                  <Link
-                    variant="default"
-                    width="100%"
-                    // justifyContent="space-between"
-                    key={file.id}
-                    href={file.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                                // margin="0 0 0 10px"
-                    display="flex"
-                    gridGap="8px"
-                  >
-                    <Text size="l" withLimit={file.name.length > 28}>
-                      {file.name}
-                    </Text>
-                    {extension && (
-                      <Icon icon="download" width="16px" height="16px" color={hexColor.blueDefault} />
-                    )}
-                  </Link>
-                );
-              })}
-            </Box>
-          )}
-          {!readOnly && (
-            <>
-              <Textarea
-                onChange={(e) => setComment(e.target.value)}
-                placeholder={t('review-assignment.comment-placeholder')}
-                fontSize="14px"
-                height="128px"
-              />
-              <Box
-                pt={6}
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-              >
-                {['reject', 'approve'].map((type) => (
-                  <Fragment key={type}>
-                    <ReviewButton type={type} />
-                  </Fragment>
-                ))}
-              </Box>
-            </>
-          )}
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+    <ReviewModalComponent
+      isOpen={isOpen}
+      onClose={onClose}
+      currentTask={currentTask}
+      projectLink={projectLink}
+    />
   );
 }
 
@@ -776,11 +680,6 @@ ReviewModal.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool,
-};
-
-ReviewModal.defaultProps = {
-  readOnly: false,
 };
 
 NoInfoModal.propTypes = {

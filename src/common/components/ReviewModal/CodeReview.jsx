@@ -1,33 +1,24 @@
-import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
 import { Box, Divider, Flex } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
-import SimpleModal from './SimpleModal';
+import PropTypes from 'prop-types';
+import Text from '../Text';
+import Icon from '../Icon';
+import useStyle from '../../hooks/useStyle';
 import '@uiw/react-markdown-editor/markdown-editor.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import '@uiw/react-markdown-preview/markdown.css';
-import Text from './Text';
-import useStyle from '../hooks/useStyle';
-import Icon from './Icon';
 
 const MarkdownEditor = dynamic(
   () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
   { ssr: false },
 );
 
-function ReviewModal({ isOpen, onClose, ...rest }) {
-  const [selectedText, setSelectedText] = useState('');
-  const { hexColor } = useStyle();
+function CodeReview({ selectedText, handleSelectedText }) {
   const [repoData, setRepoData] = useState({
     isFetching: true,
   });
-
-  const handleSelectedText = () => {
-    const text = window.getSelection().toString();
-    if (text.length > 0) {
-      setSelectedText(text);
-    }
-  };
+  const { hexColor } = useStyle();
 
   const fetchRawRepositroy = async (githubUrl) => {
     try {
@@ -37,7 +28,6 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
       const data = await response.text();
       const extensionLanguage = pathname.split('.').pop();
       const codeRaw = `\`\`\`${extensionLanguage}\n${data}\n\`\`\``;
-      // const codeRaw = data;
       setRepoData({
         raw: codeRaw,
         extensionLanguage,
@@ -57,11 +47,8 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
   };
 
   useEffect(() => {
-    if (isOpen) {
-      // fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/src/common/services/breathecode.js');
-      fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/styles/theme.js');
-    }
-  }, [isOpen]);
+    fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/styles/theme.js');
+  }, []);
 
   const handleKeyUp = () => {
     handleSelectedText();
@@ -75,24 +62,7 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
   }, []);
 
   return (
-    <SimpleModal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Rigobot code review"
-      closeOnOverlayClick={false}
-      maxWidth="74rem"
-      minHeight="30rem"
-      bodyStyles={{
-        display: 'flex',
-        gridGap: '20px',
-        padding: '0.5rem 16px',
-      }}
-      headerStyles={{
-        userSelect: 'none',
-      }}
-      onMouseUp={handleSelectedText}
-      {...rest}
-    >
+    <>
       <Box flex={0.65} overflow="auto">
         {repoData.isFetching
           ? 'Loading...' : (
@@ -137,17 +107,17 @@ function ReviewModal({ isOpen, onClose, ...rest }) {
           )}
         </Box>
       </Box>
-    </SimpleModal>
+    </>
   );
 }
 
-ReviewModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
+CodeReview.propTypes = {
+  selectedText: PropTypes.string,
+  handleSelectedText: PropTypes.func,
 };
-ReviewModal.defaultProps = {
-  isOpen: false,
-  onClose: () => {},
+CodeReview.defaultProps = {
+  selectedText: '',
+  handleSelectedText: () => {},
 };
 
-export default ReviewModal;
+export default CodeReview;
