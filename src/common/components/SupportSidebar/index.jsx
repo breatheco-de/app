@@ -11,13 +11,19 @@ import Mentoring from './Mentoring';
 function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();
   const toast = useToast();
-  const [programServices, setProgramServices] = useState([]);
+  const [programServices, setProgramServices] = useState({
+    list: [],
+    isFetching: true,
+  });
 
   useEffect(() => {
     if (services?.length === 0) {
       bc.mentorship().getService().then(({ data }) => {
         if (data !== undefined && data.length > 0) {
-          setProgramServices(data);
+          setProgramServices({
+            list: data,
+            isFetching: false,
+          });
         }
       }).catch(() => {
         toast({
@@ -30,11 +36,14 @@ function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData 
         });
       });
     } else {
-      setProgramServices(services);
+      setProgramServices({
+        list: services,
+        isFetching: false,
+      });
     }
   }, [services]);
 
-  return programServices?.length > 0 && (
+  return programServices.list?.length > 0 && (
     <Mentoring
       allCohorts={allCohorts}
       programServices={programServices}
