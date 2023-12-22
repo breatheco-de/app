@@ -103,19 +103,16 @@ function ContactInformation({
                           )}
                         <Box>
                           <Text size="16px" fontWeight={700} textAlign="left">
-                            {info?.service?.title || slugToTitle(info?.service?.slug)}
+                            {info?.features[0]?.title || slugToTitle(info?.service?.slug)}
                           </Text>
-                          {/* {info.features.length > 0 && (
-                            <Text size="14px" textAlign="left">
-                              {info.features[0]?.description}
-                            </Text>
-                          )} */}
                         </Box>
-                        <Tooltip label={info.features[0]?.description} placement="top">
-                          <Box>
-                            <Icon icon="help" width="15px" height="15px" style={{ alignItems: 'center' }} />
-                          </Box>
-                        </Tooltip>
+                        {info.features[0]?.description && (
+                          <Tooltip label={info.features[0]?.description} placement="top">
+                            <Box>
+                              <Icon icon="help" width="15px" height="15px" style={{ alignItems: 'center' }} />
+                            </Box>
+                          </Tooltip>
+                        )}
                       </Box>
                     ))}
                 </Flex>
