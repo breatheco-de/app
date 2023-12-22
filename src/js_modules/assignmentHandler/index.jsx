@@ -508,6 +508,44 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
   //   type: PropTypes.string.isRequired,
   // };
 
+  // <Box width="auto" height="auto">
+  //   <Button
+  //     variant="default"
+  //     onClick={onOpen}
+  //     fontSize="15px"
+  //     padding="0 24px"
+  //   >
+  //     {t('task-handler.review')}
+  //   </Button>
+
+  //   <Modal
+  //     isOpen={isOpen}
+  //     onClose={onClose}
+  //     size="lg"
+  //   >
+  //     <ModalOverlay />
+  //     <ModalContent borderRadius="17px" marginTop="10%">
+  //       <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+  //         {t('review-assignment.title')}
+  //       </ModalHeader>
+  //       <ModalCloseButton />
+  //       <ModalBody pb={6} px={{ base: '10px', md: '35px' }}>
+  //         <Box display="flex" flexDirection="column" pt={4} pb={5}>
+  //           <Text>{fullName}</Text>
+  //           <Link href={projectLink} fontWeight="700" width="fit-content" letterSpacing="0.05em" target="_blank" rel="noopener noreferrer" color="blue.default">
+  //             {currentTask.title}
+  //           </Link>
+  //         </Box>
+  //         <Textarea onChange={(e) => setComment(e.target.value)} placeholder={t('review-assignment.comment-placeholder')} fontSize="14px" height="128px" />
+  //         <Box pt={6} display="flex" flexDirection="row" justifyContent="space-between">
+  //           {['reject', 'approve'].map((type) => (
+  //             <ReviewButton type={type} />
+  //           ))}
+  //         </Box>
+  //       </ModalBody>
+  //     </ModalContent>
+  //   </Modal>
+  //   </Box>
   return (
     <ReviewModalComponent
       isOpen={isOpen}
