@@ -27,6 +27,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
+import axios from '../../axios';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -66,7 +67,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { user, choose } = useAuth();
+  const { isAuthenticated, user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -103,25 +104,19 @@ function chooseProgram() {
     return members;
   };
 
-  const getServices = async (cohorts = []) => {
-    if (cohorts?.length) {
-      const mentorshipPromises = cohorts.map((cohort) => bc.mentorship({ academy: cohort?.cohort?.academy?.id }, true).getService()
+  const getServices = async (userRoles) => {
+    if (userRoles?.length > 0) {
+      const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
         .then(({ data }) => {
           if (data !== undefined && data.length > 0) {
-            return data.map((service) => {
-              const allSubscriptions = [...(subscriptionData?.subscriptions || []), ...(subscriptionData?.plan_financings || [])];
-              const subscription = allSubscriptions?.find((sub) => sub?.selected_mentorship_service_set?.slug === service?.slug) || {};
-              return ({
-                ...service,
-                subscription,
-                cohort: cohort?.cohort,
-              });
-            });
+            return data.map((service) => ({
+              ...service,
+              academy: {
+                id: userRoles?.[0]?.academy.id,
+                available_as_saas: role?.academy?.available_as_saas,
+              },
+            }));
           }
-          return [];
-        })
-        .catch((error) => {
-          console.error('error_getting_mentorship_services', error);
           return [];
         }));
       const mentorshipResults = await Promise.all(mentorshipPromises);
@@ -131,11 +126,6 @@ function chooseProgram() {
         isLoading: false,
         data: recopilatedServices,
       });
-    } else {
-      setMentorshipServices({
-        isLoading: false,
-        data: [],
-      });
     }
   };
 
@@ -143,8 +133,8 @@ function chooseProgram() {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
-    getServices(cohorts);
 
+    getServices(dataQuery?.roles);
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -185,9 +175,10 @@ function chooseProgram() {
     }, 2000);
 
     return () => clearTimeout(revalidate);
-  }, [dataQuery?.cohorts]);
+  }, [isAuthenticated, dataQuery?.cohorts, dataQuery?.roles]);
 
   useEffect(() => {
+    axios.defaults.headers.common.Academy = null;
     setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
@@ -232,8 +223,6 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
-  // console.log('cohorts', dataQuery?.cohorts);
-  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {

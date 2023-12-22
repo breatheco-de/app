@@ -136,14 +136,14 @@ function MentoringConsumables({
       academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
-        const relatedConsumables = consumables?.mentorship_service_sets?.find((c) => c?.slug === service?.slug);
+        const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
         setProgramMentors(res.data);
         setConsumableOfService({
           ...relatedConsumables,
           balance: {
-            unit: service?.cohort?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+            unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
           },
-          available_as_saas: service?.cohort?.available_as_saas,
+          available_as_saas: service?.academy?.available_as_saas,
         });
         setTimeout(() => {
           setMentoryProps({ ...mentoryProps, service });

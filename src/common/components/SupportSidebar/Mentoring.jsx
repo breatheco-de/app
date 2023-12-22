@@ -28,7 +28,7 @@ function Mentoring({
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
-  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState([]);
+  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
   const { isLoading, user } = useAuth();
   // const toast = useToast();
   const { slug } = router.query;
@@ -38,7 +38,7 @@ function Mentoring({
     mentorSearch: '',
   });
 
-  const servicesFiltered = programServices.filter(
+  const servicesFiltered = programServices.list.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
 
@@ -48,8 +48,8 @@ function Mentoring({
         (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
       );
     }
-    if (programServices?.length > 0) {
-      return programServices?.filter(
+    if (programServices.list?.length > 0) {
+      return programServices.list?.filter(
         (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
       );
     }
@@ -94,10 +94,10 @@ function Mentoring({
   const step2 = mentoryProps?.service && !mentoryProps?.date;
 
   const getAllMentorsAvailable = async () => {
-    const servicesSlugs = programServices.map((service) => service?.slug);
+    const servicesSlugs = programServices.list.map((service) => service?.slug);
 
     if (servicesSlugs.length > 0) {
-      const mentors = programServices.map((service) => bc.mentorship({
+      const mentors = programServices.list.map((service) => bc.mentorship({
         services: service?.slug,
         status: 'ACTIVE',
         syllabus: slug,
@@ -116,24 +116,35 @@ function Mentoring({
 
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
-    const allConsumables = await bc.payment().service().consumable()
-      .then((res) => res?.data);
+    const reqConsumables = await bc.payment().service().consumable()
+      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.mentorship()
+        .getServiceSet(mentorshipServiceSet?.id)
+        .then((rs) => ({
+          ...rs?.data,
+          ...mentorshipServiceSet,
+        }))));
 
+    const allConsumables = await Promise.all(reqConsumables);
     setConsumables(allConsumables);
     setAllMentorsAvailable(mentors);
   };
 
   useEffect(() => {
-    if (programServices?.length > 0) {
+    if (!programServices.isFetching && programServices.list?.length > 0) {
       getMentorsAndConsumables();
     }
   }, [programServices]);
 
   useEffect(() => {
-    if (allCohorts.length > 0) {
-      setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
-    } else {
-      setIsAvailableForConsumables(cohortSession?.available_as_saas === true);
+    const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
+
+    if (existsCohortSession) {
+      setIsAvailableForConsumables(cohortSession?.available_as_saas);
+    }
+    if (!existsCohortSession) {
+      if (allCohorts.length > 0) {
+        setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
+      }
     }
   }, [allCohorts]);
 
@@ -154,7 +165,7 @@ function Mentoring({
             consumables,
             mentorshipService,
             setMentoryProps,
-            programServices: programServices?.length > 0 ? programServices : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
+            programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
             servicesFiltered: suscriptionServicesFiltered,
             dateFormated,
             searchProps,
@@ -177,7 +188,7 @@ function Mentoring({
             mentoryProps,
             width,
             setMentoryProps,
-            programServices,
+            programServices: programServices.list,
             dateFormated,
             servicesFiltered,
             searchProps,
