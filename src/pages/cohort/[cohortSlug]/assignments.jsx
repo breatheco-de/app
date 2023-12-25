@@ -340,7 +340,11 @@ function Assignments() {
         ...contextState.allTasks.slice(keyIndex + 1), // after keyIndex (exclusive)
       ],
     });
-    loadStudents();
+    const studentKey = currentStudentList.findIndex((x) => x.user.id === taskUpdated.user?.id);
+    const taskKey = currentStudentList[studentKey].tasks.findIndex((x) => x.id === taskUpdated.id);
+    const copyStudentList = [...currentStudentList];
+    copyStudentList[studentKey].tasks[taskKey] = taskUpdated;
+    setCurrentStudentList([...copyStudentList]);
   };
 
   const getOptionsStudents = (inputValue) => bc.cohort(inputValue ? { like: inputValue, limit: 2000 } : { limit: 2000 })

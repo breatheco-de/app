@@ -311,8 +311,8 @@ function Page({ event, asset }) {
   );
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
 
-  const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
-  const isFreeForConsumables = finishedEvent || (event?.free_for_bootcamps === true && existsAvailableAsSaas);
+  const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
 
   const dynamicFormInfo = () => {
     if (finishedEvent) {

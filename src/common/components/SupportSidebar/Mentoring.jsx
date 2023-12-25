@@ -4,7 +4,7 @@ import {
 } from 'react';
 import {
   Box,
-  useToast,
+  // useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
@@ -18,7 +18,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, programServices, subscriptions, subscriptionData,
+  width, allCohorts, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -28,8 +28,9 @@ function Mentoring({
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
+  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
   const { isLoading, user } = useAuth();
-  const toast = useToast();
+  // const toast = useToast();
   const { slug } = router.query;
 
   const [searchProps, setSearchProps] = useState({
@@ -37,13 +38,25 @@ function Mentoring({
     mentorSearch: '',
   });
 
-  const servicesFiltered = programServices.filter(
+  const servicesFiltered = programServices.list.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
   );
-  const suscriptionServicesFiltered = subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0
-    ? subscriptionData?.selected_mentorship_service_set?.mentorship_services?.filter(
-      (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
-    ) : [];
+
+  const filterServices = () => {
+    if (subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0) {
+      return subscriptionData?.selected_mentorship_service_set?.mentorship_services?.filter(
+        (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+      );
+    }
+    if (programServices.list?.length > 0) {
+      return programServices.list?.filter(
+        (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
+      );
+    }
+
+    return [];
+  };
+  const suscriptionServicesFiltered = filterServices();
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
@@ -80,26 +93,22 @@ function Mentoring({
   const step1 = !mentoryProps?.service;
   const step2 = mentoryProps?.service && !mentoryProps?.date;
 
-  const getAllMentorsAvailable = () => {
-    const servicesSlugs = programServices.map((service) => service?.slug);
+  const getAllMentorsAvailable = async () => {
+    const servicesSlugs = programServices.list.map((service) => service?.slug);
 
     if (servicesSlugs.length > 0) {
-      return bc.mentorship({
-        services: servicesSlugs.toString(),
+      const mentors = programServices.list.map((service) => bc.mentorship({
+        services: service?.slug,
         status: 'ACTIVE',
         syllabus: slug,
+        academy: service.academy.id,
       }).getMentor()
-        .then((res) => res?.data)
-        .catch(() => {
-          toast({
-            position: 'top',
-            title: 'Error',
-            description: t('alert-message:error-finding-mentors'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        });
+        .then((res) => {
+          const allMentors = res?.data;
+          return allMentors;
+        }));
+      const mentorsList = (await Promise.all(mentors)).flat();
+      return mentorsList;
     }
 
     return [];
@@ -107,29 +116,45 @@ function Mentoring({
 
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
-    const allConsumables = await bc.payment().service().consumable()
-      .then((res) => res?.data);
+    const reqConsumables = await bc.payment().service().consumable()
+      .then((res) => res?.data?.mentorship_service_sets.map((mentorshipServiceSet) => bc.mentorship()
+        .getServiceSet(mentorshipServiceSet?.id)
+        .then((rs) => ({
+          ...rs?.data,
+          ...mentorshipServiceSet,
+        }))));
 
+    const allConsumables = await Promise.all(reqConsumables);
     setConsumables(allConsumables);
     setAllMentorsAvailable(mentors);
-    // setServiceMentoring(allConsumables);
-    // setAllMentorsAvailable(mentors);
   };
 
   useEffect(() => {
-    if (programServices?.length > 0) {
+    if (!programServices.isFetching && programServices.list?.length > 0) {
       getMentorsAndConsumables();
     }
   }, [programServices]);
 
-  const isAvailableForConsumables = cohortSession?.available_as_saas === true;
+  useEffect(() => {
+    const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
+
+    if (existsCohortSession) {
+      setIsAvailableForConsumables(cohortSession?.available_as_saas);
+    }
+    if (!existsCohortSession) {
+      if (allCohorts.length > 0) {
+        setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
+      }
+    }
+  }, [allCohorts]);
+
   const mentorshipService = consumables?.mentorship_service_sets?.find(
     (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
   );
 
   return !isLoading && user?.id && (
     <Box>
-      <Box fontSize="16px" padding="10px 16px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
+      <Box fontSize="16px" padding="6px 8px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
         {t('supportSideBar.mentoring-label')}
       </Box>
       {isAvailableForConsumables ? (
@@ -140,9 +165,9 @@ function Mentoring({
             consumables,
             mentorshipService,
             setMentoryProps,
-            programServices: subscriptionData?.selected_mentorship_service_set?.mentorship_services,
-            dateFormated,
+            programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
             servicesFiltered: suscriptionServicesFiltered,
+            dateFormated,
             searchProps,
             setSearchProps,
             setProgramMentors,
@@ -163,7 +188,7 @@ function Mentoring({
             mentoryProps,
             width,
             setMentoryProps,
-            programServices,
+            programServices: programServices.list,
             dateFormated,
             servicesFiltered,
             searchProps,
@@ -188,11 +213,13 @@ Mentoring.propTypes = {
   width: PropTypes.string,
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  allCohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Mentoring.defaultProps = {
   width: '100%',
   subscriptions: [],
+  allCohorts: [],
 };
 
 export default memo(Mentoring);

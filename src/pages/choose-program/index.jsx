@@ -26,6 +26,8 @@ import { PREPARING_FOR_COHORT } from '../../common/store/types';
 import SimpleModal from '../../common/components/SimpleModal';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
+import SupportSidebar from '../../common/components/SupportSidebar';
+import axios from '../../axios';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -61,7 +63,11 @@ function chooseProgram() {
   const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
-  const { user, choose } = useAuth();
+  const [mentorshipServices, setMentorshipServices] = useState({
+    isLoading: true,
+    data: [],
+  });
+  const { isAuthenticated, user, choose } = useAuth();
   const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -98,10 +104,37 @@ function chooseProgram() {
     return members;
   };
 
+  const getServices = async (userRoles) => {
+    if (userRoles?.length > 0) {
+      const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
+        .then(({ data }) => {
+          if (data !== undefined && data.length > 0) {
+            return data.map((service) => ({
+              ...service,
+              academy: {
+                id: userRoles?.[0]?.academy.id,
+                available_as_saas: role?.academy?.available_as_saas,
+              },
+            }));
+          }
+          return [];
+        }));
+      const mentorshipResults = await Promise.all(mentorshipPromises);
+      const recopilatedServices = mentorshipResults.flat();
+
+      setMentorshipServices({
+        isLoading: false,
+        data: recopilatedServices,
+      });
+    }
+  };
+
   useEffect(() => {
     const cohorts = dataQuery?.cohorts;
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
+
+    getServices(dataQuery?.roles);
     const cohortIsReady = cohorts?.length > 0 && cohorts?.some((item) => {
       const cohort = item?.cohort;
       const academy = cohort?.academy;
@@ -111,10 +144,11 @@ function chooseProgram() {
 
       return false;
     });
-    if (cohorts) {
+    if (cohorts?.length > 0) {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+
       setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
@@ -141,9 +175,10 @@ function chooseProgram() {
     }, 2000);
 
     return () => clearTimeout(revalidate);
-  }, [dataQuery?.cohorts]);
+  }, [isAuthenticated, dataQuery?.cohorts, dataQuery?.roles]);
 
   useEffect(() => {
+    axios.defaults.headers.common.Academy = null;
     setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
@@ -188,8 +223,6 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
-  // console.log('cohorts', dataQuery?.cohorts);
-  // TOOD: usar available_as_saas
   useEffect(() => {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
@@ -483,8 +516,8 @@ function chooseProgram() {
             </Box>
           )}
         </Box>
-        <Box flex={{ base: 1, md: 0.3 }}>
-          <Box flex={1} zIndex={10}>
+        <Flex flexDirection="column" gridGap="42px" flex={{ base: 1, md: 0.3 }}>
+          <Box zIndex={10}>
             <LiveEvent
               featureLabel={t('common:live-event.title')}
               featureReadMoreUrl={t('common:live-event.readMoreUrl')}
@@ -493,7 +526,17 @@ function chooseProgram() {
               margin="0 auto"
             />
           </Box>
-          {dataQuery?.cohorts.length > 0 && (
+          <Box zIndex={10}>
+            {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
+              <SupportSidebar
+                allCohorts={dataQuery?.cohorts}
+                services={mentorshipServices.data}
+                subscriptions={allSubscriptions}
+              />
+            )}
+          </Box>
+
+          {dataQuery?.cohorts?.length > 0 && (
             <NextChakraLink
               href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
               aria-label="4Geeks Academy community"
@@ -503,7 +546,6 @@ function chooseProgram() {
               alignItems="center"
               gridGap="30px"
               padding="1.2rem"
-              mt="2rem"
               borderRadius="17px"
               border="1px solid"
               justifyContent="space-between"
@@ -518,7 +560,7 @@ function chooseProgram() {
               <Icon icon="external-link" width="19px" height="18px" color="currentColor" />
             </NextChakraLink>
           )}
-        </Box>
+        </Flex>
       </Flex>
     </Flex>
   );
