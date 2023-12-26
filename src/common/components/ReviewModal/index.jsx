@@ -7,6 +7,7 @@ import useStyle from '../../hooks/useStyle';
 import CodeReview from './CodeReview';
 import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
+import FileList from './FileList';
 
 function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
   const stages = {
@@ -29,6 +30,12 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
     }
   };
 
+  const widthSizes = {
+    initial: '36rem',
+    file_list: '36rem',
+    code_review: '74rem',
+  };
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -37,28 +44,27 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
         setStage(stages.initial);
       }}
       title={stage === stages.initial ? 'Assignment review' : 'Rigobot code review'}
-      // title="Rigobot code review"
       closeOnOverlayClick={false}
-      maxWidth={stages.initial ? '42rem' : '74rem'}
+      maxWidth={widthSizes[stage]}
+      isCentered={stage === stages.initial}
       // maxWidth="74rem"
-      minHeight="30rem"
+      minHeight={stage === stages.initial ? 'auto' : '30rem'}
       bodyStyles={{
         display: 'flex',
         gridGap: '20px',
-        padding: '0.5rem 16px',
+        padding: '1rem',
       }}
       headerStyles={{
         userSelect: 'none',
         textTransform: stage === stages.initial ? 'uppercase' : 'initial',
         fontSize: stage === stages.initial ? '15px' : '26px',
-        textAlign: stages.initial ? 'center' : 'start',
+        textAlign: stage === stages.initial ? 'center' : 'start',
         fontWeight: 700,
       }}
-      onMouseUp={handleSelectedText}
       {...rest}
     >
-      {stage === stages.initial && (
-        <Box>
+      {stage === stages.initial && currentTask && (
+        <Box maxWidth="500px" margin="0 auto">
           <AlertMessage type="warning" full message="This project needs to have at least 3 code reviews in order to be accepted or rejected." borderRadius="4px" padding="8px" mb="24px" />
           <Flex flexDirection="column" gridGap="16px">
             <Text size="14px" color={lightColor}>
@@ -70,7 +76,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
               </span>
               {' '}
               <Link variant="default" href={projectLink}>
-                {currentTask.title}
+                {currentTask?.title}
               </Link>
             </Text>
             <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
@@ -88,8 +94,11 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
           </Flex>
         </Box>
       )}
+      {stage === stages.file_list && (
+        <FileList stage={stage} stages={stages} setStage={setStage} />
+      )}
       {stage === stages.code_review && (
-        <CodeReview selectedText={selectedText} handleSelectedText={handleSelectedText} />
+        <CodeReview setStage={setStage} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
     </SimpleModal>
   );
