@@ -25,6 +25,7 @@ import { getQueryString } from '../../../utils';
 import { parseQuerys } from '../../../utils/url';
 import ModalToGetAccess, { stageType } from '../../../common/components/ModalToGetAccess';
 import { error } from '../../../utils/logging';
+import { reportDatalayer } from '../../../utils/requests';
 
 export const getServerSideProps = async ({ locale, query }) => {
   const t = await getT(locale, 'dashboard');
@@ -140,6 +141,12 @@ function Page({ id, syllabus, cohort, members }) {
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: id,
+        },
+      });
       setIsFetching(true);
       bc.cohort().join(id)
         .then(async (resp) => {
