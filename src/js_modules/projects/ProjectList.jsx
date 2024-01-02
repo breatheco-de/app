@@ -13,6 +13,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 import LoaderScreen from '../../common/components/LoaderScreen';
+import { reportDatalayer } from '../../utils/requests';
 
 const ProjectList = forwardRef(({
   projects, projectPath, pathWithDifficulty,
@@ -178,6 +179,17 @@ const ProjectList = forwardRef(({
                     padding="6px 15px"
                     fontSize="15px"
                     letterSpacing="0.05em"
+                    onClick={() => {
+                      reportDatalayer({
+                        dataLayer: {
+                          event: 'select_content',
+                          asset_slug: ex.slug,
+                          asset_title: ex.title,
+                          asset_lang: ex.lang,
+                          asset_category: ex.category.slug,
+                        },
+                      });
+                    }}
                   >
                     {getButtonTitle(ex)}
                   </Link>
