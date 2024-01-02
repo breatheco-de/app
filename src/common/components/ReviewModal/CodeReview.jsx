@@ -15,7 +15,7 @@ const MarkdownEditor = dynamic(
   { ssr: false },
 );
 
-function CodeReview({ setStage, selectedText, handleSelectedText }) {
+function CodeReview({ data, setStage, selectedText, handleSelectedText }) {
   const [repoData, setRepoData] = useState({
     isFetching: true,
   });
@@ -23,16 +23,12 @@ function CodeReview({ setStage, selectedText, handleSelectedText }) {
 
   const fetchRawRepositroy = async (githubUrl) => {
     try {
-      const pathname = new URL(githubUrl)?.pathname.replace('/blob', '');
-      const rawUrl = githubUrl.replace('https://github.com', 'https://raw.githubusercontent.com').replace('/blob', '');
-      const response = await fetch(rawUrl);
-      const data = await response.text();
-      const extensionLanguage = pathname.split('.').pop();
-      const codeRaw = `\`\`\`${extensionLanguage}\n${data}\n\`\`\``;
+      const extensionLanguage = data?.path?.split('.').pop().replace(/\?.*$/, '');
+      const codeRaw = `\`\`\`${extensionLanguage}\n${data.code}\n\`\`\``;
       setRepoData({
         raw: codeRaw,
         extensionLanguage,
-        pathname,
+        pathname: data?.path,
         url: githubUrl,
         error: false,
         isFetching: false,
@@ -144,6 +140,7 @@ CodeReview.propTypes = {
   setStage: PropTypes.func.isRequired,
   selectedText: PropTypes.string,
   handleSelectedText: PropTypes.func,
+  data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 CodeReview.defaultProps = {
   selectedText: '',

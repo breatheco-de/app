@@ -8,6 +8,8 @@ import CodeReview from './CodeReview';
 import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import FileList from './FileList';
+import bc from '../../services/breathecode';
+import { error } from '../../../utils/logging';
 
 function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
   const stages = {
@@ -16,6 +18,13 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
     code_review: 'code_review',
   };
   const [selectedText, setSelectedText] = useState('');
+  const [loaders, setLoaders] = useState({
+    isFetchingCommitFiles: false,
+  });
+  const [contextData, setContextData] = useState({
+    commitfiles: [],
+    commitFile: {},
+  });
   const [stage, setStage] = useState(stages.initial);
   const { lightColor, featuredColor, hexColor } = useStyle();
   // const [repoData, setRepoData] = useState({
@@ -32,8 +41,29 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
 
   const widthSizes = {
     initial: '36rem',
-    file_list: '36rem',
+    file_list: '42rem',
     code_review: '74rem',
+  };
+
+  const proceedToCommitFiles = () => {
+    setLoaders((prevState) => ({
+      ...prevState,
+      isFetchingCommitFiles: true,
+    }));
+    bc.assignments().files(currentTask.id)
+      .then((resp) => {
+        setContextData((prevState) => ({
+          ...prevState,
+          commitfiles: resp.data,
+        }));
+        setLoaders((prevState) => ({
+          ...prevState,
+          isFetchingCommitFiles: false,
+        }));
+        setStage(stages.file_list);
+      }).catch((err) => {
+        error('"proceedToCommitFiles" function error:', err);
+      });
   };
 
   return (
@@ -86,7 +116,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
                   0 code reviews
                 </Text>
               </Flex>
-              <Button height="auto" onClick={() => setStage(stages.file_list)} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+              <Button height="auto" onClick={proceedToCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                 Start code review
                 <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
               </Button>
@@ -94,11 +124,11 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
           </Flex>
         </Box>
       )}
-      {stage === stages.file_list && (
-        <FileList stage={stage} stages={stages} setStage={setStage} />
+      {stage === stages.file_list && !loaders.isFetchingCommitFiles && (
+        <FileList data={contextData.commitfiles} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} />
       )}
-      {stage === stages.code_review && (
-        <CodeReview setStage={setStage} selectedText={selectedText} handleSelectedText={handleSelectedText} />
+      {stage === stages.code_review && contextData.commitFile?.code && (
+        <CodeReview setStage={setStage} data={contextData.commitFile} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
     </SimpleModal>
   );
