@@ -27,9 +27,6 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
   });
   const [stage, setStage] = useState(stages.initial);
   const { lightColor, featuredColor, hexColor } = useStyle();
-  // const [repoData, setRepoData] = useState({
-  //   isFetching: true,
-  // });
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 
   const handleSelectedText = () => {
@@ -119,7 +116,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
                   0 code reviews
                 </Text>
               </Flex>
-              <Button height="auto" onClick={proceedToCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+              <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                 Start code review
                 <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
               </Button>
