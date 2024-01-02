@@ -28,6 +28,9 @@
     "label": "¿Qué tipo de soporte está disponible para los estudiantes?",
     "answer": "Tendrás acceso a sesiones de tutoría personalizada realizadas por expertos en la tecnología. Además, nuestra plataforma ofrece retroalimentación por inteligencia artificial en los proyectos que envíes, asistencia con ejercicios y respuestas a cualquier pregunta que puedas tener durante tu aprendizaje. Esta combinación de tutoría personalizada y soporte impulsado por inteligencia artificial asegura que recibas orientación y ayuda siempre que lo necesites, mejorando tu experiencia de aprendizaje en general."
   }, {
+    "label": "¿Qué las sesiones de mentoría uno-a-uno?",
+    "answer": "Las sesiones de mentoría uno-a-uno son reuniones de 45 minutos entre tú y un mentor experto, donde puedes hacer todas las preguntas relacionadas con los problemas que tienes en tu código o los conceptos que no comprendes, sobre casi cualquier tecnología, y en el día y hora que mejor se adapte a tu tiempo."
+  }, {
     "label": "¿Los cursos son a tu propio ritmo o dirigidos por un instructor?",
     "answer": "Nuestros Planes Básico y con Feedback permiten a los estudiantes participar en los cursos a su propio ritmo, brindando una experiencia de aprendizaje a su propio ritmo con el respaldo de expertos o inteligencia artificial cuando lo necesite. Por otro lado, si optas por nuestro bootcamp, las sesiones de aprendizaje son dirigidas por un instructor."
   }]

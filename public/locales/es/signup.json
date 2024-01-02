@@ -201,7 +201,7 @@
       "trial_duration_unit": "MONTH",
       "price": 20,
       "price_text": "$19.99",
-      "discount_text": "$50",
+      "discount_text": "$150",
       "period": "MONTH",
       "period_label": "Al mes",
       "isFree": false,
