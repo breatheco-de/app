@@ -21,7 +21,7 @@ function CodeReview({ data, setStage, selectedText, handleSelectedText }) {
   });
   const { hexColor } = useStyle();
 
-  const fetchRawRepositroy = async (githubUrl) => {
+  const prepareCommitData = () => {
     try {
       const extensionLanguage = data?.path?.split('.').pop().replace(/\?.*$/, '');
       const codeRaw = `\`\`\`${extensionLanguage}\n${data.code}\n\`\`\``;
@@ -29,7 +29,7 @@ function CodeReview({ data, setStage, selectedText, handleSelectedText }) {
         raw: codeRaw,
         extensionLanguage,
         pathname: data?.path,
-        url: githubUrl,
+        url: data?.html_url,
         error: false,
         isFetching: false,
       });
@@ -44,7 +44,7 @@ function CodeReview({ data, setStage, selectedText, handleSelectedText }) {
   };
 
   useEffect(() => {
-    fetchRawRepositroy('https://github.com/breatheco-de/app/blob/main/styles/theme.js');
+    prepareCommitData();
   }, []);
 
   const handleKeyUp = () => {
