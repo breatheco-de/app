@@ -38,7 +38,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const run = async () => {
     if (isAuthenticated || allowNotLogged) {
       console.log('I am running the code!');
-      const { code, language } = languagesData[tabIndex];
+      const { code, language } = languages[tabIndex];
       console.log('code');
       console.log(code);
       // try {
@@ -52,11 +52,11 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
       //   console.log(e);
       // }
 
-      const currLanguage = { ...languagesData[tabIndex], output: 'super cool result of the output' };
+      const currLanguage = { ...languages[tabIndex], output: 'super cool result of the output' };
       setLanguages([
-        ...languagesData.slice(0, tabIndex),
+        ...languages.slice(0, tabIndex),
         currLanguage,
-        ...languagesData.slice(tabIndex + 1),
+        ...languages.slice(tabIndex + 1),
       ]);
     } else {
       setShowModal(true);
