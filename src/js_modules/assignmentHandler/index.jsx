@@ -563,16 +563,6 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  // const prepareForReview = () => {
-  //   // onOpen();
-  //   console.log('currentTask:::', currentTask);
-  //   // console.log('projectLink:::', projectLink);
-  //   bc.assignments().files(currentTask.id)
-  //     .then((resp) => {
-  //       console.log('resp:::', resp);
-  //     });
-  // };
-
   return (
     <Box width="auto" height="auto">
       <Button

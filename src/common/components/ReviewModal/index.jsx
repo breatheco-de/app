@@ -54,7 +54,10 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
       .then((resp) => {
         setContextData((prevState) => ({
           ...prevState,
-          commitfiles: resp.data,
+          commitfiles: {
+            task: currentTask,
+            fileList: resp.data,
+          },
         }));
         setLoaders((prevState) => ({
           ...prevState,
@@ -128,7 +131,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
         <FileList data={contextData.commitfiles} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} />
       )}
       {stage === stages.code_review && contextData.commitFile?.code && (
-        <CodeReview setStage={setStage} data={contextData.commitFile} selectedText={selectedText} handleSelectedText={handleSelectedText} />
+        <CodeReview setStage={setStage} commitData={contextData.commitFile} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
     </SimpleModal>
   );

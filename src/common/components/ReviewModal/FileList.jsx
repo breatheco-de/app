@@ -1,6 +1,5 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import atob from 'atob';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
@@ -10,8 +9,9 @@ import { error } from '../../../utils/logging';
 
 function FileList({ data, setContextData, stage, stages, setStage }) {
   const { fontColor, borderColor, lightColor, hexColor } = useStyle();
+  const fileList = data?.fileList || [];
 
-  const openCommitFile = (id) => bc.assignments().file(id)
+  const openCommitFile = (commitData) => bc.assignments().file(commitData.id)
     .then((resp) => bc.get(resp.data.file_url)
       .then(async (fileResp) => {
         const fileData = await fileResp.json();
@@ -20,7 +20,9 @@ function FileList({ data, setContextData, stage, stages, setStage }) {
           setContextData((prevState) => ({
             ...prevState,
             commitFile: {
+              ...commitData,
               ...fileData,
+              task: data?.task || {},
               code: decodedContent,
             },
           }));
@@ -33,7 +35,7 @@ function FileList({ data, setContextData, stage, stages, setStage }) {
 
   return (
     <Flex display={stage !== stages.file_list && 'none'} flexDirection="column" gridGap="24px" width="100%">
-      {data?.length > 0 ? (
+      {fileList?.length > 0 ? (
         <>
           <Heading size="21px" color={lightColor}>
             Select the file you want to review
@@ -44,7 +46,7 @@ function FileList({ data, setContextData, stage, stages, setStage }) {
           </Flex>
           <Flex flexDirection="column" gridGap="12px">
             {/* card */}
-            {data.map((file) => (
+            {fileList.map((file) => (
               <Flex border="1px solid" borderColor={borderColor} padding="4px 8px" borderRadius="8px">
                 <Icon icon="file" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} flex={0.1} />
                 <Flex flexDirection="column" gridGap="9px" flex={0.4} maxWidth="102px">
@@ -66,7 +68,7 @@ function FileList({ data, setContextData, stage, stages, setStage }) {
                   <Icon icon="code" width="20px" height="20px" color={hexColor.black} ml="16px" />
                   <Icon icon="arrowDown" width="34px" height="34px" color={hexColor.blueDefault} ml="6px" />
                 </Flex>
-                <Button flex={0.2} height="auto" onClick={() => openCommitFile(file.id)} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="flex-end">
+                <Button flex={0.2} height="auto" onClick={() => openCommitFile(file)} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="flex-end">
                   Reviewed
                 </Button>
               </Flex>

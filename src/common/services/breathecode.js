@@ -245,6 +245,7 @@ const breathecode = {
       get: () => axios.get(`${url}/user/me/task`),
       files: (taskId) => axios.get(`${url}/me/task/${taskId}/commitfile`),
       file: (id) => axios.get(`${url}/me/commitfile/${id}`),
+      createCodeRevision: (taskId, data) => axios.post(`${url}/me/task/${taskId}/coderevision`, data),
     };
   },
   feedback: () => {
