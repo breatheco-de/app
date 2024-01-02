@@ -19,6 +19,7 @@ import Editor from '@monaco-editor/react';
 import { setStorageItem } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
@@ -34,9 +35,23 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
-  const run = () => {
+  const run = async () => {
     if (isAuthenticated || allowNotLogged) {
       console.log('I am running the code!');
+      const { code, language } = languagesData[tabIndex];
+      console.log('code');
+      console.log(code);
+      // try {
+      //   const data = await bc.rigobot().completionJob({
+      //     inputs: {
+      //       text: `Act as a ${language} compiler and compile the following code, return the output wrapped between this symbols --- This is the code: ${code}`,
+      //     },
+      //   });
+      //   console.log(data);
+      // } catch (e) {
+      //   console.log(e);
+      // }
+
       const currLanguage = { ...languagesData[tabIndex], output: 'super cool result of the output' };
       setLanguages([
         ...languagesData.slice(0, tabIndex),
@@ -69,7 +84,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
-          <Button onClick={run} variant="ghost" size="sm" color="white">
+          <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
             <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
             {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
           </Button>
@@ -82,8 +97,8 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         />
         <TabPanels>
           {languages.map(({ code, language, output }, i) => (
-            <TabPanel overflow="hidden" padding="0" borderRadius="0 0 4px 4px">
-              <Box height="290px">
+            <TabPanel padding="0">
+              <Box height="290px" borderRadius="0 0 4px 4px" overflow="hidden">
                 <Editor
                   theme="my-theme"
                   value={code}
@@ -108,8 +123,12 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                 />
               </Box>
               <SlideFade in={output} offsetY="20px">
-                <Box color="white" padding="20px" background="#00041A" borderRadius="4px" marginTop="15px">
-                  {output}
+                <Box fontFamily="monospace" color="white" padding="20px" background="#00041A" borderRadius="4px" marginTop="15px">
+                  <Text>
+                    {t('result')}
+                    :
+                  </Text>
+                  <Text>{output}</Text>
                 </Box>
               </SlideFade>
             </TabPanel>
