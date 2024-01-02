@@ -3,7 +3,6 @@ import { Button } from '@chakra-ui/react';
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
 import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
-import MktTrustCards from '../common/components/MktTrustCards';
 import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
@@ -59,7 +58,6 @@ export default function Example() {
 
   return (
     <main className={styles.main}>
-      <MktTrustCards />
       <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
         Open modal
       </Button>
