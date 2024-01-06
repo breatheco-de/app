@@ -119,25 +119,23 @@ function Checkout() {
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
-    if (!queryPlanExists) {
-      const translations = getTranslations(t);
-      const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
-      bc.payment().getPlan(defaultPlan).then(async (resp) => {
-        const processedPlan = await processPlans(resp?.data, {
-          quarterly: false,
-          halfYearly: false,
-          planType: 'original',
-        }, translations);
-        setOriginalPlan(processedPlan);
-      });
-      reportDatalayer({
-        dataLayer: {
-          event: 'begin_checkout',
-          path: '/checkout',
-          conversion_info: userSession,
-        },
-      });
-    }
+    const translations = getTranslations(t);
+    const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
+    bc.payment().getPlan(defaultPlan).then(async (resp) => {
+      const processedPlan = await processPlans(resp?.data, {
+        quarterly: false,
+        halfYearly: false,
+        planType: 'original',
+      }, translations);
+      setOriginalPlan(processedPlan);
+    });
+    reportDatalayer({
+      dataLayer: {
+        event: 'begin_checkout',
+        path: '/checkout',
+        conversion_info: userSession,
+      },
+    });
   }, []);
 
   useEffect(() => {
