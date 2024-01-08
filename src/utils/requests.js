@@ -15,16 +15,15 @@ const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.pr
 const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
 
 const mapDifficulty = (difficulty) => {
-  switch (difficulty?.toLowerCase()) {
-    case 'junior':
-      return 'easy';
-    case 'semi-senior':
-      return 'intermediate';
-    case 'senior':
-      return 'hard';
-    default:
-      return 'unknown';
+  const difficultyStr = difficulty?.toLowerCase();
+  if (['junior', 'beginner'].includes(difficultyStr)) {
+    return 'easy';
+  } if (difficultyStr === 'semi-senior') {
+    return 'intermediate';
+  } if (difficultyStr === 'senior') {
+    return 'hard';
   }
+  return difficultyStr || 'unknown';
 };
 
 const reportDatalayer = (payload) => {

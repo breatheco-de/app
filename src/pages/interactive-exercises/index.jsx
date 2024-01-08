@@ -28,6 +28,12 @@ const fetchExercises = async (lang, page, query) => {
     'mid-level': 'INTERMEDIATE',
     senior: 'HARD',
   };
+  const difficultyQueryValues = {
+    beginner: 'junior',
+    easy: 'junior',
+    intermediate: 'mid-level',
+    hard: 'senior',
+  };
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
@@ -37,7 +43,7 @@ const fetchExercises = async (lang, page, query) => {
     academy: WHITE_LABEL_ACADEMY,
     limit: contentPerPage,
     offset: page ? (page - 1) * contentPerPage : 0,
-    difficulty: difficulty[query.difficulty],
+    difficulty: difficulty?.[query?.difficulty] || difficulty[difficultyQueryValues?.[query?.difficulty]],
     technologies,
     video,
     like: query?.search,
