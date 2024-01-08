@@ -277,7 +277,7 @@ function ProjectSlug({ project, markdown }) {
                   <Box display="flex" justifyContent="center">
                     <Icon icon="sideSupport" width="300px" height="70px" />
                   </Box>
-                  <Box px="22px" pb="30px" pt="20px">
+                  <Box px="22px" py="20px">
                     <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
                   </Box>
                 </>
@@ -328,7 +328,7 @@ function ProjectSlug({ project, markdown }) {
               <Box display="flex" justifyContent="center">
                 <Icon icon="sideSupport" width="300px" height="70px" />
               </Box>
-              <Box px="22px" pb="30px" pt="20px">
+              <Box px="22px" py="20px">
                 <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
               </Box>
             </>
