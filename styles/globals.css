@@ -506,3 +506,7 @@ featured {
 .video-overlay .video-container {
   transform: scale(1);
 }
+
+.anchorjs-link {
+  color:#0097CD;
+}

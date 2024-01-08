@@ -2,8 +2,6 @@ import {
   Box, useColorModeValue, Flex, useColorMode, Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
@@ -17,7 +15,6 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-import redirectsFromApi from '../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
@@ -206,21 +203,9 @@ function TableInfo({ t, project, commonTextColor }) {
 function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const translations = project?.translations || { es: '', en: '' };
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
-  const router = useRouter();
-  const { slug } = router.query;
-  const { locale } = router;
-
-  useEffect(() => {
-    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-coding-tutorial/${slug}`);
-
-    if (redirect) {
-      router.push(redirect?.destination);
-    }
-  }, [router, router.locale, translations]);
 
   return (
     <>
@@ -292,7 +277,7 @@ function ProjectSlug({ project, markdown }) {
                   <Box display="flex" justifyContent="center">
                     <Icon icon="sideSupport" width="300px" height="70px" />
                   </Box>
-                  <Box px="22px" pb="30px" pt="20px">
+                  <Box px="22px" py="20px">
                     <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
                   </Box>
                 </>
@@ -343,7 +328,7 @@ function ProjectSlug({ project, markdown }) {
               <Box display="flex" justifyContent="center">
                 <Icon icon="sideSupport" width="300px" height="70px" />
               </Box>
-              <Box px="22px" pb="30px" pt="20px">
+              <Box px="22px" py="20px">
                 <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
               </Box>
             </>

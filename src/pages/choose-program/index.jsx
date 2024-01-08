@@ -237,30 +237,18 @@ function chooseProgram() {
           }).getMembers();
           const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
           const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
-          if (tasks?.data?.length > 0) {
-            setCohortTasks((prev) => ({
-              ...prev,
-              [item?.cohort.slug]: {
-                ...handlers.handleTasks(tasks.data, true),
-                teacher,
-                assistant,
-              },
-            }));
-          }
-          if (tasks?.data?.length <= 0) {
-            const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-            handlers.getAssignmentsCount({ cohortProgram: syllabus?.data, taskTodo: tasks?.data })
-              .then((assignmentData) => {
-                setCohortTasks((prev) => ({
-                  ...prev,
-                  [item?.cohort.slug]: {
-                    ...assignmentData,
-                    teacher,
-                    assistant,
-                  },
-                }));
-              });
-          }
+          const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
+          handlers.getAssignmentsCount({ cohortProgram: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
+            .then((assignmentData) => {
+              setCohortTasks((prev) => ({
+                ...prev,
+                [item?.cohort.slug]: {
+                  ...assignmentData,
+                  teacher,
+                  assistant,
+                },
+              }));
+            });
         }
         return null;
       });
