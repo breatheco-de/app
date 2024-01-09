@@ -165,7 +165,7 @@ function StudentReport() {
   const fetchActivities = async () => {
     try {
       setIsFetchingActivities(true);
-      const res = await bc.activity({ user_id: studentId, limit, ...paramsActivities }).getActivity(academy);
+      const res = await bc.activity({ user_id: studentId, limit, order: 'timestamp', ...paramsActivities }).getActivity(academy);
       const newActivities = res?.data || [];
       setFetchMoreActivities(limit === newActivities.length);
 
