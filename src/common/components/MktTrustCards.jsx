@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Img, Fade,
+  Box, Img, Fade, IconButton,
 } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
@@ -18,18 +19,25 @@ function Card({ card }) {
   const { fontColor, hexColor } = useStyle();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
-    }, 2000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
+  //   }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   const formatedDescription = description.length > 39 ? `${description.substring(0, 40)}...` : description;
+
+  const handlePrev = () => {
+    setCurrentIndex((curr) => (curr - 1 < 0 ? images.length - 1 : curr - 1));
+  };
+  const handleNext = () => {
+    setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
+  };
   return (
     <Box
-      width="180px"
+      width={{ sm: '180px', base: '100%' }}
       height="270px"
       background={hexColor.backgroundColor}
       borderRadius="11px"
@@ -42,6 +50,26 @@ function Card({ card }) {
       justifyContent="space-between"
     >
       <Box width="100%" height="95px" marginBottom="16px" position="relative">
+        <IconButton
+          position="absolute"
+          top="30%"
+          left="-7"
+          zIndex="10"
+          variant="ghost"
+          _hover={{ bg: 'none' }}
+          onClick={handlePrev}
+          icon={<ChevronLeftIcon w={8} h={8} />}
+        />
+        <IconButton
+          position="absolute"
+          top="30%"
+          right="-7"
+          zIndex="10"
+          variant="ghost"
+          _hover={{ bg: 'none' }}
+          onClick={handleNext}
+          icon={<ChevronRightIcon w={8} h={8} />}
+        />
         {images.map((image, i) => (
           <Fade in={currentIndex === i}>
             <Img
