@@ -144,10 +144,11 @@ function LiveEvent({
   };
 
   const getLiveIcon = (event) => {
+    const endDate = event?.ended_at || event?.ending_at;
     if (liveEvent.main.length === 0 && nearestEvent) {
       return nearestEvent?.icon || 'group';
     }
-    if (isLiveOrStarting(new Date(event?.starting_at), new Date(event.ending_at))) {
+    if (isLiveOrStarting(new Date(event?.starting_at), new Date(endDate))) {
       return 'live-event';
     }
     return 'live-event-opaque';
@@ -206,15 +207,17 @@ function LiveEvent({
     const otherTimeEventsText = {};
     if (mainEvents?.length > 0) {
       mainEvents.forEach((event) => {
+        const endDate = event?.ended_at || event?.ending_at;
         const startsAt = event?.starting_at && new Date(event.starting_at);
-        const endsAt = event?.ending_at && new Date(event.ending_at);
+        const endsAt = endDate && new Date(endDate);
         mainTimeEventsText[event.id] = textTime(startsAt, endsAt);
       });
     }
     if (otherEventsList?.length > 0) {
       otherEventsList.forEach((event) => {
+        const endDate = event?.ended_at || event?.ending_at;
         const startsAt = event?.starting_at && new Date(event.starting_at);
-        const endsAt = event?.ending_at && new Date(event.ending_at);
+        const endsAt = endDate && new Date(endDate);
         otherTimeEventsText[event.id] = textTime(startsAt, endsAt);
       });
     }
@@ -336,7 +339,7 @@ function LiveEvent({
         {mainEvents.length !== 0 ? (
           <Box
             background={bgColor2}
-            border={mainEvents.some((event) => isLiveOrStarting(new Date(event.starting_at), new Date(event.ending_at))) && '2px solid'}
+            border={mainEvents.some((event) => isLiveOrStarting(new Date(event.starting_at), new Date((event?.ended_at || event?.ending_at)))) && '2px solid'}
             borderColor={CustomTheme.colors.blue.default2}
             padding="10px"
             borderRadius="19px"
@@ -461,7 +464,7 @@ function LiveEvent({
               setIsOpen(!isOpen);
             }}
           >
-            {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 ? (
+            {getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date((e?.ended_at || e?.ending_at))))?.length !== 0 ? (
               <>
                 <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
                   <Icon width="16px" height="16px" icon="on-live" />

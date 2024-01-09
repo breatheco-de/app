@@ -338,9 +338,9 @@ export function MDHr() {
   return <Box as="hr" backgroundColor={useColorModeValue('gray.400', 'gray.500')} mb="20px" />;
 }
 
-export function MDText({ children }) {
+export function MDText({ children, ...rest }) {
   return (
-    <Text size="l" fontWeight="400">
+    <Text size="l" fontWeight="400" {...rest}>
       {children}
     </Text>
   );

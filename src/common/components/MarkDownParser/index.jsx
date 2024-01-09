@@ -48,7 +48,7 @@ function ImgComponent(props) {
   return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
 function ParagraphComponent({ ...props }) {
-  return (<MDText {...props} />);
+  return (<MDText id={props?.node?.children?.[0]?.properties?.alt} {...props} />);
 }
 function HrComponent({ ...props }) {
   return (<MDHr {...props} />);
@@ -157,7 +157,7 @@ function MarkDownParser({
     const anchors = new AnchorJS();
     anchors.options = {
       placement: 'left',
-      icon: '#',
+      icon: '',
     };
     anchors.add('.markdown-body h1');
     anchors.add('.markdown-body h2');

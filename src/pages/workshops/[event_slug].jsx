@@ -161,6 +161,7 @@ function Page({ event, asset }) {
   const { isAuthenticated, user } = useAuth();
   // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
+  const endDate = event?.ended_at || event?.ending_at;
 
   useEffect(() => {
     if (event?.id) {
@@ -220,7 +221,7 @@ function Page({ event, asset }) {
 
   const duration = isValidDate(event?.ending_at) && isValidDate(event?.starting_at)
     ? intervalToDuration({
-      end: new Date(event?.ending_at),
+      end: new Date(endDate),
       start: new Date(event?.starting_at),
     })
     : {};
@@ -232,7 +233,7 @@ function Page({ event, asset }) {
 
   const unixFormatedDate = {
     starting_at: isValidDate(event?.starting_at) ? new Date(event?.starting_at).getTime() / 1000 : '',
-    ending_at: isValidDate(event?.ending_at) ? new Date(event?.ending_at).getTime() / 1000 : '',
+    ending_at: isValidDate(endDate) ? new Date(endDate).getTime() / 1000 : '',
   };
 
   const eventNotExists = !event?.slug;
@@ -529,7 +530,7 @@ function Page({ event, asset }) {
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
-                  endingAt={event?.ending_at}
+                  endingAt={endDate}
                   onEndedEvent={handleOnFinished}
                   finishedView={(
                     <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
