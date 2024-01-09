@@ -23,7 +23,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
         const data = res?.data;
         if (data && data.length > 0) {
           const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
-          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && l?.ending_at && l?.slug);
+          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
           setEvents(existentLiveClasses);
         }
       });
@@ -59,7 +59,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
               description={event?.excerpt}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
-              endingAt={event?.ending_at}
+              endingAt={event?.ended_at || event?.ending_at}
             />
           ))}
         </Flex>

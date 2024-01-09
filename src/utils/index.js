@@ -251,8 +251,9 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
   if (data === undefined || data?.length === 0) return [];
 
   const filteredDates = data.filter((item) => {
+    const endDate = item.ended_at || item.ending_at;
     const startingDate = new Date(item.starting_at);
-    const endingDate = new Date(item.ending_at);
+    const endingDate = new Date(endDate);
     const timeDiff = startingDate - currentDate;
     const minutesDiff = Math.round(timeDiff / (1000 * 60));
 
