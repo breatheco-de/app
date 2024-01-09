@@ -257,7 +257,7 @@ const handlers = {
   },
 
   getAssignmentsCount: ({
-    cohortProgram,
+    cohortProgram, taskTodo, cohortId,
   }) => new Promise((resolve) => {
     const modules = cohortProgram?.json?.days || cohortProgram?.json?.modules;
     const assignmentsRecopilated = [];
@@ -302,19 +302,26 @@ const handlers = {
     const arrayOfObjects = Object.keys(assignmentsRecopilatedObj).map((key) => {
       const taskLength = assignmentsRecopilatedObj[key];
       const taskType = key.toUpperCase();
+      const completed = taskTodo.filter((task) => task.task_type === taskType && task.task_status === 'DONE').length;
       const icon = taskIcons[taskType];
 
       return {
         icon,
         taskLength,
+        completed,
         task_type: taskType,
         title: toCapitalize(taskType),
       };
     });
+    const totalCompletedTasks = arrayOfObjects.reduce((acc, task) => acc + task.completed, 0);
+    const totalTasks = arrayOfObjects.reduce((acc, task) => acc + task.taskLength, 0);
+    const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100);
 
-    resolve({ allTasks: arrayOfObjects });
-
-    // resolve(assignmentsRecopilatedObj);
+    resolve({
+      allTasks: arrayOfObjects,
+      cohortId,
+      percentage: completedTasksPercentage,
+    });
   }),
   getAssetData: (slug) => new Promise((resolve, reject) => {
     bc.lesson().getAsset(slug)

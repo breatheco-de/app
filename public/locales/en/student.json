@@ -14,11 +14,11 @@
     "date": "Date"
   },
   "activities-section": {
-    "title": "Actividades",
+    "title": "Activities",
     "no-activities": "No activities found",
     "activities": {
-      "invite_created": "Inivite created",
-      "invite_status_updated": "Inivite status updated",
+      "invite_created": "Invite created",
+      "invite_status_updated": "Invite status updated",
       "survey": "nps survey answered",
       "login": "Breathecode login",
       "open_syllabus_module": "Open syllabus module",

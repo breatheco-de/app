@@ -150,10 +150,7 @@ function SimpleTable({
 
       <Flex
         flexDirection="column"
-        py="14px"
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={commonBorderColor}
+        pt="14px"
         width="100%"
         justifyContent="space-between"
       >

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import AnchorJS from 'anchor-js';
 import bc from '../../services/breathecode';
 
 // import { useRouter } from 'next/router';
@@ -47,7 +48,7 @@ function ImgComponent(props) {
   return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
 function ParagraphComponent({ ...props }) {
-  return (<MDText {...props} />);
+  return (<MDText id={props?.node?.children?.[0]?.properties?.alt} {...props} />);
 }
 function HrComponent({ ...props }) {
   return (<MDHr {...props} />);
@@ -152,6 +153,19 @@ function MarkDownParser({
 
   // const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
 
+  useEffect(() => {
+    // initialize anchorJS when markdown content has mounted to the DOM
+    const anchors = new AnchorJS();
+    anchors.options = {
+      placement: 'left',
+      icon: '',
+    };
+    anchors.add('.markdown-body h1');
+    anchors.add('.markdown-body h2');
+    anchors.add('.markdown-body h3');
+    anchors.add('.markdown-body p');
+    anchors.add('.markdown-body pre');
+  }, [content]);
   useEffect(() => {
     setLearnpackActions([
       {

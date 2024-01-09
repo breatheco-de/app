@@ -153,7 +153,10 @@ function FilterModal({
             />
 
             {/* <------------------- Difficulty section -------------------> */}
-            {isWindow && !window.location.pathname.includes('/lessons') && (
+            {isWindow
+            && !window.location.pathname.includes('/lessons')
+            && !window.location.pathname.includes('/how-to')
+            && (
               <DifficultySection
                 t={t}
                 title={t('difficulties')}

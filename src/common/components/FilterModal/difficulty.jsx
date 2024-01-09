@@ -23,6 +23,7 @@ function DifficultySection({
   const router = useRouter();
   const [queryPosition, setQueryPosition] = useState(null);
   const defaultDifficulties = ['junior', 'mid-level', 'senior'];
+  const difficultyQuery = router?.query?.difficulty ? router.query.difficulty.toLocaleLowerCase() : '';
   const { lightColor } = useStyle();
 
   const getDifficultyPosition = (difficulty) => {
@@ -40,10 +41,15 @@ function DifficultySection({
 
   const difficultyExists = defaultDifficulties.some((l) => difficulties.map((d) => defaultDifficulties[getDifficultyPosition(d)]).includes(l));
 
+  const difficultyValues = {
+    beginner: 'junior',
+    easy: 'junior',
+    intermediate: 'mid-level',
+    hard: 'senior',
+  };
   useEffect(() => {
-    const difficultyQuery = router.query.difficulty;
     if (difficultyQuery !== null) {
-      const difficultyQueryIndex = defaultDifficulties.findIndex((difficulty) => difficulty === difficultyQuery);
+      const difficultyQueryIndex = defaultDifficulties.findIndex((difficulty) => difficulty === difficultyValues?.[difficultyQuery]);
       if (difficultyQueryIndex !== -1) setQueryPosition(difficultyQueryIndex);
     }
   }, [router.query.difficulty]);

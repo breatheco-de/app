@@ -155,7 +155,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
           )}
 
           {(!isBootcampType && relatedSubscription?.invoices?.[0]?.amount === item?.price) ? (
-            <Text width="100%" color="white" textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
+            <Text width="100%" textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
               {utilProps.already_have_it}
             </Text>
           ) : (
