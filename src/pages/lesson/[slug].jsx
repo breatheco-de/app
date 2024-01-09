@@ -1,12 +1,11 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable no-param-reassign */
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box, useColorModeValue, ModalOverlay, ModalContent, ModalCloseButton, Button, Tooltip, Modal,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Icon from '../../common/components/Icon';
 import { cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
@@ -17,7 +16,6 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-import redirectsFromApi from '../../../public/redirects-from-api.json';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
@@ -190,23 +188,8 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { fontColor, borderColor, featuredLight } = useStyle();
   const [isFullScreen, setIsFullScreen] = useState(false);
   const currentTheme = useColorModeValue('light', 'dark');
-  const translations = lesson?.translations || { es: '', en: '', us: '' };
-
-  const router = useRouter();
-  const { slug } = router.query;
-  const { locale } = router;
 
   const isIpynb = ipynbHtml?.statusText === 'OK' || ipynbHtml?.iframe;
-
-  useEffect(() => {
-    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/lesson/${slug}`);
-
-    if (redirect) {
-      router.push(redirect?.destination);
-    }
-
-    return () => {};
-  }, [router, router.locale, translations]);
 
   return (
     <>

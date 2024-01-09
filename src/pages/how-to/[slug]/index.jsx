@@ -18,7 +18,6 @@ import Text from '../../../common/components/Text';
 import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
-import redirectsFromApi from '../../../../public/redirects-from-api.json';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils/index';
@@ -165,20 +164,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 export default function HowToSlug({ data, markdown }) {
   const { t, lang } = useTranslation('how-to');
-  // const { title, author, preview } = data;
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
   const { fontColor, featuredLight } = useStyle();
-  // const preview = data?.preview || '';
-
-  // const { translations } = data;
-  const translations = data?.translations || { es: '', en: '', us: '' };
-  // const defaultImage = '/static/images/coding-notebook.png';
-  // const getImage = preview || defaultImage;
   const router = useRouter();
-  const { slug } = router.query;
-  const { locale } = router;
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const linkColor = useColorModeValue('blue.default', 'blue.300');
 
@@ -190,15 +180,6 @@ export default function HowToSlug({ data, markdown }) {
       router.push('/404');
     }
   }, [isHowTo]);
-
-  useEffect(() => {
-    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/how-to/${slug}`);
-
-    if (redirect) {
-      router.push(redirect?.destination);
-    }
-    return () => {};
-  }, [router, router.locale, translations]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -290,7 +271,6 @@ export default function HowToSlug({ data, markdown }) {
             )}
           </Box>
 
-          {/* <Image src={getImage} alt={title} margin="20px 0 30px 0" width="100%" borderRadius="10px" height="100%" style={{ aspectRatio: '12/6' }} /> */}
           <Box
             borderRadius="3px"
             margin="0 auto"

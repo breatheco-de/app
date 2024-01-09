@@ -19,7 +19,7 @@ export function Wrapper({ children, ...rest }) {
   const style = rest.style || {};
 
   return (
-    <Box style={style}>
+    <Box as="div" style={style}>
       {children}
     </Box>
   );
@@ -29,6 +29,7 @@ export function MDLink({ children, href }) {
   const protocol = includesProtocol ? '' : 'https://';
   return (
     <Link
+      as="a"
       href={`${protocol}${href}`}
       fontSize="inherit"
       color="blue.400"

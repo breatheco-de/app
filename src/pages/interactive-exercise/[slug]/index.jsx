@@ -39,7 +39,6 @@ import getMarkDownContent from '../../../common/components/MarkDownParser/markdo
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
-import redirectsFromApi from '../../../../public/redirects-from-api.json';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject, unSlugifyCapitalize } from '../../../utils';
@@ -545,29 +544,14 @@ function TabletWithForm({
 function Exercise({ exercise, markdown }) {
   const [tags, setTags] = useState([]);
   const { t } = useTranslation(['exercises']);
-  const translations = exercise?.translations || { es: '', en: '' };
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const router = useRouter();
   const language = router.locale === 'en' ? 'us' : 'es';
-  const { slug } = router.query;
-  const { locale } = router;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
 
   const toast = useToast();
-
-  const handleRedirect = async () => {
-    const redirect = redirectsFromApi?.find((r) => r?.source === `${locale === 'en' ? '' : `/${locale}`}/interactive-exercise/${slug}`);
-
-    if (redirect) {
-      router.push(redirect?.destination);
-    }
-  };
-
-  useEffect(() => {
-    handleRedirect();
-  }, [router, router.locale, translations]);
 
   const tagsArray = (exer) => {
     const values = [];
