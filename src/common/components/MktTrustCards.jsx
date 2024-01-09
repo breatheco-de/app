@@ -37,38 +37,45 @@ function Card({ card }) {
   };
   return (
     <Box
-      width={{ sm: '180px', base: '100%' }}
-      height="270px"
+      width={{ sm: '230px', base: '100%' }}
+      height={{ md: '270px', base: '320px' }}
       background={hexColor.backgroundColor}
       borderRadius="11px"
       border="1px solid"
       borderColor={hexColor.borderColor}
-      padding="16px"
+      // padding="16px"
       textAlign="center"
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
+      overflow="hidden"
     >
       <Box width="100%" height="95px" marginBottom="16px" position="relative">
         <IconButton
+          isRound
           position="absolute"
-          top="30%"
-          left="-7"
+          top="50%"
+          left="1"
           zIndex="10"
           variant="ghost"
-          _hover={{ bg: 'none' }}
+          _hover={{ bg: '#DADADA' }}
           onClick={handlePrev}
-          icon={<ChevronLeftIcon w={8} h={8} />}
+          size="xs"
+          background="#DADADA"
+          icon={<ChevronLeftIcon w={4} h={4} color="black" />}
         />
         <IconButton
+          isRound
           position="absolute"
-          top="30%"
-          right="-7"
+          top="50%"
+          right="1"
           zIndex="10"
           variant="ghost"
-          _hover={{ bg: 'none' }}
+          _hover={{ bg: '#DADADA' }}
           onClick={handleNext}
-          icon={<ChevronRightIcon w={8} h={8} />}
+          size="xs"
+          background="#DADADA"
+          icon={<ChevronRightIcon w={4} h={4} color="black" />}
         />
         {images.map((image, i) => (
           <Fade in={currentIndex === i}>
@@ -77,13 +84,13 @@ function Card({ card }) {
               key={image}
               src={image}
               width="100%"
-              height="95px"
+              height="120px"
               position="absolute"
             />
           </Fade>
         ))}
       </Box>
-      <Box>
+      <Box padding="0 16px">
         <Text size="md" fontWeight="700" lineHeight="16px" marginBottom="10px">
           {title}
         </Text>
@@ -96,11 +103,13 @@ function Card({ card }) {
           {formatedDescription}
         </Text>
       </Box>
-      <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}>
-        {t('asset-button.article')}
-        {'  '}
-        →
-      </Link>
+      <Box paddingBottom="16px">
+        <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}>
+          {t('asset-button.article')}
+          {'  '}
+          →
+        </Link>
+      </Box>
     </Box>
   );
 }
@@ -134,7 +143,7 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding="30px" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
+    <Box id={id} padding="30px" width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
@@ -154,7 +163,7 @@ function MktTrustCards({
           </Text>
         )}
       </Box>
-      <Box display="flex" gap="24px" justifyContent="center" flexWrap="wrap">
+      <Box width="100%" display="flex" gap="24px" justifyContent="space-between" flexWrap="wrap">
         {cards.map((card) => (
           <Card card={card} key={`${card.title}`} />
         ))}
