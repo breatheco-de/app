@@ -1,6 +1,7 @@
 {
   "run": "Correr",
   "result": "Resultado",
+  "terminal": "Consola",
   "log-in-modal": {
     "title": "Inicia sesión primero",
     "text": "Para compilar el código debes iniciar sesión o registrarte sin costos",

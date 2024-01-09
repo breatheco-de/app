@@ -10,7 +10,7 @@ import {
   Tab,
   TabPanel,
   TabIndicator,
-  SlideFade,
+  Collapse,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -52,7 +52,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
       //   console.log(e);
       // }
 
-      const currLanguage = { ...languages[tabIndex], output: 'super cool result of the output' };
+      const currLanguage = { ...languages[tabIndex], output: 'Hello world' };
       setLanguages([
         ...languages.slice(0, tabIndex),
         currLanguage,
@@ -98,7 +98,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         <TabPanels>
           {languages.map(({ code, language, output }, i) => (
             <TabPanel padding="0">
-              <Box height="290px" borderRadius="0 0 4px 4px" overflow="hidden">
+              <Box height="290px" borderRadius={!output && '0 0 4px 4px'} overflow="hidden">
                 <Editor
                   theme="my-theme"
                   value={code}
@@ -122,15 +122,14 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   onMount={handleEditorDidMount}
                 />
               </Box>
-              <SlideFade in={output} offsetY="20px">
-                <Box fontFamily="monospace" color="white" padding="20px" background="#00041A" borderRadius="4px" marginTop="15px">
-                  <Text>
-                    {t('result')}
-                    :
+              <Collapse in={output} offsetY="20px">
+                <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
+                  <Text fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
+                    {stTranslation ? stTranslation[lang]['code-viewer'].terminal : t('terminal')}
                   </Text>
-                  <Text>{output}</Text>
+                  <Text fontFamily="monospace" padding="8px">{output}</Text>
                 </Box>
-              </SlideFade>
+              </Collapse>
             </TabPanel>
           ))}
         </TabPanels>

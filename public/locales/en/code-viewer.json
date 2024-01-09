@@ -1,6 +1,7 @@
 {
   "run": "Run",
   "result": "Result",
+  "terminal": "Terminal",
   "log-in-modal": {
     "title": "Login first",
     "text": "In order to compile the code you have to login or create an account for FREE",
