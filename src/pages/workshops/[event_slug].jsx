@@ -32,6 +32,7 @@ import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
+import { log } from '../../utils/logging';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -154,6 +155,7 @@ function Page({ event, asset }) {
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
+  log('event_data:', event);
 
   const router = useRouter();
   const { locale } = router;
