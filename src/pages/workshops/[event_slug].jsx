@@ -131,7 +131,7 @@ export const getStaticProps = async ({ params, locale }) => {
       },
       translations: translationArray,
       disableLangSwitcher: true,
-      event: data,
+      eventData: data,
       asset,
     },
   });
