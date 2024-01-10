@@ -16,7 +16,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Editor from '@monaco-editor/react';
-import { setStorageItem } from '../../utils';
+import { setStorageItem, getStorageItem } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import bc from '../services/breathecode';
@@ -39,18 +39,41 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
     if (isAuthenticated || allowNotLogged) {
       console.log('I am running the code!');
       const { code, language } = languages[tabIndex];
+      const token = getStorageItem('accessToken');
       console.log('code');
       console.log(code);
-      // try {
-      //   const data = await bc.rigobot().completionJob({
-      //     inputs: {
-      //       text: `Act as a ${language} compiler and compile the following code, return the output wrapped between this symbols --- This is the code: ${code}`,
-      //     },
-      //   });
-      //   console.log(data);
-      // } catch (e) {
-      //   console.log(e);
-      // }
+      try {
+        const completionJob = {
+          inputs: {
+            code,
+            language_and_version: language,
+          },
+          execute_async: false,
+          include_organization_brief: false,
+          include_purpose_objective: true,
+        };
+        const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${token}&dev=true`);
+        const data = await resp.json();
+        const rigobotToken = data.key;
+        console.log('rigobotToken');
+        console.log(rigobotToken);
+        const completionRequest = await fetch('https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/', {
+          method: 'POST',
+          body: JSON.stringify(completionJob),
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Token ${rigobotToken}`,
+          },
+        });
+        // const data = await bc.rigobot().completionJob({
+        //   inputs: {
+        //     text: `Act as a ${language} compiler and compile the following code, return the output wrapped between this symbols --- This is the code: ${code}`,
+        //   },
+        // });
+        console.log(data);
+      } catch (e) {
+        console.log(e);
+      }
 
       const currLanguage = { ...languages[tabIndex], output: 'Hello world' };
       setLanguages([
