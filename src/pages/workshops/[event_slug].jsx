@@ -32,6 +32,7 @@ import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
+import { log } from '../../utils/logging';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -130,15 +131,16 @@ export const getStaticProps = async ({ params, locale }) => {
       },
       translations: translationArray,
       disableLangSwitcher: true,
-      event: data,
+      eventData: data,
       asset,
     },
   });
 };
 
-function Page({ event, asset }) {
+function Page({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
+  const [event, setEvent] = useState(eventData);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -154,22 +156,30 @@ function Page({ event, asset }) {
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
+  log('event_data:', event);
 
   const router = useRouter();
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
 
+  const getEventData = async () => {
+    const resp = await bc.public().singleEvent(eventData?.slug).catch(() => ({
+      statusText: 'not-found',
+    }));
+    const data = resp?.data;
+    setEvent(data);
+  };
   useEffect(() => {
-    if (event?.id) {
-      const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
+    if (eventData?.id) {
+      getEventData();
+      const eventLang = (eventData?.lang === 'us' || eventData?.lang === null) ? 'en' : eventData?.lang;
       if (eventLang !== locale) {
-        window.location.href = `/${eventLang}/workshops/${event?.slug}`;
+        window.location.href = `/${eventLang}/workshops/${eventData?.slug}`;
       }
-      bc.events().getUsers(event?.id)
+      bc.events().getUsers(eventData?.id)
         .then((resp) => {
           const formatedUsers = resp.data.map((l, i) => {
             const index = i + 1;
@@ -198,7 +208,7 @@ function Page({ event, asset }) {
         })
         .catch(() => {});
     }
-  }, [event]);
+  }, [eventData]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -994,11 +1004,11 @@ function Page({ event, asset }) {
 }
 
 Page.propTypes = {
-  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Page.defaultProps = {
-  event: {},
+  eventData: {},
   asset: null,
 };
 

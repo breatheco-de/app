@@ -6,7 +6,7 @@ import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAcce
 import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
-import ReviewModal from '../common/components/ReviewModal';
+import MktTrustCards from '../common/components/MktTrustCards';
 
 export const getStaticProps = () => {
   if (!isDevMode) {
@@ -25,7 +25,6 @@ export const getStaticProps = () => {
 
 export default function Example() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [stage, setStage] = useState('');
   const { isAuthenticated } = useAuth();
   const [isFetchingEvent, setIsFetchingEvent] = useState(false);
@@ -60,18 +59,13 @@ export default function Example() {
 
   return (
     <main className={styles.main}>
-      <Button variant="default" mb="1rem" onClick={() => setIsReviewModalOpen(true)}>
-        Open Review Modal
-      </Button>
+      <MktTrustCards />
       <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
         Open modal
       </Button>
       <Button variant="default" mb="1rem" isDisabled={!isAuthenticated} isLoading={isFetchingEvent} onClick={openEventConsumables}>
         Open out of Event consumables
       </Button>
-
-      <ReviewModal isOpen={isReviewModalOpen} onClose={() => setIsReviewModalOpen(false)} />
-
       <ModalToGetAccess
         isOpen={isModalOpen}
         stage={stage}
