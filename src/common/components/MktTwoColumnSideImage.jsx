@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Flex, Img,
+  Box, Flex, Img, useColorModeValue,
 } from '@chakra-ui/react';
 import Heading from './Heading';
 import Text from './Text';
@@ -47,6 +47,8 @@ function MktTwoColumnSideImage({
     right: 'ltr',
     left: 'rtl',
   };
+  const fontColor = useColorModeValue(slice?.primary?.font_color, slice?.primary?.font_color_in_darkmode);
+  const sideBackgroundColor = useColorModeValue(textBackgroundColor, slice?.primary?.background_in_dark_mode);
 
   const imageProps = slice && slice?.primary?.image?.dimensions;
 
@@ -129,20 +131,20 @@ function MktTwoColumnSideImage({
         }}
       >
         {/* 2 / span 4 */}
-        <Box display={{ base: 'block', md: 'grid' }} height="100%" style={{ direction: 'initial' }} gridColumn="2 / span 4" background={textBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
-          <Flex flexDirection="column" gridGap="16px" alignSelf="center">
-            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor}>
+        <Box display={{ base: 'block', md: 'grid' }} height="100%" style={{ direction: 'initial' }} gridColumn="2 / span 4" background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
+          <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
+            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'}>
               {title}
             </Heading>
             {subTitle && (
-              <Heading as="h4" fontSize={prismicStyles.subtitleSize} color={subtitleColor || hexColor.blueDefault}>
+              <Heading as="h4" fontSize={prismicStyles.subtitleSize} color={subtitleColor || 'currentColor'}>
                 {subTitle}
               </Heading>
             )}
             {slice.primary.description ? (
               <PrismicTextComponent
                 field={slice?.primary?.description}
-                color={slice?.primary?.description_color}
+                color={slice?.primary?.description_color || 'currentColor'}
               />
             ) : (
               <Text

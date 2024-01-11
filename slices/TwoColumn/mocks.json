@@ -115,6 +115,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "#000000",
 				"type": "Color"
+			},
+			"font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#b82d6b",
+				"type": "Color"
+			},
+			"font_color_in_darkmode": {
+				"__TYPE__": "FieldContent",
+				"value": "#ceb6e1",
+				"type": "Color"
+			},
+			"background_in_dark_mode": {
+				"__TYPE__": "FieldContent",
+				"value": "#4be53c",
+				"type": "Color"
 			}
 		},
 		"items": [
