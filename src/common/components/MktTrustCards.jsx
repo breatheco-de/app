@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Img, Fade,
+  Box, Img, Fade, IconButton,
 } from '@chakra-ui/react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
@@ -18,30 +19,64 @@ function Card({ card }) {
   const { fontColor, hexColor } = useStyle();
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
-    }, 2000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
+  //   }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   const formatedDescription = description.length > 39 ? `${description.substring(0, 40)}...` : description;
+
+  const handlePrev = () => {
+    setCurrentIndex((curr) => (curr - 1 < 0 ? images.length - 1 : curr - 1));
+  };
+  const handleNext = () => {
+    setCurrentIndex((curr) => (curr + 1 < images.length ? curr + 1 : 0));
+  };
   return (
     <Box
-      width="180px"
-      height="270px"
+      width={{ sm: '230px', base: '100%' }}
+      height={{ md: '270px', base: '320px' }}
       background={hexColor.backgroundColor}
       borderRadius="11px"
       border="1px solid"
       borderColor={hexColor.borderColor}
-      padding="16px"
+      // padding="16px"
       textAlign="center"
       display="flex"
       flexDirection="column"
       justifyContent="space-between"
+      overflow="hidden"
     >
       <Box width="100%" height="95px" marginBottom="16px" position="relative">
+        <IconButton
+          isRound
+          position="absolute"
+          top="50%"
+          left="1"
+          zIndex="10"
+          variant="ghost"
+          _hover={{ bg: '#DADADA' }}
+          onClick={handlePrev}
+          size="xs"
+          background="#DADADA"
+          icon={<ChevronLeftIcon w={4} h={4} color="black" />}
+        />
+        <IconButton
+          isRound
+          position="absolute"
+          top="50%"
+          right="1"
+          zIndex="10"
+          variant="ghost"
+          _hover={{ bg: '#DADADA' }}
+          onClick={handleNext}
+          size="xs"
+          background="#DADADA"
+          icon={<ChevronRightIcon w={4} h={4} color="black" />}
+        />
         {images.map((image, i) => (
           <Fade in={currentIndex === i}>
             <Img
@@ -49,13 +84,13 @@ function Card({ card }) {
               key={image}
               src={image}
               width="100%"
-              height="95px"
+              height="120px"
               position="absolute"
             />
           </Fade>
         ))}
       </Box>
-      <Box>
+      <Box padding="0 16px">
         <Text size="md" fontWeight="700" lineHeight="16px" marginBottom="10px">
           {title}
         </Text>
@@ -68,11 +103,13 @@ function Card({ card }) {
           {formatedDescription}
         </Text>
       </Box>
-      <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}>
-        {t('asset-button.article')}
-        {'  '}
-        →
-      </Link>
+      <Box paddingBottom="16px">
+        <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}>
+          {t('asset-button.article')}
+          {'  '}
+          →
+        </Link>
+      </Box>
     </Box>
   );
 }
@@ -106,7 +143,7 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding="30px" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
+    <Box id={id} padding="30px" width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
@@ -126,7 +163,7 @@ function MktTrustCards({
           </Text>
         )}
       </Box>
-      <Box display="flex" gap="24px" justifyContent="center" flexWrap="wrap">
+      <Box width="100%" display="flex" gap="24px" justifyContent="space-between" flexWrap="wrap">
         {cards.map((card) => (
           <Card card={card} key={`${card.title}`} />
         ))}

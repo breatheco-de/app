@@ -24,7 +24,7 @@ function MainEvent({
 
   const accessToken = getStorageItem('accessToken');
   const liveStartsAtDate = new Date(event?.starting_at);
-  const liveEndsAtDate = new Date(event?.ending_at);
+  const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
 
   return (
     <>
@@ -57,7 +57,7 @@ function MainEvent({
           opacity={isLiveOrStarting(liveStartsAtDate, liveEndsAtDate) ? '1' : '0.5'}
           position="relative"
         >
-          {mainEvents.length <= 1 && getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ending_at)))?.length !== 0 && (
+          {mainEvents.length <= 1 && getOtherEvents().filter((e) => isLiveOrStarting(new Date(e?.starting_at), new Date(e?.ended_at || e?.ending_at)))?.length !== 0 && (
             <Box
               borderRadius="full"
               width="17px"

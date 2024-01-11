@@ -11,17 +11,24 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
+import useDebounce from '../../common/hooks/useDebounce';
 
 function Search({ placeholder, onChange }) {
   const router = useRouter();
   const [value, setValue] = useState('');
+  const debouncedSearchTerm = useDebounce(value, 300);
 
   useEffect(() => {
-    if (router.query.search !== undefined) {
-      setValue(router.query.search);
+    if (debouncedSearchTerm) {
+      onChange();
+      router.push({
+        query: {
+          ...router.query,
+          search: debouncedSearchTerm.toLowerCase(),
+        },
+      });
     }
-    // initialSearchValue = router.query && router.query.search;
-  }, [router.query.search]);
+  }, [debouncedSearchTerm]);
 
   return (
     <Formik initialValues={{ search: value }}>
@@ -36,18 +43,18 @@ function Search({ placeholder, onChange }) {
                       <Icon icon="search" color="gray" width="16px" height="16px" />
                     </InputLeftElement>
                     <Input
-                      defaultValue={value}
-                      onChange={(values) => {
-                        // update the path query with search value
-                        setTimeout(() => {
-                          onChange();
+                      defaultValue={router?.query?.search}
+                      onChange={(e) => {
+                        if (e?.target?.value?.length === 0) {
                           router.push({
                             query: {
                               ...router.query,
-                              search: values.target.value.toLowerCase(),
+                              search: '',
                             },
                           });
-                        }, 300);
+                        } else {
+                          setValue(e.target.value);
+                        }
                       }}
                       id="search"
                       width="100%"

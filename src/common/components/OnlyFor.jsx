@@ -29,7 +29,7 @@ function Component({ withBanner }) {
 }
 
 function OnlyFor({
-  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, profile,
+  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) {
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT'];
@@ -61,7 +61,7 @@ function OnlyFor({
     return false;
   };
 
-  return haveRequiredCapabilities() ? children : <Component />;
+  return haveRequiredCapabilities() ? children : <Component withBanner={withBanner} />;
 }
 
 OnlyFor.propTypes = {
@@ -73,6 +73,7 @@ OnlyFor.propTypes = {
 
   onlyTeachers: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  withBanner: PropTypes.bool,
 };
 
 OnlyFor.defaultProps = {
@@ -82,6 +83,7 @@ OnlyFor.defaultProps = {
   onlyMember: false,
   onlyTeachers: false,
   profile: {},
+  withBanner: false,
 };
 
 Component.propTypes = {
