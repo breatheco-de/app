@@ -195,6 +195,14 @@ function PricingView() {
           <Img margin="auto" width="235px" src="/static/images/women-laptop-people.png" />
         </Flex>
         <Faq marginTop="40px" items={t('faq', {}, { returnObjects: true })} />
+        <Box>
+          <Text fontWeight="300" size="xs" marginTop="20px">
+            {t('pricing-disclaimer.title')}
+          </Text>
+          <Text fontWeight="300" size="xs" marginBottom="20px">
+            {t('pricing-disclaimer.description')}
+          </Text>
+        </Box>
       </Container>
     </>
   );
