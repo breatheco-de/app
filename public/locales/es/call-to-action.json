@@ -1,6 +1,7 @@
 { 
   "call-to-actions": [
     {
+      "component": "WeeklyCodingChallenge",
       "asset_type": ["lesson","project"], 
       "asset_id": [2223,323],
       "asset_technologies": ["html","js"],

@@ -1,37 +1,61 @@
 /* eslint-disable no-unused-vars */
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import useStyle from '../hooks/useStyle';
+import CallToActionCard from './CallToActionCard';
 
 function DynamicCallToAction({ assetType, assetId, assetTechnologies }) {
+  const { hexColor } = useStyle();
   const { t } = useTranslation('call-to-action');
   const callToActions = t('call-to-actions', {}, { returnObjects: true });
-  console.log('callToActions');
-  console.log(callToActions);
 
-  const filterCTA = () => {
-    // Function to count coincidences between a call to action and the target asset
-    const countCoincidences = (cta) => {
-      let coincidences = 0;
-      if (cta.asset_id.includes(assetId)) {
-        coincidences += 1;
-      }
-      if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech))) {
-        coincidences += 1;
-      }
-      if (cta.asset_type.includes(assetType)) {
-        coincidences += 1;
-      }
-      return coincidences;
-    };
-    // Filter call to actions with at least one coincidence and sort by descending coincidences
-    return callToActions.filter((cta) => countCoincidences(cta) > 0).sort((a, b) => countCoincidences(b) - countCoincidences(a));
+  // Function to count coincidences between a call to action and the target asset
+  const countCoincidences = (cta) => {
+    let coincidences = 0;
+    if (cta.asset_id.includes(assetId)) {
+      coincidences += 1;
+    }
+    if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech))) {
+      coincidences += 1;
+    }
+    if (cta.asset_type.includes(assetType)) {
+      coincidences += 1;
+    }
+    return coincidences;
   };
 
-  const foundCta = filterCTA()[0];
+  const processedCtas = callToActions.map((cta) => ({ ...cta, coincidence: countCoincidences(cta) }));
 
-  return (
-    <h1>si amigo</h1>
-  );
+  // Filter call to actions with at least one coincidence and sort by descending coincidences
+  const filterCTA = () => processedCtas
+    .filter((cta) => cta.coincidence > 0)
+    .sort((a, b) => {
+      if (b.coincidence === a.coincidence) {
+        if (b.asset_id === assetId) return 1;
+        if (a.asset_id === assetId) return -1;
+        return 0;
+      }
+      return b.coincidence - a.coincidence;
+    });
+  const selectedCta = filterCTA()[0];
+
+  if (selectedCta?.component === 'WeeklyCodingChallenge') {
+    return (
+      <CallToActionCard
+        background="yellow.light"
+        borderColor={hexColor.yellowDefault}
+        color="black"
+        iconUrl={selectedCta.content.icon_url}
+        title={selectedCta.content.title}
+        description={selectedCta.content.description}
+        buttonLabel={selectedCta.content.button_label}
+        forwardUrl={selectedCta.content.forward_url}
+        pillLabel="6 days left"
+      />
+    );
+  }
+
+  return null;
 }
 
 DynamicCallToAction.propTypes = {
