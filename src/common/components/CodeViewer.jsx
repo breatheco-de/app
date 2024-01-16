@@ -38,6 +38,23 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
+  const getRigobotToken = async () => {
+    let rigobotToken = getStorageItem('rigobotToken');
+    rigobotToken = JSON.parse(rigobotToken);
+
+    if (!rigobotToken || rigobotToken.expires_at < new Date().toISOString()) {
+      const bcToken = getStorageItem('accessToken');
+
+      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}&dev=true`);
+      const data = await resp.json();
+      setStorageItem('rigobotToken', JSON.stringify(data));
+
+      rigobotToken = data;
+    }
+
+    return rigobotToken.key;
+  };
+
   const run = async () => {
     if (isAuthenticated || allowNotLogged) {
       try {
@@ -48,7 +65,8 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           ...languages.slice(tabIndex + 1),
         ]);
         const { code, language } = languages[tabIndex];
-        const token = getStorageItem('accessToken');
+
+        const rigobotToken = await getRigobotToken();
 
         const completionJob = {
           inputs: {
@@ -59,10 +77,6 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           include_organization_brief: false,
           include_purpose_objective: true,
         };
-        const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${token}&dev=true`);
-        const data = await resp.json();
-        const rigobotToken = data.key;
-
         const completionRequest = await fetch('https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/', {
           method: 'POST',
           body: JSON.stringify(completionJob),
