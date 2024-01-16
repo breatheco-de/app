@@ -5,8 +5,6 @@ import {
   Container, Box,
 } from '@chakra-ui/react';
 import Text from './Text';
-import Link from './NextChakraLink';
-import { slugify } from '../../utils';
 import CustomTheme from '../../../styles/theme';
 
 function MktTechnologiesPills({ id, technologies, ...rest }) {
@@ -14,7 +12,7 @@ function MktTechnologiesPills({ id, technologies, ...rest }) {
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const cleanTechs = technologies.length > 0 && typeof technologies[0] !== 'string' ? technologies : technologies.map((tech) => ({ text: tech }));
+  const cleanTeachs = technologies.length > 0 && typeof technologies[0] === 'string' ? technologies : technologies.map((obj) => obj.text);
 
   const colors = [
     CustomTheme.colors.green.light,
@@ -66,29 +64,24 @@ function MktTechnologiesPills({ id, technologies, ...rest }) {
         onTouchMove={onMouseMove}
         onTouchEnd={onMouseLeave}
       >
-        {cleanTechs.map((tech, i) => (
-          <Link
-            href={`/technology/${tech.slug || slugify(tech.text)}`}
-            textDecoration="1px solid black"
+        {cleanTeachs.map((tech, i) => (
+          <Text
+            key={`${tech}-${i}`}
+            height="32px"
+            fontSize="16px"
+            fontWeight="bold"
+            padding="10px"
+            borderRadius="25px"
+            textTransform="uppercase"
+            background={colors[((i % colorsLength) + colorsLength) % colorsLength]}
+            display="flex"
+            justifyContent="center"
+            flexDirection="column"
+            color="#000"
+            minWidth="fit-content"
           >
-            <Text
-              key={`${tech.text}-${i}`}
-              height="32px"
-              fontSize="16px"
-              fontWeight="bold"
-              padding="10px"
-              borderRadius="25px"
-              textTransform="uppercase"
-              background={colors[((i % colorsLength) + colorsLength) % colorsLength]}
-              display="flex"
-              justifyContent="center"
-              flexDirection="column"
-              color="#000"
-              minWidth="fit-content"
-            >
-              {tech.text}
-            </Text>
-          </Link>
+            {tech}
+          </Text>
         ))}
       </Box>
     </Container>
