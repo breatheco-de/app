@@ -27,6 +27,15 @@ const Component = (args, context) => {
   )
 };
 
+const htmlCode = `
+  <h1>Hello world!</h1>
+  <div>
+    <p>
+      This is the html test
+    </p>
+  </div>
+`;
+
 export const Default = Component.bind({});
 Default.args = {
   languagesData: [{
@@ -37,6 +46,10 @@ Default.args = {
     label: 'Python',
     language: 'python',
     code: 'print(1)',
+  }, {
+    label: 'Html',
+    language: 'html',
+    code: htmlCode,
   }],
 };
 
