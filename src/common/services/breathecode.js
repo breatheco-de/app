@@ -51,6 +51,7 @@ const breathecode = {
           user_agent: 'bc/student',
         }),
       }),
+      verifyRigobotConnection: (token) => axios.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),

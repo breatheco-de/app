@@ -555,6 +555,7 @@ function Dashboard() {
             {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">
                 <ProgressBar
+                  cohortProgram={cohortProgram}
                   taskTodo={taskTodoState}
                   progressText={t('progressText')}
                   width="100%"

@@ -3,14 +3,13 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, useColorModeValue, Text,
+  Box, useColorModeValue, Text, Flex,
 } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import Image from 'next/image';
 import { MotionBox } from '../../common/components/Animated';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
-import GridContainer from '../../common/components/GridContainer';
 import Button from '../../common/components/Button';
 import PrismicTextComponent from '../../common/components/PrismicTextComponent';
 
@@ -45,27 +44,27 @@ function IntroductionSection({
   };
 
   const getLeftColumnSize = () => {
-    if (isLeftBigger) return '2 / span 5';
-    if (isRightBigger) return '2 / span 3';
-    if (bothAreEqual) return '2 / span 4';
-    return '2 / span 5';
+    if (isLeftBigger) return 0.7;
+    if (isRightBigger) return 0.3;
+    if (bothAreEqual) return 0.5;
+    return 0.7;
   };
 
   const getRightColumnSize = () => {
-    if (isLeftBigger) return '7 / span 3';
-    if (isRightBigger) return '5 / span 5';
-    if (bothAreEqual) return '6 / span 4';
-    return '7 / span 3';
+    if (isLeftBigger) return 0.3;
+    if (isRightBigger) return 0.7;
+    if (bothAreEqual) return 0.5;
+    return 0.3;
   };
 
   return (
-    <GridContainer
-      gridTemplateColumns="repeat(10, 1fr)"
-      px="10px"
+    <Flex
+      flexDirection={{ base: 'column', md: 'row' }}
+      px={{ base: '10px', md: '0px' }}
       id={slice?.primary?.id_key || ''}
       {...rest}
     >
-      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '1 / span 5' : getLeftColumnSize()}>
+      <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
         <Heading as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
@@ -189,9 +188,9 @@ function IntroductionSection({
       </Box>
 
       {/* ----------------------- Image ----------------------- */}
-      <Box display={{ base: 'block', md: 'grid' }} gridColumn={fitContent ? '7 / span 4' : getRightColumnSize()} alignContent="center">
+      <Box display={{ base: 'block', md: 'grid' }} flex={getRightColumnSize()}>
         {slice?.primary?.image?.url ? (
-          <Box display="flex" height="fit-content" justifyContent="center">
+          <Box display="flex" height="fit-content" justifyContent="end">
             <Image
               src={slice.primary.image.url}
               alt={slice.primary.image.alt || 'Introduction avatars'}
@@ -216,7 +215,7 @@ function IntroductionSection({
           </video>
         )}
       </Box>
-    </GridContainer>
+    </Flex>
   );
 }
 
