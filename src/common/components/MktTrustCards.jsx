@@ -84,7 +84,7 @@ function Card({ card }) {
               key={image}
               src={image}
               width="100%"
-              height="120px"
+              height={{ md: '120px', base: '140px' }}
               position="absolute"
             />
           </Fade>
