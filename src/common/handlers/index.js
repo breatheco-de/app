@@ -206,7 +206,7 @@ const handlers = {
     const allExercises = tasks.filter((e) => e.task_type === 'EXERCISE');
     const allProjects = tasks.filter((p) => p.task_type === 'PROJECT');
     const allQuiz = tasks.filter((q) => q.task_type === 'QUIZ');
-    const taskCount = cohortInfo.allTasks.length > 0 ? cohortInfo.allTasks : [];
+    const taskCount = cohortInfo?.allTasks?.length > 0 ? cohortInfo.allTasks : tasks;
 
     const allTasks = [
       {

@@ -163,7 +163,7 @@ function Page({ id, syllabus, cohort, members }) {
               isClosable: true,
             });
             setTimeout(() => {
-              redirectTocohort();
+              router.push('/choose-program');
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
