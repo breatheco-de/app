@@ -23,6 +23,7 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
+          npm install -g bun
           npm install
           npm run build-storybook
 
