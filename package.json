@@ -32,7 +32,7 @@
     "lint:files": "eslint src/**/*.{js,jsx}",
     "lint:fix": "eslint src/**/*.{js,jsx} --fix",
     "lint:fix:components": "eslint --fix src/common/components/**/*.{js,jsx}",
-    "prepare": "husky install && bun make:assets",
+    "prepare-repo": "husky install && bun make:assets",
     "make:sitemap": "bun ./scripts/sitemap-generator/index.js",
     "slicemachine": "start-slicemachine",
     "make:redirect": "bun ./scripts/redirects-generator.js",
