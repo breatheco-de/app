@@ -201,39 +201,40 @@ const handlers = {
 
     return show;
   }),
-  handleTasks: (tasks, onlyExistent = false) => {
+  handleTasks: ({ tasks = [], cohortInfo, onlyExistent = false }) => {
     const allLessons = tasks.filter((l) => l.task_type === 'LESSON');
     const allExercises = tasks.filter((e) => e.task_type === 'EXERCISE');
     const allProjects = tasks.filter((p) => p.task_type === 'PROJECT');
     const allQuiz = tasks.filter((q) => q.task_type === 'QUIZ');
+    const taskCount = cohortInfo.allTasks.length > 0 ? cohortInfo.allTasks : [];
 
     const allTasks = [
       {
         title: 'Lesson',
         icon: 'book',
         task_type: 'LESSON',
-        taskLength: allLessons.length,
+        taskLength: taskCount.find((t) => t?.task_type === 'LESSON')?.taskLength,
         completed: allLessons.filter((l) => l.task_status === 'DONE').length,
       },
       {
         title: 'Exercise',
         icon: 'strength',
         task_type: 'EXERCISE',
-        taskLength: allExercises.length,
+        taskLength: taskCount.find((t) => t?.task_type === 'EXERCISE')?.taskLength,
         completed: allExercises.filter((e) => e.task_status === 'DONE').length,
       },
       {
         title: 'Project',
         icon: 'code',
         task_type: 'PROJECT',
-        taskLength: allProjects.length,
+        taskLength: taskCount.find((t) => t?.task_type === 'PROJECT')?.taskLength,
         completed: allProjects.filter((p) => p.task_status === 'DONE').length,
       },
       {
         title: 'Quiz',
         icon: 'answer',
         task_type: 'QUIZ',
-        taskLength: allQuiz.length,
+        taskLength: taskCount.find((t) => t?.task_type === 'QUIZ')?.taskLength,
         completed: allQuiz.filter((q) => q.task_status === 'DONE').length,
       },
     ];
@@ -266,17 +267,17 @@ const handlers = {
       const {
         assignments = [],
         lessons = [],
-        project = [],
+        replits = [],
         quizzes = [],
       } = module;
 
-      const assignmentsCount = assignments.length;
+      const exercisesCount = replits.length;
       const lessonsCount = lessons.length;
-      const projectCount = project.title ? 1 : (project?.length || 0);
+      const projectCount = assignments.length;
       const quizzesCount = quizzes.length;
 
       const assignmentsRecopilatedObj = {
-        assignmentsCount,
+        exercisesCount,
         lessonsCount,
         projectCount,
         quizzesCount,
@@ -293,7 +294,7 @@ const handlers = {
     };
 
     assignmentsRecopilated.forEach((assignment) => {
-      assignmentsRecopilatedObj.exercise += assignment.assignmentsCount;
+      assignmentsRecopilatedObj.exercise += assignment.exercisesCount;
       assignmentsRecopilatedObj.lesson += assignment.lessonsCount;
       assignmentsRecopilatedObj.project += assignment.projectCount;
       assignmentsRecopilatedObj.quiz += assignment.quizzesCount;

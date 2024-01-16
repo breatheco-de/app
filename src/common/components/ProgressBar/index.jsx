@@ -8,13 +8,17 @@ import Icon from '../Icon';
 import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
+import { usePersistent } from '../../hooks/usePersistent';
 
 function ProgressBar({
   progressText, taskTodo, width,
 }) {
   const { fontColor } = useStyle();
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [programsList] = usePersistent('programsList', {});
+  const currentCohortInfo = programsList[cohortSession.slug || {}];
 
-  const { allTasks, percentage } = handlers.handleTasks(taskTodo);
+  const { allTasks, percentage } = handlers.handleTasks({ tasks: taskTodo, cohortInfo: currentCohortInfo });
   return (
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
