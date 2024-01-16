@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, useToast } from '@chakra-ui/react';
 import SimpleModal from '../SimpleModal';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
@@ -9,7 +9,6 @@ import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import FileList from './FileList';
 import bc from '../../services/breathecode';
-import { error } from '../../../utils/logging';
 
 function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
   const stages = {
@@ -27,6 +26,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
   });
   const [stage, setStage] = useState(stages.initial);
   const { lightColor, featuredColor, hexColor } = useStyle();
+  const toast = useToast();
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
 
   const handleSelectedText = () => {
@@ -42,28 +42,38 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
     code_review: '74rem',
   };
 
-  const proceedToCommitFiles = () => {
+  const proceedToCommitFiles = async () => {
     setLoaders((prevState) => ({
       ...prevState,
       isFetchingCommitFiles: true,
     }));
-    bc.assignments().files(currentTask.id)
-      .then((resp) => {
-        setContextData((prevState) => ({
-          ...prevState,
-          commitfiles: {
-            task: currentTask,
-            fileList: resp.data,
-          },
-        }));
-        setLoaders((prevState) => ({
-          ...prevState,
-          isFetchingCommitFiles: false,
-        }));
-        setStage(stages.file_list);
-      }).catch((err) => {
-        error('"proceedToCommitFiles" function error:', err);
+    const response = await bc.assignments().files(currentTask.id);
+    const data = await response.json();
+
+    if (response.status >= 400) {
+      toast({
+        title: 'Error',
+        description: data.detail,
+        status: 'error',
+        duration: 9000,
+        position: 'top',
+        isClosable: true,
       });
+    }
+    if (response.ok) {
+      setContextData((prevState) => ({
+        ...prevState,
+        commitfiles: {
+          task: currentTask,
+          fileList: data,
+        },
+      }));
+      setStage(stages.file_list);
+    }
+    setLoaders((prevState) => ({
+      ...prevState,
+      isFetchingCommitFiles: false,
+    }));
   };
 
   return (
