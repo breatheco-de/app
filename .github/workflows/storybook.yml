@@ -23,9 +23,8 @@ jobs:
 
       - name: Install and Build 🔧
         run: |
-          npm install -g bun
-          bun install
-          bun build-storybook
+          npm install
+          npm run build-storybook
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@4.1.4
