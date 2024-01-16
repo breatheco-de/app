@@ -6,7 +6,6 @@ import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
-import GridContainer from './GridContainer';
 import PrismicTextComponent from './PrismicTextComponent';
 
 const SIZES = {
@@ -115,9 +114,10 @@ function MktTwoColumnSideImage({
       background={background || backgroundColor}
       {...rest}
     >
-      <GridContainer
-        gridTemplateColumns="repeat(10, 1fr)"
+      <Flex
+        flexDirection={{ base: 'column', md: 'row' }}
         maxWidth="1280px"
+        margin="0 auto"
         id={id}
         px="10px"
         border={border}
@@ -130,10 +130,9 @@ function MktTwoColumnSideImage({
           direction: flexDirection[imagePosition],
         }}
       >
-        {/* 2 / span 4 */}
-        <Box display={{ base: 'block', md: 'grid' }} height="100%" style={{ direction: 'initial' }} gridColumn="2 / span 4" background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
+        <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
           <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
-            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'}>
+            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
             </Heading>
             {subTitle && (
@@ -184,7 +183,7 @@ function MktTwoColumnSideImage({
             )}
           </Flex>
         </Box>
-        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
+        <Box flex={0.5} style={{ direction: 'initial' }}>
           <Img
             boxSize="100%"
             margin="0 auto"
@@ -196,7 +195,7 @@ function MktTwoColumnSideImage({
             width={imageProps?.width}
           />
         </Box>
-      </GridContainer>
+      </Flex>
     </Box>
   );
 }
