@@ -9,7 +9,7 @@ const availableLanguages = {
 };
 
 const taskIcons = {
-  EXERCISE: 'assignment',
+  EXERCISE: 'strength',
   LESSON: 'book',
   PROJECT: 'code',
   QUIZ: 'answer',
@@ -258,9 +258,9 @@ const handlers = {
   },
 
   getAssignmentsCount: ({
-    cohortProgram, taskTodo, cohortId,
+    data, taskTodo, cohortId,
   }) => new Promise((resolve) => {
-    const modules = cohortProgram?.json?.days || cohortProgram?.json?.modules;
+    const modules = data?.json?.days || data?.json?.modules || data;
     const assignmentsRecopilated = [];
 
     modules?.forEach((module) => {
@@ -316,7 +316,7 @@ const handlers = {
     });
     const totalCompletedTasks = arrayOfObjects.reduce((acc, task) => acc + task.completed, 0);
     const totalTasks = arrayOfObjects.reduce((acc, task) => acc + task.taskLength, 0);
-    const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100);
+    const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100) || 0;
 
     resolve({
       allTasks: arrayOfObjects,

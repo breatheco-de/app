@@ -65,6 +65,8 @@ function Page({ id, syllabus, cohort, members }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [alreadyHaveCohort, setAlreadyHaveCohort] = useState(false);
   const [isModalToGetAccesOpen, setIsModalToGetAccesOpen] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const toast = useToast();
   const router = useRouter();
   const qsForPricing = parseQuerys({ plan: qsPlan && encodeURIComponent(qsPlan) });
@@ -89,6 +91,29 @@ function Page({ id, syllabus, cohort, members }) {
     router.push(cohortDashboardLink);
   };
 
+  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => {} } = {}) => {
+    bc.admissions().me().then((resp) => {
+      const data = resp?.data;
+      const alreadyHaveThisCohort = data?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
+
+      if (alreadyHaveThisCohort) {
+        callback();
+
+        setIsFetching(false);
+        if (withAlert) {
+          toast({
+            position: 'top',
+            title: t('already-have-this-cohort'),
+            status: 'info',
+            duration: 5000,
+          });
+        }
+        setAlreadyHaveCohort(true);
+        redirectTocohort();
+      }
+    });
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
@@ -100,21 +125,7 @@ function Page({ id, syllabus, cohort, members }) {
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
 
-      bc.admissions().me().then((resp) => {
-        const data = resp?.data;
-        const alreadyHaveThisCohort = data?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohort?.id);
-
-        if (alreadyHaveThisCohort) {
-          toast({
-            position: 'top',
-            title: t('already-have-this-cohort'),
-            status: 'info',
-            duration: 5000,
-          });
-          setAlreadyHaveCohort(true);
-          redirectTocohort();
-        }
-      });
+      redirectToCohortIfItsReady();
     }
   }, [isAuthenticated]);
 
@@ -130,6 +141,23 @@ function Page({ id, syllabus, cohort, members }) {
       router.push(`/pricing${qsForPricing}`);
     }
   }, [cohort?.id]);
+
+  useEffect(() => {
+    let interval;
+    if (readyToRefetch && timeElapsed < 10) {
+      interval = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
+        redirectToCohortIfItsReady({
+          withAlert: false,
+          callback: () => clearInterval(interval),
+        });
+      }, 1500);
+    }
+    if (readyToRefetch === false) {
+      setTimeElapsed(0);
+      clearInterval(interval);
+    }
+  }, [readyToRefetch]);
 
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const techs = syllabus?.main_technologies?.split(',') || [];
@@ -152,7 +180,7 @@ function Page({ id, syllabus, cohort, members }) {
         .then(async (resp) => {
           const dataRequested = await resp.json();
           if (dataRequested?.status === 'ACTIVE') {
-            redirectTocohort();
+            setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
             toast({
@@ -177,8 +205,7 @@ function Page({ id, syllabus, cohort, members }) {
             router.push(`/pricing${qsForPricing}`);
           }
         })
-        .catch(() => {})
-        .finally(() => {
+        .catch(() => {
           setTimeout(() => {
             setIsFetching(false);
           }, 600);

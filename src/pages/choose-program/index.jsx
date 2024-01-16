@@ -238,16 +238,18 @@ function chooseProgram() {
           const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
           const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
           const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-          handlers.getAssignmentsCount({ cohortProgram: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
+          handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
             .then((assignmentData) => {
-              setCohortTasks((prev) => ({
-                ...prev,
-                [item?.cohort.slug]: {
-                  ...assignmentData,
-                  teacher,
-                  assistant,
-                },
-              }));
+              if (item?.cohort?.slug) {
+                setCohortTasks((prev) => ({
+                  ...prev,
+                  [item?.cohort.slug]: {
+                    ...assignmentData,
+                    teacher,
+                    assistant,
+                  },
+                }));
+              }
             });
         }
         return null;
