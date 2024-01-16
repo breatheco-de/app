@@ -10,7 +10,7 @@ import Heading from './Heading';
 import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 
-function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, ...rest }) {
+function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, iconStyles, buttonStyles, descriptionStyles, ...rest }) {
   const { hexColor } = useStyle();
   return (
     <Box
@@ -29,16 +29,16 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
           </Box>
         )}
       </Box>
-      <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
+      <Box position="absolute" borderRadius="full" top="-30px" width="44px" height="44px" {...iconStyles}>
         <Image src={iconUrl} width={44} height={44} />
       </Box>
       <Heading size="xsm" marginBottom="8px">
         {title}
       </Heading>
-      <Text size="md" lineHeight="16px" wwight="400" marginBottom="16px">
+      <Text size="md" lineHeight="16px" wwight="400" marginBottom="16px" {...descriptionStyles}>
         {description}
       </Text>
-      <NextChakraLink href={forwardUrl} fontWeight="700" color={hexColor.blueDefault} display="block" textAlign="center">
+      <NextChakraLink href={forwardUrl} fontWeight="700" color={hexColor.blueDefault} display="block" textAlign="center" {...buttonStyles}>
         {buttonLabel}
       </NextChakraLink>
     </Box>
@@ -52,6 +52,9 @@ CallToActionCard.propTypes = {
   forwardUrl: PropTypes.string,
   iconUrl: PropTypes.string,
   pillLabel: PropTypes.string,
+  iconStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  descriptionStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CallToActionCard.defaultProps = {
@@ -61,6 +64,9 @@ CallToActionCard.defaultProps = {
   forwardUrl: '',
   iconUrl: '',
   pillLabel: null,
+  iconStyles: {},
+  buttonStyles: {},
+  descriptionStyles: {},
 };
 
 export default CallToActionCard;

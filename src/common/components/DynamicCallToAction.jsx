@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import useStyle from '../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
 
-function DynamicCallToAction({ assetType, assetId, assetTechnologies }) {
+function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslation }) {
   const { hexColor } = useStyle();
-  const { t } = useTranslation('call-to-action');
-  const callToActions = t('call-to-actions', {}, { returnObjects: true });
+  const { t, lang } = useTranslation('call-to-action');
+  const callToActions = stTranslation ? stTranslation[lang]['call-to-action']['call-to-actions'] : t('call-to-actions', {}, { returnObjects: true });
 
   // Function to count coincidences between a call to action and the target asset
   const countCoincidences = (cta) => {
@@ -50,7 +50,40 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies }) {
         description={selectedCta.content.description}
         buttonLabel={selectedCta.content.button_label}
         forwardUrl={selectedCta.content.forward_url}
-        pillLabel="6 days left"
+        // pillLabel="6 days left"
+      />
+    );
+  }
+
+  if (selectedCta?.component === 'LargeWeeklyCodingChallenge') {
+    return (
+      <CallToActionCard
+        background="#FFE9B8"
+        borderColor={hexColor.yellowDefault}
+        color="black"
+        maxWidth="none"
+        width="100%"
+        iconUrl={selectedCta.content.icon_url}
+        title={selectedCta.content.title}
+        description={selectedCta.content.description}
+        buttonLabel={selectedCta.content.button_label}
+        forwardUrl={selectedCta.content.forward_url}
+        iconStyles={{
+          border: '1px solid',
+          borderColor: hexColor.yellowDefault,
+        }}
+        buttonStyles={{
+          display: 'inline-block',
+          variant: 'buttonDefault',
+          background: 'black',
+          color: 'white',
+          _hover: { bg: 'black' },
+        }}
+        descriptionStyles={{
+          size: '18px',
+          lineHeight: '21px',
+        }}
+        // pillLabel="6 days left"
       />
     );
   }
@@ -62,12 +95,14 @@ DynamicCallToAction.propTypes = {
   assetType: PropTypes.string,
   assetId: PropTypes.number,
   assetTechnologies: PropTypes.arrayOf(PropTypes.string),
+  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 DynamicCallToAction.defaultProps = {
   assetType: null,
   assetId: null,
   assetTechnologies: [],
+  stTranslation: null,
 };
 
 export default DynamicCallToAction;

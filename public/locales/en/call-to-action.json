@@ -3,7 +3,7 @@
     {
       "component": "WeeklyCodingChallenge",
       "asset_type": ["lesson","project"], 
-      "asset_id": [2223,323],
+      "asset_id": [323],
       "asset_technologies": ["html","js"],
       "content": {
         "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
@@ -14,15 +14,15 @@
       }
     },
     {
-      "component": "Second",
+      "component": "LargeWeeklyCodingChallenge",
       "asset_type": ["lesson"], 
       "asset_id": [2223],
       "asset_technologies": ["html","js"],
       "content": {
-        "icon_url": "https://path/to/icon.png",
+        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
         "title": "Weekly coding challenges",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge",
+        "description": "Every week, we pick a real-life project to build your portfolio and get ready for a job. All projects are built with chaGPT as co-pilot",
+        "button_label": "Join Challenge",
         "forward_url": "https://google.com/"
       }
     },
