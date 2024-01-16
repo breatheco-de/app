@@ -11,6 +11,7 @@ import {
   TabPanel,
   TabIndicator,
   Collapse,
+  Tooltip,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -25,6 +26,8 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
+const notExecutables = ['html', 'css'];
+
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -37,12 +40,16 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
 
   const run = async () => {
     if (isAuthenticated || allowNotLogged) {
-      console.log('I am running the code!');
-      const { code, language } = languages[tabIndex];
-      const token = getStorageItem('accessToken');
-      console.log('code');
-      console.log(code);
       try {
+        const currLanguage = { ...languages[tabIndex], running: true };
+        setLanguages([
+          ...languages.slice(0, tabIndex),
+          currLanguage,
+          ...languages.slice(tabIndex + 1),
+        ]);
+        const { code, language } = languages[tabIndex];
+        const token = getStorageItem('accessToken');
+
         const completionJob = {
           inputs: {
             code,
@@ -55,8 +62,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${token}&dev=true`);
         const data = await resp.json();
         const rigobotToken = data.key;
-        console.log('rigobotToken');
-        console.log(rigobotToken);
+
         const completionRequest = await fetch('https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/', {
           method: 'POST',
           body: JSON.stringify(completionJob),
@@ -65,22 +71,17 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
             Authorization: `Token ${rigobotToken}`,
           },
         });
-        // const data = await bc.rigobot().completionJob({
-        //   inputs: {
-        //     text: `Act as a ${language} compiler and compile the following code, return the output wrapped between this symbols --- This is the code: ${code}`,
-        //   },
-        // });
-        console.log(data);
+        const completion = await completionRequest.json();
+
+        currLanguage.output = completion.answer.replace('---terminal output---', '').replace('\n', '');
+        setLanguages([
+          ...languages.slice(0, tabIndex),
+          currLanguage,
+          ...languages.slice(tabIndex + 1),
+        ]);
       } catch (e) {
         console.log(e);
       }
-
-      const currLanguage = { ...languages[tabIndex], output: 'Hello world' };
-      setLanguages([
-        ...languages.slice(0, tabIndex),
-        currLanguage,
-        ...languages.slice(tabIndex + 1),
-      ]);
     } else {
       setShowModal(true);
     }
@@ -107,10 +108,12 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
-          <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
-            <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-            {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
-          </Button>
+          {!notExecutables.includes(languages[tabIndex].language) && (
+            <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
+              <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
+              {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
+            </Button>
+          )}
         </Box>
         <TabIndicator
           mt="-1.5px"
@@ -119,18 +122,18 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           borderRadius="1px"
         />
         <TabPanels>
-          {languages.map(({ code, language, output }, i) => (
+          {languages.map(({ code, language, output, running }, i) => (
             <TabPanel padding="0">
               <Box height="290px" borderRadius={!output && '0 0 4px 4px'} overflow="hidden">
                 <Editor
                   theme="my-theme"
                   value={code}
                   onChange={(value) => {
-                    const currLanguage = { ...languagesData[i], code: value };
+                    const currLanguage = { ...languages[i], code: value };
                     setLanguages([
-                      ...languagesData.slice(0, i),
+                      ...languages.slice(0, i),
                       currLanguage,
-                      ...languagesData.slice(i + 1),
+                      ...languages.slice(i + 1),
                     ]);
                   }}
                   defaultLanguage={language}
@@ -145,12 +148,23 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   onMount={handleEditorDidMount}
                 />
               </Box>
-              <Collapse in={output} offsetY="20px">
+              <Collapse in={running} offsetY="20px">
                 <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
-                  <Text fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
+                  <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
                     {stTranslation ? stTranslation[lang]['code-viewer'].terminal : t('terminal')}
+                    <Tooltip
+                      label={stTranslation ? stTranslation[lang]['code-viewer']['loading-output'] : t('loading-output')}
+                      placement="right"
+                      hasArrow
+                    >
+                      <Box>
+                        <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
+                      </Box>
+                    </Tooltip>
                   </Text>
-                  <Text fontFamily="monospace" padding="8px">{output}</Text>
+                  <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
+                    {output}
+                  </Text>
                 </Box>
               </Collapse>
             </TabPanel>

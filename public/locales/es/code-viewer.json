@@ -2,6 +2,7 @@
   "run": "Correr",
   "result": "Resultado",
   "terminal": "Consola",
+  "loading-output": "La terminal mostrará la salida de la computadora después de ejecutar su código.",
   "log-in-modal": {
     "title": "Inicia sesión primero",
     "text": "Para compilar el código debes iniciar sesión o registrarte sin costos",
