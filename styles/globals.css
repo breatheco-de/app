@@ -506,7 +506,16 @@ featured {
 .video-overlay .video-container {
   transform: scale(1);
 }
+body.chakra-ui-light .anchorjs-link {
+  background: #EEF9FE;
+  border-radius: 4px;
+}
+body.chakra-ui-dark .anchorjs-link {
+  background: #283340;
+  border-radius: 4px;
+}
 
 .anchorjs-link {
   color:#0097CD;
+  font-size: 24px !important;
 }
