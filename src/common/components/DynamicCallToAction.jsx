@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import useStyle from '../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
+import { parseQuerys } from '../../utils/url';
 
 function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslation }) {
   const { hexColor } = useStyle();
@@ -39,6 +40,8 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslat
     });
   const selectedCta = filterCTA()[0];
 
+  const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: selectedCta.content.internal_cta_placement }, selectedCta.content.forward_url.includes('?'))}`;
+
   if (selectedCta?.component === 'WeeklyCodingChallenge') {
     return (
       <CallToActionCard
@@ -49,7 +52,7 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslat
         title={selectedCta.content.title}
         description={selectedCta.content.description}
         buttonLabel={selectedCta.content.button_label}
-        forwardUrl={selectedCta.content.forward_url}
+        forwardUrl={formatedForwardUrl}
         // pillLabel="6 days left"
       />
     );
@@ -67,7 +70,7 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslat
         title={selectedCta.content.title}
         description={selectedCta.content.description}
         buttonLabel={selectedCta.content.button_label}
-        forwardUrl={selectedCta.content.forward_url}
+        forwardUrl={formatedForwardUrl}
         iconStyles={{
           border: '1px solid',
           borderColor: hexColor.yellowDefault,

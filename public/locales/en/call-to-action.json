@@ -10,6 +10,7 @@
         "title": "Weekly coding challenges",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
+        "internal_cta_placement": "WeeklyCodingChallenge",
         "forward_url": "https://google.com/"
       }
     },
@@ -23,7 +24,8 @@
         "title": "Weekly coding challenges",
         "description": "Every week, we pick a real-life project to build your portfolio and get ready for a job. All projects are built with chaGPT as co-pilot",
         "button_label": "Join Challenge",
-        "forward_url": "https://google.com/"
+        "internal_cta_placement": "LargeWeeklyCodingChallenge",
+        "forward_url": "https://google.com/?utm_placement=si"
       }
     },
     {
@@ -36,6 +38,7 @@
         "title": "Weekly coding challenges",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge",
+        "internal_cta_placement": "Third",
         "forward_url": "https://google.com/"
       }
     }
