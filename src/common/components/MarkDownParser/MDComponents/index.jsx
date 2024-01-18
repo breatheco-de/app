@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
+import CodeViewer from '../../CodeViewer';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
@@ -43,10 +44,56 @@ export function MDLink({ children, href }) {
   );
 }
 
+export function CustomSyntaxHighlighter({ language, children, ...props }) {
+  return (
+    <SyntaxHighlighter
+      showLineNumbers
+      style={tomorrow}
+      language={language}
+      PreTag="div"
+      {...props}
+    >
+      {String(children).replace(/\n$/, '')}
+    </SyntaxHighlighter>
+  );
+}
+
+const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'html', 'css', 'scss'];
+
+const languagesLabels = {
+  jsx: 'JS',
+  javascript: 'JS',
+  python: 'Python',
+  html: 'Html',
+};
+
+const languagesNames = {
+  jsx: 'javascript',
+  javascript: 'javascript',
+  python: 'python',
+  html: 'html',
+};
+
 export function Code({ inline, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || '');
 
-  return !inline && match ? (
+  if (inline && !match) {
+    return (
+      <code className={`${className} highlight`} {...props}>
+        {children}
+      </code>
+    );
+  }
+
+  return allowCodeViewer.includes(match[1]) ? (
+    <CodeViewer
+      languagesData={[{
+        code: String(children).replace(/\n$/, ''),
+        language: languagesNames[match[1]] || match[1],
+        label: languagesLabels[match[1]] || match[1],
+      }]}
+    />
+  ) : (
     <SyntaxHighlighter
       showLineNumbers
       style={tomorrow}
@@ -56,10 +103,6 @@ export function Code({ inline, className, children, ...props }) {
     >
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
-  ) : (
-    <code className={`${className} highlight`} {...props}>
-      {children}
-    </code>
   );
 }
 
@@ -527,6 +570,11 @@ Code.propTypes = {
 Code.defaultProps = {
   className: '',
   inline: false,
+};
+
+CustomSyntaxHighlighter.propTypes = {
+  language: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 MDLink.propTypes = {

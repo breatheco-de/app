@@ -12,6 +12,7 @@ import {
   TabIndicator,
   Collapse,
   Tooltip,
+  useToast,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -20,19 +21,19 @@ import Editor from '@monaco-editor/react';
 import { setStorageItem, getStorageItem } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['html', 'css'];
+const notExecutables = ['html', 'css', 'shell'];
 
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const router = useRouter();
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('code-viewer');
   const { isAuthenticated } = useAuth();
+  const toast = useToast();
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
@@ -95,6 +96,13 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         ]);
       } catch (e) {
         console.log(e);
+        toast({
+          position: 'top',
+          title: typeof e === 'string' ? e : t('error'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
       }
     } else {
       setShowModal(true);
@@ -207,11 +215,11 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         buttonHandlerStyles={{ variant: 'default' }}
         closeActionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('login');
+          router.push('/login');
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('checkout');
+          router.push('/checkout');
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />
