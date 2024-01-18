@@ -62,6 +62,7 @@ const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'html', 'css', 'sc
 
 const languagesLabels = {
   jsx: 'JS',
+  js: 'JS',
   javascript: 'JS',
   python: 'Python',
   html: 'Html',
@@ -69,6 +70,7 @@ const languagesLabels = {
 
 const languagesNames = {
   jsx: 'javascript',
+  js: 'javascript',
   javascript: 'javascript',
   python: 'python',
   html: 'html',
