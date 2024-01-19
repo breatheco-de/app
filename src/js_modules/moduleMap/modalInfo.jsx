@@ -19,7 +19,7 @@ function ModalInfo({
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
-  maxWidth, forceHandlerAndClose, ...rest
+  maxWidth, forceHandlerAndClose, children, ...rest
 }) {
   const { t } = useTranslation('dashboard');
   const [githubUrl, setGithubUrl] = useState(link);
@@ -239,6 +239,7 @@ function ModalInfo({
                 )}
               </>
             )}
+            {children && children}
           </ModalBody>
 
           <ModalFooter justifyContent="space-evenly" {...footerStyle}>
@@ -377,6 +378,7 @@ ModalInfo.propTypes = {
   childrenDescription: PropTypes.node,
   maxWidth: PropTypes.string,
   forceHandlerAndClose: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 ModalInfo.defaultProps = {
@@ -413,6 +415,7 @@ ModalInfo.defaultProps = {
   childrenDescription: null,
   maxWidth: 'md',
   forceHandlerAndClose: false,
+  children: null,
 };
 
 export default memo(ModalInfo);

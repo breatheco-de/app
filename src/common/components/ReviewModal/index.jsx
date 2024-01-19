@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { Box, Button, Flex, Link, useToast } from '@chakra-ui/react';
+// import useTranslation from 'next-translate/useTranslation';
 import SimpleModal from '../SimpleModal';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
@@ -10,21 +11,18 @@ import Icon from '../Icon';
 import FileList from './FileList';
 import bc from '../../services/breathecode';
 
-function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
-  const stages = {
-    initial: 'initial',
-    file_list: 'file_list',
-    code_review: 'code_review',
-  };
+export const stages = {
+  initial: 'initial',
+  file_list: 'file_list',
+  code_review: 'code_review',
+};
+function ReviewModal({ isOpen, defaultStage, defaultContextData, onClose, currentTask, projectLink, ...rest }) {
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
   });
-  const [contextData, setContextData] = useState({
-    commitfiles: [],
-    commitFile: {},
-  });
-  const [stage, setStage] = useState(stages.initial);
+  const [contextData, setContextData] = useState(defaultContextData);
+  const [stage, setStage] = useState(defaultStage);
   const { lightColor, featuredColor, hexColor } = useStyle();
   const toast = useToast();
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
@@ -123,7 +121,7 @@ function ReviewModal({ isOpen, onClose, currentTask, projectLink, ...rest }) {
               <Flex alignItems="center" gridGap="10px">
                 <Icon icon="code" width="18.5px" height="17px" color="#fff" />
                 <Text size="14px" fontWeight={700}>
-                  0 code reviews
+                  {`${contextData?.code_revisions} code reviews`}
                 </Text>
               </Flex>
               <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
@@ -149,12 +147,20 @@ ReviewModal.propTypes = {
   onClose: PropTypes.func,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   projectLink: PropTypes.string,
+  defaultStage: PropTypes.string,
+  defaultContextData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ReviewModal.defaultProps = {
   isOpen: false,
   onClose: () => {},
   currentTask: {},
   projectLink: '',
+  defaultStage: stages.initial,
+  defaultContextData: {
+    commitfiles: [],
+    commitFile: {},
+    code_revisions: [],
+  },
 };
 
 export default ReviewModal;

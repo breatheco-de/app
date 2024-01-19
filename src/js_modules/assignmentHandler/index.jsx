@@ -562,11 +562,15 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
 function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [contextData, setContextData] = useState();
   const toast = useToast();
   const handleOpen = () => {
     bc.assignments().getCodeRevisions(currentTask.id)
       .then(({ data }) => {
-        console.log('data:::', data);
+        console.log('code_revisions_data:::', data);
+        setContextData({
+          code_revisions: data,
+        });
         onOpen();
       })
       .catch(() => {
@@ -595,6 +599,7 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
       <ReviewModal
         currentTask={currentTask}
         projectLink={projectLink}
+        defaultContextData={contextData}
         updpateAssignment={updpateAssignment}
         isOpen={isOpen}
         onClose={onClose}

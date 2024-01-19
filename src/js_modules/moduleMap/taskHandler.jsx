@@ -3,7 +3,7 @@
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
   PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, Box, useColorModeValue, useToast,
+  FormErrorMessage, Box, useColorModeValue, useToast, Flex,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
@@ -20,6 +20,7 @@ import { formatBytes } from '../../utils';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import iconDict from '../../common/utils/iconDict.json';
 import { usePersistent } from '../../common/hooks/usePersistent';
+import ReviewModal, { stages } from '../../common/components/ReviewModal';
 
 export function TextByTaskStatus({ currentTask, t }) {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -126,6 +127,11 @@ export function ButtonHandlerByTaskStatus({
   const [githubUrl, setGithubUrl] = useState('');
   const [fileProps, setFileProps] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [openCommitFiles, setOpenCommitFiles] = useState(false);
+  const [loaders, setLoaders] = useState({
+    isFetchingCommitFiles: false,
+  });
+  const [contextData, setContextData] = useState({});
   const fileContainerRef = useRef(null);
   const fileInputRef = useRef();
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
@@ -174,6 +180,29 @@ export function ButtonHandlerByTaskStatus({
     );
   }
 
+  const openAssignmentFeedbackModal = () => {
+    bc.assignments().getCodeRevisions(currentTask.id)
+      .then(({ data }) => {
+        console.log('code_revisions_data:::', data);
+        setContextData({
+          code_revisions: data,
+        });
+      })
+      .catch(() => {
+        toast({
+          title: t('alert-message:something-went-wrong'),
+          description: 'Cannot get code revisions',
+          status: 'error',
+          duration: 5000,
+          position: 'top',
+          isClosable: true,
+        });
+      })
+      .finally(() => {
+        onOpen();
+      });
+  };
+
   function OpenModalButton() {
     return (
       <Button
@@ -181,7 +210,7 @@ export function ButtonHandlerByTaskStatus({
           if (noDeliveryFormat) {
             changeStatusAssignment(event, currentTask, 'PENDING');
           } else {
-            handleOpen(() => onOpen());
+            handleOpen(() => openAssignmentFeedbackModal());
           }
         }}
         isDisabled={taskIsAproved}
@@ -206,12 +235,56 @@ export function ButtonHandlerByTaskStatus({
     );
   }
 
+  const proceedToCommitFiles = async () => {
+    setLoaders((prevState) => ({
+      ...prevState,
+      isFetchingCommitFiles: true,
+    }));
+    const response = await bc.assignments().files(currentTask.id);
+    const data = typeof response === 'object' ? await response.json() : {};
+
+    if (!response || response?.status >= 400) {
+      setLoaders((prevState) => ({
+        ...prevState,
+        isFetchingCommitFiles: false,
+      }));
+      toast({
+        title: 'Error',
+        description: data.detail,
+        status: 'error',
+        duration: 9000,
+        position: 'top',
+        isClosable: true,
+      });
+    }
+    if (response?.ok) {
+      setContextData((prevState) => ({
+        ...prevState,
+        commitfiles: {
+          task: currentTask,
+          fileList: data,
+        },
+      }));
+      setOpenCommitFiles(true);
+    }
+    setLoaders((prevState) => ({
+      ...prevState,
+      isFetchingCommitFiles: false,
+    }));
+  };
+
+  // if (currentTask?.task_type === 'PROJECT') {
+  //   console.log('currentTask:::', currentTask);
+  // }
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       // Option case Revision pending...
       return (
         <>
+          <Button variant="unstyled" mr="10px">
+            <Icon icon="comment" width="20px" height="20px" />
+          </Button>
           <OpenModalButton />
           <ModalInfo
             isOpen={isOpen}
@@ -234,7 +307,24 @@ export function ButtonHandlerByTaskStatus({
               onClose();
             }}
             closeText={t('modalInfo.rejected.remove-delivery')}
-          />
+          >
+            <Flex mt="20px" padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
+              <Flex alignItems="center" gridGap="10px">
+                <Icon icon="code" width="18.5px" height="17px" color="#fff" />
+                <Text size="14px" fontWeight={700}>
+                  0 code reviews
+                </Text>
+              </Flex>
+              <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                Read and rate the feedback
+                <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+              </Button>
+            </Flex>
+          </ModalInfo>
+
+          {openCommitFiles && (
+            <ReviewModal isOpen={openCommitFiles} currentTask={currentTask} defaultStage={stages.file_list} onClose={() => setOpenCommitFiles(false)} defaultContextData={contextData} />
+          )}
         </>
       );
     }
@@ -247,11 +337,12 @@ export function ButtonHandlerByTaskStatus({
             onClose={onClose}
             title={t('modalInfo.title')}
             description={t('modalInfo.approved')}
-            teacherFeedback={currentTask.description}
+            teacherFeedback={currentTask?.description}
             linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
             attachment={fileData}
             disableHandler
+            disableCloseButton
           />
         </>
       );
