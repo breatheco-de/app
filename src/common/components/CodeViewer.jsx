@@ -13,6 +13,7 @@ import {
   Collapse,
   Tooltip,
   useToast,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -125,6 +126,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         const completion = await completionRequest.json();
 
         currLanguage.output = completion.answer.replace('---terminal output---', '').replace('\n', '');
+        currLanguage.running = false;
         setLanguages([
           ...languages.slice(0, tabIndex),
           currLanguage,
@@ -132,6 +134,12 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         ]);
       } catch (e) {
         console.log(e);
+        const currLanguage = { ...languages[tabIndex], running: false };
+        setLanguages([
+          ...languages.slice(0, tabIndex),
+          currLanguage,
+          ...languages.slice(tabIndex + 1),
+        ]);
         toast({
           position: 'top',
           title: typeof e === 'string' ? e : t('error'),
@@ -167,10 +175,16 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
             ))}
           </TabList>
           {!notExecutables.includes(languages[tabIndex].language) && (
-            <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
-              <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-              {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
-            </Button>
+            <>
+              {languages[tabIndex].running ? (
+                <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
+              ) : (
+                <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
+                  <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
+                  {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
+                </Button>
+              )}
+            </>
           )}
         </Box>
         <TabIndicator
@@ -216,7 +230,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   onMount={handleEditorDidMount}
                 />
               </Box>
-              <Collapse in={running} offsetY="20px">
+              <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
                 <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
                   <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
                     {stTranslation ? stTranslation[lang]['code-viewer'].terminal : t('terminal')}
