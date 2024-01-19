@@ -13,6 +13,8 @@ function Image(props) {
         quality={quality}
         src={src}
         alt={alt}
+        width={rest.width}
+        height={rest.height}
         style={{
           ...styleImg,
           objectFit,

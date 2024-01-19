@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | TrustCardsSlice
   | TitleIntroductionSlice
   | MarkdownSlice
   | TwoColumnSlice
@@ -1214,6 +1215,66 @@ export type TitleIntroductionSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *TrustCards → Primary*
+ */
+export interface TrustCardsSliceDefaultPrimary {
+  /**
+   * title field in *TrustCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: trust_cards.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *TrustCards → Items*
+ */
+export interface TrustCardsSliceDefaultItem {
+  /**
+   * description field in *TrustCards → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: trust_cards.items[].description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for TrustCards Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TrustCardsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<TrustCardsSliceDefaultPrimary>,
+  Simplify<TrustCardsSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *TrustCards*
+ */
+type TrustCardsSliceVariation = TrustCardsSliceDefault;
+
+/**
+ * TrustCards Shared Slice
+ *
+ * - **API ID**: `trust_cards`
+ * - **Description**: TrustCards
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type TrustCardsSlice = prismic.SharedSlice<
+  "trust_cards",
+  TrustCardsSliceVariation
+>;
+
+/**
  * Primary content in *TwoColumn → Primary*
  */
 export interface TwoColumnSliceDefaultPrimary {
@@ -1349,6 +1410,26 @@ export interface TwoColumnSliceDefaultPrimary {
   link_button: prismic.BooleanField;
 
   /**
+   * Font color field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  font_color: prismic.ColorField;
+
+  /**
+   * Font color in darkmode field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_color_in_darkmode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  font_color_in_darkmode: prismic.ColorField;
+
+  /**
    * Button Color field in *TwoColumn → Primary*
    *
    * - **Field Type**: Select
@@ -1367,6 +1448,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#color
    */
   background_color: prismic.ColorField;
+
+  /**
+   * Background in dark mode field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.background_in_dark_mode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  background_in_dark_mode: prismic.ColorField;
 
   /**
    * Image position field in *TwoColumn → Primary*
@@ -1487,6 +1578,11 @@ declare module "@prismicio/client" {
       TitleIntroductionSliceDefaultPrimary,
       TitleIntroductionSliceVariation,
       TitleIntroductionSliceDefault,
+      TrustCardsSlice,
+      TrustCardsSliceDefaultPrimary,
+      TrustCardsSliceDefaultItem,
+      TrustCardsSliceVariation,
+      TrustCardsSliceDefault,
       TwoColumnSlice,
       TwoColumnSliceDefaultPrimary,
       TwoColumnSliceVariation,

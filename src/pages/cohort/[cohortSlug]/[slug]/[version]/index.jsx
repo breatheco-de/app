@@ -11,11 +11,9 @@ import {
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { useFlags, useLDClient } from 'launchdarkly-react-client-sdk';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
-import packageJson from '../../../../../../package.json';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
@@ -53,7 +51,6 @@ function Dashboard() {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const ldClient = useLDClient();
   const { contextState, setContextState } = useModuleMap();
   const [showWarningModal, setShowWarningModal] = useState(false);
   const { cohortProgram } = contextState;
@@ -62,7 +59,6 @@ function Dashboard() {
   const [showSearch, setShowSearch] = useState(false);
 
   const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
-  const flags = useFlags();
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
@@ -194,7 +190,7 @@ function Dashboard() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
+    if (cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
       setIsOpenFinalProject(true);
     }
     if (showGithubWarning === 'active') {
@@ -202,7 +198,7 @@ function Dashboard() {
     }
     bc.payment().events()
       .then(({ data }) => {
-        const eventsRemain = data.filter((l) => new Date(l.ending_at) - new Date() > 0).slice(0, 3);
+        const eventsRemain = data.filter((l) => new Date(l?.ended_at || l?.ending_at) - new Date() > 0).slice(0, 3);
         setEvents(eventsRemain);
       });
 
@@ -294,27 +290,6 @@ function Dashboard() {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (user?.id && !isLoading) {
-      ldClient?.identify({
-        kind: 'user',
-        key: user?.id,
-        firstName: user?.first_name,
-        lastName: user?.last_name,
-        name: `${user?.first_name} ${user?.last_name}`,
-        email: user?.email,
-        id: user?.id,
-        language: router?.locale,
-        screenWidth: window?.screen?.width,
-        screenHeight: window?.screen?.height,
-        device: navigator?.userAgent,
-        version: packageJson.version,
-        cohort: cohortSession?.name,
-        cohortSlug: cohortSession?.slug,
-        cohortId: cohortSession?.id,
-        cohortStage: cohortSession?.stage,
-        academy: cohortSession?.academy?.id,
-      });
-    }
     if (!isLoading) {
       getCohortAssignments({
         user, setContextState, slug,
@@ -510,15 +485,13 @@ function Dashboard() {
                   </Box>
                 </Box>
                 )}
-                {flags?.appReleaseEnableLiveEvents && (
-                  <LiveEvent
-                    featureLabel={t('common:live-event.title')}
-                    featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                    mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                    otherEvents={events}
-                  />
-                )}
-                {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+                <LiveEvent
+                  featureLabel={t('common:live-event.title')}
+                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                  otherEvents={events}
+                />
+                {cohortSession?.stage === 'FINAL_PROJECT' && (
                   <FinalProject
                     tasks={taskTodoState}
                     studentAndTeachers={onlyStudentsActive}
@@ -534,7 +507,7 @@ function Dashboard() {
                   width="100%"
                 />
                 )}
-                {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+                {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
                   <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
                 )}
               </Box>
@@ -582,6 +555,7 @@ function Dashboard() {
             {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">
                 <ProgressBar
+                  cohortProgram={cohortProgram}
                   taskTodo={taskTodoState}
                   progressText={t('progressText')}
                   width="100%"
@@ -733,15 +707,13 @@ function Dashboard() {
                   </Box>
                 </Box>
               )}
-              {flags?.appReleaseEnableLiveEvents && (
-                <LiveEvent
-                  featureLabel={t('common:live-event.title')}
-                  featureReadMoreUrl={t('common:live-event.readMoreUrl')}
-                  mainClasses={liveClasses?.length > 0 ? liveClasses : []}
-                  otherEvents={events}
-                />
-              )}
-              {flags?.appReleaseEnableFinalProjectMode && cohortSession?.stage === 'FINAL_PROJECT' && (
+              <LiveEvent
+                featureLabel={t('common:live-event.title')}
+                featureReadMoreUrl={t('common:live-event.readMoreUrl')}
+                mainClasses={liveClasses?.length > 0 ? liveClasses : []}
+                otherEvents={events}
+              />
+              {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
                   tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
@@ -757,7 +729,7 @@ function Dashboard() {
                 width="100%"
               />
               )}
-              {cohortSession?.cohort_role?.toLowerCase() === 'student' && flags?.appReleaseEnableMentorshipsWidget && (
+              {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
                 <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
             </Box>

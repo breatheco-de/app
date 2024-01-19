@@ -58,7 +58,7 @@ function UpgradeForConsumableView({ externalData }) {
   };
 
   const alreadySubscribedToAll = hasBasePlan && hasASuggestedPlan;
-  const noExistsConsumablesForUserSubscriptions = findedEventTypeOfPlanCoincidences?.length === 0;
+  const noExistsConsumablesForUserSubscriptions = isEventConsumable ? findedEventTypeOfPlanCoincidences?.length === 0 : coincidencesOfServiceWithOtherSubscriptions?.length === 0;
 
   const handleGetConsumables = () => {
     setIsValidating(true);

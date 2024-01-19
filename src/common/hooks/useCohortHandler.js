@@ -85,7 +85,7 @@ function useHandler() {
           ...cohortSession,
           ...currentCohort,
           date_joined: data.date_joined,
-          cohort_role: findCohort.role,
+          cohort_role: findCohort?.role,
           cohort_user: {
             created_at: findCohort?.created_at,
             educational_status: findCohort?.educational_status,
@@ -96,7 +96,7 @@ function useHandler() {
         choose({
           cohort_slug: cohortSlug,
           date_joined: data.date_joined,
-          cohort_role: findCohort.role,
+          cohort_role: findCohort?.role,
           version,
           slug: currentCohort?.syllabus_version.slug,
           cohort_name: currentCohort.name,

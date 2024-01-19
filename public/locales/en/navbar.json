@@ -4,7 +4,8 @@
   "logout": "Logout",
   "language": "Language",
   "my-profile": "My Profile",
-  "start-coding": "Start Coding",
+  "course-details": "Course details",
+  "upgrade-experience": "Upgrade Experience",
   "ITEMS": [
     {
       "label": "Dashboard",

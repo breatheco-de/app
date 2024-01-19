@@ -19,7 +19,7 @@ const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel, 
     const titleLength = lengthOfString(event?.title);
     const formatedTimeString = dateTextObj?.[event?.id];
     const startsAt = event?.starting_at && new Date(event.starting_at);
-    const endsAt = event?.ending_at && new Date(event.ending_at);
+    const endsAt = event?.ended_at ? new Date(event?.ended_at) : (event?.ending_at && new Date(event.ending_at));
     const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
     const truncatedTime = lengthOfString(formatedTimeString) >= 16 ? `${formatedTimeString?.substring(0, 15)}...` : formatedTimeString;
 

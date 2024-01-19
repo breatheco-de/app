@@ -22,12 +22,17 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
+import TagCapsule from '../../common/components/TagCapsule';
+import Link from '../../common/components/NextChakraLink';
+import { categoriesFor } from '../../utils/variables';
+import DraggableContainer from '../../common/components/DraggableContainer';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
 import modifyEnv from '../../../modifyEnv';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
+import { log } from '../../utils/logging';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -37,6 +42,19 @@ const arrayOfImages = [
 ];
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+const langsDict = {
+  es: 'es',
+  en: 'en',
+  us: 'en',
+};
+
+const assetTypeDict = {
+  ARTICLE: 'lesson',
+  LESSON: 'lesson',
+  PROJECT: 'interactive-coding-tutorial',
+  EXERCISE: 'interactive-exercise',
+};
 
 export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.public().events();
@@ -88,6 +106,12 @@ export const getStaticProps = async ({ params, locale }) => {
     [lang]: data?.slug,
   };
 
+  let asset = null;
+  if (data?.asset_slug) {
+    const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+    asset = assetResp?.data;
+  }
+
   return ({
     props: {
       seo: {
@@ -107,14 +131,16 @@ export const getStaticProps = async ({ params, locale }) => {
       },
       translations: translationArray,
       disableLangSwitcher: true,
-      event: data,
+      eventData: data,
+      asset,
     },
   });
 };
 
-function Page({ event }) {
+function Page({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const [users, setUsers] = useState([]);
+  const [event, setEvent] = useState(eventData);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
   const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
@@ -130,21 +156,30 @@ function Page({ event }) {
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
+  log('event_data:', event);
 
   const router = useRouter();
   const { locale } = router;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
-  // const { isInProcessOfSubscription, handleSubscribeToPlan, setIsInProcessOfSubscription } = useSubscribeToPlan();
   const { featuredColor, hexColor } = useStyle();
+  const endDate = event?.ended_at || event?.ending_at;
 
+  const getEventData = async () => {
+    const resp = await bc.public().singleEvent(eventData?.slug).catch(() => ({
+      statusText: 'not-found',
+    }));
+    const data = resp?.data;
+    setEvent(data);
+  };
   useEffect(() => {
-    if (event?.id) {
-      const eventLang = (event?.lang === 'us' || event?.lang === null) ? 'en' : event?.lang;
+    if (eventData?.id) {
+      getEventData();
+      const eventLang = (eventData?.lang === 'us' || eventData?.lang === null) ? 'en' : eventData?.lang;
       if (eventLang !== locale) {
-        window.location.href = `/${eventLang}/workshops/${event?.slug}`;
+        window.location.href = `/${eventLang}/workshops/${eventData?.slug}`;
       }
-      bc.events().getUsers(event?.id)
+      bc.events().getUsers(eventData?.id)
         .then((resp) => {
           const formatedUsers = resp.data.map((l, i) => {
             const index = i + 1;
@@ -173,7 +208,7 @@ function Page({ event }) {
         })
         .catch(() => {});
     }
-  }, [event]);
+  }, [eventData]);
 
   useEffect(() => {
     let currentIndex = 0;
@@ -196,7 +231,7 @@ function Page({ event }) {
 
   const duration = isValidDate(event?.ending_at) && isValidDate(event?.starting_at)
     ? intervalToDuration({
-      end: new Date(event?.ending_at),
+      end: new Date(endDate),
       start: new Date(event?.starting_at),
     })
     : {};
@@ -208,7 +243,7 @@ function Page({ event }) {
 
   const unixFormatedDate = {
     starting_at: isValidDate(event?.starting_at) ? new Date(event?.starting_at).getTime() / 1000 : '',
-    ending_at: isValidDate(event?.ending_at) ? new Date(event?.ending_at).getTime() / 1000 : '',
+    ending_at: isValidDate(endDate) ? new Date(endDate).getTime() / 1000 : '',
   };
 
   const eventNotExists = !event?.slug;
@@ -287,8 +322,8 @@ function Page({ event }) {
   );
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
 
-  const existsAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
-  const isFreeForConsumables = finishedEvent || (event?.free_for_bootcamps === true && existsAvailableAsSaas);
+  const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
 
   const dynamicFormInfo = () => {
     if (finishedEvent) {
@@ -438,6 +473,14 @@ function Page({ event }) {
     }
   };
 
+  const getAssetType = (myAsset) => {
+    let assetType;
+    if (categoriesFor.howTo.split(',').includes(myAsset.category.slug)) assetType = 'how-to';
+    else assetType = assetTypeDict[myAsset.asset_type];
+
+    return assetType;
+  };
+
   return (
     <Box as="div">
       <ModalToGetAccess
@@ -497,7 +540,7 @@ function Page({ event }) {
               {event?.id && (
                 <ComponentOnTime
                   startingAt={event?.starting_at}
-                  endingAt={event?.ending_at}
+                  endingAt={endDate}
                   onEndedEvent={handleOnFinished}
                   finishedView={(
                     <Box display="flex" alignItems="center" fontWeight={700} color="danger" fontSize="12px" background="red.light" borderRadius="18px" padding="4px 10px" gridGap="10px">
@@ -593,6 +636,83 @@ function Page({ event }) {
                 data={event?.host_user}
               />
             </Box>
+          )}
+          {asset && (
+            <>
+              <Box mb="20px">
+                <Text size="26px" fontWeight={700} mb="10px">
+                  {finishedEvent ? t('workshop-asset-ended') : t('workshop-asset-upcoming')}
+                </Text>
+                <Link display="block" href={`/${langsDict[asset.lang || 'en']}/${getAssetType(asset)}/${asset.slug}`} width="fit-content">
+                  <Box
+                    background={featuredColor}
+                    width="210px"
+                    borderRadius="10px"
+                    padding="16px"
+                    cursor="pointer"
+                    minHeight="135px"
+                  >
+                    <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                      <TagCapsule padding="0" margin="0" tags={asset.technologies?.slice(0, 1) || []} variant="rounded" />
+                      <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                        {format(new Date(asset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
+                      </Text>
+                    </Box>
+                    <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
+                      <Text size="md" fontWeight="700" color={hexColor.blueDefault}>
+                        {asset.title}
+                      </Text>
+                      <Icon icon="arrowRight" color="" width="20px" height="14px" />
+                    </Box>
+                  </Box>
+                </Link>
+              </Box>
+              {!finishedEvent && asset.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
+                <Box background={hexColor.lightColor} padding="16px" borderRadius="11px" mb="31px">
+                  <Text size="26px" fontWeight={700} mb="10px">
+                    {t('documents')}
+                  </Text>
+                  <DraggableContainer>
+                    <Box gap="16px" display="flex">
+                      {asset?.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug))
+                        .map((relatedAsset) => {
+                          const assetType = getAssetType(relatedAsset);
+                          return (
+                            <Link href={`/${langsDict[assetType.lang || 'en']}/${assetType}/${relatedAsset.slug}`}>
+                              <Box
+                                background={hexColor.backgroundColor}
+                                width="210px"
+                                border="1px solid"
+                                borderColor={hexColor.borderColor}
+                                borderRadius="10px"
+                                padding="16px"
+                                cursor="pointer"
+                                minHeight="135px"
+                                display="flex"
+                                flexDirection="column"
+                                justifyContent="space-between"
+                              >
+                                <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                                  <TagCapsule padding="0" margin="0" tags={relatedAsset?.technologies?.slice(0, 1) || []} variant="rounded" />
+                                  <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                                    {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy').replaceAll('-', '/')}
+                                  </Text>
+                                </Box>
+                                <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
+                                  <Text size="md" fontWeight="700">
+                                    {relatedAsset.title}
+                                  </Text>
+                                  <Icon icon="arrowRight" color="" width="20px" height="14px" />
+                                </Box>
+                              </Box>
+                            </Link>
+                          );
+                        })}
+                    </Box>
+                  </DraggableContainer>
+                </Box>
+              )}
+            </>
           )}
           {event?.id && (
             <>
@@ -884,10 +1004,12 @@ function Page({ event }) {
 }
 
 Page.propTypes = {
-  event: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Page.defaultProps = {
-  event: {},
+  eventData: {},
+  asset: null,
 };
 
 export default Page;

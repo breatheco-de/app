@@ -14,7 +14,7 @@ import Icon from '../../common/components/Icon';
 import iconDict from '../../common/utils/iconDict.json';
 
 function ModalInfo({
-  isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
+  isOpen, onClose, actionHandler, closeActionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
   htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
@@ -35,6 +35,7 @@ function ModalInfo({
     if (forceHandler && !forceHandlerAndClose) {
       setConfirmRejection(true);
     } else {
+      closeActionHandler();
       onClose();
     }
   };
@@ -346,6 +347,7 @@ ModalInfo.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
+  closeActionHandler: PropTypes.func,
   rejectHandler: PropTypes.func,
   forceHandler: PropTypes.bool,
   disableHandler: PropTypes.bool,
@@ -382,6 +384,7 @@ ModalInfo.propTypes = {
 ModalInfo.defaultProps = {
   isOpen: false,
   actionHandler: () => {},
+  closeActionHandler: () => {},
   rejectHandler: () => {},
   forceHandler: false,
   disableHandler: false,

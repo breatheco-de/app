@@ -8,6 +8,7 @@ const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREAT
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
+const rigoHostV1 = 'https://rigobot.herokuapp.com/v1';
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -50,6 +51,7 @@ const breathecode = {
           user_agent: 'bc/student',
         }),
       }),
+      verifyRigobotConnection: (token) => axios.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
@@ -231,7 +233,7 @@ const breathecode = {
           academy: academyId,
         },
       }),
-      getMeActivity: () => axios.get(`${url}/me/activity`),
+      getMeActivity: () => axios.get(`${url}/me/activity${qs}`),
       getActivityReport: (academyId) => axios.get(`${url}/report${qs}`, {
         headers: academyId && {
           academy: academyId,
@@ -253,12 +255,13 @@ const breathecode = {
       sendVote: (arg) => axios.put(`${url}/user/me/answer/${arg.entity_id}`, { ...arg }),
     };
   },
-  mentorship: (query = {}) => {
+  mentorship: (query = {}, connector = false) => {
     const url = `${host}/mentorship/academy`;
     const urlNoAcademy = `${host}/mentorship`;
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, connector);
     return {
-      getService: () => axios.get(`${url}/service?status=ACTIVE`),
+      getService: () => axios.get(`${url}/service?status=ACTIVE${qs}`),
+      getServiceSet: (mentorshipServiceSetId) => axios.get(`${host}/payments/mentorshipserviceset/${mentorshipServiceSetId}`),
       getMentor: () => axios.get(`${url}/mentor${qs}`),
       getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session${qs}`),
     };
@@ -335,6 +338,13 @@ const breathecode = {
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
       applyEvent: (eventId) => axios.post(`${url}/event/${eventId}/checkin${qs}`),
       getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
+    };
+  },
+  rigobot: (query = {}) => {
+    const url = `${rigoHostV1}`;
+    const qs = parseQuerys(query);
+    return {
+      completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
     };
   },
 };

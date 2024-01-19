@@ -16,7 +16,7 @@ function Events({ data, events }) {
 
   const dateElapsed = (element) => useDistanceDate(
     element.starting_at,
-    element.ending_at,
+    (element?.ended_at || element?.ending_at),
     router.locale,
   );
 
@@ -31,7 +31,7 @@ function Events({ data, events }) {
 
   const filteredEvents = events && events?.filter((l) => useDistanceDate(
     l.starting_at,
-    l.ending_at,
+    (l?.ended_at || l?.ending_at),
   ).isExpired === false).splice(0, 3);
 
   const handleOpenLink = (link) => {

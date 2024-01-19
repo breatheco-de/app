@@ -16,6 +16,7 @@ import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
 import { error } from '../../utils/logging';
+import { reportDatalayer } from '../../utils/requests';
 
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
@@ -128,8 +129,16 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                   variant={{ base: '', md: 'buttonDefault' }}
                   onClick={() => {
                     setStorageItem('redirected-from', link);
+                    reportDatalayer({
+                      dataLayer: {
+                        event: 'ad_interaction',
+                        course_slug: course.slug,
+                        course_title: course.title,
+                        ad_position: 'top-left',
+                      },
+                    });
                   }}
-                  href={link}
+                  href={`${link}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${course?.slug}&internal_cta_campaign=null`}
                   alignItems="center"
                   display="flex"
                   colorScheme={{ base: 'default', md: 'success' }}

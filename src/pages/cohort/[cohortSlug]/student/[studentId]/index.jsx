@@ -15,25 +15,24 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Input,
+  Spinner,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
-import { Form, Formik } from 'formik';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
-import DatePickerField from '../../../../../common/components/Forms/DateField';
 import bc from '../../../../../common/services/breathecode';
-import ReactSelect, { AsyncSelect } from '../../../../../common/components/ReactSelect';
+import ReactSelect from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import Icon from '../../../../../common/components/Icon';
 import Text from '../../../../../common/components/Text';
 import DottedTimeline from '../../../../../common/components/DottedTimeline';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 
@@ -110,11 +109,18 @@ function StudentReport() {
   const [openFilter, setOpenFilter] = useState(false);
   const [activityLabel, setActivityLabel] = useState(null);
   const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [deliveryUrl, setDeliveryUrl] = useState('');
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [fetchMoreActivities, setFetchMoreActivities] = useState(true);
+  const [isFetchingActivities, setIsFetchingActivities] = useState(true);
+  const [isFetching, setIsFetching] = useState(true);
+  const [paramsActivities, setParamsActivities] = useState({
+    page: 1,
+  });
   const [report, setReport] = useState([]);
   const [studentAssignments, setStudentAssignments] = useState({
     lessons: [],
@@ -140,18 +146,7 @@ function StudentReport() {
 
   const activitiesLabels = t('activities-section.activities', {}, { returnObjects: true });
   const activitiesOptions = Object.keys(activitiesLabels).map((act) => ({ label: activitiesLabels[act], value: act }));
-
-  const processActivities = (data) => {
-    const sortedActivities = {};
-
-    data.forEach((activity) => {
-      const { kind } = activity;
-      if (!sortedActivities[kind]) sortedActivities[kind] = activity;
-      else if (sortedActivities[kind].timestamp < activity.timestamp) sortedActivities[kind] = activity;
-    });
-
-    return Object.values(sortedActivities);
-  };
+  const limit = 10;
 
   const attendanceStyles = {
     ATTENDED: hexColor.green,
@@ -167,6 +162,23 @@ function StudentReport() {
     return 'NO-INFO';
   };
 
+  const fetchActivities = async () => {
+    try {
+      setIsFetchingActivities(true);
+      const res = await bc.activity({ user_id: studentId, limit, order: 'timestamp', ...paramsActivities }).getActivity(academy);
+      const newActivities = res?.data || [];
+      setFetchMoreActivities(limit === newActivities.length);
+
+      if (paramsActivities.append) setActivities([...activities, ...newActivities]);
+      else setActivities(newActivities);
+
+      setIsFetchingActivities(false);
+    } catch (e) {
+      setIsFetchingActivities(false);
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     bc.admissions({ users: studentId }).cohortUsers(academy)
       .then((res) => {
@@ -175,18 +187,15 @@ function StudentReport() {
       }).catch((e) => {
         console.log(e);
       });
-    bc.activity({ user_id: studentId }).getActivity(academy)
-      .then((res) => {
-        const data = processActivities(res?.data);
-        setActivities(data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
   }, []);
 
   useEffect(() => {
+    fetchActivities();
+  }, [paramsActivities]);
+
+  useEffect(() => {
     if (selectedCohortUser) {
+      setIsFetching(true);
       const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
       const projectsQueryObject = {
         filter: {
@@ -248,6 +257,8 @@ function StudentReport() {
 
           const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
           const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
+
+          const attendancePercentage = (attendancePresent.length * 100) / attendanceTaken.length;
           setReport([{
             label: t('analitics.total-mentorships'),
             icon: 'book',
@@ -263,7 +274,7 @@ function StudentReport() {
             label: t('analitics.percentage-attendance'),
             icon: 'list',
             variationColor: hexColor.blueDefault,
-            value: `${(attendancePresent.length * 100) / attendanceTaken.length}%`,
+            value: `${Math.round(attendancePercentage * 100) / 100}%`,
           }, {
             label: t('analitics.nps'),
             icon: 'smile',
@@ -271,8 +282,11 @@ function StudentReport() {
             value: resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score,
             max: 10,
           }]);
+
+          setIsFetching(false);
         })
         .catch((e) => {
+          setIsFetching(false);
           console.log(e);
         });
     }
@@ -440,16 +454,11 @@ function StudentReport() {
   const clearFilters = () => {
     setActivityLabel(null);
     setStartDate(null);
+    setEndDate(null);
+    setParamsActivities({ page: 1 });
+    setActivities([]);
+    setOpenFilter(false);
   };
-
-  const filteredActivities = activities.filter((act) => {
-    if (!activityLabel && !startDate) return true;
-
-    const filterKind = activityLabel ? act.kind === activityLabel.value : true;
-    const filterDate = startDate ? act.timestamp > startDate.toISOString() : true;
-
-    return filterKind && filterDate;
-  });
 
   return (
     <Box>
@@ -517,7 +526,10 @@ function StudentReport() {
           </Box>
         )}
         <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
-          {report.map((elem) => (
+          {isFetching && [...Array(4).keys()].map(() => (
+            <SimpleSkeleton height="108px" width="100%" />
+          ))}
+          {!isFetching && report.map((elem) => (
             <KPI
               label={elem.label}
               icon={elem.icon}
@@ -536,7 +548,7 @@ function StudentReport() {
         wrap={{ base: 'wrap', md: 'nowrap' }}
         padding="0 10px"
       >
-        <Box width="100%" maxWidth="695px" marginTop="2%">
+        <Box width="100%" maxWidth="695px" marginTop="2%" overflow="hidden">
           <Box marginBottom="20px" width="100%">
             <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
             <Box marginTop="20px">
@@ -556,58 +568,62 @@ function StudentReport() {
               />
             </Box>
           </Box>
-          <Box width="100%">
-            <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
-            <Box marginTop="20px">
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="book"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.lessons')}</p>
-                  </Flex>
-                )}
-                dots={lessonsDots}
-              />
+          {isFetching ? (
+            <DottedTimelineSkeleton />
+          ) : (
+            <Box width="100%">
+              <Heading color={hexColor.fontColor2} size="m">{`${t('deliverables')}:`}</Heading>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="book"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.lessons')}</p>
+                    </Flex>
+                  )}
+                  dots={lessonsDots}
+                />
+              </Box>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  onClickDots={showSingleTask}
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="laptop-code"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.projects')}</p>
+                    </Flex>
+                  )}
+                  dots={projectDots}
+                />
+              </Box>
+              <Box marginTop="20px">
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="learnpack"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('deliverables-section.exercises')}</p>
+                    </Flex>
+                  )}
+                  dots={exerciseDots}
+                />
+              </Box>
             </Box>
-            <Box marginTop="20px">
-              <DottedTimeline
-                onClickDots={showSingleTask}
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="laptop-code"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.projects')}</p>
-                  </Flex>
-                )}
-                dots={projectDots}
-              />
-            </Box>
-            <Box marginTop="20px">
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="learnpack"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('deliverables-section.exercises')}</p>
-                  </Flex>
-                )}
-                dots={exerciseDots}
-              />
-            </Box>
-          </Box>
+          )}
           <ReviewModal
             currentTask={currentProject}
             projectLink={`https://4geeks.com${
@@ -661,7 +677,7 @@ function StudentReport() {
               {t('common:filters')}
             </Button>
           </Flex>
-          {filteredActivities.length === 0 && (
+          {!isFetching && activities.length === 0 && (
             <Box width="100%" mt="20px">
               <Heading size="xsm" color={hexColor.fontColor2} fontWeight="700">
                 {t('activities-section.no-activities')}
@@ -669,7 +685,7 @@ function StudentReport() {
             </Box>
           )}
           <Box padding="0 10px">
-            {filteredActivities.map((activity) => {
+            {activities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
               return (
@@ -689,6 +705,26 @@ function StudentReport() {
               );
             })}
           </Box>
+          {isFetchingActivities && (
+            <Box marginTop="15px" display="flex" justifyContent="center">
+              <Spinner color={hexColor.blueDefault} />
+            </Box>
+          )}
+          {activities.length > 0 && fetchMoreActivities && (
+            <Button
+              width="100%"
+              color={hexColor.blueDefault}
+              onClick={() => {
+                setParamsActivities({
+                  ...paramsActivities,
+                  page: paramsActivities.page + 1,
+                  append: true,
+                });
+              }}
+            >
+              {t('common:load-more')}
+            </Button>
+          )}
         </Box>
       </Flex>
       <Modal isOpen={openFilter} onClose={() => setOpenFilter(false)}>
@@ -697,35 +733,35 @@ function StudentReport() {
           <ModalHeader>{t('common:filters')}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Formik>
-              <Form>
-                <Box marginBottom="10px">
-                  <ReactSelect
-                    id="activity-select"
-                    placeholder={t('filter.activity')}
-                    isClearable
-                    value={activityLabel || ''}
-                    onChange={(selected) => {
-                      setActivityLabel(selected || []);
-                    }}
-                    options={activitiesOptions}
-                  />
-                </Box>
-                <Box position="relative" zIndex="0" marginBottom="10px">
-                  <Text fontSize="l" fontWeight="400" marginBottom="10px">
-                    {t('filter.date')}
-                  </Text>
-                  <DatePicker
-                    calendarClassName="centerMonth"
-                    selected={startDate}
-                    onChange={(date) => {
-                      setStartDate(date);
-                    }}
-                    inline
-                  />
-                </Box>
-              </Form>
-            </Formik>
+            <Box marginBottom="10px">
+              <ReactSelect
+                id="activity-select"
+                placeholder={t('filter.activity')}
+                isClearable
+                value={activityLabel || ''}
+                onChange={(selected) => {
+                  setActivityLabel(selected || []);
+                }}
+                options={activitiesOptions}
+              />
+            </Box>
+            <Box position="relative" zIndex="0" marginBottom="10px">
+              <Text fontSize="l" fontWeight="400" marginBottom="10px">
+                {t('filter.date')}
+              </Text>
+              <DatePicker
+                calendarClassName="centerMonth"
+                startDate={startDate}
+                endDate={endDate}
+                onChange={(dates) => {
+                  const [start, end] = dates;
+                  setStartDate(start);
+                  setEndDate(end);
+                }}
+                selectsRange
+                inline
+              />
+            </Box>
 
           </ModalBody>
 
@@ -738,9 +774,20 @@ function StudentReport() {
             >
               {t('common:clear-all')}
             </Button>
-            {/* <Button colorScheme="blue">
+            <Button
+              colorScheme="blue"
+              onClick={() => {
+                setParamsActivities({
+                  page: 1,
+                  date_start: startDate ? startDate.toISOString() : undefined,
+                  date_end: endDate ? endDate.toISOString() : undefined,
+                  kind: activityLabel?.value || undefined,
+                });
+                setOpenFilter(false);
+              }}
+            >
               {t('common:apply-filters')}
-            </Button> */}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -1,19 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
 import {
-  Box,
+  Box, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Heading from './Heading';
 import PublicCourseCard from './PublicCourseCard';
-import GridContainer from './GridContainer';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { error } from '../../utils/logging';
 import { setStorageItem } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 
 const coursesLimit = 2;
 
@@ -105,14 +105,13 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
   };
 
   return courses.length > 0 && (
-    <GridContainer
-      maxW="container.xl"
-      gridTemplateColumns="repeat(10, 1fr)"
-      padding="0"
+    <Flex
+      maxWidth="1280px"
+      margin="0 auto"
+      justifyContent="center"
       {...rest}
     >
       <Box
-        // flexWrap={{ base: 'wrap', xl: 'nowrap' }}
         gridColumn={gridColumn}
         flexWrap="wrap"
         id={id}
@@ -165,6 +164,14 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
               iconBackground="#25BF6C"
               onClick={() => {
                 setStorageItem('redirected-from', course?.course_translation?.landing_url);
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'ad_interaction',
+                    course_slug: course.slug,
+                    course_title: course.title,
+                    ad_position: 'bottom-center',
+                  },
+                });
               }}
               href={course?.course_translation?.landing_url}
               programName={course.course_translation.title}
@@ -175,7 +182,7 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
           ))}
         </Box>
       </Box>
-    </GridContainer>
+    </Flex>
   );
 }
 

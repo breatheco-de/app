@@ -1,5 +1,5 @@
 import React, {
-  useEffect, memo,
+  useEffect, memo, useState,
 } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -18,10 +18,12 @@ const color = {
 function Timeline({
   title, assignments, technologies, width, onClickAssignment, showPendingTasks,
 }) {
-  const { t } = useTranslation('syllabus');
+  const { t, lang } = useTranslation('syllabus');
   const { colorMode } = useColorMode();
   const router = useRouter();
-  const { cohortSlug, lessonSlug } = router.query;
+  const { lessonSlug } = router.query;
+  const [currentAssignment, setCurrentAssignment] = useState(null);
+  const [currentDefaultSlug, setCurrentDefaultSlug] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
 
@@ -37,8 +39,22 @@ function Timeline({
   };
 
   useEffect(() => {
-    scrollIntoView(lessonSlug);
-  }, []);
+    if (assignments?.length > 0) {
+      const assignmentFound = assignments.find((item) => (
+        item?.translations?.us?.slug === lessonSlug
+        || item?.translations?.es?.slug === lessonSlug
+      ));
+      const slug = currentAssignment?.translations?.us?.slug || currentAssignment?.translations?.en?.slug;
+      setCurrentDefaultSlug(slug);
+      setCurrentAssignment(assignmentFound);
+    }
+  }, [lessonSlug, assignments]);
+
+  useEffect(() => {
+    if (currentDefaultSlug) {
+      scrollIntoView(currentDefaultSlug);
+    }
+  }, [currentDefaultSlug]);
   const handleClick = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
@@ -81,8 +97,11 @@ function Timeline({
       <Box>
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
-          const assignmentPath = `/syllabus/${cohortSlug}/${item.type.toLowerCase()}/${item.slug}`;
-          const muted = assignmentPath !== router.asPath;
+          const muted = item?.slug !== currentDefaultSlug;
+          const assignmentTitle = lang === 'en'
+            ? (item?.translations?.en?.title || item?.translations?.us?.title)
+            : (item?.translations?.[lang]?.title || item?.title);
+
           return (
             <Box
               key={`${item?.id}-${mapIndex}`}
@@ -106,7 +125,7 @@ function Timeline({
                 </Box>
                 <Box marginLeft="12px">
                   <Text size="sm" color={fontColor2} fontWeight="900" marginY={0}>{item.type}</Text>
-                  <Text size="l" fontWeight="400" marginY={0} color={fontColor2}>{item.title}</Text>
+                  <Text size="l" fontWeight="400" marginY={0} color={fontColor2}>{assignmentTitle}</Text>
                 </Box>
               </Flex>
             </Box>

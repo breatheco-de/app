@@ -4,7 +4,6 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { useState } from 'react';
-// import { useFlags } from 'launchdarkly-react-client-sdk';
 import ShowPrices from '../../common/components/ShowPrices';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';

@@ -2,24 +2,45 @@ import {
   Box, Flex, Heading,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
 import handlers from '../../handlers';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
+import { usePersistent } from '../../hooks/usePersistent';
 
 function ProgressBar({
-  progressText, taskTodo, width,
+  progressText, cohortProgram, taskTodo, width,
 }) {
   const { fontColor } = useStyle();
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [programsList] = usePersistent('programsList', {});
+  const [taskCount, setTaskCount] = useState({});
+  const currentCohortInfo = programsList[cohortSession.slug || {}];
 
-  const { allTasks, percentage } = handlers.handleTasks(taskTodo);
+  const { allTasks, percentage } = handlers.handleTasks({ tasks: taskTodo, cohortInfo: currentCohortInfo });
+
+  useEffect(() => {
+    if (allTasks?.cohortId !== undefined) return;
+    if (taskTodo && cohortProgram) {
+      handlers.getAssignmentsCount({ data: cohortProgram, taskTodo, cohortId: cohortSession?.id })
+        .then((assignmentData) => {
+          if (cohortSession?.slug) {
+            setTaskCount(assignmentData);
+          }
+        });
+    }
+  }, [taskTodo, cohortProgram]);
+
+  const tasksList = allTasks?.cohortId ? allTasks : taskCount.allTasks;
+
   return (
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
-          <Counter valueTo={percentage} totalDuration={2} />
+          <Counter valueTo={percentage || taskCount?.percentage} totalDuration={2} />
           %
         </Heading>
         <Text size="l" marginY="0">
@@ -28,7 +49,7 @@ function ProgressBar({
       </Flex>
       <Progress percents={percentage} />
       <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
-        {allTasks.map((program) => (
+        {tasksList?.length > 0 && tasksList.map((program) => (
           <Box key={program.title} display="flex">
             <Icon
               icon={program.icon || 'book'}
@@ -51,11 +72,13 @@ ProgressBar.propTypes = {
   width: PropTypes.string,
   progressText: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  cohortProgram: PropTypes.oneOfType([PropTypes.any]),
 };
 ProgressBar.defaultProps = {
   width: '100%',
   progressText: 'progress in the program',
   taskTodo: [],
+  cohortProgram: {},
 };
 
 export default ProgressBar;

@@ -105,12 +105,20 @@ function MentoringConsumables({
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [consumableOfService, setConsumableOfService] = useState({});
   const router = useRouter();
   const toast = useToast();
   const { slug } = router.query;
 
-  const currentBalance = (Number(mentorshipService?.balance) && mentorshipService?.balance) || (Number(mentorshipService?.balance?.unit) && mentorshipService?.balance?.unit);
-  const existConsumablesOnCurrentService = consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+  const mentorshipBalance = mentorshipService?.balance?.unit || mentorshipService?.balance || consumableOfService?.balance?.unit;
+  const currentBalance = Number(mentorshipBalance && mentorshipBalance);
+
+  const calculateExistenceOfConsumable = () => {
+    if (consumableOfService.available_as_saas === false) return true;
+    if (consumableOfService?.balance) return consumableOfService?.balance?.unit > 0;
+    return consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+  };
+  const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -125,9 +133,18 @@ function MentoringConsumables({
       services: service.slug,
       status: 'ACTIVE',
       syllabus: slug,
+      academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
+        const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
         setProgramMentors(res.data);
+        setConsumableOfService({
+          ...relatedConsumables,
+          balance: {
+            unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+          },
+          available_as_saas: service?.academy?.available_as_saas,
+        });
         setTimeout(() => {
           setMentoryProps({ ...mentoryProps, service });
           setSavedChanges({ ...savedChanges, service });
@@ -150,11 +167,12 @@ function MentoringConsumables({
     const academyService = mentoryProps?.service?.slug
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
+
     validatePlanExistence(allSubscriptions).then((data) => {
       setDataToGetAccessModal({
         ...data,
         event: '',
-        academyServiceSlug: academyService?.slug,
+        academyService,
       });
       setIsModalToGetAccessOpen(true);
     })
@@ -268,8 +286,8 @@ function MentoringConsumables({
                     <Image
                       src={mentoryProps.mentor?.user.profile?.avatar_url}
                       alt={`selected ${mentoryProps.mentor?.user?.first_name} ${mentoryProps.mentor?.user?.last_name}`}
-                      width="40px"
-                      height="40px"
+                      width={40}
+                      height={40}
                       objectFit="cover"
                       style={{ minWidth: '40px', width: '40px !important', height: '40px !important' }}
                       styleImg={{ borderRadius: '50px' }}
@@ -332,8 +350,8 @@ function MentoringConsumables({
                               <Image
                                 src={mentor?.user.profile?.avatar_url}
                                 alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
-                                width="78px"
-                                height="78px"
+                                width={78}
+                                height={78}
                                 objectFit="cover"
                                 style={{ minWidth: '78px', width: '78px !important', height: '78px !important' }}
                                 styleImg={{ borderRadius: '50px' }}
