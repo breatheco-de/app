@@ -457,7 +457,7 @@ function Checkout() {
         {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
           <>
             <Box as="hr" width="100%" margin="10px 0" />
-            <Box display="flex" justifyContent="space-between" mt="auto">
+            <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" mt="auto">
               {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
                 <Button
                   variant="outline"

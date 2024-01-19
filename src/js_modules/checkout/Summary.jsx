@@ -358,7 +358,7 @@ function Summary() {
       <Box display="flex" flexDirection="column" flex={0.5}>
         <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
           <Heading
-            size="xsm"
+            fontSize="22px"
             p="0 0 12px 0"
           >
             {t('select-payment-plan')}
@@ -401,7 +401,7 @@ function Summary() {
                         height="fit-content"
                         fontWeight="400"
                       >
-                        <Box fontSize="18px" fontWeight="700">
+                        <Box fontSize={{ base: '12px', md: '18px' }} fontWeight="700">
                           {title}
                         </Box>
                         <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
