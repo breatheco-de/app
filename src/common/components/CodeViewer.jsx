@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Button,
   Avatar,
@@ -18,7 +18,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Editor from '@monaco-editor/react';
-import { setStorageItem, getStorageItem } from '../../utils';
+import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import useAuth from '../hooks/useAuth';
@@ -47,15 +47,33 @@ export const languagesNames = {
 };
 
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
+  const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('code-viewer');
   const { isAuthenticated } = useAuth();
   const toast = useToast();
+  const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+  const handleTouchStart = (event) => {
+    event.preventDefault();
+    setInitialTouchY(event.touches[0].clientY);
+  };
+
+  const handleTouchMove = (event) => {
+    if (isWindow) {
+      event.preventDefault(); // Prevent default scrolling behavior
+      const currentTouchY = event.touches[0].clientY; // Get current y-coordinate
+      const deltaY = currentTouchY - initialTouchY; // Calculate vertical distance
+
+      document.body.scrollY = deltaY;
+      window.scrollBy(0, -deltaY);
+    }
+  };
 
   const getRigobotToken = async () => {
     let rigobotToken = getStorageItem('rigobotToken');
@@ -164,7 +182,14 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         <TabPanels>
           {languages.map(({ code, language, output, running }, i) => (
             <TabPanel padding="0">
-              <Box height="290px" borderRadius={!output && '0 0 4px 4px'} overflow="hidden">
+              <Box
+                ref={editorContainerRef}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                height="290px"
+                borderRadius={!output && '0 0 4px 4px'}
+                overflow="hidden"
+              >
                 <Editor
                   theme="my-theme"
                   value={code}
