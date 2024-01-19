@@ -28,6 +28,24 @@ import Icon from './Icon';
 
 const notExecutables = ['html', 'css', 'shell'];
 
+export const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'html', 'css', 'scss'];
+
+export const languagesLabels = {
+  jsx: 'JS',
+  js: 'JS',
+  javascript: 'JS',
+  python: 'Python',
+  html: 'Html',
+};
+
+export const languagesNames = {
+  jsx: 'javascript',
+  js: 'javascript',
+  javascript: 'javascript',
+  python: 'python',
+  html: 'html',
+};
+
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -59,7 +77,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const run = async () => {
     if (isAuthenticated || allowNotLogged) {
       try {
-        const currLanguage = { ...languages[tabIndex], running: true };
+        const currLanguage = { ...languages[tabIndex], running: true, output: null };
         setLanguages([
           ...languages.slice(0, tabIndex),
           currLanguage,
@@ -162,6 +180,9 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   height="300px"
                   options={{
                     borderRadius: '4px',
+                    scrollbar: {
+                      alwaysConsumeMouseWheel: false,
+                    },
                     minimap: {
                       enabled: false,
                     },
