@@ -59,6 +59,9 @@ body.chakra-ui-dark .chakra-popover__arrow {
   z-index: 99!important;
   background: var(--chakra-colors-gray-800) !important;
 }
+body.chakra-ui-dark .popover-bg-color {
+  background: var(--chakra-colors-gray-800) !important
+};
 body.chakra-ui-dark .popover-bgColor {
   background: var(--chakra-colors-gray-800) !important;
   color: #00ABE9;
