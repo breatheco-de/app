@@ -23,7 +23,7 @@ function Summary() {
   const [disableHandler, setDisableHandler] = useState(false);
 
   const {
-    state, nextStep, setSelectedPlanCheckoutData, handleChecking, setPlanProps, handlePayment, getPaymentText,
+    state, nextStep, setSelectedPlanCheckoutData, setPlanProps, handlePayment, getPaymentText,
     setLoader,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
@@ -139,68 +139,54 @@ function Summary() {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    handleChecking({
-      plan: selectedPlanCheckoutData,
-    })
-      .then((data) => {
-        if (isNotTrial || !priceIsNotNumber) {
-          nextStep();
-        } else {
-          handlePayment({
-            ...data,
-            installments: selectedPlanCheckoutData?.how_many_months,
-          }, true)
-            .then((respPayment) => {
-              const silentCode = respPayment?.silent_code;
-              if (silentCode) {
-                setReadyToRefetch(false);
+    if (isNotTrial || !priceIsNotNumber) {
+      nextStep();
+    } else {
+      handlePayment({
+        ...checkoutData,
+        installments: selectedPlanCheckoutData?.how_many_months,
+      }, true)
+        .then((respPayment) => {
+          const silentCode = respPayment?.silent_code;
+          if (silentCode) {
+            setReadyToRefetch(false);
 
-                if (silentCode === SILENT_CODE.CARD_ERROR) {
-                  setOpenDeclinedModal(true);
-                  setDeclinedModalProps({
-                    title: t('transaction-denied'),
-                    description: t('card-declined'),
-                  });
-                }
-                if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
-                  setOpenDeclinedModal(true);
-                  setDeclinedModalProps({
-                    title: t('transaction-denied'),
-                    description: t('payment-not-processed'),
-                  });
-                }
-                if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
-                  setOpenDeclinedModal(true);
-                  setDeclinedModalProps({
-                    title: t('transaction-denied'),
-                    description: t('payment-error'),
-                  });
-                }
-              }
-              if (respPayment.status === 'FULFILLED') {
-                setReadyToRefetch(true);
-              }
-            })
-            .catch(() => {
-              toast({
-                position: 'top',
-                title: t('alert-message:payment-error'),
-                status: 'error',
-                duration: 7000,
-                isClosable: true,
+            if (silentCode === SILENT_CODE.CARD_ERROR) {
+              setOpenDeclinedModal(true);
+              setDeclinedModalProps({
+                title: t('transaction-denied'),
+                description: t('card-declined'),
               });
-            });
-        }
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: 'Something went wrong choosing plan',
-          status: 'error',
-          duration: 6000,
-          isClosable: true,
+            }
+            if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+              setOpenDeclinedModal(true);
+              setDeclinedModalProps({
+                title: t('transaction-denied'),
+                description: t('payment-not-processed'),
+              });
+            }
+            if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+              setOpenDeclinedModal(true);
+              setDeclinedModalProps({
+                title: t('transaction-denied'),
+                description: t('payment-error'),
+              });
+            }
+          }
+          if (respPayment.status === 'FULFILLED') {
+            setReadyToRefetch(true);
+          }
+        })
+        .catch(() => {
+          toast({
+            position: 'top',
+            title: t('alert-message:payment-error'),
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
         });
-      });
+    }
   };
 
   return (

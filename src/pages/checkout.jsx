@@ -128,7 +128,19 @@ function Checkout() {
         planType: 'original',
       }, translations);
       setOriginalPlan(processedPlan);
-    });
+    })
+      .catch((err) => {
+        if (err) {
+          toast({
+            position: 'top',
+            title: t('alert-message:no-plan-configuration'),
+            status: 'info',
+            duration: 4000,
+            isClosable: true,
+          });
+          router.push('/pricing');
+        }
+      });
     reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
@@ -219,7 +231,7 @@ function Checkout() {
           setLoader('plan', false);
         });
     }
-    if (!queryServiceExists && queryPlanExists && tokenExists && !cohortsData.loading) {
+    if (!queryServiceExists && queryPlanExists && isAuthenticated && tokenExists && !cohortsData.loading) {
       setLoader('plan', true);
       setShowChooseClass(false);
       bc.payment().getPlan(planFormated)
