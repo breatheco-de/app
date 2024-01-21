@@ -139,6 +139,7 @@ export function ButtonHandlerByTaskStatus({
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
+  const isButtonDisabled = currentTask === null || taskIsAproved;
 
   const {
     featuredColor, modal, hexColor, lightColor,
@@ -151,10 +152,12 @@ export function ButtonHandlerByTaskStatus({
       <Button
         display="flex"
         onClick={(event) => {
-          changeStatusAssignment(event, currentTask);
-          onClickHandler();
+          if (currentTask) {
+            changeStatusAssignment(event, currentTask);
+            onClickHandler();
+          }
         }}
-        isDisabled={taskIsAproved}
+        isDisabled={isButtonDisabled}
         minWidth="26px"
         minHeight="26px"
         background={allowText ? 'blue.default' : 'none'}
@@ -178,13 +181,15 @@ export function ButtonHandlerByTaskStatus({
     return (
       <Button
         onClick={(event) => {
-          if (noDeliveryFormat) {
-            changeStatusAssignment(event, currentTask, 'PENDING');
-          } else {
-            handleOpen(() => onOpen());
+          if (currentTask) {
+            if (noDeliveryFormat) {
+              changeStatusAssignment(event, currentTask, 'PENDING');
+            } else {
+              handleOpen(() => onOpen());
+            }
           }
         }}
-        isDisabled={taskIsAproved}
+        isDisabled={isButtonDisabled}
         display="flex"
         minWidth="26px"
         minHeight="26px"
@@ -389,7 +394,7 @@ export function ButtonHandlerByTaskStatus({
           <Button
             display="flex"
             variant={allowText ? 'default' : 'none'}
-            isDisabled={taskIsAproved}
+            isDisabled={isButtonDisabled}
             minWidth="26px"
             minHeight="26px"
             height="fit-content"

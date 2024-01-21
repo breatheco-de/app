@@ -334,11 +334,10 @@ function Content() {
 
   useEffect(() => {
     if (sortedAssignments.length <= 0) {
-      router.push('/choose-program');
       toast({
         position: 'top',
         title: t('alert-message:no-cohort-modules-found'),
-        status: 'error',
+        status: 'warning',
         duration: 7000,
         isClosable: true,
       });
