@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
-import CodeViewer, { allowCodeViewer, languagesLabels, languagesNames } from '../../CodeViewer';
 import Heading from '../../Heading';
 import OnlyFor from '../../OnlyFor';
 import tomorrow from '../syntaxHighlighter/tomorrow';
@@ -47,23 +46,7 @@ export function MDLink({ children, href }) {
 export function Code({ inline, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || '');
 
-  if (inline || !match) {
-    return (
-      <code className={`${className} highlight`} {...props}>
-        {children}
-      </code>
-    );
-  }
-
-  return match && allowCodeViewer.includes(match[1]) ? (
-    <CodeViewer
-      languagesData={[{
-        code: String(children).replace(/\n$/, ''),
-        language: languagesNames[match[1]] || match[1],
-        label: languagesLabels[match[1]] || match[1],
-      }]}
-    />
-  ) : (
+  return !inline && match ? (
     <SyntaxHighlighter
       showLineNumbers
       style={tomorrow}
@@ -73,6 +56,10 @@ export function Code({ inline, className, children, ...props }) {
     >
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
+  ) : (
+    <code className={`${className} highlight`} {...props}>
+      {children}
+    </code>
   );
 }
 
