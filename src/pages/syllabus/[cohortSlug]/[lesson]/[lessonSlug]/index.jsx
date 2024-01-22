@@ -36,6 +36,7 @@ import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../../../../utils/variables';
+import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
 function Content() {
@@ -44,6 +45,7 @@ function Content() {
   const { isLoading, user, choose } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
+  const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
@@ -265,7 +267,28 @@ function Content() {
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
-          const currentSlug = data?.translations?.[language] || lessonSlug;
+          const translations = data?.translations;
+          // const assetLang = data?.lang;
+          // const translationInEnglish = translations?.en || translations?.us;
+
+          // const translationArray = [
+          //   {
+          //     value: 'en',
+          //     lang: 'en',
+          //     slug: (assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish,
+          //     link: `/syllabus/${cohortSlug}/${lesson}/${(assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish}`,
+          //   },
+          //   {
+          //     value: 'es',
+          //     lang: 'es',
+          //     slug: assetLang === 'es' ? data.slug : translations?.es,
+          //     link: `/es/syllabus/${cohortSlug}/${lesson}/${assetLang === 'es' ? data.slug : translations?.es}`,
+          //   },
+          // ].filter((item) => item?.slug !== undefined);
+          // setUserSession({
+          //   translations: translationArray,
+          // });
+          const currentSlug = translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
           const extension = urlPathname ? urlPathname.split('.').pop() : null;
@@ -323,6 +346,11 @@ function Content() {
           EventIfNotFound();
         });
     }
+    return () => {
+      setUserSession({
+        translations: [],
+      });
+    };
   }, [router, lessonSlug]);
 
   useEffect(() => {
@@ -775,7 +803,7 @@ function Content() {
             />
           )}
 
-          <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
+          <Box margin="2.5rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
               <ButtonHandlerByTaskStatus
                 allowText
