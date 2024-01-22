@@ -29,13 +29,14 @@ import Icon from './Icon';
 
 const notExecutables = ['html', 'css', 'shell'];
 
-export const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'html', 'css', 'scss'];
+export const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'py', 'html', 'css', 'scss'];
 
 export const languagesLabels = {
   jsx: 'JS',
   js: 'JS',
   javascript: 'JS',
   python: 'Python',
+  py: 'Python',
   html: 'Html',
 };
 
@@ -44,6 +45,7 @@ export const languagesNames = {
   js: 'javascript',
   javascript: 'javascript',
   python: 'python',
+  py: 'python',
   html: 'html',
 };
 
@@ -174,7 +176,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
-          {!notExecutables.includes(languages[tabIndex].language) && (
+          {!notExecutables.includes(languages[tabIndex].language) && languages[tabIndex].code.trim() !== '' && (
             <>
               {languages[tabIndex].running ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
