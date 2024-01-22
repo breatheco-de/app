@@ -29,7 +29,6 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import bc from '../../../../../common/services/breathecode';
-import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
@@ -311,18 +310,12 @@ function Content() {
                 }
               })
               .catch(() => {
-                defaultDataFetch({
-                  currentBlankProps,
-                  lessonSlug,
-                  assetTypeValues,
-                  lesson,
-                  setQuizSlug,
-                  setReadme,
-                  setCurrentData,
-                  setIpynbHtmlUrl,
-                  toast,
-                  router,
-                  t,
+                setReadme({
+                  content: t('no-traduction-found-description'),
+                });
+                setCurrentData({
+                  ...data,
+                  title: t('no-traduction-found'),
                 });
               });
           }
@@ -390,7 +383,7 @@ function Content() {
         icon: 'message',
         slug: 'teacher-instructions',
         title: t('teacherSidebar.instructions'),
-        content: true,
+        content: extendedInstructions !== null,
         actionHandler: () => {
           setExtendedIsEnabled(!extendedIsEnabled);
           if (extendedIsEnabled === false) {
