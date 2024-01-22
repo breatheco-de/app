@@ -11,7 +11,6 @@ import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
 import LoaderScreen from '../common/components/LoaderScreen';
 import { isWindow } from '../utils';
-import { reportDatalayer } from '../utils/requests';
 
 const switchTypes = {
   monthly: 'monthly',
