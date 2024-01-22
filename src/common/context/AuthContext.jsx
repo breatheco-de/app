@@ -139,6 +139,13 @@ function AuthProvider({ children, pageProps }) {
   // Validate and Fetch user token from localstorage when it changes
   const handleSession = (tokenString) => setTokenSession(tokenString);
 
+  const updateSettingsLang = async () => {
+    try {
+      await bc.auth().updateSettings({ lang });
+    } catch (e) {
+      console.log(e);
+    }
+  };
   const authHandler = async () => {
     const token = getToken();
 
@@ -195,7 +202,9 @@ function AuthProvider({ children, pageProps }) {
             } else if (!localStorage.getItem('showGithubWarning') || localStorage.getItem('showGithubWarning') !== 'postponed') {
               localStorage.setItem('showGithubWarning', 'active');
             }
-            if (!pageProps.disableLangSwitcher && langHelper[lang] !== settingsLang) router.push(router.asPath, '', { locale: settingsLang });
+            if (!pageProps.disableLangSwitcher && langHelper[router?.locale] !== settingsLang) {
+              updateSettingsLang();
+            }
           })
           .catch(() => {
             handleSession(null);
