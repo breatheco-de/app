@@ -151,6 +151,7 @@ function PricingView() {
           <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
           <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
           <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
+            {/*
             <Button
               width={{ base: '100%', sm: 'fit-content' }}
               variant="outline"
@@ -164,6 +165,7 @@ function PricingView() {
             >
               {t('learning-code.chat')}
             </Button>
+            */}
           </Flex>
         </Box>
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
