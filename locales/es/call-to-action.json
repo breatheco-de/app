@@ -10,6 +10,7 @@
         "title": "Weekly coding challenges",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge",
+        "internal_cta_placement": "WeeklyCodingChallenge",
         "forward_url": "https://google.com/"
       }
     }
