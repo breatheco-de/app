@@ -207,7 +207,7 @@ function MarkDownParser({
   }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
   const preParsedContent = useMemo(() => {
-    const regex = /(```(?<language>\w+)\srunable="true"\n(?<code>(?:.|\n)*?)```\n)+/gm;
+    const regex = /(```(?<language>\w+)\srunable=("true")|('true')\n(?<code>(?:.|\n)*?)```\n)+/gm;
 
     return content.replace(regex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
   }, [content]);
