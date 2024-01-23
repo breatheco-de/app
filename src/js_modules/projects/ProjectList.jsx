@@ -39,13 +39,13 @@ const ProjectList = forwardRef(({
   const getDifficultyColors = (currDifficulty) => {
     const background = {
       beginner: 'featuredLight',
-      easy: 'featuredLight',
+      easy: 'green.light',
       intermediate: 'yellow.100',
       hard: 'red.light',
     };
     const color = {
       beginner: 'blue.default',
-      easy: 'blue.default',
+      easy: 'green.400',
       intermediate: '#FFB718',
       hard: 'danger',
     };
