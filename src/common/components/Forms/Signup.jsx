@@ -18,13 +18,14 @@ import PhoneInput from '../PhoneInput';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
-import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
+import { BASE_PLAN } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
 import { getStorageItem, setStorageItem, getQueryString } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import bc from '../../services/breathecode';
+import modifyEnv from '../../../../modifyEnv';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
@@ -32,6 +33,7 @@ function SignupForm({
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { emailValidation, thriggerValidation } = useEmailValidation();
   const { hexColor, featuredColor } = useStyle();
   const plan = getQueryString('plan') || planSlug;
