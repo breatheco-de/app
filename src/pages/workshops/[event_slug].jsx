@@ -758,12 +758,15 @@ function Page({ eventData, asset }) {
                       </Box>
                     )}
                     {!event?.online_event && (
-                      <Box display="flex" gridGap="10px" justifyContent="center" marginBottom="10px">
-                        <Icon icon="location" width="20px" height="20px" color="white" />
-                        <Text size="14px" fontWeight={700} width="fit-content">
-                          {event?.venue?.street_address}
-                        </Text>
-                      </Box>
+                      <>
+                        <Box display="flex" gridGap="10px" justifyContent="center" marginBottom="10px">
+                          <Icon icon="location" width="20px" height="20px" color="white" />
+                          <Text size="14px" fontWeight={700} width="fit-content">
+                            {event?.venue?.street_address}
+                          </Text>
+                        </Box>
+                        <Text textAlign="center">{t('form.joined-description-in-person')}</Text>
+                      </>
                     )}
                     {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
                       <Box display="flex" gap="10px">
