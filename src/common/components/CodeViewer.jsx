@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Button,
   Avatar,
@@ -12,31 +12,71 @@ import {
   TabIndicator,
   Collapse,
   Tooltip,
+  useToast,
+  CircularProgress,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Editor from '@monaco-editor/react';
-import { setStorageItem, getStorageItem } from '../../utils';
+import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['html', 'css'];
+const notExecutables = ['html', 'css', 'shell'];
+
+export const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'py', 'html', 'css', 'scss'];
+
+export const languagesLabels = {
+  jsx: 'JS',
+  js: 'JS',
+  javascript: 'JS',
+  python: 'Python',
+  py: 'Python',
+  html: 'Html',
+};
+
+export const languagesNames = {
+  jsx: 'javascript',
+  js: 'javascript',
+  javascript: 'javascript',
+  python: 'python',
+  py: 'python',
+  html: 'html',
+};
 
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
+  const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('code-viewer');
   const { isAuthenticated } = useAuth();
+  const toast = useToast();
+  const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+  const handleTouchStart = (event) => {
+    event.preventDefault();
+    setInitialTouchY(event.touches[0].clientY);
+  };
+
+  const handleTouchMove = (event) => {
+    if (isWindow) {
+      event.preventDefault(); // Prevent default scrolling behavior
+      const currentTouchY = event.touches[0].clientY; // Get current y-coordinate
+      const deltaY = currentTouchY - initialTouchY; // Calculate vertical distance
+
+      document.body.scrollY = deltaY;
+      window.scrollBy(0, -deltaY);
+    }
+  };
 
   const getRigobotToken = async () => {
     let rigobotToken = getStorageItem('rigobotToken');
@@ -58,7 +98,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const run = async () => {
     if (isAuthenticated || allowNotLogged) {
       try {
-        const currLanguage = { ...languages[tabIndex], running: true };
+        const currLanguage = { ...languages[tabIndex], running: true, output: null };
         setLanguages([
           ...languages.slice(0, tabIndex),
           currLanguage,
@@ -88,6 +128,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         const completion = await completionRequest.json();
 
         currLanguage.output = completion.answer.replace('---terminal output---', '').replace('\n', '');
+        currLanguage.running = false;
         setLanguages([
           ...languages.slice(0, tabIndex),
           currLanguage,
@@ -95,6 +136,19 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         ]);
       } catch (e) {
         console.log(e);
+        const currLanguage = { ...languages[tabIndex], running: false };
+        setLanguages([
+          ...languages.slice(0, tabIndex),
+          currLanguage,
+          ...languages.slice(tabIndex + 1),
+        ]);
+        toast({
+          position: 'top',
+          title: typeof e === 'string' ? e : t('error'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
       }
     } else {
       setShowModal(true);
@@ -122,11 +176,17 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
-          {!notExecutables.includes(languages[tabIndex].language) && (
-            <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
-              <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-              {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
-            </Button>
+          {!notExecutables.includes(languages[tabIndex].language) && languages[tabIndex].code.trim() !== '' && (
+            <>
+              {languages[tabIndex].running ? (
+                <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
+              ) : (
+                <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
+                  <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
+                  {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
+                </Button>
+              )}
+            </>
           )}
         </Box>
         <TabIndicator
@@ -138,7 +198,14 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         <TabPanels>
           {languages.map(({ code, language, output, running }, i) => (
             <TabPanel padding="0">
-              <Box height="290px" borderRadius={!output && '0 0 4px 4px'} overflow="hidden">
+              <Box
+                ref={editorContainerRef}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                height="290px"
+                borderRadius={!output && '0 0 4px 4px'}
+                overflow="hidden"
+              >
                 <Editor
                   theme="my-theme"
                   value={code}
@@ -154,6 +221,9 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   height="300px"
                   options={{
                     borderRadius: '4px',
+                    scrollbar: {
+                      alwaysConsumeMouseWheel: false,
+                    },
                     minimap: {
                       enabled: false,
                     },
@@ -162,7 +232,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
                   onMount={handleEditorDidMount}
                 />
               </Box>
-              <Collapse in={running} offsetY="20px">
+              <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
                 <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
                   <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
                     {stTranslation ? stTranslation[lang]['code-viewer'].terminal : t('terminal')}
@@ -207,11 +277,11 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         buttonHandlerStyles={{ variant: 'default' }}
         closeActionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('login');
+          router.push('/login');
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('checkout');
+          router.push('/checkout');
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />
