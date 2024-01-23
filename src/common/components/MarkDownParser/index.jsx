@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
@@ -63,7 +63,7 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
 
 function CodeViewerComponent({ children }) {
   const input = children[0];
-  const regex = /```([a-zA-Z]+)\n([\s\S]+?)```/g;
+  const regex = /```([a-zA-Z]+)\srunable="true"\n([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
@@ -206,6 +206,12 @@ function MarkDownParser({
     ]);
   }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
+  const preParsedContent = useMemo(() => {
+    const regex = /(```(?<language>\w+)\srunable="true"\n(?<code>(?:.|\n)*?)```\n)+/gm;
+
+    return content.replace(regex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
+  }, [content]);
+
   return (
     <>
       <ContentHeading
@@ -271,7 +277,7 @@ function MarkDownParser({
           quote: Quote,
         }}
       >
-        {content}
+        {preParsedContent}
       </ReactMarkdown>
     </>
   );
