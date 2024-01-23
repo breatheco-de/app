@@ -63,7 +63,7 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
 
 function CodeViewerComponent({ children }) {
   const input = children[0];
-  const regex = /```([a-zA-Z]+)\srunable="true"\n([\s\S]+?)```/g;
+  const regex = /```([a-zA-Z]+)\srunable=("true")|('true')\n([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
