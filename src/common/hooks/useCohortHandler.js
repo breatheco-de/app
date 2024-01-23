@@ -86,8 +86,8 @@ function useHandler() {
     // Fetch cohort data with pathName structure
     if (cohortSlug) {
       bc.admissions().me().then(({ data }) => {
-        const { cohorts } = data;
         if (!data) throw new Error('No data');
+        const { cohorts } = data;
         // find cohort with current slug
         const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
         const currentCohort = findCohort?.cohort;
