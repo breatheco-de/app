@@ -11,7 +11,6 @@ import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
 import LoaderScreen from '../common/components/LoaderScreen';
 import { isWindow } from '../utils';
-import { reportDatalayer } from '../utils/requests';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -151,6 +150,7 @@ function PricingView() {
           <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
           <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
           <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
+            {/*
             <Button
               width={{ base: '100%', sm: 'fit-content' }}
               variant="outline"
@@ -164,6 +164,7 @@ function PricingView() {
             >
               {t('learning-code.chat')}
             </Button>
+            */}
           </Flex>
         </Box>
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
@@ -195,6 +196,14 @@ function PricingView() {
           <Img margin="auto" width="235px" src="/static/images/women-laptop-people.png" />
         </Flex>
         <Faq marginTop="40px" items={t('faq', {}, { returnObjects: true })} />
+        <Box>
+          <Text fontWeight="300" size="xs" marginTop="20px">
+            {t('pricing-disclaimer.title')}
+          </Text>
+          <Text fontWeight="300" size="xs" marginBottom="20px">
+            {t('pricing-disclaimer.description')}
+          </Text>
+        </Box>
       </Container>
     </>
   );
