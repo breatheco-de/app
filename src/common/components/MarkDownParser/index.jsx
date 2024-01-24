@@ -74,8 +74,8 @@ function CodeViewerComponent(props) {
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(input)) !== null) {
     fragments.push({
-      language: languagesNames[match[1]] || match[1],
-      label: languagesLabels[match[1]] || match[1],
+      language: languagesNames[match[1].toLowerCase()] || match[1],
+      label: languagesLabels[match[1].toLowerCase()] || match[1],
       code: match[3].trim(),
     });
   }
