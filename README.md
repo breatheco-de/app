@@ -20,9 +20,9 @@ bun install
 4. Then generate required files before start:
 
 ```bash
-bun prepare
+bun prepare-repo
 # or
-bun run prepare
+bun run prepare-repo
 ```
 
 5. Then, run the development server:

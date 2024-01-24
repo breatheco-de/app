@@ -20,6 +20,7 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
+import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 
@@ -58,6 +59,31 @@ function IframeComponent({ ...props }) {
 }
 function OnlyForComponent({ cohortSession, profile, ...props }) {
   return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
+}
+
+function CodeViewerComponent({ children }) {
+  const input = children[0];
+  const regex = /```([a-zA-Z]+)\n([\s\S]+?)```/g;
+  let match;
+  const fragments = [];
+
+  do {
+    match = regex.exec(input);
+    if (match !== null) {
+      fragments.push({
+        language: languagesNames[match[1]] || match[1],
+        label: languagesLabels[match[1]] || match[1],
+        code: match[2].trim(),
+      });
+    }
+  } while (match !== null);
+
+  return (
+    <CodeViewer
+      languagesData={fragments}
+      marginTop="10px"
+    />
+  );
 }
 
 function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
@@ -238,6 +264,7 @@ function MarkDownParser({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),

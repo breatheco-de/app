@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Flex, Img,
+  Box, Flex, Img, useColorModeValue,
 } from '@chakra-ui/react';
 import Heading from './Heading';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
-import GridContainer from './GridContainer';
 import PrismicTextComponent from './PrismicTextComponent';
 
 const SIZES = {
@@ -47,6 +46,8 @@ function MktTwoColumnSideImage({
     right: 'ltr',
     left: 'rtl',
   };
+  const fontColor = useColorModeValue(slice?.primary?.font_color, slice?.primary?.font_color_in_darkmode);
+  const sideBackgroundColor = useColorModeValue(textBackgroundColor, slice?.primary?.background_in_dark_mode);
 
   const imageProps = slice && slice?.primary?.image?.dimensions;
 
@@ -85,7 +86,7 @@ function MktTwoColumnSideImage({
         titleLineHeight: '1.2',
         subtitleSize: '21px',
         descriptionSize: '18px',
-        padding: '24px 0px',
+        padding: '24px 14px',
       };
     }
     if (informationSize === SIZES.LARGE) {
@@ -102,7 +103,7 @@ function MktTwoColumnSideImage({
       titleLineHeight: '1.2',
       subtitleSize: '14px',
       descriptionSize: '12px',
-      padding: '24px 0px',
+      padding: '24px 14px',
     };
   };
   const prismicStyles = prisimicStyles();
@@ -113,9 +114,10 @@ function MktTwoColumnSideImage({
       background={background || backgroundColor}
       {...rest}
     >
-      <GridContainer
-        gridTemplateColumns="repeat(10, 1fr)"
+      <Flex
+        flexDirection={{ base: 'column', md: 'row' }}
         maxWidth="1280px"
+        margin="0 auto"
         id={id}
         px="10px"
         border={border}
@@ -128,21 +130,20 @@ function MktTwoColumnSideImage({
           direction: flexDirection[imagePosition],
         }}
       >
-        {/* 2 / span 4 */}
-        <Box display={{ base: 'block', md: 'grid' }} height="100%" style={{ direction: 'initial' }} gridColumn="2 / span 4" background={textBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
-          <Flex flexDirection="column" gridGap="16px" alignSelf="center">
-            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor}>
+        <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
+          <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
+            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
             </Heading>
             {subTitle && (
-              <Heading as="h4" fontSize={prismicStyles.subtitleSize} color={subtitleColor || hexColor.blueDefault}>
+              <Heading as="h4" fontSize={prismicStyles.subtitleSize} color={subtitleColor || 'currentColor'}>
                 {subTitle}
               </Heading>
             )}
             {slice.primary.description ? (
               <PrismicTextComponent
                 field={slice?.primary?.description}
-                color={slice?.primary?.description_color}
+                color={slice?.primary?.description_color || 'currentColor'}
               />
             ) : (
               <Text
@@ -182,7 +183,7 @@ function MktTwoColumnSideImage({
             )}
           </Flex>
         </Box>
-        <Box display={{ base: 'block', md: 'grid' }} style={{ direction: 'initial' }} gridColumn="6 / span 4">
+        <Box flex={0.5} style={{ direction: 'initial' }}>
           <Img
             boxSize="100%"
             margin="0 auto"
@@ -194,7 +195,7 @@ function MktTwoColumnSideImage({
             width={imageProps?.width}
           />
         </Box>
-      </GridContainer>
+      </Flex>
     </Box>
   );
 }

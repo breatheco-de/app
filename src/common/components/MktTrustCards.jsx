@@ -84,7 +84,7 @@ function Card({ card }) {
               key={image}
               src={image}
               width="100%"
-              height="120px"
+              height={{ md: '120px', base: '140px' }}
               position="absolute"
             />
           </Fade>
@@ -143,7 +143,7 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding="30px" width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
+    <Box id={id} padding={{ base: '30px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}

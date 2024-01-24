@@ -1410,6 +1410,26 @@ export interface TwoColumnSliceDefaultPrimary {
   link_button: prismic.BooleanField;
 
   /**
+   * Font color field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  font_color: prismic.ColorField;
+
+  /**
+   * Font color in darkmode field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_color_in_darkmode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  font_color_in_darkmode: prismic.ColorField;
+
+  /**
    * Button Color field in *TwoColumn → Primary*
    *
    * - **Field Type**: Select
@@ -1428,6 +1448,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#color
    */
   background_color: prismic.ColorField;
+
+  /**
+   * Background in dark mode field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.background_in_dark_mode
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  background_in_dark_mode: prismic.ColorField;
 
   /**
    * Image position field in *TwoColumn → Primary*

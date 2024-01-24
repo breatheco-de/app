@@ -8,14 +8,14 @@ import Heading from './Heading';
 import { calculateDifferenceDays } from '../../utils';
 import LoaderScreen from './LoaderScreen';
 
-function TimeString({ string, label }) {
+function TimeString({ string, label, size, textSize }) {
   return (
     <Box display="flex" flexDirection="column">
-      <Heading size="l" fontWeight={700}>
+      <Heading size={size} fontWeight={700}>
         {string}
       </Heading>
       {label && (
-      <Text size="15px" fontWeight={700} textTransform="uppercase">
+      <Text size={textSize} fontWeight={700} textTransform="uppercase">
         {label}
       </Text>
       )}
@@ -71,26 +71,30 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
         ) : (
           <Box display="flex" gridGap="1px" margin="0 auto" alignItems="center" fontSize="40px">
             {autoRemove && timer?.days <= 0 ? null : (
-              <Heading size="18px" fontWeight={700}>
-                {timer?.days}
-                :
-              </Heading>
+              <>
+                <TimeString label={t('days')} string={timer?.days} size="xsm" textSize="9px" />
+                <Box margin="-1rem 2px 0 2px">
+                  :
+                </Box>
+              </>
             )}
             {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : (
-              <Heading size="18px" fontWeight={700}>
-                {timer?.hours}
-                :
-              </Heading>
+              <>
+                <TimeString label="Hrs" string={timer?.hours} size="xsm" textSize="10px" />
+                <Box margin="-1rem 2px 0 2px">
+                  :
+                </Box>
+              </>
             )}
             {autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : (
-              <Heading size="18px" fontWeight={700}>
-                {timer?.minutes}
-                :
-              </Heading>
+              <>
+                <TimeString label="Min" string={timer.minutes} size="xsm" textSize="10px" />
+                <Box margin="-1rem 2px 0 2px">
+                  :
+                </Box>
+              </>
             )}
-            <Heading size="18px" fontWeight={700}>
-              {timer?.seconds}
-            </Heading>
+            <TimeString label={t('short-seconds')} string={timer.seconds} size="xsm" textSize="10px" />
           </Box>
         )}
       </Box>
@@ -147,10 +151,14 @@ Timer.defaultProps = {
 TimeString.propTypes = {
   string: PropTypes.string,
   label: PropTypes.string,
+  size: PropTypes.string,
+  textSize: PropTypes.string,
 };
 TimeString.defaultProps = {
   string: '00',
   label: '',
+  size: 'l',
+  textSize: '15px',
 };
 
 export default Timer;
