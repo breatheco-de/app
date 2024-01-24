@@ -5,6 +5,8 @@
   "edit-page": "Edit in Github",
   "open-google-collab": "Open in Collab",
   "next-page": "Next page",
+  "no-traduction-found": "No traduction found",
+  "no-traduction-found-description": ">We are sorry, a translation for this content was not found. We are constantly working to offer our modules in various languages and appreciate your patience. If you wish to contribute with translations, please visit our repository on Github. In the meantime, you can try accessing the content in another available language or check back later to see if the translation has been added.",
   "previous-page": "Previous page",
   "ask-to-done": "Would you like to mark this \"{{taskType}}\" as done before moving on?",
   "mark-later": "Mark as done later",
