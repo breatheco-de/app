@@ -38,6 +38,7 @@ export const languagesLabels = {
   python: 'Python',
   py: 'Python',
   html: 'Html',
+  css: 'CSS',
 };
 
 export const languagesNames = {
