@@ -167,6 +167,8 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
     monaco.editor.setTheme('my-theme');
   };
 
+  if (languagesData === null || languagesData === undefined || languagesData.length === 0) return null;
+
   return (
     <Box width="100%" {...rest}>
       <Tabs onChange={(index) => setTabIndex(index)} variant="unstyled">
