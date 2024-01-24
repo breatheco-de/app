@@ -12,6 +12,7 @@ import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
+import { warn } from '../../utils/logging';
 
 const initialState = {
   isLoading: true,
@@ -143,7 +144,7 @@ function AuthProvider({ children, pageProps }) {
     try {
       await bc.auth().updateSettings({ lang });
     } catch (e) {
-      console.log(e);
+      warn('error function "updateSettingsLang": ', e);
     }
   };
   const authHandler = async () => {

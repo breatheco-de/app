@@ -265,6 +265,13 @@
           "icon": "courses"
         },
         "features": [{ "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándole oportunidades para mejorar sus habilidades existentes o profundizar en otras nuevas." }]
+      },{
+        "service": {
+          "slug": "ai-interaction",
+          "title": "Prueba nuestra interacción con IA",
+          "icon": "message"
+        },
+        "features": [{ "description": "Prueba nuestros modelos de IA entrenados internamente, capaces de revisar tu código constantemente y brindarte comentarios de ayuda, consejos mientras codifica y más." }]
       }]
     },
     "premium-plan": {
