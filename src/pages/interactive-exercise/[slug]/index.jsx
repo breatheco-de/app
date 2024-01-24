@@ -37,6 +37,7 @@ import ShowOnSignUp from '../../../common/components/ShowOnSignup';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
+import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
@@ -656,8 +657,6 @@ function Exercise({ exercise, markdown }) {
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
             margin="30px 0"
-            backgroundColor={useColorModeValue('white', 'featuredDark')}
-            transition="background 0.2s ease-in-out"
             width="100%"
             height="auto"
             borderWidth="0px"
@@ -668,12 +667,28 @@ function Exercise({ exercise, markdown }) {
             borderColor={commonBorderColor}
           >
             {exercise?.slug ? (
-              <TabletWithForm
-                toast={toast}
-                exercise={exercise}
-                commonTextColor={commonTextColor}
-                commonBorderColor={commonBorderColor}
-              />
+              <>
+                <Box
+                  backgroundColor={useColorModeValue('white', 'featuredDark')}
+                  transition="background 0.2s ease-in-out"
+                  borderRadius="17px"
+                >
+                  <TabletWithForm
+                    toast={toast}
+                    exercise={exercise}
+                    commonTextColor={commonTextColor}
+                    commonBorderColor={commonBorderColor}
+                  />
+                </Box>
+                <DynamicCallToAction
+                  assetId={exercise.id}
+                  assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                  assetType="exercise"
+                  placement="side"
+                  maxWidth="none"
+                  marginTop="40px"
+                />
+              </>
             ) : (
               <Skeleton height="646px" width="300px" borderRadius="17px" />
             )}
@@ -707,8 +722,6 @@ function Exercise({ exercise, markdown }) {
           gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
           margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
           flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
-          transition="background 0.2s ease-in-out"
           width={{ base: '300px', lg: '350px', xl: '350px' }}
           minWidth="250px"
           height="fit-content"
@@ -720,12 +733,27 @@ function Exercise({ exercise, markdown }) {
           borderColor={commonBorderColor}
         >
           {exercise?.slug ? (
-            <TabletWithForm
-              toast={toast}
-              exercise={exercise}
-              commonTextColor={commonTextColor}
-              commonBorderColor={commonBorderColor}
-            />
+            <>
+              <Box
+                borderRadius="17px"
+                backgroundColor={useColorModeValue('white', 'featuredDark')}
+                transition="background 0.2s ease-in-out"
+              >
+                <TabletWithForm
+                  toast={toast}
+                  exercise={exercise}
+                  commonTextColor={commonTextColor}
+                  commonBorderColor={commonBorderColor}
+                />
+              </Box>
+              <DynamicCallToAction
+                assetId={exercise.id}
+                assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                assetType="exercise"
+                placement="side"
+                marginTop="40px"
+              />
+            </>
           ) : (
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}

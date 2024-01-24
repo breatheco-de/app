@@ -15,6 +15,7 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
+import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
@@ -299,6 +300,13 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
+              <DynamicCallToAction
+                assetId={project.id}
+                assetTechnologies={project.technologies?.map((item) => item?.slug)}
+                assetType="project"
+                placement="bottom"
+                marginTop="40px"
+              />
               <MktRecommendedCourses
                 marginTop="15px"
                 title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
