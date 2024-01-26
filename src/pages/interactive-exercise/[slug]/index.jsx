@@ -660,11 +660,7 @@ function Exercise({ exercise, markdown }) {
             width="100%"
             height="auto"
             borderWidth="0px"
-            borderRadius="17px"
             overflow="hidden"
-            border={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
           >
             {exercise?.slug ? (
               <>
@@ -672,6 +668,9 @@ function Exercise({ exercise, markdown }) {
                   backgroundColor={useColorModeValue('white', 'featuredDark')}
                   transition="background 0.2s ease-in-out"
                   borderRadius="17px"
+                  border={1}
+                  borderStyle="solid"
+                  borderColor={commonBorderColor}
                 >
                   <TabletWithForm
                     toast={toast}
@@ -705,7 +704,7 @@ function Exercise({ exercise, markdown }) {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {markdown ? (
-              <MarkDownParser content={markdownData.content} />
+              <MarkDownParser assetData={exercise} content={markdownData.content} />
               // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
@@ -726,11 +725,7 @@ function Exercise({ exercise, markdown }) {
           minWidth="250px"
           height="fit-content"
           borderWidth="0px"
-          borderRadius="17px"
           overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
         >
           {exercise?.slug ? (
             <>
@@ -738,6 +733,9 @@ function Exercise({ exercise, markdown }) {
                 borderRadius="17px"
                 backgroundColor={useColorModeValue('white', 'featuredDark')}
                 transition="background 0.2s ease-in-out"
+                border={1}
+                borderStyle="solid"
+                borderColor={commonBorderColor}
               >
                 <TabletWithForm
                   toast={toast}

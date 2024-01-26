@@ -260,27 +260,38 @@ function ProjectSlug({ project, markdown }) {
             <Box
               display={{ base: 'flex', lg: 'none' }}
               flexDirection="column"
-              backgroundColor={useColorModeValue('white', 'featuredDark')}
               margin="30px 0"
             // width={{ base: '100%', md: '350px' }}
               minWidth={{ base: '100%', lg: '300px' }}
               maxWidth="350px"
               height="fit-content"
               borderWidth="0px"
-              borderRadius="17px"
               overflow="hidden"
-              border={1}
-              borderStyle="solid"
-              borderColor={commonBorderColor}
             >
               {project && project?.difficulty ? (
                 <>
-                  <Box display="flex" justifyContent="center">
-                    <Icon icon="sideSupport" width="300px" height="70px" />
+                  <Box
+                    border={1}
+                    borderStyle="solid"
+                    borderColor={commonBorderColor}
+                    borderRadius="17px"
+                    backgroundColor={useColorModeValue('white', 'featuredDark')}
+                  >
+                    <Box display="flex" justifyContent="center">
+                      <Icon icon="sideSupport" width="300px" height="70px" />
+                    </Box>
+                    <Box px="22px" py="20px">
+                      <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+                    </Box>
                   </Box>
-                  <Box px="22px" py="20px">
-                    <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-                  </Box>
+                  <DynamicCallToAction
+                    assetId={project.id}
+                    assetTechnologies={project.technologies?.map((item) => item?.slug)}
+                    assetType="project"
+                    placement="side"
+                    marginTop="40px"
+                    maxWidth="none"
+                  />
                 </>
               ) : (
                 <Skeleton height="100%" width="100%" borderRadius="17px" />
@@ -296,17 +307,10 @@ function ProjectSlug({ project, markdown }) {
               transition="background .2s ease"
             >
               {typeof markdown === 'string' ? (
-                <MarkDownParser content={markdownData.content} withToc />
+                <MarkDownParser assetData={project} content={markdownData.content} withToc />
               ) : (
                 <MDSkeleton />
               )}
-              <DynamicCallToAction
-                assetId={project.id}
-                assetTechnologies={project.technologies?.map((item) => item?.slug)}
-                assetType="project"
-                placement="bottom"
-                marginTop="40px"
-              />
               <MktRecommendedCourses
                 marginTop="15px"
                 title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
@@ -319,26 +323,36 @@ function ProjectSlug({ project, markdown }) {
           display={{ base: 'none', lg: 'flex' }}
           gridColumn="9 / span 3"
           flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
           margin="30px 0"
           minWidth={{ base: '100%', md: '300px' }}
           maxWidth="350px"
           height="fit-content"
           borderWidth="0px"
-          borderRadius="17px"
           overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
         >
           {project && project?.difficulty ? (
             <>
-              <Box display="flex" justifyContent="center">
-                <Icon icon="sideSupport" width="300px" height="70px" />
+              <Box
+                border={1}
+                borderStyle="solid"
+                borderColor={commonBorderColor}
+                borderRadius="17px"
+                backgroundColor={useColorModeValue('white', 'featuredDark')}
+              >
+                <Box display="flex" justifyContent="center">
+                  <Icon icon="sideSupport" width="300px" height="70px" />
+                </Box>
+                <Box px="22px" py="20px">
+                  <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
+                </Box>
               </Box>
-              <Box px="22px" py="20px">
-                <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-              </Box>
+              <DynamicCallToAction
+                assetId={project.id}
+                assetTechnologies={project.technologies?.map((item) => item?.slug)}
+                assetType="project"
+                placement="side"
+                marginTop="40px"
+              />
             </>
           ) : (
             <Skeleton height="646px" width="100%" borderRadius="17px" />

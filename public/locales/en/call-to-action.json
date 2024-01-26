@@ -97,6 +97,20 @@
         "placement": "bottom",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
+    },
+    {
+      "component": "WeeklyCodingChallenge",
+      "asset_type": ["article"], 
+      "asset_id": [],
+      "asset_technologies": [],
+      "content": {
+        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
+        "title": "Weekly coding challenges 8",
+        "description": "Every week we do one different challenge, be the next one!",
+        "button_label": "Start your next challenge →",
+        "placement": "bottom",
+        "forward_url": "https://4geeks.com/start-coding-using-javascript"
+      }
     }
   ]
 }
