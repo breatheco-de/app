@@ -94,7 +94,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   }, []);
 
   return courses?.length > 0 && (
-    <Box as="aside" minWidth={{ base: '100%', md: '214px' }} width="auto" padding="8px" margin="0 auto" {...rest}>
+    <Box as="aside" minWidth={{ base: '100%', md: '214px' }} width="auto" margin="0 auto" {...rest}>
       {title && (
         <Heading size="18px" lineHeight="21px" m="10px 0 20px 0">
           {title || t('continue-learning-course')}
