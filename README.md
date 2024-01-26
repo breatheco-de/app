@@ -1,4 +1,4 @@
-# 4Geeks Developers Community
+# 4Geeks.com App
 
 ## Getting Started.
 
@@ -40,6 +40,20 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+
+## Asset Registry Cache
+
+### Reset cached lesson:
+
+Assets are cached internally for better performance, you can reset an asset with the following request:
+
+```bash
+PUT https://4geeks.com/api/asset/<slug>
+```
+
+### Get cached lesson:
+
+You can open the redis terminal in vercel and type: `GET <asset_slug>` to get the latest asset json from the breathecode API. [Here is an example](https://www.awesomescreenshot.com/image/45567980?key=5be790828078a884b05a6f6598510541).
 
 ## Learn More
 

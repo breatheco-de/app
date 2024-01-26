@@ -19,8 +19,6 @@ function ContentHeading({
     <Box
       borderStyle="solid"
       borderColor={useColorModeValue('gray.200', 'gray.900')}
-      paddingBottom="2rem"
-      marginBottom="2rem"
     >
       <Box marginBottom="1.5rem">
         <Box display="flex" justifyContent="space-between" gridGap="16px" margin={{ base: '1rem 0 0 0', md: '2rem 0 0 0' }}>

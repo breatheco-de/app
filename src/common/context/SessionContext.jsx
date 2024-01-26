@@ -88,7 +88,10 @@ function SessionProvider({ children }) {
         userSession,
         setUserSession: (session) => {
           localStorage.setItem('userSession', JSON.stringify(session));
-          setUserSession(session);
+          setUserSession({
+            ...userSession,
+            ...session,
+          });
         },
         setConversionUrl,
       }}
