@@ -71,6 +71,12 @@
   "many_months_payment": "{{qty}} pagos mensuales",
   "our_plans": "Nuestros planes",
   "join-cohort": {
+    "cta": {
+      "lesson": "Únete a la cohorte para poder acceder a esta lección",
+      "exercise": "Únete a la cohorte para poder acceder a este ejercicio",
+      "project": "Únete a la cohorte para poder acceder a este proyecto",
+      "generic": "Únete a la cohorte para poder acceder a este {{type}}"
+    },
     "description": "Por favor, únete a la cohorte para acceder al contenido del programa.",
     "button": "Unirse a la cohorte"
   },
