@@ -468,6 +468,54 @@ function TabletWithForm({
                 </Link>
                 {t('clone-modal.text-part-two')}
               </Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
+                    Gitpod
+                  </Button>
+                </GridItem>
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
+                    Github Codespaces
+                  </Button>
+                </GridItem>
+              </Grid>
               <Text
                 // cursor="pointer"
                 id="command-container"
@@ -476,6 +524,7 @@ function TabletWithForm({
                 fontWeight="400"
                 marginBottom="5px"
                 style={{ borderRadius: '5px' }}
+                textAlign="center"
                 fontSize="14px"
                 lineHeight="24px"
               >
@@ -511,17 +560,28 @@ function TabletWithForm({
                 <Link
                   href={t('clone-link')}
                   target="_blank"
-                  fontSize="15px"
-                  fontWeight="700"
-                  color={useColorModeValue('blue.default', 'blue.300')}
+                  rel="noopener noreferrer"
                   display="inline-block"
                   letterSpacing="0.05em"
                   fontFamily="Lato, Sans-serif"
-                  marginLeft="10px"
+                  color="blue.default"
                 >
-                  {t('how-to-clone')}
+                  Gitpod
+                </Link>
+                {t('modal.or')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
+                  color="blue.default"
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Github Codespaces
                 </Link>
               </Text>
+
             </ModalBody>
           </ModalContent>
         </Modal>

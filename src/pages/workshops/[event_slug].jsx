@@ -987,7 +987,6 @@ function Page({ eventData, asset }) {
                       avatarUrl={c?.attendee?.profile?.avatar_url}
                       data={c?.attendee}
                       badge
-                      withoutPopover
                     />
                   );
                 })}
