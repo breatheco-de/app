@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { devLog } from '../../utils';
+import { DOMAIN_NAME } from '../../utils/variables';
 // import { useState, useEffect } from 'react';
 // import { usePersistent } from '../../hooks/usePersistent';
 import bc from '../services/breathecode';
@@ -17,7 +18,21 @@ function useHandler() {
   const [taskTodoState, setTaskTodoState] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const toast = useToast();
+  const assetSlug = router?.query?.lessonSlug;
+  const assetType = router?.query?.lesson;
 
+  const pathConnector = {
+    read: `${router.locale === 'en' ? `${DOMAIN_NAME}/lesson/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/lesson/${assetSlug}`}`,
+    practice: `${router.locale === 'en' ? `${DOMAIN_NAME}/interactive-exercise/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/interactive-exercise/${assetSlug}`}`,
+    project: `${router.locale === 'en' ? `${DOMAIN_NAME}/project/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/project/${assetSlug}`}`,
+    answer: `https://assessment.4geeks.com/quiz/${assetSlug}`,
+  };
+
+  const redirectToPublicPage = () => {
+    if (pathConnector?.[assetType]) {
+      router.push(pathConnector[assetType]);
+    }
+  };
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   const getCohortAssignments = ({
     user, setContextState, slug,
@@ -71,42 +86,44 @@ function useHandler() {
     // Fetch cohort data with pathName structure
     if (cohortSlug) {
       bc.admissions().me().then(({ data }) => {
+        if (!data) throw new Error('No data');
         const { cohorts } = data;
         // find cohort with current slug
         const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
         const currentCohort = findCohort?.cohort;
         const version = currentCohort?.syllabus_version?.version;
         const name = currentCohort?.syllabus_version?.name;
-        if (!cohortSession?.academy?.id) {
-          router.push('/choose-program');
+        if (!cohortSession?.academy?.id || !currentCohort) {
+          redirectToPublicPage();
         }
-
-        setCohortSession({
-          ...cohortSession,
-          ...currentCohort,
-          date_joined: data.date_joined,
-          cohort_role: findCohort.role,
-          cohort_user: {
-            created_at: findCohort?.created_at,
-            educational_status: findCohort?.educational_status,
-            finantial_status: findCohort?.finantial_status,
-            role: findCohort?.role,
-          },
-        });
-        choose({
-          cohort_slug: cohortSlug,
-          date_joined: data.date_joined,
-          cohort_role: findCohort.role,
-          version,
-          slug: currentCohort?.syllabus_version.slug,
-          cohort_name: currentCohort.name,
-          cohort_id: currentCohort.id,
-          syllabus_name: name,
-          academy_id: currentCohort.academy.id,
-        });
-        resolve(currentCohort);
+        if (currentCohort) {
+          setCohortSession({
+            ...cohortSession,
+            ...currentCohort,
+            date_joined: data.date_joined,
+            cohort_role: findCohort?.role,
+            cohort_user: {
+              created_at: findCohort?.created_at,
+              educational_status: findCohort?.educational_status,
+              finantial_status: findCohort?.finantial_status,
+              role: findCohort?.role,
+            },
+          });
+          choose({
+            cohort_slug: cohortSlug,
+            date_joined: data.date_joined,
+            cohort_role: findCohort?.role,
+            version,
+            slug: currentCohort?.syllabus_version.slug,
+            cohort_name: currentCohort.name,
+            cohort_id: currentCohort.id,
+            syllabus_name: name,
+            academy_id: currentCohort.academy.id,
+          });
+          resolve(currentCohort);
+        }
       }).catch((error) => {
-        router.push('/choose-program');
+        redirectToPublicPage();
         toast({
           position: 'top',
           title: t('alert-message:invalid-cohort-slug'),

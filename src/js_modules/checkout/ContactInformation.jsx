@@ -97,7 +97,7 @@ function ContactInformation({
                     && defaultPlanData?.featured_info.map((info) => info?.service?.slug && (
                       <Box display="flex" gridGap="8px" alignItems="center">
                         {info?.service?.icon_url
-                          ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                          ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                           : (
                             <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
                           )}

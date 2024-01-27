@@ -31,6 +31,9 @@ export const processPlans = (data, {
   planType = '',
 } = {}, translations = {}) => bc.payment().getPlanProps(data?.slug)
   .then((resp) => {
+    if (!resp) {
+      throw new Error('The plan does not exist');
+    }
     const planPropsData = resp?.data;
     const existsAmountPerHalf = data?.price_per_half > 0;
     const existsAmountPerMonth = data?.price_per_month > 0;

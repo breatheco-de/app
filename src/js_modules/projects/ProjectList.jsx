@@ -38,13 +38,13 @@ const ProjectList = forwardRef(({
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
   const getDifficultyColors = (currDifficulty) => {
     const background = {
-      beginner: 'green.light',
+      beginner: 'featuredLight',
       easy: 'green.light',
       intermediate: 'yellow.100',
       hard: 'red.light',
     };
     const color = {
-      beginner: 'green.400',
+      beginner: 'blue.default',
       easy: 'green.400',
       intermediate: '#FFB718',
       hard: 'danger',

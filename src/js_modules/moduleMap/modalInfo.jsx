@@ -9,15 +9,14 @@ import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import Text from '../../common/components/Text';
 import validationSchema from '../../common/components/Forms/validationSchemas';
-import MarkDownParser from '../../common/components/MarkDownParser';
 import Icon from '../../common/components/Icon';
 import iconDict from '../../common/utils/iconDict.json';
 
 function ModalInfo({
-  isOpen, onClose, actionHandler, rejectHandler, forceHandler, disableHandler, title, description,
+  isOpen, onClose, actionHandler, closeActionHandler, rejectHandler, forceHandler, disableHandler, title, description,
   teacherFeedback, linkInfo, linkText, link, handlerText, closeText, cancelColorButton,
   handlerColorButton, rejectData, sendProject, currentTask, type, closeButtonVariant,
-  htmlDescription, markdownDescription, attachment, disableInput, descriptionStyle, footerStyle,
+  htmlDescription, attachment, disableInput, descriptionStyle, footerStyle,
   closeButtonStyles, buttonHandlerStyles, headerStyles, disableCloseButton, childrenDescription,
   maxWidth, forceHandlerAndClose, children, ...rest
 }) {
@@ -35,6 +34,7 @@ function ModalInfo({
     if (forceHandler && !forceHandlerAndClose) {
       setConfirmRejection(true);
     } else {
+      closeActionHandler();
       onClose();
     }
   };
@@ -81,24 +81,6 @@ function ModalInfo({
               >
                 {description}
               </Text>
-            )}
-            {markdownDescription && (
-              <Box
-                height="100%"
-                margin="0 rem auto 0 auto"
-                transition="background 0.2s ease-in-out"
-                borderRadius="3px"
-                maxWidth="1280px"
-                background={useColorModeValue('white', 'dark')}
-                width={{ base: '100%', md: 'auto' }}
-                className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-              >
-                <MarkDownParser content={markdownDescription} />
-                {/* {(markdown && ipynbHtmlUrl === '')
-                  ? <MarkDownParser content={markdownData.content} />
-                  : <MDSkeleton />} */}
-
-              </Box>
             )}
             {htmlDescription && (
               <Text
@@ -347,6 +329,7 @@ ModalInfo.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func.isRequired,
   actionHandler: PropTypes.func,
+  closeActionHandler: PropTypes.func,
   rejectHandler: PropTypes.func,
   forceHandler: PropTypes.bool,
   disableHandler: PropTypes.bool,
@@ -367,7 +350,6 @@ ModalInfo.propTypes = {
   type: PropTypes.string,
   closeButtonVariant: PropTypes.string,
   htmlDescription: PropTypes.string,
-  markdownDescription: PropTypes.string,
   attachment: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   descriptionStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   footerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -384,6 +366,7 @@ ModalInfo.propTypes = {
 ModalInfo.defaultProps = {
   isOpen: false,
   actionHandler: () => {},
+  closeActionHandler: () => {},
   rejectHandler: () => {},
   forceHandler: false,
   disableHandler: false,
@@ -404,7 +387,6 @@ ModalInfo.defaultProps = {
   type: 'default',
   closeButtonVariant: 'danger',
   htmlDescription: '',
-  markdownDescription: '',
   attachment: [],
   descriptionStyle: {},
   footerStyle: {},

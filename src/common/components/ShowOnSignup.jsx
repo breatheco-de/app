@@ -207,6 +207,7 @@ function ShowOnSignUp({
         handlerText={t('signup:resend')}
         forceHandlerAndClose
         onClose={() => {
+          refetchAfterSuccess();
           setVerifyEmailProps({
             ...verifyEmailProps,
             state: false,

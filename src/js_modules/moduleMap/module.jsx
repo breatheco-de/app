@@ -194,7 +194,7 @@ function Module({
             fileData={fileData}
           />
         ) : (
-          <Button variant="link" gridGap="4px" onClick={onDisabledClick}>
+          <Button variant="link" gridGap="4px" onClick={() => onDisabledClick({ ...data, title: taskTranslations?.title || title })}>
             <Icon icon="padlock" width="20px" height="20px" />
             <Box as="span" display={{ base: 'none', sm: 'initial' }}>
               {`${wordConnector?.[taskTypeLowerCase]} ${t(`common:${taskTypeLowerCase}`).toLocaleLowerCase()}`}

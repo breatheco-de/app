@@ -83,7 +83,7 @@ const AvatarUser = memo(({
           </Avatar>
         </WrapItem>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent minWidth={data?.role ? '320px' : ''} width={data?.role ? '100%' : 'auto'} pr={!data?.role && '20px'}>
         {data?.role && (
           <PopoverHeader>
             <Heading
@@ -99,11 +99,11 @@ const AvatarUser = memo(({
           </PopoverHeader>
         )}
         <PopoverArrow />
-        <PopoverBody display="flex" flexDirection="row" gridGap="15px" my="8px">
+        <PopoverBody className="popover-bg-color" display="flex" flexDirection="row" gridGap="15px" my="8px">
           <Avatar
             id={fullNameLabel}
-            width="95px"
-            height="95px"
+            width={data?.role ? '95px' : '38px'}
+            height={data?.role ? '95px' : '38px'}
             style={{ userSelect: 'none' }}
             src={avatar}
           />

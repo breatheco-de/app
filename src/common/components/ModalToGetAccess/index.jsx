@@ -6,6 +6,8 @@ import SimpleModal from '../SimpleModal';
 import Signup from '../Forms/Signup';
 import LogIn from '../Forms/LogIn';
 import Heading from '../Heading';
+import Text from '../Text';
+import Icon from '../Icon';
 import UpgradeForConsumableView from '../UpgradeForConsumableView';
 // import NextChakraLink from './NextChakraLink';
 import useStyle from '../../hooks/useStyle';
@@ -22,9 +24,9 @@ export const stageType = {
   isWaitingForCohort: 'is-waiting-for-cohort',
 };
 
-function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onClose, customFunction, ...rest }) {
+function ModalToGetAccess({ stage, message, planSlug, externalData, currentItem, isOpen, onClose, customFunction, ...rest }) {
   const { t } = useTranslation('signup');
-  const { featuredColor } = useStyle();
+  const { featuredColor, hexColor } = useStyle();
   const [stageView, setStageView] = useState('');
   const [planData, setPlanData] = useState({});
 
@@ -59,6 +61,8 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
     setStageView('');
   };
 
+  const joinCohortCta = t('join-cohort.cta', {}, { returnObjects: true });
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -77,7 +81,7 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
         <Image src={image} alt="Get Access" style={{ objectFit: 'cover' }} margin={!isWaitingCohort && withoutSpacing && '2rem 0 0 0'} borderBottomLeftRadius="6px" />
       </Box>
 
-      <Flex flexDirection="column" marginTop={!message && '2rem'} flex={{ base: 1, md: 0.5 }} paddingBottom={withoutSpacing && '1rem'} width={{ base: 'auto', md: '394px' }}>
+      <Flex background={hexColor.lightColor} borderRadius="11px" flexDirection="column" marginTop={!message && '2rem'} flex={{ base: 1, md: 0.5 }} paddingBottom={withoutSpacing && '1rem'} width={{ base: 'auto', md: '394px' }}>
         {message && message?.length > 0 && (
           <AlertMessage type="soft" full withoutIcon message={message} borderRadius="4px" padding="6px" textStyle={{ fontSize: '14px' }} mb="16px" />
         )}
@@ -123,10 +127,20 @@ function ModalToGetAccess({ stage, message, planSlug, externalData, isOpen, onCl
         )}
 
         {view === stageType.isWaitingForCohort && (
-          <Flex flexDirection="column" gridGap="3rem" padding="16px" borderRadius="11px" borderBottom="16px">
-            <Heading as="h2" size="26px" display="flex" flexDirection="column">
-              {t('join-cohort.description')}
-            </Heading>
+          <Flex height="100%" justifyContent="center" flexDirection="column" gridGap="3rem" padding="16px" borderRadius="11px" borderBottom="16px">
+            <Box>
+              <Box gap="5px" display="flex" alignItems="center" marginBottom="10px">
+                <Box width="44px" height="44px" borderRadius="4px" background={hexColor.blueDefault} padding="6px">
+                  <Icon icon={currentItem?.icon} color="white" width="32px" height="32px" />
+                </Box>
+                <Text fontSize="18px" color={hexColor.blueDefault}>
+                  {joinCohortCta[currentItem?.task_type.toLocaleLowerCase()] || t('join-cohort.cta.generic', { type: currentItem?.task_type.toLocaleLowerCase() })}
+                </Text>
+              </Box>
+              <Heading as="h2" size="sm" display="flex" flexDirection="column">
+                {currentItem?.title}
+              </Heading>
+            </Box>
             <Button variant="default" width={!externalData?.existsRelatedSubscription && 'fit-content'} onClick={customFunction}>
               {externalData?.existsRelatedSubscription ? t('join-cohort.button') : t('common:close')}
             </Button>
@@ -146,6 +160,7 @@ ModalToGetAccess.propTypes = {
   message: PropTypes.string,
   externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
   customFunction: PropTypes.func,
+  currentItem: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
 };
 ModalToGetAccess.defaultProps = {
   stage: stageType.login,
@@ -155,6 +170,7 @@ ModalToGetAccess.defaultProps = {
   message: '',
   externalData: {},
   customFunction: () => {},
+  currentItem: null,
 };
 
 export default ModalToGetAccess;

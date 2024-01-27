@@ -58,8 +58,14 @@ function SessionProvider({ children }) {
       const internal_cta_content = getQueryString('internal_cta_content') || storedSession?.internal_cta_content;
       const internal_cta_campaign = getQueryString('internal_cta_campaign') || storedSession?.internal_cta_campaign;
 
-      const session = {
+      // remove translations for the endpoint
+      const cleanedStore = {
         ...storedSession,
+        translations: undefined,
+      };
+
+      const session = {
+        ...cleanedStore,
         user_agent: userAgent,
         landing_url: landingUrl,
         conversion_url: conversionUrl,
@@ -88,7 +94,10 @@ function SessionProvider({ children }) {
         userSession,
         setUserSession: (session) => {
           localStorage.setItem('userSession', JSON.stringify(session));
-          setUserSession(session);
+          setUserSession({
+            ...userSession,
+            ...session,
+          });
         },
         setConversionUrl,
       }}

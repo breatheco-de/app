@@ -77,6 +77,14 @@
             "default_value": false
           }
         },
+        "font_color": {
+          "type": "Color",
+          "config": { "label": "Font color", "placeholder": "" }
+        },
+        "font_color_in_darkmode": {
+          "type": "Color",
+          "config": { "label": "Font color in darkmode", "placeholder": "" }
+        },
         "button_color": {
           "type": "Select",
           "config": {
@@ -91,6 +99,10 @@
             "label": "Background color",
             "placeholder": "Example: #FFFFFF"
           }
+        },
+        "background_in_dark_mode": {
+          "type": "Color",
+          "config": { "label": "Background in dark mode", "placeholder": "" }
         },
         "image_position": {
           "type": "Select",

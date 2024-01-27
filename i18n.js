@@ -1,7 +1,7 @@
 module.exports = {
   pages: {
     // Enable translations for the following pages
-    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'program-card', 'final-project', 'profile', 'login', 'signup'],
+    '*': ['common', 'navbar', 'footer', 'alert-message', 'share', 'live-event', 'call-to-action', 'code-viewer', 'program-card', 'final-project', 'profile', 'login', 'signup'],
     '/': ['home', 'social'],
     '/login': ['login', 'signup'],
     '/example': ['counter'],
@@ -36,18 +36,5 @@ module.exports = {
   locales: ['en', 'es'],
   defaultLocale: 'en',
   localeDetection: false,
-
-  // locales: ['default', 'en', 'es'],
-  // // defaultLocale: 'en', // removed for redirects handling purposes
-  // defaultLocale: 'default',
-  // localeDetection: false, // run and detects in home page = '/'
-
-  // return a Promise with the JSON file.
-
   loadLocaleFrom: (lang, ns) => import(`./public/locales/${lang}/${ns}.json`).then((m) => m.default),
-
-  // loadLocaleFrom: (lang, ns) => {
-  //   if (lang === 'default') return '';
-  //   return import(`./public/locales/${lang}/${ns}.json`).then((m) => m.default);
-  // },
 };

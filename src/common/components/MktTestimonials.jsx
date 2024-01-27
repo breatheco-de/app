@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box,
+  Box, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
@@ -82,47 +81,38 @@ function MktTestimonials({
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
   return testimonialsArray && (
-    <GridContainer
-      gridTemplateColumns="repeat(10, 1fr)"
-      px="10px"
+    <Flex
+      flexDirection="column"
+      maxWidth="1280px"
+      py="20px"
+      px={{ base: '10px', md: '0px' }}
       id={id}
       {...rest}
     >
+      {title && (
+        <Heading textAlign="center" as="h2" size="sm" marginBottom="20px">
+          {title}
+        </Heading>
+      )}
       <Box
-        display={{ base: 'block', md: 'grid' }}
-        gridColumn="2 / span 8"
-        flexDirection="column"
-        px="10px"
-        padding="20px 0"
-        textAlign="center"
-        width="100%"
-        {...rest}
+        gridGap="20px"
+        flexDirection="row"
+        marginBottom="15px"
+        display="flex"
+        overflow="auto"
+        justifyContent={{ base: 'inherit', md: 'space-between' }}
       >
-        {title && (
-          <Heading as="h2" size="sm" marginBottom="20px">
-            {title}
-          </Heading>
-        )}
-        <Box
-          gridGap="20px"
-          flexDirection="row"
-          marginBottom="15px"
-          display="flex"
-          overflow="auto"
-          justifyContent={{ base: 'inherit', md: 'center' }}
-        >
-          {testimonialsArray && testimonialsArray.map((testimonial) => (
-            <TestimonialBox
-              key={`${testimonial?.author?.first_name}-${testimonial?.author?.last_name}`}
-              picture={testimonial?.author?.profile?.avatar_url}
-              name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
-              rating={testimonial?.total_rating}
-              description={testimonial?.comments}
-            />
-          ))}
-        </Box>
+        {testimonialsArray && testimonialsArray.map((testimonial) => (
+          <TestimonialBox
+            key={`${testimonial?.author?.first_name}-${testimonial?.author?.last_name}`}
+            picture={testimonial?.author?.profile?.avatar_url}
+            name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
+            rating={testimonial?.total_rating}
+            description={testimonial?.comments}
+          />
+        ))}
       </Box>
-    </GridContainer>
+    </Flex>
   );
 }
 

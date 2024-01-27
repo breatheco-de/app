@@ -7,7 +7,6 @@ import {
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
-  Link,
   Button,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -16,8 +15,11 @@ import styles from '../../../styles/flags.module.css';
 import navbarTR from '../translations/navbar';
 import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
+import NextChakraLink from './NextChakraLink';
+import useSession from '../hooks/useSession';
 
 function LanguageSelector({ display, translations, ...rest }) {
+  const { userSession } = useSession();
   const router = useRouter();
   const { t } = useTranslation('common');
   const { isAuthenticated } = useAuth();
@@ -29,9 +31,10 @@ function LanguageSelector({ display, translations, ...rest }) {
   } = navbarTR[locale];
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
-  const translationsPropsExists = translations?.length > 0;
-  const currentTranslationLanguage = translationsPropsExists && translations?.find((l) => l.lang === locale);
-  const translationData = (translationsPropsExists && translations) || languagesTR;
+  const externalTranslations = userSession?.translations || translations;
+  const translationsPropsExists = externalTranslations?.length > 0;
+  const currentTranslationLanguage = translationsPropsExists && externalTranslations?.find((l) => l.lang === locale);
+  const translationData = (translationsPropsExists && externalTranslations) || languagesTR;
 
   const updateSettingsLang = async (lang) => {
     try {
@@ -58,8 +61,8 @@ function LanguageSelector({ display, translations, ...rest }) {
           aria-label="Language Selector"
           textAlign="-webkit-center"
           height="auto"
-          isDisabled={translations?.length === 1}
-          title={translations?.length === 1 ? t('no-translation-available') : ''}
+          isDisabled={externalTranslations?.length === 1}
+          title={externalTranslations?.length === 1 ? t('no-translation-available') : ''}
           backgroundColor="transparent"
           width="auto"
           alignSelf="center"
@@ -103,19 +106,17 @@ function LanguageSelector({ display, translations, ...rest }) {
             const path = translationsPropsExists ? l?.link : router.asPath;
 
             const cleanedPath = (path === '/' && value !== 'en') ? '' : path;
-            const localePrefix = `${value !== 'en' && !cleanedPath.includes(`/${value}`) ? `/${value}` : ''}`;
-
-            const link = `${localePrefix}${cleanedPath}`;
+            const link = cleanedPath;
 
             return (
-              <Link
+              <NextChakraLink
                 width="100%"
                 key={value}
                 href={link}
-                role="group"
+                locale={value}
                 alignSelf="center"
                 display="flex"
-                gridGap="5px"
+                gridGap={5}
                 fontWeight="bold"
                 textDecoration="none"
                 opacity={locale === value ? 1 : 0.75}
@@ -128,7 +129,7 @@ function LanguageSelector({ display, translations, ...rest }) {
               >
                 <Box className={`${styles.flag} ${styles[value]}`} width="25px" height="25px" />
                 {label}
-              </Link>
+              </NextChakraLink>
             );
           })}
         </Box>

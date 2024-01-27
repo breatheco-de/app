@@ -55,14 +55,6 @@ body.chakra-ui-light .chakra-popover__arrow {
   background: var(--popper-arrow-bg)
 }
 
-body.chakra-ui-dark .chakra-popover__arrow {
-  z-index: 99!important;
-  background: var(--chakra-colors-gray-800) !important;
-}
-body.chakra-ui-dark .popover-bgColor {
-  background: var(--chakra-colors-gray-800) !important;
-  color: #00ABE9;
-}
 body.chakra-ui-dark .arrow-blue-color {
   border: 1px solid #0097CD;
   background: var(--chakra-colors-gray-800) !important;
@@ -71,7 +63,6 @@ body.chakra-ui-dark .arrow-blue-color {
 featured {
   color: #0097CD;
 }
-
 
 .react-player {
   aspect-ratio: 16/9;

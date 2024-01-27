@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
@@ -20,6 +20,7 @@ import { usePersistent } from '../../hooks/usePersistent';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
+import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 
@@ -58,6 +59,33 @@ function IframeComponent({ ...props }) {
 }
 function OnlyForComponent({ cohortSession, profile, ...props }) {
   return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
+}
+
+function CodeViewerComponent(props) {
+  const { preParsedContent, node } = props;
+  const nodeStartOffset = node.position.start.offset;
+  const nodeEndOffset = node.position.end.offset;
+
+  const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
+  const regex = /```([a-zA-Z]+)\s{1,}runable=("true"|'true'|true)\s{0,}\n([\s\S]+?)```/g;
+  let match;
+  const fragments = [];
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = regex.exec(input)) !== null) {
+    fragments.push({
+      language: languagesNames[match[1].toLowerCase()] || match[1],
+      label: languagesLabels[match[1].toLowerCase()] || match[1],
+      code: match[3].trim(),
+    });
+  }
+
+  return (
+    <CodeViewer
+      languagesData={fragments}
+      margin="10px 0"
+    />
+  );
 }
 
 function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
@@ -181,6 +209,18 @@ function MarkDownParser({
     ]);
   }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
+  const preParsedContent = useMemo(() => {
+    //This regex is to remove the runable empty codeblocks
+    const emptyCodeRegex = /```([a-zA-Z]+)\s{1,}runable=("true"|true|'true')\s{0,}\n(\n{1,}|\s{1,}\n{1,})?```/gm;
+    //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
+    const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
+
+    const removedEmptyCodeViewers = content.replace(emptyCodeRegex, () => '');
+    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
+
+    return contentReplace;
+  }, [content]);
+
   return (
     <>
       <ContentHeading
@@ -239,13 +279,14 @@ function MarkDownParser({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
           quote: Quote,
         }}
       >
-        {content}
+        {preParsedContent}
       </ReactMarkdown>
     </>
   );

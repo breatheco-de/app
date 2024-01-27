@@ -11,6 +11,8 @@
   "profile-updated": "Profile Updated",
   "update-failed": "Something went wrong updating your profile",
   "connect-github": "Connect with GitHub",
+  "connect-rigobot": "Connect with Rigo AI",
+  "connected-with-rigobot": "You are connected to Rigo AI",
   "save-changes": "Save changes",
   "certificate-preview-not-available": "Certificate Preview Not Available",
   "tabList": [

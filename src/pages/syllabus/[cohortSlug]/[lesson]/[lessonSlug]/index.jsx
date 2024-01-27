@@ -29,7 +29,6 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import bc from '../../../../../common/services/breathecode';
-import { defaultDataFetch } from '../../../../../js_modules/syllabus/dataFetch';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
@@ -37,6 +36,7 @@ import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../../../../utils/variables';
+import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
 function Content() {
@@ -45,6 +45,7 @@ function Content() {
   const { isLoading, user, choose } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
+  const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const { isOpen, onToggle } = useDisclosure();
@@ -266,7 +267,28 @@ function Content() {
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
-          const currentSlug = data?.translations?.[language] || lessonSlug;
+          const translations = data?.translations;
+          // const assetLang = data?.lang;
+          // const translationInEnglish = translations?.en || translations?.us;
+
+          // const translationArray = [
+          //   {
+          //     value: 'en',
+          //     lang: 'en',
+          //     slug: (assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish,
+          //     link: `/syllabus/${cohortSlug}/${lesson}/${(assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish}`,
+          //   },
+          //   {
+          //     value: 'es',
+          //     lang: 'es',
+          //     slug: assetLang === 'es' ? data.slug : translations?.es,
+          //     link: `/es/syllabus/${cohortSlug}/${lesson}/${assetLang === 'es' ? data.slug : translations?.es}`,
+          //   },
+          // ].filter((item) => item?.slug !== undefined);
+          // setUserSession({
+          //   translations: translationArray,
+          // });
+          const currentSlug = translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
           const extension = urlPathname ? urlPathname.split('.').pop() : null;
@@ -311,18 +333,12 @@ function Content() {
                 }
               })
               .catch(() => {
-                defaultDataFetch({
-                  currentBlankProps,
-                  lessonSlug,
-                  assetTypeValues,
-                  lesson,
-                  setQuizSlug,
-                  setReadme,
-                  setCurrentData,
-                  setIpynbHtmlUrl,
-                  toast,
-                  router,
-                  t,
+                setReadme({
+                  content: t('no-traduction-found-description'),
+                });
+                setCurrentData({
+                  ...data,
+                  title: t('no-traduction-found'),
                 });
               });
           }
@@ -330,15 +346,19 @@ function Content() {
           EventIfNotFound();
         });
     }
+    return () => {
+      setUserSession({
+        translations: [],
+      });
+    };
   }, [router, lessonSlug]);
 
   useEffect(() => {
     if (sortedAssignments.length <= 0) {
-      router.push('/choose-program');
       toast({
         position: 'top',
         title: t('alert-message:no-cohort-modules-found'),
-        status: 'error',
+        status: 'warning',
         duration: 7000,
         isClosable: true,
       });
@@ -391,7 +411,7 @@ function Content() {
         icon: 'message',
         slug: 'teacher-instructions',
         title: t('teacherSidebar.instructions'),
-        content: true,
+        content: extendedInstructions !== null,
         actionHandler: () => {
           setExtendedIsEnabled(!extendedIsEnabled);
           if (extendedIsEnabled === false) {
@@ -559,7 +579,7 @@ function Content() {
       target: 'popup',
     },
   ];
-
+  const repoUrl = ipynbHtmlUrl ? `${currentData?.url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
@@ -713,7 +733,18 @@ function Content() {
 
           <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
             {currentData?.url && !isQuiz && (
-              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${currentData.url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+              <Link
+                display="flex"
+                target="_blank"
+                rel="noopener noreferrer"
+                width="100%"
+                gridGap="8px"
+                padding={{ base: '8px 12px', md: '8px' }}
+                background="transparent"
+                href={`${repoUrl}`}
+                _hover={{ opacity: 0.7 }}
+                style={{ color: fontColor, textDecoration: 'none' }}
+              >
                 <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
                 {t('edit-page')}
               </Link>
@@ -772,7 +803,7 @@ function Content() {
             />
           )}
 
-          <Box margin="4rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
+          <Box margin="2.5rem 0 0 0" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" alignItems="center" justifyContent="space-between" padding="1.75rem 0 " borderTop="2px solid" borderColor={commonBorderColor} width="100%">
             <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
               <ButtonHandlerByTaskStatus
                 allowText

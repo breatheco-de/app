@@ -25,6 +25,7 @@ function ProfileForm({ profile }) {
   const [, setProfile] = usePersistent('profile', {});
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
+  const [hasRigobotConnection, setHasRigobotConnection] = useState(false);
   const accessToken = getStorageItem('accessToken');
 
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -34,7 +35,14 @@ function ProfileForm({ profile }) {
   } = useStyle();
 
   const hasGithub = profile.github && profile.github.username !== '';
+  const verifyRigobotConnection = async () => {
+    const resp = await bc.auth().verifyRigobotConnection(accessToken);
+    if (resp.status === 200) {
+      setHasRigobotConnection(true);
+    }
+  };
   useEffect(() => {
+    verifyRigobotConnection();
     const userSchema = {
       first_name: profile.first_name,
       last_name: profile.last_name,
@@ -195,46 +203,6 @@ function ProfileForm({ profile }) {
                   </FormControl>
                 )}
               </Field>
-              {/* <Field name="phone">
-                {({ form }) => (
-                  <FormControl isInvalid={form.errors.phone && form.touched.phone}>
-                    <FormLabel
-                      margin="0px"
-                      color="gray.default"
-                      fontSize="sm"
-                      float="left"
-                      htmlFor="phone"
-                    >
-                      {t('common:phone')}
-                    </FormLabel>
-                    <Input
-                      name="phone"
-                      color={lightColor}
-                      onChange={(e) => {
-                        setUserInfo({
-                          ...userInfo, phone: e.target.value,
-                        });
-                        form.handleChange(e);
-                      }}
-                      defaultValue={profile.profile?.phone || ''}
-                      disabled
-                      _disabled={{
-                        backgroundColor: disabledBackgroundColor,
-                        cursor: 'not-allowed',
-                        color: disabledColor,
-                        border: '0',
-                        // opacity: '0.5',
-                      }}
-                      type="tel"
-                      placeholder=""
-                      height="50px"
-                      borderColor="gray.default"
-                      borderRadius="3px"
-                    />
-                    <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
-                  </FormControl>
-                )}
-              </Field> */}
             </Box>
             <InputGroup>
               <InputLeftAddon background={backgroundColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
@@ -290,6 +258,45 @@ function ProfileForm({ profile }) {
                     }}
                   >
                     {t('connect-github')}
+                  </Text>
+                )}
+              </Box>
+            </InputGroup>
+            <InputGroup>
+              <InputLeftAddon background={backgroundColor} border="1px solid" borderRadius="3px" borderColor="gray.default" height="3.125rem">
+                <Icon icon="rigobot-logo" width="24px" height="24px" />
+              </InputLeftAddon>
+              <Box
+                w="100%"
+                h="3.125rem"
+                border="1px solid"
+                borderRightRadius="3px"
+                display="flex"
+                borderColor="gray.default"
+                alignItems="center"
+              >
+                {hasRigobotConnection ? (
+                  <>
+                    <Text
+                      margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                      textAlign="start"
+                      cursor="default"
+                    >
+                      {t('connected-with-rigobot')}
+                    </Text>
+                  </>
+                ) : (
+                  <Text
+                    margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                    textAlign="start"
+                    color="blue.default"
+                    cursor="pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                    }}
+                  >
+                    {t('connect-rigobot')}
                   </Text>
                 )}
               </Box>
