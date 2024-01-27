@@ -66,8 +66,8 @@
   },
   "review-assignment": {
     "title": "Assignment Review",
-    "reject": "Mark as rejected",
-    "approve": "Mark as approved",
+    "reject": "Reject",
+    "approve": "Approve",
     "files": "Files",
     "description": "Description",
     "github-url": "Github URL",

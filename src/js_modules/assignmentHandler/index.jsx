@@ -434,127 +434,13 @@ export function NoInfoModal({ isOpen, onClose }) {
 
 // eslint-disable-next-line no-unused-vars
 export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) {
-  // const { t } = useTranslation('assignments');
-  // const toast = useToast();
-  // const [comment, setComment] = useState('');
-
-  // function ReviewButton({ type }) {
-  //   const statusColor = {
-  //     approve: 'success',
-  //     reject: 'error',
-  //   };
-  //   const buttonColor = {
-  //     approve: 'success',
-  //     reject: 'danger',
-  //   };
-  //   const buttonText = {
-  //     approve: t('review-assignment.approve'),
-  //     reject: t('review-assignment.reject'),
-  //   };
-  //   const revisionStatus = {
-  //     approve: 'APPROVED',
-  //     reject: 'REJECTED',
-  //   };
-  //   const alertStatus = {
-  //     approve: t('alert-message:review-assignment-approve'),
-  //     reject: t('alert-message:review-assignment-reject'),
-  //   };
-  //   return (
-  //     <Button
-  //       background={buttonColor[type]}
-  //       _hover={{ background: buttonColor[type] }}
-  //       onClick={() => {
-  //         if (revisionStatus[type] !== undefined) {
-  //           bc.todo()
-  //             .update({
-  //               id: currentTask.id,
-  //               revision_status: revisionStatus[type],
-  //               description: comment,
-  //             })
-  //             .then(() => {
-  //               toast({
-  //                 position: 'top',
-  //                 title: alertStatus[type],
-  //                 status: statusColor[type],
-  //                 duration: 5000,
-  //                 isClosable: true,
-  //               });
-  //               updpateAssignment({
-  //                 ...currentTask,
-  //                 id: currentTask.id,
-  //                 revision_status: revisionStatus[type],
-  //                 description: comment,
-  //               });
-  //               onClose();
-  //             })
-  //             .catch(() => {
-  //               toast({
-  //                 position: 'top',
-  //                 title: t('alert-message:review-assignment-error'),
-  //                 status: 'error',
-  //                 duration: 5000,
-  //                 isClosable: true,
-  //               });
-  //             });
-  //         }
-  //       }}
-  //       color="white"
-  //       fontSize="13px"
-  //       textTransform="uppercase"
-  //     >
-  //       {buttonText[type]}
-  //     </Button>
-  //   );
-  // }
-
-  // ReviewButton.propTypes = {
-  //   type: PropTypes.string.isRequired,
-  // };
-
-  // <Box width="auto" height="auto">
-  //   <Button
-  //     variant="default"
-  //     onClick={onOpen}
-  //     fontSize="15px"
-  //     padding="0 24px"
-  //   >
-  //     {t('task-handler.review')}
-  //   </Button>
-
-  //   <Modal
-  //     isOpen={isOpen}
-  //     onClose={onClose}
-  //     size="lg"
-  //   >
-  //     <ModalOverlay />
-  //     <ModalContent borderRadius="17px" marginTop="10%">
-  //       <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
-  //         {t('review-assignment.title')}
-  //       </ModalHeader>
-  //       <ModalCloseButton />
-  //       <ModalBody pb={6} px={{ base: '10px', md: '35px' }}>
-  //         <Box display="flex" flexDirection="column" pt={4} pb={5}>
-  //           <Text>{fullName}</Text>
-  //           <Link href={projectLink} fontWeight="700" width="fit-content" letterSpacing="0.05em" target="_blank" rel="noopener noreferrer" color="blue.default">
-  //             {currentTask.title}
-  //           </Link>
-  //         </Box>
-  //         <Textarea onChange={(e) => setComment(e.target.value)} placeholder={t('review-assignment.comment-placeholder')} fontSize="14px" height="128px" />
-  //         <Box pt={6} display="flex" flexDirection="row" justifyContent="space-between">
-  //           {['reject', 'approve'].map((type) => (
-  //             <ReviewButton type={type} />
-  //           ))}
-  //         </Box>
-  //       </ModalBody>
-  //     </ModalContent>
-  //   </Modal>
-  //   </Box>
   return (
     <ReviewModalComponent
       isOpen={isOpen}
       onClose={onClose}
       currentTask={currentTask}
       projectLink={projectLink}
+      updpateAssignment={updpateAssignment}
     />
   );
 }
@@ -574,6 +460,7 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
         onOpen();
       })
       .catch(() => {
+        onOpen();
         toast({
           title: t('alert-message:something-went-wrong'),
           description: 'Cannot get code revisions',
