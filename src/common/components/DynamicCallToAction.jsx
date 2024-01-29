@@ -70,7 +70,7 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, placement,
     });
   const selectedCta = filterCTA()[0];
 
-  const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: selectedCta.content.placement }, selectedCta.content.forward_url.includes('?'))}`;
+  const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: placement }, selectedCta.content.forward_url.includes('?'))}`;
 
   if (!selectedCta) return null;
 

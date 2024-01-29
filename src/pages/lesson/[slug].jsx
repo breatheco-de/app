@@ -234,8 +234,8 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses technologies={lesson?.technologies} />
           <DynamicCallToAction
-            assetId={lesson.id}
-            assetTechnologies={lesson.technologies?.map((item) => item?.slug)}
+            assetId={lesson?.id}
+            assetTechnologies={lesson?.technologies?.map((item) => item?.slug)}
             assetType="lesson"
             placement="side"
             marginTop="40px"

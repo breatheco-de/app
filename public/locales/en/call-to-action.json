@@ -10,7 +10,6 @@
         "title": "Weekly coding challenges",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
@@ -24,7 +23,6 @@
         "title": "Weekly coding challenges 2",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
@@ -38,7 +36,6 @@
         "title": "Weekly coding challenges 3",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
@@ -52,7 +49,6 @@
         "title": "Weekly coding challenges 4",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
@@ -66,7 +62,6 @@
         "title": "Weekly coding challenges 5",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
@@ -80,7 +75,6 @@
         "title": "Weekly coding challenges 6",
         "description": "Every week we do one different challenge, be the next one!",
         "button_label": "Start your next challenge →",
-        "placement": "side",
         "forward_url": "https://4geeks.com/start-coding-using-javascript"
       }
     },
