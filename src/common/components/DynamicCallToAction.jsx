@@ -46,7 +46,7 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, placement,
     if (cta.asset_id.includes(assetId)) {
       coincidences += 1;
     }
-    if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech))) {
+    if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech.toLowerCase()))) {
       coincidences += 1;
     }
     if (cta.asset_type.includes(assetType)) {
