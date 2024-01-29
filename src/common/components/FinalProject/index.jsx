@@ -142,6 +142,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
               background="blue.light"
               color="blue.default"
               padding="0 27px"
+              whiteSpace="normal"
             >
               <Icon icon={repoUrl ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
               {repoUrl
