@@ -65,6 +65,7 @@ function Page({ id, syllabus, cohort, members }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [alreadyHaveCohort, setAlreadyHaveCohort] = useState(false);
   const [isModalToGetAccesOpen, setIsModalToGetAccesOpen] = useState(false);
+  const [currentTask, setCurrentTask] = useState(null);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const toast = useToast();
@@ -225,6 +226,9 @@ function Page({ id, syllabus, cohort, members }) {
         onClose={() => setIsModalToGetAccesOpen(false)}
         closeOnOverlayClick
         customFunction={joinCohort}
+        withoutSpacing={false}
+        currentItem={currentTask}
+        padding="16px"
       />
       <Container maxWidth="1280px" padding="0 1rem" mt="17px">
         <Link mb="15px" display="flex" gridGap="4px" variant="default" href="/choose-program">
@@ -324,7 +328,10 @@ function Page({ id, syllabus, cohort, members }) {
                           data={contentData}
                           taskTodo={[]}
                           isDisabled
-                          onDisabledClick={() => setIsModalToGetAccesOpen(true)}
+                          onDisabledClick={(moduleComponentData) => {
+                            setCurrentTask(moduleComponentData);
+                            setIsModalToGetAccesOpen(true);
+                          }}
                         />
                       );
                     })}

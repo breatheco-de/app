@@ -183,18 +183,19 @@ function Page({ eventData, asset }) {
         .then((resp) => {
           const formatedUsers = resp.data.map((l, i) => {
             const index = i + 1;
+            const existsAvatar = l?.attendee?.profile?.avatar_url;
             const avatarNumber = adjustNumberBeetwenMinMax({
               number: index,
               min: 1,
               max: 20,
             });
-            if (l?.attendee === null) {
+            if (l?.attendee === null || !existsAvatar) {
               return {
                 ...l,
                 attendee: {
-                  id: 475335 + i,
-                  first_name: 'Anonymous',
-                  last_name: '',
+                  id: l?.attendee?.id || 475335 + i,
+                  first_name: l?.attendee?.first_name || 'Anonymous',
+                  last_name: l?.attendee?.last_name || '',
                   profile: {
                     avatar_url: `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
                   },
@@ -980,14 +981,13 @@ function Page({ eventData, asset }) {
               >
                 {limitedUsers?.map((c) => {
                   const fullName = `${c?.attendee?.first_name} ${c?.attendee?.last_name}`;
-                  return c?.attendee?.profile?.avatar_url && (
+                  return (
                     <AvatarUser
                       key={`${c?.attendee?.id} - ${c?.attendee?.first_name}`}
                       fullName={fullName}
                       avatarUrl={c?.attendee?.profile?.avatar_url}
                       data={c?.attendee}
                       badge
-                      withoutPopover
                     />
                   );
                 })}
