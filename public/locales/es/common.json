@@ -190,10 +190,10 @@
     "github-url-required": "La URL de GitHub es necesaria"
   },
   "live-event": {
-    "title": "Clases en vivo, sesiones de codificación, talleres y reuniones cada pocas horas.",
+    "title": "Clases en vivo, sesiones de codificación, workshops y reuniones cada pocas horas.",
     "readMoreUrl": "https://4geeks.com/es/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
   },
-  "upcoming-workshops": "Próximos talleres",
+  "upcoming-workshops": "Próximos workshops",
   "workshop": "Workshop",
   "submit-project": "Enviar proyecto",
   "uploadScreenshot": "Subir captura de pantalla",
