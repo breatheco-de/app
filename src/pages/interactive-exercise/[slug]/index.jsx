@@ -47,6 +47,7 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../../common/components/ReactPlayerV2';
+import UpcomingWorkshops from '../../../common/components/UpcomingWorkshops';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -769,6 +770,7 @@ function Exercise({ exercise, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <UpcomingWorkshops technologies={exercise?.technologies} />
             <MktRecommendedCourses
               title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               technologies={exercise?.technologies}
