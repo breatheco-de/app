@@ -21,6 +21,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import iconDict from '../../common/utils/iconDict.json';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import ReviewModal, { stages } from '../../common/components/ReviewModal';
+import { log } from '../../utils/logging';
 
 export function TextByTaskStatus({ currentTask, t }) {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -130,6 +131,8 @@ export function ButtonHandlerByTaskStatus({
   const [openCommitFiles, setOpenCommitFiles] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
+    isOpeningReviewModal: false,
+    isChangingTaskStatus: false,
   });
   const [contextData, setContextData] = useState({});
   const fileContainerRef = useRef(null);
@@ -157,10 +160,21 @@ export function ButtonHandlerByTaskStatus({
     return (
       <Button
         display="flex"
+        isLoading={loaders.isChangingTaskStatus}
         onClick={(event) => {
           if (currentTask) {
-            changeStatusAssignment(event, currentTask);
-            onClickHandler();
+            setLoaders((prevState) => ({
+              ...prevState,
+              isChangingTaskStatus: true,
+            }));
+            changeStatusAssignment(event, currentTask)
+              .finally(() => {
+                setLoaders((prevState) => ({
+                  ...prevState,
+                  isChangingTaskStatus: false,
+                }));
+                onClickHandler();
+              });
           }
         }}
         isDisabled={isButtonDisabled}
@@ -184,35 +198,56 @@ export function ButtonHandlerByTaskStatus({
   }
 
   const openAssignmentFeedbackModal = () => {
-    bc.assignments().getCodeRevisions(currentTask.id)
-      .then(({ data }) => {
-        console.log('code_revisions_data:::', data);
-        setContextData({
-          code_revisions: data,
+    if (currentTask.revision_status !== 'APPROVED') {
+      bc.assignments().getCodeRevisions(currentTask.id)
+        .then(({ data }) => {
+          log('code_revisions_data:::', data);
+          setContextData({
+            code_revisions: data,
+          });
+        })
+        .catch(() => {
+          toast({
+            title: t('alert-message:something-went-wrong'),
+            description: 'Cannot get code revisions',
+            status: 'error',
+            duration: 5000,
+            position: 'top',
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          onOpen();
+          setLoaders((prevState) => ({
+            ...prevState,
+            isOpeningReviewModal: false,
+          }));
         });
-      })
-      .catch(() => {
-        toast({
-          title: t('alert-message:something-went-wrong'),
-          description: 'Cannot get code revisions',
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
-      })
-      .finally(() => {
-        onOpen();
-      });
+    } else {
+      onOpen();
+      setLoaders((prevState) => ({
+        ...prevState,
+        isOpeningReviewModal: false,
+      }));
+    }
   };
 
   function OpenModalButton() {
     return (
       <Button
+        isLoading={loaders.isOpeningReviewModal}
         onClick={(event) => {
           if (currentTask) {
+            setLoaders((prevState) => ({
+              ...prevState,
+              isOpeningReviewModal: true,
+            }));
             if (noDeliveryFormat) {
               changeStatusAssignment(event, currentTask, 'PENDING');
+              setLoaders((prevState) => ({
+                ...prevState,
+                isOpeningReviewModal: false,
+              }));
             } else {
               handleOpen(() => openAssignmentFeedbackModal());
             }
@@ -278,9 +313,6 @@ export function ButtonHandlerByTaskStatus({
     }));
   };
 
-  // if (currentTask?.task_type === 'PROJECT') {
-  //   console.log('currentTask:::', currentTask);
-  // }
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {

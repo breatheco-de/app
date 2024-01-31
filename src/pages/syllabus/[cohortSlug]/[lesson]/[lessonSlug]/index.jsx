@@ -218,16 +218,16 @@ function Content() {
     }
   };
 
-  const changeStatusAssignment = (event, task, taskStatus) => {
+  const changeStatusAssignment = async (event, task, taskStatus) => {
     event.preventDefault();
-    updateAssignment({
+    await updateAssignment({
       t, task, taskStatus, closeSettings, toast, contextState, setContextState,
     });
   };
 
-  const sendProject = ({ task, githubUrl, taskStatus }) => {
+  const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
-    updateAssignment({
+    await updateAssignment({
       t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
     });
   };

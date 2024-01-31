@@ -128,23 +128,23 @@ function Module({
     }
   };
 
-  const changeStatusAssignment = (event, task, taskStatus) => {
+  const changeStatusAssignment = async (event, task, taskStatus) => {
     if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
       setUpdatedTask({
         ...task,
       });
-      updateAssignment({
+      await updateAssignment({
         t, task, taskStatus, closeSettings, toast, contextState, setContextState,
       });
     }
   };
 
-  const sendProject = ({
+  const sendProject = async ({
     task, githubUrl, taskStatus,
   }) => {
     setShowModal(true);
-    updateAssignment({
+    await updateAssignment({
       t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
     });
   };
