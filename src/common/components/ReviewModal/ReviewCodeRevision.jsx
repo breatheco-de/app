@@ -64,8 +64,8 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
             <Flex flexDirection="column" gridGap="12px">
               {fileList.map((file) => {
                 const revisionsRelated = contextData.code_revisions.filter((revision) => revision?.file?.id === file?.id);
-                const reviewed = revisionsRelated?.length > 0;
-                return reviewed && (
+                const isReviewed = revisionsRelated?.length > 0;
+                return (
                   <Flex border="1px solid" borderColor={borderColor} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                     <Flex flex={0.3} gridGap="10px">
                       <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} />
@@ -90,7 +90,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                       </Flex>
                     </Flex>
                     <Button
-                      variant={reviewed ? 'link' : 'default'}
+                      variant={isReviewed ? 'link' : 'default'}
                       flex={0.3}
                       height="40px"
                       onClick={() => openCommitFile(file)}
@@ -98,7 +98,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                       alignItems="center"
                       gridGap="10px"
                     >
-                      -&gt; Review
+                      {isReviewed ? '-> Reviewed' : '-> Not reviewed'}
                     </Button>
                   </Flex>
                 );

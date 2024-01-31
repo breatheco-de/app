@@ -25,7 +25,7 @@ export const stages = {
 
 const inputLimit = 500;
 
-function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssignment, currentTask,
+function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
   projectLink, ...rest }) {
   const { t } = useTranslation('assignments');
   const toast = useToast();
@@ -48,6 +48,7 @@ function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssig
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
+  const hasNotBeenReviewed = revisionStatus === 'PENDING';
   const hasNoFilesToReview = contextData?.code_revisions?.length === 0;
   const isReadyToApprove = contextData?.code_revisions?.length >= 3 && taskStatus === 'DONE';
   const isStageWithDefaultStyles = stage === stages.initial || stage === stages.approve_or_reject_code_revision || hasNoFilesToReview;
@@ -291,9 +292,11 @@ function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssig
       {...rest}
     >
       {stage === stages.initial && currentTask && (
-        <Box width="100%" maxWidth="500px" margin="0 auto" minHeight="215px" position="relative">
+        <Box width="100%" maxWidth="500px" margin="0 auto" mb="8px" position="relative">
           {loaders.isFetchingCodeReviews ? (
-            <LoaderScreen width="300px" height="302px" />
+            <Box minHeight="215px">
+              <LoaderScreen width="300px" height="302px" />
+            </Box>
           ) : (
             <>
               {!isReadyToApprove && (
@@ -307,16 +310,24 @@ function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssig
                 />
               )}
               <Flex flexDirection="column" gridGap="16px">
-                <Flex justifyContent="space-between">
+                {!isStudent ? (
+                  <Flex justifyContent="space-between">
+                    <Text size="14px" color={lightColor}>
+                      {`Student: ${fullName}`}
+                    </Text>
+                    {taskStatus === 'DONE' && hasNotBeenReviewed && (
+                    <Box textTransform="uppercase" fontSize="13px" background="yellow.light" color="yellow.default" borderRadius="27px" padding="2px 6px" fontWeight={700} border="2px solid" borderColor="yellow.default">
+                      Waiting for review
+                    </Box>
+                    )}
+                  </Flex>
+                ) : (
                   <Text size="14px" color={lightColor}>
-                    {`Student: ${fullName}`}
+                    {hasNotBeenReviewed
+                      ? t('dashboard:modalInfo.still-reviewing')
+                      : `Your teacher has ${revisionStatus} your project.`}
                   </Text>
-                  {taskStatus === 'DONE' && revisionStatus === 'PENDING' && (
-                  <Box textTransform="uppercase" fontSize="13px" background="yellow.light" color="yellow.default" borderRadius="27px" padding="2px 6px" fontWeight={700} border="2px solid" borderColor="yellow.default">
-                    Waiting for review
-                  </Box>
-                  )}
-                </Flex>
+                )}
                 <Text size="14px" color={lightColor}>
                   <span>
                     Project Instructions:
@@ -334,12 +345,12 @@ function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssig
                     </Text>
                   </Flex>
                   <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                    Start code review
+                    {isStudent ? 'Read and rate the feedback' : 'Start code review'}
                     <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
                   </Button>
                 </Flex>
 
-                {isReadyToApprove && (
+                {isReadyToApprove && !isStudent && (
                   <Flex justifyContent="space-between" pt="8px">
                     {['reject', 'approve'].map((type) => (
                       <Button
@@ -406,6 +417,7 @@ ReviewModal.propTypes = {
   defaultStage: PropTypes.string,
   updpateAssignment: PropTypes.func.isRequired,
   externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  isStudent: PropTypes.bool,
 };
 ReviewModal.defaultProps = {
   isOpen: false,
@@ -414,6 +426,7 @@ ReviewModal.defaultProps = {
   projectLink: '',
   defaultStage: stages.initial,
   externalData: null,
+  isStudent: false,
 };
 
 export default ReviewModal;
