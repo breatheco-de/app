@@ -27,7 +27,13 @@ function ModuleMap({
       task_type: l.task_type,
       cohort: cohortSession.id,
     }));
-
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_syllabus_module',
+        new_tasks: updatedTasks,
+        cohort: cohortSession.id,
+      },
+    });
     startDay({
       t,
       id: userId,
