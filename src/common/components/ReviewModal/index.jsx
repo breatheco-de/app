@@ -25,7 +25,8 @@ export const stages = {
 
 const inputLimit = 500;
 
-function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssignment, currentTask, projectLink, ...rest }) {
+function ReviewModal({ isOpen, externalData, defaultStage, onClose, updpateAssignment, currentTask,
+  projectLink, ...rest }) {
   const { t } = useTranslation('assignments');
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');

@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react/no-unstable-nested-components */
 import {
   FormControl, Input, Button, Popover, PopoverTrigger, PopoverContent,
-  PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody, useDisclosure,
-  FormErrorMessage, Box, useColorModeValue, useToast, Flex,
+  PopoverArrow, PopoverHeader, PopoverCloseButton, PopoverBody,
+  FormErrorMessage, Box, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
@@ -11,7 +12,6 @@ import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 import Icon from '../../common/components/Icon';
-import ModalInfo from './modalInfo';
 import { isGithubUrl } from '../../utils/regex';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
@@ -20,8 +20,7 @@ import { formatBytes } from '../../utils';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import iconDict from '../../common/utils/iconDict.json';
 import { usePersistent } from '../../common/hooks/usePersistent';
-import ReviewModal, { stages } from '../../common/components/ReviewModal';
-import { log } from '../../utils/logging';
+import ReviewModal from '../../common/components/ReviewModal';
 
 export function TextByTaskStatus({ currentTask, t }) {
   const taskIsAproved = currentTask?.revision_status === 'APPROVED';
@@ -121,20 +120,18 @@ export function ButtonHandlerByTaskStatus({
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen,
 }) {
   const { t } = useTranslation('dashboard');
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [cohortSession] = usePersistent('cohortSession', {});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
   const [fileProps, setFileProps] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [openCommitFiles, setOpenCommitFiles] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
     isOpeningReviewModal: false,
     isChangingTaskStatus: false,
   });
-  const [contextData, setContextData] = useState({});
   const fileContainerRef = useRef(null);
   const fileInputRef = useRef();
   const commonInputColor = useColorModeValue('gray.600', 'gray.200');
@@ -198,59 +195,61 @@ export function ButtonHandlerByTaskStatus({
   }
 
   const openAssignmentFeedbackModal = () => {
-    if (currentTask.revision_status !== 'APPROVED') {
-      bc.assignments().getCodeRevisions(currentTask.id)
-        .then(({ data }) => {
-          log('code_revisions_data:::', data);
-          setContextData({
-            code_revisions: data,
-          });
-        })
-        .catch(() => {
-          toast({
-            title: t('alert-message:something-went-wrong'),
-            description: 'Cannot get code revisions',
-            status: 'error',
-            duration: 5000,
-            position: 'top',
-            isClosable: true,
-          });
-        })
-        .finally(() => {
-          onOpen();
-          setLoaders((prevState) => ({
-            ...prevState,
-            isOpeningReviewModal: false,
-          }));
-        });
-    } else {
-      onOpen();
-      setLoaders((prevState) => ({
-        ...prevState,
-        isOpeningReviewModal: false,
-      }));
-    }
+    // if (currentTask.revision_status !== 'APPROVED') {
+    //   bc.assignments().getCodeRevisions(currentTask.id)
+    //     .then(({ data }) => {
+    //       log('code_revisions_data:::', data);
+    //       setContextData({
+    //         code_revisions: data,
+    //       });
+    //     })
+    //     .catch(() => {
+    //       toast({
+    //         title: t('alert-message:something-went-wrong'),
+    //         description: 'Cannot get code revisions',
+    //         status: 'error',
+    //         duration: 5000,
+    //         position: 'top',
+    //         isClosable: true,
+    //       });
+    //     })
+    //     .finally(() => {
+    //       // onOpen();
+    //       setIsReviewModalOpen(true);
+    //       setLoaders((prevState) => ({
+    //         ...prevState,
+    //         isOpeningReviewModal: false,
+    //       }));
+    //     });
+    // } else {
+    //   // onOpen();
+    // }
+    setIsReviewModalOpen(true);
+    setLoaders((prevState) => ({
+      ...prevState,
+      isOpeningReviewModal: false,
+    }));
   };
 
   function OpenModalButton() {
     return (
       <Button
         isLoading={loaders.isOpeningReviewModal}
-        onClick={(event) => {
+        onClick={() => {
           if (currentTask) {
             setLoaders((prevState) => ({
               ...prevState,
               isOpeningReviewModal: true,
             }));
-            if (noDeliveryFormat) {
-              changeStatusAssignment(event, currentTask, 'PENDING');
-              setLoaders((prevState) => ({
-                ...prevState,
-                isOpeningReviewModal: false,
-              }));
-            } else {
-              handleOpen(() => openAssignmentFeedbackModal());
-            }
+            // if (noDeliveryFormat) {
+            //   changeStatusAssignment(event, currentTask, 'PENDING');
+            //   setLoaders((prevState) => ({
+            //     ...prevState,
+            //     isOpeningReviewModal: false,
+            //   }));
+            // } else {
+            // }
+            handleOpen(() => openAssignmentFeedbackModal());
           }
         }}
         isDisabled={isButtonDisabled}
@@ -275,55 +274,83 @@ export function ButtonHandlerByTaskStatus({
     );
   }
 
-  const proceedToCommitFiles = async () => {
-    setLoaders((prevState) => ({
-      ...prevState,
-      isFetchingCommitFiles: true,
-    }));
-    const response = await bc.assignments().files(currentTask.id);
-    const data = typeof response === 'object' ? await response.json() : {};
+  // const proceedToCommitFiles = async () => {
+  //   setLoaders((prevState) => ({
+  //     ...prevState,
+  //     isFetchingCommitFiles: true,
+  //   }));
+  //   const response = await bc.assignments().files(currentTask.id);
+  //   const data = typeof response === 'object' ? await response.json() : {};
 
-    if (!response || response?.status >= 400) {
-      setLoaders((prevState) => ({
-        ...prevState,
-        isFetchingCommitFiles: false,
-      }));
-      toast({
-        title: 'Error',
-        description: data.detail,
-        status: 'error',
-        duration: 9000,
-        position: 'top',
-        isClosable: true,
-      });
-    }
-    if (response?.ok) {
-      setContextData((prevState) => ({
-        ...prevState,
-        commitfiles: {
-          task: currentTask,
-          fileList: data,
-        },
-      }));
-      setOpenCommitFiles(true);
-    }
-    setLoaders((prevState) => ({
-      ...prevState,
-      isFetchingCommitFiles: false,
-    }));
-  };
+  //   if (!response || response?.status >= 400) {
+  //     setLoaders((prevState) => ({
+  //       ...prevState,
+  //       isFetchingCommitFiles: false,
+  //     }));
+  //     toast({
+  //       title: 'Error',
+  //       description: data.detail,
+  //       status: 'error',
+  //       duration: 9000,
+  //       position: 'top',
+  //       isClosable: true,
+  //     });
+  //   }
+  //   if (response?.ok) {
+  //     setContextData((prevState) => ({
+  //       ...prevState,
+  //       commitfiles: {
+  //         task: currentTask,
+  //         fileList: data,
+  //       },
+  //     }));
+  //     setIsReviewModalOpen(true);
+  //   }
+  //   setLoaders((prevState) => ({
+  //     ...prevState,
+  //     isFetchingCommitFiles: false,
+  //   }));
+  // };
 
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
-    if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
+    if (currentTask.task_status === 'DONE') {
       // Option case Revision pending...
+      // CODING HERE 🚧 - DESDE AHORA AQUI SE VERA APROVADO, PENDING O REJECTED
+      // if (currentTask.revision_status === 'APPROVED') {
+      //   return (
+      //     <>
+      //       <OpenModalButton />
+      //       <ReviewModal
+      //         isOpen={isReviewModalOpen}
+      //         externalData={contextData}
+      //         currentTask={currentTask}
+      //         defaultStage={stages.review_code_revision}
+      //         onClose={() => setIsReviewModalOpen(false)}
+      //         defaultContextData={contextData}
+      //       />
+      //       {/* <ModalInfo
+      //         isOpen={isOpen}
+      //         onClose={onClose}
+      //         title={t('modalInfo.title')}
+      //         description={t('modalInfo.approved')}
+      //         teacherFeedback={currentTask?.description}
+      //         linkInfo={t('modalInfo.link-info')}
+      //         link={currentTask.github_url}
+      //         attachment={fileData}
+      //         disableHandler
+      //         disableCloseButton
+      //       /> */}
+      //     </>
+      //   );
+      // }
       return (
         <>
           <Button variant="unstyled" mr="10px">
             <Icon icon="comment" width="20px" height="20px" />
           </Button>
           <OpenModalButton />
-          <ModalInfo
+          {/* <ModalInfo
             isOpen={isOpen}
             onClose={onClose}
             title={t('modalInfo.title')}
@@ -357,60 +384,46 @@ export function ButtonHandlerByTaskStatus({
                 <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
               </Button>
             </Flex>
-          </ModalInfo>
+          </ModalInfo> */}
 
-          {openCommitFiles && (
-            <ReviewModal isOpen={openCommitFiles} externalData={contextData} currentTask={currentTask} defaultStage={stages.review_code_revision} onClose={() => setOpenCommitFiles(false)} defaultContextData={contextData} />
-          )}
-        </>
-      );
-    }
-    if (currentTask.revision_status === 'APPROVED') {
-      return (
-        <>
-          <OpenModalButton />
-          <ModalInfo
-            isOpen={isOpen}
-            onClose={onClose}
-            title={t('modalInfo.title')}
-            description={t('modalInfo.approved')}
-            teacherFeedback={currentTask?.description}
-            linkInfo={t('modalInfo.link-info')}
-            link={currentTask.github_url}
-            attachment={fileData}
-            disableHandler
-            disableCloseButton
-          />
-        </>
-      );
-    }
-
-    if (currentTask.revision_status === 'REJECTED') {
-      return (
-        <>
-          <OpenModalButton />
-          <ModalInfo
-            isOpen={isOpen}
-            onClose={onClose}
-            title={t('modalInfo.title')}
-            description={t('modalInfo.rejected.title')}
-            type="taskHandler"
-            sendProject={sendProject}
+          <ReviewModal
+            isOpen={isReviewModalOpen}
+            isStudent
             currentTask={currentTask}
-            closeText={t('modalInfo.rejected.remove-delivery')}
-            teacherFeedback={currentTask.description}
-            linkInfo={t('modalInfo.link-info')}
-            link={currentTask.github_url}
-            attachment={fileData}
-            handlerText={t('modalInfo.rejected.resubmit-assignment')}
-            actionHandler={(event) => {
-              changeStatusAssignment(event, currentTask, 'PENDING');
-              onClose();
-            }}
+            projectLink={currentTask?.github_url}
+            // defaultStage={stages.initial}
+            onClose={() => setIsReviewModalOpen(false)}
           />
         </>
       );
     }
+
+    // if (currentTask.revision_status === 'REJECTED') {
+    //   return (
+    //     <>
+    //       <OpenModalButton />
+    //       <ModalInfo
+    //         isOpen={isOpen}
+    //         onClose={onClose}
+    //         title={t('modalInfo.title')}
+    //         description={t('modalInfo.rejected.title')}
+    //         type="taskHandler"
+    //         sendProject={sendProject}
+    //         currentTask={currentTask}
+    //         closeText={t('modalInfo.rejected.remove-delivery')}
+    //         teacherFeedback={currentTask.description}
+    //         linkInfo={t('modalInfo.link-info')}
+    //         link={currentTask.github_url}
+    //         attachment={fileData}
+    //         handlerText={t('modalInfo.rejected.resubmit-assignment')}
+    //         actionHandler={(event) => {
+    //           changeStatusAssignment(event, currentTask, 'PENDING');
+    //           onClose();
+    //         }}
+    //       />
+    //     </>
+    //   );
+    // }
 
     const handleCloseFile = () => {
       closeSettings();
