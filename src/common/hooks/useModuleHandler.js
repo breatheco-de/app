@@ -1,4 +1,5 @@
 import { differenceInDays } from 'date-fns';
+import { reportDatalayer } from '../../utils/requests';
 import bc from '../services/breathecode';
 
 export const updateAssignment = ({
@@ -107,6 +108,12 @@ export const startDay = async ({
     const response = await bc.todo({}).add(newTasks);
 
     if (response.status < 400) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'open_syllabus_module',
+          new_tasks: newTasks,
+        },
+      });
       toast({
         position: 'top',
         title: label
