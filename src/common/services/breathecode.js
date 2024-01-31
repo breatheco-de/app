@@ -241,14 +241,15 @@ const breathecode = {
     };
   },
 
-  assignments: () => {
+  assignments: (query = {}) => {
     const url = `${host}/assignment`;
+    const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/user/me/task`),
       getCodeRevisions: (taskId) => axios.get(`${url}/academy/task/${taskId}/coderevision`),
-      files: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/commitfile`),
-      file: (id) => axios.get(`${url}/me/commitfile/${id}`),
-      createCodeRevision: (taskId, data) => axios.post(`${url}/me/task/${taskId}/coderevision`, data),
+      files: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/commitfile${qs}`),
+      file: (taskId, commitId) => axios.get(`${url}/academy/task/${taskId}/commitfile/${commitId}`),
+      createCodeRevision: (taskId, data) => axios.post(`${url}/academy/task/${taskId}/coderevision`, data),
     };
   },
   feedback: () => {

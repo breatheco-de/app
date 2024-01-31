@@ -295,7 +295,7 @@ export function ButtonHandlerByTaskStatus({
             isOpen={isOpen}
             onClose={onClose}
             title={t('modalInfo.title')}
-            description={t('modalInfo.still-reviewing')}
+            description={contextData?.code_revisions?.length > 0 ? t('modalInfo.reviewed') : t('modalInfo.still-reviewing')}
             teacherFeedback={currentTask.description}
             linkInfo={t('modalInfo.link-info')}
             link={currentTask.github_url}
@@ -317,7 +317,7 @@ export function ButtonHandlerByTaskStatus({
               <Flex alignItems="center" gridGap="10px">
                 <Icon icon="code" width="18.5px" height="17px" color="#fff" />
                 <Text size="14px" fontWeight={700}>
-                  0 code reviews
+                  {`${contextData?.code_revisions?.length} code reviews`}
                 </Text>
               </Flex>
               <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
@@ -328,7 +328,7 @@ export function ButtonHandlerByTaskStatus({
           </ModalInfo>
 
           {openCommitFiles && (
-            <ReviewModal isOpen={openCommitFiles} currentTask={currentTask} defaultStage={stages.file_list} onClose={() => setOpenCommitFiles(false)} defaultContextData={contextData} />
+            <ReviewModal isOpen={openCommitFiles} externalData={contextData} currentTask={currentTask} defaultStage={stages.review_code_revision} onClose={() => setOpenCommitFiles(false)} defaultContextData={contextData} />
           )}
         </>
       );

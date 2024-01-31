@@ -21,9 +21,10 @@ const views = {
   started_revision: 'started_revision',
   success: 'success',
 };
-function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) {
+function CodeReview({ handleResetFlow, contextData, setContextData, setStage, selectedText, handleSelectedText }) {
   const [repoData, setRepoData] = useState({});
   const [view, setView] = useState(views.initial);
+  const [isLoading, setIsLoading] = useState(false);
   const [codeReview, setCodeReview] = useState({
     code: '',
     comment: '',
@@ -32,11 +33,13 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
   const toast = useToast();
   const { hexColor } = useStyle();
   const inputLimit = 380;
+  const commitData = contextData?.commitFile;
+  const myRevisions = contextData?.my_revisions || [];
 
   const prepareCommitData = () => {
     try {
       const extensionLanguage = commitData?.path?.split('.').pop().replace(/\?.*$/, '');
-      const codeRaw = `\`\`\`${extensionLanguage}\n${commitData.code}\n\`\`\``;
+      const codeRaw = extensionLanguage ? `\`\`\`${extensionLanguage}\n${commitData.code}\n\`\`\`` : commitData.code;
       setRepoData({
         raw: codeRaw,
         extensionLanguage,
@@ -69,7 +72,9 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
   }, []);
 
   const startCodeReview = () => {
-    const encodedText = btoa(selectedText);
+    // Remove invalid characters in UTF-8
+    const value = selectedText.replace(/[^\t\n\r\x20-\x7E\x80-\xBF\xC0-\xFD\xFE\xFF]/g, '');
+    const encodedText = btoa(value);
     setCodeReview({
       code: encodedText,
       comment: '',
@@ -86,20 +91,25 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
     }
   };
   const submitCodeReview = () => {
+    setIsLoading(true);
     setCodeReview((prev) => ({
       ...prev,
       isSubmitting: true,
     }));
     if (codeReview.comment.length >= 10) {
-      setView(views.success);
-      bc.assignments().createCodeRevision(commitData?.task?.id, {
+      bc.assignments().createCodeRevision(commitData.task.id, {
         commitfile_id: commitData?.id,
         content_for_review: codeReview.code,
         comments: codeReview.comment,
         github_username: commitData?.committer?.github_username,
       })
         .then((resp) => {
-          if (resp.data.comment?.length > 10) {
+          if (resp.data.comment?.length > 0) {
+            setContextData((prev) => ({
+              ...prev,
+              code_revisions: [...prev.code_revisions, resp.data],
+              my_revisions: [...prev.my_revisions, resp.data],
+            }));
             setView(views.success);
           }
         })
@@ -126,6 +136,7 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
       code: '',
       comments: '',
     });
+    handleResetFlow();
   };
 
   return (
@@ -156,7 +167,7 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
               The code review was sent successfully.
             </Text>
             <Text size="18px">
-              You have submitted 2 code reviews
+              {`You have submitted ${myRevisions.length} code reviews`}
             </Text>
             <Button variant="default" gridGap="10px" mt="10px" onClick={goBack} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
               <Icon icon="code-comment" size="23px" color="#fff" />
@@ -243,7 +254,7 @@ function CodeReview({ commitData, setStage, selectedText, handleSelectedText }) 
                   </Box>
                 </Box>
 
-                <Button variant="default" gridGap="10px" isDisabled={codeReview.comment.length < 10} onClick={submitCodeReview} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
+                <Button variant="default" isLoading={isLoading} gridGap="10px" isDisabled={codeReview.comment.length < 10} onClick={submitCodeReview} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                   <Icon icon="code-comment" size="23px" color={codeReview.comment.length < 10 ? '#606060' : '#fff'} />
                   <Text>
                     Submit Code Review
@@ -263,7 +274,9 @@ CodeReview.propTypes = {
   setStage: PropTypes.func.isRequired,
   selectedText: PropTypes.string,
   handleSelectedText: PropTypes.func,
-  commitData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  contextData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  setContextData: PropTypes.func.isRequired,
+  handleResetFlow: PropTypes.func.isRequired,
 };
 CodeReview.defaultProps = {
   selectedText: '',

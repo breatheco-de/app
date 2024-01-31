@@ -133,12 +133,14 @@ export function DetailsModal({
                 bc.todo().update({
                   id: currentTask.id,
                   revision_status: 'PENDING',
+                  description: '',
                 })
                   .then(() => {
                     updpateAssignment({
                       ...currentTask,
                       id: currentTask.id,
                       revision_status: 'PENDING',
+                      description: '',
                     });
                     setOpenUndoApproval(false);
                     onClose();
@@ -448,28 +450,8 @@ export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpe
 function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
   const { t } = useTranslation('assignments');
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [contextData, setContextData] = useState();
-  const toast = useToast();
   const handleOpen = () => {
-    bc.assignments().getCodeRevisions(currentTask.id)
-      .then(({ data }) => {
-        console.log('code_revisions_data:::', data);
-        setContextData({
-          code_revisions: data,
-        });
-        onOpen();
-      })
-      .catch(() => {
-        onOpen();
-        toast({
-          title: t('alert-message:something-went-wrong'),
-          description: 'Cannot get code revisions',
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
-      });
+    onOpen();
   };
 
   return (
@@ -486,7 +468,6 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
       <ReviewModal
         currentTask={currentTask}
         projectLink={projectLink}
-        defaultContextData={contextData}
         updpateAssignment={updpateAssignment}
         isOpen={isOpen}
         onClose={onClose}
@@ -534,12 +515,14 @@ function ButtonHandler({
               bc.todo().update({
                 id: currentTask.id,
                 revision_status: 'PENDING',
+                description: '',
               })
                 .then(() => {
                   updpateAssignment({
                     ...currentTask,
                     id: currentTask.id,
                     revision_status: 'PENDING',
+                    description: '',
                   });
                   toast({
                     position: 'top',

@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-function SimpleModal({ isOpen, title, isCentered, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, onMouseUp, ...rest }) {
+function SimpleModal({ isOpen, title, leftButton, isCentered, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, onMouseUp, closeButtonStyles, ...rest }) {
   const { modal, borderColor2 } = useStyle();
 
   const closeHandler = () => {
@@ -24,6 +24,7 @@ function SimpleModal({ isOpen, title, isCentered, children, onClose, maxWidth, b
           style={{ marginTop: isCentered ? '' : '10vh' }}
           {...rest}
         >
+          {leftButton && leftButton}
           {title && (
           <ModalHeader
             borderBottom={1}
@@ -34,7 +35,7 @@ function SimpleModal({ isOpen, title, isCentered, children, onClose, maxWidth, b
             {title}
           </ModalHeader>
           )}
-          {(!hideCloseButton && !forceHandler) && <ModalCloseButton />}
+          {(!hideCloseButton && !forceHandler) && <ModalCloseButton {...closeButtonStyles} />}
           <ModalBody {...bodyStyles}>
             {children}
           </ModalBody>
@@ -57,6 +58,8 @@ SimpleModal.propTypes = {
   closeOnOverlayClick: PropTypes.bool,
   onMouseUp: PropTypes.func,
   isCentered: PropTypes.bool,
+  leftButton: PropTypes.node,
+  closeButtonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
 };
 SimpleModal.defaultProps = {
   title: '',
@@ -69,6 +72,8 @@ SimpleModal.defaultProps = {
   closeOnOverlayClick: true,
   onMouseUp: () => {},
   isCentered: false,
+  leftButton: null,
+  closeButtonStyles: {},
 };
 
 export default SimpleModal;

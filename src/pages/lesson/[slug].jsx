@@ -293,11 +293,13 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser content={markdownData.content} withToc isPublic />
-              <MktRecommendedCourses
-                display={{ base: 'none', md: 'grid' }}
-                title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
-                technologies={lesson?.technologies}
-              />
+              {lesson?.technologies?.length > 0 && (
+                <MktRecommendedCourses
+                  display={{ base: 'none', md: 'grid' }}
+                  title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+                  technologies={lesson?.technologies}
+                />
+              )}
 
             </Box>
 
