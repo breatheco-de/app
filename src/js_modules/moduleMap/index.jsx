@@ -8,6 +8,7 @@ import Text from '../../common/components/Text';
 import Module from './module';
 import { startDay } from '../../common/hooks/useModuleHandler';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
