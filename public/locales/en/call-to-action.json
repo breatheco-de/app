@@ -2,100 +2,16 @@
   "call-to-actions": [
     {
       "component": "WeeklyCodingChallenge",
-      "asset_type": ["lesson"], 
-      "asset_id": [1012],
+      "asset_type": [], 
+      "asset_id": [1],
       "asset_technologies": [],
       "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
+        "icon_url": "https://path/to/icon.png",
         "title": "Weekly coding challenges",
         "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
+        "button_label": "Start your next challenge",
         "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": ["lesson"], 
-      "asset_id": [],
-      "asset_technologies": [],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 2",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": ["lesson"], 
-      "asset_id": [938],
-      "asset_technologies": [],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 3",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": [], 
-      "asset_id": [938],
-      "asset_technologies": ["ptyhon"],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 4",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": [], 
-      "asset_id": [],
-      "asset_technologies": ["ptyhon"],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 5",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": ["exercise"], 
-      "asset_id": [],
-      "asset_technologies": [],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 6",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "LargeWeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
-      }
-    },
-    {
-      "component": "WeeklyCodingChallenge",
-      "asset_type": ["project"], 
-      "asset_id": [],
-      "asset_technologies": [],
-      "content": {
-        "icon_url": "https://storage.googleapis.com/breathecode/logos-workshops/javascript-event-type.svg",
-        "title": "Weekly coding challenges 7",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge →",
-        "internal_cta_placement": "LargeWeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/start-coding-using-javascript"
+        "forward_url": "https://4geeks.com/start-coding-using/javascript"
       }
     }
   ]

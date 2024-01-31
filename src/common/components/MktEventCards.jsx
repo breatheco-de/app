@@ -37,6 +37,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
       px="10px"
       padding={{ base: '0 10px', lg: '0' }}
       flexDirection={{ base: 'column', lg: 'row' }}
+      gridColumn="1 / span 10"
       {...rest}
     >
       <Flex alignItems="center" gridGap="32px" marginBottom="32px">

@@ -23,6 +23,7 @@ import CallToAction from '../CallToAction';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
+import DynamicCallToAction from '../DynamicCallToAction';
 
 function MarkdownH2Heading({ ...props }) {
   return (
@@ -88,6 +89,18 @@ function CodeViewerComponent(props) {
   );
 }
 
+function MdCallToAction({ assetData }) {
+  return (
+    <DynamicCallToAction
+      assetId={assetData?.id}
+      assetTechnologies={assetData?.technologies?.map((item) => item?.slug)}
+      assetType={assetData?.asset_type.toLowerCase()}
+      placement="bottom"
+      marginTop="40px"
+    />
+  );
+}
+
 function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
   const childrenExists = props?.children?.length >= 0;
   const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
@@ -109,7 +122,7 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 
 function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers,
+  showLineNumbers, showInlineLineNumbers, assetData,
 }) {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -280,6 +293,7 @@ function MarkDownParser({
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
           codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent }),
+          calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
@@ -303,6 +317,7 @@ MarkDownParser.propTypes = {
   currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
+  assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -315,6 +330,7 @@ MarkDownParser.defaultProps = {
   currentData: {},
   showLineNumbers: true,
   showInlineLineNumbers: true,
+  assetData: null,
 };
 
 export default MarkDownParser;

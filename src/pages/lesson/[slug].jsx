@@ -17,6 +17,7 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
@@ -230,8 +231,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         gridGap="36px"
         padding="0 10px"
       >
-        <Box display={{ base: 'none', md: 'flex' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
+        <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses technologies={lesson?.technologies} />
+          <DynamicCallToAction
+            assetId={lesson?.id}
+            assetTechnologies={lesson?.technologies?.map((item) => item?.slug)}
+            assetType="lesson"
+            placement="side"
+            marginTop="40px"
+          />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
@@ -292,7 +300,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               width={{ base: '100%', md: 'auto' }}
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
-              <MarkDownParser content={markdownData.content} withToc isPublic />
+              <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
               {lesson?.technologies?.length > 0 && (
                 <MktRecommendedCourses
                   display={{ base: 'none', md: 'grid' }}
@@ -300,9 +308,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   technologies={lesson?.technologies}
                 />
               )}
-
             </Box>
-
           ) : (
             <>
               {!isIpynb && (
