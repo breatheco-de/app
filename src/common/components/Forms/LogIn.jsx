@@ -48,13 +48,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 duration: 9000,
                 isClosable: true,
               });
-              reportDatalayer({
-                dataLayer: {
-                  event: 'login',
-                  method: '4geeks_form',
-                  path: '/login',
-                },
-              });
             }
           })
           .catch(() => {
