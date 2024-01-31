@@ -52,7 +52,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 dataLayer: {
                   event: 'login',
                   method: '4geeks_form',
-                  path: '/login'
+                  path: '/login',
                 },
               });
             }
