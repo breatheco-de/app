@@ -14,6 +14,7 @@ import { isWindow } from '../../utils/index';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../../utils/requests';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
@@ -131,6 +132,13 @@ function Module({
   const changeStatusAssignment = (event, task, taskStatus) => {
     if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
+      reportDatalayer({
+        dataLayer: {
+          event: 'assignment_status_updated',
+          task_status: taskStatus,
+          task: task,
+        },
+      });
       setUpdatedTask({
         ...task,
       });
