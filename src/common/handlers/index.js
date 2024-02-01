@@ -15,6 +15,10 @@ const taskIcons = {
   QUIZ: 'answer',
 };
 
+const getCompletedTasksFromModule = (module, taskTodo) => (module?.length > 0 ? module.filter(
+  (assignment) => taskTodo.some((task) => task?.associated_slug === assignment?.slug && task?.task_status === 'DONE'),
+) : []);
+
 const handlers = {
   getSyllabus: (academyId, slug, version) => new Promise((resolve, reject) => {
     bc.syllabus().get(academyId, slug, version)
@@ -262,6 +266,12 @@ const handlers = {
   }) => new Promise((resolve) => {
     const modules = data?.json?.days || data?.json?.modules || data;
     const assignmentsRecopilated = [];
+    const assetsCompleted = {
+      exercise: [],
+      lesson: [],
+      project: [],
+      quiz: [],
+    };
 
     modules?.forEach((module) => {
       const {
@@ -282,6 +292,14 @@ const handlers = {
         projectCount,
         quizzesCount,
       };
+      const replitsCompletedFromTask = getCompletedTasksFromModule(replits, taskTodo);
+      const quizzesCompletedFromTask = getCompletedTasksFromModule(quizzes, taskTodo);
+      const lessonsCompletedFromTask = getCompletedTasksFromModule(lessons, taskTodo);
+      const assignmentsCompletedFromTask = getCompletedTasksFromModule(assignments, taskTodo);
+      assetsCompleted.exercise.push(...replitsCompletedFromTask);
+      assetsCompleted.lesson.push(...lessonsCompletedFromTask);
+      assetsCompleted.project.push(...assignmentsCompletedFromTask);
+      assetsCompleted.quiz.push(...quizzesCompletedFromTask);
 
       assignmentsRecopilated.push(assignmentsRecopilatedObj);
     });
@@ -302,8 +320,9 @@ const handlers = {
 
     const arrayOfObjects = Object.keys(assignmentsRecopilatedObj).map((key) => {
       const taskLength = assignmentsRecopilatedObj[key];
+      const taskCompleted = assetsCompleted[key];
       const taskType = key.toUpperCase();
-      const completed = taskTodo.filter((task) => task.task_type === taskType && task.task_status === 'DONE').length;
+      const completed = taskCompleted?.length;
       const icon = taskIcons[taskType];
 
       return {
@@ -317,11 +336,12 @@ const handlers = {
     const totalCompletedTasks = arrayOfObjects.reduce((acc, task) => acc + task.completed, 0);
     const totalTasks = arrayOfObjects.reduce((acc, task) => acc + task.taskLength, 0);
     const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100) || 0;
+    const limitedPercentage = completedTasksPercentage > 100 ? 100 : completedTasksPercentage;
 
     resolve({
       allTasks: arrayOfObjects,
       cohortId,
-      percentage: completedTasksPercentage,
+      percentage: limitedPercentage,
     });
   }),
   getAssetData: (slug) => new Promise((resolve, reject) => {

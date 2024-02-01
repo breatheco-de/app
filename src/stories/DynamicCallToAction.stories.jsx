@@ -5,9 +5,14 @@ export default {
   title: 'Components/DynamicCallToAction',
   component: DynamicCallToAction,
   argTypes: {
+    placement: {
+      control: {
+        type: 'text'
+      }
+    },
     assetType: {
       control: {
-        type: 'string'
+        type: 'text'
       }
     },
     assetId: {
@@ -32,11 +37,13 @@ WeeklyCodingChallenge.args = {
   assetType: 'lesson',
   assetId: 323,
   assetTechnologies: ['html', 'python'],
+  placement: 'side',
 };
 
 export const LargeWeeklyCodingChallenge = Component.bind({});
 LargeWeeklyCodingChallenge.args = {
-  assetType: 'lesson',
-  assetId: 2223,
+  assetType: 'exercise',
+  assetId: 4,
   assetTechnologies: ['javascript'],
+  placement: 'bottom',
 };

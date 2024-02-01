@@ -38,6 +38,7 @@ export const languagesLabels = {
   python: 'Python',
   py: 'Python',
   html: 'Html',
+  css: 'CSS',
 };
 
 export const languagesNames = {
@@ -167,6 +168,8 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
     monaco.editor.setTheme('my-theme');
   };
 
+  if (languagesData === null || languagesData === undefined || languagesData.length === 0) return null;
+
   return (
     <Box width="100%" {...rest}>
       <Tabs onChange={(index) => setTabIndex(index)} variant="unstyled">
@@ -176,9 +179,9 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
-          {!notExecutables.includes(languages[tabIndex].language) && languages[tabIndex].code.trim() !== '' && (
+          {!notExecutables.includes(languages[tabIndex]?.language) && languages[tabIndex]?.code.trim() !== '' && (
             <>
-              {languages[tabIndex].running ? (
+              {languages[tabIndex]?.running ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
               ) : (
                 <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">

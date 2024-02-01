@@ -63,7 +63,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const queryToken = isWindow && query.get('token')?.split('?')[0];
   const queryTokenExists = isWindow && queryToken !== undefined && queryToken;
   const sessionExists = haveSession || queryTokenExists;
-
   const imageFilter = useColorModeValue('none', 'brightness(0) invert(1)');
   const mktQueryString = parseQuerys({
     featured: true,

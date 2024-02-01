@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
@@ -23,6 +23,7 @@ import CallToAction from '../CallToAction';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
+import DynamicCallToAction from '../DynamicCallToAction';
 
 function MarkdownH2Heading({ ...props }) {
   return (
@@ -61,27 +62,41 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
   return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
 }
 
-function CodeViewerComponent({ children }) {
-  const input = children[0];
-  const regex = /```([a-zA-Z]+)\n([\s\S]+?)```/g;
+function CodeViewerComponent(props) {
+  const { preParsedContent, node } = props;
+  const nodeStartOffset = node.position.start.offset;
+  const nodeEndOffset = node.position.end.offset;
+
+  const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
+  const regex = /```([a-zA-Z]+)\s{1,}runable=("true"|'true'|true)\s{0,}\n([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
-  do {
-    match = regex.exec(input);
-    if (match !== null) {
-      fragments.push({
-        language: languagesNames[match[1]] || match[1],
-        label: languagesLabels[match[1]] || match[1],
-        code: match[2].trim(),
-      });
-    }
-  } while (match !== null);
+  // eslint-disable-next-line no-cond-assign
+  while ((match = regex.exec(input)) !== null) {
+    fragments.push({
+      language: languagesNames[match[1].toLowerCase()] || match[1],
+      label: languagesLabels[match[1].toLowerCase()] || match[1],
+      code: match[3].trim(),
+    });
+  }
 
   return (
     <CodeViewer
       languagesData={fragments}
-      marginTop="10px"
+      margin="10px 0"
+    />
+  );
+}
+
+function MdCallToAction({ assetData }) {
+  return (
+    <DynamicCallToAction
+      assetId={assetData?.id}
+      assetTechnologies={assetData?.technologies?.map((item) => item?.slug)}
+      assetType={assetData?.asset_type.toLowerCase()}
+      placement="bottom"
+      marginTop="40px"
     />
   );
 }
@@ -106,7 +121,7 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 }
 
 function MarkDownParser({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData, assetData,
 }) {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -206,6 +221,18 @@ function MarkDownParser({
     ]);
   }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
 
+  const preParsedContent = useMemo(() => {
+    //This regex is to remove the runable empty codeblocks
+    const emptyCodeRegex = /```([a-zA-Z]+)\s{1,}runable=("true"|true|'true')\s{0,}\n(\n{1,}|\s{1,}\n{1,})?```/gm;
+    //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
+    const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
+
+    const removedEmptyCodeViewers = content.replace(emptyCodeRegex, () => '');
+    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
+
+    return contentReplace;
+  }, [content]);
+
   return (
     <>
       <ContentHeading
@@ -264,14 +291,15 @@ function MarkDownParser({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
-          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent }),
+          calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
           li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
           quote: Quote,
         }}
       >
-        {content}
+        {preParsedContent}
       </ReactMarkdown>
     </>
   );
@@ -286,6 +314,7 @@ MarkDownParser.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   isPublic: PropTypes.bool,
   currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
+  assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -296,6 +325,7 @@ MarkDownParser.defaultProps = {
   currentTask: {},
   isPublic: false,
   currentData: {},
+  assetData: null,
 };
 
 export default MarkDownParser;
