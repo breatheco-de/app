@@ -695,9 +695,11 @@ function Page({ eventData, asset }) {
                               >
                                 <Box display="flex" justifyContent="space-between" marginBottom="20px">
                                   <TagCapsule padding="0" margin="0" tags={relatedAsset?.technologies?.slice(0, 1) || []} variant="rounded" />
-                                  <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
-                                    {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy')?.replaceAll('-', '/')}
-                                  </Text>
+                                  {relatedAsset?.published_at && (
+                                    <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                                      {format(new Date(relatedAsset.published_at), 'dd-MM-yyyy')?.replaceAll('-', '/')}
+                                    </Text>
+                                  )}
                                 </Box>
                                 <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
                                   <Text size="md" fontWeight="700">
