@@ -135,8 +135,12 @@ function Module({
       reportDatalayer({
         dataLayer: {
           event: 'assignment_status_updated',
-          task_status: taskStatus,
-          task,
+          task_status,
+          task_id: task.id,
+          task_title: task.title,
+          task_associated_slug: task.associated_slug,
+          task_type: task.task_type,
+          task_revision_status: task.revision_status,
         },
       });
       setUpdatedTask({
