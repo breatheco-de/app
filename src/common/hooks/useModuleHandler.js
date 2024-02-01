@@ -79,7 +79,7 @@ export const updateAssignment = ({
         reportDatalayer({
           dataLayer: {
             event: 'assignment_status_updated',
-            task_status,
+            task_status: taskStatus,
             task_id: task.id,
             task_title: task.title,
             task_associated_slug: task.associated_slug,
