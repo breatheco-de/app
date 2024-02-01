@@ -136,7 +136,7 @@ function Module({
         dataLayer: {
           event: 'assignment_status_updated',
           task_status: taskStatus,
-          task: task,
+          task,
         },
       });
       setUpdatedTask({
