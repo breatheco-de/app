@@ -448,7 +448,7 @@ function Page({ eventData, asset }) {
 
               reportDatalayer({
                 dataLayer: {
-                  event: 'event_order',
+                  event: 'join_event',
                   event_id: event.id,
                   event_slug: event.slug,
                   event_title: event.title,
