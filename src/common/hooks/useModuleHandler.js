@@ -1,6 +1,6 @@
 import { differenceInDays } from 'date-fns';
-import { reportDatalayer } from '../../utils/requests';
 import bc from '../services/breathecode';
+import { reportDatalayer } from '../../utils/requests';
 
 export const updateAssignment = ({
   t, task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
@@ -76,6 +76,17 @@ export const updateAssignment = ({
             ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
           ],
         });
+        reportDatalayer({
+          dataLayer: {
+            event: 'assignment_status_updated',
+            task_status: taskStatus,
+            task_id: task.id,
+            task_title: task.title,
+            task_associated_slug: task.associated_slug,
+            task_type: task.task_type,
+            task_revision_status: task.revision_status,
+          },
+        });
         toast({
           position: 'top',
           // title: `"${res.data.title}" has been updated successfully`,
@@ -108,12 +119,6 @@ export const startDay = async ({
     const response = await bc.todo({}).add(newTasks);
 
     if (response.status < 400) {
-      reportDatalayer({
-        dataLayer: {
-          event: 'open_syllabus_module',
-          new_tasks: newTasks,
-        },
-      });
       toast({
         position: 'top',
         title: label

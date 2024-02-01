@@ -8,6 +8,7 @@ import Text from '../../common/components/Text';
 import Module from './module';
 import { startDay } from '../../common/hooks/useModuleHandler';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
@@ -27,7 +28,13 @@ function ModuleMap({
       task_type: l.task_type,
       cohort: cohortSession.id,
     }));
-
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_syllabus_module',
+        tasks: updatedTasks,
+        cohort_id: cohortSession.id,
+      },
+    });
     startDay({
       t,
       id: userId,
