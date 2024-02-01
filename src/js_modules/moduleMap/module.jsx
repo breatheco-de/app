@@ -14,7 +14,7 @@ import { isWindow } from '../../utils/index';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
-import { reportDatalayer } from '../../../utils/requests';
+import { reportDatalayer } from '../../utils/requests';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
