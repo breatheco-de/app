@@ -12,12 +12,12 @@ function Component({ withBanner }) {
   const router = useRouter();
 
   return withBanner ? (
-    <Box display="flex" background={backgroundColor} minHeight="auto" border="5px solid" borderColor={featuredColor} borderRadius="14px" p="0" gridGap="26px">
-      <Box display="flex" justifyContent="center" alignItems="center" style={{ aspectRatio: '1' }} width="auto" minHeight="160px" height="auto" background={featuredColor} borderRadius="7px" m="4px">
+    <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} background={backgroundColor} minHeight="auto" border="5px solid" borderColor={featuredColor} borderRadius="14px" p="0" gridGap={{ base: '0', sm: '26px' }}>
+      <Box display="flex" justifyContent="center" alignItems="center" style={{ aspectRatio: '1' }} width="auto" minHeight="160px" height={{ base: '160px', md: 'auto' }} background={featuredColor} borderRadius="7px" m="4px">
         <Icon icon="padlock" width="60px" height="65px" />
       </Box>
-      <Box my="1rem" display="flex" flexDirection="column" gridGap="24px" width="100%">
-        <Box p={{ base: '0 15% 0 0', md: '0 45% 0 0' }} fontSize="18px" fontWeight="700">
+      <Box my="1rem" display="flex" padding={{ base: '0 16px', sm: '0' }} flexDirection="column" gridGap="24px" width="100%">
+        <Box p={{ base: '0', sm: '0 26px 0 0' }} fontSize="18px" fontWeight="700">
           {t('upgrade-plan.title')}
         </Box>
         <Button variant="default" onClick={() => router.push('/login')} w="fit-content" textTransform="uppercase" fontSize="14px" letterSpacing="0.05em">

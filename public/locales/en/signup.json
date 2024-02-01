@@ -70,6 +70,12 @@
   "many_months_payment": "{{qty}} months payment",
   "our_plans": "Our plans",
   "join-cohort": {
+    "cta": {
+      "lesson": "Join cohort to get access to this lesson",
+      "exercise": "Join cohort to get access to this exercise",
+      "project": "Join cohort to get access to this project",
+      "generic": "Join cohort to get access to this {{type}}"
+    },
     "description": "Click the button below to join the cohort and access the program's content.",
     "button": "Join cohort"
   },

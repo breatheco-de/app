@@ -5,10 +5,40 @@ import useStyle from '../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
 import { parseQuerys } from '../../utils/url';
 
-function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslation }) {
+function DynamicCallToAction({ assetType, assetId, assetTechnologies, placement, stTranslation, ...rest }) {
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('call-to-action');
   const callToActions = stTranslation ? stTranslation[lang]['call-to-action']['call-to-actions'] : t('call-to-actions', {}, { returnObjects: true });
+
+  const variants = {
+    side: {
+      background: 'yellow.light',
+      borderColor: hexColor.yellowDefault,
+      color: 'black',
+    },
+    bottom: {
+      background: '#FFE9B8',
+      borderColor: hexColor.yellowDefault,
+      color: 'black',
+      maxWidth: 'none',
+      width: '100%',
+      iconStyles: {
+        border: '1px solid',
+        borderColor: hexColor.yellowDefault,
+      },
+      buttonStyles: {
+        display: 'inline-block',
+        variant: 'buttonDefault',
+        background: 'black',
+        color: 'white !important',
+        _hover: { bg: 'black' },
+      },
+      descriptionStyles: {
+        size: '18px',
+        lineHeight: '21px',
+      },
+    },
+  };
 
   // Function to count coincidences between a call to action and the target asset
   const countCoincidences = (cta) => {
@@ -16,7 +46,7 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslat
     if (cta.asset_id.includes(assetId)) {
       coincidences += 1;
     }
-    if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech))) {
+    if (cta.asset_technologies.some((tech) => assetTechnologies.includes(tech.toLowerCase()))) {
       coincidences += 1;
     }
     if (cta.asset_type.includes(assetType)) {
@@ -40,64 +70,29 @@ function DynamicCallToAction({ assetType, assetId, assetTechnologies, stTranslat
     });
   const selectedCta = filterCTA()[0];
 
-  const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: selectedCta.content.internal_cta_placement }, selectedCta.content.forward_url.includes('?'))}`;
+  const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: placement }, selectedCta.content.forward_url.includes('?'))}`;
 
-  if (selectedCta?.component === 'WeeklyCodingChallenge') {
-    return (
-      <CallToActionCard
-        background="yellow.light"
-        borderColor={hexColor.yellowDefault}
-        color="black"
-        iconUrl={selectedCta.content.icon_url}
-        title={selectedCta.content.title}
-        description={selectedCta.content.description}
-        buttonLabel={selectedCta.content.button_label}
-        forwardUrl={formatedForwardUrl}
-        // pillLabel="6 days left"
-      />
-    );
-  }
+  if (!selectedCta) return null;
 
-  if (selectedCta?.component === 'LargeWeeklyCodingChallenge') {
-    return (
-      <CallToActionCard
-        background="#FFE9B8"
-        borderColor={hexColor.yellowDefault}
-        color="black"
-        maxWidth="none"
-        width="100%"
-        iconUrl={selectedCta.content.icon_url}
-        title={selectedCta.content.title}
-        description={selectedCta.content.description}
-        buttonLabel={selectedCta.content.button_label}
-        forwardUrl={formatedForwardUrl}
-        iconStyles={{
-          border: '1px solid',
-          borderColor: hexColor.yellowDefault,
-        }}
-        buttonStyles={{
-          display: 'inline-block',
-          variant: 'buttonDefault',
-          background: 'black',
-          color: 'white',
-          _hover: { bg: 'black' },
-        }}
-        descriptionStyles={{
-          size: '18px',
-          lineHeight: '21px',
-        }}
-        // pillLabel="6 days left"
-      />
-    );
-  }
-
-  return null;
+  return (
+    <CallToActionCard
+      iconUrl={selectedCta.content.icon_url}
+      title={selectedCta.content.title}
+      description={selectedCta.content.description}
+      buttonLabel={selectedCta.content.button_label}
+      forwardUrl={formatedForwardUrl}
+      {...rest}
+      {...variants[placement]}
+      // pillLabel="6 days left"
+    />
+  );
 }
 
 DynamicCallToAction.propTypes = {
   assetType: PropTypes.string,
   assetId: PropTypes.number,
   assetTechnologies: PropTypes.arrayOf(PropTypes.string),
+  placement: PropTypes.string,
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
@@ -106,6 +101,7 @@ DynamicCallToAction.defaultProps = {
   assetId: null,
   assetTechnologies: [],
   stTranslation: null,
+  placement: 'side',
 };
 
 export default DynamicCallToAction;

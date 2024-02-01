@@ -37,6 +37,7 @@ import ShowOnSignUp from '../../../common/components/ShowOnSignup';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
+import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
@@ -468,6 +469,54 @@ function TabletWithForm({
                 </Link>
                 {t('clone-modal.text-part-two')}
               </Text>
+              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
+                    Gitpod
+                  </Button>
+                </GridItem>
+                <GridItem w="100%">
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    fontSize="14px"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="otuline"
+                    border="1px solid"
+                    borderColor="blue.default"
+                    fontWeight="700"
+                    color="blue.default"
+                    onClick={() => {
+                      if (typeof window !== 'undefined') {
+                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
+                      }
+                    }}
+                  >
+                    {'  '}
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
+                    Github Codespaces
+                  </Button>
+                </GridItem>
+              </Grid>
               <Text
                 // cursor="pointer"
                 id="command-container"
@@ -476,6 +525,7 @@ function TabletWithForm({
                 fontWeight="400"
                 marginBottom="5px"
                 style={{ borderRadius: '5px' }}
+                textAlign="center"
                 fontSize="14px"
                 lineHeight="24px"
               >
@@ -511,17 +561,28 @@ function TabletWithForm({
                 <Link
                   href={t('clone-link')}
                   target="_blank"
-                  fontSize="15px"
-                  fontWeight="700"
-                  color={useColorModeValue('blue.default', 'blue.300')}
+                  rel="noopener noreferrer"
                   display="inline-block"
                   letterSpacing="0.05em"
                   fontFamily="Lato, Sans-serif"
-                  marginLeft="10px"
+                  color="blue.default"
                 >
-                  {t('how-to-clone')}
+                  Gitpod
+                </Link>
+                {t('modal.or')}
+                <Link
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
+                  color="blue.default"
+                  display="inline-block"
+                  letterSpacing="0.05em"
+                  fontFamily="Lato, Sans-serif"
+                >
+                  Github Codespaces
                 </Link>
               </Text>
+
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -656,24 +717,37 @@ function Exercise({ exercise, markdown }) {
             display={{ base: 'flex', md: 'none' }}
             flexDirection="column"
             margin="30px 0"
-            backgroundColor={useColorModeValue('white', 'featuredDark')}
-            transition="background 0.2s ease-in-out"
             width="100%"
             height="auto"
             borderWidth="0px"
-            borderRadius="17px"
             overflow="hidden"
-            border={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
           >
             {exercise?.slug ? (
-              <TabletWithForm
-                toast={toast}
-                exercise={exercise}
-                commonTextColor={commonTextColor}
-                commonBorderColor={commonBorderColor}
-              />
+              <>
+                <Box
+                  backgroundColor={useColorModeValue('white', 'featuredDark')}
+                  transition="background 0.2s ease-in-out"
+                  borderRadius="17px"
+                  border={1}
+                  borderStyle="solid"
+                  borderColor={commonBorderColor}
+                >
+                  <TabletWithForm
+                    toast={toast}
+                    exercise={exercise}
+                    commonTextColor={commonTextColor}
+                    commonBorderColor={commonBorderColor}
+                  />
+                </Box>
+                <DynamicCallToAction
+                  assetId={exercise.id}
+                  assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                  assetType="exercise"
+                  placement="side"
+                  maxWidth="none"
+                  marginTop="40px"
+                />
+              </>
             ) : (
               <Skeleton height="646px" width="300px" borderRadius="17px" />
             )}
@@ -690,7 +764,7 @@ function Exercise({ exercise, markdown }) {
             className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
             {markdown ? (
-              <MarkDownParser content={markdownData.content} />
+              <MarkDownParser assetData={exercise} content={markdownData.content} />
               // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
             ) : (
               <MDSkeleton />
@@ -707,25 +781,37 @@ function Exercise({ exercise, markdown }) {
           gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
           margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
           flexDirection="column"
-          backgroundColor={useColorModeValue('white', 'featuredDark')}
-          transition="background 0.2s ease-in-out"
           width={{ base: '300px', lg: '350px', xl: '350px' }}
           minWidth="250px"
           height="fit-content"
           borderWidth="0px"
-          borderRadius="17px"
           overflow="hidden"
-          border={1}
-          borderStyle="solid"
-          borderColor={commonBorderColor}
         >
           {exercise?.slug ? (
-            <TabletWithForm
-              toast={toast}
-              exercise={exercise}
-              commonTextColor={commonTextColor}
-              commonBorderColor={commonBorderColor}
-            />
+            <>
+              <Box
+                borderRadius="17px"
+                backgroundColor={useColorModeValue('white', 'featuredDark')}
+                transition="background 0.2s ease-in-out"
+                border={1}
+                borderStyle="solid"
+                borderColor={commonBorderColor}
+              >
+                <TabletWithForm
+                  toast={toast}
+                  exercise={exercise}
+                  commonTextColor={commonTextColor}
+                  commonBorderColor={commonBorderColor}
+                />
+              </Box>
+              <DynamicCallToAction
+                assetId={exercise.id}
+                assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                assetType="exercise"
+                placement="side"
+                marginTop="40px"
+              />
+            </>
           ) : (
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
