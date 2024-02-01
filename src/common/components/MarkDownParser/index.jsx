@@ -228,7 +228,7 @@ function MarkDownParser({
     const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
 
     const removedEmptyCodeViewers = content.replace(emptyCodeRegex, () => '');
-    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
+    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
 
     return contentReplace;
   }, [content]);
