@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
-import bc from '../../services/breathecode';
 import Icon from '../Icon';
 import Text from '../Text';
-import { error, log } from '../../../utils/logging';
+import { log } from '../../../utils/logging';
 
 function FileList({ contextData, setContextData, stage, stages, setStage, setReviewStatus }) {
   const { t } = useTranslation('assignments');
@@ -22,33 +21,24 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
     approve: 'success',
     reject: 'danger',
   };
-  log('fileList:::', fileList);
-  const proceedToCodeReview = (commitData, fileData) => {
-    const content = fileData?.content || commitData?.content;
+  log('fileList:', fileList);
+  const proceedToCodeReview = (commitData) => {
+    const content = commitData?.content;
 
-    const decodedContent = atob(content);
     setContextData((prevState) => ({
       ...prevState,
       commitFile: {
         path: commitData?.name,
         ...commitData,
-        ...fileData,
         task: data?.task || {},
-        code: decodedContent,
+        code: content,
       },
     }));
     setStage(stages.code_review);
   };
-  const openCommitFile = (commitData) => bc.assignments().file(data?.task?.id, commitData?.id)
-    .then((resp) => bc.get(resp.data.file_url)
-      .then(async (fileResp) => {
-        log('open_commit_file:::', resp.data);
-        const fileData = fileResp !== undefined ? await fileResp.json() : undefined;
-        proceedToCodeReview(resp?.data, fileData);
-      }))
-    .catch((err) => {
-      error('"openCommitFile" fetch error:', err);
-    });
+  const openCommitFile = (commitData) => {
+    proceedToCodeReview(commitData);
+  };
 
   return (
     <Flex display={stage !== stages.file_list && 'none'} flexDirection="column" gridGap="24px" width="100%">

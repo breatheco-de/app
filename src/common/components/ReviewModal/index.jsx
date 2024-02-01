@@ -42,6 +42,8 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
     commitfiles: [],
     commitFile: {},
     code_revisions: [],
+    my_revisions: [],
+    revision_content: {},
   });
   const [stage, setStage] = useState(defaultStage);
   const { lightColor, featuredColor, hexColor } = useStyle();
@@ -188,6 +190,13 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
     review_code_revision: '56rem',
   };
 
+  const handleCommitFilesStage = () => {
+    if (isStudent) {
+      setStage(stages.review_code_revision);
+    } else {
+      setStage(stages.file_list);
+    }
+  };
   const proceedToCommitFiles = async () => {
     setLoaders((prevState) => ({
       ...prevState,
@@ -205,7 +214,7 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
         position: 'top',
         isClosable: true,
       });
-      setStage(stages.file_list);
+      handleCommitFilesStage();
     }
     if (response.ok) {
       setContextData((prevState) => ({
@@ -215,7 +224,7 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
           fileList: data,
         },
       }));
-      setStage(stages.file_list);
+      handleCommitFilesStage();
     }
     setLoaders((prevState) => ({
       ...prevState,
@@ -268,11 +277,14 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
           top={isStageWithDefaultStyles ? 2 : 4}
           left={5}
           onClick={() => {
-            if (stage === stages.code_review) {
+            if (isStudent && stage === stages.code_review) {
+              setStage(stages.review_code_revision);
+            }
+            if (!isStudent && stage === stages.code_review) {
               setStage(stages.file_list);
               handleResetFlow();
             }
-            if (stage === stages.file_list) {
+            if (stage === stages.file_list || stage === stages.review_code_revision) {
               setStage(stages.initial);
             }
             if (stage === stages.approve_or_reject_code_revision && !hasNoFilesToReview) {
@@ -328,15 +340,20 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
                       : `Your teacher has ${revisionStatus} your project.`}
                   </Text>
                 )}
-                <Text size="14px" color={lightColor}>
-                  <span>
-                    Project Instructions:
-                  </span>
-                  {' '}
-                  <Link variant="default" href={projectLink}>
-                    {currentTask?.title}
-                  </Link>
-                </Text>
+                {!isStudent && (
+                  <Text size="14px" color={lightColor}>
+                    <span>
+                      Project Instructions:
+                    </span>
+                    {' '}
+                    <Link variant="default" href={projectLink}>
+                      {currentTask?.title}
+                    </Link>
+                  </Text>
+                )}
+                <Box>
+                  Teacher feedback here if its approved
+                </Box>
                 <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                   <Flex alignItems="center" gridGap="10px">
                     <Icon icon="code" width="18.5px" height="17px" color="#fff" />
@@ -395,10 +412,10 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
       )}
 
       {stage === stages.file_list && !loaders.isFetchingCommitFiles && (
-        <FileList contextData={contextData} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} setReviewStatus={setReviewStatus} />
+        <FileList isStudent={isStudent} contextData={contextData} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} setReviewStatus={setReviewStatus} />
       )}
-      {stage === stages.code_review && contextData.commitFile?.code && (
-        <CodeReview setStage={setStage} handleResetFlow={handleResetFlow} contextData={contextData} setContextData={setContextData} selectedText={selectedText} handleSelectedText={handleSelectedText} />
+      {stage === stages.code_review && (contextData.commitFile?.code || contextData.revision_content?.code) && (
+        <CodeReview isStudent={isStudent} setStage={setStage} handleResetFlow={handleResetFlow} contextData={contextData} setContextData={setContextData} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
 
       {/* Student view */}
