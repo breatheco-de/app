@@ -171,14 +171,20 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   if (languagesData === null || languagesData === undefined || languagesData.length === 0) return null;
 
   return (
-    <Box width="100%" {...rest}>
-      <Tabs onChange={(index) => setTabIndex(index)} variant="unstyled">
+    <Box overflowX="hidden" width="100%" {...rest}>
+      <Tabs position="relative" onChange={(index) => setTabIndex(index)} variant="unstyled">
         <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
           <TabList width="fit-content">
             {languages.map(({ label }, i) => (
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
+          <TabIndicator
+            mt="30px"
+            height="2px"
+            bg="blue.500"
+            borderRadius="1px"
+          />
           {!notExecutables.includes(languages[tabIndex]?.language) && languages[tabIndex]?.code.trim() !== '' && (
             <>
               {languages[tabIndex]?.running ? (
@@ -192,12 +198,6 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
             </>
           )}
         </Box>
-        <TabIndicator
-          mt="-1.5px"
-          height="2px"
-          bg="blue.500"
-          borderRadius="1px"
-        />
         <TabPanels>
           {languages.map(({ code, language, output, running }, i) => (
             <TabPanel padding="0">

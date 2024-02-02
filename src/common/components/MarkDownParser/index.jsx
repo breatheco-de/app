@@ -227,8 +227,8 @@ function MarkDownParser({
     //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
     const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
 
-    const removedEmptyCodeViewers = content.replace(emptyCodeRegex, () => '');
-    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<codeviewer>\n${match}\n</codeviewer>\n\n`);
+    const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
+    const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
 
     return contentReplace;
   }, [content]);
