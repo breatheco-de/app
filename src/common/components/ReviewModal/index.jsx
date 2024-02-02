@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
@@ -14,6 +15,10 @@ import bc from '../../services/breathecode';
 import LoaderScreen from '../LoaderScreen';
 import ReviewCodeRevision from './ReviewCodeRevision';
 import { usePersistent } from '../../hooks/usePersistent';
+import PopoverTaskHandler from '../PopoverTaskHandler';
+import { updateAssignment } from '../../hooks/useModuleHandler';
+import useModuleMap from '../../store/actions/moduleMapAction';
+import iconDict from '../../utils/iconDict.json';
 
 export const stages = {
   initial: 'initial',
@@ -25,8 +30,8 @@ export const stages = {
 
 const inputLimit = 500;
 
-function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
-  projectLink, ...rest }) {
+function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
+  projectLink, changeStatusAssignment, ...rest }) {
   const { t } = useTranslation('assignments');
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');
@@ -37,6 +42,11 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
   });
   const [profile] = usePersistent('profile', {});
   const [comment, setComment] = useState('');
+  const [cohortSession] = usePersistent('cohortSession', {});
+  const [currentAssetData, setCurrentAssetData] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [fileData, setFileData] = useState(defaultFileData);
+  const { contextState, setContextState } = useModuleMap();
   const [reviewStatus, setReviewStatus] = useState('');
   const [contextData, setContextData] = useState({
     commitfiles: [],
@@ -66,6 +76,14 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
   const buttonText = {
     approve: t('review-assignment.approve'),
     reject: t('review-assignment.reject'),
+  };
+  const assignmentButtonText = {
+    resubmit: 'Resubmit Assignment',
+    remove: 'Remove delivery',
+  };
+  const assignmentButtonColor = {
+    resubmit: 'blue.default',
+    remove: 'danger',
   };
   const revisionStatusUpperCase = {
     approve: 'APPROVED',
@@ -242,6 +260,57 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
     return 'Rigobot code review';
   };
 
+  // const handleOpen = async (onOpen = () => {}) => {
+  //   if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+  //     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+  //     if (assetResp?.status < 400) {
+  //       const assetData = await assetResp.data;
+  //       setCurrentAssetData(assetData);
+
+  //       if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
+  //         const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+  //         const respData = await fileResp.data;
+  //         setFileData(respData);
+  //         onOpen();
+  //       } else {
+  //         onOpen();
+  //       }
+  //     } else {
+  //       onOpen();
+  //     }
+  //   }
+  // };
+  const toggleSettings = async () => {
+    setLoaders((prevState) => ({
+      ...prevState,
+      isOpeningResubmitForm: true,
+    }));
+    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
+    if (assetResp.status < 400) {
+      setLoaders((prevState) => ({
+        ...prevState,
+        isOpeningResubmitForm: false,
+      }));
+      const assetData = await assetResp.data;
+      setCurrentAssetData(assetData);
+
+      if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
+        const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+        const respData = await fileResp.data;
+        setFileData(respData);
+      }
+      setSettingsOpen(!settingsOpen);
+    }
+  };
+  const closeSettings = () => {
+    setSettingsOpen(false);
+  };
+  const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus }) => {
+    await updateAssignment({
+      t, task, closeSettings, toast, githubUrl, taskStatus: newTaskStatus, contextState, setContextState,
+    });
+  };
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -354,6 +423,36 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
                 <Box>
                   Teacher feedback here if its approved
                 </Box>
+
+                {Array.isArray(fileData) && fileData.length > 0 && (
+                  <Box mt="10px">
+                    <Text size="l" mb="8px">
+                      {t('modalInfo.files-sended-to-teacher')}
+                    </Text>
+                    <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
+                      {fileData.map((file) => {
+                        const extension = file.name.split('.').pop();
+                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                        const isImage = imageExtensions.includes(extension);
+                        const icon = iconDict.includes(extension) ? extension : 'file';
+                        return (
+                          <Box key={`${file.id}-${file.name}`} display="flex">
+                            <Icon icon={isImage ? 'image' : icon} width="22px" height="22px" />
+                            <Link
+                              href={file.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              color="blue.500"
+                              margin="0 0 0 10px"
+                            >
+                              {file.name}
+                            </Link>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  </Box>
+                )}
                 <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                   <Flex alignItems="center" gridGap="10px">
                     <Icon icon="code" width="18.5px" height="17px" color="#fff" />
@@ -386,6 +485,61 @@ function ReviewModal({ isOpen, isStudent, externalData, defaultStage, onClose, u
                         {buttonText[type]}
                       </Button>
                     ))}
+                  </Flex>
+                )}
+
+                {isStudent && revisionStatus === 'REJECTED' && (
+                  <Flex justifyContent="space-between" pt="8px">
+                    <Button
+                      minWidth="128px"
+                      background={assignmentButtonColor.remove}
+                      _hover={{ background: assignmentButtonColor.remove }}
+                      onClick={(event) => {
+                        changeStatusAssignment(event, currentTask, 'PENDING');
+                      }}
+                      color="white"
+                      borderRadius="3px"
+                      fontSize="13px"
+                      textTransform="uppercase"
+                    >
+                      {assignmentButtonText.remove}
+                    </Button>
+                    <PopoverTaskHandler
+                      isLoading={loaders.isOpeningResubmitForm}
+                      currentAssetData={currentAssetData}
+                      currentTask={currentTask}
+                      sendProject={sendProject}
+                      settingsOpen={settingsOpen}
+                      closeSettings={closeSettings}
+                      toggleSettings={toggleSettings}
+                      allowText
+                      buttonChildren="Resubmit Assignment"
+                      // currentAssetData,
+                      // currentTask,
+                      // sendProject,
+                      // onClickHandler,
+                      // settingsOpen,
+                      // allowText,
+                      // closeSettings,
+                      // toggleSettings,
+                      // buttonChildren,
+                    />
+
+                    {/* <Button
+                      minWidth="128px"
+                      background={assignmentButtonColor.resubmit}
+                      _hover={{ background: assignmentButtonColor.resubmit }}
+                      onClick={(event) => {
+
+                        // changeStatusAssignment(event, currentTask, 'PENDING');
+                      }}
+                      color="white"
+                      borderRadius="3px"
+                      fontSize="13px"
+                      textTransform="uppercase"
+                    >
+                      {assignmentButtonText.resubmit}
+                    </Button> */}
                   </Flex>
                 )}
               </Flex>
@@ -435,6 +589,7 @@ ReviewModal.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
   externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isStudent: PropTypes.bool,
+  changeStatusAssignment: PropTypes.func,
 };
 ReviewModal.defaultProps = {
   isOpen: false,
@@ -444,6 +599,7 @@ ReviewModal.defaultProps = {
   defaultStage: stages.initial,
   externalData: null,
   isStudent: false,
+  changeStatusAssignment: () => {},
 };
 
 export default ReviewModal;
