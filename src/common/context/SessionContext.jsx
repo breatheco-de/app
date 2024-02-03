@@ -16,6 +16,7 @@ const initialState = {
   internal_cta_placement: '',
   internal_cta_content: '',
   internal_cta_campaign: '',
+  internal_ad_placement: '',
 };
 
 export const SessionContext = createContext({
@@ -57,6 +58,7 @@ function SessionProvider({ children }) {
       const internal_cta_placement = getQueryString('internal_cta_placement') || storedSession?.internal_cta_placement;
       const internal_cta_content = getQueryString('internal_cta_content') || storedSession?.internal_cta_content;
       const internal_cta_campaign = getQueryString('internal_cta_campaign') || storedSession?.internal_cta_campaign;
+      const internal_ad_placement = getQueryString('internal_ad_placement') || storedSession?.internal_ad_placement;
 
       // remove translations for the endpoint
       const cleanedStore = {
@@ -77,6 +79,7 @@ function SessionProvider({ children }) {
         internal_cta_placement,
         internal_cta_content,
         internal_cta_campaign,
+        internal_ad_placement,
       };
       setUserSession(session);
       localStorage.setItem('userSession', JSON.stringify(session));

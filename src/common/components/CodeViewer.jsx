@@ -284,7 +284,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/checkout');
+          router.push('/checkout?enableRedirect=true&internal_ad_placement=codeviewer');
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />
