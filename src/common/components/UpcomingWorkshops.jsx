@@ -39,7 +39,7 @@ function UpcomingWorkshops({ technologies }) {
             return {
               title: event.title,
               upperTags: technologies,
-              url: `/workshop/${event.slug}`,
+              url: `/workshops/${event.slug}`,
               lang: langsDict[event.lang || 'en'],
               lowerTags: [t('common:workshop')],
               rightCornerElement: isLive(startDate, endDate) ? (
