@@ -59,7 +59,7 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
           <Flex flexDirection="column" gridGap="12px">
             {fileList.map((file) => {
               const revisionsRelated = contextData.code_revisions.filter((revision) => revision?.file?.id === file?.id);
-              const reviewed = revisionsRelated?.length > 0;
+              // const reviewed = revisionsRelated?.length > 0;
               return (
                 <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                   <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} flex={0.1} />
@@ -86,7 +86,8 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                     </Flex>
                   </Flex>
                   <Button
-                    variant={reviewed ? 'link' : 'default'}
+                    // variant={reviewed ? 'link' : 'default'}
+                    variant="default"
                     flex={0.2}
                     height="40px"
                     onClick={() => openCommitFile(file)}
@@ -94,7 +95,8 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                     alignItems="center"
                     gridGap="10px"
                   >
-                    {reviewed ? 'Reviewed' : 'Start review'}
+                    Start review
+                    {/* {reviewed ? 'Reviewed' : 'Start review'} */}
                   </Button>
                 </Flex>
               );
@@ -102,7 +104,7 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
           </Flex>
         </>
       ) : (
-        <Flex alignItems="center" width="500px" flexDirection="column" margin="1rem auto 1rem auto" gridGap="0.7rem">
+        <Flex alignItems="center" justifyContent="center" height="100%" width="500px" flexDirection="column" margin="1rem auto 1rem auto" gridGap="0.7rem">
           <Heading size="xsm">
             No files to review
           </Heading>

@@ -321,9 +321,10 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
       title={getTitle()}
       closeOnOverlayClick={false}
       maxWidth={hasNoFilesToReview ? widthSizes.initial : widthSizes[stage]}
-      isCentered={isStageWithDefaultStyles}
-      // maxWidth="74rem"
+      isCentered
       minHeight={isStageWithDefaultStyles ? 'auto' : '30rem'}
+      overflow="auto"
+      margin="0 10px"
       bodyStyles={{
         display: 'flex',
         gridGap: '20px',
@@ -412,10 +413,10 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                 {!isStudent && (
                   <Text size="14px" color={lightColor}>
                     <span>
-                      Project Instructions:
+                      Project delivered:
                     </span>
                     {' '}
-                    <Link variant="default" href={projectLink}>
+                    <Link variant="default" href={currentTask?.github_url}>
                       {currentTask?.title}
                     </Link>
                   </Text>

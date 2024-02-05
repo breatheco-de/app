@@ -68,7 +68,8 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
   const prepareCommitData = () => {
     try {
       const extensionLanguage = commitData?.path?.split('.').pop().replace(/\?.*$/, '');
-      const codeRaw = extensionLanguage ? `\`\`\`${extensionLanguage}\n${commitData.code}\n\`\`\`` : commitData.code;
+      const codeRaw = commitData.code;
+      // const codeRaw = extensionLanguage ? `\`\`\`${extensionLanguage}\n${commitData.code}\n\`\`\`` : commitData.code;
       setRepoData({
         raw: codeRaw,
         extensionLanguage,
@@ -201,13 +202,13 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
 
   return (
     <>
-      <Box flex={0.6} overflow="auto" onMouseUp={isStudent ? () => {} : handleSelectedText}>
+      <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={isStudent ? () => {} : handleSelectedText}>
         {!repoData?.raw
           ? 'Loading...' : (
             <MarkdownEditor
               className="hide-preview"
               value={repoData.raw}
-              style={{ height: '93vh', minWidth: '100%' }}
+              style={{ height: 'auto', minWidth: '100%' }}
               visible={false}
               enableScroll
               renderPreview={() => null}
@@ -220,7 +221,7 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
         <Divider orientation="vertical" />
       </Box>
 
-      <Box maxWidth={isStudent ? '455px' : '26.22rem'} flex={isStudent ? 0.5 : 0.4}>
+      <Box maxWidth={isStudent ? '455px' : '26.22rem'} maxHeight="76vh" overflow="auto" flex={isStudent ? 0.5 : 0.4}>
         {view === views.success ? (
           <Flex flexDirection="column" height="100%" alignItems="center" justifyContent="center" gridGap="24px">
             <Text size="26px" fontWeight={700} textAlign="center" lineHeight="34px">
