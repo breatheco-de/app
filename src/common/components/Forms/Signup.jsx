@@ -50,7 +50,7 @@ function SignupForm({
   const toast = useToast();
   const router = useRouter();
 
-  const { syllabus } = router.query;
+  const { syllabus, enableRedirect } = router.query;
 
   // const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
@@ -131,16 +131,28 @@ function SignupForm({
             },
             state: true,
           });
-          router.push({
-            query: {
-              ...router.query,
-              token: data.access_token,
-            },
-          });
-          onHandleSubmit({
-            ...allValues,
-            ...data,
-          });
+          if (enableRedirect === 'true' && redirectStorageAlreadyExists) {
+            const { enableRedirect: enabRed, ...restOfQuery } = router.query;
+            router.push({
+              pathname: redirectStorage,
+              query: {
+                ...restOfQuery,
+                token: data.access_token,
+              },
+            });
+            localStorage.removeItem('redirect');
+          } else {
+            router.push({
+              query: {
+                ...router.query,
+                token: data.access_token,
+              },
+            });
+            onHandleSubmit({
+              ...allValues,
+              ...data,
+            });
+          }
         }
       }
 
