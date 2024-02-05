@@ -33,11 +33,11 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
     'Accept-Language': lang,
   };
   const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
-  const technologiesTitle = technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ');
+  const technologiesTitle = technologies?.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') || '';
 
   const getCourses = async () => {
     try {
-      if (typeof technologies === 'string' && technologies.length > 0) {
+      if (typeof technologies === 'string' && technologies?.length > 0) {
         const qsConnector = parseQuerys({
           academy: WHITE_LABEL_ACADEMY,
           featured: true,
