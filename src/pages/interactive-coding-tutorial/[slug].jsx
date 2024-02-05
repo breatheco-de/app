@@ -17,7 +17,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { cleanObject, unSlugifyCapitalize } from '../../utils/index';
+import { cleanObject } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
@@ -313,7 +313,6 @@ function ProjectSlug({ project, markdown }) {
               )}
               <MktRecommendedCourses
                 marginTop="15px"
-                title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}
                 technologies={project?.technologies}
               />
             </Box>

@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import Icon from '../../common/components/Icon';
-import { cleanObject, getExtensionName, unSlugifyCapitalize } from '../../utils';
+import { cleanObject, getExtensionName } from '../../utils';
 import Link from '../../common/components/NextChakraLink';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import TagCapsule from '../../common/components/TagCapsule';
@@ -305,8 +305,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
               {lesson?.technologies.length > 0 && (
                 <MktRecommendedCourses
-                  display={{ base: 'none', md: 'grid' }}
-                  title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
+                  display={{ base: 'none', md: 'flex' }}
                   technologies={lesson?.technologies}
                 />
               )}
