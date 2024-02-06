@@ -93,7 +93,9 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
   }, []);
 
   const handleKeyUp = () => {
-    handleSelectedText();
+    if (view === views.initial) {
+      handleSelectedText();
+    }
   };
 
   useEffect(() => {
@@ -204,12 +206,12 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
 
   return (
     <>
-      <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={isStudent ? () => {} : handleSelectedText}>
+      <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => {} : handleSelectedText}>
         {!repoData?.raw
           ? 'Loading...' : (
             <MarkdownEditor
+              readOnly
               className="hide-preview"
-              readOnly={isStudent}
               value={repoData.raw}
               style={{ height: 'auto', minWidth: '100%' }}
               visible={false}
@@ -257,7 +259,7 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
             )}
             <Heading size="sm" mb={isStudent ? '3rem' : '24px'} textAlign={isStudent && 'center'}>
               {isStudent
-                ? t('code-review.teacher-has-reviewed-your-code')
+                ? t('code-review.teacher-has-reviewed-your-code', { name: revisionContent?.reviewer?.name })
                 : t('code-review.code-review')}
             </Heading>
             <Box padding="9px 0" borderRadius="8px" overflow="auto">
@@ -361,13 +363,17 @@ ${revisionContent?.code}
                   )}
 
                   <Flex flexDirection="column" gridGap="24px" mt="2rem">
-                    {reviewRateStatus
-                      ? <Divider margin="18px 0 -8px 0" />
-                      : (
-                        <Box fontSize="18px" textAlign="center">
-                          {t('code-review.did-feedback-useful')}
-                        </Box>
-                      )}
+                    {!revisionContent?.hasBeenReviewed && (
+                      <>
+                        {reviewRateStatus
+                          ? <Divider margin="18px 0 -8px 0" />
+                          : (
+                            <Box fontSize="18px" textAlign="center">
+                              {t('code-review.did-feedback-useful')}
+                            </Box>
+                          )}
+                      </>
+                    )}
                     <Box fontSize="14px" textAlign="center">
                       {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
                       {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}

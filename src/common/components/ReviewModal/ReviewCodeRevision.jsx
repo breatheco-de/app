@@ -153,15 +153,19 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
               {codeRevisions?.length > 0 && codeRevisions.map((commit) => {
                 const isSelected = revisionContent?.id === commit?.id;
                 const hasBeenReviewed = typeof commit?.is_good === 'boolean';
+                const dataStruct = {
+                  ...commit,
+                  revision_rating: commit?.revision_rating,
+                  hasBeenReviewed,
+                };
                 return (
-                  <Flex border="1px solid" borderColor={borderColor} background={isSelected ? featuredLight : ''} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
+                  <Flex cursor="pointer" onClick={() => selectCodeRevision(dataStruct)} _hover={{ background: featuredLight }} border="1px solid" borderColor={isSelected ? 'blue.default' : borderColor} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                     <Flex flex={0.3} gridGap="10px">
                       <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} />
                       <Flex flexDirection="column" justifyContent="center" gridGap="9px" maxWidth="102px">
                         <Flex flexDirection="column" gridGap="0px">
                           <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
                             {commit?.file?.name}
-                            {/* {commit?.file?.name.includes('/') ? commit?.file.name : `./${commit?.file.name}`} */}
                           </Text>
                           <Text fontSize="12px" fontWeight={400} title={commit?.file?.commit_hash}>
                             {`${commit?.file?.commit_hash.slice(0, 10)}...`}
@@ -187,13 +191,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                       variant="link"
                       flex={0.3}
                       height="40px"
-                      onClick={() => {
-                        selectCodeRevision({
-                          ...commit,
-                          revision_rating: commit?.revision_rating,
-                          hasBeenReviewed,
-                        });
-                      }}
+                      onClick={() => selectCodeRevision(dataStruct)}
                       display="flex"
                       width="fit-content"
                       justifyContent="flex-end"
@@ -210,12 +208,6 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
           </Box>
           {revisionContent?.id && (
             <Flex flexDirection="column" overflow="auto" gridGap="12px" flex={0.35} width="100%" padding="8px" mt={!hasRevision && '3.4rem'}>
-              {hasRevision && (
-                <Button variant="link" onClick={goBack} mb="1.1rem" height="auto" fontSize="12px" gridGap="10px" justifyContent="flex-start">
-                  <Icon icon="arrowLeft2" width="20px" height="8px" color={hexColor.blueDefault} />
-                  {t('common:goBack')}
-                </Button>
-              )}
               <Box fontSize="14px" fontWeight={700} letterSpacing="0.08em">
                 {revisionContent?.file?.name}
               </Box>

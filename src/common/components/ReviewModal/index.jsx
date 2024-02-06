@@ -455,7 +455,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                 )}
                 <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                   <Flex alignItems="center" gridGap="10px">
-                    <Icon icon="code" width="18.5px" height="17px" color="#fff" />
+                    <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
                     <Text size="14px" fontWeight={700}>
                       {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
                     </Text>

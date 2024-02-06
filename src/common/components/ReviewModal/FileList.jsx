@@ -11,6 +11,7 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
   const { t } = useTranslation('assignments');
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
   const data = contextData?.commitFiles || {};
+  const codeRevisions = contextData?.code_revisions || [];
   const fileList = data?.fileList || [];
 
   const buttonText = {
@@ -59,22 +60,30 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
           </Flex>
           <Flex flexDirection="column" gridGap="12px">
             {fileList.map((file) => {
-              const revisionsRelated = contextData.code_revisions.filter((revision) => revision?.file?.id === file?.id);
+              const revisionsRelated = codeRevisions.filter((revision) => revision?.file?.id === file?.id).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+              const lastUpdatedRevision = revisionsRelated[0];
+              const rateIcon = lastUpdatedRevision.is_good ? 'feedback-like' : 'feedback-dislike';
+
               return (
                 <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                   <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} flex={0.1} />
                   <Flex flexDirection="column" gridGap="9px" flex={0.4} maxWidth="102px">
-                    <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
-                      {file?.name}
-                    </Text>
+                    <Flex flexDirection="column" gridGap="0px">
+                      <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
+                        {file?.name}
+                      </Text>
+                      <Text fontSize="12px" fontWeight={400} title={file?.commit_hash}>
+                        {`${file?.commit_hash.slice(0, 10)}...`}
+                      </Text>
+                    </Flex>
                     {file?.committer?.github_username && (
                       <Box fontSize="12px">
                         {file?.committer?.github_username}
                       </Box>
                     )}
                   </Flex>
-                  <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={0.4}>
-                    <Icon icon="unchecked" width="24px" height="24px" />
+                  <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={1}>
+                    <Icon icon={lastUpdatedRevision.is_good !== null ? rateIcon : 'unchecked'} width="24px" height="24px" />
                   </Flex>
 
                   <Flex flex={0.3} justifyContent="center" alignItems="center">
