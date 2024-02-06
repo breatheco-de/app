@@ -612,6 +612,7 @@ function Exercise({ exercise, markdown }) {
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
+  const { hexColor } = useStyle();
 
   const toast = useToast();
 
@@ -795,9 +796,9 @@ function Exercise({ exercise, markdown }) {
                 borderRadius="17px"
                 backgroundColor={useColorModeValue('white', 'featuredDark')}
                 transition="background 0.2s ease-in-out"
-                border={1}
+                border={2}
                 borderStyle="solid"
-                borderColor={commonBorderColor}
+                borderColor={hexColor.greenLight}
               >
                 <TabletWithForm
                   toast={toast}
