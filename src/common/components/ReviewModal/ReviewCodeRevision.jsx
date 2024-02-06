@@ -127,7 +127,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
   };
 
   return (
-    <Flex flexDirection="row" gridGap="6px" width="100%" maxHeight={reviewRateStatus ? 'auto' : '30rem'}>
+    <Flex flexDirection="row" justifyContent="center" gridGap="6px" width="100%" maxHeight={reviewRateStatus ? 'auto' : '30rem'}>
       {codeRevisions?.length > 0 ? (
         <>
           <Box width="100%" flex={0.65}>
@@ -322,7 +322,7 @@ ${revisionContent?.code}
           )}
         </>
       ) : (
-        <Flex alignItems="center" flexDirection="column" mt="2rem" gridGap="0.7rem">
+        <Flex alignItems="center" flexDirection="column" my="4rem" gridGap="0.7rem">
           <Heading size="xsm">
             No files to review
           </Heading>

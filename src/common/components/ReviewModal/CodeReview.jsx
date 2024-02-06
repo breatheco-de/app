@@ -207,6 +207,7 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
           ? 'Loading...' : (
             <MarkdownEditor
               className="hide-preview"
+              readOnly={isStudent}
               value={repoData.raw}
               style={{ height: 'auto', minWidth: '100%' }}
               visible={false}

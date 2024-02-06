@@ -226,17 +226,6 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     const response = await bc.assignments().files(currentTask.id);
     const data = await response.json();
 
-    if (response.status >= 400) {
-      toast({
-        title: 'Error',
-        description: data.detail,
-        status: 'error',
-        duration: 9000,
-        position: 'top',
-        isClosable: true,
-      });
-      handleCommitFilesStage();
-    }
     if (response.ok) {
       setContextData((prevState) => ({
         ...prevState,
@@ -245,8 +234,8 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
           fileList: data,
         },
       }));
-      handleCommitFilesStage();
     }
+    handleCommitFilesStage();
     setLoaders((prevState) => ({
       ...prevState,
       isFetchingCommitFiles: false,
@@ -366,9 +355,11 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
             <>
               {!isReadyToApprove && (
                 <AlertMessage
-                  type="warning"
+                  type={isStudent ? 'info' : 'warning'}
                   full
-                  message="This project needs to have at least 3 code reviews in order to be accepted or rejected."
+                  message={isStudent
+                    ? "The teacher's feedback will be shown here if it's approved"
+                    : 'This project needs to have at least 3 code reviews in order to be accepted or rejected.'}
                   borderRadius="4px"
                   padding="8px"
                   mb="24px"
