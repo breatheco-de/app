@@ -22,6 +22,8 @@ function TagCapsule({
   href,
   borderRadius,
   lineHeight,
+  textTransform,
+  whiteSpace,
   ...rest
 }) {
   const { colorMode } = useColorMode();
@@ -71,7 +73,8 @@ function TagCapsule({
               size={fontSize}
               fontWeight={fontWeight}
               color="black"
-              textTransform="uppercase"
+              textTransform={textTransform}
+              whiteSpace={whiteSpace}
             >
               {tagTitle || tag}
             </Text>
@@ -107,7 +110,8 @@ function TagCapsule({
               size={fontSize}
               fontWeight={fontWeight}
               color={color}
-              textTransform="uppercase"
+              textTransform={textTransform}
+              whiteSpace={whiteSpace}
             >
               {tagTitle || tag}
             </Text>
@@ -141,6 +145,8 @@ TagCapsule.propTypes = {
   borderRadius: PropTypes.string,
   color: PropTypes.string,
   lineHeight: PropTypes.string,
+  textTransform: PropTypes.string,
+  whiteSpace: PropTypes.string,
 };
 TagCapsule.defaultProps = {
   separator: '/',
@@ -160,6 +166,8 @@ TagCapsule.defaultProps = {
   borderRadius: '15px',
   color: 'black',
   lineHeight: '22px',
+  textTransform: 'uppercase',
+  whiteSpace: null,
 };
 
 export default memo(TagCapsule);
