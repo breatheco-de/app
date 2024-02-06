@@ -1,71 +1,62 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Box, Flex,
+  Box,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import Icon from './Icon';
 import Heading from './Heading';
+import Text from './Text';
 import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { error } from '../../utils/logging';
-import { setStorageItem } from '../../utils';
+import { setStorageItem, unSlugifyCapitalize } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 
 const coursesLimit = 2;
 
-function MktRecommendedCourses({ id, technologies, background, title, gridColumn, endpoint, ...rest }) {
-  const { lang } = useTranslation('common');
-  const ref = useRef(null);
-  const [isDown, setIsDown] = useState(false);
+function MktRecommendedCourses({ id, technologies, background, gridColumn, endpoint, ...rest }) {
+  const { t, lang } = useTranslation('common');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const [courses, setCourses] = useState([]);
-  const { hexColor, fontColor, featuredColor } = useStyle();
+  const { hexColor, fontColor, featuredLight } = useStyle();
 
-  const deafultQuerystring = parseQuerys({
-    featured: true,
-    academy: WHITE_LABEL_ACADEMY,
-  });
   const defaultHostAndEndpoint = `${BREATHECODE_HOST}/v1/marketing/course`;
 
   const headers = {
     'Accept-Language': lang,
   };
-  const technologiesArray = typeof technologies === 'string' ? technologies.split(',') : technologies;
+
+  const processTechnologies = () => {
+    if (typeof technologies === 'string') return technologies.split(',');
+    if (Array.isArray(technologies) && technologies[0]) {
+      if (typeof technologies[0] === 'string') return technologies;
+
+      return technologies.map((tech) => tech.slug);
+    }
+    return [];
+  };
+
+  const technologiesArray = processTechnologies(technologies);
+  const technologiesTitle = technologiesArray.map((tech) => unSlugifyCapitalize(tech)).slice(0, 4).join(', ') || '';
 
   const getCourses = async () => {
     try {
-      if (typeof technologies === 'string' && technologies.length > 0) {
-        const qsConnector = parseQuerys({
-          academy: WHITE_LABEL_ACADEMY,
-          featured: true,
+      const chosenEndpoint = endpoint || defaultHostAndEndpoint;
+      const qsConnector = parseQuerys({
+        featured: true,
+        academy: WHITE_LABEL_ACADEMY,
+      }, chosenEndpoint.includes('?'));
+      const res = await fetch(`${chosenEndpoint}${qsConnector}`, { headers });
+      const data = await res.json();
+      if (res?.status < 400 && data.length > 0) {
+        const sortedCourses = data.slice(0, coursesLimit).sort((a, b) => {
+          if (technologiesArray.some((tech) => b.technologies.includes(tech))) return 1;
+          return -1;
         });
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${qsConnector}`, { headers });
-        const data = await res.json();
-
-        if (res?.status < 400 && data.length > 0) {
-          const coursesSorted = [];
-          for (let i = 0; i < technologiesArray.length; i += 1) {
-            const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]));
-            const alreadyExists = coursesSorted.some((c) => c?.slug === course?.slug);
-
-            if (course && !alreadyExists) {
-              coursesSorted.push(course);
-            }
-          }
-          const list = coursesSorted?.length > 0 ? coursesSorted : data;
-          const filteredData = list.filter((course) => course.course_translation).slice(0, coursesLimit);
-          setCourses(filteredData);
-        }
-      } else {
-        const res = await fetch(`${endpoint || defaultHostAndEndpoint}${deafultQuerystring}`, { headers });
-        const data = await res.json();
-        setCourses(data.filter((course) => course.course_translation).slice(0, coursesLimit));
+        setCourses(sortedCourses);
       }
     } catch (e) {
       error(e);
@@ -76,121 +67,92 @@ function MktRecommendedCourses({ id, technologies, background, title, gridColumn
     getCourses();
   }, []);
 
-  useEffect(() => {
-    if (ref.current?.clientWidth !== ref.current?.scrollWidth) ref.current.scrollLeft = 45;
-  }, [courses]);
-
-  const onMouseDown = (e) => {
-    setIsDown(true);
-    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    setStartX(pageX - ref.current.offsetLeft);
-    setScrollLeft(ref.current.scrollLeft);
-  };
-
-  const onMouseLeave = () => {
-    setIsDown(false);
-  };
-
-  const onMouseUp = () => {
-    setIsDown(false);
-  };
-
-  const onMouseMove = (e) => {
-    if (!isDown) return;
-    e.preventDefault();
-    const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    const x = pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * 1; //scroll-normal
-    ref.current.scrollLeft = scrollLeft - walk;
-  };
-
   return courses.length > 0 && (
-    <Flex
+    <Box
       maxWidth="1280px"
       margin="0 auto"
-      justifyContent="center"
+      flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+      id={id}
+      borderRadius="11px"
+      padding="16px"
+      background={background || featuredLight}
+      display="flex"
+      border="1px solid"
+      borderColor={hexColor.borderColor}
+      gap="10px"
       {...rest}
     >
       <Box
-        gridColumn={gridColumn}
-        flexWrap="wrap"
-        id={id}
-        borderRadius="13px"
-        padding={{ base: '20px', lg: '30px' }}
-        background={background || featuredColor}
+        flexShrink="2"
+        // minWidth="170px"
+        maxWidth={{ base: 'none', lg: '270px' }}
         display="flex"
+        flexDirection="column"
+        justifyContent="center"
       >
-        {title && (
-          <Box
-            flexShrink="2"
-            minWidth="170px"
-            maxWidth={{ base: 'none', lg: '300px' }}
-          >
-            <Heading
-              as="h2"
-              size="30px"
-              fontWeight="700"
-              color={fontColor}
-              dangerouslySetInnerHTML={{ __html: title }}
-            />
-            <Icon icon="longArrowRight" style={{ margin: '10px 0' }} color={hexColor.blueDefault} width="100px" height="80px" />
-          </Box>
-        )}
-        <Box
-          as="aside"
-          ref={ref}
-          flexGrow="1"
-          flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
-          justifyContent={{ base: courses.length > 1 && 'space-between', md: courses.length > 1 ? 'space-between' : 'center', xl: 'space-between' }}
-          display="flex"
-          gridGap="10px"
-          overflowX="hidden"
-          cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
-          onMouseDown={onMouseDown}
-          onMouseUp={onMouseUp}
-          onMouseMove={onMouseMove}
-          onMouseLeave={onMouseLeave}
-          onTouchStart={onMouseDown}
-          onTouchMove={onMouseMove}
-          onTouchEnd={onMouseLeave}
+        <Heading
+          as="h2"
+          size="30px"
+          fontWeight="700"
+          color={fontColor}
         >
-          {courses.map((course) => (
-            <PublicCourseCard
-              key={course.slug}
-              margin={{ base: courses.length === 1 && 'auto', md: '0' }}
-              width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
-              maxWidth="300px"
-              icon_url={course.icon_url}
-              iconBackground="#25BF6C"
-              onClick={() => {
-                setStorageItem('redirected-from', course?.course_translation?.landing_url);
-                reportDatalayer({
-                  dataLayer: {
-                    event: 'ad_interaction',
-                    course_slug: course.slug,
-                    course_title: course.title,
-                    ad_position: 'bottom-center',
-                  },
-                });
-              }}
-              href={course?.course_translation?.landing_url}
-              programName={course.course_translation.title}
-              programSlug={course.slug}
-              programDescription={course.course_translation.description}
-              flexShrink="0"
-            />
-          ))}
-        </Box>
+          {t('continue-learning')}
+        </Heading>
+        {technologiesTitle && technologiesTitle.length > 0 && (
+          <Text size="18px" fontWeight="400" mt="0 !important">
+            {t('technologies-and-more', { technologies: technologiesTitle })}
+          </Text>
+        )}
       </Box>
-    </Flex>
+      <Box
+        as="aside"
+        flexGrow="1"
+        flexShrink={{ base: '1', xl: '0' }}
+        justifyContent={{
+          base: 'center',
+          // md: courses.length > 1 ? 'space-between' : 'center',
+          xl: 'flex-end',
+        }}
+        display="flex"
+        flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+        gap="10px"
+      >
+        {courses.map((course) => (
+          <PublicCourseCard
+            key={course.slug}
+            mx={{ base: courses.length === 1 && 'auto', md: '0' }}
+            // width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
+            width={{ base: '100%', md: 'auto' }}
+            maxWidth={{ base: 'none', md: '240px' }}
+            icon_url={course.icon_url}
+            iconBackground="#25BF6C"
+            onClick={() => {
+              setStorageItem('redirected-from', course?.course_translation?.landing_url);
+              reportDatalayer({
+                dataLayer: {
+                  event: 'ad_interaction',
+                  course_slug: course.slug,
+                  course_title: course.title,
+                  ad_position: 'bottom-center',
+                },
+              });
+            }}
+            href={course?.course_translation?.landing_url}
+            programName={course.course_translation.title}
+            programSlug={course.slug}
+            programDescription={course.course_translation.description}
+            // flexShrink="0"
+          />
+        ))}
+      </Box>
+    </Box>
   );
 }
 
 MktRecommendedCourses.propTypes = {
   id: PropTypes.string,
   background: PropTypes.string,
-  title: PropTypes.string,
-  technologies: PropTypes.string,
+  technologies: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   endpoint: PropTypes.string,
   gridColumn: PropTypes.string,
 };
@@ -198,7 +160,6 @@ MktRecommendedCourses.propTypes = {
 MktRecommendedCourses.defaultProps = {
   id: null,
   background: null,
-  title: null,
   technologies: null,
   gridColumn: '1 / span 10',
   endpoint: '',
