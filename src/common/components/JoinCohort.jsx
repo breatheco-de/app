@@ -19,8 +19,8 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort,
     <Flex gap="30px" margin={margin} mt={{ base: '4rem', md: '5rem', lg: '50px' }} alignItems="center" justifyContent="space-between" position="relative">
       <Box position="relative" flex={{ base: 1, lg: 0.5 }} background={hexColor.featuredColor} padding="47px 16px" borderRadius="10px">
         {logo && isAbsoluteUrl(logo) ? (
-          <Box position="relative" top="-30px">
-            <Image src={logo} width="44px" height="44px" alt="Course logo" style={{ minWidth: '33px', minHeight: '33px' }} />
+          <Box position="absolute" top="-30px">
+            <Image src={logo} width={70} height={70} alt="Course logo" style={{ minWidth: '33px', minHeight: '33px' }} />
           </Box>
         ) : (
           <Box position="absolute" borderRadius="full" top="-30px" background={hexColor.green} padding="16px">
