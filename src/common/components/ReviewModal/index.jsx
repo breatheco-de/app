@@ -2,7 +2,6 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
-// import useTranslation from 'next-translate/useTranslation';
 import useTranslation from 'next-translate/useTranslation';
 import SimpleModal from '../SimpleModal';
 import Text from '../Text';
@@ -91,8 +90,8 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     reject: 'REJECTED',
   };
   const reviewHint = {
-    approve: 'Why are you approving this assignment?',
-    reject: 'Why are you rejecting this assignment?',
+    approve: t('code-review.why-approve'),
+    reject: t('code-review.why-reject'),
   };
   const alertStatus = {
     approve: t('alert-message:review-assignment-approve'),
@@ -245,12 +244,12 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
 
   const getTitle = () => {
     if (stage === stages.initial) {
-      return 'Assignment review';
+      return t('code-review.assignment-review');
     }
     if (stage === stages.approve_or_reject_code_revision) {
-      return 'Write a feedback';
+      return t('code-review.write-feedback');
     }
-    return 'Rigobot code review';
+    return t('code-review.rigobot-code-review');
   };
 
   const toggleSettings = async () => {
@@ -359,8 +358,8 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   type={isStudent ? 'info' : 'warning'}
                   full
                   message={isStudent
-                    ? 'This project needs to have at least 3 code reviews in order to be accepted or rejected by your teacher.'
-                    : 'This project needs to have at least 3 code reviews in order to be accepted or rejected.'}
+                    ? t('code-review.info-student')
+                    : t('code-review.info-teacher')}
                   borderRadius="4px"
                   padding="8px"
                   mb="24px"
@@ -370,11 +369,11 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                 {!isStudent ? (
                   <Flex justifyContent="space-between">
                     <Text size="14px" color={lightColor}>
-                      {`Student: ${fullName}`}
+                      {t('code-review.student-name', { name: fullName })}
                     </Text>
                     {taskStatus === 'DONE' && hasNotBeenReviewed && (
                     <Box textTransform="uppercase" fontSize="13px" background="yellow.light" color="yellow.default" borderRadius="27px" padding="2px 6px" fontWeight={700} border="2px solid" borderColor="yellow.default">
-                      Waiting for review
+                      {t('code-review.waiting-for-review')}
                     </Box>
                     )}
                   </Flex>
@@ -382,13 +381,18 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   <Text size="14px" color={lightColor}>
                     {hasNotBeenReviewed
                       ? t('dashboard:modalInfo.still-reviewing')
-                      : `Your teacher has ${revisionStatus} your project.`}
+                      : (
+                        <>
+                          {revisionStatus === 'APROVED' && t('code-review.assignment-approved-msg')}
+                          {revisionStatus === 'REJECTED' && t('code-review.assignment-rejected-msg')}
+                        </>
+                      )}
                   </Text>
                 )}
                 {!isStudent && (
                   <Text size="14px" color={lightColor}>
                     <span>
-                      Project delivered:
+                      {t('code-review.project-delivered')}
                     </span>
                     {' '}
                     <Link variant="default" href={currentTask?.github_url}>
@@ -399,7 +403,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                 {hasBeenApproved ? (
                   <Flex flexDirection="column" gridGap="8px">
                     <Box fontSize="14">
-                      Your teacher said:
+                      {t('code-review.your-teacher-said')}
                     </Box>
                     <Text
                       className="quote-container"
@@ -416,7 +420,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   </Flex>
                 ) : (
                   <Box>
-                    {'The teacher\'s feedback will be shown here if it\'s approved'}
+                    {t('code-review.feedback-will-be-shown-here')}
                   </Box>
                 )}
 
@@ -453,11 +457,13 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   <Flex alignItems="center" gridGap="10px">
                     <Icon icon="code" width="18.5px" height="17px" color="#fff" />
                     <Text size="14px" fontWeight={700}>
-                      {`${contextData?.code_revisions?.length} code reviews`}
+                      {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
                     </Text>
                   </Flex>
                   <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                    {isStudent ? 'Read and rate the feedback' : 'Start code review'}
+                    {isStudent
+                      ? t('code-review.read-and-rate-the-feedback')
+                      : t('code-review.start-code-review')}
                     <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
                   </Button>
                 </Flex>
@@ -509,33 +515,8 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                       closeSettings={closeSettings}
                       toggleSettings={toggleSettings}
                       allowText
-                      buttonChildren="Resubmit Assignment"
-                      // currentAssetData,
-                      // currentTask,
-                      // sendProject,
-                      // onClickHandler,
-                      // settingsOpen,
-                      // allowText,
-                      // closeSettings,
-                      // toggleSettings,
-                      // buttonChildren,
+                      buttonChildren={t('code-review.resubmit-assignment')}
                     />
-
-                    {/* <Button
-                      minWidth="128px"
-                      background={assignmentButtonColor.resubmit}
-                      _hover={{ background: assignmentButtonColor.resubmit }}
-                      onClick={(event) => {
-
-                        // changeStatusAssignment(event, currentTask, 'PENDING');
-                      }}
-                      color="white"
-                      borderRadius="3px"
-                      fontSize="13px"
-                      textTransform="uppercase"
-                    >
-                      {assignmentButtonText.resubmit}
-                    </Button> */}
                   </Flex>
                 )}
               </Flex>
@@ -550,13 +531,13 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
             <Text fontSize="14px" fontWeight={700} mb="18px">
               {reviewHint[reviewStatus]}
             </Text>
-            <Textarea aria-label="feedback input" fontSize="12px" onChange={onChangeComment} minHeight="134" placeholder="Start you review here..." />
+            <Textarea aria-label="feedback input" fontSize="12px" onChange={onChangeComment} minHeight="134" placeholder={t('code-review.start-review-here')} />
             <Box position="absolute" bottom={1.5} right={3} color={comment.length < 10 ? '#EB5757' : 'currentColor'}>
               {`${comment.length}/ ${inputLimit}`}
             </Box>
           </Box>
           <Button isLoading={loaders.isApprovingOrRejecting} variant="default" alignSelf="flex-end" isDisabled={comment.length < 10 || revisionStatusUpperCase[reviewStatus] === undefined} onClick={approveOrRejectProject}>
-            Send feedback
+            {t('code-review.send-feedback')}
           </Button>
         </Flex>
       )}
@@ -568,7 +549,6 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
         <CodeReview isStudent={isStudent} setStage={setStage} handleResetFlow={handleResetFlow} contextData={contextData} setContextData={setContextData} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
 
-      {/* Student view */}
       {stage === stages.review_code_revision && (
         <ReviewCodeRevision contextData={contextData} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} />
       )}

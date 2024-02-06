@@ -2,6 +2,7 @@ import { Box, Button, Divider, Flex, Link, Textarea, useToast } from '@chakra-ui
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import Icon from '../Icon';
 import bc from '../../services/breathecode';
@@ -25,6 +26,7 @@ const views = {
 const inputReviewRateCommentLimit = 100;
 
 function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, setStage, selectedText, handleSelectedText }) {
+  const { t } = useTranslation('assignments');
   const [repoData, setRepoData] = useState({});
   const [view, setView] = useState(views.initial);
   const [isLoading, setIsLoading] = useState(false);
@@ -145,7 +147,7 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
         })
         .catch((error) => {
           toast({
-            title: 'Something went wrong creating the code review',
+            title: t('alert-message:error-creating-code-review'),
             description: error?.message,
             status: 'error',
             duration: 5000,
@@ -226,15 +228,15 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
         {view === views.success ? (
           <Flex flexDirection="column" height="100%" alignItems="center" justifyContent="center" gridGap="24px">
             <Text size="26px" fontWeight={700} textAlign="center" lineHeight="34px">
-              The code review was sent successfully.
+              {t('code-review.code-review-successfully-sent')}
             </Text>
             <Text size="18px">
-              {`You have submitted ${myRevisions.length} code reviews`}
+              {t('code-review.submited-assignments-count', { count: myRevisions?.length })}
             </Text>
             <Button variant="default" gridGap="10px" mt="10px" onClick={goBack} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
               <Icon icon="code-comment" size="23px" color="#fff" />
               <Text>
-                Start other code review
+                {t('code-review.start-other-code-review')}
               </Text>
             </Button>
           </Flex>
@@ -255,13 +257,13 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
             )}
             <Heading size="sm" mb={isStudent ? '3rem' : '24px'} textAlign={isStudent && 'center'}>
               {isStudent
-                ? `${revisionContent?.reviewer?.name} has reviewed your code and provided the following feedback:`
-                : 'Code Review'}
+                ? t('code-review.teacher-has-reviewed-your-code')
+                : t('code-review.code-review')}
             </Heading>
             <Box padding="9px 0" borderRadius="8px" overflow="auto">
               {!isStudent && (
                 <Text fontSize="14px" fontWeight={700} mb="8px">
-                  Reviewing
+                  {t('code-review.reviewing')}
                 </Text>
               )}
               {!isStudent && (
@@ -280,23 +282,22 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
                   <Flex gridGap="15px" alignItems="start">
                     {selectedText?.length > 0 ? (
                       <Text size="14px">
-                        You have made your selection, please confirm to start your code review by clicking on the following button. Otherwise select another piece of the code.
-                        You&apos;ve selected the code:
+                        {t('code-review.selection-code-text')}
                       </Text>
                     ) : (
                       <>
                         <Icon icon="code-comment" size="23px" color={hexColor.blueDefault} mt="5px" />
                         <Text size="18px">
-                          Use your mouse to select the part of the code you want to give feedback about.
+                          {t('code-review.use-your-mouse-to-select-code')}
                         </Text>
                       </>
                     )}
                   </Flex>
 
-                  {selectedText.length > 0 && (
+                  {selectedText?.length > 0 && (
                     <Box fontSize="13px" color="#fff" mt="2rem" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)" mb="24px">
                       <Text fontSize="18px" color="#fff" fontWeight={700} mb="14px">
-                        You&apos;ve selected the following code:
+                        {t('code-review.you-selected-the-code')}
                       </Text>
                       <pre>
                         <code className="language-bash">
@@ -310,7 +311,7 @@ function CodeReview({ isStudent, handleResetFlow, contextData, setContextData, s
                     <Button variant="default" gridGap="10px" onClick={startCodeReview} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                       <Icon icon="code-comment" size="23px" color="#fff" />
                       <Text>
-                        Start Code Review
+                        {t('code-review.start-code-review')}
                       </Text>
                     </Button>
                   )}
@@ -335,7 +336,7 @@ ${revisionContent?.code}
                   ) : (
                     <>
                       <Text size="14px" mb="-6px">
-                        Write comment
+                        {t('code-review.write-comment')}
                       </Text>
 
                       <Box position="relative">
@@ -347,12 +348,12 @@ ${revisionContent?.code}
                       <Flex gridGap="9px" mt="0.7rem">
                         <Button flex={0.7} variant="default" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'send'} gridGap="10px" isDisabled={reviewRateData.comment.length < 10} onClick={() => submitReviewRate('send')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text>
-                            Send
+                            {t('code-review.send')}
                           </Text>
                         </Button>
                         <Button flex={0.3} variant="outline" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'skip'} borderColor="blue.default" gridGap="10px" onClick={() => submitReviewRate('skip')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text color="blue.default">
-                            Skip
+                            {t('code-review.skip')}
                           </Text>
                         </Button>
                       </Flex>
@@ -364,13 +365,13 @@ ${revisionContent?.code}
                       ? <Divider margin="18px 0 -8px 0" />
                       : (
                         <Box fontSize="18px" textAlign="center">
-                          Did you find this feedback useful?
+                          {t('code-review.did-feedback-useful')}
                         </Box>
                       )}
                     <Box fontSize="14px" textAlign="center">
-                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && 'Rate this comment'}
-                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && 'Youl liked this comment'}
-                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && 'You disliked this comment'}
+                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
+                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
+                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
                     </Box>
                     <Flex justifyContent="center" gridGap="3.5rem">
                       <Button
@@ -403,7 +404,7 @@ ${revisionContent?.code}
                   <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" background={reviewRateStatus === 'like' ? 'green.light' : 'red.light2'} padding="16px 8px">
                     <Icon icon={reviewRateStatus === 'like' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
                     <Text size="14px" fontWeight={700} textAlign="center" color="black">
-                      Your comment was sent successfully.
+                      {t('comment-was-sent-successfully')}
                     </Text>
                   </Flex>
                   {reviewRateData?.comment.length > 0 && reviewRateData?.submitType === 'send' && (
@@ -412,22 +413,22 @@ ${revisionContent?.code}
                     </Box>
                   )}
                   <Button variant="outline" borderColor="blue.default" color="blue.default" onClick={goBack} fontSize="17px" gridGap="15px">
-                    Back to comments
+                    {t('code-review.back-to-comments')}
                   </Button>
                 </Flex>
               )}
               {view === views.started_revision && (
                 <Flex flexDirection="column" gridGap="24px">
                   <Text size="14px">
-                    Code review has stared: Please give some feedback about the code based on the coding guidelines. You can read more about the guidelines
+                    {t('code-review.code-review-started-msg')}
                     {' '}
-                    <Link variant="default" href="/" fontSize="14px" target="_blank" rel="noopener noreferer">here</Link>
+                    <Link variant="default" href="/" fontSize="14px" target="_blank" rel="noopener noreferer">{t('code-review.here')}</Link>
                     .
                   </Text>
 
                   <Box position="relative">
                     <Text fontSize="14px" fontWeight={700} mb="18px">
-                      Write a well understandable review
+                      {t('code-review.write-feedback-msg')}
                     </Text>
                     <Textarea value={codeReview.comment} aria-label="feedback input" fontSize="12px" onChange={onChangeCodeReview} minHeight="134" placeholder="Start you review here..." />
                     <Box position="absolute" bottom={1.5} right={3} color={codeReview.comment.length < 10 ? '#EB5757' : 'currentColor'}>
@@ -438,7 +439,7 @@ ${revisionContent?.code}
                   <Button variant="default" isLoading={isLoading} gridGap="10px" isDisabled={codeReview.comment.length < 10} onClick={submitCodeReview} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                     <Icon icon="code-comment" size="23px" color={codeReview.comment.length < 10 ? '#606060' : '#fff'} />
                     <Text>
-                      Submit Code Review
+                      {t('code-review.submit-code-review')}
                     </Text>
                   </Button>
                 </Flex>

@@ -46,16 +46,16 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
         <>
           <Flex mb="15px" gridGap="2px" flexDirection="column">
             <Heading size="18px" color={lightColor} fontWeight={400}>
-              Select the file you want to review from:
+              {t('code-review.select-file-to-review')}
             </Heading>
             <Heading size="18px" fontWeight={700}>
               {data?.task?.title}
             </Heading>
           </Flex>
           <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>
-            <Box fontSize="12px" flex={0.33}>Filename</Box>
-            <Box fontSize="12px" flex={0.33}>Feedback status</Box>
-            <Box fontSize="12px" flex={0.33}>Reviews</Box>
+            <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
+            <Box fontSize="12px" flex={0.33}>{t('code-review.feedback-status')}</Box>
+            <Box fontSize="12px" flex={0.33}>{t('code-review.reviews')}</Box>
           </Flex>
           <Flex flexDirection="column" gridGap="12px">
             {fileList.map((file) => {
@@ -94,7 +94,7 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                     alignItems="center"
                     gridGap="10px"
                   >
-                    Start review
+                    {t('code-review.start-review')}
                   </Button>
                 </Flex>
               );
@@ -104,10 +104,10 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
       ) : (
         <Flex alignItems="center" justifyContent="center" height="100%" width="500px" flexDirection="column" margin="1rem auto 1rem auto" gridGap="0.7rem">
           <Heading size="xsm">
-            No files to review
+            {t('code-review.no-files-to-review')}
           </Heading>
           <Text size="14px" textAlign="center" style={{ textWrap: 'balance' }}>
-            The student has no files to review yet. But you can still approve or reject the assignment, and leave a comment.
+            {t('code-review.student-has-no-files-to-review')}
           </Text>
           <Flex width="100%" justifyContent="space-between" mt="3rem">
             {['reject', 'approve'].map((type) => (

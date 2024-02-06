@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
@@ -20,6 +21,7 @@ const defaultReviewRateData = {
 function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
+  const { t } = useTranslation('assignments');
 
   const reviewRateStatus = reviewRateData?.status;
   const data = contextData?.commitFiles || {};
@@ -48,13 +50,15 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
       }));
     }
   };
-  const selectCodeRevision = (revision) => {
+  const selectCodeRevision = (revision, resetReviewRate = true) => {
     const content = revision?.original_code;
     const commitFile = data?.fileList?.length > 0
       ? data?.fileList.find((l) => l.id === revision?.file?.id)
       : {};
     const decodedReviewCodeContent = atob(content);
-    setReviewRateData(defaultReviewRateData);
+    if (resetReviewRate) {
+      setReviewRateData(defaultReviewRateData);
+    }
     setContextData((prevState) => ({
       ...prevState,
       commitFile: {
@@ -77,7 +81,6 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
       const hasBeenReviewed = firstCodeRevision?.revision_rating > 0 || firstCodeRevision?.revision_rating !== null;
       selectCodeRevision({
         ...firstCodeRevision,
-        is_good: firstCodeRevision?.revision_rating >= 10,
         revision_rating: firstCodeRevision?.revision_rating,
         hasBeenReviewed,
       });
@@ -107,15 +110,18 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
     bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
       .then(({ data: respData }) => {
         setReviewRateData((prev) => ({ ...prev, submited: true }));
+        const updatedRevisionContent = {
+          ...respData,
+          is_good: typeof respData?.is_good === 'string' ? respData?.is_good === 'True' : respData?.is_good,
+          hasBeenReviewed: true,
+        };
         const updateCodeRevisions = contextData.code_revisions.map((revision) => {
           if (revision.id === revisionContent.id) {
-            return {
-              ...respData,
-            };
+            return updatedRevisionContent;
           }
           return revision;
         });
-        // const codeRevisionsSortedByDate = updateCodeRevisions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        selectCodeRevision(updatedRevisionContent, false);
         setContextData((prevState) => ({
           ...prevState,
           code_revisions: updateCodeRevisions,
@@ -133,20 +139,20 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
           <Box width="100%" flex={0.65}>
             <Flex mb="15px" gridGap="2px" flexDirection="column">
               <Heading size="18px" color={lightColor} fontWeight={400}>
-                Select the file you want to review from:
+                {t('code-review.select-file-to-review')}
               </Heading>
               <Heading size="18px" fontWeight={700}>
                 {data?.task?.title}
               </Heading>
             </Flex>
             <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>
-              <Box fontSize="12px" flex={0.33}>Filename</Box>
-              <Box fontSize="12px" flex={0.33} textAlign="center">Feedback Status</Box>
+              <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
+              <Box fontSize="12px" flex={0.33} textAlign="center">{t('code-review.feedback-status')}</Box>
             </Flex>
             <Flex flexDirection="column" gridGap="12px">
               {codeRevisions?.length > 0 && codeRevisions.map((commit) => {
                 const isSelected = revisionContent?.id === commit?.id;
-                const hasBeenReviewed = commit?.revision_rating > 0 || commit?.revision_rating !== null;
+                const hasBeenReviewed = typeof commit?.is_good === 'boolean';
                 return (
                   <Flex border="1px solid" borderColor={borderColor} background={isSelected ? featuredLight : ''} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                     <Flex flex={0.3} gridGap="10px">
@@ -184,7 +190,6 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                       onClick={() => {
                         selectCodeRevision({
                           ...commit,
-                          is_good: commit?.revision_rating >= 10,
                           revision_rating: commit?.revision_rating,
                           hasBeenReviewed,
                         });
@@ -196,7 +201,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                       padding="0 1rem 0 0"
                       gridGap="10px"
                     >
-                      Review
+                      {t('code-review.review')}
                     </Button>
                   </Flex>
                 );
@@ -208,7 +213,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
               {hasRevision && (
                 <Button variant="link" onClick={goBack} mb="1.1rem" height="auto" fontSize="12px" gridGap="10px" justifyContent="flex-start">
                   <Icon icon="arrowLeft2" width="20px" height="8px" color={hexColor.blueDefault} />
-                  Go back
+                  {t('common:goBack')}
                 </Button>
               )}
               <Box fontSize="14px" fontWeight={700} letterSpacing="0.08em">
@@ -222,7 +227,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                     <>
                       <Flex flexDirection="column" gridGap="8px">
                         <Heading fontSize="12px" fontWeight={700}>
-                          {`${revisionContent?.reviewer?.name} has commented:`}
+                          {t('code-review.person-has-commented', { name: revisionContent?.reviewer?.name })}
                         </Heading>
                         <Text size="12px">
                           {revisionContent?.comment}
@@ -238,18 +243,18 @@ ${revisionContent?.code}
                       </Flex>
                       <Button onClick={() => setStage(stages.code_review)} variant="link" fontSize="17px" gridGap="15px">
                         <Icon icon="longArrowRight" width="20px" height="20px" color={hexColor.blueDefault} />
-                        Go to review
+                        {t('code-review.go-to-review')}
                       </Button>
                       <Divider mt="-8px" />
                     </>
                   ) : (
                     <>
                       <Text size="14px" mb="-6px">
-                        Write comment
+                        {t('code-review.write-comment')}
                       </Text>
 
                       <Box position="relative">
-                        <Textarea value={reviewRateData?.comment} aria-label="feedback input" fontSize="12px" onChange={onChangeRateComment} minHeight="130px" placeholder="Start you review here..." />
+                        <Textarea value={reviewRateData?.comment} aria-label="feedback input" fontSize="12px" onChange={onChangeRateComment} minHeight="130px" placeholder={t('code-review.start-review-here')} />
                         <Box position="absolute" bottom={1.5} right={3} color={reviewRateData.comment.length < 10 ? 'yellow.default' : 'currentColor'}>
                           {`${reviewRateData.comment.length}/ ${inputReviewRateCommentLimit}`}
                         </Box>
@@ -257,12 +262,12 @@ ${revisionContent?.code}
                       <Flex gridGap="9px" mt="0.7rem">
                         <Button flex={0.7} variant="default" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'send'} gridGap="10px" isDisabled={reviewRateData.comment.length < 10} onClick={() => submitReviewRate('send')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text>
-                            Send
+                            {t('code-review.send')}
                           </Text>
                         </Button>
                         <Button flex={0.3} variant="outline" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'skip'} borderColor="blue.default" gridGap="10px" onClick={() => submitReviewRate('skip')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text color="blue.default">
-                            Skip
+                            {t('code-review.skip')}
                           </Text>
                         </Button>
                       </Flex>
@@ -271,9 +276,9 @@ ${revisionContent?.code}
                   <Flex flexDirection="column" gridGap="24px">
                     {reviewRateStatus && <Divider margin="18px 0 -8px 0" />}
                     <Box fontSize="14px" textAlign="center">
-                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && 'Rate this comment'}
-                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && 'Youl liked this comment'}
-                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && 'You disliked this comment'}
+                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
+                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
+                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
                     </Box>
                     <Flex justifyContent="center" gridGap="3.5rem">
                       <Button
@@ -305,7 +310,7 @@ ${revisionContent?.code}
                   <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" background={reviewRateStatus === 'like' ? 'green.light' : 'red.light2'} padding="16px 8px">
                     <Icon icon={reviewRateStatus === 'like' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
                     <Text size="14px" fontWeight={700} textAlign="center" color="black">
-                      Your comment was sent successfully.
+                      {t('code-review.comment-was-sent-successfully')}
                     </Text>
                   </Flex>
                   {reviewRateData?.comment.length > 0 && reviewRateData?.submitType === 'send' && (
@@ -314,7 +319,7 @@ ${revisionContent?.code}
                     </Box>
                   )}
                   <Button variant="outline" borderColor="blue.default" color="blue.default" onClick={goBack} fontSize="17px" gridGap="15px">
-                    Back to comments
+                    {t('code-review.back-to-comments')}
                   </Button>
                 </Flex>
               )}
@@ -324,10 +329,10 @@ ${revisionContent?.code}
       ) : (
         <Flex alignItems="center" flexDirection="column" my="4rem" gridGap="0.7rem">
           <Heading size="xsm">
-            No files to review
+            {t('code-review.no-files-to-review')}
           </Heading>
           <Text size="14px">
-            Your teacher has not reviewed any files yet. try again later.
+            {t('code-review.teacher-has-not-reviewed-files')}
           </Text>
         </Flex>
       )}
