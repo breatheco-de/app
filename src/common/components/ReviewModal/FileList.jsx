@@ -82,7 +82,7 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                       </Box>
                     )}
                   </Flex>
-                  <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={1}>
+                  <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={lastUpdatedRevision.is_good !== null ? 1 : 0.5}>
                     <Icon icon={lastUpdatedRevision.is_good !== null ? rateIcon : 'unchecked'} width="24px" height="24px" />
                   </Flex>
 
