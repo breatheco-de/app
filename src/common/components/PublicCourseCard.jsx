@@ -62,11 +62,12 @@ function PublicCourseCard({
           />
         ) : (
           <Text
-            size="xs"
-            lineHeight="14px"
+            size={{ base: 'md', md: 'xs' }}
+            lineHeight={{ base: '24px', md: '14px' }}
             fontWeight="500"
             color={textColor}
             marginTop="0 !important"
+            overflow="hidden !important"
           >
             {programDescription}
           </Text>

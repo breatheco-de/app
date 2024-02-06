@@ -71,7 +71,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
     <Box
       maxWidth="1280px"
       margin="0 auto"
-      flexWrap="wrap"
+      flexWrap={{ base: 'wrap', xl: 'nowrap' }}
       id={id}
       borderRadius="11px"
       padding="16px"
@@ -84,7 +84,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
     >
       <Box
         flexShrink="2"
-        minWidth="170px"
+        // minWidth="170px"
         maxWidth={{ base: 'none', lg: '270px' }}
         display="flex"
         flexDirection="column"
@@ -107,9 +107,14 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       <Box
         as="aside"
         flexGrow="1"
-        justifyContent={{ base: 'center', md: courses.length > 1 ? 'flex-end' : 'center', xl: 'flex-end' }}
+        flexShrink={{ base: '1', xl: '0' }}
+        justifyContent={{
+          base: 'center',
+          // md: courses.length > 1 ? 'space-between' : 'center',
+          xl: 'flex-end',
+        }}
         display="flex"
-        flexWrap="wrap"
+        flexWrap={{ base: 'wrap', lg: 'nowrap' }}
         gap="10px"
       >
         {courses.map((course) => (
@@ -117,8 +122,8 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
             key={course.slug}
             mx={{ base: courses.length === 1 && 'auto', md: '0' }}
             // width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
-            width="auto"
-            maxWidth="240px"
+            width={{ base: '100%', md: 'auto' }}
+            maxWidth={{ base: 'none', md: '240px' }}
             icon_url={course.icon_url}
             iconBackground="#25BF6C"
             onClick={() => {
@@ -136,7 +141,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
             programName={course.course_translation.title}
             programSlug={course.slug}
             programDescription={course.course_translation.description}
-            flexShrink="0"
+            // flexShrink="0"
           />
         ))}
       </Box>
