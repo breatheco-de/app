@@ -61,6 +61,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
   const hasNotBeenReviewed = revisionStatus === 'PENDING';
+  const hasBeenApproved = revisionStatus === 'APPROVED';
   const hasNoFilesToReview = contextData?.code_revisions?.length === 0;
   const isReadyToApprove = contextData?.code_revisions?.length >= 3 && taskStatus === 'DONE';
   const isStageWithDefaultStyles = stage === stages.initial || stage === stages.approve_or_reject_code_revision || hasNoFilesToReview;
@@ -358,7 +359,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   type={isStudent ? 'info' : 'warning'}
                   full
                   message={isStudent
-                    ? "The teacher's feedback will be shown here if it's approved"
+                    ? 'This project needs to have at least 3 code reviews in order to be accepted or rejected by your teacher.'
                     : 'This project needs to have at least 3 code reviews in order to be accepted or rejected.'}
                   borderRadius="4px"
                   padding="8px"
@@ -395,9 +396,29 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                     </Link>
                   </Text>
                 )}
-                <Box>
-                  Teacher feedback here if its approved
-                </Box>
+                {hasBeenApproved ? (
+                  <Flex flexDirection="column" gridGap="8px">
+                    <Box fontSize="14">
+                      Your teacher said:
+                    </Box>
+                    <Text
+                      className="quote-container"
+                      display="flex"
+                      alignContent="center"
+                      background={featuredColor}
+                      padding="6px 10px"
+                      borderRadius="4px"
+                      width="100%"
+                      size="12px"
+                    >
+                      {currentTask?.description}
+                    </Text>
+                  </Flex>
+                ) : (
+                  <Box>
+                    {'The teacher\'s feedback will be shown here if it\'s approved'}
+                  </Box>
+                )}
 
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">
