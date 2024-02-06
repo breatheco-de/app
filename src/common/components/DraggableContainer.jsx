@@ -40,7 +40,6 @@ function DraggableContainer({ children, ...rest }) {
       ref={ref}
       padding="0"
       cursor="grab"
-      // cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
       maxW="container.xl"
       width="100%"
       overflowX="hidden"
