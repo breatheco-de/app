@@ -305,12 +305,10 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             >
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
               <UpcomingWorkshops />
-              {lesson?.technologies.length > 0 && (
-                <MktRecommendedCourses
-                  display={{ base: 'none', md: 'flex' }}
-                  technologies={lesson?.technologies}
-                />
-              )}
+              <MktRecommendedCourses
+                display={{ base: 'none', md: 'flex' }}
+                technologies={lesson?.technologies}
+              />
 
             </Box>
 
@@ -404,6 +402,10 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                 <Box width="100%" height="100%">
                   <IpynbHtmlParser
                     html={ipynbHtml.html}
+                  />
+                  <MktRecommendedCourses
+                    display={{ base: 'none', md: 'flex' }}
+                    technologies={lesson?.technologies}
                   />
                   <UpcomingWorkshops />
                 </Box>
