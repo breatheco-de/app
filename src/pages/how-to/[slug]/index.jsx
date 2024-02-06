@@ -291,7 +291,7 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <UpcomingWorkshops technologies={data?.technologies} />
+            <UpcomingWorkshops />
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}

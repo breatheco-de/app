@@ -40,7 +40,7 @@ function SmallCardsCarousel({ title, cards, boxStyle, ...rest }) {
               justifyContent="space-between"
               style={{ ...boxStyle }}
             >
-              <Box alignItems="center" display="flex" justifyContent="space-between" marginBottom="10px">
+              <Box alignItems="center" display="flex" justifyContent="space-between" marginBottom="10px" overflow="hidden">
                 <TagCapsule
                   padding="0"
                   margin="0"
@@ -48,6 +48,7 @@ function SmallCardsCarousel({ title, cards, boxStyle, ...rest }) {
                   tags={card.upperTags?.slice(0, 3) || []}
                   variant="rounded"
                   width="100%"
+                  whiteSpace="nowrap"
                 />
                 {card.rightCornerElement && (
                   <>

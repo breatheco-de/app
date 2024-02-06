@@ -312,7 +312,7 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
-              <UpcomingWorkshops technologies={project?.technologies} />
+              <UpcomingWorkshops />
               <MktRecommendedCourses
                 marginTop="15px"
                 title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}

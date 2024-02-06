@@ -304,7 +304,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
-              <UpcomingWorkshops technologies={lesson?.technologies} />
+              <UpcomingWorkshops />
               {lesson?.technologies.length > 0 && (
                 <MktRecommendedCourses
                   display={{ base: 'none', md: 'grid' }}
@@ -406,6 +406,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   <IpynbHtmlParser
                     html={ipynbHtml.html}
                   />
+                  <UpcomingWorkshops />
                 </Box>
               )}
             </Box>

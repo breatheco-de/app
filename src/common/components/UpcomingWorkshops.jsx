@@ -2,7 +2,6 @@ import { Tag, TagLabel } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
-import PropTypes from 'prop-types';
 import axios from '../../axios';
 import SmallCardsCarousel from './SmallCardsCarousel';
 import modifyEnv from '../../../modifyEnv';
@@ -15,7 +14,7 @@ const langsDict = {
   us: 'en',
 };
 
-function UpcomingWorkshops({ technologies }) {
+function UpcomingWorkshops() {
   const [cards, setCards] = useState([]);
   const { t } = useTranslation('workshops');
 
@@ -38,7 +37,7 @@ function UpcomingWorkshops({ technologies }) {
             const endDate = new Date(event.ending_at);
             return {
               title: event.title,
-              upperTags: technologies,
+              upperTags: event.asset?.technologies || [],
               url: `/workshop/${event.slug}`,
               lang: langsDict[event.lang || 'en'],
               lowerTags: [t('common:workshop')],
@@ -74,12 +73,5 @@ function UpcomingWorkshops({ technologies }) {
     />
   );
 }
-
-UpcomingWorkshops.propTypes = {
-  technologies: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-};
-UpcomingWorkshops.defaultProps = {
-  technologies: [],
-};
 
 export default UpcomingWorkshops;

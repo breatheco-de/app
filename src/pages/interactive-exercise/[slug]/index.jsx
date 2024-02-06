@@ -770,7 +770,7 @@ function Exercise({ exercise, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <UpcomingWorkshops technologies={exercise?.technologies} />
+            <UpcomingWorkshops />
             <MktRecommendedCourses
               title={t('common:continue-learning', { technologies: exercise?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
               technologies={exercise?.technologies}
