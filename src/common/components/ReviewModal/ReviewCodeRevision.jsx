@@ -133,7 +133,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
   };
 
   return (
-    <Flex flexDirection="row" justifyContent="center" gridGap="6px" width="100%" maxHeight={reviewRateStatus ? 'auto' : '30rem'}>
+    <Flex flexDirection="row" height="30rem" justifyContent="center" gridGap="6px" width="100%" maxHeight={reviewRateStatus ? 'auto' : '30rem'}>
       {codeRevisions?.length > 0 ? (
         <>
           <Box width="100%" flex={0.65}>
@@ -149,7 +149,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
               <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
               <Box fontSize="12px" flex={0.33} textAlign="center">{t('code-review.feedback-status')}</Box>
             </Flex>
-            <Flex flexDirection="column" gridGap="12px">
+            <Flex overflow="auto" height="24rem" py="0.5rem" flexDirection="column" gridGap="12px">
               {codeRevisions?.length > 0 && codeRevisions.map((commit) => {
                 const isSelected = revisionContent?.id === commit?.id;
                 const hasBeenReviewed = typeof commit?.is_good === 'boolean';

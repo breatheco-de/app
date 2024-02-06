@@ -490,7 +490,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                   </Flex>
                 )}
 
-                {isStudent && revisionStatus === 'REJECTED' && (
+                {isStudent && revisionStatus !== 'APPROVED' && (
                   <Flex justifyContent="space-between" pt="8px">
                     <Button
                       minWidth="128px"
