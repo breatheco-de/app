@@ -49,7 +49,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
   const { contextState, setContextState } = useModuleMap();
   const [reviewStatus, setReviewStatus] = useState('');
   const [contextData, setContextData] = useState({
-    commitfiles: [],
+    commitFiles: [],
     commitFile: {},
     code_revisions: [],
     my_revisions: [],
@@ -100,9 +100,10 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
 
   useEffect(() => {
     if (externalData) {
-      setContextData({
+      setContextData((prev) => ({
+        ...prev,
         ...externalData,
-      });
+      }));
     }
     if (isOpen && currentTask?.id > 0 && !externalData) {
       setLoaders((prevState) => ({
@@ -111,10 +112,12 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
       }));
       bc.assignments().getCodeRevisions(currentTask.id)
         .then(({ data }) => {
-          setContextData({
-            code_revisions: data,
+          const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          setContextData((prev) => ({
+            ...prev,
+            code_revisions: codeRevisionsSortedByDate,
             my_revisions: data.filter((revision) => revision?.reviewer?.username === profile?.email),
-          });
+          }));
         })
         .catch(() => {
           toast({
@@ -237,7 +240,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     if (response.ok) {
       setContextData((prevState) => ({
         ...prevState,
-        commitfiles: {
+        commitFiles: {
           task: currentTask,
           fileList: data,
         },
@@ -260,26 +263,6 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     return 'Rigobot code review';
   };
 
-  // const handleOpen = async (onOpen = () => {}) => {
-  //   if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-  //     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-  //     if (assetResp?.status < 400) {
-  //       const assetData = await assetResp.data;
-  //       setCurrentAssetData(assetData);
-
-  //       if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-  //         const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
-  //         const respData = await fileResp.data;
-  //         setFileData(respData);
-  //         onOpen();
-  //       } else {
-  //         onOpen();
-  //       }
-  //     } else {
-  //       onOpen();
-  //     }
-  //   }
-  // };
   const toggleSettings = async () => {
     setLoaders((prevState) => ({
       ...prevState,

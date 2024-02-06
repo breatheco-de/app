@@ -250,6 +250,8 @@ const breathecode = {
       files: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/commitfile${qs}`),
       file: (taskId, commitId) => axios.get(`${url}/academy/task/${taskId}/commitfile/${commitId}`),
       createCodeRevision: (taskId, data) => axios.post(`${url}/academy/task/${taskId}/coderevision`, data),
+      rateCodeRevision: (coderevisionId, data) => axios.post(`${url}/me/coderevision/${coderevisionId}/rate`, data),
+      // /v1/assingment/me/coderevision/<int:coderevision_id>/rate
     };
   },
   feedback: () => {

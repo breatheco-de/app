@@ -10,7 +10,7 @@ import { log } from '../../../utils/logging';
 function FileList({ contextData, setContextData, stage, stages, setStage, setReviewStatus }) {
   const { t } = useTranslation('assignments');
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
-  const data = contextData?.commitfiles || {};
+  const data = contextData?.commitFiles || {};
   const fileList = data?.fileList || [];
 
   const buttonText = {
@@ -53,19 +53,19 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
             </Heading>
           </Flex>
           <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>
-            <Box fontSize="12px" flex={0.3}>Name</Box>
-            <Box fontSize="12px" flex={0.7}>Feedback status</Box>
+            <Box fontSize="12px" flex={0.33}>Filename</Box>
+            <Box fontSize="12px" flex={0.33}>Feedback status</Box>
+            <Box fontSize="12px" flex={0.33}>Reviews</Box>
           </Flex>
           <Flex flexDirection="column" gridGap="12px">
             {fileList.map((file) => {
               const revisionsRelated = contextData.code_revisions.filter((revision) => revision?.file?.id === file?.id);
-              // const reviewed = revisionsRelated?.length > 0;
               return (
                 <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
                   <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} flex={0.1} />
                   <Flex flexDirection="column" gridGap="9px" flex={0.4} maxWidth="102px">
-                    <Text fontSize="12px" fontWeight={700}>
-                      {file?.name.includes('/') ? file.name : `./${file.name}`}
+                    <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
+                      {file?.name}
                     </Text>
                     {file?.committer?.github_username && (
                       <Box fontSize="12px">
@@ -73,8 +73,8 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                       </Box>
                     )}
                   </Flex>
-                  <Flex flex={0.3} alignItems="center" justifyContent="center">
-                    <Icon icon="verified" width="24px" height="24px" />
+                  <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={0.4}>
+                    <Icon icon="unchecked" width="24px" height="24px" />
                   </Flex>
 
                   <Flex flex={0.3} justifyContent="center" alignItems="center">
@@ -86,7 +86,6 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                     </Flex>
                   </Flex>
                   <Button
-                    // variant={reviewed ? 'link' : 'default'}
                     variant="default"
                     flex={0.2}
                     height="40px"
@@ -96,7 +95,6 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
                     gridGap="10px"
                   >
                     Start review
-                    {/* {reviewed ? 'Reviewed' : 'Start review'} */}
                   </Button>
                 </Flex>
               );

@@ -358,7 +358,7 @@ ${revisionContent?.code}
                     </>
                   )}
 
-                  <Flex flexDirection="column" gridGap="24px" mt="5rem">
+                  <Flex flexDirection="column" gridGap="24px" mt="2rem">
                     {reviewRateStatus
                       ? <Divider margin="18px 0 -8px 0" />
                       : (
@@ -367,15 +367,29 @@ ${revisionContent?.code}
                         </Box>
                       )}
                     <Box fontSize="14px" textAlign="center">
-                      {reviewRateStatus === null && 'Rate this comment'}
-                      {reviewRateStatus === 'like' && 'Youl liked this comment'}
-                      {reviewRateStatus === 'dislike' && 'You disliked this comment'}
+                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && 'Rate this comment'}
+                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && 'Youl liked this comment'}
+                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && 'You disliked this comment'}
                     </Box>
                     <Flex justifyContent="center" gridGap="3.5rem">
-                      <Button opacity={(reviewRateStatus === 'like' || reviewRateStatus === null) ? 1 : 0.5} onClick={() => handleSelectReviewRate('like')} variant="unstyled" height="auto" gridGap="10px" aria-label="Mark as Useful">
+                      <Button
+                        opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
+                        onClick={() => handleSelectReviewRate('like')}
+                        variant="unstyled"
+                        height="auto"
+                        gridGap="10px"
+                        aria-label="Mark as Useful"
+                      >
                         <Icon icon="feedback-like" width="54px" height="54px" />
                       </Button>
-                      <Button opacity={(reviewRateStatus === 'dislike' || reviewRateStatus === null) ? 1 : 0.5} onClick={() => handleSelectReviewRate('dislike')} variant="unstyled" height="auto" gridGap="10px" aria-label="Mark as not useful">
+                      <Button
+                        opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
+                        onClick={() => handleSelectReviewRate('dislike')}
+                        variant="unstyled"
+                        height="auto"
+                        gridGap="10px"
+                        aria-label="Mark as not useful"
+                      >
                         <Icon icon="feedback-dislike" width="54px" height="54px" />
                       </Button>
                     </Flex>
