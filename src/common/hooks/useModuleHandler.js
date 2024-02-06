@@ -1,5 +1,6 @@
 import { differenceInDays } from 'date-fns';
 import bc from '../services/breathecode';
+import { reportDatalayer } from '../../utils/requests';
 
 export const updateAssignment = async ({
   t, task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
@@ -77,6 +78,17 @@ export const updateAssignment = async ({
             taskToUpdate, // key item (updated)
             ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
           ],
+        });
+        reportDatalayer({
+          dataLayer: {
+            event: 'assignment_status_updated',
+            task_status: taskStatus,
+            task_id: task.id,
+            task_title: task.title,
+            task_associated_slug: task.associated_slug,
+            task_type: task.task_type,
+            task_revision_status: task.revision_status,
+          },
         });
         toast({
           position: 'top',

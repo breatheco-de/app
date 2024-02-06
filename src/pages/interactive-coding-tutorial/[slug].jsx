@@ -22,6 +22,7 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
+import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -311,6 +312,7 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
+              <UpcomingWorkshops />
               <MktRecommendedCourses
                 marginTop="15px"
                 title={t('common:continue-learning', { technologies: project?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ').replace(/-|_/g, ' ') })}

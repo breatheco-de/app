@@ -26,6 +26,7 @@ import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
+import UpcomingWorkshops from '../../../common/components/UpcomingWorkshops';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -290,6 +291,7 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <UpcomingWorkshops />
             <MktRecommendedCourses
               display={{ base: 'none', md: 'grid' }}
               title={t('common:continue-learning', { technologies: data?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}

@@ -62,6 +62,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const handleTouchStart = (event) => {
     event.preventDefault();
@@ -171,14 +172,20 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   if (languagesData === null || languagesData === undefined || languagesData.length === 0) return null;
 
   return (
-    <Box width="100%" {...rest}>
-      <Tabs onChange={(index) => setTabIndex(index)} variant="unstyled">
+    <Box overflowX="hidden" width="100%" {...rest}>
+      <Tabs position="relative" onChange={(index) => setTabIndex(index)} variant="unstyled">
         <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
           <TabList width="fit-content">
             {languages.map(({ label }, i) => (
               <Tab key={label} color={i === tabIndex ? 'blue.500' : 'white'}>{label}</Tab>
             ))}
           </TabList>
+          <TabIndicator
+            mt="30px"
+            height="2px"
+            bg="blue.500"
+            borderRadius="1px"
+          />
           {!notExecutables.includes(languages[tabIndex]?.language) && languages[tabIndex]?.code.trim() !== '' && (
             <>
               {languages[tabIndex]?.running ? (
@@ -192,12 +199,6 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
             </>
           )}
         </Box>
-        <TabIndicator
-          mt="-1.5px"
-          height="2px"
-          bg="blue.500"
-          borderRadius="1px"
-        />
         <TabPanels>
           {languages.map(({ code, language, output, running }, i) => (
             <TabPanel padding="0">
@@ -284,7 +285,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/checkout');
+          router.push(`/checkout?enableRedirect=true&internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />
