@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-useless-fragment */
 /* eslint-disable react/no-unstable-nested-components */
 import {
   Button,
@@ -6,7 +5,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import Icon from '../../common/components/Icon';
 import ReviewModal from '../../common/components/ReviewModal';
 import PopoverTaskHandler, { IconByTaskStatus, TextByTaskStatus } from '../../common/components/PopoverTaskHandler';
 
@@ -69,35 +67,6 @@ export function ButtonHandlerByTaskStatus({
   }
 
   const openAssignmentFeedbackModal = () => {
-    // if (currentTask.revision_status !== 'APPROVED') {
-    //   bc.assignments().getCodeRevisions(currentTask.id)
-    //     .then(({ data }) => {
-    //       log('code_revisions_data:::', data);
-    //       setContextData({
-    //         code_revisions: data,
-    //       });
-    //     })
-    //     .catch(() => {
-    //       toast({
-    //         title: t('alert-message:something-went-wrong'),
-    //         description: 'Cannot get code revisions',
-    //         status: 'error',
-    //         duration: 5000,
-    //         position: 'top',
-    //         isClosable: true,
-    //       });
-    //     })
-    //     .finally(() => {
-    //       // onOpen();
-    //       setIsReviewModalOpen(true);
-    //       setLoaders((prevState) => ({
-    //         ...prevState,
-    //         isOpeningReviewModal: false,
-    //       }));
-    //     });
-    // } else {
-    //   // onOpen();
-    // }
     setIsReviewModalOpen(true);
     setLoaders((prevState) => ({
       ...prevState,
@@ -115,14 +84,6 @@ export function ButtonHandlerByTaskStatus({
               ...prevState,
               isOpeningReviewModal: true,
             }));
-            // if (noDeliveryFormat) {
-            //   changeStatusAssignment(event, currentTask, 'PENDING');
-            //   setLoaders((prevState) => ({
-            //     ...prevState,
-            //     isOpeningReviewModal: false,
-            //   }));
-            // } else {
-            // }
             handleOpen(() => openAssignmentFeedbackModal());
           }
         }}
@@ -151,13 +112,8 @@ export function ButtonHandlerByTaskStatus({
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && !onlyPopoverDialog) {
-      // Option case Revision pending...
-      // CODING HERE 🚧 - DESDE AHORA AQUI SE VERA APROVADO, PENDING O REJECTED
       return (
         <>
-          <Button variant="unstyled" mr="10px">
-            <Icon icon="comment" width="20px" height="20px" />
-          </Button>
           <OpenModalButton />
 
           <ReviewModal
