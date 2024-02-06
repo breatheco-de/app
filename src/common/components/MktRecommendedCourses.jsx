@@ -74,7 +74,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       flexWrap="wrap"
       id={id}
       borderRadius="11px"
-      padding="16px 8px"
+      padding="16px"
       background={background || featuredLight}
       display="flex"
       border="1px solid"
@@ -107,8 +107,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       <Box
         as="aside"
         flexGrow="1"
-        flexDirection={{ base: 'row', xl: courses.length === 1 && 'row-reverse' }}
-        justifyContent={{ base: 'center', md: courses.length > 1 ? 'space-between' : 'center', xl: 'space-between' }}
+        justifyContent={{ base: 'center', md: courses.length > 1 ? 'flex-end' : 'center', xl: 'flex-end' }}
         display="flex"
         flexWrap="wrap"
         gap="10px"
