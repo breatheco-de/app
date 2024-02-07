@@ -25,7 +25,7 @@
   "error-with-status": "A {{statusCode}} error occurred on server",
   "error-without-status": "An error occurred on the server",
   "edit-on-github": "Edit on Github",
-  "open-google-collab": "Open in Collab",
+  "open-google-collab": "Open in Colab",
   "github-not-connected": "Your Github account is not connected.",
   "github-warning": "Your Github account is not connected. Only active 4Geeks Academy students with a conected Github account will be able to get unlimited Codespace hours.",
   "title": "Welcome | Learn",
