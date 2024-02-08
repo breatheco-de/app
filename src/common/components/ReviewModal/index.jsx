@@ -61,9 +61,10 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
   const revisionStatus = currentTask?.revision_status;
   const hasNotBeenReviewed = revisionStatus === 'PENDING';
   const hasBeenApproved = revisionStatus === 'APPROVED';
-  const hasNoFilesToReview = contextData?.code_revisions?.length === 0;
+  const noFilesToReview = contextData?.code_revisions?.length === 0;
+  const hasFilesToReview = contextData?.code_revisions?.length > 0;
   const isReadyToApprove = contextData?.code_revisions?.length >= 3 && taskStatus === 'DONE';
-  const isStageWithDefaultStyles = stage === stages.initial || stage === stages.approve_or_reject_code_revision || hasNoFilesToReview;
+  const isStageWithDefaultStyles = stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview;
 
   const statusColor = {
     approve: 'success',
@@ -292,7 +293,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
       }}
       title={getTitle()}
       closeOnOverlayClick={false}
-      maxWidth={hasNoFilesToReview ? widthSizes.initial : widthSizes[stage]}
+      maxWidth={noFilesToReview ? widthSizes.initial : widthSizes[stage]}
       isCentered
       minHeight={isStageWithDefaultStyles ? 'auto' : '30rem'}
       overflow="auto"
@@ -329,12 +330,12 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
             if (stage === stages.file_list || stage === stages.review_code_revision) {
               setStage(stages.initial);
             }
-            if (stage === stages.approve_or_reject_code_revision && !hasNoFilesToReview) {
+            if (stage === stages.approve_or_reject_code_revision && !noFilesToReview) {
               setStage(stages.initial);
               setReviewStatus('');
               setComment('');
             }
-            if (stage === stages.approve_or_reject_code_revision && hasNoFilesToReview) {
+            if (stage === stages.approve_or_reject_code_revision && noFilesToReview) {
               setStage(stages.file_list);
             }
           }}
@@ -453,20 +454,22 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                     </Box>
                   </Box>
                 )}
-                <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
-                  <Flex alignItems="center" gridGap="10px">
-                    <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
-                    <Text size="14px" fontWeight={700}>
-                      {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
-                    </Text>
+                {hasFilesToReview && (
+                  <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
+                    <Flex alignItems="center" gridGap="10px">
+                      <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
+                      <Text size="14px" fontWeight={700}>
+                        {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
+                      </Text>
+                    </Flex>
+                    <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                      {isStudent
+                        ? t('code-review.read-and-rate-the-feedback')
+                        : t('code-review.start-code-review')}
+                      <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+                    </Button>
                   </Flex>
-                  <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                    {isStudent
-                      ? t('code-review.read-and-rate-the-feedback')
-                      : t('code-review.start-code-review')}
-                    <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
-                  </Button>
-                </Flex>
+                )}
 
                 {isReadyToApprove && !isStudent && (
                   <Flex justifyContent="space-between" pt="8px">
