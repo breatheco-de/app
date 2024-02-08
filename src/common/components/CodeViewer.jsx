@@ -62,6 +62,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const handleTouchStart = (event) => {
     event.preventDefault();
@@ -284,7 +285,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push('/checkout');
+          router.push(`/checkout?enableRedirect=true&internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />

@@ -46,7 +46,8 @@
   "enroll": "Enroll now",
   "learn-more": "Learn more",
   "more-technologies":"More technologies",
-  "continue-learning":"Continue learning for free about:<br><br>{{technologies}} and more.",
+  "continue-learning":"Continue learning for free about:",
+  "technologies-and-more": "{{technologies}} and more.",
   "user-id": "User ID",
   "day": "Day",
   "days": "Days",
@@ -193,6 +194,8 @@
     "title": "Live classes, coding sessions, workshops and hangouts every few hours.",
     "readMoreUrl": "https://4geeks.com/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
   },
+  "upcoming-workshops": "Upcoming workshops",
+  "workshop": "Workshop",
   "submit-project": "Submit project",
   "uploadScreenshot": "Upload screenshot",
   "continue-learning-course": "Continue learning for free about:",

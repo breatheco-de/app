@@ -46,7 +46,8 @@
   "enroll": "Unirse Ahora",
   "learn-more": "Aprender más",
   "more-technologies":"Más tecnologías",
-  "continue-learning":"Continúa aprendiendo gratis sobre:<br><br>{{technologies}} y más.",
+  "continue-learning":"Continúa aprendiendo gratis sobre:",
+  "technologies-and-more": "{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
   "days": "Días",
@@ -190,9 +191,11 @@
     "github-url-required": "La URL de GitHub es necesaria"
   },
   "live-event": {
-    "title": "Clases en vivo, sesiones de codificación, talleres y reuniones cada pocas horas.",
+    "title": "Clases en vivo, sesiones de codificación, workshops y reuniones cada pocas horas.",
     "readMoreUrl": "https://4geeks.com/es/docs/knowledge-base-4geeks/live-events-workshops-and-classes"
   },
+  "upcoming-workshops": "Próximos workshops",
+  "workshop": "Workshop",
   "submit-project": "Enviar proyecto",
   "uploadScreenshot": "Subir captura de pantalla",
   "continue-learning-course": "Continúa aprendiendo gratis sobre:",
