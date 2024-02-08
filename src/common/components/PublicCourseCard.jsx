@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import PropTypes from 'prop-types';
-import { Box, useColorModeValue, Divider, Img } from '@chakra-ui/react';
+import { Box, useColorModeValue, Img } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Link from './NextChakraLink';
 import Text from './Text';
@@ -19,48 +19,35 @@ function PublicCourseCard({
   const textColor = useColorModeValue('black', 'white');
 
   return (
-    <Box width={width} {...rest}>
-      <Box
-        borderRadius="9px 9px 0 0"
-        width="90%"
-        margin="auto"
-        height="140px"
-        background={iconBackground}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-      >
-        {/* <Icon color="#FFF" icon={icon} width="84px" height="74px" style={{ margin: 'auto' }} /> */}
-        <Img
-          width="84px"
-          height="74px"
-          // boxSize="100%"
-          margin="auto"
-          objectFit="cover"
-          src={icon_url}
-          alt="Course Icon"
-        />
+    <Box
+      border="1px solid"
+      borderColor={hexColor.borderColor}
+      borderRadius="9px"
+      padding="15px"
+      background={backgroundColor2}
+      position="relative"
+      width={width}
+      marginTop="30px"
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      {...rest}
+    >
+      <Box position="absolute" borderRadius="full" top="-30px">
+        <Img src={icon_url} width="44px" height="44px" />
       </Box>
-      <Box
-        border="1px solid"
-        borderColor={hexColor.blueDefault}
-        borderRadius="9px"
-        padding="15px"
-        height="min-content"
-        background={backgroundColor2}
-      >
+      <Box height="10px" />
+      <Box>
         <Heading
           size="lg"
           as="h3"
-          lineHeight="31px"
+          lineHeight="19px"
           fontWeight="700"
           color={textColor}
-          marginBottom="10px"
-          textAlign="center"
+          margin="0 0 5px 0 !important"
         >
           {programName}
         </Heading>
-        <Divider style={{ borderBottomWidth: '1px', borderStyle: 'solid', borderColor: '#DADADA' }} w="90%" margin="auto" />
         {syllabusContent || assistants.length > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
@@ -75,36 +62,35 @@ function PublicCourseCard({
           />
         ) : (
           <Text
-            fontSize="xs"
-            lineHeight="14px"
-            fontWeight="700"
+            size={{ base: 'md', md: 'xs' }}
+            lineHeight={{ base: '24px', md: '14px' }}
+            fontWeight="500"
             color={textColor}
-            textAlign="center"
-            marginTop="20px"
+            marginTop="0 !important"
+            overflow="hidden !important"
           >
             {programDescription}
           </Text>
         )}
-        <Link
-          variant="buttonDefault"
-          border="1px solid"
-          borderRadius="3px"
-          borderColor={hexColor.blueDefault}
-          onClick={onClick}
-          href={href || `${ORIGIN_HOST}/${programSlug}`}
-          textAlign="center"
-          margin="10px auto 0 auto"
-          display="block"
-          width="50%"
-          color={`${hexColor.blueDefault} !important`}
-          textDecoration="none !important"
-          background="none"
-          _hover={{ opacity: 0.7 }}
-          _active={{ opacity: 1 }}
-        >
-          {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
-        </Link>
       </Box>
+      <Link
+        variant="buttonDefault"
+        border="1px solid"
+        borderRadius="3px"
+        onClick={onClick}
+        href={href || `${ORIGIN_HOST}/${programSlug}`}
+        textAlign="center"
+        marginTop="10px"
+        display="block"
+        width="120px"
+        color="white !important"
+        textDecoration="none !important"
+        padding="7px 16px !important"
+        _hover={{ opacity: 0.7 }}
+        _active={{ opacity: 1 }}
+      >
+        {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
+      </Link>
     </Box>
   );
 }
