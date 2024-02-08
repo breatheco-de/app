@@ -21,7 +21,7 @@ function ShowOnSignUp({
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan } = useSubscribeToPlan();
-  const { backgroundColor, featuredColor } = useStyle();
+  const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
@@ -120,6 +120,7 @@ function ShowOnSignUp({
               setFormProps={setFormProps}
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
+              buttonStyles={{ background: hexColor.greenLight }}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .finally(() => {

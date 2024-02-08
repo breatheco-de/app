@@ -20,8 +20,7 @@ import {
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import Script from 'next/script';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
@@ -233,13 +232,25 @@ function TabletWithForm({
           />
         </Head>
       )}
+      <Box px="22px" pb="20px" display={{ base: 'block', md: 'none' }}>
+        <SimpleTable
+          href="/interactive-exercises"
+          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
+          repository={exercise.url}
+          duration={exercise.duration}
+          videoAvailable={exercise.solution_video_url}
+          // technologies={exercise.technologies}
+          liveDemoAvailable={exercise.intro_video_url}
+        />
+      </Box>
       <Box
-        px="22px"
-        pb="30px"
-        pt="24px"
-        borderBottom={1}
+        backgroundColor={useColorModeValue('white', 'featuredDark')}
+        transition="background 0.2s ease-in-out"
+        borderRadius="17px"
+        border={2}
         borderStyle="solid"
-        borderColor={commonBorderColor}
+        borderColor={hexColor.greenLight}
+        overflow="hidden"
       >
         <ShowOnSignUp
           headContent={exercise?.intro_video_url && (
@@ -248,6 +259,9 @@ function TabletWithForm({
               withModal
               url={exercise?.intro_video_url}
               withThumbnail
+              thumbnailStyle={{
+                borderRadius: '0 0 0 0',
+              }}
             />
           )}
           hideForm={!user && formSended}
@@ -257,10 +271,11 @@ function TabletWithForm({
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}
-          padding="0"
+          padding="24px 22px 30px 22px"
           background="none"
           border="none"
           conversionTechnologies={conversionTechnologies}
+          borderRadius="0"
         >
           <>
             {user && !formSended && (
@@ -587,49 +602,31 @@ function TabletWithForm({
             </ModalBody>
           </ModalContent>
         </Modal>
-      </Box>
-      <Box px="22px" pb="30px" pt="24px">
-        <SimpleTable
-          href="/interactive-exercises"
-          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
-          repository={exercise.url}
-          duration={exercise.duration}
-          videoAvailable={exercise.solution_video_url}
-          technologies={exercise.technologies}
-          liveDemoAvailable={exercise.intro_video_url}
-        />
+        <Box px="22px" pb="20px" pt="24px" display={{ base: 'none', md: 'block' }}>
+          <SimpleTable
+            href="/interactive-exercises"
+            difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
+            repository={exercise.url}
+            duration={exercise.duration}
+            videoAvailable={exercise.solution_video_url}
+            // technologies={exercise.technologies}
+            liveDemoAvailable={exercise.intro_video_url}
+          />
+        </Box>
       </Box>
     </>
   );
 }
 
 function Exercise({ exercise, markdown }) {
-  const [tags, setTags] = useState([]);
   const { t } = useTranslation(['exercises']);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const router = useRouter();
-  const language = router.locale === 'en' ? 'us' : 'es';
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
-  const { hexColor } = useStyle();
+  // const { hexColor } = useStyle();
 
   const toast = useToast();
-
-  const tagsArray = (exer) => {
-    const values = [];
-    if (exer) {
-      if (exer.difficulty) values.push({ name: t(`common:${exer.difficulty.toLowerCase()}`) });
-      if (exer.interactive) values.push({ name: t('common:interactive') });
-      if (exer.duration) values.push({ name: `${exer.duration}HRS` });
-    }
-
-    setTags(values);
-  };
-
-  useEffect(() => {
-    tagsArray(exercise);
-  }, [language]);
 
   return (
     <>
@@ -663,8 +660,9 @@ function Exercise({ exercise, markdown }) {
             {`← ${t('exercises:backToExercises')}`}
           </Link>
           <TagCapsule
+            isLink
             variant="rounded"
-            tags={tags}
+            tags={exercise?.technologies}
             marginY="8px"
             style={{
               padding: '2px 10px',
@@ -726,14 +724,7 @@ function Exercise({ exercise, markdown }) {
           >
             {exercise?.slug ? (
               <>
-                <Box
-                  backgroundColor={useColorModeValue('white', 'featuredDark')}
-                  transition="background 0.2s ease-in-out"
-                  borderRadius="17px"
-                  border={1}
-                  borderStyle="solid"
-                  borderColor={commonBorderColor}
-                >
+                <Box>
                   <TabletWithForm
                     toast={toast}
                     exercise={exercise}
@@ -792,14 +783,7 @@ function Exercise({ exercise, markdown }) {
         >
           {exercise?.slug ? (
             <>
-              <Box
-                borderRadius="17px"
-                backgroundColor={useColorModeValue('white', 'featuredDark')}
-                transition="background 0.2s ease-in-out"
-                border={2}
-                borderStyle="solid"
-                borderColor={hexColor.greenLight}
-              >
+              <Box>
                 <TabletWithForm
                   toast={toast}
                   exercise={exercise}
