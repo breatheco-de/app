@@ -40,5 +40,11 @@
     "destination": "/es/interactive-coding-tutorial/random-card-es",
     "locale": false,
     "permanent": true
+  },
+  {
+    "source": "/podcast",
+    "destination": "https://podcast.4geeks.com",
+    "locale": false,
+    "permanent": true
   }
 ]
