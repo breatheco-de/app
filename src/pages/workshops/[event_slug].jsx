@@ -719,7 +719,7 @@ function Page({ eventData, asset }) {
                 actionHandler={handleJoin}
                 handlerText={t('confirm-attendance')}
               />
-              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
                     {!readyToJoinEvent && (
@@ -733,7 +733,7 @@ function Page({ eventData, asset }) {
                           startingAt={event?.starting_at}
                           onFinish={handleOnReadyToStart}
                           color="white"
-                          background="blue.900"
+                          background={hexColor.green}
                           height="40px"
                         />
                       </Box>
@@ -753,7 +753,7 @@ function Page({ eventData, asset }) {
                       <Box display="flex" gap="10px">
                         <Button
                           fontSize="17px"
-                          color="blue.default"
+                          color={hexColor.greenLight}
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
@@ -800,6 +800,7 @@ function Page({ eventData, asset }) {
                           alignItems="center"
                           gridGap="10px"
                           width="100%"
+                          background={hexColor.greenLight}
                         >
                           {t('no-consumables.get-more-workshops')}
                           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
@@ -877,6 +878,7 @@ function Page({ eventData, asset }) {
                   childrenDescription={formInfo?.childrenDescription}
                   readOnly={!event?.slug}
                   position="relative"
+                  borderColor={hexColor.greenLight}
                   gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
                 >
                   {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
@@ -886,7 +888,7 @@ function Page({ eventData, asset }) {
                       variant="default"
                       display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
-                      background={buttonEnabled ? 'blue.default' : 'gray.350'}
+                      background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                       isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                       _disabled={{
@@ -931,6 +933,7 @@ function Page({ eventData, asset }) {
                             alignItems="center"
                             gridGap="10px"
                             width="100%"
+                            background={hexColor.greenLight}
                           >
                             {t('no-consumables.get-more-workshops')}
                             <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
