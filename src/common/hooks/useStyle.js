@@ -6,7 +6,7 @@ const useStyle = () => {
   const backgroundColor2 = useColorModeValue('white', 'gray.700');
   const backgroundColor3 = useColorModeValue('gray.light2', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const borderColor2 = useColorModeValue('gray.200', 'gray.500');
+  const borderColor2 = useColorModeValue('gray.200', 'featuredDark');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
   const disabledBackgroundColor = useColorModeValue('gray.250', 'gray.600');
   const disabledColor = useColorModeValue('gray.500', 'gray.350');
