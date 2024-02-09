@@ -119,6 +119,7 @@
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
+    "reviewed": "Tu profesor ha revisado tu entrega y ha proporcionado retroalimentación",
     "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
     "files-sended-to-teacher": "",
     "rejected": {

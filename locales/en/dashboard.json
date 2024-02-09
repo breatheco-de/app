@@ -119,6 +119,7 @@
   "modalInfo": {
     "title": "Review status",
     "still-reviewing": "Your teacher is still reviewing your delivery and will provide feedback once it's done",
+    "reviewed": "Your teacher has reviewed your delivery and has provided feedback",
     "approved": "Your teacher has successfully approved your project!",
     "files-sended-to-teacher": "",
     "rejected": {
