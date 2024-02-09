@@ -319,11 +319,12 @@ function TabletWithForm({
               color="white"
               fontSize="14px"
               alignItems="center"
+              background={hexColor.greenLight}
               onClick={() => setShowModal(true)}
             >
               {'  '}
               <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-              {t('open-gitpod')}
+              {t('open-learnpack')}
             </Button>
             <Button
               borderRadius="3px"
@@ -334,8 +335,8 @@ function TabletWithForm({
               variant="otuline"
               border="1px solid"
               textTransform="uppercase"
-              borderColor="blue.default"
-              color="blue.default"
+              borderColor={hexColor.greenLight}
+              color={hexColor.greenLight}
               onClick={() => {
                 ReportOpenInProvisioningVendor('local');
                 setShowCloneModal(true);
