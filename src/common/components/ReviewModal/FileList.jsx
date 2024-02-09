@@ -60,9 +60,11 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
           </Flex>
           <Flex flexDirection="column" gridGap="12px">
             {fileList.map((file) => {
-              const revisionsRelated = codeRevisions.filter((revision) => revision?.file?.id === file?.id).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+              const revisionsRelated = codeRevisions?.length > 0
+                ? codeRevisions.filter((revision) => revision?.file?.id === file?.id).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+                : [{}];
               const lastUpdatedRevision = revisionsRelated[0];
-              const rateIcon = lastUpdatedRevision.is_good ? 'feedback-like' : 'feedback-dislike';
+              const rateIcon = lastUpdatedRevision?.is_good ? 'feedback-like' : 'feedback-dislike';
 
               return (
                 <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">

@@ -6,7 +6,7 @@ module.exports = {
     '/login': ['login', 'signup'],
     '/example': ['counter'],
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard', 'choose-program', 'projects', 'profile', 'assignments'],
-    '/cohort/[cohortSlug]/assignments': ['assignments'],
+    '/cohort/[cohortSlug]/assignments': ['assignments', 'dashboard'],
     '/cohort/[cohortSlug]/student/[studentId]': ['student', 'assignments'],
     '/cohort/[cohortSlug]/attendance': ['attendance'],
     '/docs/[syllabusSlug]/[assetSlug]': ['docs'],

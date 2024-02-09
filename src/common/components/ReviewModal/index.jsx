@@ -54,7 +54,11 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
     my_revisions: [],
     revision_content: {},
   });
-  const [stage, setStage] = useState(defaultStage);
+  const [stageHistory, setStageHistory] = useState({
+    stage: defaultStage,
+    from: null,
+  });
+  // const [stage, setStage] = useState(defaultStage);
   const { lightColor, featuredColor, hexColor } = useStyle();
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
@@ -62,8 +66,13 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
   const hasNotBeenReviewed = revisionStatus === 'PENDING';
   const hasBeenApproved = revisionStatus === 'APPROVED';
   const noFilesToReview = contextData?.code_revisions?.length === 0;
-  const hasFilesToReview = contextData?.code_revisions?.length > 0;
-  const isReadyToApprove = contextData?.code_revisions?.length >= 3 && taskStatus === 'DONE';
+  const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
+  const stage = stageHistory?.stage;
+
+  // Fetch student files, if is empty show simple view
+
+  const minimumReviews = 0;
+  const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
   const isStageWithDefaultStyles = stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview;
 
   const statusColor = {
@@ -98,6 +107,27 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
     approve: t('alert-message:review-assignment-approve'),
     reject: t('alert-message:review-assignment-reject'),
   };
+  const setStage = (newStage) => {
+    setStageHistory((prevState) => ({
+      stage: newStage,
+      from: prevState.stage,
+    }));
+  };
+  const getRepoFiles = async () => {
+    const response = await bc.assignments().files(currentTask.id);
+    const data = await response.json();
+
+    if (response.ok) {
+      setContextData((prevState) => ({
+        ...prevState,
+        commitFiles: {
+          task: currentTask,
+          fileList: data,
+        },
+      }));
+    }
+  };
+
   useEffect(() => {
     if (externalData) {
       setContextData((prev) => ({
@@ -113,6 +143,8 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
         ...prevState,
         isFetchingCodeReviews: true,
       }));
+      getRepoFiles();
+
       bc.assignments().getCodeRevisions(currentTask.id)
         .then(({ data }) => {
           const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -221,23 +253,12 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
       setStage(stages.file_list);
     }
   };
+
   const proceedToCommitFiles = async () => {
     setLoaders((prevState) => ({
       ...prevState,
       isFetchingCommitFiles: true,
     }));
-    const response = await bc.assignments().files(currentTask.id);
-    const data = await response.json();
-
-    if (response.ok) {
-      setContextData((prevState) => ({
-        ...prevState,
-        commitFiles: {
-          task: currentTask,
-          fileList: data,
-        },
-      }));
-    }
     handleCommitFilesStage();
     setLoaders((prevState) => ({
       ...prevState,
@@ -296,6 +317,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
       isOpen={isOpen}
       onClose={() => {
         onClose();
+        setContextData({});
         setStage(stages.initial);
       }}
       title={getTitle()}
@@ -337,16 +359,16 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
             if (stage === stages.file_list || stage === stages.review_code_revision) {
               setStage(stages.initial);
             }
-            if (stage === stages.approve_or_reject_code_revision && !noFilesToReview) {
+            if (stage === stages.approve_or_reject_code_revision && stageHistory.from === stages.initial) {
               setStage(stages.initial);
               setReviewStatus('');
               setComment('');
             }
-            if (stage === stages.approve_or_reject_code_revision && noFilesToReview) {
+            if (stage === stages.approve_or_reject_code_revision && contextData?.code_revisions?.length > 0 && stageHistory.from !== stages.initial) {
               setStage(stages.file_list);
             }
           }}
-          aria-label="Go back"
+          aria-label={t('common:go-back')}
         >
           <Icon icon="arrowLeft2" width="26px" height="15px" color={hexColor.black} />
         </Button>
@@ -397,17 +419,14 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                       )}
                   </Text>
                 )}
-                {!isStudent && (
-                  <Text size="14px" color={lightColor}>
-                    <span>
-                      {t('code-review.project-delivered')}
-                    </span>
-                    {' '}
-                    <Link variant="default" href={currentTask?.github_url}>
-                      {currentTask?.title}
-                    </Link>
+                <Flex flexDirection="column" color={lightColor}>
+                  <Text size="15px" fontWeight={700}>
+                    {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
                   </Text>
-                )}
+                  <Link variant="default" href={currentTask?.github_url}>
+                    {currentTask?.title}
+                  </Link>
+                </Flex>
                 {hasBeenApproved && (
                   <Flex flexDirection="column" gridGap="8px">
                     <Box fontSize="14">
@@ -428,14 +447,6 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                   </Flex>
                 )}
 
-                <Flex flexDirection="column">
-                  <Text size="15px" fontWeight={700}>
-                    {t('dashboard:modalInfo.link-info')}
-                  </Text>
-                  <Link variant="default" href={currentTask?.github_url}>
-                    {currentTask?.github_url}
-                  </Link>
-                </Flex>
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">
                     <Text size="l" mb="8px">

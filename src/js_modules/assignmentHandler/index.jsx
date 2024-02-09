@@ -17,18 +17,12 @@ import ReviewModalComponent from '../../common/components/ReviewModal';
 // import { getStorageItem } from '../../utils';
 // import Modal from './modal';
 
-export function DetailsModal({
-  currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly,
-}) {
-  const { hexColor } = useStyle();
-  const { t } = useTranslation('assignments');
-  const [openUndoApproval, setOpenUndoApproval] = useState(false);
-  const toast = useToast();
-  // const textAreaRef = useRef(null);
-  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
-  const fontColor = useColorModeValue('gra.dark', 'gray.250');
+export function UndoApprovalModal({ isOpen, currentTask, onClose, updpateAssignment }) {
+  const { modal, borderColor2 } = useStyle();
   const labelColor = useColorModeValue('gray.600', 'gray.200');
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const { t } = useTranslation('assignments');
+  const toast = useToast();
+  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
 
   return (
@@ -38,8 +32,82 @@ export function DetailsModal({
       size="lg"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="17px" marginTop="10%">
-        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+      <ModalContent background={modal.background2} borderRadius="md" marginTop="10%">
+        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
+          {t('deliver-assignment.title')}
+        </ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pt="2rem" pb="2rem" px={{ base: '20px', md: '15%' }}>
+          <Text fontSize="22px" fontWeight="700" textAlign="center">
+            {t('task-handler.confirm-undo', { student: fullName })}
+          </Text>
+        </ModalBody>
+        <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
+          <Button
+            onClick={() => {
+              bc.todo().update({
+                id: currentTask.id,
+                revision_status: 'PENDING',
+                description: '',
+              })
+                .then(() => {
+                  updpateAssignment({
+                    ...currentTask,
+                    id: currentTask.id,
+                    revision_status: 'PENDING',
+                    description: '',
+                  });
+                  onClose();
+                  toast({
+                    position: 'top',
+                    title: t('alert-message:review-assignment-updated'),
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                })
+                .catch((e) => {
+                  console.log(e);
+                  toast({
+                    position: 'top',
+                    title: t('alert-message:review-assignment-error'),
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                });
+            }}
+            variant={taskIsIgnored ? 'default' : 'outline'}
+            textTransform="uppercase"
+          >
+            {t('task-handler.undo-approval')}
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+}
+
+export function DetailsModal({
+  currentTask, projectLink, updpateAssignment, isOpen, onClose, readOnly,
+}) {
+  const { modal, hexColor, borderColor2 } = useStyle();
+  const { t } = useTranslation('assignments');
+  const [openUndoApproval, setOpenUndoApproval] = useState(false);
+  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
+  const fontColor = useColorModeValue('gray.dark', 'gray.250');
+  const labelColor = useColorModeValue('gray.600', 'gray.200');
+  const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+    >
+      <ModalOverlay />
+      <ModalContent background={modal.background2} borderRadius="md" marginTop="10%">
+        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
           {t('review-assignment.title')}
         </ModalHeader>
         <ModalCloseButton />
@@ -68,7 +136,7 @@ export function DetailsModal({
           {currentTask?.file && Array.isArray(currentTask.file) && (
             <Box pb={6}>
               <Text color={fontColor}>{t('review-assignment.files')}</Text>
-              {currentTask.file.map((file) => {
+              {currentTask.file.length > 0 ? currentTask.file.map((file) => {
                 const extension = file.name.split('.').pop();
                 return (
                   <Link
@@ -91,7 +159,11 @@ export function DetailsModal({
                     )}
                   </Link>
                 );
-              })}
+              }) : (
+                <Text fontSize="14px">
+                  Empty
+                </Text>
+              )}
             </Box>
           )}
           {currentTask?.description && (
@@ -102,7 +174,7 @@ export function DetailsModal({
           )}
         </ModalBody>
         {!readOnly && (
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
             <Button onClick={() => setOpenUndoApproval(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
               {t('task-handler.undo-approval')}
             </Button>
@@ -110,67 +182,12 @@ export function DetailsModal({
         )}
       </ModalContent>
 
-      <Modal
-          // isCentered
+      <UndoApprovalModal
         isOpen={openUndoApproval}
         onClose={() => setOpenUndoApproval(false)}
-        size="lg"
-      >
-        <ModalOverlay />
-        <ModalContent borderRadius="17px" marginTop="10%">
-          <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
-            {t('deliver-assignment.title')}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pt="2rem" pb="2rem" px={{ base: '20px', md: '15%' }}>
-            <Text fontSize="22px" fontWeight="700" textAlign="center">
-              {t('task-handler.confirm-undo', { student: fullName })}
-            </Text>
-          </ModalBody>
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
-            <Button
-              onClick={() => {
-                bc.todo().update({
-                  id: currentTask.id,
-                  revision_status: 'PENDING',
-                  description: '',
-                })
-                  .then(() => {
-                    updpateAssignment({
-                      ...currentTask,
-                      id: currentTask.id,
-                      revision_status: 'PENDING',
-                      description: '',
-                    });
-                    setOpenUndoApproval(false);
-                    onClose();
-                    toast({
-                      position: 'top',
-                      title: t('alert-message:review-assignment-updated'),
-                      status: 'success',
-                      duration: 5000,
-                      isClosable: true,
-                    });
-                  })
-                  .catch((e) => {
-                    console.log(e);
-                    toast({
-                      position: 'top',
-                      title: t('alert-message:review-assignment-error'),
-                      status: 'error',
-                      duration: 5000,
-                      isClosable: true,
-                    });
-                  });
-              }}
-              variant={taskIsIgnored ? 'default' : 'outline'}
-              textTransform="uppercase"
-            >
-              {t('task-handler.undo-approval')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        currentTask={currentTask}
+        updpateAssignment={updpateAssignment}
+      />
     </Modal>
   );
 }
@@ -179,6 +196,7 @@ export function DeliverModal({
   currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose, readOnly,
 }) {
   const { t } = useTranslation('assignments');
+  const { modal, borderColor2 } = useStyle();
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
   const toast = useToast();
   const [copied, setCopied] = useState(false);
@@ -186,7 +204,6 @@ export function DeliverModal({
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const fontColor = useColorModeValue('gra.dark', 'gray.250');
   const labelColor = useColorModeValue('gray.600', 'gray.200');
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
 
   useEffect(() => {
@@ -204,8 +221,8 @@ export function DeliverModal({
       size="lg"
     >
       <ModalOverlay />
-      <ModalContent borderRadius="17px" marginTop="10%">
-        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+      <ModalContent background={modal.background2} borderRadius="17px" marginTop="10%">
+        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
           {t('deliver-assignment.title')}
         </ModalHeader>
         <ModalCloseButton />
@@ -262,7 +279,7 @@ export function DeliverModal({
           </Text>
         </ModalBody>
         {!readOnly && (
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
             <Button onClick={() => setOpenIgnoreTask(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
               {taskIsIgnored
                 ? t('deliver-assignment.mark-as-pending')
@@ -280,7 +297,7 @@ export function DeliverModal({
       >
         <ModalOverlay />
         <ModalContent borderRadius="17px" marginTop="10%">
-          <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={commonBorderColor} fontWeight="bold" textTransform="uppercase">
+          <ModalHeader fontSize="15px" color="gray.600" textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
             {t('deliver-assignment.title')}
           </ModalHeader>
           <ModalCloseButton />
@@ -289,7 +306,7 @@ export function DeliverModal({
               {t('deliver-assignment.confirm-ignore', { student: fullName })}
             </Text>
           </ModalBody>
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={commonBorderColor}>
+          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
             <Button
               onClick={() => {
                 bc.todo().update({
@@ -405,7 +422,7 @@ function DeliverHandler({
 export function NoInfoModal({ isOpen, onClose }) {
   const { t } = useTranslation('assignments');
   const { hexColor } = useStyle();
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.500');
+  const borderColor2 = useColorModeValue('gray.250', 'gray.500');
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -417,7 +434,7 @@ export function NoInfoModal({ isOpen, onClose }) {
           textAlign="center"
           letterSpacing="0.05em"
           borderBottom="1px solid"
-          borderColor={commonBorderColor}
+          borderColor={borderColor2}
           fontWeight="bold"
           textTransform="uppercase"
         >
@@ -479,9 +496,9 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
 function ButtonHandler({
   currentTask, cohortSession, updpateAssignment,
 }) {
+  const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const { t } = useTranslation('assignments');
   const router = useRouter();
-  const toast = useToast();
   const lang = {
     es: '/es/',
     en: '/',
@@ -508,48 +525,25 @@ function ButtonHandler({
     }
     if (statusConditional.approved) {
       return (
-        <Box width="auto" height="auto">
-          <Button
-            variant="link"
-            onClick={() => {
-              bc.todo().update({
-                id: currentTask.id,
-                revision_status: 'PENDING',
-                description: '',
-              })
-                .then(() => {
-                  updpateAssignment({
-                    ...currentTask,
-                    id: currentTask.id,
-                    revision_status: 'PENDING',
-                    description: '',
-                  });
-                  toast({
-                    position: 'top',
-                    title: t('alert-message:review-assignment-updated'),
-                    status: 'success',
-                    duration: 5000,
-                    isClosable: true,
-                  });
-                })
-                .catch((e) => {
-                  console.log(e);
-                  toast({
-                    position: 'top',
-                    title: t('alert-message:review-assignment-error'),
-                    status: 'error',
-                    duration: 5000,
-                    isClosable: true,
-                  });
-                });
-            }}
-            fontSize="15px"
-            color="blue.default"
-            _hover={{ textDecoration: 'none' }}
-          >
-            {t('task-handler.undo-approval')}
-          </Button>
-        </Box>
+        <>
+          <Box width="auto" height="auto">
+            <Button
+              variant="link"
+              onClick={() => setOpenUndoApproval(true)}
+              fontSize="15px"
+              color="blue.default"
+              _hover={{ textDecoration: 'none' }}
+            >
+              {t('task-handler.undo-approval')}
+            </Button>
+          </Box>
+          <UndoApprovalModal
+            isOpen={openUndoApproval}
+            onClose={() => setOpenUndoApproval(false)}
+            updpateAssignment={updpateAssignment}
+            currentTask={currentTask}
+          />
+        </>
       );
     }
     if (statusConditional.rejected) {
@@ -623,6 +617,12 @@ DetailsModal.propTypes = {
 
 DetailsModal.defaultProps = {
   readOnly: false,
+};
+UndoApprovalModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  updpateAssignment: PropTypes.func.isRequired,
 };
 
 export default memo(ButtonHandler);
