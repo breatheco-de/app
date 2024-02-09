@@ -28,6 +28,12 @@ export const stages = {
   review_code_revision: 'review_code_revision',
 };
 
+const statusList = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+};
+const { APPROVED, PENDING, REJECTED } = statusList;
 const inputLimit = 500;
 
 function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
@@ -67,9 +73,9 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
-  const hasNotBeenReviewed = revisionStatus === 'PENDING';
-  const hasBeenApproved = revisionStatus === 'APPROVED';
-  const noFilesToReview = contextData?.commitFiles?.fileList?.length === 0;
+  const hasNotBeenReviewed = revisionStatus === PENDING;
+  const hasBeenApproved = revisionStatus === APPROVED;
+  const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.stage;
 
@@ -98,8 +104,8 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
     remove: 'danger',
   };
   const revisionStatusUpperCase = {
-    approve: 'APPROVED',
-    reject: 'REJECTED',
+    approve: APPROVED,
+    reject: REJECTED,
   };
   const reviewHint = {
     approve: t('code-review.why-approve'),
@@ -116,24 +122,63 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
     }));
   };
   const getRepoFiles = async () => {
-    const response = await bc.assignments().files(currentTask.id);
-    const data = await response.json();
+    try {
+      const response = isStudent
+        ? await bc.assignments().personalFiles(currentTask.id)
+        : await bc.assignments().files(currentTask.id);
+      const data = await response.json();
 
-    if (response.ok) {
-      setContextData((prevState) => ({
+      if (response.ok) {
+        setContextData((prevState) => ({
+          ...prevState,
+          commitFiles: {
+            task: currentTask,
+            fileList: data,
+          },
+        }));
+      } else {
+        setContextData((prevState) => ({
+          ...prevState,
+          commitFiles: {
+            task: currentTask,
+            fileList: [],
+          },
+        }));
+      }
+    } catch (error) {
+      error('Error fetching repo files:', error);
+    }
+  };
+  const getCodeRevisions = async () => {
+    try {
+      const response = isStudent
+        ? await bc.assignments().getPersonalCodeRevisions(currentTask.id)
+        : await bc.assignments().getCodeRevisions(currentTask.id);
+      const data = await response.json();
+
+      if (response.ok) {
+        const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setContextData((prev) => ({
+          ...prev,
+          code_revisions: codeRevisionsSortedByDate,
+          my_revisions: data.filter((revision) => revision?.reviewer?.username === profile?.email),
+        }));
+      } else {
+        toast({
+          title: t('alert-message:something-went-wrong'),
+          description: 'Cannot get code revisions',
+          status: 'error',
+          duration: 5000,
+          position: 'top',
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching code revisions:', error);
+    } finally {
+      setLoaders((prevState) => ({
         ...prevState,
-        commitFiles: {
-          task: currentTask,
-          fileList: data,
-        },
-      }));
-    } else {
-      setContextData((prevState) => ({
-        ...prevState,
-        commitFiles: {
-          task: currentTask,
-          fileList: [],
-        },
+        isFetchingCodeReviews: false,
       }));
     }
   };
@@ -154,32 +199,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
         isFetchingCodeReviews: true,
       }));
       getRepoFiles();
-
-      bc.assignments().getCodeRevisions(currentTask.id)
-        .then(({ data }) => {
-          const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-          setContextData((prev) => ({
-            ...prev,
-            code_revisions: codeRevisionsSortedByDate,
-            my_revisions: data.filter((revision) => revision?.reviewer?.username === profile?.email),
-          }));
-        })
-        .catch(() => {
-          toast({
-            title: t('alert-message:something-went-wrong'),
-            description: 'Cannot get code revisions',
-            status: 'error',
-            duration: 5000,
-            position: 'top',
-            isClosable: true,
-          });
-        })
-        .finally(() => {
-          setLoaders((prevState) => ({
-            ...prevState,
-            isFetchingCodeReviews: false,
-          }));
-        });
+      getCodeRevisions();
     }
   }, [isOpen, currentTask?.id, externalData]);
 
@@ -425,8 +445,8 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                       ? t('dashboard:modalInfo.still-reviewing')
                       : (
                         <>
-                          {revisionStatus === 'APROVED' && t('code-review.assignment-approved-msg')}
-                          {revisionStatus === 'REJECTED' && t('code-review.assignment-rejected-msg')}
+                          {revisionStatus === APPROVED && t('code-review.assignment-approved-msg')}
+                          {revisionStatus === REJECTED && t('code-review.assignment-rejected-msg')}
                         </>
                       )}
                   </Text>
@@ -527,7 +547,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                   </Flex>
                 )}
 
-                {isStudent && revisionStatus !== 'APPROVED' && (
+                {isStudent && revisionStatus !== APPROVED && (
                   <Flex justifyContent="space-between" pt="8px">
                     <Button
                       minWidth="128px"
@@ -539,7 +559,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                           ...prevState,
                           isRemovingDelivery: true,
                         }));
-                        changeStatusAssignment(event, currentTask, 'PENDING')
+                        changeStatusAssignment(event, currentTask, PENDING)
                           .finally(() => {
                             setLoaders((prevState) => ({
                               ...prevState,

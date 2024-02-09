@@ -233,9 +233,11 @@ ${revisionContent?.code}
                           />
                         </Box>
                       </Flex>
-                      <Button onClick={() => setStage(stages.code_review)} variant="link" fontSize="17px" gridGap="15px">
-                        <Icon icon="longArrowRight" width="20px" height="20px" color={hexColor.blueDefault} />
-                        {t('code-review.go-to-review')}
+                      <Button isDisabled={!contextData.commitFile?.id} onClick={() => setStage(stages.code_review)} color={!contextData.commitFile?.id && 'white'} variant="link" fontSize="17px" gridGap="15px">
+                        {contextData.commitFile?.id && (
+                          <Icon icon="longArrowRight" width="20px" height="20px" color={hexColor.blueDefault} />
+                        )}
+                        {contextData.commitFile?.id ? t('code-review.go-to-review') : 'No commit file found'}
                       </Button>
                       <Divider mt="-8px" />
                     </>
