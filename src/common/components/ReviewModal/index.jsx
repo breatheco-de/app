@@ -29,7 +29,7 @@ export const stages = {
 
 const inputLimit = 500;
 
-function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
+function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
   projectLink, changeStatusAssignment, ...rest }) {
   const { t } = useTranslation('assignments');
   const toast = useToast();
@@ -44,7 +44,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
   const [cohortSession] = usePersistent('cohortSession', {});
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [fileData, setFileData] = useState(defaultFileData);
+  const [fileData, setFileData] = useState();
   const { contextState, setContextState } = useModuleMap();
   const [reviewStatus, setReviewStatus] = useState('');
   const [contextData, setContextData] = useState({
@@ -98,7 +98,6 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     approve: t('alert-message:review-assignment-approve'),
     reject: t('alert-message:review-assignment-reject'),
   };
-
   useEffect(() => {
     if (externalData) {
       setContextData((prev) => ({
@@ -107,6 +106,9 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
       }));
     }
     if (isOpen && currentTask?.id > 0 && !externalData) {
+      if (externalFiles) {
+        setFileData(externalFiles);
+      }
       setLoaders((prevState) => ({
         ...prevState,
         isFetchingCodeReviews: true,
@@ -205,7 +207,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
   };
 
   const widthSizes = {
-    initial: '36rem',
+    initial: hasFilesToReview ? '36rem' : '28rem',
     approve_or_reject_code_revision: '36rem',
     file_list: '42rem',
     code_review: '74rem',
@@ -253,11 +255,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
     return t('code-review.rigobot-code-review');
   };
 
-  const toggleSettings = async () => {
-    setLoaders((prevState) => ({
-      ...prevState,
-      isOpeningResubmitForm: true,
-    }));
+  const getAssetData = async ({ callback = () => {} } = {}) => {
     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp.status < 400) {
       setLoaders((prevState) => ({
@@ -272,8 +270,17 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
         const respData = await fileResp.data;
         setFileData(respData);
       }
-      setSettingsOpen(!settingsOpen);
+      callback();
     }
+  };
+  const toggleSettings = async () => {
+    setLoaders((prevState) => ({
+      ...prevState,
+      isOpeningResubmitForm: true,
+    }));
+    getAssetData({
+      callback: () => setSettingsOpen(!settingsOpen),
+    });
   };
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -294,14 +301,14 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
       title={getTitle()}
       closeOnOverlayClick={false}
       maxWidth={noFilesToReview ? widthSizes.initial : widthSizes[stage]}
-      isCentered
+      isCentered={!stages.initial}
       minHeight={isStageWithDefaultStyles ? 'auto' : '30rem'}
-      overflow="auto"
+      overflow={stages.initial ? 'initial' : 'auto'}
       margin="0 10px"
       bodyStyles={{
         display: 'flex',
         gridGap: '20px',
-        padding: '1rem',
+        padding: '1rem 1.5rem',
       }}
       headerStyles={{
         userSelect: 'none',
@@ -354,7 +361,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
             </Box>
           ) : (
             <>
-              {!isReadyToApprove && (
+              {hasFilesToReview && !isReadyToApprove && (
                 <AlertMessage
                   type={isStudent ? 'info' : 'warning'}
                   full
@@ -379,7 +386,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                     )}
                   </Flex>
                 ) : (
-                  <Text size="14px" color={lightColor}>
+                  <Text size="15px" color={lightColor}>
                     {hasNotBeenReviewed
                       ? t('dashboard:modalInfo.still-reviewing')
                       : (
@@ -401,7 +408,7 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                     </Link>
                   </Text>
                 )}
-                {hasBeenApproved ? (
+                {hasBeenApproved && (
                   <Flex flexDirection="column" gridGap="8px">
                     <Box fontSize="14">
                       {t('code-review.your-teacher-said')}
@@ -419,12 +426,16 @@ function ReviewModal({ defaultFileData, isOpen, isStudent, externalData, default
                       {currentTask?.description}
                     </Text>
                   </Flex>
-                ) : (
-                  <Box>
-                    {t('code-review.feedback-will-be-shown-here')}
-                  </Box>
                 )}
 
+                <Flex flexDirection="column">
+                  <Text size="15px" fontWeight={700}>
+                    {t('dashboard:modalInfo.link-info')}
+                  </Text>
+                  <Link variant="default" href={currentTask?.github_url}>
+                    {currentTask?.github_url}
+                  </Link>
+                </Flex>
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">
                     <Text size="l" mb="8px">
