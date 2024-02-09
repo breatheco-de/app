@@ -99,6 +99,7 @@
     "start-review": "Comenzar revisión",
     "no-files-to-review": "No hay archivos para revisar",
     "student-has-no-files-to-review": "El estudiante aún no tiene archivos para revisar. Pero aún puedes aprobar o rechazar el proyecto y dejar un comentario.",
+    "student-has-no-files-but-has-been-approved": "El estudiante aún no tiene archivos para revisar. Pero la tarea ha sido aprobada.",
     "code-review-successfully-sent": "La revisión de código se envió con éxito.",
     "start-other-code-review": "Comenzar otra revisión de código",
     "select-file-to-review": "Selecciona el archivo que quieres revisar de:",

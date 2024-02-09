@@ -119,6 +119,7 @@ export function ButtonHandlerByTaskStatus({
           <ReviewModal
             isOpen={isReviewModalOpen}
             isStudent
+            changeStatusAssignment={changeStatusAssignment}
             externalFiles={fileData}
             currentAssetData={currentAssetData}
             currentTask={currentTask}

@@ -1,18 +1,23 @@
 import { Box, Button, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { useState } from 'react';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 import { log } from '../../../utils/logging';
+import UndoApprovalModal from '../UndoApprovalModal';
 
-function FileList({ contextData, setContextData, stage, stages, setStage, setReviewStatus }) {
+function FileList({ isStudent, currentTask, contextData, updpateAssignment, setContextData, stage, stages, setStage, setReviewStatus }) {
   const { t } = useTranslation('assignments');
+  const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
   const data = contextData?.commitFiles || {};
   const codeRevisions = contextData?.code_revisions || [];
   const fileList = data?.fileList || [];
+  const revisionStatus = currentTask?.revision_status;
+  const hasBeenApproved = revisionStatus === 'APPROVED';
 
   const buttonText = {
     approve: t('review-assignment.approve'),
@@ -113,32 +118,58 @@ function FileList({ contextData, setContextData, stage, stages, setStage, setRev
           </Flex>
         </>
       ) : (
-        <Flex alignItems="center" justifyContent="center" height="100%" width="500px" flexDirection="column" margin="1rem auto 1rem auto" gridGap="0.7rem">
+        <Flex alignItems="center" justifyContent="center" padding="0 0 1.5rem 0" height="100%" width="500px" flexDirection="column" margin="1rem auto" gridGap="0.7rem">
           <Heading size="xsm">
             {t('code-review.no-files-to-review')}
           </Heading>
           <Text size="14px" textAlign="center" style={{ textWrap: 'balance' }}>
-            {t('code-review.student-has-no-files-to-review')}
+            {!hasBeenApproved ? t('code-review.student-has-no-files-to-review') : t('code-review.student-has-no-files-but-has-been-approved')}
           </Text>
-          <Flex width="100%" justifyContent="space-between" mt="3rem">
-            {['reject', 'approve'].map((type) => (
+          {!hasBeenApproved && (
+            <Flex width="100%" justifyContent="space-between" mt="3rem">
+              {['reject', 'approve'].map((type) => (
+                <Button
+                  minWidth="128px"
+                  background={buttonColor[type]}
+                  _hover={{ background: buttonColor[type] }}
+                  onClick={() => {
+                    setStage(stages.approve_or_reject_code_revision);
+                    setReviewStatus(type);
+                  }}
+                  color="white"
+                  borderRadius="3px"
+                  fontSize="13px"
+                  textTransform="uppercase"
+                >
+                  {buttonText[type]}
+                </Button>
+              ))}
+            </Flex>
+          )}
+          {!isStudent && hasBeenApproved && (
+            <>
               <Button
                 minWidth="128px"
-                background={buttonColor[type]}
-                _hover={{ background: buttonColor[type] }}
-                onClick={() => {
-                  setStage(stages.approve_or_reject_code_revision);
-                  setReviewStatus(type);
-                }}
+                mt="8px"
+                onClick={() => setOpenUndoApproval(true)}
                 color="white"
                 borderRadius="3px"
                 fontSize="13px"
                 textTransform="uppercase"
+                variant="outline"
+                width="fit-content"
+                alignSelf="center"
               >
-                {buttonText[type]}
+                {t('task-handler.undo-approval')}
               </Button>
-            ))}
-          </Flex>
+              <UndoApprovalModal
+                isOpen={openUndoApproval}
+                onClose={() => setOpenUndoApproval(false)}
+                updpateAssignment={updpateAssignment}
+                currentTask={currentTask}
+              />
+            </>
+          )}
         </Flex>
       )}
     </Flex>
@@ -156,6 +187,9 @@ FileList.propTypes = {
   contextData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setContextData: PropTypes.func,
   setReviewStatus: PropTypes.func.isRequired,
+  isStudent: PropTypes.bool.isRequired,
+  updpateAssignment: PropTypes.func,
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 FileList.defaultProps = {
   stage: '',
@@ -166,6 +200,7 @@ FileList.defaultProps = {
   },
   setStage: () => {},
   setContextData: () => {},
+  updpateAssignment: () => {},
 };
 
 export default FileList;

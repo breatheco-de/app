@@ -99,6 +99,7 @@
     "start-review": "Start review",
     "no-files-to-review": "No files to review",
     "student-has-no-files-to-review": "The student has no files to review yet. But you can still approve or reject the assignment, and leave a comment.",
+    "student-has-no-files-but-has-been-approved": "The student has no files to review yet. But the assignment has been approved.",
     "code-review-successfully-sent": "The code review was sent successfully.",
     "start-other-code-review": "Start other code review",
     "select-file-to-review": "Select the file you want to review from:",
