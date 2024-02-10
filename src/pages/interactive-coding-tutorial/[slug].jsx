@@ -205,8 +205,6 @@ function TableInfo({ t, project, commonTextColor }) {
 function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
-  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   const { colorMode } = useColorMode();
 
   return (
@@ -273,8 +271,6 @@ function ProjectSlug({ project, markdown }) {
                 <>
                   <TabletWithForm
                     exercise={project}
-                    commonTextColor={commonTextColor}
-                    commonBorderColor={commonBorderColor}
                   />
                   <DynamicCallToAction
                     assetId={project.id}
@@ -326,8 +322,6 @@ function ProjectSlug({ project, markdown }) {
             <>
               <TabletWithForm
                 exercise={project}
-                commonTextColor={commonTextColor}
-                commonBorderColor={commonBorderColor}
               />
               <DynamicCallToAction
                 assetId={project.id}

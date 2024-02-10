@@ -44,7 +44,9 @@ function TabletWithForm({
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
-  const { hexColor } = useStyle();
+  const { hexColor, lightColor } = useStyle();
+  const textColor = commonTextColor || lightColor;
+  const borderColor = commonBorderColor || useColorModeValue('gray.250', 'gray.900');
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
 
   const ReportOpenInProvisioningVendor = (vendor = '') => {
@@ -148,7 +150,7 @@ function TabletWithForm({
                 >
                   {t('thanks')}
                 </Heading>
-                <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
+                <Text size="md" color={textColor} textAlign="center" marginTop="10px" px="0px">
                   {t('download')}
                 </Text>
               </>
@@ -201,7 +203,7 @@ function TabletWithForm({
         >
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
               {t('modal.title')}
             </ModalHeader>
             <ModalCloseButton />
@@ -310,7 +312,7 @@ function TabletWithForm({
         >
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
+            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
               {t('clone-modal.title')}
             </ModalHeader>
             <ModalCloseButton />
@@ -464,15 +466,16 @@ function TabletWithForm({
 }
 
 TabletWithForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  commonTextColor: PropTypes.string.isRequired,
-  commonBorderColor: PropTypes.string.isRequired,
+  commonTextColor: PropTypes.string,
+  commonBorderColor: PropTypes.string,
   exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
+  commonTextColor: null,
+  commonBorderColor: null,
 };
 
 export default TabletWithForm;

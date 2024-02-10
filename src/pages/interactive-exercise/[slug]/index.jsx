@@ -174,7 +174,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 function Exercise({ exercise, markdown }) {
   const { t } = useTranslation(['exercises']);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const { colorMode } = useColorMode();
   const { lightColor } = useStyle();
 
@@ -277,8 +276,6 @@ function Exercise({ exercise, markdown }) {
                 <Box>
                   <TabletWithForm
                     exercise={exercise}
-                    commonTextColor={lightColor}
-                    commonBorderColor={commonBorderColor}
                   />
                 </Box>
                 <DynamicCallToAction
@@ -334,8 +331,6 @@ function Exercise({ exercise, markdown }) {
               <Box>
                 <TabletWithForm
                   exercise={exercise}
-                  commonTextColor={lightColor}
-                  commonBorderColor={commonBorderColor}
                 />
               </Box>
               <DynamicCallToAction
@@ -375,14 +370,6 @@ function Exercise({ exercise, markdown }) {
 Exercise.propTypes = {
   exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-};
-
-TabletWithForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  commonTextColor: PropTypes.string.isRequired,
-  toast: PropTypes.func.isRequired,
-  commonBorderColor: PropTypes.string.isRequired,
-  exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default Exercise;
