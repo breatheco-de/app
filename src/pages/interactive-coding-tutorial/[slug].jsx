@@ -8,8 +8,8 @@ import Head from 'next/head';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
+import TabletWithForm from '../../js_modules/projects/TabletWithForm';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
@@ -271,20 +271,11 @@ function ProjectSlug({ project, markdown }) {
             >
               {project && project?.difficulty ? (
                 <>
-                  <Box
-                    border={1}
-                    borderStyle="solid"
-                    borderColor={commonBorderColor}
-                    borderRadius="17px"
-                    backgroundColor={useColorModeValue('white', 'featuredDark')}
-                  >
-                    <Box display="flex" justifyContent="center">
-                      <Icon icon="sideSupport" width="300px" height="70px" />
-                    </Box>
-                    <Box px="22px" py="20px">
-                      <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-                    </Box>
-                  </Box>
+                  <TabletWithForm
+                    exercise={project}
+                    commonTextColor={commonTextColor}
+                    commonBorderColor={commonBorderColor}
+                  />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -333,20 +324,11 @@ function ProjectSlug({ project, markdown }) {
         >
           {project && project?.difficulty ? (
             <>
-              <Box
-                border={1}
-                borderStyle="solid"
-                borderColor={commonBorderColor}
-                borderRadius="17px"
-                backgroundColor={useColorModeValue('white', 'featuredDark')}
-              >
-                <Box display="flex" justifyContent="center">
-                  <Icon icon="sideSupport" width="300px" height="70px" />
-                </Box>
-                <Box px="22px" py="20px">
-                  <TableInfo t={t} project={project} commonTextColor={commonTextColor} />
-                </Box>
-              </Box>
+              <TabletWithForm
+                exercise={project}
+                commonTextColor={commonTextColor}
+                commonBorderColor={commonBorderColor}
+              />
               <DynamicCallToAction
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
