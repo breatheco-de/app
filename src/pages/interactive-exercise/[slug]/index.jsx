@@ -602,7 +602,7 @@ function TabletWithForm({
             </ModalBody>
           </ModalContent>
         </Modal>
-        <Box px="22px" pb="20px" pt="24px" display={{ base: 'none', md: 'block' }}>
+        <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
             href="/interactive-exercises"
             difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
