@@ -178,7 +178,7 @@ function MentoringFree({
                   ) : ''}
                 </Box>
                 {mentoryProps?.service && (
-                  <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+                  <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0" style={{ textWrap: 'nowrap' }}>
                     <Box>
                       {t('mentorship.you-have')}
                     </Box>
