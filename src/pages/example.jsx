@@ -68,7 +68,6 @@ export default function Example() {
       <Button variant="default" mb="1rem" isDisabled={!isAuthenticated} isLoading={isFetchingEvent} onClick={openEventConsumables}>
         Open out of Event consumables
       </Button>
-
       <ModalToGetAccess
         isOpen={isModalOpen}
         stage={stage}
