@@ -162,6 +162,8 @@ function MentoringConsumables({
       });
   };
 
+  const servicesWithMentorsAvailable = servicesFiltered.filter((service) => allMentorsAvailable.some((mentor) => mentor.services.some((mentServ) => mentServ.slug === service.slug)));
+
   const handleGetMoreMentorships = () => {
     setIsFetchingDataForModal(true);
     const academyService = mentoryProps?.service?.slug
@@ -317,7 +319,7 @@ function MentoringConsumables({
                       </InputRightElement>
                     </InputGroup>
                     <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
-                      {servicesFiltered.length > 0 ? servicesFiltered.map((service) => (
+                      {servicesWithMentorsAvailable.length > 0 ? servicesWithMentorsAvailable.map((service) => (
                         <Box key={service.name} borderTop="1px solid" cursor="pointer" onClick={() => handleService(service)} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
                           {service.name}
                         </Box>
