@@ -43,16 +43,19 @@ export function MDLink({ children, href }) {
   );
 }
 
-export function Code({ inline, className, children, ...props }) {
+export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children, ...props }) {
   const match = /language-(\w+)/.exec(className || '');
 
   return !inline && match ? (
     <SyntaxHighlighter
-      showLineNumbers
+      showLineNumbers={showLineNumbers}
+      showInlineLineNumbers={showInlineLineNumbers}
       style={tomorrow}
+      customStyle={{
+        padding: showLineNumbers ? '1em 0px' : '16px',
+      }}
       language={match[1]}
       PreTag="div"
-      {...props}
     >
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
@@ -523,10 +526,14 @@ Code.propTypes = {
   className: PropTypes.string,
   children: PropTypes.node.isRequired,
   inline: PropTypes.bool,
+  showLineNumbers: PropTypes.bool,
+  showInlineLineNumbers: PropTypes.bool,
 };
 Code.defaultProps = {
   className: '',
   inline: false,
+  showLineNumbers: true,
+  showInlineLineNumbers: true,
 };
 
 MDLink.propTypes = {

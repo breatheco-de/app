@@ -2,7 +2,7 @@ import { differenceInDays } from 'date-fns';
 import bc from '../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
 
-export const updateAssignment = ({
+export const updateAssignment = async ({
   t, task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
 }) => {
   // Task case
@@ -14,7 +14,8 @@ export const updateAssignment = ({
       task_status: toggleStatus,
     };
 
-    bc.todo({}).update(taskToUpdate).then(() => {
+    try {
+      await bc.todo({}).update(taskToUpdate);
       const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
       setContextState({
         ...contextState,
@@ -33,7 +34,8 @@ export const updateAssignment = ({
       });
 
       closeSettings();
-    }).catch(() => {
+    } catch (error) {
+      console.log(error);
       toast({
         position: 'top',
         title: t('alert-message:assignment-update-error'),
@@ -42,7 +44,7 @@ export const updateAssignment = ({
         isClosable: true,
       });
       closeSettings();
-    });
+    }
   } else {
     // Project case
     const getProjectUrl = () => {
@@ -64,9 +66,10 @@ export const updateAssignment = ({
       delivered_at: new Date(),
     };
 
-    bc.todo({}).update(taskToUpdate).then(({ data }) => {
+    try {
+      const response = await bc.todo({}).update(taskToUpdate);
       // verify if form is equal to the response
-      if (data.github_url === projectUrl) {
+      if (response.data.github_url === projectUrl) {
         const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
         setContextState({
           ...contextState,
@@ -99,7 +102,8 @@ export const updateAssignment = ({
         });
         closeSettings();
       }
-    }).catch(() => {
+    } catch (error) {
+      console.log(error);
       toast({
         position: 'top',
         title: t('alert-message:delivery-error'),
@@ -108,7 +112,7 @@ export const updateAssignment = ({
         isClosable: true,
       });
       closeSettings();
-    });
+    }
   }
 };
 

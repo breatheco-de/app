@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import {
   Avatar,
-  Tooltip,
   Box, Flex, Image, Skeleton,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -37,6 +36,8 @@ function ContactInformation({
       },
     });
   }, []);
+
+  console.log('defaultPlanData?.featured_info:::', defaultPlanData?.featured_info);
 
   return (
     <Box display="flex" height="100%" maxWidth="1336px" width="100%" margin={{ base: 'inherit', md: '1rem auto 1rem auto', '2xl': '4rem auto 4rem auto' }}>
@@ -92,28 +93,26 @@ function ContactInformation({
                 {/* <Text size="16px" color="blue.default">
                   {t('what-includes')}
                 </Text> */}
-                <Flex flexDirection="column" gridGap="12px" mt="1rem">
+                <Flex flexDirection="column" gridGap="4px" mt="1rem">
                   {defaultPlanData?.featured_info?.length > 0
                     && defaultPlanData?.featured_info.map((info) => info?.service?.slug && (
-                      <Box display="flex" gridGap="8px" alignItems="center">
-                        {info?.service?.icon_url
-                          ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                          : (
-                            <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
-                          )}
-                        <Box>
-                          <Text size="16px" fontWeight={700} textAlign="left">
-                            {info?.features[0]?.title || slugToTitle(info?.service?.slug)}
-                          </Text>
-                        </Box>
-                        {info.features[0]?.description && (
-                          <Tooltip label={info.features[0]?.description} placement="top">
-                            <Box>
-                              <Icon icon="help" width="15px" height="15px" style={{ alignItems: 'center' }} />
-                            </Box>
-                          </Tooltip>
-                        )}
-                      </Box>
+                      <>
+                        <Flex gridGap="8px" alignItems="center">
+                          {info?.service?.icon_url
+                            ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                            : (
+                              <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
+                            )}
+                          <Box>
+                            <Text size="16px" fontWeight={700} textAlign="left">
+                              {info?.features[0]?.title || slugToTitle(info?.service?.slug)}
+                            </Text>
+                          </Box>
+                        </Flex>
+                        <Text size="12px" marginLeft="20px" mb="12px">
+                          {info.features[0]?.description}
+                        </Text>
+                      </>
                     ))}
                 </Flex>
               </Flex>

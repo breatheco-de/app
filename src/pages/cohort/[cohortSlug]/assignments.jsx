@@ -35,6 +35,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import Projects from '../../../common/views/Projects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
+import axiosInstance from '../../../axios';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -197,6 +198,7 @@ function Assignments() {
   };
 
   useEffect(() => {
+    axiosInstance.defaults.headers.common.academy = academy;
     bc.admissions()
       .me()
       .then(({ data }) => {
@@ -289,6 +291,8 @@ function Assignments() {
     if (selectedCohort) {
       loadStudents();
       getFilterAssignments(selectedCohort.value, selectedCohort.academy || academy);
+    } else {
+      setLoadStatus({ loading: false, status: 'idle' });
     }
   }, [
     selectedCohort,

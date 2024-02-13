@@ -112,7 +112,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
             // const tags = ['Free course'];
 
             return (
-              <Container key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius} padding={containerPadding}>
+              <Container border="1px solid" borderColor={{ base: 'default', md: 'success' }} key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius} padding={containerPadding}>
                 <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />

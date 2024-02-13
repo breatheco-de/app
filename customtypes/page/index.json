@@ -38,6 +38,7 @@
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "info_cards": { "type": "SharedSlice" },
             "trust_cards": { "type": "SharedSlice" },
             "title_introduction": { "type": "SharedSlice" },
             "markdown": { "type": "SharedSlice" },
