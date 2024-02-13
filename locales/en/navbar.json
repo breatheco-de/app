@@ -47,6 +47,19 @@
               "label": "Upcoming live events"
             }
           ]
+        },
+        {
+          "label": "Podcast",
+          "slug": "podcast",
+          "asPath": "/workshops",
+          "icon": "microphone",
+          "description": "A tech-culture podcast where you learn to fight the enemies to become a successful professional in tech.",
+          "subMenu": [
+            {
+              "href": "/podcast",
+              "label": "List all episodes"
+            }
+          ]
         }
       ],
       "position": 3
