@@ -20,7 +20,7 @@ module.exports = {
     '/interactive-coding-tutorial/[slug]': ['projects'],
     '/interactive-coding-tutorials': ['projects'],
     '/interactive-exercise/[slug]': ['exercises', 'workshops'],
-    '/choose-program': ['choose-program', 'dashboard', 'profile'],
+    '/choose-program': ['choose-program', 'dashboard', 'profile', 'assignments'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard', 'projects'],
     '/survey/[surveyId]': ['survey'],
     '/mentorship': ['mentorship'],

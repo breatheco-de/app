@@ -36,8 +36,8 @@ const statusList = {
 const { APPROVED, PENDING, REJECTED } = statusList;
 const inputLimit = 500;
 
-function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultStage, onClose, updpateAssignment, currentTask,
-  projectLink, changeStatusAssignment, ...rest }) {
+function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
+  projectLink, changeStatusAssignment, disableRate, ...rest }) {
   const { t } = useTranslation('assignments');
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');
@@ -152,7 +152,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
   const getCodeRevisions = async () => {
     try {
       const response = isStudent
-        ? await bc.assignments().getPersonalCodeRevisions(currentTask.id)
+        ? await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id)
         : await bc.assignments().getCodeRevisions(currentTask.id);
       const data = await response.json();
 
@@ -185,10 +185,14 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
 
   useEffect(() => {
     if (externalData) {
-      setContextData((prev) => ({
-        ...prev,
+      setContextData(() => ({
         ...externalData,
       }));
+    }
+  }, [isOpen, externalData]);
+  useEffect(() => {
+    if (defaultStage) {
+      setStage(defaultStage);
     }
     if (isOpen && currentTask?.id > 0 && !externalData) {
       if (externalFiles) {
@@ -355,7 +359,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
       title={getTitle()}
       closeOnOverlayClick={false}
       maxWidth={noFilesToReview ? widthSizes.initial : widthSizes[stage]}
-      isCentered={!stages.initial}
+      minWidth={stage === stages.code_review && '83vw'}
       minHeight={isStageWithDefaultStyles ? 'auto' : '30rem'}
       overflow={stages.initial ? 'initial' : 'auto'}
       margin="0 10px"
@@ -374,7 +378,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
       closeButtonStyles={{
         top: isStageWithDefaultStyles ? 2 : 5,
       }}
-      leftButton={stage !== stages.initial && (
+      leftButton={stage !== stages.initial && !fixedStage && (
         <Button
           position="absolute"
           variant="unstyled"
@@ -508,7 +512,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
                     </Box>
                   </Box>
                 )}
-                {hasFilesToReview && (
+                {hasFilesToReview && !disableRate && (
                   <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
@@ -638,7 +642,7 @@ function ReviewModal({ externalFiles, isOpen, isStudent, externalData, defaultSt
         <FileList isStudent={isStudent} contextData={contextData} setContextData={setContextData} currentTask={currentTask} updpateAssignment={updpateAssignment} stage={stage} stages={stages} setStage={setStage} setReviewStatus={setReviewStatus} />
       )}
       {stage === stages.code_review && (contextData.commitFile?.code || contextData.revision_content?.code) && (
-        <CodeReview isStudent={isStudent} setStage={setStage} handleResetFlow={handleResetFlow} contextData={contextData} setContextData={setContextData} selectedText={selectedText} handleSelectedText={handleSelectedText} />
+        <CodeReview isExternal={isExternal} onClose={onClose} disableRate={disableRate} isStudent={isStudent} setStage={setStage} handleResetFlow={handleResetFlow} contextData={contextData} setContextData={setContextData} selectedText={selectedText} handleSelectedText={handleSelectedText} />
       )}
 
       {stage === stages.review_code_revision && (
@@ -658,6 +662,9 @@ ReviewModal.propTypes = {
   externalData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isStudent: PropTypes.bool,
   changeStatusAssignment: PropTypes.func,
+  fixedStage: PropTypes.bool,
+  disableRate: PropTypes.bool,
+  isExternal: PropTypes.bool,
 };
 ReviewModal.defaultProps = {
   isOpen: false,
@@ -668,6 +675,9 @@ ReviewModal.defaultProps = {
   externalData: null,
   isStudent: false,
   changeStatusAssignment: () => {},
+  fixedStage: false,
+  disableRate: false,
+  isExternal: false,
 };
 
 export default ReviewModal;

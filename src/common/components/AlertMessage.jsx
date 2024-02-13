@@ -31,11 +31,14 @@ function AlertMessage({
       gridGap="16px"
       {...rest}
     >
+      {!withoutIcon && (
+        <Icon icon={type} secondColor={rest.secondColor} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+      )}
       {children && children}
       {!children && (
         <>
           {!withoutIcon && (
-            <Icon icon={type} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+            <Icon icon={type} secondColor={rest.secondColor} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
           )}
           <Box>
             {title && (
@@ -45,14 +48,14 @@ function AlertMessage({
             )}
             {dangerouslySetInnerHTML ? (
               <Text
-                fontSize="15px"
+                fontSize={rest.fontSize || '15px'}
                 color={full ? 'black' : (textColor || fontColor)}
                 fontWeight="500"
                 style={{ ...textStyle, margin: '0' }}
                 dangerouslySetInnerHTML={{ __html: message }}
               />
             ) : (
-              <Text fontSize="15px" color={full ? 'black' : (textColor || fontColor)} fontWeight="700" style={{ ...textStyle, margin: '0' }}>
+              <Text fontSize={rest.fontSize || '15px'} color={full ? 'black' : (textColor || fontColor)} fontWeight={rest.fontWeight || '700'} style={{ ...textStyle, margin: '0' }}>
                 {message}
               </Text>
             )}
@@ -64,7 +67,7 @@ function AlertMessage({
 }
 
 AlertMessage.propTypes = {
-  message: PropTypes.string,
+  message: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   type: PropTypes.string,
   style: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   full: PropTypes.bool,
