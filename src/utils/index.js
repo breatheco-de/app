@@ -31,13 +31,17 @@ const slugify = (str) => (typeof str === 'string' ? str
   .replace(/^-+|-+$/g, '')
   : '');
 
-const unSlugify = (str) => (typeof str === 'string' ? str
-  .replace(/-/g, ' ')
-  .replace(
-    /\w\S*/g,
-    (txt) => txt.charAt(0) + txt.substr(1).toLowerCase(),
-  )
-  : '');
+  const unSlugify = (str, capitalize = false) => (typeof str === 'string'
+    ? str
+      .replace(/-/g, ' ')
+      .replace(
+        /\w\S*/g,
+        (txt) => {
+          const firstLetter = capitalize ? txt.charAt(0).toUpperCase() : txt.charAt(0);
+          return firstLetter + txt.substring(1).toLowerCase();
+        },
+      )
+    : '');
 
 const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
