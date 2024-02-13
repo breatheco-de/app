@@ -8,7 +8,7 @@ import bc from '../../services/breathecode';
 // import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 
-function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData }) {
+function SupportSidebar({ allCohorts, allAcademySyllabus, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();
   const toast = useToast();
   const [programServices, setProgramServices] = useState({
@@ -46,6 +46,7 @@ function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData 
   return programServices.list?.length > 0 && (
     <Mentoring
       allCohorts={allCohorts}
+      allAcademySyllabus={allAcademySyllabus}
       programServices={programServices}
       subscriptions={subscriptions}
       subscriptionData={subscriptionData}
@@ -58,6 +59,7 @@ SupportSidebar.propTypes = {
   services: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   subscriptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   allCohorts: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  allAcademySyllabus: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 SupportSidebar.defaultProps = {
@@ -65,6 +67,7 @@ SupportSidebar.defaultProps = {
   subscriptions: [],
   services: [],
   allCohorts: [],
+  allAcademySyllabus: [],
 };
 
 export default memo(SupportSidebar);

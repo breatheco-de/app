@@ -2,16 +2,16 @@
   "call-to-actions": [
      {
       "component": "WeeklyCodingChallenge",
-      "asset_type": [], 
-      "asset_id": [1],
+      "asset_type": ["lesson", "project", "exercise", "article"], 
+      "asset_id": [],
       "asset_technologies": [],
       "content": {
-        "icon_url": "https://path/to/icon.png",
-        "title": "Weekly coding challenges",
-        "description": "Every week we do one different challenge, be the next one!",
-        "button_label": "Start your next challenge",
-        "internal_cta_placement": "WeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/es/start-coding-using/javascript"
+        "icon_url": "https://storage.googleapis.com/breathecode/logos-technologias/weekly-coding-challenge-bg.png",
+        "title": "Weekly Coding Challenge",
+        "description": "Todas las semanas escogemos un proyecto de la vida real para que construyas tu portafolio y te prepares para conseguir un trabajo. Todos nuestros proyectos están construidos con ChatGPT como co-pilot!",
+        "button_label": "Únete al reto",
+        "internal_cta_placement": "SideWeeklyCodingChallenge",
+        "forward_url": "https://4geeks.com/es/weekly-coding-challenge"
       }
     }
   ]

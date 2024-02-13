@@ -181,6 +181,231 @@ export type EventCardsSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *InfoCards → Primary*
+ */
+export interface InfoCardsSliceDefaultPrimary {
+  /**
+   * title field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * subtitle field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.subtitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  subtitle: prismic.KeyTextField;
+
+  /**
+   * description field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * cardOneIcon field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardOneIcon
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardOneIcon: prismic.KeyTextField;
+
+  /**
+   * cardOneColor field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardOneColor
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardOneColor: prismic.KeyTextField;
+
+  /**
+   * cardOneTitle field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardOneTitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardOneTitle: prismic.KeyTextField;
+
+  /**
+   * cardOneDescription field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardOneDescription
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardOneDescription: prismic.KeyTextField;
+
+  /**
+   * cardTwoIcon field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardTwoIcon
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardTwoIcon: prismic.KeyTextField;
+
+  /**
+   * cardTwoColor field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardTwoColor
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardTwoColor: prismic.KeyTextField;
+
+  /**
+   * cardTwoTitle field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardTwoTitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardTwoTitle: prismic.KeyTextField;
+
+  /**
+   * cardTwoDescription field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardTwoDescription
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardTwoDescription: prismic.KeyTextField;
+
+  /**
+   * cardThreeIcon field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardThreeIcon
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardThreeIcon: prismic.KeyTextField;
+
+  /**
+   * cardThreeColor field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardThreeColor
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardThreeColor: prismic.KeyTextField;
+
+  /**
+   * cardThreeTitle field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardThreeTitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardThreeTitle: prismic.KeyTextField;
+
+  /**
+   * cardThreeDescription field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardThreeDescription
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardThreeDescription: prismic.KeyTextField;
+
+  /**
+   * cardFourIcon field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardFourIcon
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardFourIcon: prismic.KeyTextField;
+
+  /**
+   * cardFourColor field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardFourColor
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardFourColor: prismic.KeyTextField;
+
+  /**
+   * cardFourTitle field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardFourTitle
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardFourTitle: prismic.KeyTextField;
+
+  /**
+   * cardFourDescription field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.cardFourDescription
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  cardFourDescription: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for InfoCards Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type InfoCardsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<InfoCardsSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *InfoCards*
+ */
+type InfoCardsSliceVariation = InfoCardsSliceDefault;
+
+/**
+ * InfoCards Shared Slice
+ *
+ * - **API ID**: `info_cards`
+ * - **Description**: InfoCards
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type InfoCardsSlice = prismic.SharedSlice<
+  "info_cards",
+  InfoCardsSliceVariation
+>;
+
+/**
  * Primary content in *Markdown → Primary*
  */
 export interface MarkdownSliceDefaultPrimary {
@@ -1538,6 +1763,10 @@ declare module "@prismicio/client" {
       EventCardsSliceDefaultPrimary,
       EventCardsSliceVariation,
       EventCardsSliceDefault,
+      InfoCardsSlice,
+      InfoCardsSliceDefaultPrimary,
+      InfoCardsSliceVariation,
+      InfoCardsSliceDefault,
       MarkdownSlice,
       MarkdownSliceDefaultPrimary,
       MarkdownSliceVariation,

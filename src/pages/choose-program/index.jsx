@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Flex, Box, Button, useToast, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
@@ -103,6 +103,24 @@ function chooseProgram() {
     const members = await getStudentAndTeachers(cohortSubscription);
     return members;
   };
+
+  const groupSyllabusByAcademy = () => {
+    const academies = [];
+    const allCohorts = dataQuery?.cohorts || [];
+    // eslint-disable-next-line array-callback-return
+    allCohorts.map(({ cohort }) => {
+      const currentIndex = academies.findIndex((acad) => acad.id === cohort.academy.id);
+      if (currentIndex === -1) {
+        academies.push({
+          id: cohort.academy.id,
+          syllabus: [cohort.syllabus_version.slug],
+        });
+      } else if (!academies[currentIndex].syllabus.includes(cohort.syllabus_version.slug)) academies[currentIndex].syllabus.push(cohort.syllabus_version.slug);
+    });
+    return academies;
+  };
+
+  const allAcademySyllabus = useMemo(groupSyllabusByAcademy, [dataQuery]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -520,6 +538,7 @@ function chooseProgram() {
             {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
                 allCohorts={dataQuery?.cohorts}
+                allAcademySyllabus={allAcademySyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
