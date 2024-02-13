@@ -121,7 +121,8 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 }
 
 function MarkDownParser({
-  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData, assetData,
+  content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
+  showLineNumbers, showInlineLineNumbers, assetData,
 }) {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -274,7 +275,7 @@ function MarkDownParser({
         components={{
           div: Wrapper,
           a: MDLink,
-          code: Code,
+          code: ({ ...props }) => Code({ ...props, showLineNumbers, showInlineLineNumbers }),
           h1: MarkdownH2Heading,
           h2: MarkdownH2Heading,
           h3: MarkdownH3Heading,
@@ -314,6 +315,8 @@ MarkDownParser.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   isPublic: PropTypes.bool,
   currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
+  showLineNumbers: PropTypes.bool,
+  showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
 };
 MarkDownParser.defaultProps = {
@@ -325,6 +328,8 @@ MarkDownParser.defaultProps = {
   currentTask: {},
   isPublic: false,
   currentData: {},
+  showLineNumbers: true,
+  showInlineLineNumbers: true,
   assetData: null,
 };
 

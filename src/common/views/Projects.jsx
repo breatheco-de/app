@@ -45,6 +45,10 @@ const ProjectsRows = forwardRef(({
           const projectLink = `${ORIGIN_HOST}${lang[router.locale]
           }project/${task.associated_slug}`;
 
+          const isMandatory = syllabusData.assignments.find(
+            (assignment) => assignment.slug === task.associated_slug && assignment.mandatory && task.revision_status !== 'APPROVED',
+          );
+
           return (
             <Box
               ref={ref || null}
@@ -68,15 +72,14 @@ const ProjectsRows = forwardRef(({
                 minWidth="calc(160px - 0.5vw)"
               >
                 <Box width="28px" height="28px" marginRight="15px">
-                  {syllabusData.assignments.find(
-                    (assignment) => assignment.slug === task.associated_slug && assignment.mandatory,
-                  ) && (
-                  <Icon
-                    icon="warning"
-                    color="yellow.default"
-                    width="28px"
-                    height="28px"
-                  />
+                  {isMandatory && (
+                    <Icon
+                      icon="warning"
+                      color="yellow.default"
+                      width="28px"
+                      height="28px"
+                      title="Mandatory task"
+                    />
                   )}
                 </Box>
                 <TaskLabel currentTask={task} t={t} />

@@ -73,5 +73,6 @@
   "error-getting-plan": "Lo sentimos, no hemos podido obtener el plan.",
   "event-access-error": "No tienes acceso para aplicar en este evento",
   "error-event-already-started": "No puedes reservar cupo para este evento porque ya ha comenzado",
-  "success-event-reservation": "¡Has reservado con éxito un cupo para este evento.!"
+  "success-event-reservation": "¡Has reservado con éxito un cupo para este evento.!",
+  "error-creating-code-review": "Algo salió mal al crear la revisión de código"
 }

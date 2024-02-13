@@ -190,7 +190,7 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
           lang[router.locale]
         }project/${currentTask?.slug}`}
         updpateAssignment={updpateAssignment}
-        isOpen={currentTask && currentTask.status === 'DELIVERED'}
+        isOpen={currentTask && (currentTask.status === 'DELIVERED' || currentTask.status === 'APPROVED')}
         onClose={() => setCurrentTask(null)}
       />
       <NoInfoModal
@@ -207,7 +207,7 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
         onClose={() => setCurrentTask(null)}
         deliveryUrl={deliveryUrl}
       />
-      <DetailsModal
+      {/* <DetailsModal
         currentTask={currentTask}
         projectLink={`${ORIGIN_HOST}${
           lang[router.locale]
@@ -215,7 +215,7 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
         updpateAssignment={updpateAssignment}
         isOpen={currentTask && currentTask.status === 'APPROVED'}
         onClose={() => setCurrentTask(null)}
-      />
+      /> */}
       {loadStatus.status === 'loading' && (
         <Box
           display="flex"
