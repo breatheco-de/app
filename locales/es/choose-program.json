@@ -36,5 +36,14 @@
   "sidebar": {
     "live-events-title": "Aprende en vivo",
     "join-our-community": "Únete a nuestra comunidad"
+  },
+  "feedback": {
+    "title": "Retroalimentación",
+    "connect-rigobot-text": "Necesitas conectarte a Rigo AI para obtener retroalimentación.",
+    "connect-rigobot": "Conéctate con Rigobot",
+    "why-feedback-text": "La retroalimentación juega un papel importante al aprender habilidades técnicas",
+    "learn-why": "Aprende por qué",
+    "code-review": "Revisión de código",
+    "no-code-reviews-text": "En este espacio, tendrás acceso a la retroalimentación proporcionada por tu profesor una vez que hayas entregado tu proyecto."
   }
 }
