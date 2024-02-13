@@ -43,6 +43,7 @@
     "connect-rigobot": "Connect with Rigobot",
     "why-feedback-text": "Feedback plays an important role when learning technical skills",
     "learn-why": "Learn why",
-    "code-review": "Code review"
+    "code-review": "Code review",
+    "no-code-reviews-text": "In this space, you will have access to the feedback provided by your teacher once you have submitted your project."
   }
 }

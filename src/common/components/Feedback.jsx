@@ -123,7 +123,7 @@ function Feedback() {
           </Text>
         </Flex>
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
-          {codeRevisions.map((revision) => (
+          {codeRevisions?.length > 0 ? codeRevisions.map((revision) => (
             <Flex gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} cursor="default" borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
@@ -142,7 +142,22 @@ function Feedback() {
               </Flex>
               <Icon icon="arrowLeft" width="13px" height="10px" padding="8px" style={{ flexShrink: 0, transform: 'rotate(180deg)' }} />
             </Flex>
-          ))}
+          )) : (
+            <AlertMessage
+              type="info"
+              withoutIcon
+              background={featuredColor}
+              border="0px"
+              iconColor={hexColor.black}
+              color="currentcolor"
+              full
+              fontSize="12px"
+              borderRadius="4px"
+              padding="8px"
+            >
+              {t('feedback.no-code-reviews-text')}
+            </AlertMessage>
+          )}
         </Flex>
         <ReviewModal
           isExternal

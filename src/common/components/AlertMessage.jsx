@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 function AlertMessage({
-  message, type, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
+  message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
 }) {
   const { fontColor } = useStyle();
   const alertColors = {
@@ -32,13 +32,13 @@ function AlertMessage({
       {...rest}
     >
       {!withoutIcon && (
-        <Icon icon={type} secondColor={rest.secondColor} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+        <Icon icon={type} secondColor={rest.secondColor} color={iconColor || (full ? '#000' : '')} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
       )}
       {children && children}
       {!children && (
         <>
           {!withoutIcon && (
-            <Icon icon={type} secondColor={rest.secondColor} color={full ? '#000' : ''} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+            <Icon icon={type} secondColor={rest.secondColor} color={iconColor || (full ? '#000' : '')} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
           )}
           <Box>
             {title && (
@@ -77,6 +77,7 @@ AlertMessage.propTypes = {
   title: PropTypes.string,
   children: PropTypes.node,
   withoutIcon: PropTypes.bool,
+  iconColor: PropTypes.string,
 };
 
 AlertMessage.defaultProps = {
@@ -90,6 +91,7 @@ AlertMessage.defaultProps = {
   title: '',
   children: null,
   withoutIcon: false,
+  iconColor: '',
 };
 
 export default AlertMessage;
