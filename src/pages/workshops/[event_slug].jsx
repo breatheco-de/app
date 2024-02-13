@@ -685,7 +685,7 @@ function Page({ eventData, asset }) {
                         url: `/${assetType}/${relatedAsset.slug}`,
                         lang: langsDict[relatedAsset.lang || 'en'],
                         upperTags: relatedAsset?.technologies?.slice(0, 1) || [],
-                        rightCornerElement: format(new Date(relatedAsset.published_at), 'dd-MM-yyyy')?.replaceAll('-', '/'),
+                        rightCornerElement: '',
                       };
                     })}
                   background={hexColor.lightColor}
