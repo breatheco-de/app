@@ -70,6 +70,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     from: null,
   });
   const { lightColor, featuredColor, hexColor } = useStyle();
+  const storybookTranslation = contextData?.translation || {};
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
@@ -304,12 +305,12 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
 
   const getTitle = () => {
     if (stage === stages.initial) {
-      return t('code-review.assignment-review');
+      return storybookTranslation?.['code-review']?.['assignment-review'] || t('code-review.assignment-review');
     }
     if (stage === stages.approve_or_reject_code_revision) {
-      return t('code-review.write-feedback');
+      return storybookTranslation?.['code-review']?.['write-feedback'] || t('code-review.write-feedback');
     }
-    return t('code-review.rigobot-code-review');
+    return storybookTranslation?.['code-review']?.['code-review'] || t('code-review.rigobot-code-review');
   };
 
   const getAssetData = async ({ callback = () => {} } = {}) => {

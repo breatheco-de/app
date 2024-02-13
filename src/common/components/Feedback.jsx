@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Flex, Link, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
 import { getStorageItem, unSlugifyCapitalize } from '../../utils';
 import ReviewModal from './ReviewModal';
@@ -11,7 +12,9 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 
-function Feedback() {
+const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+
+function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
   const { isAuthenticated } = useAuth();
   const accessToken = getStorageItem('accessToken');
@@ -20,6 +23,9 @@ function Feedback() {
   const [codeRevisions, setCodeRevisions] = useState([]);
   const [isAuthenticatedWithRigobot, setIsAuthenticatedWithRigobot] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const isStorybookView = storyConfig?.externalCodeRevisions?.length > 0;
+  const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
+  const storybookTranslation = storyConfig?.translation?.[storyConfig?.locale];
 
   const toast = useToast();
   const learnWhyLink = {
@@ -28,8 +34,10 @@ function Feedback() {
   };
 
   const handleOpen = (data) => {
-    const code = atob(data?.file?.content);
-    const selectionOfReviewCode = atob(data.original_code);
+    const isFileCodeBase64 = base64regex.test(data?.file?.content);
+    const isReviewCodeBase64 = base64regex.test(data?.original_code);
+    const code = isFileCodeBase64 ? atob(data?.file?.content) : data?.file?.content;
+    const selectionOfReviewCode = isReviewCodeBase64 ? atob(data.original_code) : data.original_code;
     setSelectedData({
       code_revisions: codeRevisions,
       commitFile: {
@@ -71,6 +79,9 @@ function Feedback() {
   };
 
   useEffect(() => {
+    if (isStorybookView) {
+      setCodeRevisions(storyConfig?.externalCodeRevisions);
+    }
     if (isAuthenticated) {
       getCodeRevisions();
       bc.auth().verifyRigobotConnection(accessToken)
@@ -80,16 +91,16 @@ function Feedback() {
           }
         });
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isStorybookView]);
 
-  return isAuthenticated && (
+  return (isAuthenticated || isStorybookView) && (
     <Box width="330px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
       <Heading size="14px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
-        {t('feedback.title')}
+        {translationChooseProgram?.feedback?.title || t('feedback.title')}
       </Heading>
       <Flex flexDirection="column" background={backgroundColor} padding="0 8px" borderRadius="0 0 17px 17px">
         <Flex flexDirection="column" my="6px" gridGap="6px">
-          {!isAuthenticatedWithRigobot && (
+          {!(storyConfig?.isAuthenticatedWithRigobot || isAuthenticatedWithRigobot) && (
             <AlertMessage
               type="warning"
               background="yellow.light"
@@ -104,20 +115,20 @@ function Feedback() {
               secondColor="transparent"
             >
               <Text size="12px" textAlign="start">
-                {t('feedback.connect-rigobot-text')}
+                {translationChooseProgram?.feedback?.['connect-rigobot-text'] || t('feedback.connect-rigobot-text')}
                 {' '}
                 <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
-                  {t('feedback.connect-rigobot')}
+                  {translationChooseProgram?.feedback?.['connect-rigobot'] || t('feedback.connect-rigobot')}
                 </Link>
                 .
               </Text>
             </AlertMessage>
           )}
           <Text size="12px" textAlign="center">
-            {t('feedback.why-feedback-text')}
+            {translationChooseProgram?.feedback?.['why-feedback-text'] || t('feedback.why-feedback-text')}
             {' '}
             <Link fontSize="12px" variant="default" href={learnWhyLink[lang]}>
-              {t('feedback.learn-why')}
+              {translationChooseProgram?.feedback?.['learn-why'] || t('feedback.learn-why')}
               .
             </Link>
           </Text>
@@ -155,13 +166,16 @@ function Feedback() {
               borderRadius="4px"
               padding="8px"
             >
-              {t('feedback.no-code-reviews-text')}
+              {translationChooseProgram?.feedback?.['no-code-reviews-text'] || t('feedback.no-code-reviews-text')}
             </AlertMessage>
           )}
         </Flex>
         <ReviewModal
           isExternal
-          externalData={selectedData}
+          externalData={{
+            ...selectedData,
+            translation: storybookTranslation,
+          }}
           isStudent
           defaultStage="code_review"
           fixedStage
@@ -172,5 +186,12 @@ function Feedback() {
     </Box>
   );
 }
+
+Feedback.propTypes = {
+  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.bool, PropTypes.array, PropTypes.object])),
+};
+Feedback.defaultProps = {
+  storyConfig: null,
+};
 
 export default Feedback;
