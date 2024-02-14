@@ -530,6 +530,6 @@ body.chakra-ui-dark .anchorjs-link {
   font-size: 24px !important;
 }
 
-.md-editor {
-  height: 100%;
+.md-editor, .cm-theme, .md-editor-content-editor {
+  height: 100% !important;
 }

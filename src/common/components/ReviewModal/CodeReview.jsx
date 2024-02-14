@@ -244,8 +244,6 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
     }
   };
 
-  console.log('verifyyy!!!!', hasRevision, reviewRateData.submited);
-
   return (
     <>
       <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => {} : handleSelectedText}>
@@ -457,7 +455,7 @@ ${revisionContent?.code}
                     <Icon icon={reviewRateStatus === 'like' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
                     <Text size="14px" fontWeight={700} textAlign="center" color="black">
                       {storybookTranslation?.['code-review']?.['comment-was-sent-successfully']
-                      || t('code-reviewcomment-was-sent-successfully')}
+                      || t('code-review.comment-was-sent-successfully')}
                     </Text>
                   </Flex>
                   {reviewRateData?.comment.length > 0 && reviewRateData?.submitType === 'send' && (

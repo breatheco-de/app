@@ -3,7 +3,7 @@ import { Box, Flex, Link, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
-import { getStorageItem, unSlugifyCapitalize } from '../../utils';
+import { decodeBase64, getStorageItem, unSlugifyCapitalize } from '../../utils';
 import ReviewModal from './ReviewModal';
 import Icon from './Icon';
 import Text from './Text';
@@ -23,21 +23,21 @@ function Feedback({ storyConfig }) {
   const [codeRevisions, setCodeRevisions] = useState([]);
   const [isAuthenticatedWithRigobot, setIsAuthenticatedWithRigobot] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const isStorybookView = storyConfig?.externalCodeRevisions?.length > 0;
+  const isStorybookView = storyConfig?.externalCodeRevisions;
   const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
   const storybookTranslation = storyConfig?.translation?.[storyConfig?.locale];
 
   const toast = useToast();
   const learnWhyLink = {
-    en: 'https://4geeks.com/mastering-technical-knowledge',
-    es: 'https://4geeks.com/es/mastering-technical-knowledge',
+    en: 'https://4geeks.com/mastering-technical-knowledge#feedback-quality-and-frequency',
+    es: 'https://4geeks.com/es/mastering-technical-knowledge#calidad-y-frecuencia-del-feedback',
   };
 
   const handleOpen = (data) => {
     const isFileCodeBase64 = base64regex.test(data?.file?.content);
     const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const code = isFileCodeBase64 ? atob(data?.file?.content) : data?.file?.content;
-    const selectionOfReviewCode = isReviewCodeBase64 ? atob(data.original_code) : data.original_code;
+    const updatedCode = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
+    const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
     setSelectedData({
       code_revisions: codeRevisions,
       commitFile: {
@@ -45,11 +45,11 @@ function Feedback({ storyConfig }) {
         path: data?.file?.name,
         url: data?.file?.file_url,
         name: data?.file?.name,
-        code,
+        code: originalCode,
       },
       revision_content: {
         ...data,
-        code: selectionOfReviewCode,
+        code: updatedCode,
       },
     });
     setIsOpen(true);
@@ -94,7 +94,7 @@ function Feedback({ storyConfig }) {
   }, [isAuthenticated, isStorybookView]);
 
   return (isAuthenticated || isStorybookView) && (
-    <Box width="330px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
+    <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
       <Heading size="14px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
         {translationChooseProgram?.feedback?.title || t('feedback.title')}
       </Heading>
