@@ -50,7 +50,7 @@ function SignupForm({
   const toast = useToast();
   const router = useRouter();
 
-  const { syllabus, enableRedirect } = router.query;
+  const { syllabus } = router.query;
 
   // const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
@@ -131,7 +131,7 @@ function SignupForm({
             },
             state: true,
           });
-          if (enableRedirect === 'true' && redirectStorageAlreadyExists) {
+          if (redirectStorageAlreadyExists) {
             const { enableRedirect: enabRed, ...restOfQuery } = router.query;
             router.push({
               pathname: redirectStorage,

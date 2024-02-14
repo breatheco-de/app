@@ -44,6 +44,7 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
+import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -732,6 +733,7 @@ function Dashboard() {
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
                 <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
               )}
+              <Feedback />
             </Box>
           )}
         </Flex>
