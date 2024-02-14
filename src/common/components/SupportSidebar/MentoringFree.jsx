@@ -91,6 +91,9 @@ function MentoringFree({
         });
       });
   };
+
+  const servicesWithMentorsAvailable = servicesFiltered.filter((service) => allMentorsAvailable.some((mentor) => mentor.services.some((mentServ) => mentServ.slug === service.slug)));
+
   return (
     <Box
       position="relative"
@@ -178,7 +181,7 @@ function MentoringFree({
                   ) : ''}
                 </Box>
                 {mentoryProps?.service && (
-                  <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+                  <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0" style={{ textWrap: 'nowrap' }}>
                     <Box>
                       {t('mentorship.you-have')}
                     </Box>
@@ -236,7 +239,7 @@ function MentoringFree({
                       </InputRightElement>
                     </InputGroup>
                     <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
-                      {servicesFiltered.length > 0 ? servicesFiltered.map((service) => (
+                      {servicesWithMentorsAvailable.length > 0 ? servicesWithMentorsAvailable.map((service) => (
                         <Box borderTop="1px solid" cursor="pointer" onClick={() => handleService(service)} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
                           {service.name}
                         </Box>
