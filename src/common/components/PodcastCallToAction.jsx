@@ -15,7 +15,7 @@ function PodcastCallToAction({ placement, stTranslation, ...rest }) {
       background: 'blue.light',
       borderColor: hexColor.blueDefault,
       color: 'black',
-    }
+    },
   };
 
   const formatedForwardUrl = selectedCta && `${selectedCta.content.forward_url}${parseQuerys({ internal_cta_placement: placement }, selectedCta.content.forward_url.includes('?'))}`;
