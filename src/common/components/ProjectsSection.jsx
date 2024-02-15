@@ -50,7 +50,7 @@ function ProjectsSection({
     if (syllabusContent?.totalProjects) {
       contentArray.push({
         name: 'projects',
-        icon: 'code',
+        icon: 'laptop',
         total: syllabusContent.totalProjects,
         completed: syllabusContent.completedProjects,
       });

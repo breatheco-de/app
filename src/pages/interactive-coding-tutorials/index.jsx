@@ -184,7 +184,7 @@ function Projects({ projects, technologyTags, difficulties, count }) {
           gridGap="10px"
           padding={{ base: '3% 15px 4% 15px', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} icon="code" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+          <TitleContent title={t('title')} icon="laptop" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
 
           <Search placeholder={t('search')} />
 
