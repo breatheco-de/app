@@ -274,9 +274,7 @@ function Exercise({ exercise, markdown }) {
             {exercise?.slug ? (
               <>
                 <Box>
-                  <TabletWithForm
-                    exercise={exercise}
-                  />
+                  <TabletWithForm asset={exercise} />
                 </Box>
                 <DynamicCallToAction
                   assetId={exercise.id}
@@ -329,9 +327,7 @@ function Exercise({ exercise, markdown }) {
           {exercise?.slug ? (
             <>
               <Box>
-                <TabletWithForm
-                  exercise={exercise}
-                />
+                <TabletWithForm asset={exercise} />
               </Box>
               <DynamicCallToAction
                 assetId={exercise.id}

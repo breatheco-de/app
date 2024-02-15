@@ -9,7 +9,6 @@
   "reserv-button-text": "Reservar lugar",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
-  "switch-user-connector": "¿No eres {{name}}?",
   "starts-in": "El evento empieza en:",
   "in-person": "Evento en persona",
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",

@@ -26,7 +26,7 @@ function ShowOnSignUp({
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const { t } = useTranslation('workshops');
+  const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
   const [formProps, setFormProps] = useState({

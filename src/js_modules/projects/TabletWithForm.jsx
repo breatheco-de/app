@@ -33,7 +33,7 @@ import { reportDatalayer } from '../../utils/requests';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
 function TabletWithForm({
-  exercise,
+  asset,
   commonTextColor,
   commonBorderColor,
   technologies,
@@ -48,6 +48,19 @@ function TabletWithForm({
   const textColor = commonTextColor || lightColor;
   const borderColor = commonBorderColor || useColorModeValue('gray.250', 'gray.900');
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
+
+  const getTitleMessage = () => {
+    if (user) return '';
+    if (asset.gitpod) return t('direct-access-interactive');
+    if (asset.solution_url) return t('direct-access-solution');
+    return t('direct-access-similar');
+  };
+
+  const getLoggedTitleMessage = () => {
+    if (asset.gitpod) return t('download');
+    if (asset.solution_url) return t('access-solution');
+    return t('similar-projects');
+  };
 
   const ReportOpenInProvisioningVendor = (vendor = '') => {
     reportDatalayer({
@@ -70,22 +83,22 @@ function TabletWithForm({
 
   return (
     <>
-      {exercise?.structuredData?.name && (
+      {asset?.structuredData?.name && (
         <Head>
           <script
             type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(exercise.structuredData) }}
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(asset.structuredData) }}
           />
         </Head>
       )}
       <Box px="22px" pb="20px" display={{ base: 'block', md: 'none' }}>
         <SimpleTable
           href="/interactive-exercises"
-          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
-          repository={exercise.url}
-          duration={exercise.duration}
-          videoAvailable={exercise.solution_video_url}
-          liveDemoAvailable={exercise.intro_video_url}
+          difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
+          repository={asset.url}
+          duration={asset.duration}
+          videoAvailable={asset.solution_video_url}
+          liveDemoAvailable={asset.intro_video_url}
           technologies={technologies}
         />
       </Box>
@@ -99,11 +112,11 @@ function TabletWithForm({
         overflow="hidden"
       >
         <ShowOnSignUp
-          headContent={exercise?.intro_video_url && (
+          headContent={asset?.intro_video_url && (
             <ReactPlayerV2
               title="Video tutorial"
               withModal
-              url={exercise?.intro_video_url}
+              url={asset?.intro_video_url}
               withThumbnail
               thumbnailStyle={{
                 borderRadius: '0 0 0 0',
@@ -111,13 +124,13 @@ function TabletWithForm({
             />
           )}
           hideForm={!user && formSended}
-          title={!user ? t('direct-access-request') : ''}
+          title={getTitleMessage()}
           submitText={t('get-instant-access')}
-          subscribeValues={{ asset_slug: exercise.slug }}
+          subscribeValues={{ asset_slug: asset.slug }}
           refetchAfterSuccess={() => {
             setFormSended(true);
           }}
-          padding="24px 22px 30px 22px"
+          padding={`${asset?.intro_video_url ? '10px' : '20px'} 22px 30px 22px`}
           background="none"
           border="none"
           conversionTechnologies={conversionTechnologies}
@@ -133,7 +146,7 @@ function TabletWithForm({
                 fontWeight="900"
                 mb="0px"
               >
-                {t('download')}
+                {getLoggedTitleMessage()}
               </Heading>
             )}
             {formSended && (
@@ -155,42 +168,76 @@ function TabletWithForm({
                 </Text>
               </>
             )}
-
-            <Button
-              marginTop="20px"
-              borderRadius="3px"
-              width="100%"
-              padding="0"
-              whiteSpace="normal"
-              variant="default"
-              color="white"
-              fontSize="14px"
-              alignItems="center"
-              background={hexColor.greenLight}
-              onClick={() => setShowModal(true)}
-            >
-              {'  '}
-              <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-              {t('open-learnpack')}
-            </Button>
-            <Button
-              borderRadius="3px"
-              width="100%"
-              fontSize="14px"
-              padding="0"
-              whiteSpace="normal"
-              variant="otuline"
-              border="1px solid"
-              textTransform="uppercase"
-              borderColor={hexColor.greenLight}
-              color={hexColor.greenLight}
-              onClick={() => {
-                ReportOpenInProvisioningVendor('local');
-                setShowCloneModal(true);
-              }}
-            >
-              {t('clone')}
-            </Button>
+            {asset.solution_video_url && (
+              <Link
+                borderRadius="3px"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={asset.solution_video_url}
+                background={hexColor.greenLight}
+                letterSpacing="0.05em"
+                textDecoration="none !important"
+                padding="7px 16px !important"
+                textAlign="center"
+                fontWeight="600"
+              >
+                {t('common:video-solution')}
+              </Link>
+            )}
+            {asset.gitpod && (
+              <>
+                <Button
+                  borderRadius="3px"
+                  width="100%"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="default"
+                  color="white"
+                  fontSize="14px"
+                  alignItems="center"
+                  background={hexColor.greenLight}
+                  onClick={() => setShowModal(true)}
+                >
+                  {'  '}
+                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
+                  {t('open-learnpack')}
+                </Button>
+                <Button
+                  borderRadius="3px"
+                  width="100%"
+                  fontSize="14px"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="otuline"
+                  border="1px solid"
+                  textTransform="uppercase"
+                  borderColor={hexColor.greenLight}
+                  color={hexColor.greenLight}
+                  onClick={() => {
+                    ReportOpenInProvisioningVendor('local');
+                    setShowCloneModal(true);
+                  }}
+                >
+                  {t('clone')}
+                </Button>
+              </>
+            )}
+            {asset.solution_url && (
+              <Link
+                borderRadius="3px"
+                target="_blank"
+                rel="noopener noreferrer"
+                href={asset.solution_url}
+                background={hexColor.greenLight}
+                letterSpacing="0.05em"
+                textDecoration="none !important"
+                padding="7px 16px !important"
+                textAlign="center"
+                fontWeight="600"
+              >
+                {t('common:review-solution')}
+              </Link>
+            )}
           </>
         </ShowOnSignUp>
         <Modal
@@ -227,7 +274,7 @@ function TabletWithForm({
                     onClick={() => {
                       if (typeof window !== 'undefined') {
                         ReportOpenInProvisioningVendor('gitpod');
-                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
+                        window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
                       }
                     }}
                   >
@@ -251,7 +298,7 @@ function TabletWithForm({
                     onClick={() => {
                       if (typeof window !== 'undefined') {
                         ReportOpenInProvisioningVendor('codespaces');
-                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
+                        window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
                   >
@@ -347,7 +394,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
+                        window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
                       }
                     }}
                   >
@@ -370,7 +417,7 @@ function TabletWithForm({
                     color="blue.default"
                     onClick={() => {
                       if (typeof window !== 'undefined') {
-                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
+                        window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
                       }
                     }}
                   >
@@ -394,12 +441,12 @@ function TabletWithForm({
               >
                 <UrlInput
                   id="clone-command"
-                  value={`git clone ${exercise.url}`}
+                  value={`git clone ${asset.url}`}
                   type="text"
                   readOnly
                   onClick={(e) => {
                     e.target.select();
-                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
+                    navigator.clipboard.writeText(`git clone ${asset.url}`);
                     toast({
                       title: t('clone-modal.copy-command'),
                       status: 'success',
@@ -410,7 +457,7 @@ function TabletWithForm({
                 />
               </Text>
               <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('clone-modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.length) : '' })}
+                {t('clone-modal.note', { folder: asset?.url ? asset?.url?.substr(asset?.url?.lastIndexOf('/') + 1, asset?.url?.length) : '' })}
               </Text>
               <OrderedList>
                 {t('clone-modal.steps', {}, { returnObjects: true }).map((step) => (
@@ -452,11 +499,11 @@ function TabletWithForm({
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
             href="/interactive-exercises"
-            difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
-            repository={exercise.url}
-            duration={exercise.duration}
-            videoAvailable={exercise.solution_video_url}
-            liveDemoAvailable={exercise.intro_video_url}
+            difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
+            repository={asset.url}
+            duration={asset.duration}
+            videoAvailable={asset.solution_video_url}
+            liveDemoAvailable={asset.intro_video_url}
             technologies={technologies}
           />
         </Box>
@@ -468,7 +515,7 @@ function TabletWithForm({
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,
   commonBorderColor: PropTypes.string,
-  exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
