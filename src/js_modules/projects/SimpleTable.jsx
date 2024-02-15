@@ -12,7 +12,6 @@ function SimpleTable({
   repository,
   duration,
   videoAvailable,
-  liveDemoAvailable,
   technologies,
   href,
 }) {
@@ -25,132 +24,131 @@ function SimpleTable({
   return (
     <>
       {/* RESPONSIVE VERSION */}
-      <Flex flexDirection="column" width="100%" display={{ base: 'flex', md: 'none' }}>
-        {(repository || verifyIfNotNull(difficulty)) && (
-          <Flex
-            width="100%"
-            py="14px"
+      <Flex
+        // flexDirection="column"
+        width="100%"
+        display={{ base: 'flex', md: 'none' }}
+        flexWrap="wrap"
+        justifyContent="space-between"
+        rowGap="5px"
+      >
+        {verifyIfNotNull(difficulty) && (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="10px"
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
-            justifyContent="space-between"
+            minWidth="50%"
+            maxWidth="100%"
+            flexGrow="1"
           >
-            {verifyIfNotNull(difficulty) && (
-              <Box display="flex" alignItems="center" gap="10px">
-                <Icon icon="measurer" width="32px" height="32px" />
-                <Box>
-                  <Text size="l" color={commonTextColor}>
-                    {t('common:difficulty')}
-                  </Text>
-                  <TagCapsule
-                    variant="rounded"
-                    tags={[difficulty]}
-                    background={getDifficultyColors(difficulty).bg}
-                    color={getDifficultyColors(difficulty).color}
-                    fontWeight={700}
-                    marginY="8px"
-                    style={{
-                      padding: '2px 10px',
-                      margin: '0',
-                    }}
-                    gap="10px"
-                    paddingX="0"
-                  />
-                </Box>
-              </Box>
-            )}
-            {repository && (
-              <Box display="flex" alignItems="center" gap="10px">
-                <Icon icon="github" color="#A9A9A9" width="32px" height="32px" />
-                <Box>
-                  <Text size="l" color={commonTextColor} display="flex" gap="8px" alignItems="center">
-                    {t('common:repository')}
-                  </Text>
-                  <Link
-                    href={repository || ''}
-                    color="blue.default"
-                    fontSize="15px"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t('common:click-to-open')}
-                  </Link>
-                </Box>
-              </Box>
-            )}
-          </Flex>
+            <Icon icon="measurer" width="32px" height="32px" />
+            <Box>
+              <Text size="l" color={commonTextColor}>
+                {t('common:difficulty')}
+              </Text>
+              <TagCapsule
+                variant="rounded"
+                tags={[difficulty]}
+                background={getDifficultyColors(difficulty).bg}
+                color={getDifficultyColors(difficulty).color}
+                fontWeight={700}
+                marginY="8px"
+                style={{
+                  padding: '2px 10px',
+                  margin: '0',
+                }}
+                gap="10px"
+                paddingX="0"
+              />
+            </Box>
+          </Box>
         )}
-        {(liveDemoAvailable || videoAvailable !== null) && (
-          <Flex
-            width="100%"
-            py="14px"
+        {repository && (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="10px"
+            py="10px"
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
-            justifyContent="space-between"
+            minWidth="50%"
+            maxWidth="100%"
+            flexGrow="1"
           >
-            {videoAvailable !== null && (
-              <Box display="flex" alignItems="center" gap="10px">
-                <Icon icon="video" color="#A9A9A9" width="32px" height="32px" />
-                <Box>
-                  <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-                    Video
-                  </Text>
-                  <Link
-                    href={videoAvailable}
-                    color="blue.default"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ fontSize: '15px' }}
-                  >
-                    {t('common:click-to-open')}
-                  </Link>
-                </Box>
-              </Box>
-            )}
-            {liveDemoAvailable && (
-              <Box display="flex" alignItems="center" gap="10px">
-                <Icon icon="lightBulb" width="32px" height="32px" />
-                <Box>
-                  <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-                    {t('common:live-demo')}
-                    {/* Live Demo Available */}
-                  </Text>
-                  <Link
-                    href={liveDemoAvailable}
-                    color="blue.default"
-                    fontSize="15px"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t('common:click-to-open')}
-                  </Link>
-                </Box>
-              </Box>
-            )}
-          </Flex>
+            <Icon icon="github" color="#A9A9A9" width="32px" height="32px" />
+            <Box>
+              <Text size="l" color={commonTextColor} display="flex" gap="8px" alignItems="center">
+                {t('common:repository')}
+              </Text>
+              <Link
+                href={repository || ''}
+                color="blue.default"
+                fontSize="15px"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('common:click-to-open')}
+              </Link>
+            </Box>
+          </Box>
+        )}
+        {videoAvailable !== null && (
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="10px"
+            py="10px"
+            borderBottom={1}
+            borderStyle="solid"
+            borderColor={commonBorderColor}
+            minWidth="50%"
+            maxWidth="100%"
+            flexGrow="1"
+          >
+            <Icon icon="video" color="#A9A9A9" width="32px" height="32px" />
+            <Box>
+              <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
+                Video
+              </Text>
+              <Link
+                href={videoAvailable}
+                color="blue.default"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '15px' }}
+              >
+                {t('common:click-to-open')}
+              </Link>
+            </Box>
+          </Box>
         )}
         {duration && (
-          <Flex
+          <Box
+            display="flex"
+            alignItems="center"
+            gap="10px"
             borderBottom={1}
             borderStyle="solid"
             borderColor={commonBorderColor}
-            width="100%"
-            py="14px"
-            justifyContent="space-between"
+            minWidth="50%"
+            maxWidth="100%"
+            flexGrow="1"
+            py="10px"
           >
-            <Box display="flex" alignItems="center" gap="10px">
-              <Icon icon="clock" width="32px" height="32px" />
-              <Box>
-                <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-                  {t('common:average-duration')}
-                </Text>
-                <Text size="l" color={commonTextColor}>
-                  {`${duration} hrs`}
-                </Text>
-              </Box>
+            <Icon icon="clock" width="32px" height="32px" />
+            <Box>
+              <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
+                {t('common:average-duration')}
+              </Text>
+              <Text size="l" color={commonTextColor}>
+                {`${duration} hrs`}
+              </Text>
             </Box>
-          </Flex>
+          </Box>
         )}
         {technologies?.length > 0 && (
           <Flex
@@ -261,32 +259,6 @@ function SimpleTable({
             </Link>
           </Flex>
         )}
-        {liveDemoAvailable && (
-          <Flex
-            width="100%"
-            py="14px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-              <Icon icon="lightBulb" width="32px" height="32px" />
-              {t('common:live-demo')}
-              {/* Live Demo Available */}
-            </Text>
-            <Link
-              href={liveDemoAvailable}
-              color="blue.default"
-              fontSize="15px"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t('common:click-to-open')}
-            </Link>
-          </Flex>
-        )}
         {duration && (
           <Flex
             width="100%"
@@ -341,7 +313,6 @@ SimpleTable.propTypes = {
   repository: PropTypes.string,
   duration: PropTypes.number,
   videoAvailable: PropTypes.string,
-  liveDemoAvailable: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   technologies: PropTypes.arrayOf(PropTypes.string),
   href: PropTypes.string.isRequired,
 };
@@ -351,7 +322,6 @@ SimpleTable.defaultProps = {
   repository: 'Not available',
   videoAvailable: 'Not available',
   duration: 0,
-  liveDemoAvailable: '',
   technologies: [],
 };
 

@@ -267,9 +267,9 @@ function ProjectSlug({ project, markdown }) {
               borderWidth="0px"
               overflow="hidden"
             >
-              {project && project?.difficulty ? (
+              {project ? (
                 <>
-                  <TabletWithForm asset={project} />
+                  <TabletWithForm asset={project} technologies={project?.technologies} />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -316,9 +316,9 @@ function ProjectSlug({ project, markdown }) {
           borderWidth="0px"
           overflow="hidden"
         >
-          {project && project?.difficulty ? (
+          {project ? (
             <>
-              <TabletWithForm asset={project} />
+              <TabletWithForm asset={project} technologies={project?.technologies} />
               <DynamicCallToAction
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
