@@ -189,7 +189,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
           gridGap="10px"
           padding={{ base: '3% 0 4% 0', md: '1.5% 0 1.5% 0' }}
         >
-          <TitleContent title={t('title')} icon="book" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
+          <TitleContent title={t('title')} icon="answer" color={iconColor} margin={{ base: '0 0 10px 0', md: '0' }} />
 
           <Search placeholder={t('search')} />
 

@@ -13,6 +13,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import Text from './Text';
 import Icon from './Icon';
 import { isNumber } from '../../utils';
+import useStyle from '../hooks/useStyle';
 
 function ProjectsSection({
   startsIn, stTranslation, syllabusContent, courseProgress,
@@ -23,6 +24,7 @@ function ProjectsSection({
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
   const now = new Date();
+  const { hexColor } = useStyle();
   const isFreeTrial = subscriptionStatus === 'FREE_TRIAL';
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
@@ -40,6 +42,7 @@ function ProjectsSection({
     if (syllabusContent?.totalLessons) {
       contentArray.push({
         name: 'lessons',
+        icon: 'book',
         total: syllabusContent.totalLessons,
         completed: syllabusContent.completedLessons,
       });
@@ -47,6 +50,7 @@ function ProjectsSection({
     if (syllabusContent?.totalProjects) {
       contentArray.push({
         name: 'projects',
+        icon: 'code',
         total: syllabusContent.totalProjects,
         completed: syllabusContent.completedProjects,
       });
@@ -54,6 +58,7 @@ function ProjectsSection({
     if (syllabusContent?.totalExercises) {
       contentArray.push({
         name: 'exercises',
+        icon: 'strength',
         total: syllabusContent.totalExercises,
         completed: syllabusContent.completedExercises,
       });
@@ -61,6 +66,7 @@ function ProjectsSection({
     if (syllabusContent?.totalQuizzes) {
       contentArray.push({
         name: 'quizzes',
+        icon: 'answer',
         total: syllabusContent.totalQuizzes,
         completed: syllabusContent.completedQuizzes,
       });
@@ -88,7 +94,8 @@ function ProjectsSection({
                 width="14px"
                 height="14px"
                 style={{ marginRight: '7px' }}
-                icon="book"
+                color={hexColor.blueDefault}
+                icon={elem?.icon || 'book'}
               />
               <Box>
                 {((isAvailableAsSaas === false || statusActive || isFreeTrial) && (hasStarted || courseProgress > 0)) && (
