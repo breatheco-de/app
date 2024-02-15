@@ -12,7 +12,7 @@ import useStyle from '../hooks/useStyle';
 // import { parseQuerys } from '../../utils/url';
 // import modifyEnv from '../../../modifyEnv';
 
-function EventCard({ id, language, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, ...rest }) {
+function EventCard({ id, language, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, isSmall, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
   const { lightColor, disabledColor2, featuredColor } = useStyle();
@@ -134,7 +134,7 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
         )}
       </Flex>
 
-      <Heading fontWeight={700} style={{ fontSize: '24px' }}>
+      <Heading size={isSmall ? '14px' : '24px'} letterSpacing={isSmall && '0.05em'} fontWeight={700} style={{ margin: '0' }}>
         {title}
       </Heading>
 
@@ -142,12 +142,14 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
         <TagCapsule tags={technologies} fontSize="13px" lineHeight="15.6px" borderRadius="20px" fontWeight={700} padding="8px 16px" margin="-5px 0 0 0" />
       )}
 
-      <Text size="14px">
-        {description}
-      </Text>
+      {description && (
+        <Text size={isSmall ? '12px' : '14px'}>
+          {description}
+        </Text>
+      )}
 
       {/* -------------------------------- host info -------------------------------- */}
-      {(host !== null && host !== undefined) && (typeof host === 'string' ? (
+      {(host !== null && host !== undefined && host.length > 5 && !isSmall) && (typeof host === 'string' ? (
         <Heading as="span" fontWeight={700} style={{ fontSize: '14px' }}>
           {host}
         </Heading>
@@ -203,6 +205,7 @@ EventCard.propTypes = {
   slug: PropTypes.string.isRequired,
   ignoreDynamicHandler: PropTypes.bool,
   language: PropTypes.string,
+  isSmall: PropTypes.bool,
 };
 
 EventCard.defaultProps = {
@@ -214,6 +217,7 @@ EventCard.defaultProps = {
   stTranslation: null,
   ignoreDynamicHandler: false,
   language: '',
+  isSmall: false,
 };
 
 export default EventCard;
