@@ -11,6 +11,7 @@ import Heading from './Heading';
 import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
+import { error } from '../../utils/logging';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
@@ -73,8 +74,8 @@ function Feedback({ storyConfig }) {
           isClosable: true,
         });
       }
-    } catch (error) {
-      error('Error fetching code revisions:', error);
+    } catch (errorData) {
+      error('Error fetching code revisions:', errorData);
     }
   };
 

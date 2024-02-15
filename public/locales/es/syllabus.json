@@ -7,6 +7,8 @@
   "next-page": "Siguiente página",
   "no-traduction-found": "No se encontró traducción",
   "no-traduction-found-description": ">Lo sentimos, no se encontró una traducción para este contenido. Estamos trabajando constantemente para ofrecer nuestros módulos en varios idiomas. Apreciamos tu paciencia y si deseas contribuir con traducciones, por favor visita nuestro repositorio en Github. Mientras tanto, puedes intentar acceder al contenido en otro idioma disponible o volver más tarde para verificar si la traducción ha sido agregada.",
+  "no-content-found": "No se encontró contenido",
+  "no-content-found-description": ">Lamentablemente, el contenido que buscas no está disponible en la ruta especificada. Estamos trabajando en mejoras continuas y valoramos tu comprensión. Si necesitas asistencia o tienes preguntas adicionales, no dudes en comunicarte con nosotros. Estamos comprometidos a brindarte el mejor servicio. Gracias por tu paciencia y comprensión.",
   "previous-page": "Anterior página",
   "ask-to-done": "¿Te gustaría marcar este \"{{taskType}}\" como completado antes de continuar?",
   "mark-later": "Marcar luego",
