@@ -393,6 +393,15 @@ function cleanObject(obj) {
   return cleaned;
 }
 
+function decodeBase64(encoded) {
+  // Decode from base64 and convert to UTF-8 and remove � characters if they exist
+    const decoded = new TextDecoder('utf-8')
+      .decode(Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)))
+      .replace(/�/g, '');
+
+    return decoded;
+}
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -402,5 +411,5 @@ export {
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
-  adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle,
+  adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
 };

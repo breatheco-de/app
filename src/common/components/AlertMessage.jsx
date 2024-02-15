@@ -37,9 +37,6 @@ function AlertMessage({
       {children && children}
       {!children && (
         <>
-          {!withoutIcon && (
-            <Icon icon={type} secondColor={rest.secondColor} color={iconColor || (full ? '#000' : '')} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
-          )}
           <Box>
             {title && (
               <Heading size="20px" letterSpacing="0.02em" mb="10px">

@@ -140,7 +140,6 @@ function MentoringConsumables({
         reportDatalayer({
           dataLayer: {
             event: 'select_mentorship_service',
-            method: '4geeks_form',
             path: router.pathname,
             consumables_amount: currentBalance,
             mentorship_service: service?.slug,
@@ -196,7 +195,6 @@ function MentoringConsumables({
       dataLayer: {
         event: 'book_mentorship_session',
         path: router.pathname,
-        method: '4geeks_form',
         consumables_amount: currentBalance,
         mentorship_service: mentoryProps?.service?.slug,
         mentor_name: `${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`,
@@ -278,7 +276,6 @@ function MentoringConsumables({
                 reportDatalayer({
                   dataLayer: {
                     event: 'begin_mentorship_session_schedule',
-                    method: '4geeks_form',
                     path: router.pathname,
                     consumables_amount: currentBalance,
                   },

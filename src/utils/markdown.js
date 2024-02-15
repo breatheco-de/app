@@ -1,6 +1,6 @@
 import atob from 'atob';
 
-const decodeFromBinary = (encoded) => {
+const decodeBase64 = (encoded) => {
   // decode base 64 encoded string with emojis
   const decoded = decodeURIComponent(
     atob(encoded).split('').map((c) => {
@@ -11,4 +11,4 @@ const decodeFromBinary = (encoded) => {
 
   return decoded;
 };
-export default decodeFromBinary;
+export default decodeBase64;
