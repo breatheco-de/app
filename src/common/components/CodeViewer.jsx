@@ -87,7 +87,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
     if (!rigobotToken || rigobotToken.expires_at < new Date().toISOString()) {
       const bcToken = getStorageItem('accessToken');
 
-      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}&dev=true`);
+      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}`);
       const data = await resp.json();
       setStorageItem('rigobotToken', JSON.stringify(data));
 

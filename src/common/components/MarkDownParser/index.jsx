@@ -68,12 +68,14 @@ function CodeViewerComponent(props) {
   const nodeEndOffset = node.position.end.offset;
 
   const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
-  const regex = /```([a-zA-Z]+)\s{1,}runable=("true"|'true'|true)\s{0,}\n([\s\S]+?)```/g;
+  const regex = /```([a-zA-Z]+).*runable=("true"|'true'|true).*([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(input)) !== null) {
+    console.log('match');
+    console.log(match);
     fragments.push({
       language: languagesNames[match[1].toLowerCase()] || match[1],
       label: languagesLabels[match[1].toLowerCase()] || match[1],
@@ -224,9 +226,9 @@ function MarkDownParser({
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
-    const emptyCodeRegex = /```([a-zA-Z]+)\s{1,}runable=("true"|true|'true')\s{0,}\n(\n{1,}|\s{1,}\n{1,})?```/gm;
+    const emptyCodeRegex = /```([a-zA-Z]+).*runable=("true"|true|'true').*(\n{1,}|\s{1,}\n{1,})?```/gm;
     //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
-    const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
+    const codeViewerRegex = /(```(?<language>\w+).*runable=("true"|'true'|true).*(?<code>(?:.|\n)*?)```\n?)+/gm;
 
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
