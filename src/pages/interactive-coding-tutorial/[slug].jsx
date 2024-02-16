@@ -16,6 +16,7 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
@@ -262,7 +263,7 @@ function ProjectSlug({ project, markdown }) {
               display={{ base: 'flex', lg: 'none' }}
               flexDirection="column"
               margin="30px 0"
-            // width={{ base: '100%', md: '350px' }}
+              // width={{ base: '100%', md: '350px' }}
               minWidth={{ base: '100%', lg: '300px' }}
               maxWidth="350px"
               height="fit-content"
@@ -292,6 +293,10 @@ function ProjectSlug({ project, markdown }) {
                     placement="side"
                     marginTop="40px"
                     maxWidth="none"
+                  />
+                  <PodcastCallToAction
+                    placement="side"
+                    marginTop="40px"
                   />
                 </>
               ) : (
@@ -351,6 +356,10 @@ function ProjectSlug({ project, markdown }) {
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
                 assetType="project"
+                placement="side"
+                marginTop="40px"
+              />
+              <PodcastCallToAction
                 placement="side"
                 marginTop="40px"
               />

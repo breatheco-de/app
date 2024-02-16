@@ -21,6 +21,7 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
@@ -206,6 +207,10 @@ export default function HowToSlug({ data, markdown }) {
             assetId={data.id}
             assetTechnologies={data.technologies?.map((item) => item?.slug)}
             assetType={data.asset_type.toLowerCase()}
+            placement="side"
+            marginTop="40px"
+          />
+          <PodcastCallToAction
             placement="side"
             marginTop="40px"
           />

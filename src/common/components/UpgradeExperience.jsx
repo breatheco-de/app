@@ -2,12 +2,20 @@ import { Button, Box } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Icon from './Icon';
+import { reportDatalayer } from '../../utils/requests';
 
 function UpgradeExperience({ ...rest }) {
   const { t, lang } = useTranslation('navbar');
   const router = useRouter();
 
   const handleLink = () => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'ad_interaction',
+        ad_type: 'upgrade_experience',
+        ad_position: 'navbar',
+      },
+    });
     const langPrefix = lang === 'en' ? '' : `/${lang}`;
     router.push(`${langPrefix}/pricing`);
   };

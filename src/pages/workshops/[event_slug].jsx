@@ -432,6 +432,18 @@ function Page({ eventData, asset }) {
   const handleJoin = () => {
     if (!finishedEvent) {
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
+        reportDatalayer({
+          dataLayer: {
+            event: 'join_event',
+            event_id: event.id,
+            event_slug: event.slug,
+            event_title: event.title,
+            event_type: event.event_type?.slug,
+            event_starting_at: unixFormatedDate.starting_at,
+            event_ending_at: unixFormatedDate.ending_at,
+            event_language: event.lang,
+          },
+        });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
       }
       if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
@@ -449,7 +461,7 @@ function Page({ eventData, asset }) {
 
               reportDatalayer({
                 dataLayer: {
-                  event: 'join_event',
+                  event: 'event_order',
                   event_id: event.id,
                   event_slug: event.slug,
                   event_title: event.title,
