@@ -38,7 +38,23 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
       <Text size="md" lineHeight="16px" wwight="400" marginBottom="16px" {...descriptionStyles}>
         {description}
       </Text>
-      <NextChakraLink href={forwardUrl} fontWeight="700" color={hexColor.blueDefault} display="block" textAlign="center" {...buttonStyles}>
+      <NextChakraLink 
+        href={forwardUrl} 
+        fontWeight="700" 
+        color={hexColor.blueDefault} 
+        display="block" 
+        textAlign="center" 
+        onClick={() => {
+          reportDatalayer({
+            dataLayer: {
+              event: 'ad_interaction',
+              ad_type: 'course',
+              ad_position: 'side',
+            },
+          });
+        }}
+        {...buttonStyles} 
+      >
         {buttonLabel}
       </NextChakraLink>
     </Box>
