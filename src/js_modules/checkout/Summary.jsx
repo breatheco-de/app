@@ -81,12 +81,14 @@ function Summary() {
     return t('free-trial');
   };
 
-  const priceIsNotNumber = Number.isNaN(Number(getPrice()));
+  const  = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_summary',
+        plan: selectedPlanCheckoutData.slug,
+        value: getPrice(),
       },
     });
   }, []);
@@ -139,7 +141,7 @@ function Summary() {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    if (isNotTrial || !priceIsNotNumber) {
+    if (isNotTrial || !) {
       nextStep();
     } else {
       handlePayment({
@@ -411,7 +413,7 @@ function Summary() {
                 );
               })}
           </Box>
-          {(isNotTrial || !priceIsNotNumber) ? (
+          {(isNotTrial || !) ? (
             <Button
               variant="default"
               width="100%"
