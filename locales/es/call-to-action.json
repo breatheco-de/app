@@ -11,8 +11,24 @@
         "description": "Todas las semanas escogemos un proyecto de la vida real para que construyas tu portafolio y te prepares para conseguir un trabajo. Todos nuestros proyectos están construidos con ChatGPT como co-pilot!",
         "button_label": "Únete al reto",
         "internal_cta_placement": "SideWeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/es/weekly-coding-challenge"
+        "forward_url": "https://4geeks.com/es/weekly-coding-challenge",
+        "ad_type": "weekly_coding_challenge"
       }
     }
-  ]
+  ],
+  "podcast-call-to-action": {
+    "component": "WeeklyCodingChallenge",
+    "asset_type": [], 
+    "asset_id": [],
+    "asset_technologies": [],
+    "content": {
+      "icon_url": "https://storage.googleapis.com/breathecode/logos-technologias/microphone_icon.png",
+      "title": "Podcast: Code Sets You Free",
+      "description": "Un podcast de cultura tecnológica donde aprenderás a luchar contra los enemigos que te bloquean en tu camino para convertirte en un profesional exitoso en tecnología.",
+      "button_label": "Escuchar el podcast",
+      "internal_cta_placement": "side",
+      "forward_url": "https://4geeks.com/es/podcast",
+      "ad_type": "podcast"
+    }
+  }
 }
