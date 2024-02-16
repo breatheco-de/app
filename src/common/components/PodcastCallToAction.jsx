@@ -28,6 +28,7 @@ function PodcastCallToAction({ placement, stTranslation, ...rest }) {
       title={selectedCta.content.title}
       description={selectedCta.content.description}
       buttonLabel={selectedCta.content.button_label}
+      adType={selectedCta.content.ad_type}
       forwardUrl={formatedForwardUrl}
       {...rest}
       {...variants[placement]}

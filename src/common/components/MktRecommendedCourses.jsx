@@ -134,6 +134,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
                   course_slug: course.slug,
                   course_title: course.title,
                   ad_position: 'bottom-center',
+                  ad_type: 'course',
                 },
               });
             }}
