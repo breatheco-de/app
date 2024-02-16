@@ -29,6 +29,7 @@ function PodcastCallToAction({ placement, stTranslation, ...rest }) {
       description={selectedCta.content.description}
       buttonLabel={selectedCta.content.button_label}
       forwardUrl={formatedForwardUrl}
+      adType='podcast_cta'
       {...rest}
       {...variants[placement]}
       // pillLabel="6 days left"
