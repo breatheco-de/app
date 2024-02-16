@@ -27,6 +27,8 @@ const InfoCards = ({ slice }) => {
       cardFourColor={slice?.primary?.cardFourColor}
       cardFourTitle={slice?.primary?.cardFourTitle}
       cardFourDescription={slice?.primary?.cardFourDescription}
+      margin={slice?.primary?.margin}
+      padding={slice?.primary?.padding}
     />
   );
 };
