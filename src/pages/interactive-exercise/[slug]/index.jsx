@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import React from 'react';
 import Script from 'next/script';
+import Head from 'next/head';
 import getT from 'next-translate/getT';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
@@ -179,6 +180,14 @@ function Exercise({ exercise, markdown }) {
 
   return (
     <>
+      {exercise?.structuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(exercise.structuredData) }}
+          />
+        </Head>
+      )}
       {exercise?.title && (
         <Script async defer src="https://buttons.github.io/buttons.js" />
       )}

@@ -19,7 +19,6 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
 import React, { useState } from 'react';
-import Head from 'next/head';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -83,14 +82,6 @@ function TabletWithForm({
 
   return (
     <>
-      {asset?.structuredData?.name && (
-        <Head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(asset.structuredData) }}
-          />
-        </Head>
-      )}
       <Box px="22px" pb="20px" display={{ base: 'block', md: 'none' }}>
         <SimpleTable
           href="/interactive-exercises"
