@@ -11,7 +11,7 @@ import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 
-function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, iconStyles, buttonStyles, descriptionStyles, ...rest }) {
+function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, iconStyles, buttonStyles, descriptionStyles, adType, ...rest }) {
   const { hexColor } = useStyle();
   return (
     <Box
@@ -49,7 +49,7 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
           reportDatalayer({
             dataLayer: {
               event: 'ad_interaction',
-              ad_type: 'course',
+              ad_type: adType,
               ad_position: 'side',
             },
           });
@@ -67,6 +67,7 @@ CallToActionCard.propTypes = {
   description: PropTypes.string,
   buttonLabel: PropTypes.string,
   forwardUrl: PropTypes.string,
+  adType: PropTypes.string,
   iconUrl: PropTypes.string,
   pillLabel: PropTypes.string,
   iconStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -84,6 +85,7 @@ CallToActionCard.defaultProps = {
   iconStyles: {},
   buttonStyles: {},
   descriptionStyles: {},
+  adType: '',
 };
 
 export default CallToActionCard;
