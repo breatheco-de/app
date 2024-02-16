@@ -22,8 +22,8 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import MktEventCards from '../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -312,7 +312,7 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
-              <UpcomingWorkshops />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 marginTop="15px"
                 technologies={project?.technologies}

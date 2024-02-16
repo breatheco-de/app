@@ -109,7 +109,7 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? featuredColor : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" width={isSmall ? '310px' : 'auto'} maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? featuredColor : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
         <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
@@ -121,7 +121,7 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
           </Text>
         </Box>
         {startedButRemain ? (
-          <Box display="flex" alignItems="center" gridGap="8px" padding="4px 10px" color="danger" background="red.light" borderRadius="18px">
+          <Box display="flex" alignItems="center" height={isSmall ? '24px' : 'auto'} gridGap="8px" padding="4px 10px" color="danger" background="red.light" borderRadius="18px">
             <Icon icon="dot" color="currentColor" width="9px" height="9px" />
             <Text size="12px" fontWeight={700} lineHeight="14.4px">
               {stTranslation ? stTranslation[lang]['live-event']['live-now'] : t('live-now')}

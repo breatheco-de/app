@@ -24,7 +24,6 @@ import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
 import MktEventCards from '../../common/components/MktEventCards';
 
 export const getStaticPaths = async () => {
@@ -405,7 +404,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                     display={{ base: 'none', md: 'flex' }}
                     technologies={lesson?.technologies}
                   />
-                  <UpcomingWorkshops />
+                  <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
                 </Box>
               )}
             </Box>

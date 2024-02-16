@@ -47,7 +47,7 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../../common/components/ReactPlayerV2';
-import UpcomingWorkshops from '../../../common/components/UpcomingWorkshops';
+import MktEventCards from '../../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -770,7 +770,7 @@ function Exercise({ exercise, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <UpcomingWorkshops />
+            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
               technologies={exercise?.technologies}
             />
