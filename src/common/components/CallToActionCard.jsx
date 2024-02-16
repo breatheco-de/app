@@ -39,7 +39,7 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
       <Text size="md" lineHeight="16px" wwight="400" marginBottom="16px" {...descriptionStyles}>
         {description}
       </Text>
-      <NextChakraLink 
+      <NextChakraLink
         href={forwardUrl}
         fontWeight="700"
         color={hexColor.blueDefault}
