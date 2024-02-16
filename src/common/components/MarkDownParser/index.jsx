@@ -68,18 +68,24 @@ function CodeViewerComponent(props) {
   const nodeEndOffset = node.position.end.offset;
 
   const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
-  const regex = /```([a-zA-Z]+).*runable=("true"|'true'|true).*([\s\S]+?)```/g;
+  const regex = /```([a-zA-Z]+)(.*)([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(input)) !== null) {
-    console.log('match');
-    console.log(match);
+    const parameters = match[2].split(' ');
+
+    let path = parameters.find((param) => param.includes('path'));
+    if (path) {
+      const removeQuotes = /"|'|path=/g;
+      path = path.replaceAll(removeQuotes, '');
+    }
     fragments.push({
       language: languagesNames[match[1].toLowerCase()] || match[1],
       label: languagesLabels[match[1].toLowerCase()] || match[1],
       code: match[3].trim(),
+      path,
     });
   }
 
@@ -232,6 +238,20 @@ function MarkDownParser({
 
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
+
+    const contextPathRegex = /```([a-zA-Z]+).*(path=[^\s]*).*([\s\S]+?)```/g;
+
+    let fileContext = '';
+    let fileMatch;
+    // eslint-disable-next-line no-cond-assign
+    while ((fileMatch = contextPathRegex.exec(contentReplace)) !== null) {
+      const filePath = fileMatch[2].trim().replaceAll(/"|'|path=/g, '');
+      const contentFile = fileMatch[3].trim();
+
+      fileContext += `File path: ${filePath}\nFile content:\n${contentFile}\n\n`;
+    }
+    console.log('fileContext');
+    console.log(fileContext);
 
     return contentReplace;
   }, [content]);

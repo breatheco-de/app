@@ -106,20 +106,31 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
-        const { code, language } = languages[tabIndex];
+        const { code, language, path } = languages[tabIndex];
 
         const rigobotToken = await getRigobotToken();
 
         const completionJob = {
-          inputs: {
-            code,
-            language_and_version: language,
-          },
           execute_async: false,
           include_organization_brief: false,
           include_purpose_objective: true,
         };
-        const completionRequest = await fetch('https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/', {
+
+        let endpoint;
+        if (path) {
+          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler-with-context/';
+          completionJob.inputs = {
+            main_file: `File path: ${path}\nFile content:\n${code}`,
+            language_and_version: language,
+          };
+        } else {
+          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/';
+          completionJob.inputs = {
+            code,
+            language_and_version: language,
+          };
+        }
+        const completionRequest = await fetch(endpoint, {
           method: 'POST',
           body: JSON.stringify(completionJob),
           headers: {
