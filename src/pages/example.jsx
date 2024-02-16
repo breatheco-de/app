@@ -69,7 +69,7 @@ export default function Example() {
         subTitle="Learn the science behind 4Geeks"
         title="Mastering Technical Knowledge"
         description={description}
-        cardOneIcon="brain"
+        cardOneIcon="https://storage.googleapis.com/breathecode/logos-technologias/logo-javascript.png"
         cardOneColor="#A4FFBD"
         cardOneTitle="Memory retention"
         cardOneDescription={cardDescription}
