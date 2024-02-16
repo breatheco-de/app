@@ -9,6 +9,7 @@ import Text from './Text';
 import Heading from './Heading';
 import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import { reportDatalayer } from '../../utils/requests';
 
 function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, iconStyles, buttonStyles, descriptionStyles, ...rest }) {
   const { hexColor } = useStyle();
