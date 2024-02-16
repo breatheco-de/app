@@ -87,7 +87,7 @@ function Summary() {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_summary',
-        plan: selectedPlanCheckoutData.slug,
+        plan: selectedPlan?.slug,
         value: getPrice(),
       },
     });
