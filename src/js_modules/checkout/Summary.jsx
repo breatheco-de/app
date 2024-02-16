@@ -81,7 +81,7 @@ function Summary() {
     return t('free-trial');
   };
 
-  const  = Number.isNaN(Number(getPrice()));
+  const priceIsNotNumber = Number.isNaN(Number(getPrice()));
 
   useEffect(() => {
     reportDatalayer({
@@ -141,7 +141,7 @@ function Summary() {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    if (isNotTrial || !) {
+    if (isNotTrial || !priceIsNotNumber) {
       nextStep();
     } else {
       handlePayment({
@@ -413,7 +413,7 @@ function Summary() {
                 );
               })}
           </Box>
-          {(isNotTrial || !) ? (
+          {(isNotTrial || !priceIsNotNumber) ? (
             <Button
               variant="default"
               width="100%"
