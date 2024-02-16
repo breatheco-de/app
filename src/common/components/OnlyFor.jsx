@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
-function Component({ withBanner }) {
+function Component({ withBanner, children }) {
   const { t } = useTranslation('common');
   const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
@@ -24,8 +24,15 @@ function Component({ withBanner }) {
           {t('upgrade-plan.button')}
         </Button>
       </Box>
+      <Box display="none">
+        {children}
+      </Box>
     </Box>
-  ) : null;
+  ) : (
+    <Box display="none">
+      {children}
+    </Box>
+  );
 }
 
 function OnlyFor({
@@ -61,7 +68,13 @@ function OnlyFor({
     return false;
   };
 
-  return haveRequiredCapabilities() ? children : <Component withBanner={withBanner} />;
+  return haveRequiredCapabilities()
+    ? children
+    : (
+      <Component withBanner={withBanner}>
+        {children}
+      </Component>
+    );
 }
 
 OnlyFor.propTypes = {
@@ -70,7 +83,6 @@ OnlyFor.propTypes = {
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,
   onlyMember: PropTypes.bool,
-
   onlyTeachers: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withBanner: PropTypes.bool,
@@ -79,7 +91,6 @@ OnlyFor.propTypes = {
 OnlyFor.defaultProps = {
   academy: '',
   capabilities: [],
-
   onlyMember: false,
   onlyTeachers: false,
   profile: {},
@@ -88,6 +99,7 @@ OnlyFor.defaultProps = {
 
 Component.propTypes = {
   withBanner: PropTypes.bool,
+  children: PropTypes.node.isRequired,
 };
 Component.defaultProps = {
   withBanner: false,

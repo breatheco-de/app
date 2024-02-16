@@ -498,10 +498,10 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, cohortSession, profile,
+  children, permission, include, exclude, cohortSession, profile,
 }) {
-  const capabilities = (permission || '')?.split(',');
-  log('md_permissions:', capabilities);
+  const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
+  log('md_permissions:', allCapabilities);
 
   return (
     <OnlyFor
@@ -509,7 +509,7 @@ export function OnlyForBanner({
       withBanner
       profile={profile}
       cohortSession={cohortSession}
-      capabilities={capabilities}
+      capabilities={allCapabilities}
     >
       {children}
     </OnlyFor>
@@ -585,11 +585,15 @@ OnlyForBanner.propTypes = {
   permission: PropTypes.string,
   cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  include: PropTypes.string,
+  exclude: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
   cohortSession: {},
   profile: {},
+  include: '',
+  exclude: '',
 };
 DOMComponent.propTypes = {
   children: PropTypes.node.isRequired,
