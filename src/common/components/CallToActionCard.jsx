@@ -40,11 +40,11 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
         {description}
       </Text>
       <NextChakraLink 
-        href={forwardUrl} 
-        fontWeight="700" 
-        color={hexColor.blueDefault} 
-        display="block" 
-        textAlign="center" 
+        href={forwardUrl}
+        fontWeight="700"
+        color={hexColor.blueDefault}
+        display="block"
+        textAlign="center"
         onClick={() => {
           reportDatalayer({
             dataLayer: {
@@ -54,7 +54,7 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
             },
           });
         }}
-        {...buttonStyles} 
+        {...buttonStyles}
       >
         {buttonLabel}
       </NextChakraLink>
