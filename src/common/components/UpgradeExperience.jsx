@@ -12,7 +12,7 @@ function UpgradeExperience({ ...rest }) {
     reportDatalayer({
       dataLayer: {
         event: 'ad_interaction',
-        ad_type: 'upgrade_experience,
+        ad_type: 'upgrade_experience',
         ad_position: 'navbar',
       },
     });
