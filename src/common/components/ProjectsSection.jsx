@@ -91,9 +91,9 @@ function ProjectsSection({
               display="flex"
             >
               <Icon
-                width="14px"
-                height="14px"
-                style={{ marginRight: '7px' }}
+                width={elem?.icon === 'laptop' ? '14px' : '14px'}
+                height={elem?.icon === 'laptop' ? '14px' : '14px'}
+                mr="7px"
                 color={hexColor.blueDefault}
                 icon={elem?.icon || 'book'}
               />
