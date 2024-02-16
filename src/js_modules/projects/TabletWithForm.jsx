@@ -230,6 +230,7 @@ function TabletWithForm({
                 rel="noopener noreferrer"
                 href={asset.solution_url}
                 background={hexColor.greenLight}
+                color="white !important"
                 letterSpacing="0.05em"
                 textDecoration="none !important"
                 padding="7px 16px !important"
