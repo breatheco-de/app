@@ -38,6 +38,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
@@ -748,6 +749,10 @@ function Exercise({ exercise, markdown }) {
                   maxWidth="none"
                   marginTop="40px"
                 />
+                <PodcastCallToAction
+                  placement="side"
+                  marginTop="40px"
+                />
               </>
             ) : (
               <Skeleton height="646px" width="300px" borderRadius="17px" />
@@ -809,6 +814,10 @@ function Exercise({ exercise, markdown }) {
                 assetId={exercise.id}
                 assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
                 assetType="exercise"
+                placement="side"
+                marginTop="40px"
+              />
+              <PodcastCallToAction
                 placement="side"
                 marginTop="40px"
               />
