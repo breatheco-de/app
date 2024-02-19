@@ -101,6 +101,7 @@ const setTokenSession = (token) => {
     localStorage.removeItem('days_history_log');
     localStorage.removeItem('queryCache');
     localStorage.removeItem('hasPaidSubscription');
+    localStorage.removeItem('programsList');
     delete axiosInstance.defaults.headers.common.Authorization;
   }
 };
