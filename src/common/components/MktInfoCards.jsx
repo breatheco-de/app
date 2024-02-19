@@ -2,17 +2,23 @@ import PropTypes from 'prop-types';
 import {
   Box,
 } from '@chakra-ui/react';
+import Image from 'next/image';
 import PrismicTextComponent from './PrismicTextComponent';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
+import { isAbsoluteUrl } from '../../utils/url';
 
 function Card({ title, description, icon, color }) {
   const { hexColor } = useStyle();
   return (
-    <Box width={{ base: '100%', md: '330px' }} borderRadius="8px" height="178px" padding="8px" border="1px solid" borderColor={color}>
-      <Icon icon={icon} color={color} width="40px" height="40px" />
+    <Box width={{ base: '100%', md: '330px' }} borderRadius="8px" minHeight="178px" padding="8px" border="1px solid" borderColor={color}>
+      {isAbsoluteUrl(icon) ? (
+        <Image src={icon} width={40} height={40} alt="Card image" />
+      ) : (
+        <Icon icon={icon} color={color} width="40px" height="40px" />
+      )}
       <Text my="10px" fontSize="16px" fontWeight="700" color={hexColor.fontColor2}>
         {title}
       </Text>
@@ -42,6 +48,8 @@ function MktInfoCards({
   cardFourColor,
   cardFourTitle,
   cardFourDescription,
+  margin,
+  padding,
   ...rest
 }) {
   const { hexColor } = useStyle();
@@ -68,7 +76,6 @@ function MktInfoCards({
     color: cardFourColor,
   }];
 
-  console.log(cards);
   return (
     <Box
       className="info-cards"
@@ -78,7 +85,8 @@ function MktInfoCards({
       width="100%"
       display="flex"
       gap="24px"
-      padding="10px"
+      padding={padding}
+      margin={margin}
       flexWrap={{ base: 'wrap', lg: 'nowrap' }}
       {...rest}
     >
@@ -150,6 +158,8 @@ MktInfoCards.propTypes = {
   cardFourColor: PropTypes.string,
   cardFourTitle: PropTypes.string,
   cardFourDescription: PropTypes.string,
+  margin: PropTypes.string,
+  padding: PropTypes.string,
 };
 
 MktInfoCards.defaultProps = {
@@ -173,6 +183,8 @@ MktInfoCards.defaultProps = {
   cardFourColor: null,
   cardFourTitle: null,
   cardFourDescription: null,
+  margin: '',
+  padding: '',
 };
 
 Card.propTypes = {

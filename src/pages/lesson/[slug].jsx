@@ -18,6 +18,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
@@ -238,6 +239,10 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             assetId={lesson?.id}
             assetTechnologies={lesson?.technologies?.map((item) => item?.slug)}
             assetType="lesson"
+            placement="side"
+            marginTop="40px"
+          />
+          <PodcastCallToAction
             placement="side"
             marginTop="40px"
           />

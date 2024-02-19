@@ -135,6 +135,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                         course_slug: course.slug,
                         course_title: course.title,
                         ad_position: 'top-left',
+                        ad_type: 'course',
                       },
                     });
                   }}
