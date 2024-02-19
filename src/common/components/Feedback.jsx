@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Flex, Link, useToast } from '@chakra-ui/react';
+import { Box, Flex, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
@@ -28,7 +28,6 @@ function Feedback({ storyConfig }) {
   const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
   const storybookTranslation = storyConfig?.translation?.[storyConfig?.locale];
 
-  const toast = useToast();
   const learnWhyLink = {
     en: 'https://4geeks.com/mastering-technical-knowledge#feedback-quality-and-frequency',
     es: 'https://4geeks.com/es/mastering-technical-knowledge#calidad-y-frecuencia-del-feedback',
@@ -64,15 +63,6 @@ function Feedback({ storyConfig }) {
       if (response.ok) {
         const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         setCodeRevisions(codeRevisionsSortedByDate);
-      } else {
-        toast({
-          title: t('alert-message:something-went-wrong'),
-          description: 'Cannot get code revisions',
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
       }
     } catch (errorData) {
       error('Error fetching code revisions:', errorData);
