@@ -153,7 +153,7 @@ function ProgramCard({
     >
       {iconLink ? (
         <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
-          <Image src={iconLink} width="44px" height="44px" />
+          <Image src={iconLink} width="44px" height="44px" borderRadius="50%" />
         </Box>
       ) : (
         <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">

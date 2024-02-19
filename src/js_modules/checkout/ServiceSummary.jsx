@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Link, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
@@ -16,6 +16,8 @@ import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
+import ModalCardError from './ModalCardError';
+import { SILENT_CODE } from '../../lib/types';
 
 function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -29,6 +31,12 @@ function ServiceSummary({ service }) {
   const [cohortSession] = usePersistent('cohortSession', {});
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingCard, setIsSubmittingCard] = useState(false);
+  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+  const [declinedModalProps, setDeclinedModalProps] = useState({
+    title: '',
+    description: '',
+  });
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -36,8 +44,6 @@ function ServiceSummary({ service }) {
     cvc: 0,
   });
   const redirectedFrom = getStorageItem('redirected-from');
-
-  const toast = useToast();
 
   const infoValidation = Yup.object().shape({
     owner_name: Yup.string()
@@ -74,33 +80,45 @@ function ServiceSummary({ service }) {
       })
       .catch(() => {});
   };
-  const handleSubmit = (_, values) => {
-    bc.payment().addCard(values)
-      .then((resp) => {
-        if (resp) {
-          setConfirmationOpen(true);
-        }
-        if (resp?.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:card-error'),
-            description: t('alert-message:card-error-description'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:card-error'),
-          description: t('alert-message:card-error-description'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+
+  const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
+    const silentCode = data?.silent_code;
+    setIsSubmitting(false);
+    actions?.setSubmitting(false);
+    callback();
+    if (silentCode === SILENT_CODE.CARD_ERROR) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('card-declined'),
       });
+    }
+    if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('payment-not-processed'),
+      });
+    }
+    if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('payment-error'),
+      });
+    }
+  };
+
+  const handleSubmit = async (_, values) => {
+    const resp = await bc.payment().addCard(values);
+    const data = await resp.json();
+    setIsSubmittingCard(false);
+    if (resp.ok) {
+      setConfirmationOpen(true);
+    } else {
+      setOpenDeclinedModal(true);
+      handlePaymentErrors(data, _);
+    }
   };
 
   useEffect(() => {
@@ -117,6 +135,14 @@ function ServiceSummary({ service }) {
       justifyContent="center"
       mb="1rem"
     >
+      <ModalCardError
+        disableTryAgain
+        isSubmitting={isSubmittingCard}
+        openDeclinedModal={openDeclinedModal}
+        setOpenDeclinedModal={setOpenDeclinedModal}
+        declinedModalProps={declinedModalProps}
+      />
+
       {purchaseCompleted
         ? (
           <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
@@ -358,6 +384,7 @@ function ServiceSummary({ service }) {
                     }}
                     onSubmit={(values, actions) => {
                       setIsSubmitting(true);
+                      setIsSubmittingCard(true);
                       const monthAndYear = values.exp?.split('/');
                       const expMonth = monthAndYear[0];
                       const expYear = monthAndYear[1];
