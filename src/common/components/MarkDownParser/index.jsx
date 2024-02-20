@@ -243,24 +243,17 @@ function MarkDownParser({
 
     const contextPathRegex = /```([a-zA-Z]+).*(path=[^\s]*).*([\s\S]+?)```/g;
 
-    // let fileContext = '';
     let fileMatch;
     // eslint-disable-next-line no-cond-assign
     while ((fileMatch = contextPathRegex.exec(contentReplace)) !== null) {
       const filePath = fileMatch[2].trim().replaceAll(/"|'|path=/g, '');
       const contentFile = fileMatch[3].trim();
 
-      // fileContext += `File path: ${filePath}\nFile content:\n${contentFile}\n\n`;
       setFileContext((file) => `${file}File path: ${filePath}\nFile content:\n${contentFile}\n\n`);
     }
-    console.log('fileContext');
-    console.log(fileContext);
 
     return contentReplace;
   }, [content]);
-
-  console.log('fileContext');
-  console.log(fileContext);
 
   return (
     <>
