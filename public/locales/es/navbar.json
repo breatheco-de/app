@@ -14,7 +14,7 @@
     },
     {
       "id": "courses",
-      "label": "Courses",
+      "label": "Cursos",
       "icon": "graduationCap",
       "description": "Explora nuestra extensa colección de cursos diseñados para ayudarte a dominar varios temas y habilidades. Ya seas un principiante o un aprendiz avanzado, aquí hay algo para todos.",
       "asPath": "/courses",
@@ -23,7 +23,7 @@
     },
     {
       "id": "bootcamp",
-      "label": "Coding Bootcamp",
+      "label": "Bootcamp de Programación",
       "href": "https://4geeksacademy.com",
       "hide_on_auth": true,
       "position": 2

@@ -148,7 +148,6 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
       };
     };
     const requests = getRequests();
-    console.log('on handle payment');
     bc.payment().pay({
       ...requests,
     })

@@ -249,13 +249,11 @@ function Content() {
   };
 
   const EventIfNotFound = () => {
-    setCurrentData({});
-    toast({
-      position: 'top',
-      title: t('alert-message:content-not-found', { lesson }),
-      status: 'error',
-      duration: 7000,
-      isClosable: true,
+    setReadme({
+      content: t('no-content-found-description'),
+    });
+    setCurrentData({
+      title: t('no-content-found'),
     });
   };
 
@@ -268,26 +266,6 @@ function Content() {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
           const translations = data?.translations;
-          // const assetLang = data?.lang;
-          // const translationInEnglish = translations?.en || translations?.us;
-
-          // const translationArray = [
-          //   {
-          //     value: 'en',
-          //     lang: 'en',
-          //     slug: (assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish,
-          //     link: `/syllabus/${cohortSlug}/${lesson}/${(assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish}`,
-          //   },
-          //   {
-          //     value: 'es',
-          //     lang: 'es',
-          //     slug: assetLang === 'es' ? data.slug : translations?.es,
-          //     link: `/es/syllabus/${cohortSlug}/${lesson}/${assetLang === 'es' ? data.slug : translations?.es}`,
-          //   },
-          // ].filter((item) => item?.slug !== undefined);
-          // setUserSession({
-          //   translations: translationArray,
-          // });
           const currentSlug = translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
