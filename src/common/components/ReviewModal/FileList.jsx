@@ -67,8 +67,9 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
             {fileList.map((file) => {
               const revisionsRelated = codeRevisions?.length > 0
                 ? codeRevisions.filter((revision) => revision?.file?.id === file?.id).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-                : [{}];
-              const lastUpdatedRevision = revisionsRelated[0];
+                : [];
+              const lastUpdatedRevision = revisionsRelated?.[0] || {};
+              const rateBooleanExists = typeof lastUpdatedRevision?.is_good === 'boolean';
               const rateIcon = lastUpdatedRevision?.is_good ? 'feedback-like' : 'feedback-dislike';
 
               return (
@@ -90,7 +91,7 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
                     )}
                   </Flex>
                   <Flex flex={0.3} alignItems="center" justifyContent="center" opacity={lastUpdatedRevision.is_good !== null ? 1 : 0.5}>
-                    <Icon icon={lastUpdatedRevision.is_good !== null ? rateIcon : 'unchecked'} width="24px" height="24px" />
+                    <Icon icon={(rateBooleanExists && lastUpdatedRevision.is_good !== null) ? rateIcon : 'unchecked'} width="24px" height="24px" />
                   </Flex>
 
                   <Flex flex={0.3} justifyContent="center" alignItems="center">
@@ -103,9 +104,12 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
                   </Flex>
                   <Button
                     variant="default"
+                    isDisabled={!file?.content}
                     flex={0.2}
                     height="40px"
-                    onClick={() => openCommitFile(file)}
+                    onClick={() => {
+                      if (file?.content) openCommitFile(file);
+                    }}
                     display="flex"
                     alignItems="center"
                     gridGap="10px"
