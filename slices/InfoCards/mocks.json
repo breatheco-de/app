@@ -103,6 +103,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "somewhere",
 				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "movie",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "twice",
+				"type": "Text"
 			}
 		},
 		"items": []
