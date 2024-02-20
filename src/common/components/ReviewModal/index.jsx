@@ -80,7 +80,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.stage;
 
-  const minimumReviews = 0;
+  const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
   const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
 
