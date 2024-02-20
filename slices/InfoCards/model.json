@@ -92,6 +92,14 @@
         "cardFourDescription": {
           "type": "Text",
           "config": { "label": "cardFourDescription", "placeholder": "" }
+        },
+        "margin": {
+          "type": "Text",
+          "config": { "label": "Margin", "placeholder": "" }
+        },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "Padding", "placeholder": "" }
         }
       },
       "items": {}
