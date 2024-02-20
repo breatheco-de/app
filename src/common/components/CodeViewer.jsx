@@ -50,7 +50,7 @@ export const languagesNames = {
   html: 'html',
 };
 
-function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
+function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext, ...rest }) {
   const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -122,6 +122,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           completionJob.inputs = {
             main_file: `File path: ${path}\nFile content:\n${code}`,
             language_and_version: language,
+            secondary_files: fileContext,
           };
         } else {
           endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/';
@@ -308,11 +309,13 @@ CodeViewer.propTypes = {
   languagesData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allowNotLogged: PropTypes.bool,
+  fileContext: PropTypes.string,
 };
 
 CodeViewer.defaultProps = {
   allowNotLogged: false,
   stTranslation: null,
+  fileContext: '',
 };
 
 export default CodeViewer;

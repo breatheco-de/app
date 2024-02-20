@@ -63,7 +63,7 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
 }
 
 function CodeViewerComponent(props) {
-  const { preParsedContent, node } = props;
+  const { preParsedContent, node, fileContext } = props;
   const nodeStartOffset = node.position.start.offset;
   const nodeEndOffset = node.position.end.offset;
 
@@ -93,6 +93,7 @@ function CodeViewerComponent(props) {
     <CodeViewer
       languagesData={fragments}
       margin="10px 0"
+      fileContext={fileContext}
     />
   );
 }
@@ -137,6 +138,7 @@ function MarkDownParser({
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [subTasksProps, setSubTasksProps] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
+  const [fileContext, setFileContext] = useState('');
   const [cohortSession] = usePersistent('cohortSession', {});
   const [profile] = usePersistent('profile', {});
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -241,20 +243,24 @@ function MarkDownParser({
 
     const contextPathRegex = /```([a-zA-Z]+).*(path=[^\s]*).*([\s\S]+?)```/g;
 
-    let fileContext = '';
+    // let fileContext = '';
     let fileMatch;
     // eslint-disable-next-line no-cond-assign
     while ((fileMatch = contextPathRegex.exec(contentReplace)) !== null) {
       const filePath = fileMatch[2].trim().replaceAll(/"|'|path=/g, '');
       const contentFile = fileMatch[3].trim();
 
-      fileContext += `File path: ${filePath}\nFile content:\n${contentFile}\n\n`;
+      // fileContext += `File path: ${filePath}\nFile content:\n${contentFile}\n\n`;
+      setFileContext((file) => `${file}File path: ${filePath}\nFile content:\n${contentFile}\n\n`);
     }
     console.log('fileContext');
     console.log(fileContext);
 
     return contentReplace;
   }, [content]);
+
+  console.log('fileContext');
+  console.log(fileContext);
 
   return (
     <>
@@ -314,7 +320,7 @@ function MarkDownParser({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
-          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
