@@ -1,13 +1,26 @@
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable react/jsx-no-useless-fragment */
-import { Box, Flex, Grid } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Grid,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+} from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Head from 'next/head';
+import Image from 'next/image';
 import Icon from '../../../common/components/Icon';
+import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import ModalInfo from '../../moduleMap/modalInfo';
@@ -16,12 +29,25 @@ import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
-import { CardSkeleton } from '../../../common/components/Skeleton';
+import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
+import bc from '../../../common/services/breathecode';
 
 function Subscriptions({ storybookConfig }) {
   const { t, lang } = useTranslation('profile');
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
+  const [servicesModal, setServicesModal] = useState(null);
+  const [consumables, setConsumables] = useState({
+    cohort_sets: [],
+    event_type_sets: [],
+    mentorship_service_sets: [],
+    service_sets: [],
+  });
+  const [services, setServices] = useState({
+    mentorships: [],
+    workshops: [],
+  });
+  const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
   const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [offerProps, setOfferProps] = useState({});
@@ -39,8 +65,40 @@ function Subscriptions({ storybookConfig }) {
     setUpgradeModalIsOpen(true);
   };
 
+  const getConsumables = async () => {
+    try {
+      const res = await bc.payment().service().consumable();
+      if (res.status === 200) {
+        const { data } = res;
+        setConsumables(data);
+        const promiseMentorship = data.mentorship_service_sets.map(async (elem) => {
+          const mentRes = await bc.mentorship().getServiceSet(elem.id);
+
+          return mentRes.data.mentorship_services;
+        });
+
+        const promiseEvents = data.mentorship_service_sets.map(async (elem) => {
+          const mentRes = await bc.payment().getEventTypeSet(elem.id);
+
+          return mentRes.data.event_types;
+        });
+        const resMentorships = await Promise.all(promiseMentorship);
+        const resWorkshops = await Promise.all(promiseEvents);
+        setServices({
+          mentorships: resMentorships.flat(),
+          workshops: resWorkshops.flat(),
+        });
+      }
+      setLoadingServices(false);
+    } catch (e) {
+      setLoadingServices(false);
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     fetchSubscriptions();
+    getConsumables();
   }, []);
 
   const {
@@ -48,7 +106,7 @@ function Subscriptions({ storybookConfig }) {
   } = profileHandlers({
     translations: profileTranslations,
   });
-  const { borderColor2, hexColor, backgroundColor3, fontColor } = useStyle();
+  const { borderColor2, hexColor, backgroundColor3, fontColor, featuredLight } = useStyle();
 
   const { blueDefault } = hexColor;
 
@@ -68,6 +126,22 @@ function Subscriptions({ storybookConfig }) {
     return true;
   }) : [];
 
+  const closeMentorshipsModal = () => setServicesModal(null);
+
+  const detailsConsumableData = {
+    mentorships: {
+      icon: 'teacher1',
+      title: t('subscription.your-mentoring-available'),
+    },
+    workshops: {
+      icon: 'community',
+      title: t('subscription.your-workshop-available'),
+    },
+  };
+
+  const totalMentorshipsAvailable = consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
+  const totalWorkshopsAvailable = consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
+
   return (
     <>
       {location?.pathname?.includes('subscriptions') && (
@@ -75,6 +149,94 @@ function Subscriptions({ storybookConfig }) {
           <title>{t('my-subscriptions')}</title>
         </Head>
       )}
+      <Box display="flex" flexWrap="wrap" gap="24px">
+        {loadingServices ? (
+          <>
+            <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+            <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+          </>
+        ) : (
+          <>
+            <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+              <Text size="sm" mb="10px" fontWeight="700">
+                {t('subscription.mentoring-available')}
+              </Text>
+              <Box display="flex" justifyContent="space-between" alignItems="end">
+                <Box display="flex" gap="10px" alignItems="center">
+                  <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
+                  <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                    {totalMentorshipsAvailable}
+                  </Heading>
+                </Box>
+                <Button variant="link" onClick={() => setServicesModal('mentorships')}>
+                  {t('subscription.see-details')}
+                </Button>
+              </Box>
+            </Box>
+            <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+              <Text size="sm" mb="10px" fontWeight="700">
+                {t('subscription.workshop-available')}
+              </Text>
+              <Box display="flex" justifyContent="space-between" alignItems="end">
+                <Box display="flex" gap="10px" alignItems="center">
+                  <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
+                  <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                    {totalWorkshopsAvailable}
+                  </Heading>
+                </Box>
+                <Button variant="link" onClick={() => setServicesModal('workshops')}>
+                  {t('subscription.see-details')}
+                </Button>
+              </Box>
+            </Box>
+          </>
+        )}
+
+      </Box>
+      <Modal isOpen={servicesModal !== null} onClose={closeMentorshipsModal}>
+        <ModalOverlay />
+        <ModalContent>
+          {servicesModal && (
+            <>
+              <ModalHeader fontSize="26px" lineHeight="31px" display="flex" alignItems="center" gap="18px">
+                <Icon icon={detailsConsumableData[servicesModal].icon} color={hexColor.blueDefault} width="32px" height="32px" />
+                {detailsConsumableData[servicesModal].title}
+              </ModalHeader>
+              <ModalBody>
+                {services[servicesModal].map((service) => {
+                  const logo = service.logo_url || service.icon_url;
+                  return (
+                    <Box mb="10px" background={hexColor.featuredColor} padding="10px" borderRadius="4px">
+                      <Box display="flex" gap="10px" alignItems="center" mb="5px">
+                        {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
+                        <Heading size="16px">
+                          {service.name}
+                        </Heading>
+                      </Box>
+                      <Text size="md" color={hexColor.fontColor3}>
+                        {service.description}
+                      </Text>
+                    </Box>
+                  );
+                })}
+              </ModalBody>
+            </>
+          )}
+
+          <ModalFooter borderTop={`1px solid ${hexColor.borderColor}`}>
+            <Button
+              background={hexColor.blueDefault}
+              onClick={closeMentorshipsModal}
+              color="white"
+              _hover={{
+                background: hexColor.blueDefault,
+              }}
+            >
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       <Text fontSize="15px" fontWeight="700" pb="18px">
         {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
       </Text>

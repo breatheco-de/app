@@ -334,6 +334,7 @@ const breathecode = {
         payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
+      getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
     };
   },
