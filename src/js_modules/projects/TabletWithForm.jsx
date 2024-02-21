@@ -82,13 +82,14 @@ function TabletWithForm({
 
   return (
     <>
-      <Box px="22px" pb="20px" display={{ base: 'block', md: 'none' }}>
+      <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
         <SimpleTable
           href="/interactive-exercises"
           difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
           repository={asset.url}
           duration={asset.duration}
-          videoAvailable={asset.solution_video_url}
+          videoAvailable={asset.gitpod ? asset.solution_video_url : null}
+          solution={asset.gitpod ? asset.solution_url : null}
           liveDemoAvailable={asset.intro_video_url}
           technologies={technologies}
         />
@@ -159,24 +160,7 @@ function TabletWithForm({
                 </Text>
               </>
             )}
-            {asset.solution_video_url && (
-              <Link
-                borderRadius="3px"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={asset.solution_video_url}
-                background={hexColor.greenLight}
-                color="white !important"
-                letterSpacing="0.05em"
-                textDecoration="none !important"
-                padding="7px 16px !important"
-                textAlign="center"
-                fontWeight="600"
-              >
-                {t('common:video-solution')}
-              </Link>
-            )}
-            {asset.gitpod && (
+            {asset.gitpod ? (
               <>
                 <Button
                   borderRadius="3px"
@@ -213,23 +197,45 @@ function TabletWithForm({
                   {t('clone')}
                 </Button>
               </>
-            )}
-            {asset.solution_url && (
-              <Link
-                borderRadius="3px"
-                target="_blank"
-                rel="noopener noreferrer"
-                href={asset.solution_url}
-                background={hexColor.greenLight}
-                color="white !important"
-                letterSpacing="0.05em"
-                textDecoration="none !important"
-                padding="7px 16px !important"
-                textAlign="center"
-                fontWeight="600"
-              >
-                {t('common:review-solution')}
-              </Link>
+            ) : (
+              <>
+                {asset.solution_video_url && (
+                  <Link
+                    borderRadius="3px"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={asset.solution_video_url}
+                    background={hexColor.greenLight}
+                    color="white !important"
+                    letterSpacing="0.05em"
+                    textDecoration="none !important"
+                    padding="7px 16px !important"
+                    textAlign="center"
+                    fontWeight="600"
+                  >
+                    {t('common:watch-video-solution')}
+                  </Link>
+                )}
+                {asset.solution_url && (
+                  <Link
+                    borderRadius="3px"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={asset.solution_url}
+                    border="1px solid"
+                    borderColor={hexColor.greenLight}
+                    color={asset.solution_video_url ? hexColor.greenLight : 'white !important'}
+                    background={asset.solution_video_url ? 'none' : hexColor.greenLight}
+                    letterSpacing="0.05em"
+                    textDecoration="none !important"
+                    padding="7px 16px !important"
+                    textAlign="center"
+                    fontWeight="600"
+                  >
+                    {t('common:review-solution')}
+                  </Link>
+                )}
+              </>
             )}
           </>
         </ShowOnSignUp>
@@ -495,7 +501,8 @@ function TabletWithForm({
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
             repository={asset.url}
             duration={asset.duration}
-            videoAvailable={asset.solution_video_url}
+            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
+            solution={asset.gitpod ? asset.solution_url : null}
             liveDemoAvailable={asset.intro_video_url}
             technologies={technologies}
           />
