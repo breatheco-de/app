@@ -89,6 +89,7 @@ function Programs({ item, handleChoose, onOpenModal }) {
       isFreeTrial={isFreeTrial}
       freeTrialExpireDate={subscription?.valid_until ? new Date(subscription?.valid_until) : new Date(subMinutes(new Date(), 1))}
       isAvailableAsSaas={cohort?.available_as_saas}
+      iconLink={cohort?.syllabus_version?.logo}
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}

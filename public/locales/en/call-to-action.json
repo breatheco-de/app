@@ -1,4 +1,4 @@
- { 
+{ 
   "call-to-actions": [
     {
       "component": "WeeklyCodingChallenge",
@@ -11,8 +11,24 @@
         "description": "Every week, we pick a real-life project to build your portfolio and get ready for a job. All projects are built with ChatGPT as co-pilot!",
         "button_label": "Start the Challenge",
         "internal_cta_placement": "SideWeeklyCodingChallenge",
-        "forward_url": "https://4geeks.com/weekly-coding-challenge"
+        "forward_url": "https://4geeks.com/weekly-coding-challenge",
+        "ad_type": "weekly_coding_challenge"
       }
     }
-  ]
+  ],
+  "podcast-call-to-action": {
+    "component": "WeeklyCodingChallenge",
+    "asset_type": [], 
+    "asset_id": [],
+    "asset_technologies": [],
+    "content": {
+      "icon_url": "https://storage.googleapis.com/breathecode/logos-technologias/microphone_icon.png",
+      "title": "Podcast: Code Sets You Free",
+      "description": "A tech-culture podcast where you learn to fight the enemies that blocks your way to become a successful professional in tech.",
+      "button_label": "Listen the podcast",
+      "internal_cta_placement": "side",
+      "forward_url": "https://4geeks.com/podcast",
+      "ad_type": "podcast"
+    }
+  }
 }

@@ -7,12 +7,12 @@ import {
   Button,
   Flex,
   Progress,
+  Image,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { memo, useState } from 'react';
-import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
@@ -153,7 +153,7 @@ function ProgramCard({
     >
       {iconLink ? (
         <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
-          <Image src={iconLink} width={44} height={44} />
+          <Image src={iconLink} width="44px" height="44px" borderRadius="50%" />
         </Box>
       ) : (
         <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">

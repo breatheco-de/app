@@ -18,13 +18,14 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
+import MktEventCards from '../../common/components/MktEventCards';
 
 export const getStaticPaths = async () => {
   const assetList = await import('../../lib/asset-list.json');
@@ -241,6 +242,10 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             placement="side"
             marginTop="40px"
           />
+          <PodcastCallToAction
+            placement="side"
+            marginTop="40px"
+          />
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
@@ -302,7 +307,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
-              <UpcomingWorkshops />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 display={{ base: 'none', md: 'grid' }}
                 title={t('common:continue-learning', { technologies: lesson?.technologies.map((tech) => tech?.title || unSlugifyCapitalize(tech)).slice(0, 4).join(', ') })}
@@ -404,7 +409,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                     display={{ base: 'none', md: 'flex' }}
                     technologies={lesson?.technologies}
                   />
-                  <UpcomingWorkshops />
+                  <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
                 </Box>
               )}
             </Box>

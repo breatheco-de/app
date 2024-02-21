@@ -48,6 +48,8 @@ function MktInfoCards({
   cardFourColor,
   cardFourTitle,
   cardFourDescription,
+  margin,
+  padding,
   ...rest
 }) {
   const { hexColor } = useStyle();
@@ -83,7 +85,8 @@ function MktInfoCards({
       width="100%"
       display="flex"
       gap="24px"
-      padding="10px"
+      padding={padding}
+      margin={margin}
       flexWrap={{ base: 'wrap', lg: 'nowrap' }}
       {...rest}
     >
@@ -155,6 +158,8 @@ MktInfoCards.propTypes = {
   cardFourColor: PropTypes.string,
   cardFourTitle: PropTypes.string,
   cardFourDescription: PropTypes.string,
+  margin: PropTypes.string,
+  padding: PropTypes.string,
 };
 
 MktInfoCards.defaultProps = {
@@ -178,6 +183,8 @@ MktInfoCards.defaultProps = {
   cardFourColor: null,
   cardFourTitle: null,
   cardFourDescription: null,
+  margin: '',
+  padding: '',
 };
 
 Card.propTypes = {

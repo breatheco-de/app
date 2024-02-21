@@ -16,14 +16,15 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import MktEventCards from '../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -260,7 +261,7 @@ function ProjectSlug({ project, markdown }) {
               display={{ base: 'flex', lg: 'none' }}
               flexDirection="column"
               margin="30px 0"
-            // width={{ base: '100%', md: '350px' }}
+              // width={{ base: '100%', md: '350px' }}
               minWidth={{ base: '100%', lg: '300px' }}
               maxWidth="350px"
               height="fit-content"
@@ -277,6 +278,10 @@ function ProjectSlug({ project, markdown }) {
                     placement="side"
                     marginTop="40px"
                     maxWidth="none"
+                  />
+                  <PodcastCallToAction
+                    placement="side"
+                    marginTop="40px"
                   />
                 </>
               ) : (
@@ -297,7 +302,7 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
-              <UpcomingWorkshops />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 marginTop="15px"
                 technologies={project?.technologies}
@@ -323,6 +328,10 @@ function ProjectSlug({ project, markdown }) {
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
                 assetType="project"
+                placement="side"
+                marginTop="40px"
+              />
+              <PodcastCallToAction
                 placement="side"
                 marginTop="40px"
               />

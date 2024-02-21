@@ -21,12 +21,13 @@ import MktRecommendedCourses from '../../../common/components/MktRecommendedCour
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../../common/components/UpcomingWorkshops';
+import MktEventCards from '../../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -209,6 +210,10 @@ export default function HowToSlug({ data, markdown }) {
             placement="side"
             marginTop="40px"
           />
+          <PodcastCallToAction
+            placement="side"
+            marginTop="40px"
+          />
         </Box>
         <Box
           gridColumn="2 / span 12"
@@ -291,7 +296,7 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <UpcomingWorkshops />
+            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
               display={{ base: 'none', md: 'flex' }}
               marginBottom="15px"

@@ -21,6 +21,7 @@ import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
@@ -29,7 +30,7 @@ import { cleanObject } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../../common/components/UpcomingWorkshops';
+import MktEventCards from '../../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -293,6 +294,10 @@ function Exercise({ exercise, markdown }) {
                   maxWidth="none"
                   marginTop="40px"
                 />
+                <PodcastCallToAction
+                  placement="side"
+                  marginTop="40px"
+                />
               </>
             ) : (
               <Skeleton height="646px" width="300px" borderRadius="17px" />
@@ -315,7 +320,7 @@ function Exercise({ exercise, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <UpcomingWorkshops />
+            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
               technologies={exercise?.technologies}
             />
@@ -342,6 +347,10 @@ function Exercise({ exercise, markdown }) {
                 assetId={exercise.id}
                 assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
                 assetType="exercise"
+                placement="side"
+                marginTop="40px"
+              />
+              <PodcastCallToAction
                 placement="side"
                 marginTop="40px"
               />

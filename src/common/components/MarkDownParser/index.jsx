@@ -63,21 +63,29 @@ function OnlyForComponent({ cohortSession, profile, ...props }) {
 }
 
 function CodeViewerComponent(props) {
-  const { preParsedContent, node } = props;
+  const { preParsedContent, node, fileContext } = props;
   const nodeStartOffset = node.position.start.offset;
   const nodeEndOffset = node.position.end.offset;
 
   const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
-  const regex = /```([a-zA-Z]+)\s{1,}runable=("true"|'true'|true)\s{0,}\n([\s\S]+?)```/g;
+  const regex = /```([a-zA-Z]+)(.*)([\s\S]+?)```/g;
   let match;
   const fragments = [];
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(input)) !== null) {
+    const parameters = match[2].split(' ');
+
+    let path = parameters.find((param) => param.includes('path'));
+    if (path) {
+      const removeQuotes = /"|'|path=/g;
+      path = path.replaceAll(removeQuotes, '');
+    }
     fragments.push({
       language: languagesNames[match[1].toLowerCase()] || match[1],
       label: languagesLabels[match[1].toLowerCase()] || match[1],
       code: match[3].trim(),
+      path,
     });
   }
 
@@ -85,6 +93,7 @@ function CodeViewerComponent(props) {
     <CodeViewer
       languagesData={fragments}
       margin="10px 0"
+      fileContext={fileContext}
     />
   );
 }
@@ -129,6 +138,7 @@ function MarkDownParser({
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [subTasksProps, setSubTasksProps] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
+  const [fileContext, setFileContext] = useState('');
   const [cohortSession] = usePersistent('cohortSession', {});
   const [profile] = usePersistent('profile', {});
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -224,12 +234,23 @@ function MarkDownParser({
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
-    const emptyCodeRegex = /```([a-zA-Z]+)\s{1,}runable=("true"|true|'true')\s{0,}\n(\n{1,}|\s{1,}\n{1,})?```/gm;
+    const emptyCodeRegex = /```([a-zA-Z]+).*runable=("true"|true|'true').*(\n{1,}|\s{1,}\n{1,})?```/gm;
     //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
-    const codeViewerRegex = /(```(?<language>\w+)\s{1,}runable=("true"|'true'|true)\s{0,}\n(?<code>(?:.|\n)*?)```\n?)+/gm;
+    const codeViewerRegex = /(```(?<language>\w+).*runable=("true"|'true'|true).*(?<code>(?:.|\n)*?)```\n?)+/gm;
 
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
+
+    const contextPathRegex = /```([a-zA-Z]+).*(path=[^\s]*).*([\s\S]+?)```/g;
+
+    let fileMatch;
+    // eslint-disable-next-line no-cond-assign
+    while ((fileMatch = contextPathRegex.exec(contentReplace)) !== null) {
+      const filePath = fileMatch[2].trim().replaceAll(/"|'|path=/g, '');
+      const contentFile = fileMatch[3].trim();
+
+      setFileContext((file) => `${file}File path: ${filePath}\nFile content:\n${contentFile}\n\n`);
+    }
 
     return contentReplace;
   }, [content]);
@@ -292,7 +313,7 @@ function MarkDownParser({
           //   component: MDTable,
           // },
           onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
-          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent }),
+          codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type

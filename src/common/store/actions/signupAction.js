@@ -148,7 +148,6 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
       };
     };
     const requests = getRequests();
-    console.log('on handle payment');
     bc.payment().pay({
       ...requests,
     })
@@ -174,7 +173,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           }
           reportDatalayer({
             dataLayer: {
-              event: 'purchase',
+              event: selectedPlanCheckoutData?.price > 0 ? 'purchase' : 'sign_up',
               value: selectedPlanCheckoutData?.price,
               currency,
               payment_type: 'Credit card',

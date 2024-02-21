@@ -152,8 +152,9 @@ function Checkout() {
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
-    if (!isAuthenticated && !tokenExists) {
-      setLoader('plan', false);
+    if (!queryPlanExists && queryServiceExists && isAuthenticated) {
+      setReadyToSelectService(true);
+      setShowChooseClass(false);
     }
     if (!queryPlanExists && !queryPlansExists && !queryEventTypeSetSlugExists && !queryMentorshipServiceSlugExists && isAuthenticated) {
       router.push('/pricing');
@@ -306,6 +307,9 @@ function Checkout() {
             isClosable: true,
           });
         });
+    }
+    if (!isAuthenticated && !tokenExists) {
+      setLoader('plan', false);
     }
   }, [cohortsData.loading, accessToken, isAuthenticated]);
 

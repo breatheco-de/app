@@ -374,6 +374,26 @@ export interface InfoCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   cardFourDescription: prismic.KeyTextField;
+
+  /**
+   * Margin field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.margin
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin: prismic.KeyTextField;
+
+  /**
+   * Padding field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
 }
 
 /**

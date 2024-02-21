@@ -162,7 +162,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         setITEMS(items.filter((item) => item.disabled !== true));
       }
     }
-  }, [user, isLoading, selectedProgramSlug, mktCourses]);
+  }, [user, isLoading, selectedProgramSlug, mktCourses, router.locale]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -207,8 +207,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle="solid"
-        borderColor={useColorModeValue('gray.200', 'gray.900')}
+        borderColor={isOpen ? borderColor : useColorModeValue('gray.200', 'gray.900')}
         justifyContent="space-between"
+        gridGap="2rem"
         align="center"
       >
         <Flex
