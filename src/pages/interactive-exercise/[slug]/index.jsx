@@ -283,9 +283,7 @@ function Exercise({ exercise, markdown }) {
           >
             {exercise?.slug ? (
               <>
-                <Box>
-                  <TabletWithForm asset={exercise} />
-                </Box>
+                <TabletWithForm asset={exercise} href="/interactive-exercises" />
                 <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
@@ -340,9 +338,7 @@ function Exercise({ exercise, markdown }) {
         >
           {exercise?.slug ? (
             <>
-              <Box>
-                <TabletWithForm asset={exercise} />
-              </Box>
+              <TabletWithForm asset={exercise} href="/interactive-exercises" />
               <DynamicCallToAction
                 assetId={exercise.id}
                 assetTechnologies={exercise.technologies?.map((item) => item?.slug)}

@@ -36,6 +36,7 @@ function TabletWithForm({
   commonTextColor,
   commonBorderColor,
   technologies,
+  href,
 }) {
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
@@ -84,7 +85,7 @@ function TabletWithForm({
     <>
       <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
         <SimpleTable
-          href="/interactive-exercises"
+          href={href}
           difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
           repository={asset.url}
           duration={asset.duration}
@@ -497,7 +498,7 @@ function TabletWithForm({
         </Modal>
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
-            href="/interactive-exercises"
+            href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
             repository={asset.url}
             duration={asset.duration}
@@ -517,6 +518,7 @@ TabletWithForm.propTypes = {
   commonBorderColor: PropTypes.string,
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  href: PropTypes.string.isRequired,
 };
 
 TabletWithForm.defaultProps = {

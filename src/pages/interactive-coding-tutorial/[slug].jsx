@@ -270,7 +270,7 @@ function ProjectSlug({ project, markdown }) {
             >
               {project ? (
                 <>
-                  <TabletWithForm asset={project} technologies={project?.technologies} />
+                  <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -323,7 +323,7 @@ function ProjectSlug({ project, markdown }) {
         >
           {project ? (
             <>
-              <TabletWithForm asset={project} technologies={project?.technologies} />
+              <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               <DynamicCallToAction
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
