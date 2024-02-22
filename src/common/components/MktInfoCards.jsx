@@ -50,6 +50,7 @@ function MktInfoCards({
   cardFourDescription,
   margin,
   padding,
+  fontFamily,
   ...rest
 }) {
   const { hexColor } = useStyle();
@@ -88,6 +89,7 @@ function MktInfoCards({
       padding={padding}
       margin={margin}
       flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+      fontFamily={fontFamily}
       {...rest}
     >
       <Box maxWidth="fit-content">
@@ -160,6 +162,7 @@ MktInfoCards.propTypes = {
   cardFourDescription: PropTypes.string,
   margin: PropTypes.string,
   padding: PropTypes.string,
+  fontFamily: PropTypes.string,
 };
 
 MktInfoCards.defaultProps = {
@@ -185,6 +188,7 @@ MktInfoCards.defaultProps = {
   cardFourDescription: null,
   margin: '',
   padding: '',
+  fontFamily: 'Lato',
 };
 
 Card.propTypes = {

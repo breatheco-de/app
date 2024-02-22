@@ -15,7 +15,7 @@ import axios from '../../axios';
 import modifyEnv from '../../../modifyEnv';
 
 function TestimonialBox({ picture, name, rating, description }) {
-  const { fontColor2, backgroundColor } = useStyle();
+  const { fontColor2, backgroundColor, hexColor } = useStyle();
   const limit = 160;
   const descriptionLength = lengthOfString(description);
   const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
@@ -27,6 +27,8 @@ function TestimonialBox({ picture, name, rating, description }) {
       borderRadius="12px"
       padding="15px"
       textAlign="center"
+      border="1px solid"
+      borderColor={hexColor.borderColor}
     >
       <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={{ borderRadius: '50%', margin: '0 auto' }} />
       <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
@@ -63,19 +65,24 @@ function MktTestimonials({
   const router = useRouter();
   const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 
-  useEffect(() => {
-    if (typeof endpoint === 'string' && endpoint?.length > 6) {
-      axios.get(endpoint || defaultEndpoint)
-        .then((response) => {
-          const data = response?.data;
+  const getTestimonials = async () => {
+    try {
+      const response = await axios.get(endpoint || defaultEndpoint);
 
-          if (typeof data === 'string') {
-            setTestimonialsData([]);
-          } else {
-            setTestimonialsData(data);
-          }
-        });
+      const data = response?.data;
+
+      if (typeof data === 'string') {
+        setTestimonialsData([]);
+      } else {
+        setTestimonialsData(data);
+      }
+    } catch (e) {
+      console.log(e);
     }
+  };
+
+  useEffect(() => {
+    getTestimonials();
   }, []);
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
