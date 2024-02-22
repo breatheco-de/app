@@ -45,5 +45,9 @@
     "learn-why": "Aprende por qué",
     "code-review": "Revisión de código",
     "no-code-reviews-text": "En este espacio, tendrás acceso a la retroalimentación proporcionada por tu profesor una vez que hayas entregado tu proyecto."
+  },
+  "late-payment": {
+    "title": "Acción requerida: Pagos atrasados",
+    "description": "Tu cuenta tiene pagos pendientes para la cohorte {{cohort_name}}. Por favor, contacta al coordinador de {{academy_name}} para restaurar el acceso completo a todas las funciones. Gracias por tu pronta atención."
   }
 }

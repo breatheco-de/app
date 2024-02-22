@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, isPlural, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -64,6 +64,10 @@ function chooseProgram() {
   const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
+  const [lateModalProps, setLateModalProps] = useState({
+    isOpen: false,
+    data: [],
+  });
   const [mentorshipServices, setMentorshipServices] = useState({
     isLoading: true,
     data: [],
@@ -74,6 +78,7 @@ function chooseProgram() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
+  const isClosedLateModal = localStorage.getItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const welcomeVideoLinks = {
@@ -221,6 +226,23 @@ function chooseProgram() {
 
   useEffect(() => {
     if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
+      const subscripionsLate = allSubscriptions.filter((subscription) => subscription.status === 'LATE');
+      if (subscripionsLate.length > 0 && !isClosedLateModal) {
+        setStorageItem('isClosedLateModal', false);
+        setLateModalProps({
+          isOpen: true,
+          data: subscripionsLate.map(
+            (subscription) => ({
+              ...subscription,
+              cohort: subscription?.selected_cohort_set?.cohorts.find(
+                (cohort) => dataQuery?.cohorts.some((c) => c?.cohort?.slug === cohort?.slug),
+              ),
+            }),
+          ),
+        });
+      } else {
+        removeStorageItem('isClosedlateModal');
+      }
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
@@ -390,7 +412,23 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <Flex minHeight="81lvh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+      <SimpleModal
+        maxWidth="30rem"
+        isOpen={lateModalProps.isOpen}
+        title={t('late-payment.title')}
+        onClose={() => {
+          setLateModalProps({ ...lateModalProps, isOpen: false });
+          setStorageItem('isClosedLateModal', false);
+        }}
+      >
+        <Text size="md">
+          {t('late-payment.description', {
+            cohort_name: lateModalProps.data[0]?.cohort?.name,
+            academy_name: lateModalProps.data?.[0]?.academy?.name,
+          })}
+        </Text>
+      </SimpleModal>
+      <Flex minHeight="81vh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>

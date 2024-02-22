@@ -45,5 +45,9 @@
     "learn-why": "Learn why",
     "code-review": "Code review",
     "no-code-reviews-text": "In this space, you will have access to the feedback provided by your teacher once you have submitted your project."
+  },
+  "late-payment": {
+    "title": "Action Required: Late Payments",
+    "description": "Your account has outstanding payments for cohort {{cohort_name}}. Please contact {{academy_name}} coordinator to restore full access to all features. Thank you for your prompt attention."
   }
 }
