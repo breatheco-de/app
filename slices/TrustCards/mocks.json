@@ -7,21 +7,28 @@
 				"__TYPE__": "FieldContent",
 				"value": "tree",
 				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Eiusmod consequat ullamco commodo eiusmod fugiat ut eu velit cupidatat consectetur nisi consectetur ut. Tempor in cillum ex velit nostrud ullamco consequat aliqua id ea incididunt sint cupidatat ullamco. Ad ullamco laborum qui esse elit reprehenderit et pariatur nisi."
+						}
+					}
+				]
+			},
+			"fontFamily": {
+				"__TYPE__": "FieldContent",
+				"value": "perhaps",
+				"type": "Text"
 			}
 		},
 		"items": [
 			{
 				"__TYPE__": "GroupItemContent",
-				"value": [
-					[
-						"description",
-						{
-							"__TYPE__": "FieldContent",
-							"value": "dangerous",
-							"type": "Text"
-						}
-					]
-				]
+				"value": []
 			}
 		]
 	}

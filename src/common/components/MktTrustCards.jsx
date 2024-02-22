@@ -37,7 +37,7 @@ function Card({ card }) {
   };
   return (
     <Box
-      width={{ sm: '230px', base: '100%' }}
+      width="100%"
       height={{ md: '270px', base: '320px' }}
       background={hexColor.backgroundColor}
       borderRadius="11px"
@@ -83,6 +83,7 @@ function Card({ card }) {
               // display={currentIndex === i ? 'block' : 'none'}
               key={image}
               src={image}
+              objectFit="contain"
               width="100%"
               height={{ md: '120px', base: '140px' }}
               position="absolute"
@@ -105,7 +106,7 @@ function Card({ card }) {
       </Box>
       <Box paddingBottom="16px">
         <Link color={hexColor.blueDefault} href={aricle_url || '#'} target="__blank" visibility={aricle_url ? 'visible' : 'hidden'}>
-          {t('asset-button.article')}
+          {card.article_label || t('asset-button.article')}
           {'  '}
           →
         </Link>
@@ -119,6 +120,7 @@ function MktTrustCards({
   title,
   description,
   slice,
+  fontFamily,
   ...rest
 }) {
   const { lang } = useTranslation('common');
@@ -143,7 +145,7 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding={{ base: '30px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
+    <Box id={id} padding={{ base: '30px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} fontFamily={fontFamily} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
@@ -163,7 +165,7 @@ function MktTrustCards({
           </Text>
         )}
       </Box>
-      <Box width="100%" display="flex" gap="24px" justifyContent="space-between" flexWrap="wrap">
+      <Box width="100%" display="flex" gap="24px" justifyContent="space-between" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
         {cards.map((card) => (
           <Card card={card} key={`${card.title}`} />
         ))}
@@ -177,6 +179,7 @@ MktTrustCards.propTypes = {
   description: PropTypes.string,
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   id: PropTypes.string,
+  fontFamily: PropTypes.string,
 };
 
 MktTrustCards.defaultProps = {
@@ -184,6 +187,7 @@ MktTrustCards.defaultProps = {
   description: null,
   slice: null,
   id: null,
+  fontFamily: 'Lato',
 };
 
 export default MktTrustCards;

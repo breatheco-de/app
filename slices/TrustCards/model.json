@@ -15,14 +15,22 @@
         "title": {
           "type": "Text",
           "config": { "label": "title", "placeholder": "" }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "fontFamily": {
+          "type": "Text",
+          "config": { "label": "Font Family", "placeholder": "" }
         }
       },
-      "items": {
-        "description": {
-          "type": "Text",
-          "config": { "label": "description", "placeholder": "" }
-        }
-      }
+      "items": {}
     }
   ]
 }

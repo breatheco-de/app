@@ -394,6 +394,16 @@ export interface InfoCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   padding: prismic.KeyTextField;
+
+  /**
+   * Font Family field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.fontFamily
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  fontFamily: prismic.KeyTextField;
 }
 
 /**
@@ -1473,21 +1483,26 @@ export interface TrustCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   title: prismic.KeyTextField;
-}
 
-/**
- * Primary content in *TrustCards → Items*
- */
-export interface TrustCardsSliceDefaultItem {
   /**
-   * description field in *TrustCards → Items*
+   * description field in *TrustCards → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: trust_cards.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  description: prismic.RichTextField;
+
+  /**
+   * Font Family field in *TrustCards → Primary*
    *
    * - **Field Type**: Text
    * - **Placeholder**: *None*
-   * - **API ID Path**: trust_cards.items[].description
+   * - **API ID Path**: trust_cards.primary.fontFamily
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
-  description: prismic.KeyTextField;
+  fontFamily: prismic.KeyTextField;
 }
 
 /**
@@ -1500,7 +1515,7 @@ export interface TrustCardsSliceDefaultItem {
 export type TrustCardsSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<TrustCardsSliceDefaultPrimary>,
-  Simplify<TrustCardsSliceDefaultItem>
+  never
 >;
 
 /**
@@ -1830,7 +1845,6 @@ declare module "@prismicio/client" {
       TitleIntroductionSliceDefault,
       TrustCardsSlice,
       TrustCardsSliceDefaultPrimary,
-      TrustCardsSliceDefaultItem,
       TrustCardsSliceVariation,
       TrustCardsSliceDefault,
       TwoColumnSlice,
