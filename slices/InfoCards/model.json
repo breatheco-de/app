@@ -100,6 +100,15 @@
         "padding": {
           "type": "Text",
           "config": { "label": "Padding", "placeholder": "" }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
         }
       },
       "items": {}
