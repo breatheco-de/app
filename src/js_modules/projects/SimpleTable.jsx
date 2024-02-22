@@ -93,7 +93,7 @@ function SimpleTable({
             </Box>
           </Box>
         )}
-        {videoAvailable !== null && (
+        {videoAvailable !== null && isAuthenticated && (
           <Box
             display="flex"
             alignItems="center"
@@ -123,7 +123,7 @@ function SimpleTable({
             </Box>
           </Box>
         )}
-        {solution !== null && (
+        {solution !== null && isAuthenticated && (
           <Flex
             display="flex"
             alignItems="center"
@@ -262,7 +262,7 @@ function SimpleTable({
             </Text>
           </Flex>
         )}
-        {videoAvailable !== null && (
+        {videoAvailable !== null && isAuthenticated && (
           <Flex
             width="100%"
             py="14px"
@@ -287,7 +287,7 @@ function SimpleTable({
             </Link>
           </Flex>
         )}
-        {solution !== null && (
+        {solution !== null && isAuthenticated && (
           <Flex
             width="100%"
             py="14px"
