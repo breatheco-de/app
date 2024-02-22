@@ -116,8 +116,8 @@
 			},
 			"fontFamily": {
 				"__TYPE__": "FieldContent",
-				"value": "push",
-				"type": "Text"
+				"value": "Lato",
+				"type": "Select"
 			}
 		},
 		"items": []

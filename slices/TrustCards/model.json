@@ -26,8 +26,12 @@
           }
         },
         "fontFamily": {
-          "type": "Text",
-          "config": { "label": "Font Family", "placeholder": "" }
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
         }
       },
       "items": {}

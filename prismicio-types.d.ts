@@ -398,12 +398,13 @@ export interface InfoCardsSliceDefaultPrimary {
   /**
    * Font Family field in *InfoCards → Primary*
    *
-   * - **Field Type**: Text
+   * - **Field Type**: Select
    * - **Placeholder**: *None*
+   * - **Default Value**: Lato
    * - **API ID Path**: info_cards.primary.fontFamily
-   * - **Documentation**: https://prismic.io/docs/field#key-text
+   * - **Documentation**: https://prismic.io/docs/field#select
    */
-  fontFamily: prismic.KeyTextField;
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
 }
 
 /**
@@ -1497,12 +1498,12 @@ export interface TrustCardsSliceDefaultPrimary {
   /**
    * Font Family field in *TrustCards → Primary*
    *
-   * - **Field Type**: Text
+   * - **Field Type**: Select
    * - **Placeholder**: *None*
    * - **API ID Path**: trust_cards.primary.fontFamily
-   * - **Documentation**: https://prismic.io/docs/field#key-text
+   * - **Documentation**: https://prismic.io/docs/field#select
    */
-  fontFamily: prismic.KeyTextField;
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
 }
 
 /**
@@ -1749,6 +1750,17 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   grid_gap: prismic.KeyTextField;
+
+  /**
+   * Font Family field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: two_column.primary.fontFamily
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
 }
 
 /**

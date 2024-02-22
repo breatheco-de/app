@@ -21,8 +21,8 @@
 			},
 			"fontFamily": {
 				"__TYPE__": "FieldContent",
-				"value": "perhaps",
-				"type": "Text"
+				"value": "Space Grotesk Variable",
+				"type": "Select"
 			}
 		},
 		"items": [
