@@ -83,9 +83,11 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
         const fullname = `${student.user.first_name} ${student.user.last_name}`;
         const percentage = Math.round((student.tasks.reduce((acum, val) => (val.task_status !== 'PENDING' && val.task_type === 'PROJECT' ? acum + 1 : acum), 0) / syllabusData.assignments.length) * 100);
         const lastDeliver = student.tasks.reduce((date, val) => {
-          if (date) return (val.task_type !== 'PROJECT' || date > val.delivered_at) ? date : val.delivered_at;
-          if (val.delivered_at && val.task_type === 'PROJECT') return val.delivered_at;
-          if (!date) return null;
+          if (val.task_type === 'PROJECT'){
+            if(date && date > val.delivered_at) return date;
+            else return val.delivered_at;
+          }
+          return date;
         }, null);
         const dots = syllabusData.assignments.map((elem) => {
           const studentTask = student.tasks.find((task) => task.associated_slug === elem.slug);
