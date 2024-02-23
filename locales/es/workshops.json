@@ -9,7 +9,6 @@
   "reserv-button-text": "Reservar lugar",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
-  "switch-user-connector": "¿No eres {{name}}?",
   "starts-in": "El evento empieza en:",
   "in-person": "Evento en persona",
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
@@ -35,6 +34,6 @@
     "description": "Te has quedado sin talleres, pero no te preocupes, puedes conseguir más con unos pocos clics.",
     "link-text": "Aprende más.",
     "link": "",
-    "get-more-workshops": "Get more workshops"
+    "get-more-workshops": "Obten más workshops"
   }
 }
