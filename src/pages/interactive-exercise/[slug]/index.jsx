@@ -2,38 +2,21 @@
 import {
   Box,
   useColorModeValue,
-  Button,
-  useToast,
   useColorMode,
   Skeleton,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-  Grid,
-  GridItem,
-  ListItem,
-  OrderedList,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import React from 'react';
 import Script from 'next/script';
-import getT from 'next-translate/getT';
 import Head from 'next/head';
-import useAuth from '../../../common/hooks/useAuth';
+import getT from 'next-translate/getT';
 import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
-import Icon from '../../../common/components/Icon';
-import SimpleTable from '../../../js_modules/projects/SimpleTable';
+import TabletWithForm from '../../../js_modules/projects/TabletWithForm';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MarkDownParser from '../../../common/components/MarkDownParser';
-import ShowOnSignUp from '../../../common/components/ShowOnSignup';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
@@ -45,9 +28,8 @@ import GridContainer from '../../../common/components/GridContainer';
 import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
-import { getCacheItem, setCacheItem, reportDatalayer } from '../../../utils/requests';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
-import ReactPlayerV2 from '../../../common/components/ReactPlayerV2';
 import MktEventCards from '../../../common/components/MktEventCards';
 
 export const getStaticPaths = async ({ locales }) => {
@@ -191,38 +173,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   }
 };
 
-function TabletWithForm({
-  toast,
-  exercise,
-  commonTextColor,
-  commonBorderColor,
-}) {
-  const { t } = useTranslation('exercises');
-  const { user } = useAuth();
-  const [formSended, setFormSended] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [showCloneModal, setShowCloneModal] = useState(false);
-  const { hexColor } = useStyle();
-  const conversionTechnologies = exercise.technologies?.map((item) => item?.slug).join(',');
-
-  const ReportOpenInProvisioningVendor = (vendor = '') => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'open_interactive_exercise',
-        user_id: user.id,
-        vendor,
-      },
-    });
-  };
-
-  const UrlInput = styled.input`
-    cursor: pointer;
-    background: none;
-    width: 100%;
-    &:focus {
-      outline: none;
-    }
-  `;
+function Exercise({ exercise, markdown }) {
+  const { t } = useTranslation(['exercises']);
+  const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  const { colorMode } = useColorMode();
+  const { lightColor } = useStyle();
 
   return (
     <>
@@ -234,405 +189,6 @@ function TabletWithForm({
           />
         </Head>
       )}
-      <Box
-        px="22px"
-        pb="30px"
-        pt="24px"
-        borderBottom={1}
-        borderStyle="solid"
-        borderColor={commonBorderColor}
-      >
-        <ShowOnSignUp
-          headContent={exercise?.intro_video_url && (
-            <ReactPlayerV2
-              title="Video tutorial"
-              withModal
-              url={exercise?.intro_video_url}
-              withThumbnail
-            />
-          )}
-          hideForm={!user && formSended}
-          title={!user ? t('direct-access-request') : ''}
-          submitText={t('get-instant-access')}
-          subscribeValues={{ asset_slug: exercise.slug }}
-          refetchAfterSuccess={() => {
-            setFormSended(true);
-          }}
-          padding="0"
-          background="none"
-          border="none"
-          conversionTechnologies={conversionTechnologies}
-        >
-          <>
-            {user && !formSended && (
-              <Heading
-                size="15px"
-                textAlign="center"
-                textTransform="uppercase"
-                width="100%"
-                fontWeight="900"
-                mb="0px"
-              >
-                {t('download')}
-              </Heading>
-            )}
-            {formSended && (
-              <>
-                <Icon style={{ margin: 'auto' }} width="104px" height="104px" icon="circle-check" />
-                <Heading
-                  size="15px"
-                  textAlign="center"
-                  textTransform="uppercase"
-                  width="100%"
-                  fontWeight="900"
-                  mt="30px"
-                  mb="0px"
-                >
-                  {t('thanks')}
-                </Heading>
-                <Text size="md" color={commonTextColor} textAlign="center" marginTop="10px" px="0px">
-                  {t('download')}
-                </Text>
-              </>
-            )}
-
-            <Button
-              marginTop="20px"
-              borderRadius="3px"
-              width="100%"
-              padding="0"
-              whiteSpace="normal"
-              variant="default"
-              color="white"
-              fontSize="14px"
-              alignItems="center"
-              onClick={() => setShowModal(true)}
-            >
-              {'  '}
-              <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-              {t('open-gitpod')}
-            </Button>
-            <Button
-              borderRadius="3px"
-              width="100%"
-              fontSize="14px"
-              padding="0"
-              whiteSpace="normal"
-              variant="otuline"
-              border="1px solid"
-              textTransform="uppercase"
-              borderColor="blue.default"
-              color="blue.default"
-              onClick={() => {
-                ReportOpenInProvisioningVendor('local');
-                setShowCloneModal(true);
-              }}
-            >
-              {t('clone')}
-            </Button>
-          </>
-        </ShowOnSignUp>
-        <Modal
-          isOpen={showModal}
-          size="xl"
-          margin="0 10px"
-          onClose={() => {
-            setShowModal(false);
-          }}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
-              {t('modal.title')}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody padding={{ base: '30px' }}>
-              <Text marginBottom="15px" fontSize="14px" lineHeight="24px" textAlign="center">
-                {t('modal.text-part-one')}
-              </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor('gitpod');
-                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                    Gitpod
-                  </Button>
-                </GridItem>
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor('codespaces');
-                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                    Github Codespaces
-                  </Button>
-                </GridItem>
-              </Grid>
-              <Text
-                // cursor="pointer"
-                id="command-container"
-                padding="9px"
-                background={useColorModeValue('featuredLight', 'darkTheme')}
-                fontWeight="400"
-                marginBottom="5px"
-                style={{ borderRadius: '5px' }}
-                textAlign="center"
-                fontSize="14px"
-                lineHeight="24px"
-              >
-                {t('modal.text-part-two')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/how-to-use-gitpod`}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                  color="blue.default"
-                >
-                  Gitpod
-                </Link>
-                {t('modal.or')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
-                  color="blue.default"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Github Codespaces
-                </Link>
-              </Text>
-
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-        <Modal
-          isOpen={showCloneModal}
-          size="md"
-          margin="0 10px"
-          onClose={() => {
-            setShowCloneModal(false);
-          }}
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
-              {t('clone-modal.title')}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody padding={{ base: '30px' }}>
-              <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
-                {t('clone-modal.text-part-one')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Learnpack Plugin
-                </Link>
-                {t('clone-modal.text-part-two')}
-              </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        window.open(`https://gitpod.io#${exercise.url}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                    Gitpod
-                  </Button>
-                </GridItem>
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        window.open(`https://github.com/codespaces/new/?repo=${exercise.url.replace('https://github.com/', '')}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                    Github Codespaces
-                  </Button>
-                </GridItem>
-              </Grid>
-              <Text
-                // cursor="pointer"
-                id="command-container"
-                padding="9px"
-                background={useColorModeValue('featuredLight', 'darkTheme')}
-                fontWeight="400"
-                marginBottom="5px"
-                style={{ borderRadius: '5px' }}
-                textAlign="center"
-                fontSize="14px"
-                lineHeight="24px"
-              >
-                <UrlInput
-                  id="clone-command"
-                  value={`git clone ${exercise.url}`}
-                  type="text"
-                  readOnly
-                  onClick={(e) => {
-                    e.target.select();
-                    navigator.clipboard.writeText(`git clone ${exercise.url}`);
-                    toast({
-                      title: t('clone-modal.copy-command'),
-                      status: 'success',
-                      duration: 7000,
-                      isClosable: true,
-                    });
-                  }}
-                />
-              </Text>
-              <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('clone-modal.note', { folder: exercise?.url ? exercise?.url?.substr(exercise?.url?.lastIndexOf('/') + 1, exercise?.url?.length) : '' })}
-              </Text>
-              <OrderedList>
-                {t('clone-modal.steps', {}, { returnObjects: true }).map((step) => (
-                  <ListItem key={step} fontSize="14px">{step}</ListItem>
-                ))}
-              </OrderedList>
-              <Text display="flex" alignItems="center" marginTop="15px">
-                <span>
-                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
-                </span>
-                <Link
-                  href={t('clone-link')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                  color="blue.default"
-                >
-                  Gitpod
-                </Link>
-                {t('modal.or')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
-                  color="blue.default"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Github Codespaces
-                </Link>
-              </Text>
-
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-      </Box>
-      <Box px="22px" pb="30px" pt="24px">
-        <SimpleTable
-          href="/interactive-exercises"
-          difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
-          repository={exercise.url}
-          duration={exercise.duration}
-          videoAvailable={exercise.solution_video_url}
-          technologies={exercise.technologies}
-          liveDemoAvailable={exercise.intro_video_url}
-        />
-      </Box>
-    </>
-  );
-}
-
-function Exercise({ exercise, markdown }) {
-  const [tags, setTags] = useState([]);
-  const { t } = useTranslation(['exercises']);
-  const markdownData = markdown ? getMarkDownContent(markdown) : '';
-  const router = useRouter();
-  const language = router.locale === 'en' ? 'us' : 'es';
-  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
-  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
-  const { colorMode } = useColorMode();
-
-  const toast = useToast();
-
-  const tagsArray = (exer) => {
-    const values = [];
-    if (exer) {
-      if (exer.difficulty) values.push({ name: t(`common:${exer.difficulty.toLowerCase()}`) });
-      if (exer.interactive) values.push({ name: t('common:interactive') });
-      if (exer.duration) values.push({ name: `${exer.duration}HRS` });
-    }
-
-    setTags(values);
-  };
-
-  useEffect(() => {
-    tagsArray(exercise);
-  }, [language]);
-
-  return (
-    <>
       {exercise?.title && (
         <Script async defer src="https://buttons.github.io/buttons.js" />
       )}
@@ -663,8 +219,9 @@ function Exercise({ exercise, markdown }) {
             {`← ${t('exercises:backToExercises')}`}
           </Link>
           <TagCapsule
+            isLink
             variant="rounded"
-            tags={tags}
+            tags={exercise?.technologies}
             marginY="8px"
             style={{
               padding: '2px 10px',
@@ -690,7 +247,7 @@ function Exercise({ exercise, markdown }) {
             <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
           )}
           {exercise?.sub_title && (
-            <Text size="md" color={commonTextColor} textAlign="left" marginBottom="10px" px="0px">
+            <Text size="md" color={lightColor} textAlign="left" marginBottom="10px" px="0px">
               {exercise.sub_title}
             </Text>
           )}
@@ -726,21 +283,7 @@ function Exercise({ exercise, markdown }) {
           >
             {exercise?.slug ? (
               <>
-                <Box
-                  backgroundColor={useColorModeValue('white', 'featuredDark')}
-                  transition="background 0.2s ease-in-out"
-                  borderRadius="17px"
-                  border={1}
-                  borderStyle="solid"
-                  borderColor={commonBorderColor}
-                >
-                  <TabletWithForm
-                    toast={toast}
-                    exercise={exercise}
-                    commonTextColor={commonTextColor}
-                    commonBorderColor={commonBorderColor}
-                  />
-                </Box>
+                <TabletWithForm asset={exercise} href="/interactive-exercises" />
                 <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
@@ -795,21 +338,7 @@ function Exercise({ exercise, markdown }) {
         >
           {exercise?.slug ? (
             <>
-              <Box
-                borderRadius="17px"
-                backgroundColor={useColorModeValue('white', 'featuredDark')}
-                transition="background 0.2s ease-in-out"
-                border={1}
-                borderStyle="solid"
-                borderColor={commonBorderColor}
-              >
-                <TabletWithForm
-                  toast={toast}
-                  exercise={exercise}
-                  commonTextColor={commonTextColor}
-                  commonBorderColor={commonBorderColor}
-                />
-              </Box>
+              <TabletWithForm asset={exercise} href="/interactive-exercises" />
               <DynamicCallToAction
                 assetId={exercise.id}
                 assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
@@ -851,14 +380,6 @@ function Exercise({ exercise, markdown }) {
 Exercise.propTypes = {
   exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   markdown: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-};
-
-TabletWithForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  commonTextColor: PropTypes.string.isRequired,
-  toast: PropTypes.func.isRequired,
-  commonBorderColor: PropTypes.string.isRequired,
-  exercise: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 export default Exercise;
