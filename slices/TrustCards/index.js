@@ -11,6 +11,7 @@ const TrustCards = ({ slice }) => {
       id={slice?.primary?.id_key}
       title={slice?.primary?.title}
       description={slice?.primary?.description}
+      fontFamily={slice?.primary?.fontFamily}
     />
   );
 };

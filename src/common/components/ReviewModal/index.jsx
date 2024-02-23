@@ -76,6 +76,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const revisionStatus = currentTask?.revision_status;
   const hasNotBeenReviewed = revisionStatus === PENDING;
   const hasBeenApproved = revisionStatus === APPROVED;
+  const hasBeenRejected = revisionStatus === REJECTED;
   const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.stage;
@@ -456,25 +457,16 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       )}
                   </Text>
                 )}
-                <Flex flexDirection="column" color={lightColor}>
-                  <Text size="15px" fontWeight={700}>
-                    {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
-                  </Text>
-                  <Link variant="default" href={currentTask?.github_url}>
-                    {currentTask?.title}
-                  </Link>
-                </Flex>
-                {hasBeenApproved && (
-                  <Flex flexDirection="column" gridGap="8px">
-                    <Box fontSize="14">
+
+                {(hasBeenApproved || hasBeenRejected) && currentTask?.description && (
+                  <Flex background={featuredColor} flexDirection="column" gridGap="4px" padding="8px 14px" borderRadius="3px">
+                    <Box fontSize="14px" fontWeight={700}>
                       {t('code-review.your-teacher-said')}
                     </Box>
                     <Text
-                      className="quote-container"
                       display="flex"
                       alignContent="center"
-                      background={featuredColor}
-                      padding="6px 10px"
+                      color={lightColor}
                       borderRadius="4px"
                       width="100%"
                       size="12px"
@@ -483,6 +475,14 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Text>
                   </Flex>
                 )}
+                <Flex flexDirection="column" color={lightColor}>
+                  <Text size="14px" fontWeight={700}>
+                    {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
+                  </Text>
+                  <Link variant="default" fontSize="14px" href={currentTask?.github_url}>
+                    {currentTask?.title}
+                  </Link>
+                </Flex>
 
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">

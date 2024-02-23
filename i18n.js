@@ -17,7 +17,7 @@ module.exports = {
     '/lessons': ['lesson'],
     '/project/[slug]': ['projects'],
     '/checkout': ['signup'],
-    '/interactive-coding-tutorial/[slug]': ['projects'],
+    '/interactive-coding-tutorial/[slug]': ['projects', 'exercises'],
     '/interactive-coding-tutorials': ['projects'],
     '/interactive-exercise/[slug]': ['exercises', 'workshops'],
     '/choose-program': ['choose-program', 'dashboard', 'profile', 'assignments'],
