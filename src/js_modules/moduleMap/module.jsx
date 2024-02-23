@@ -109,7 +109,8 @@ function Module({
   };
 
   const handleOpen = async (onOpen = () => {}) => {
-    if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
+    const taskIsAprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
+    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsAprovedOrRejected)) {
       const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
       if (assetResp?.status < 400) {
         const assetData = await assetResp.data;
@@ -162,7 +163,7 @@ function Module({
   };
 
   const isDone = currentTask?.task_status === 'DONE' || currentTask?.revision_status === 'APPROVED';
-  const isMandatoryTimeOut = data?.task_type === 'PROJECT' && data?.task_status === 'PENDING' && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
+  const isMandatoryTimeOut = data?.task_type === 'PROJECT' && !isDone && data?.mandatory === true && data?.daysDiff >= 14; // exceeds 2 weeks
 
   const wordConnector = {
     lesson: t('modules.read'),
