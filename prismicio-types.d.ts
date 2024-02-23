@@ -1439,6 +1439,17 @@ export interface TitleIntroductionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   grid_gap: prismic.KeyTextField;
+
+  /**
+   * Font Family field in *TitleIntroduction → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: title_introduction.primary.fontFamily
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
 }
 
 /**

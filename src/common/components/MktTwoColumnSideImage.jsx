@@ -132,8 +132,8 @@ function MktTwoColumnSideImage({
         }}
       >
         <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
-          <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center" fontFamily={fontFamily}>
-            <Heading as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
+          <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
+            <Heading fontFamily={fontFamily} as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
             </Heading>
             {subTitle && (

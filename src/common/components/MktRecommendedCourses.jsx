@@ -17,7 +17,7 @@ import { reportDatalayer } from '../../utils/requests';
 
 const coursesLimit = 2;
 
-function MktRecommendedCourses({ id, technologies, background, gridColumn, endpoint, ...rest }) {
+function MktRecommendedCourses({ id, technologies, background, gridColumn, endpoint, title, ...rest }) {
   const { t, lang } = useTranslation('common');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
@@ -90,18 +90,33 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
         flexDirection="column"
         justifyContent="center"
       >
-        <Heading
-          as="h2"
-          size="30px"
-          fontWeight="700"
-          color={fontColor}
-        >
-          {t('continue-learning')}
-        </Heading>
-        {technologiesTitle && technologiesTitle.length > 0 && (
-          <Text size="18px" fontWeight="400" mt="0 !important">
-            {t('technologies-and-more', { technologies: technologiesTitle })}
-          </Text>
+        {title ? (
+          <>
+            <Heading
+              as="h2"
+              size="30px"
+              fontWeight="700"
+              color={fontColor}
+            >
+              {title}
+            </Heading>
+          </>
+        ) : (
+          <>
+            <Heading
+              as="h2"
+              size="30px"
+              fontWeight="700"
+              color={fontColor}
+            >
+              {t('continue-learning')}
+            </Heading>
+            {technologiesTitle && technologiesTitle.length > 0 && (
+              <Text size="18px" fontWeight="400" mt="0 !important">
+                {t('technologies-and-more', { technologies: technologiesTitle })}
+              </Text>
+            )}
+          </>
         )}
       </Box>
       <Box
@@ -153,6 +168,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
 MktRecommendedCourses.propTypes = {
   id: PropTypes.string,
   background: PropTypes.string,
+  title: PropTypes.string,
   technologies: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   endpoint: PropTypes.string,
   gridColumn: PropTypes.string,
@@ -161,6 +177,7 @@ MktRecommendedCourses.propTypes = {
 MktRecommendedCourses.defaultProps = {
   id: null,
   background: null,
+  title: null,
   technologies: null,
   gridColumn: '1 / span 10',
   endpoint: '',
