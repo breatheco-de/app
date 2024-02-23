@@ -85,7 +85,7 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
         const lastDeliver = student.tasks.reduce((date, val) => {
           if (val.task_type === 'PROJECT'){
             if(date && date > val.delivered_at) return date;
-            else return val.delivered_at;
+            return val.delivered_at;
           }
           return date;
         }, null);
