@@ -110,6 +110,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "lay",
 				"type": "Text"
+			},
+			"fontFamily": {
+				"__TYPE__": "FieldContent",
+				"value": "Space Grotesk Variable",
+				"type": "Select"
 			}
 		},
 		"items": [
