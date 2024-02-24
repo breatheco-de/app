@@ -109,6 +109,10 @@
             "options": ["Lato", "Space Grotesk Variable"],
             "default_value": "Lato"
           }
+        },
+        "paddingMobile": {
+          "type": "Text",
+          "config": { "label": "Padding Mobile", "placeholder": "" }
         }
       },
       "items": {}

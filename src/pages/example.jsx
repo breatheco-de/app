@@ -94,6 +94,7 @@ export default function Example() {
         cardFourColor="#FFBEBE"
         cardFourTitle="Motivation"
         cardFourDescription={cardDescription}
+        paddingMobile="15px"
       />
       <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
         Open modal

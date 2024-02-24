@@ -50,6 +50,7 @@ function MktInfoCards({
   cardFourDescription,
   margin,
   padding,
+  paddingMobile,
   fontFamily,
   ...rest
 }) {
@@ -86,7 +87,10 @@ function MktInfoCards({
       width="100%"
       display="flex"
       gap="24px"
-      padding={padding}
+      padding={{
+        base: paddingMobile,
+        md: padding,
+      }}
       margin={margin}
       flexWrap={{ base: 'wrap', lg: 'nowrap' }}
       fontFamily={fontFamily}
@@ -162,6 +166,7 @@ MktInfoCards.propTypes = {
   cardFourDescription: PropTypes.string,
   margin: PropTypes.string,
   padding: PropTypes.string,
+  paddingMobile: PropTypes.string,
   fontFamily: PropTypes.string,
 };
 
@@ -187,7 +192,8 @@ MktInfoCards.defaultProps = {
   cardFourTitle: null,
   cardFourDescription: null,
   margin: '',
-  padding: '',
+  padding: '0',
+  paddingMobile: '0',
   fontFamily: 'Lato',
 };
 
