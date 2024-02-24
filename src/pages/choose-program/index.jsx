@@ -172,6 +172,11 @@ function chooseProgram() {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      const cohortWithFinantialStatusLate = cohorts.some((elem) => elem.finantial_status === 'LATE');
+      setLateModalProps({
+        isOpen: !cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
+        data: cohortWithFinantialStatusLate,
+      });
 
       setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
@@ -226,23 +231,6 @@ function chooseProgram() {
 
   useEffect(() => {
     if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
-      const subscripionsLate = allSubscriptions.filter((subscription) => subscription.status === 'LATE');
-      if (subscripionsLate.length > 0 && !isClosedLateModal) {
-        setStorageItem('isClosedLateModal', false);
-        setLateModalProps({
-          isOpen: true,
-          data: subscripionsLate.map(
-            (subscription) => ({
-              ...subscription,
-              cohort: subscription?.selected_cohort_set?.cohorts.find(
-                (cohort) => dataQuery?.cohorts.some((c) => c?.cohort?.slug === cohort?.slug),
-              ),
-            }),
-          ),
-        });
-      } else {
-        removeStorageItem('isClosedlateModal');
-      }
       updateProgramList(dataQuery?.cohorts?.reduce((acc, value) => {
         acc[value.cohort.slug] = {
           ...state[value.cohort.slug],
@@ -268,16 +256,16 @@ function chooseProgram() {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
+          const isFinantialStatusLate = item?.finantial_status === 'LATE';
           const { academy, syllabus_version: syllabusVersion } = item.cohort;
-
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
-          const studentAndTeachers = await bc.cohort({
+          const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
             role: 'TEACHER,ASSISTANT',
             cohorts: item?.cohort?.slug,
             academy: item?.cohort?.academy?.id,
           }).getMembers();
-          const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
-          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
+          const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
+          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
           const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
           handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
             .then((assignmentData) => {
@@ -421,12 +409,15 @@ function chooseProgram() {
           setStorageItem('isClosedLateModal', false);
         }}
       >
-        <Text size="md">
-          {t('late-payment.description', {
-            cohort_name: lateModalProps.data[0]?.cohort?.name,
-            academy_name: lateModalProps.data?.[0]?.academy?.name,
-          })}
-        </Text>
+        <Text
+          size="md"
+          dangerouslySetInnerHTML={{
+            __html: t('late-payment.description', {
+              cohort_name: lateModalProps.data[0]?.cohort?.name,
+              academy_name: lateModalProps.data?.[0]?.cohort?.academy?.name,
+            }),
+          }}
+        />
       </SimpleModal>
       <Flex minHeight="81vh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
@@ -513,7 +504,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
+              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (

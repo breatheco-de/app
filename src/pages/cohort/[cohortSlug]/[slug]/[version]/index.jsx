@@ -509,7 +509,16 @@ function Dashboard() {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
+                  <SupportSidebar
+                    allCohorts={[{
+                      cohort: {
+                        ...cohortSession,
+                        ...cohortSession?.cohort_user,
+                      },
+                    }]}
+                    subscriptions={allSubscriptions}
+                    subscriptionData={subscriptionData}
+                  />
                 )}
               </Box>
             )}
@@ -731,7 +740,16 @@ function Dashboard() {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
+                <SupportSidebar
+                  allCohorts={[{
+                    cohort: {
+                      ...cohortSession,
+                      ...cohortSession?.cohort_user,
+                    },
+                  }]}
+                  subscriptions={allSubscriptions}
+                  subscriptionData={subscriptionData}
+                />
               )}
               <Feedback />
             </Box>

@@ -48,6 +48,6 @@
   },
   "late-payment": {
     "title": "Acción requerida: Pagos atrasados",
-    "description": "Tu cuenta tiene pagos pendientes para la cohorte {{cohort_name}}. Por favor, contacta al coordinador de {{academy_name}} para restaurar el acceso completo a todas las funciones. Gracias por tu pronta atención."
+    "description": "Tu cuenta tiene pagos pendientes para la cohorte <strong>{{cohort_name}}</strong>. Por favor, contacta al coordinador de <strong>{{academy_name}}</strong> para restaurar el acceso completo a todas las funciones. Gracias por tu pronta atención."
   }
 }
