@@ -40,7 +40,7 @@ import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
 function Content() {
-  const { t } = useTranslation('syllabus');
+  const { t, lang } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isLoading, user, choose } = useAuth();
   const { contextState, setContextState } = useModuleMap();
@@ -261,39 +261,25 @@ function Content() {
 
   useEffect(() => {
     const currTask = filterEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
-
+    const englishTaskUrls = {
+      en: currTask?.translations?.en,
+      us: currTask?.translations?.us,
+    };
+    const currentLanguageTaskUrl = englishTaskUrls[lang] || currTask?.translations?.[lang]?.slug || lessonSlug;
     if (currTask?.target === 'blank') {
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${lessonSlug}?asset_type=${assetTypeValues[lesson]}`)
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`)
         .then(({ data }) => {
           const translations = data?.translations;
-          // const assetLang = data?.lang;
-          // const translationInEnglish = translations?.en || translations?.us;
-
-          // const translationArray = [
-          //   {
-          //     value: 'en',
-          //     lang: 'en',
-          //     slug: (assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish,
-          //     link: `/syllabus/${cohortSlug}/${lesson}/${(assetLang === 'en' || assetLang === 'us') ? data?.slug : translationInEnglish}`,
-          //   },
-          //   {
-          //     value: 'es',
-          //     lang: 'es',
-          //     slug: assetLang === 'es' ? data.slug : translations?.es,
-          //     link: `/es/syllabus/${cohortSlug}/${lesson}/${assetLang === 'es' ? data.slug : translations?.es}`,
-          //   },
-          // ].filter((item) => item?.slug !== undefined);
-          // setUserSession({
-          //   translations: translationArray,
-          // });
+          const exensionName = getExtensionName(data.readme_url);
+          const isIpynb = exensionName === 'ipynb';
           const currentSlug = translations?.[language] || lessonSlug;
           const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
           const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
           const extension = urlPathname ? urlPathname.split('.').pop() : null;
-          const translatedExtension = language === 'us' ? '' : `.${language}`;
-          const finalPathname = `${pathnameWithoutExtension}${translatedExtension}.${extension}`;
+          // const translatedExtension = language === 'us' ? '' : `.${language}`;
+          const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
           setCallToActionProps({
             token: accessToken,
@@ -303,8 +289,7 @@ function Content() {
           });
           setReadmeUrlPathname(finalPathname);
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
-          const exensionName = getExtensionName(data.readme_url);
-          if (exensionName === 'ipynb') {
+          if (isIpynb) {
             setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
             setCurrentData(data);
           } else {
@@ -579,7 +564,7 @@ function Content() {
       target: 'popup',
     },
   ];
-  const repoUrl = ipynbHtmlUrl ? `${currentData?.url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.url;
+  const repoUrl = (ipynbHtmlUrl && currentData?.url) ? `${currentData?.url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
