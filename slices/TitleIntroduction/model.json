@@ -100,6 +100,15 @@
             "label": "Grid gap",
             "placeholder": "Space between columns in pixels"
           }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
         }
       },
       "items": {},

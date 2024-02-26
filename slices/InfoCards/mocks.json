@@ -113,6 +113,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "twice",
 				"type": "Text"
+			},
+			"fontFamily": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
+			},
+			"paddingMobile": {
+				"__TYPE__": "FieldContent",
+				"value": "mix",
+				"type": "Text"
 			}
 		},
 		"items": []

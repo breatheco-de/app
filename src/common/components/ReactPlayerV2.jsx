@@ -6,7 +6,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, title, withModal, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, ...rest
 }) {
   const isVideoFromDrive = url && url.includes('drive.google.com');
   const isLoomVideo = url && url.includes('loom.com');
@@ -60,6 +60,7 @@ function ReactPlayerV2({
             backgroundSize="cover"
             backgroundImage={`url(${thumbnail || videoThumbnail || ''})`}
             borderRadius="4px"
+            style={{ ...thumbnailStyle }}
           >
             <IconButton
               aria-label="Play video"
@@ -153,6 +154,7 @@ ReactPlayerV2.propTypes = {
   className: PropTypes.string,
   withThumbnail: PropTypes.bool,
   iframeStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
+  thumbnailStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   withModal: PropTypes.bool,
   title: PropTypes.string,
   closeOnOverlayClick: PropTypes.bool,
@@ -164,6 +166,7 @@ ReactPlayerV2.defaultProps = {
   className: '',
   withThumbnail: false,
   iframeStyle: {},
+  thumbnailStyle: {},
   withModal: false,
   title: '',
   closeOnOverlayClick: true,

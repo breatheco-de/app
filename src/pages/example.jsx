@@ -4,6 +4,8 @@ import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
 import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
 import MktInfoCards from '../common/components/MktInfoCards';
+import MktTrustCards from '../common/components/MktTrustCards';
+import MktTestimonials from '../common/components/MktTestimonials';
 import { getSubscriptions, validatePlanExistence } from '../common/handlers/subscriptions';
 import useAuth from '../common/hooks/useAuth';
 import bc from '../common/services/breathecode';
@@ -65,6 +67,13 @@ export default function Example() {
   const cardDescription = 'Hundreds of interactive exercises, projects, and lessons are available thanks to LearnPack, our interactive engine.';
   return (
     <main className={styles.main}>
+      <MktTestimonials
+        title="Success stories of our students"
+      />
+      <MktTrustCards
+        title="Trust cards title!"
+        description="The current traditional teaching methods focus on theoretical aspects, neglecting hands-on experience and student engagement"
+      />
       <MktInfoCards
         subTitle="Learn the science behind 4Geeks"
         title="Mastering Technical Knowledge"
@@ -85,6 +94,7 @@ export default function Example() {
         cardFourColor="#FFBEBE"
         cardFourTitle="Motivation"
         cardFourDescription={cardDescription}
+        paddingMobile="15px"
       />
       <Button variant="default" mb="1rem" onClick={() => onClick(stageType.login)}>
         Open modal

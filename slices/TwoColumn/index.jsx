@@ -28,6 +28,7 @@ function TwoColumn({ slice }) {
       subtitleColor={slice?.primary?.subtitle_color}
       textBackgroundColor={slice?.primary?.text_background_color}
       buttonColor={slice?.primary?.button_color}
+      fontFamily={slice?.primary?.fontFamily}
     />
   );
 }

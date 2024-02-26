@@ -95,7 +95,7 @@ function ContactInformation({
                   {defaultPlanData?.featured_info?.length > 0
                     && defaultPlanData?.featured_info.map((info) => info?.service?.slug && (
                       <>
-                        <Flex gridGap="8px" alignItems="center">
+                        <Flex key={info.service.slug} gridGap="8px" alignItems="center">
                           {info?.service?.icon_url
                             ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
                             : (

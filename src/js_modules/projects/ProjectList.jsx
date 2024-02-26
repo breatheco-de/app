@@ -15,6 +15,25 @@ import useStyle from '../../common/hooks/useStyle';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import { reportDatalayer } from '../../utils/requests';
 
+export const getDifficultyColors = (currDifficulty) => {
+  const background = {
+    beginner: 'featuredLight',
+    easy: 'green.light',
+    intermediate: 'yellow.100',
+    hard: 'red.light',
+  };
+  const color = {
+    beginner: 'blue.default',
+    easy: 'green.400',
+    intermediate: '#FFB718',
+    hard: 'danger',
+  };
+  return {
+    bg: background[currDifficulty],
+    color: color[currDifficulty],
+  };
+};
+
 const ProjectList = forwardRef(({
   projects, projectPath, pathWithDifficulty,
   withoutImage, isLoading, withoutDifficulty, isDynamic, notFoundMessage,
@@ -36,24 +55,6 @@ const ProjectList = forwardRef(({
   };
   const getArrayOfTechnologies = (technologies) => technologies.map((tech) => tech?.title);
   const checkIsPathDifficulty = (thisDifficulty) => (pathWithDifficulty ? `/${thisDifficulty}` : '');
-  const getDifficultyColors = (currDifficulty) => {
-    const background = {
-      beginner: 'featuredLight',
-      easy: 'green.light',
-      intermediate: 'yellow.100',
-      hard: 'red.light',
-    };
-    const color = {
-      beginner: 'blue.default',
-      easy: 'green.400',
-      intermediate: '#FFB718',
-      hard: 'danger',
-    };
-    return {
-      bg: background[currDifficulty],
-      color: color[currDifficulty],
-    };
-  };
 
   const breakpointColumnsObj = {
     default: 3,

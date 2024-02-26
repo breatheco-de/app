@@ -130,6 +130,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "#4be53c",
 				"type": "Color"
+			},
+			"fontFamily": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
 			}
 		},
 		"items": [
