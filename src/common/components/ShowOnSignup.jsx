@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import Text from './Text';
 import Signup from './Forms/Signup';
+import useGoogleMaps from '../hooks/useGoogleMaps';
+import useSignup from '../store/actions/signupAction';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
@@ -19,6 +21,12 @@ function ShowOnSignUp({
   conversionTechnologies, setNoConsumablesFound, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+  const { gmapStatus, getUserLocation } = useGoogleMaps(
+    GOOGLE_KEY,
+    'places',
+  );
+  const { setLocation } = useSignup();
   const { isAuthenticated, user, logout } = useAuth();
   const { handleSubscribeToPlan } = useSubscribeToPlan();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
@@ -38,6 +46,12 @@ function ShowOnSignUp({
 
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
+
+  useEffect(() => {
+    getUserLocation()
+      .then((loc) => setLocation(loc))
+      .catch((e) => console.log(e));
+  }, [gmapStatus]);
 
   useEffect(() => {
     const isLogged = alreadyLogged || isAuthenticated;

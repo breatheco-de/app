@@ -405,6 +405,16 @@ export interface InfoCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#select
    */
   fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+
+  /**
+   * Padding Mobile field in *InfoCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: info_cards.primary.paddingMobile
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  paddingMobile: prismic.KeyTextField;
 }
 
 /**

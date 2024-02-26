@@ -65,7 +65,37 @@ const useGoogleMaps = (apiKey, libraries = 'places') => {
     return null;
   };
 
-  return { gmapStatus, geocode, getNearestLocation };
+  const getUserLocation = async (setCoords = () => {}) => {
+    const userLocation = localStorage.getItem('user-location');
+    if (gmapStatus.loaded && apiKey && !userLocation) {
+      const { data } = await getNearestLocation(apiKey);
+      if (data) {
+        setCoords({
+          latitude: data.location.lat,
+          longitude: data.location.lng,
+        });
+      }
+
+      const results = await geocode({ location: data.location });
+      const loc = {};
+
+      results[0].address_components.forEach((comp) => {
+        if (comp.types.includes('locality')) loc.city = comp.long_name;
+        if (comp.types.includes('country')) {
+          loc.country = comp.long_name;
+          loc.countryShort = comp.short_name;
+        }
+      });
+      localStorage.setItem('user-location', JSON.stringify(loc));
+
+      return loc;
+    } if (userLocation) {
+      return JSON.parse(userLocation);
+    }
+    return null;
+  };
+
+  return { gmapStatus, geocode, getNearestLocation, getUserLocation };
 };
 
 export default useGoogleMaps;
