@@ -44,10 +44,9 @@ function OnlyFor({
   const teachers = ['TEACHER', 'ASSISTANT'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
 
-  // const cohortCapabilities = cohortSession?.user_capabilities || [];
+  const cohortCapabilities = cohortSession?.user_capabilities || [];
   const profileCapabilities = profile?.permissionsSlug || [];
-  const userCapabilities = profileCapabilities;
-  // const userCapabilities = onlyTeachers ? cohortCapabilities : profileCapabilities;
+  const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
   const cohortRole = cohortSession?.cohort_role?.toUpperCase() || profileRole || 'NONE';
   const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
