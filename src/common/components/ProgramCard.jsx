@@ -428,9 +428,9 @@ function ProgramCard({
                             fontWeight={700}
                           >
                             {isFinantialStatusLate && (programCardTR?.['action-required'] || t('action-required'))}
-                            {!isFinantialStatusLate && isNumber(String(lessonNumber))
+                            {!isFinantialStatusLate && (isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
-                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
+                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`)}
                           </Button>
 
                         ) : (

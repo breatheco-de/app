@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { calculateDifferenceDays, isPlural, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, getStorageItem, isPlural, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -78,7 +78,7 @@ function chooseProgram() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
-  const isClosedLateModal = localStorage.getItem('isClosedLateModal');
+  const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const welcomeVideoLinks = {
@@ -172,9 +172,9 @@ function chooseProgram() {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
-      const cohortWithFinantialStatusLate = cohorts.some((elem) => elem.finantial_status === 'LATE');
+      const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.finantial_status === 'LATE');
       setLateModalProps({
-        isOpen: !cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
+        isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
         data: cohortWithFinantialStatusLate,
       });
 
@@ -406,7 +406,7 @@ function chooseProgram() {
         title={t('late-payment.title')}
         onClose={() => {
           setLateModalProps({ ...lateModalProps, isOpen: false });
-          setStorageItem('isClosedLateModal', false);
+          setStorageItem('isClosedLateModal', true);
         }}
       >
         <Text
