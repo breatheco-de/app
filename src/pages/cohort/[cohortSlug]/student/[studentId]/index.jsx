@@ -275,12 +275,12 @@ function StudentReport() {
             label: t('analitics.percentage-attendance'),
             icon: 'list',
             variationColor: hexColor.blueDefault,
-            value: `${Math.round(attendancePercentage * 100) / 100}%`,
+            value: `${(Math.round(attendancePercentage * 100) / 100 || 0)}%`,
           }, {
             label: t('analitics.nps'),
             icon: 'smile',
             variationColor: hexColor.green,
-            value: Math.round(npsAnswered * 100) / 100,
+            value: (Math.round(npsAnswered * 100) / 100),
             max: 10,
           }]);
 
@@ -295,7 +295,8 @@ function StudentReport() {
 
   const lessonStyles = {
     COMPLETED: hexColor.green,
-    UNREAD: hexColor.danger,
+    // UNREAD: hexColor.danger,
+    UNREAD: hexColor.fontColor3,
     STARTED: hexColor.yellowDefault,
     'NOT-OPENED': hexColor.fontColor3,
   };
