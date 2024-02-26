@@ -142,6 +142,8 @@ function Subscriptions({ storybookConfig }) {
   const totalMentorshipsAvailable = consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalWorkshopsAvailable = consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
 
+  // const totalMentorshipsAvailable = -1;
+
   return (
     <>
       {location?.pathname?.includes('subscriptions') && (
@@ -164,9 +166,13 @@ function Subscriptions({ storybookConfig }) {
               <Box display="flex" justifyContent="space-between" alignItems="end">
                 <Box display="flex" gap="10px" alignItems="center">
                   <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
-                  <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                    {totalMentorshipsAvailable}
-                  </Heading>
+                  {totalMentorshipsAvailable >= 0 ? (
+                    <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                      {totalMentorshipsAvailable}
+                    </Heading>
+                  ) : (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  )}
                 </Box>
                 <Button variant="link" onClick={() => setServicesModal('mentorships')}>
                   {t('subscription.see-details')}
@@ -180,9 +186,13 @@ function Subscriptions({ storybookConfig }) {
               <Box display="flex" justifyContent="space-between" alignItems="end">
                 <Box display="flex" gap="10px" alignItems="center">
                   <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
-                  <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                    {totalWorkshopsAvailable}
-                  </Heading>
+                  {totalWorkshopsAvailable >= 0 ? (
+                    <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                      {totalWorkshopsAvailable}
+                    </Heading>
+                  ) : (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  )}
                 </Box>
                 <Button variant="link" onClick={() => setServicesModal('workshops')}>
                   {t('subscription.see-details')}
