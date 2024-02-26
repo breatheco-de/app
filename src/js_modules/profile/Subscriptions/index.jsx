@@ -23,7 +23,6 @@ import Icon from '../../../common/components/Icon';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
-import useAuth from '../../../common/hooks/useAuth';
 import ModalInfo from '../../moduleMap/modalInfo';
 import profileHandlers from './handlers';
 import { location, slugToTitle, toCapitalize, unSlugify } from '../../../utils';
@@ -35,9 +34,6 @@ import bc from '../../../common/services/breathecode';
 
 function Subscriptions({ storybookConfig, cohorts }) {
   const { t, lang } = useTranslation('profile');
-  const { user } = useAuth();
-  console.log('user');
-  console.log(user);
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
