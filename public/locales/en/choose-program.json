@@ -48,6 +48,6 @@
   },
   "late-payment": {
     "title": "Action Required: Late Payments",
-    "description": "Your account has outstanding payments for cohort <strong>{{cohort_name}}</strong>. Please contact <strong>{{academy_name}}</strong> coordinator to restore full access to all features. Thank you for your prompt attention."
+    "description": "Your account has pending payments for cohort <strong>{{cohort_name}}</strong>. Please contact <strong>{{academy_name}}</strong> coordinator to restore full access to all features. Thank you for your prompt attention."
   }
 }
