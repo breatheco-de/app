@@ -19,7 +19,7 @@ function SupportSidebar({ allCohorts, allAcademySyllabus, services, subscription
   const filterByFinantialStatus = (list) => list.filter((service) => {
     if (allCohorts.length > 0) {
       return allCohorts.some((elem) => {
-        if (elem?.cohort?.academy?.id === service?.academy?.id && elem?.finantial_status === 'LATE') {
+        if (elem?.cohort?.academy?.id === service?.academy?.id && (elem?.finantial_status === 'LATE' || elem?.educational_status === 'SUSPENDED')) {
           return false;
         }
         return true;

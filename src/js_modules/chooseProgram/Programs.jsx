@@ -21,7 +21,7 @@ function Programs({ item, handleChoose, onOpenModal, setLateModalProps }) {
   const isBought = subscription?.invoices?.[0]?.amount >= 0;
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
-  const isFinantialStatusLate = item?.finantial_status === 'LATE';
+  const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
   const subscriptionExists = currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null;
 
   const router = useRouter();

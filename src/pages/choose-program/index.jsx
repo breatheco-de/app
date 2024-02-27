@@ -172,7 +172,7 @@ function chooseProgram() {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
-      const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.finantial_status === 'LATE');
+      const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
       setLateModalProps({
         isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
         data: cohortWithFinantialStatusLate,
@@ -256,7 +256,7 @@ function chooseProgram() {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
-          const isFinantialStatusLate = item?.finantial_status === 'LATE';
+          const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
           const { academy, syllabus_version: syllabusVersion } = item.cohort;
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
           const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({

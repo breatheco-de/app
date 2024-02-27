@@ -175,17 +175,21 @@ function Dashboard() {
         });
       });
   };
-
   useEffect(() => {
     if (isAuthenticated) {
       bc.admissions().me()
         .then((resp) => {
           const data = resp?.data;
           const cohorts = data?.cohorts;
-          const isToShowGithubMessage = cohorts?.some(
-            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-          );
-          setIsAvailableToShowModalMessage(isToShowGithubMessage);
+          const currentCohort = cohorts?.find((l) => l?.cohort?.slug === cohortSlug);
+          if (currentCohort?.finantial_status === 'LATE' || currentCohort?.educational_status === 'SUSPENDED') {
+            router.push('/choose-program');
+          } else {
+            const isReadyToShowGithubMessage = cohorts?.some(
+              (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+            );
+            setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
+          }
         });
     }
   }, [isAuthenticated]);
