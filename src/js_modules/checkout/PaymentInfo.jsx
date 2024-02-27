@@ -107,6 +107,7 @@ function PaymentInfo() {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_complete_purchase',
+        value: state?.selectedPlanCheckoutData?.price,
       },
     });
   }, []);
