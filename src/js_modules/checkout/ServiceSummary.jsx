@@ -18,6 +18,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalCardError from './ModalCardError';
 import { SILENT_CODE } from '../../lib/types';
+import { reportDatalayer } from '../../utils/requests';
 
 function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -74,6 +75,25 @@ function ServiceSummary({ service }) {
     bc.payment().service().payConsumable(dataToAssign)
       .then((res) => {
         if (res && res?.status < 400) {
+          reportDatalayer({
+            event: 'purchase',
+            ecommerce: {
+              currencyCode: 'USD',
+              detail: {
+                actionField: {
+                  slug: service.service.slug,
+                },
+                products: [{
+                  name: selectedService.title,
+                  id: selectedService?.id,
+                  price: selectedService.priceDiscounted,
+                  brand: '4Geeks',
+                  category: service.serviceInfo.type,
+                  quantity: 1,
+                }],
+              },
+            },
+          });
           setPurchaseCompleted(true);
           setConfirmationOpen(false);
         }
@@ -86,6 +106,12 @@ function ServiceSummary({ service }) {
     setIsSubmitting(false);
     actions?.setSubmitting(false);
     callback();
+    // reportDatalayer({
+    //   event: 'error',
+    //   eventCategory: 'payment',
+    //   eventAction: 'error',
+    //   eventLabel: silentCode,
+    // });
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
       setDeclinedModalProps({
@@ -110,6 +136,26 @@ function ServiceSummary({ service }) {
   };
 
   const handleSubmit = async (_, values) => {
+    reportDatalayer({
+      event: 'checkout',
+      ecommerce: {
+        currencyCode: 'USD',
+        detail: {
+          actionField: {
+            step: 2,
+            option: 'Credit card',
+          },
+          products: [{
+            name: selectedService.title,
+            id: selectedService?.id,
+            price: selectedService.priceDiscounted,
+            brand: '4Geeks',
+            category: service.serviceInfo.type,
+            quantity: 1,
+          }],
+        },
+      },
+    });
     const resp = await bc.payment().addCard(values);
     const data = await resp.json();
     setIsSubmittingCard(false);
@@ -121,9 +167,35 @@ function ServiceSummary({ service }) {
     }
   };
 
+  const handleSelectService = (item) => {
+    if (item?.id) {
+      reportDatalayer({
+        event: 'checkout',
+        ecommerce: {
+          currencyCode: 'USD',
+          detail: {
+            actionField: {
+              step: 1,
+              option: 'Select service',
+            },
+            products: [{
+              name: item.title,
+              id: item?.id,
+              price: item.priceDiscounted,
+              brand: '4Geeks',
+              category: service.serviceInfo.type,
+              quantity: 1,
+            }],
+          },
+        },
+      });
+    }
+    setSelectedService(item);
+  };
+
   useEffect(() => {
-    if (service.list.length === 1) {
-      setSelectedService(service.list[0]);
+    if (service?.list?.length === 1) {
+      handleSelectService(service.list[0]);
     }
   }, [service]);
 
@@ -226,7 +298,7 @@ function ServiceSummary({ service }) {
                       {t('consumables.select-bundle')}
                     </Heading>
                     {selectedService?.id && service.list.length > 1 && (
-                      <Button fontSize="14px" variant="link" onClick={() => setSelectedService({})}>
+                      <Button fontSize="14px" variant="link" onClick={() => handleSelectService({})}>
                         {t('consumables.change-my-selection')}
                       </Button>
                     )}
@@ -239,7 +311,7 @@ function ServiceSummary({ service }) {
                           key={`${item?.slug}-${item?.title}`}
                           display="flex"
                           onClick={() => {
-                            setSelectedService(item);
+                            handleSelectService(item);
                           }}
                           flexDirection="row"
                           width="100%"
