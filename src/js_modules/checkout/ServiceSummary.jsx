@@ -75,25 +75,23 @@ function ServiceSummary({ service }) {
     bc.payment().service().payConsumable(dataToAssign)
       .then((res) => {
         if (res && res?.status < 400) {
-          reportDatalayer({
-            event: 'purchase',
-            ecommerce: {
-              currencyCode: 'USD',
-              detail: {
-                actionField: {
-                  slug: service.service.slug,
-                },
-                products: [{
-                  name: selectedService.title,
-                  id: selectedService?.id,
-                  price: selectedService.priceDiscounted,
-                  brand: '4Geeks',
-                  category: service.serviceInfo.type,
-                  quantity: 1,
-                }],
-              },
-            },
-          });
+          // reportDatalayer({
+          //   event: 'purchase',
+          //   ecommerce: {
+          //     transaction_id: '12345',
+          //     affiliation: '4Geeks',
+          //     value: selectedService.priceDiscounted,
+          //     currency: 'USD',
+          //     items: [{
+          //       item_name: selectedService.title,
+          //       item_id: selectedService?.id,
+          //       price: selectedService.priceDiscounted,
+          //       item_brand: '4Geeks',
+          //       item_category: service.serviceInfo.type,
+          //       quantity: 1,
+          //     }],
+          //   },
+          // });
           setPurchaseCompleted(true);
           setConfirmationOpen(false);
         }
@@ -136,30 +134,45 @@ function ServiceSummary({ service }) {
   };
 
   const handleSubmit = async (_, values) => {
-    reportDatalayer({
-      event: 'checkout',
-      ecommerce: {
-        currencyCode: 'USD',
-        detail: {
-          actionField: {
-            step: 2,
-            option: 'Credit card',
-          },
-          products: [{
-            name: selectedService.title,
-            id: selectedService?.id,
+    if (selectedService?.id) {
+      reportDatalayer({
+        event: 'select_item',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          items: [{
+            item_name: selectedService.title,
+            item_id: selectedService?.id,
             price: selectedService.priceDiscounted,
-            brand: '4Geeks',
-            category: service.serviceInfo.type,
+            item_brand: '4Geeks',
+            item_category: service.serviceInfo.type,
             quantity: 1,
           }],
         },
-      },
-    });
+      });
+    }
     const resp = await bc.payment().addCard(values);
     const data = await resp.json();
     setIsSubmittingCard(false);
     if (resp.ok) {
+      reportDatalayer({
+        event: 'add_payment_info',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          payment_type: 'Credit Card',
+          items: [
+            {
+              item_id: selectedService?.id,
+              item_name: selectedService?.title,
+              item_brand: '4Geeks',
+              item_category: service.serviceInfo.type,
+              price: selectedService?.priceDiscounted,
+              quantity: 1,
+            },
+          ],
+        },
+      });
       setConfirmationOpen(true);
     } else {
       setOpenDeclinedModal(true);
@@ -168,34 +181,29 @@ function ServiceSummary({ service }) {
   };
 
   const handleSelectService = (item) => {
-    if (item?.id) {
-      reportDatalayer({
-        event: 'checkout',
-        ecommerce: {
-          currencyCode: 'USD',
-          detail: {
-            actionField: {
-              step: 1,
-              option: 'Select service',
-            },
-            products: [{
-              name: item.title,
-              id: item?.id,
-              price: item.priceDiscounted,
-              brand: '4Geeks',
-              category: service.serviceInfo.type,
-              quantity: 1,
-            }],
-          },
-        },
-      });
-    }
     setSelectedService(item);
   };
 
   useEffect(() => {
     if (service?.list?.length === 1) {
       handleSelectService(service.list[0]);
+    }
+    if (service?.list?.length > 0) {
+      reportDatalayer({
+        event: 'view_item_list',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          items: service?.list.map((item) => ({
+            item_name: item?.title,
+            item_id: item?.id,
+            price: item?.priceDiscounted,
+            item_brand: '4Geeks',
+            item_category: service?.serviceInfo?.type,
+            quantity: 1,
+          })),
+        },
+      });
     }
   }, [service]);
 
