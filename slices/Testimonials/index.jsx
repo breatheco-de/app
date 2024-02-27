@@ -13,6 +13,7 @@ const Testimonials = ({ slice }) => (
     title={slice?.primary?.title}
     endpoint={slice?.primary?.endpoint}
     margin={slice?.primary?.margin || '0 auto 20px auto'}
+    px={{ base: '20px', md: '0px' }}
   />
 );
 Testimonials.propTypes = {

@@ -74,6 +74,7 @@ function IntroductionSection({
                 size="48px"
                 fontWeight={700}
                 lineHeight="inherit"
+                fontFamily={fontFamily}
               />
               {slice?.primary?.highlight && (
                 <PrismicRichText

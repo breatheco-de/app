@@ -29,7 +29,7 @@ const InfoCards = ({ slice }) => {
       cardFourDescription={slice?.primary?.cardFourDescription}
       margin={slice?.primary?.margin}
       padding={slice?.primary?.padding}
-      paddingMobile={slice?.primary?.paddingMobile}
+      paddingMobile="20px"
       fontFamily={slice?.primary?.fontFamily}
     />
   );

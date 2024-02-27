@@ -145,7 +145,7 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding={{ base: '30px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} fontFamily={fontFamily} {...rest}>
+    <Box id={id} padding={{ base: '20px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} fontFamily={fontFamily} {...rest}>
       <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
