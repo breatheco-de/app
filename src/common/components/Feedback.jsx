@@ -77,7 +77,7 @@ function Feedback({ storyConfig }) {
       getCodeRevisions();
       bc.auth().verifyRigobotConnection(accessToken)
         .then((response) => {
-          if (response.data) {
+          if (response?.data) {
             setIsAuthenticatedWithRigobot(true);
           }
         });
