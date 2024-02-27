@@ -67,6 +67,11 @@
   },
   "subscription": {
     "what-you-will-get": "Lo que obtendrás:",
+    "mentoring-available": "Sesiones de mentorías disponibles",
+    "your-mentoring-available": "Tus servicios de mentorías disponibles",
+    "workshop-available": "Sesiones de workshops disponibles",
+    "your-workshop-available": "Tus sesiones de workshops disponibles",
+    "see-details": "Ver detalles",
     "next-payment": "Siguiente pago el {{date}}",
     "last-payment": "Ultimo pago el {{date}}",
     "duration": "Duración: {{duration}}",
