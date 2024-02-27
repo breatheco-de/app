@@ -12,6 +12,7 @@ const TrustCards = ({ slice }) => {
       title={slice?.primary?.title}
       description={slice?.primary?.description}
       fontFamily={slice?.primary?.fontFamily}
+      padding={{ base: '20px', md: '0' }}
     />
   );
 };

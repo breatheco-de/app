@@ -98,7 +98,7 @@ function MktTestimonials({
       flexDirection="column"
       maxWidth="1280px"
       py="20px"
-      px={{ base: '10px', md: '0px' }}
+      px={{ base: '20px', md: '0px' }}
       id={id}
       width="100%"
       {...rest}
