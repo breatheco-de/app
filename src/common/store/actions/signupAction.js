@@ -174,7 +174,7 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
           }
           reportDatalayer({
             dataLayer: {
-              event: selectedPlanCheckoutData?.price > 0 ? 'purchase' : 'sign_up',
+              event: 'purchase',
               value: selectedPlanCheckoutData?.price,
               currency,
               payment_type: 'Credit card',
