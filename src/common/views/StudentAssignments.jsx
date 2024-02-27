@@ -29,7 +29,7 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
   const { hexColor } = useStyle();
 
   const getStatus = (task) => {
-    if (!task) return null;
+    if (!task) return 'NOT-OPENED';
     if (task.task_status === 'DONE' && task.revision_status === 'PENDING') return 'DELIVERED';
     if (task.task_status === 'PENDING' && task.revision_status === 'PENDING') return 'UNDELIVERED';
     return task.revision_status;
@@ -73,9 +73,11 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
   const statusColors = {
     APPROVED: hexColor.green,
     REJECTED: hexColor.danger,
-    UNDELIVERED: hexColor.danger,
+    UNDELIVERED: hexColor.fontColor3,
     DELIVERED: hexColor.yellowDefault,
+    'NOT-OPENED': hexColor.fontColor3,
   };
+
   return (
     <>
       {currentStudentList.map((student) => {
