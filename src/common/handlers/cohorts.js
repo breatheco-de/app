@@ -183,7 +183,6 @@ export const generateCohortSyllabusModules = async (id) => {
       };
     })) : [];
 
-    delete syllabusData.json;
     return {
       syllabus: {
         ...syllabusData,

@@ -7,14 +7,18 @@ import Image from 'next/image';
 import Heading from './Heading';
 import Text from './Text';
 import Icon from './Icon';
+import ReactPlayerV2 from './ReactPlayerV2';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import { isAbsoluteUrl } from '../../utils/url';
 
-function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort, cohort }) {
-  const { t } = useTranslation('dashboard');
+function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort, cohort, syllabus }) {
+  const { t, lang } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const { isAuthenticated } = useAuth();
+
+  const introVideo = syllabus?.json?.intro_video?.[lang] || null;
+
   return (
     <Flex gap="30px" margin={margin} mt={{ base: '4rem', md: '5rem', lg: '50px' }} alignItems="center" justifyContent="space-between" position="relative">
       <Box position="relative" flex={{ base: 1, lg: 0.5 }} background={hexColor.featuredColor} padding="47px 16px" borderRadius="10px">
@@ -49,7 +53,22 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort,
           {cohort?.never_ends ? t('join-cohort-page.start-course') : t('join-cohort-page.join-next-cohort')}
         </Button>
       </Box>
-      <Img maxWidth="420px" flex={{ base: 1, lg: 0.5 }} flexShrink={0} zIndex={10} margin="0 auto" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
+      {introVideo ? (
+        <Box flex={{ base: 1, lg: 0.5 }} maxWidth="550px" display={{ base: 'none', lg: 'block' }}>
+          <ReactPlayerV2
+            withModal
+            url={introVideo}
+            withThumbnail
+            thumbnailStyle={{
+              borderRadius: '11px',
+              minHeight: '100%',
+              height: '382px',
+            }}
+          />
+        </Box>
+      ) : (
+        <Img maxWidth="420px" flex={{ base: 1, lg: 0.5 }} flexShrink={0} zIndex={10} margin="0 auto" display={{ base: 'none', lg: 'block' }} src="/static/images/women-laptop-people.png" />
+      )}
     </Flex>
   );
 }
@@ -61,10 +80,12 @@ JoinCohort.propTypes = {
   isFetching: PropTypes.bool.isRequired,
   alreadyHaveCohort: PropTypes.bool.isRequired,
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 JoinCohort.defaultProps = {
   margin: null,
   logo: null,
+  syllabus: null,
 };
 
 export default JoinCohort;

@@ -249,6 +249,7 @@ function Page({ id, syllabus, cohort, members }) {
             alreadyHaveCohort={alreadyHaveCohort}
             joinFunction={joinCohort}
             cohort={cohort}
+            syllabus={syllabus}
           />
         ) : (
           <CallToAction
