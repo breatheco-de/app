@@ -146,7 +146,7 @@ function ServiceSummary({ service }) {
             price: selectedService.priceDiscounted,
             item_brand: '4Geeks',
             item_category: service.serviceInfo.type,
-            quantity: 1,
+            quantity: selectedService?.qty,
           }],
         },
       });
@@ -168,7 +168,7 @@ function ServiceSummary({ service }) {
               item_brand: '4Geeks',
               item_category: service.serviceInfo.type,
               price: selectedService?.priceDiscounted,
-              quantity: 1,
+              quantity: selectedService?.qty,
             },
           ],
         },
@@ -200,7 +200,7 @@ function ServiceSummary({ service }) {
             price: item?.priceDiscounted,
             item_brand: '4Geeks',
             item_category: service?.serviceInfo?.type,
-            quantity: 1,
+            quantity: item?.qty,
           })),
         },
       });
