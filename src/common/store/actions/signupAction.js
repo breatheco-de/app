@@ -365,7 +365,8 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
 
         allItems.push({
           id: num,
-          title: `${numItems} Mentorship sessions`,
+          slug: `${numItems}-${data?.serviceInfo?.type}`,
+          title: `${numItems} ${data?.serviceInfo?.type === 'mentorship' ? 'mentorship sessions' : 'events'}`,
           qty: numItems,
           pricePerUnit: price.discounted / numItems,
           price: price.original,
