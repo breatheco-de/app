@@ -20,7 +20,6 @@ import Icon from '../../../common/components/Icon';
 import axiosInstance from '../../../axios';
 import { usePersistent } from '../../../common/hooks/usePersistent';
 import { SUBS_STATUS, getAllMySubscriptions } from '../../../common/handlers/subscriptions';
-import CallToAction from '../../../common/components/CallToAction';
 import { getQueryString } from '../../../utils';
 import { parseQuerys } from '../../../utils/url';
 import ModalToGetAccess, { stageType } from '../../../common/components/ModalToGetAccess';
@@ -162,11 +161,6 @@ function Page({ id, syllabus, cohort, members }) {
 
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const techs = syllabus?.main_technologies?.split(',') || [];
-  const handleClick = (e) => {
-    if (alreadyHaveCohort) {
-      e.preventDefault();
-    }
-  };
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
@@ -241,33 +235,17 @@ function Page({ id, syllabus, cohort, members }) {
           />
           {t('backToChooseProgram')}
         </Link>
-        {existsRelatedSubscription ? (
-          <JoinCohortComponent
-            margin="40px 0"
-            logo={syllabus?.logo}
-            isFetching={isFetching}
-            alreadyHaveCohort={alreadyHaveCohort}
-            joinFunction={joinCohort}
-            cohort={cohort}
-            syllabus={syllabus}
-          />
-        ) : (
-          <CallToAction
-            background="blue.default"
-            buttonStyle={{
-              backgroundColor: hexColor.backgroundColor,
-              color: hexColor.blueDefault,
-              borderColor: hexColor.blueDefault,
-            }}
-            onClick={handleClick}
-            isLoading={alreadyHaveCohort}
-            margin="0 0 40px 0"
-            title={t('join-cohort-page.cta-description')}
-            href={`/pricing${qsForPricing}`}
-            buttonText={t('join-cohort-page.cta-button')}
-            width={{ base: '100%', md: 'fit-content' }}
-          />
-        )}
+        <JoinCohortComponent
+          margin="40px 0"
+          logo={syllabus?.logo}
+          isFetching={isFetching}
+          alreadyHaveCohort={alreadyHaveCohort}
+          joinFunction={joinCohort}
+          cohort={cohort}
+          syllabus={syllabus}
+          existsRelatedSubscription={existsRelatedSubscription}
+          href={`/pricing${qsForPricing}`}
+        />
         <GridContainer
           withContainer
           display={{ base: 'flex', md: 'grid' }}
