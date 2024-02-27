@@ -229,7 +229,7 @@ function Assignments() {
 
   useEffect(() => {
     if (selectedCohort) {
-      bc.admissions().cohort(selectedCohort.slug, academy)
+      bc.admissions().cohort(selectedCohort.slug, (selectedCohort?.academy || academy))
         .then(async ({ data }) => {
           const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
           if (syllabusInfo?.data) {
@@ -415,6 +415,7 @@ function Assignments() {
                   query: {
                     ...router.query,
                     cohortSlug: cohort.slug,
+                    academy: cohort?.academy,
                   },
                 });
               }}
@@ -422,6 +423,7 @@ function Assignments() {
                 value: cohort.value,
                 slug: cohort.slug,
                 label: cohort.label,
+                academy: cohort.academy,
               }))}
             />
           )}
