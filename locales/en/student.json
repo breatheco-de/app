@@ -42,7 +42,7 @@
     "nps": "NPS"
   },
   "project-status": {
-    "approved": "Aproved",
+    "approved": "Approved",
     "pending": "Pending",
     "ignored": "Ignored",
     "rejected": "Rejected"
