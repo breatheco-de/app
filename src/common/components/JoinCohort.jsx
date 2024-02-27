@@ -42,7 +42,7 @@ function JoinCohort({ margin, logo, joinFunction, isFetching, alreadyHaveCohort,
           {existsRelatedSubscription ? t('join-cohort-page.preview-description') : t('join-cohort-page.cta-description')}
         </Text>
         {!existsRelatedSubscription ? (
-          <Button as="a" href={href} textTransform="uppercase" borderColor="white" color="white" variant="outline">
+          <Button as="a" href={href} textTransform="uppercase" variant="default">
             {t('join-cohort-page.cta-button')}
           </Button>
         ) : (
