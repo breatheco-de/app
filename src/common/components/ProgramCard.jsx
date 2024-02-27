@@ -423,6 +423,7 @@ function ProgramCard({
                           <Button
                             variant={isFinantialStatusLate ? 'danger' : 'link'}
                             onClick={handleChoose}
+                            width="100%"
                             isLoading={isLoadingPageContent}
                             gridGap="6px"
                             fontWeight={700}
