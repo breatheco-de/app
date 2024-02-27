@@ -464,6 +464,7 @@ featured {
   -webkit-text-stroke-color: rgb(169 169 169);
 }
 
+.intro-video,
 .intro-video iframe {
   border-bottom-left-radius: 17px;
   border-bottom-right-radius: 17px;
