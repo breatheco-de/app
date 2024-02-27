@@ -14,7 +14,7 @@ import { formatBytes } from '../../utils';
 import { usePersistent } from '../hooks/usePersistent';
 
 export function TextByTaskStatus({ currentTask, t }) {
-  const taskIsAproved = currentTask?.revision_status === 'APPROVED';
+  const taskIsApproved = currentTask?.revision_status === 'APPROVED';
   // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
@@ -59,7 +59,7 @@ export function TextByTaskStatus({ currentTask, t }) {
   }
   return (
     <>
-      <Icon icon="checked2" color={taskIsAproved ? '#606060' : '#FFFFFF'} width="14px" />
+      <Icon icon="checked2" color={taskIsApproved ? '#606060' : '#FFFFFF'} width="14px" />
       {t('common:taskStatus.mark-as-done')}
     </>
   );
@@ -115,7 +115,7 @@ function PopoverTaskHandler({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const toast = useToast();
 
-  const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
+  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const deliveryFormatIsUrl = deliveryFormatExists && currentAssetData?.delivery_formats.includes('url');
@@ -124,7 +124,7 @@ function PopoverTaskHandler({
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
-  const isButtonDisabled = currentTask === null || taskIsAproved;
+  const isButtonDisabled = currentTask === null || taskIsApproved;
 
   const customUrlValidation = Yup.object().shape({
     githubUrl: Yup.string().matches(

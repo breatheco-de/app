@@ -19,12 +19,12 @@ export function ButtonHandlerByTaskStatus({
     isOpeningReviewModal: false,
     isChangingTaskStatus: false,
   });
-  const taskIsAproved = allowText && currentTask?.revision_status === 'APPROVED';
-  const taskIsAprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
+  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
+  const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
 
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
-  const isButtonDisabled = currentTask === null || taskIsAproved;
+  const isButtonDisabled = currentTask === null || taskIsApproved;
 
   function TaskButton() {
     return (
@@ -112,7 +112,7 @@ export function ButtonHandlerByTaskStatus({
 
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
-    if ((currentTask.task_status === 'DONE' || taskIsAprovedOrRejected) && !onlyPopoverDialog) {
+    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog) {
       return (
         <>
           <OpenModalButton />
