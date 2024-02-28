@@ -10,7 +10,7 @@ import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 
-function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
+function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -18,16 +18,20 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
   const endpointDefault = endpoint || '/v1/events/all';
 
   useEffect(() => {
-    axios.get(`${BREATHECODE_HOST}${endpointDefault}`)
-      .then((res) => {
-        const data = res?.data;
-        if (data && data.length > 0) {
-          const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
-          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
-          setEvents(existentLiveClasses);
-        }
-      });
-  }, []);
+    if (externalEvents) {
+      setEvents(externalEvents);
+    } else {
+      axios.get(`${BREATHECODE_HOST}${endpointDefault}`)
+        .then((res) => {
+          const data = res?.data;
+          if (data && data.length > 0) {
+            const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
+            const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
+            setEvents(existentLiveClasses);
+          }
+        });
+    }
+  }, [externalEvents]);
 
   return events?.length > 0 && (
     <GridContainer
@@ -50,6 +54,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
         <Flex gridGap="20px" width="max-content" margin="0">
           {events.map((event) => (
             <EventCard
+              isSmall={isSmall}
               key={event?.id}
               language={event.lang}
               id={event?.id}
@@ -57,7 +62,7 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
               title={event?.title}
               host={event?.host}
               ignoreDynamicHandler
-              description={event?.excerpt}
+              description={hideDescription ? '' : event?.excerpt}
               technologies={event?.technologies || []}
               startingAt={event?.starting_at}
               endingAt={event?.ended_at || event?.ending_at}
@@ -70,17 +75,23 @@ function MktEventCards({ id, title, hoursToLimit, endpoint, ...rest }) {
 }
 
 MktEventCards.propTypes = {
+  isSmall: PropTypes.bool,
   id: PropTypes.string,
   title: PropTypes.string,
   endpoint: PropTypes.string,
   hoursToLimit: PropTypes.number,
+  externalEvents: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
+  hideDescription: PropTypes.bool,
 };
 
 MktEventCards.defaultProps = {
-  id: '',
+  isSmall: false,
+  id: 'UpcomingEvents',
   title: 'Starting soon',
   endpoint: '',
   hoursToLimit: 1440, // 60 days
+  externalEvents: null,
+  hideDescription: false,
 };
 
 export default MktEventCards;

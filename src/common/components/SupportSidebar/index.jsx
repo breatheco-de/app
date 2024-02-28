@@ -8,7 +8,7 @@ import bc from '../../services/breathecode';
 // import { usePersistent } from '../../hooks/usePersistent';
 import Mentoring from './Mentoring';
 
-function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData }) {
+function SupportSidebar({ allCohorts, allAcademySyllabus, services, subscriptions, subscriptionData }) {
   const { t } = useTranslation();
   const toast = useToast();
   const [programServices, setProgramServices] = useState({
@@ -16,12 +16,25 @@ function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData 
     isFetching: true,
   });
 
+  const filterByFinantialStatus = (list) => list.filter((service) => {
+    if (allCohorts.length > 0) {
+      return allCohorts.some((elem) => {
+        if (elem?.cohort?.academy?.id === service?.academy?.id && (elem?.finantial_status === 'LATE' || elem?.educational_status === 'SUSPENDED')) {
+          return false;
+        }
+        return true;
+      });
+    }
+    return true;
+  });
+
   useEffect(() => {
     if (services?.length === 0) {
       bc.mentorship().getService().then(({ data }) => {
-        if (data !== undefined && data.length > 0) {
+        const servicesFiltered = filterByFinantialStatus(data);
+        if (servicesFiltered && servicesFiltered.length > 0) {
           setProgramServices({
-            list: data,
+            list: servicesFiltered,
             isFetching: false,
           });
         }
@@ -36,8 +49,9 @@ function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData 
         });
       });
     } else {
+      const servicesFiltered = filterByFinantialStatus(services);
       setProgramServices({
-        list: services,
+        list: servicesFiltered,
         isFetching: false,
       });
     }
@@ -46,6 +60,7 @@ function SupportSidebar({ allCohorts, services, subscriptions, subscriptionData 
   return programServices.list?.length > 0 && (
     <Mentoring
       allCohorts={allCohorts}
+      allAcademySyllabus={allAcademySyllabus}
       programServices={programServices}
       subscriptions={subscriptions}
       subscriptionData={subscriptionData}
@@ -58,6 +73,7 @@ SupportSidebar.propTypes = {
   services: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   subscriptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   allCohorts: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  allAcademySyllabus: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
 };
 
 SupportSidebar.defaultProps = {
@@ -65,6 +81,7 @@ SupportSidebar.defaultProps = {
   subscriptions: [],
   services: [],
   allCohorts: [],
+  allAcademySyllabus: [],
 };
 
 export default memo(SupportSidebar);

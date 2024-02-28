@@ -50,7 +50,7 @@ export const languagesNames = {
   html: 'html',
 };
 
-function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
+function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext, ...rest }) {
   const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -87,7 +87,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
     if (!rigobotToken || rigobotToken.expires_at < new Date().toISOString()) {
       const bcToken = getStorageItem('accessToken');
 
-      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}&dev=true`);
+      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}`);
       const data = await resp.json();
       setStorageItem('rigobotToken', JSON.stringify(data));
 
@@ -106,20 +106,32 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
-        const { code, language } = languages[tabIndex];
+        const { code, language, path } = languages[tabIndex];
 
         const rigobotToken = await getRigobotToken();
 
         const completionJob = {
-          inputs: {
-            code,
-            language_and_version: language,
-          },
           execute_async: false,
           include_organization_brief: false,
           include_purpose_objective: true,
         };
-        const completionRequest = await fetch('https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/', {
+
+        let endpoint;
+        if (path) {
+          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler-with-context/';
+          completionJob.inputs = {
+            main_file: `File path: ${path}\nFile content:\n${code}`,
+            language_and_version: language,
+            secondary_files: fileContext,
+          };
+        } else {
+          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/';
+          completionJob.inputs = {
+            code,
+            language_and_version: language,
+          };
+        }
+        const completionRequest = await fetch(endpoint, {
           method: 'POST',
           body: JSON.stringify(completionJob),
           headers: {
@@ -285,7 +297,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, ...rest }) {
         }}
         actionHandler={() => {
           setStorageItem('redirect', router?.asPath);
-          router.push(`/checkout?enableRedirect=true&internal_cta_placement=codeviewer&plan=${defaultPlan}`);
+          router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
         handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
       />
@@ -297,11 +309,13 @@ CodeViewer.propTypes = {
   languagesData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allowNotLogged: PropTypes.bool,
+  fileContext: PropTypes.string,
 };
 
 CodeViewer.defaultProps = {
   allowNotLogged: false,
   stTranslation: null,
+  fileContext: '',
 };
 
 export default CodeViewer;

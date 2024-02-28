@@ -41,7 +41,7 @@ function OnlyFor({
   storyTranslation, cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) {
   const academyNumber = Math.floor(academy);
-  const teachers = ['TEACHER', 'ASSISTANT'];
+  const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
 
   const cohortCapabilities = cohortSession?.user_capabilities || [];

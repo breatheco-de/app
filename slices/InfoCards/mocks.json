@@ -1,0 +1,125 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "meant",
+				"type": "Text"
+			},
+			"subtitle": {
+				"__TYPE__": "FieldContent",
+				"value": "palace",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Quis do qui proident adipisicing fugiat laborum mollit minim nostrud qui excepteur nisi id."
+						}
+					}
+				]
+			},
+			"cardOneIcon": {
+				"__TYPE__": "FieldContent",
+				"value": "plain",
+				"type": "Text"
+			},
+			"cardOneColor": {
+				"__TYPE__": "FieldContent",
+				"value": "merely",
+				"type": "Text"
+			},
+			"cardOneTitle": {
+				"__TYPE__": "FieldContent",
+				"value": "men",
+				"type": "Text"
+			},
+			"cardOneDescription": {
+				"__TYPE__": "FieldContent",
+				"value": "angle",
+				"type": "Text"
+			},
+			"cardTwoIcon": {
+				"__TYPE__": "FieldContent",
+				"value": "due",
+				"type": "Text"
+			},
+			"cardTwoColor": {
+				"__TYPE__": "FieldContent",
+				"value": "finger",
+				"type": "Text"
+			},
+			"cardTwoTitle": {
+				"__TYPE__": "FieldContent",
+				"value": "direct",
+				"type": "Text"
+			},
+			"cardTwoDescription": {
+				"__TYPE__": "FieldContent",
+				"value": "underline",
+				"type": "Text"
+			},
+			"cardThreeIcon": {
+				"__TYPE__": "FieldContent",
+				"value": "win",
+				"type": "Text"
+			},
+			"cardThreeColor": {
+				"__TYPE__": "FieldContent",
+				"value": "instrument",
+				"type": "Text"
+			},
+			"cardThreeTitle": {
+				"__TYPE__": "FieldContent",
+				"value": "manufacturing",
+				"type": "Text"
+			},
+			"cardThreeDescription": {
+				"__TYPE__": "FieldContent",
+				"value": "found",
+				"type": "Text"
+			},
+			"cardFourIcon": {
+				"__TYPE__": "FieldContent",
+				"value": "middle",
+				"type": "Text"
+			},
+			"cardFourColor": {
+				"__TYPE__": "FieldContent",
+				"value": "breathing",
+				"type": "Text"
+			},
+			"cardFourTitle": {
+				"__TYPE__": "FieldContent",
+				"value": "finish",
+				"type": "Text"
+			},
+			"cardFourDescription": {
+				"__TYPE__": "FieldContent",
+				"value": "somewhere",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "movie",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "twice",
+				"type": "Text"
+			},
+			"fontFamily": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
+			}
+		},
+		"items": []
+	}
+]

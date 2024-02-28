@@ -159,6 +159,7 @@ function Checkout() {
       router.push('/pricing');
     }
     if (isAuthenticated && isAvailableToSelectPlan && queryServiceExists) {
+      // If exists plan to select show the select service plan view
       setReadyToSelectService(true);
       setShowChooseClass(false);
     }
@@ -225,6 +226,9 @@ function Checkout() {
                   setServiceToRequest(respData[0]);
                 }
               });
+          } else {
+            setReadyToSelectService(true);
+            setShowChooseClass(false);
           }
         })
         .finally(() => {
@@ -306,6 +310,9 @@ function Checkout() {
             isClosable: true,
           });
         });
+    }
+    if (!isAuthenticated && !tokenExists) {
+      setLoader('plan', false);
     }
   }, [cohortsData.loading, accessToken, isAuthenticated]);
 

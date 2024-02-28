@@ -96,6 +96,9 @@ function DesktopItem({ item, readSyllabus }) {
             variant="unstyled"
             display="flex"
             flexDirection="row"
+            style={{
+              textWrap: 'balance',
+            }}
             textTransform="uppercase"
             fontWeight={700}
             color={linkColor}
@@ -127,7 +130,7 @@ function DesktopItem({ item, readSyllabus }) {
             zIndex="100"
             border="1px solid"
             borderColor={popoverBorderColor}
-            width="640px"
+            width={{ base: 'auto', lg: '500px', xl: '640px' }}
             role="group"
             _groupHover={{ display: 'block' }}
           >
@@ -353,7 +356,8 @@ function DesktopItem({ item, readSyllabus }) {
       ) : (
         <NextChakraLink
           display="flex"
-          width="max-content"
+          width="auto"
+          textAlign="center"
           alignItems="center"
           p={2}
           href={item.href ?? '#'}

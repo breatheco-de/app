@@ -25,7 +25,7 @@ import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import RelatedContent from '../../common/components/RelatedContent';
-import UpcomingWorkshops from '../../common/components/UpcomingWorkshops';
+import MktEventCards from '../../common/components/MktEventCards';
 
 export const getStaticPaths = async () => {
   const assetList = await import('../../lib/asset-list.json');
@@ -307,14 +307,12 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
-              <UpcomingWorkshops />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 display={{ base: 'none', md: 'flex' }}
                 technologies={lesson?.technologies}
               />
-
             </Box>
-
           ) : (
             <>
               {!isIpynb && (
@@ -410,7 +408,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                     display={{ base: 'none', md: 'flex' }}
                     technologies={lesson?.technologies}
                   />
-                  <UpcomingWorkshops />
+                  <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
                 </Box>
               )}
             </Box>

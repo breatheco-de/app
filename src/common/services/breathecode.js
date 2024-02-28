@@ -241,10 +241,20 @@ const breathecode = {
     };
   },
 
-  assignments: () => {
+  assignments: (query = {}) => {
     const url = `${host}/assignment`;
+    const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/user/me/task`),
+      getCodeRevisions: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/coderevision`),
+      files: (taskId) => breathecode.get(`${url}/academy/task/${taskId}/commitfile${qs}`),
+      file: (taskId, commitId) => axios.get(`${url}/academy/task/${taskId}/commitfile/${commitId}`),
+      createCodeRevision: (taskId, data) => axios.post(`${url}/academy/task/${taskId}/coderevision`, data),
+      getPersonalCodeRevisionsByTask: (taskId) => breathecode.get(`${url}/me/task/${taskId}/coderevision`),
+      getPersonalCodeRevisions: () => breathecode.get(`${url}/me/coderevision${qs}`),
+      personalFiles: (taskId) => breathecode.get(`${url}/me/task/${taskId}/commitfile${qs}`),
+      personalFile: (commitId) => breathecode.get(`${url}/me/commitfile/${commitId}${qs}`),
+      rateCodeRevision: (coderevisionId, data) => axios.post(`${url}/me/coderevision/${coderevisionId}/rate`, data),
     };
   },
   feedback: () => {
@@ -310,7 +320,7 @@ const breathecode = {
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
       courses: () => axios.get(`${host}/marketing/course${qs}`),
       pay: (data) => breathecode.post(`${url}/pay${qs}`, data),
-      addCard: (data) => axios.post(`${url}/card${qs}`, data),
+      addCard: (data) => breathecode.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),
       cancelMySubscription: (id) => axios.put(`${url}/me/subscription/${id}/cancel${qs}`),
       getPlan: (slug) => axios.get(`${url}/plan/${slug}${qs}`),
@@ -324,6 +334,7 @@ const breathecode = {
         payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
+      getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
     };
   },

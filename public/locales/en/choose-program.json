@@ -36,5 +36,18 @@
   "sidebar": {
     "live-events-title": "Learn LIVE",
     "join-our-community": "Join our community"
+  },
+  "feedback": {
+    "title": "Feedback",
+    "connect-rigobot-text": "You need to connect to Rigo AI in order to obtain feedback.",
+    "connect-rigobot": "Connect with Rigobot",
+    "why-feedback-text": "Feedback plays an important role when learning technical skills",
+    "learn-why": "Learn why",
+    "code-review": "Code review",
+    "no-code-reviews-text": "In this space, you will have access to the feedback provided by your teacher once you have submitted your project."
+  },
+  "late-payment": {
+    "title": "Action Required: Late Payments",
+    "description": "Your account has pending payments for cohort <strong>{{cohort_name}}</strong>. Please contact <strong>{{academy_name}}</strong> coordinator to restore full access to all features. Thank you for your prompt attention."
   }
 }

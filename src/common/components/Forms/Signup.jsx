@@ -28,7 +28,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 
 function SignupForm({
-  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues,
+  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
 }) {
   const { userSession } = useSession();
@@ -50,7 +50,7 @@ function SignupForm({
   const toast = useToast();
   const router = useRouter();
 
-  const { syllabus, enableRedirect } = router.query;
+  const { syllabus } = router.query;
 
   // const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
@@ -131,7 +131,7 @@ function SignupForm({
             },
             state: true,
           });
-          if (enableRedirect === 'true' && redirectStorageAlreadyExists) {
+          if (redirectStorageAlreadyExists) {
             const { enableRedirect: enabRed, ...restOfQuery } = router.query;
             router.push({
               pathname: redirectStorage,
@@ -304,6 +304,7 @@ function SignupForm({
               isDisabled={isDisabled}
               isLoading={isSubmitting}
               alignSelf="flex-end"
+              {...buttonStyles}
             >
               {t('create-account')}
             </Button>
@@ -407,6 +408,7 @@ SignupForm.propTypes = {
   columnLayout: PropTypes.bool,
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   showLoginLink: PropTypes.bool,
+  buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => {},
@@ -420,6 +422,7 @@ SignupForm.defaultProps = {
   subscribeValues: {},
   conversionTechnologies: null,
   showLoginLink: false,
+  buttonStyles: {},
 };
 
 export default SignupForm;

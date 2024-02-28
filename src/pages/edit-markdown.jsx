@@ -63,9 +63,9 @@ function EditMarkdown() {
   }, []);
 
   return (
-    <Box display="flex" flexDirection="column">
+    <Box display="flex" flexDirection="column" height="93vh">
       {!isLoaded && (
-        <Box position="absolute" background={bgColor} zIndex={99} h="100vh" display="flex" alignItems="center" justifyContent="center" width="100%">
+        <Box position="absolute" background={bgColor} zIndex={99} height="100vh" display="flex" alignItems="center" justifyContent="center" width="100%">
           <Img src="/4Geeks.ico" width="35px" height="35px" position="absolute" mt="6px" zIndex="40" boxShadow="0px 0px 16px 0px #0097cd" borderRadius="40px" alt="4Geeks Icon" />
           <Box className="loader" />
         </Box>

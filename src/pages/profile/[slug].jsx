@@ -25,6 +25,7 @@ function Profile() {
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
+  const [myCohorts, setMyCohorts] = useState([]);
   const [isAvailableToShowModalMessage, setIsAvailableToShowModalMessage] = useState([]);
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
@@ -55,6 +56,7 @@ function Profile() {
         .then((resp) => {
           const data = resp?.data;
           const cohorts = data?.cohorts;
+          setMyCohorts(cohorts);
           const isToShowGithubMessage = cohorts?.some(
             (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
           );
@@ -116,7 +118,7 @@ function Profile() {
               <Certificates certificates={certificates} />
             </TabPanel>
             <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-              <Subscriptions />
+              <Subscriptions cohorts={myCohorts} />
             </TabPanel>
           </TabPanels>
         </Tabs>
