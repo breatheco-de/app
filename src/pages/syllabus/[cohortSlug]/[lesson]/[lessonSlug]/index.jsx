@@ -562,7 +562,7 @@ function Content() {
       target: 'popup',
     },
   ];
-  const repoUrl = (ipynbHtmlUrl && currentData?.url) ? `${currentData?.url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.url;
+  const repoUrl = (ipynbHtmlUrl && currentData?.readme_url) ? `${currentData?.readme_url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.readme_url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
@@ -724,7 +724,7 @@ function Content() {
                 gridGap="8px"
                 padding={{ base: '8px 12px', md: '8px' }}
                 background="transparent"
-                href={`${repoUrl}`}
+                href={repoUrl}
                 _hover={{ opacity: 0.7 }}
                 style={{ color: fontColor, textDecoration: 'none' }}
               >
