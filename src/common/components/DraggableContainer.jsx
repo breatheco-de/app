@@ -39,10 +39,11 @@ function DraggableContainer({ children, ...rest }) {
     <Container
       ref={ref}
       padding="0"
+      className="hideOverflowX__"
       cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
       maxW="container.xl"
       width="100%"
-      overflowX="hidden"
+      overflowX="auto"
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onMouseMove={onMouseMove}

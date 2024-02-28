@@ -50,6 +50,7 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "11.11.0",
     "@fnando/sparkline": "^0.3.10",
+    "@fontsource-variable/space-grotesk": "^5.0.16",
     "@fontsource/lato": "4.5.10",
     "@loadable/component": "5.15.3",
     "@monaco-editor/react": "^4.6.0",

@@ -7,12 +7,12 @@ import {
   Button,
   Flex,
   Progress,
+  Image,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { formatDuration, intervalToDuration, subMinutes } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { memo, useState } from 'react';
-import Image from 'next/image';
 import CustomTheme from '../../../styles/theme';
 import Text from './Text';
 import Icon from './Icon';
@@ -71,7 +71,7 @@ function ProgramCard({
   programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground, stTranslation,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
-  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isLoadingPageContent,
+  subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isFinantialStatusLate, isLoadingPageContent,
 }) {
   const { t, lang } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
@@ -153,7 +153,7 @@ function ProgramCard({
     >
       {iconLink ? (
         <Box position="absolute" borderRadius="full" top="-30px" padding="10px">
-          <Image src={iconLink} width={44} height={44} />
+          <Image src={iconLink} width="44px" height="44px" borderRadius="50%" />
         </Box>
       ) : (
         <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
@@ -348,7 +348,7 @@ function ProgramCard({
                       width="100%"
                       padding="0"
                       whiteSpace="normal"
-                      variant="default"
+                      variant={isFinantialStatusLate ? 'danger' : 'default'}
                       onClick={handleChoose}
                       isLoading={isLoadingPageContent}
                     >
@@ -420,10 +420,18 @@ function ProgramCard({
                     {!isExpired && (
                       <>
                         {(courseProgress > 0 && !isCancelled) ? (
-                          <Button variant="link" onClick={handleChoose} isLoading={isLoadingPageContent} gridGap="6px" fontWeight={700}>
-                            {isNumber(String(lessonNumber))
+                          <Button
+                            variant={isFinantialStatusLate ? 'danger' : 'link'}
+                            onClick={handleChoose}
+                            width="100%"
+                            isLoading={isLoadingPageContent}
+                            gridGap="6px"
+                            fontWeight={700}
+                          >
+                            {isFinantialStatusLate && (programCardTR?.['action-required'] || t('action-required'))}
+                            {!isFinantialStatusLate && (isNumber(String(lessonNumber))
                               ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
-                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`}
+                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`)}
                           </Button>
 
                         ) : (
@@ -434,12 +442,14 @@ function ProgramCard({
                               width="100%"
                               padding="0"
                               whiteSpace="normal"
-                              variant="default"
+                              variant={isFinantialStatusLate ? 'danger' : 'default'}
                               mb={isAvailableAsSaas && !statusActive && '10px'}
                               onClick={handleChoose}
                               isLoading={isLoadingPageContent}
                             >
-                              {programCardTR?.['start-course'] || t('start-course')}
+                              {isFinantialStatusLate
+                                ? programCardTR?.['action-required'] || t('action-required')
+                                : programCardTR?.['start-course'] || t('start-course')}
                             </Button>
                             )}
                           </>
@@ -563,6 +573,7 @@ ProgramCard.propTypes = {
   bullets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   background: PropTypes.string,
   isLoadingPageContent: PropTypes.bool,
+  isFinantialStatusLate: PropTypes.bool,
 };
 
 ProgramCard.defaultProps = {
@@ -591,6 +602,7 @@ ProgramCard.defaultProps = {
   bullets: [],
   background: '',
   isLoadingPageContent: false,
+  isFinantialStatusLate: false,
 };
 
 export default memo(ProgramCard);

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Link, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import * as Yup from 'yup';
 import { Form, Formik } from 'formik';
@@ -16,6 +16,9 @@ import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
+import ModalCardError from './ModalCardError';
+import { SILENT_CODE } from '../../lib/types';
+import { reportDatalayer } from '../../utils/requests';
 
 function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -29,6 +32,12 @@ function ServiceSummary({ service }) {
   const [cohortSession] = usePersistent('cohortSession', {});
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingCard, setIsSubmittingCard] = useState(false);
+  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
+  const [declinedModalProps, setDeclinedModalProps] = useState({
+    title: '',
+    description: '',
+  });
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -36,8 +45,6 @@ function ServiceSummary({ service }) {
     cvc: 0,
   });
   const redirectedFrom = getStorageItem('redirected-from');
-
-  const toast = useToast();
 
   const infoValidation = Yup.object().shape({
     owner_name: Yup.string()
@@ -68,44 +75,135 @@ function ServiceSummary({ service }) {
     bc.payment().service().payConsumable(dataToAssign)
       .then((res) => {
         if (res && res?.status < 400) {
+          // reportDatalayer({
+          //   event: 'purchase',
+          //   ecommerce: {
+          //     transaction_id: '12345',
+          //     affiliation: '4Geeks',
+          //     value: selectedService.priceDiscounted,
+          //     currency: 'USD',
+          //     items: [{
+          //       item_name: selectedService.title,
+          //       item_id: selectedService?.id,
+          //       price: selectedService.priceDiscounted,
+          //       item_brand: '4Geeks',
+          //       item_category: service.serviceInfo.type,
+          //       quantity: 1,
+          //     }],
+          //   },
+          // });
           setPurchaseCompleted(true);
           setConfirmationOpen(false);
         }
       })
       .catch(() => {});
   };
-  const handleSubmit = (_, values) => {
-    bc.payment().addCard(values)
-      .then((resp) => {
-        if (resp) {
-          setConfirmationOpen(true);
-        }
-        if (resp?.status >= 400) {
-          toast({
-            position: 'top',
-            title: t('alert-message:card-error'),
-            description: t('alert-message:card-error-description'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:card-error'),
-          description: t('alert-message:card-error-description'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+
+  const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
+    const silentCode = data?.silent_code;
+    setIsSubmitting(false);
+    actions?.setSubmitting(false);
+    callback();
+    // reportDatalayer({
+    //   event: 'error',
+    //   eventCategory: 'payment',
+    //   eventAction: 'error',
+    //   eventLabel: silentCode,
+    // });
+    if (silentCode === SILENT_CODE.CARD_ERROR) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('card-declined'),
       });
+    }
+    if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('payment-not-processed'),
+      });
+    }
+    if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
+      setOpenDeclinedModal(true);
+      setDeclinedModalProps({
+        title: t('transaction-denied'),
+        description: t('payment-error'),
+      });
+    }
+  };
+
+  const handleSubmit = async (_, values) => {
+    if (selectedService?.id) {
+      reportDatalayer({
+        event: 'select_item',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          items: [{
+            item_name: selectedService.title,
+            item_id: selectedService?.id,
+            price: selectedService.priceDiscounted,
+            item_brand: '4Geeks',
+            item_category: service.serviceInfo.type,
+            quantity: selectedService?.qty,
+          }],
+        },
+      });
+    }
+    const resp = await bc.payment().addCard(values);
+    const data = await resp.json();
+    setIsSubmittingCard(false);
+    if (resp.ok) {
+      reportDatalayer({
+        event: 'add_payment_info',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          payment_type: 'Credit Card',
+          items: [
+            {
+              item_id: selectedService?.id,
+              item_name: selectedService?.title,
+              item_brand: '4Geeks',
+              item_category: service.serviceInfo.type,
+              price: selectedService?.priceDiscounted,
+              quantity: selectedService?.qty,
+            },
+          ],
+        },
+      });
+      setConfirmationOpen(true);
+    } else {
+      setOpenDeclinedModal(true);
+      handlePaymentErrors(data, _);
+    }
+  };
+
+  const handleSelectService = (item) => {
+    setSelectedService(item);
   };
 
   useEffect(() => {
-    if (service.list.length === 1) {
-      setSelectedService(service.list[0]);
+    if (service?.list?.length === 1) {
+      handleSelectService(service.list[0]);
+    }
+    if (service?.list?.length > 0) {
+      reportDatalayer({
+        event: 'view_item_list',
+        item_list_name: service.serviceInfo.slug,
+        ecommerce: {
+          currency: 'USD',
+          items: service?.list.map((item) => ({
+            item_name: item?.title,
+            item_id: item?.id,
+            price: item?.priceDiscounted,
+            item_brand: '4Geeks',
+            item_category: service?.serviceInfo?.type,
+            quantity: item?.qty,
+          })),
+        },
+      });
     }
   }, [service]);
 
@@ -117,6 +215,14 @@ function ServiceSummary({ service }) {
       justifyContent="center"
       mb="1rem"
     >
+      <ModalCardError
+        disableTryAgain
+        isSubmitting={isSubmittingCard}
+        openDeclinedModal={openDeclinedModal}
+        setOpenDeclinedModal={setOpenDeclinedModal}
+        declinedModalProps={declinedModalProps}
+      />
+
       {purchaseCompleted
         ? (
           <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
@@ -200,7 +306,7 @@ function ServiceSummary({ service }) {
                       {t('consumables.select-bundle')}
                     </Heading>
                     {selectedService?.id && service.list.length > 1 && (
-                      <Button fontSize="14px" variant="link" onClick={() => setSelectedService({})}>
+                      <Button fontSize="14px" variant="link" onClick={() => handleSelectService({})}>
                         {t('consumables.change-my-selection')}
                       </Button>
                     )}
@@ -213,7 +319,7 @@ function ServiceSummary({ service }) {
                           key={`${item?.slug}-${item?.title}`}
                           display="flex"
                           onClick={() => {
-                            setSelectedService(item);
+                            handleSelectService(item);
                           }}
                           flexDirection="row"
                           width="100%"
@@ -358,6 +464,7 @@ function ServiceSummary({ service }) {
                     }}
                     onSubmit={(values, actions) => {
                       setIsSubmitting(true);
+                      setIsSubmittingCard(true);
                       const monthAndYear = values.exp?.split('/');
                       const expMonth = monthAndYear[0];
                       const expYear = monthAndYear[1];

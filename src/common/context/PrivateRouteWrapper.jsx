@@ -14,7 +14,9 @@ export const withGuard = (PassedComponent) => {
     const queryTokenExists = isWindow && queryToken !== undefined && queryToken.length > 0;
     const pathname = isWindow ? window.location.pathname : '';
     const cleanUrl = isWindow && removeURLParameter(window.location.href, 'token');
-    const requiresDefaultRedirect = pathname.includes('/cohort/') || pathname.includes('/syllabus/');
+    const defaultRedirect = '/choose-program';
+    const requiresDefaultRedirect = pathname.includes('/cohort/') && pathname.includes('/syllabus/');
+    const isDinamicPage = pathname.includes('/syllabus/');
 
     const redirectToLogin = () => {
       setTimeout(() => {
@@ -25,10 +27,15 @@ export const withGuard = (PassedComponent) => {
       }, 150);
     };
 
-    if (!isLoading || queryTokenExists) {
+    if (!isLoading || isAuthenticated) {
+      if (isDinamicPage) {
+        return (
+          <PassedComponent {...props} />
+        );
+      }
       if (isNotAuthenticated) {
         if (requiresDefaultRedirect) {
-          localStorage.setItem('redirect', '/choose-program');
+          localStorage.setItem('redirect', defaultRedirect);
         } else {
           localStorage.setItem('redirect', pathname);
         }
@@ -47,9 +54,14 @@ export const withGuard = (PassedComponent) => {
     }
     if (queryTokenExists === false) {
       if (!tokenExists && isWindow) {
+        if (isDinamicPage) {
+          return (
+            <PassedComponent {...props} />
+          );
+        }
         if (requiresDefaultRedirect) {
           log('redirect choose-program setted');
-          localStorage.setItem('redirect', '/choose-program');
+          localStorage.setItem('redirect', defaultRedirect);
           redirectToLogin();
         } else {
           log('redirect setted');

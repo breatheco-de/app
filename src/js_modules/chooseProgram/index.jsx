@@ -17,7 +17,7 @@ import ProgramCard from '../../common/components/ProgramCard';
 import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 
-function ChooseProgram({ chooseList, handleChoose }) {
+function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const { t } = useTranslation('choose-program');
   const { programsList } = useProgramList();
   const [marketingCursesList, setMarketingCursesList] = useState([]);
@@ -109,6 +109,7 @@ function ChooseProgram({ chooseList, handleChoose }) {
               item={item}
               handleChoose={handleChoose}
               onOpenModal={() => setUpgradeModalIsOpen(true)}
+              setLateModalProps={setLateModalProps}
             />
           ))}
         </Box>
@@ -214,10 +215,12 @@ function ChooseProgram({ chooseList, handleChoose }) {
 ChooseProgram.propTypes = {
   chooseList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
+  setLateModalProps: PropTypes.func,
 };
 ChooseProgram.defaultProps = {
   chooseList: [],
   handleChoose: () => {},
+  setLateModalProps: () => {},
 };
 
 export default ChooseProgram;

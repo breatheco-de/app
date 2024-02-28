@@ -257,6 +257,7 @@ function StudentReport() {
 
           const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
           const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
+          const npsAnswered = resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score;
 
           const attendancePercentage = (attendancePresent.length * 100) / attendanceTaken.length;
           setReport([{
@@ -274,12 +275,12 @@ function StudentReport() {
             label: t('analitics.percentage-attendance'),
             icon: 'list',
             variationColor: hexColor.blueDefault,
-            value: `${Math.round(attendancePercentage * 100) / 100}%`,
+            value: `${(Math.round(attendancePercentage * 100) / 100 || 0)}%`,
           }, {
             label: t('analitics.nps'),
             icon: 'smile',
             variationColor: hexColor.green,
-            value: resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score,
+            value: (Math.round(npsAnswered * 100) / 100),
             max: 10,
           }]);
 
@@ -294,7 +295,8 @@ function StudentReport() {
 
   const lessonStyles = {
     COMPLETED: hexColor.green,
-    UNREAD: hexColor.danger,
+    // UNREAD: hexColor.danger,
+    UNREAD: hexColor.fontColor3,
     STARTED: hexColor.yellowDefault,
     'NOT-OPENED': hexColor.fontColor3,
   };
@@ -527,7 +529,7 @@ function StudentReport() {
         )}
         <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
           {isFetching && [...Array(4).keys()].map(() => (
-            <SimpleSkeleton height="108px" width="100%" />
+            <SimpleSkeleton borderRadius="10px" height="108px" width="100%" />
           ))}
           {!isFetching && report.map((elem) => (
             <KPI

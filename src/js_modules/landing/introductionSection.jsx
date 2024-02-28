@@ -14,7 +14,7 @@ import Button from '../../common/components/Button';
 import PrismicTextComponent from '../../common/components/PrismicTextComponent';
 
 function IntroductionSection({
-  data, slice, fitContent, ...rest
+  data, slice, fitContent, fontFamily, ...rest
 }) {
   const colors = useColorModeValue('#000', '#fff');
 
@@ -65,7 +65,7 @@ function IntroductionSection({
       {...rest}
     >
       <Box display={{ base: 'block', md: 'grid' }} flex={getLeftColumnSize()}>
-        <Heading as="span" size="xl" fontWeight="700">
+        <Heading fontFamily={fontFamily} as="span" size="xl" fontWeight="700">
           {slice?.primary?.title ? (
             <>
               <PrismicTextComponent
@@ -74,6 +74,7 @@ function IntroductionSection({
                 size="48px"
                 fontWeight={700}
                 lineHeight="inherit"
+                fontFamily={fontFamily}
               />
               {slice?.primary?.highlight && (
                 <PrismicRichText
@@ -222,11 +223,13 @@ function IntroductionSection({
 IntroductionSection.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   slice: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  fontFamily: PropTypes.string,
 };
 
 IntroductionSection.defaultProps = {
   slice: {},
   data: {},
+  fontFamily: 'Lato',
 };
 
 export default IntroductionSection;

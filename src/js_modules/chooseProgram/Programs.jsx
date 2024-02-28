@@ -7,7 +7,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-function Programs({ item, handleChoose, onOpenModal }) {
+function Programs({ item, handleChoose, onOpenModal, setLateModalProps }) {
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
@@ -21,6 +21,7 @@ function Programs({ item, handleChoose, onOpenModal }) {
   const isBought = subscription?.invoices?.[0]?.amount >= 0;
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
+  const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
   const subscriptionExists = currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null;
 
   const router = useRouter();
@@ -40,14 +41,21 @@ function Programs({ item, handleChoose, onOpenModal }) {
       syllabus_name: name,
       academy_id: cohort.academy.id,
     });
-
-    axios.defaults.headers.common.Academy = cohort.academy.id;
-    setCohortSession({
-      ...cohort,
-      ...cohortSession,
-      selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
-    });
-    router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
+    if (isFinantialStatusLate) {
+      setLateModalProps({
+        isOpen: true,
+        data: [{ cohort }],
+      });
+      setIsLoadingPageContent(false);
+    } else {
+      axios.defaults.headers.common.Academy = cohort.academy.id;
+      setCohortSession({
+        ...cohort,
+        ...cohortSession,
+        selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
+      });
+      router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
+    }
   };
 
   // const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
@@ -85,10 +93,12 @@ function Programs({ item, handleChoose, onOpenModal }) {
       width="100%"
       syllabusContent={syllabusContent?.length > 0 ? Object.assign({}, ...syllabusContent) : {}}
       programName={cohort?.name}
+      isFinantialStatusLate={isFinantialStatusLate}
       isBought={isBought || availableAsSaasButNotBought}
       isFreeTrial={isFreeTrial}
       freeTrialExpireDate={subscription?.valid_until ? new Date(subscription?.valid_until) : new Date(subMinutes(new Date(), 1))}
       isAvailableAsSaas={cohort?.available_as_saas}
+      iconLink={cohort?.syllabus_version?.logo}
       // haveFreeTrial={}
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
@@ -115,12 +125,14 @@ Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleChoose: PropTypes.func,
   onOpenModal: PropTypes.func,
+  setLateModalProps: PropTypes.func,
 };
 
 Programs.defaultProps = {
   item: {},
   handleChoose: () => {},
   onOpenModal: () => {},
+  setLateModalProps: () => {},
 };
 
 export default memo(Programs);

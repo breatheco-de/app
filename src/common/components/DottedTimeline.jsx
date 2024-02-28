@@ -27,7 +27,7 @@ function DottedTimeline({ label, dots, helpText, width, onClickDots }) {
       </Flex>
       <AnimatedContainer isScrollable={isScrollable} position="relative" overflow="hidden">
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
-          {dots && dots.map((dot, i) => (
+          {dots?.length > 0 && dots.map((dot, i) => (
             <Box padding="5px 0" borderBottom="2px solid" borderColor={dot.highlight ? highLightColor : 'transparent'}>
               <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
                 <Box

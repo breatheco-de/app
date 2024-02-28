@@ -35,6 +35,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import Projects from '../../../common/views/Projects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
+import axiosInstance from '../../../axios';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -197,6 +198,7 @@ function Assignments() {
   };
 
   useEffect(() => {
+    axiosInstance.defaults.headers.common.academy = academy;
     bc.admissions()
       .me()
       .then(({ data }) => {
@@ -229,7 +231,7 @@ function Assignments() {
 
   useEffect(() => {
     if (selectedCohort) {
-      bc.admissions().cohort(selectedCohort.slug, academy)
+      bc.admissions().cohort(selectedCohort.slug, (selectedCohort?.academy || academy))
         .then(async ({ data }) => {
           const syllabusInfo = await bc.admissions().syllabus(data.syllabus_version.slug, data.syllabus_version.version, academy);
           if (syllabusInfo?.data) {
@@ -415,6 +417,7 @@ function Assignments() {
                   query: {
                     ...router.query,
                     cohortSlug: cohort.slug,
+                    academy: cohort?.academy,
                   },
                 });
               }}
@@ -422,6 +425,7 @@ function Assignments() {
                 value: cohort.value,
                 slug: cohort.slug,
                 label: cohort.label,
+                academy: cohort.academy,
               }))}
             />
           )}

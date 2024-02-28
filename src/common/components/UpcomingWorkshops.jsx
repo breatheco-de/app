@@ -36,6 +36,7 @@ function UpcomingWorkshops() {
             const startDate = new Date(event.starting_at);
             const endDate = new Date(event.ending_at);
             return {
+              ...event,
               title: event.title,
               upperTags: event.asset?.technologies || [],
               url: `/workshops/${event.slug}`,

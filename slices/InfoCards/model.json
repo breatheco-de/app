@@ -1,0 +1,117 @@
+{
+  "id": "info_cards",
+  "type": "SharedSlice",
+  "name": "InfoCards",
+  "description": "InfoCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "title", "placeholder": "" }
+        },
+        "subtitle": {
+          "type": "Text",
+          "config": { "label": "subtitle", "placeholder": "" }
+        },
+        "description": {
+          "type": "StructuredText",
+          "config": {
+            "label": "description",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "cardOneIcon": {
+          "type": "Text",
+          "config": { "label": "cardOneIcon", "placeholder": "" }
+        },
+        "cardOneColor": {
+          "type": "Text",
+          "config": { "label": "cardOneColor", "placeholder": "" }
+        },
+        "cardOneTitle": {
+          "type": "Text",
+          "config": { "label": "cardOneTitle", "placeholder": "" }
+        },
+        "cardOneDescription": {
+          "type": "Text",
+          "config": { "label": "cardOneDescription", "placeholder": "" }
+        },
+        "cardTwoIcon": {
+          "type": "Text",
+          "config": { "label": "cardTwoIcon", "placeholder": "" }
+        },
+        "cardTwoColor": {
+          "type": "Text",
+          "config": { "label": "cardTwoColor", "placeholder": "" }
+        },
+        "cardTwoTitle": {
+          "type": "Text",
+          "config": { "label": "cardTwoTitle", "placeholder": "" }
+        },
+        "cardTwoDescription": {
+          "type": "Text",
+          "config": { "label": "cardTwoDescription", "placeholder": "" }
+        },
+        "cardThreeIcon": {
+          "type": "Text",
+          "config": { "label": "cardThreeIcon", "placeholder": "" }
+        },
+        "cardThreeColor": {
+          "type": "Text",
+          "config": { "label": "cardThreeColor", "placeholder": "" }
+        },
+        "cardThreeTitle": {
+          "type": "Text",
+          "config": { "label": "cardThreeTitle", "placeholder": "" }
+        },
+        "cardThreeDescription": {
+          "type": "Text",
+          "config": { "label": "cardThreeDescription", "placeholder": "" }
+        },
+        "cardFourIcon": {
+          "type": "Text",
+          "config": { "label": "cardFourIcon", "placeholder": "" }
+        },
+        "cardFourColor": {
+          "type": "Text",
+          "config": { "label": "cardFourColor", "placeholder": "" }
+        },
+        "cardFourTitle": {
+          "type": "Text",
+          "config": { "label": "cardFourTitle", "placeholder": "" }
+        },
+        "cardFourDescription": {
+          "type": "Text",
+          "config": { "label": "cardFourDescription", "placeholder": "" }
+        },
+        "margin": {
+          "type": "Text",
+          "config": { "label": "Margin", "placeholder": "" }
+        },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "Padding", "placeholder": "" }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

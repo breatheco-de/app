@@ -19,6 +19,7 @@ import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 import { validatePlanExistence } from '../../handlers/subscriptions';
 import { isDevMode } from '../../../utils';
+import { reportDatalayer } from '../../../utils/requests';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -136,6 +137,15 @@ function MentoringConsumables({
       academy: service?.academy?.id,
     }).getMentor()
       .then((res) => {
+        reportDatalayer({
+          dataLayer: {
+            event: 'select_mentorship_service',
+            path: router.pathname,
+            consumables_amount: currentBalance,
+            mentorship_service: service?.slug,
+          },
+        });
+
         const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
         setProgramMentors(res.data);
         setConsumableOfService({
@@ -179,6 +189,19 @@ function MentoringConsumables({
       setIsModalToGetAccessOpen(true);
     })
       .finally(() => setIsFetchingDataForModal(false));
+  };
+  const reportBookMentor = () => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'book_mentorship_session',
+        path: router.pathname,
+        consumables_amount: currentBalance,
+        mentorship_service: mentoryProps?.service?.slug,
+        mentor_name: `${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`,
+        mentor_id: mentoryProps.mentor.slug,
+        mentor_booking_url: mentoryProps.mentor.booking_url,
+      },
+    });
   };
 
   return (
@@ -244,7 +267,21 @@ function MentoringConsumables({
                 {t('supportSideBar.mentors-available', { count: 3 })}
               </Text>
             </Box>
-            <Button variant="link" fontSize="14px" onClick={() => setOpen(true)}>
+            {/* Schedule event */}
+            <Button
+              variant="link"
+              fontSize="14px"
+              onClick={() => {
+                setOpen(true);
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'begin_mentorship_session_schedule',
+                    path: router.pathname,
+                    consumables_amount: currentBalance,
+                  },
+                });
+              }}
+            >
               {t('supportSideBar.schedule-button')}
               <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
             </Button>
@@ -252,7 +289,7 @@ function MentoringConsumables({
         )}
 
         {isDevMode && open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
-          <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0">
+          <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0" style={{ textWrap: 'nowrap' }}>
             <Box>
               {t('mentorship.you-have')}
             </Box>
@@ -368,6 +405,7 @@ function MentoringConsumables({
                                   {mentor?.booking_url ? (
                                     <Link
                                       variant="default"
+                                      onClick={() => reportBookMentor()}
                                       href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${cohortSession?.bc_id}`}
                                       target="_blank"
                                       rel="noopener noreferrer"

@@ -656,29 +656,31 @@ function Page({ eventData, asset }) {
                 <Text size="26px" fontWeight={700} mb="10px">
                   {finishedEvent ? t('workshop-asset-ended') : t('workshop-asset-upcoming')}
                 </Text>
-                <Link display="block" locale={langsDict[asset.lang || 'en']} href={`/${getAssetType(asset)}/${asset.slug}`} width="fit-content">
-                  <Box
-                    background={featuredColor}
-                    width="210px"
-                    borderRadius="10px"
-                    padding="16px"
-                    cursor="pointer"
-                    minHeight="135px"
-                  >
-                    <Box display="flex" justifyContent="space-between" marginBottom="20px">
-                      <TagCapsule padding="0" margin="0" tags={asset.technologies?.slice(0, 1) || []} variant="rounded" />
-                      <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
-                        {format(new Date(asset.published_at), 'dd-MM-yyyy')?.replaceAll('-', '/')}
-                      </Text>
-                    </Box>
+                <Box
+                  background={featuredColor}
+                  width="300px"
+                  borderRadius="10px"
+                  padding="16px"
+                  minHeight="135px"
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="space-between"
+                >
+                  <Box display="flex" justifyContent="space-between" marginBottom="20px">
+                    <TagCapsule whiteSpace="nowrap" padding="0" margin="0" tags={asset.technologies?.slice(0, 1) || []} variant="rounded" />
+                    <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
+                      {t(`common:${asset.asset_type.toLowerCase()}`)}
+                    </Text>
+                  </Box>
+                  <Link width="100%" display="block" locale={langsDict[asset.lang || 'en']} href={`/${getAssetType(asset)}/${asset.slug}`}>
                     <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
                       <Text size="md" fontWeight="700" color={hexColor.blueDefault}>
                         {asset.title}
                       </Text>
                       <Icon icon="arrowRight" color="" width="20px" height="14px" />
                     </Box>
-                  </Box>
-                </Link>
+                  </Link>
+                </Box>
               </Box>
               {!finishedEvent && asset.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
                 <SmallCardsCarousel
@@ -695,7 +697,7 @@ function Page({ eventData, asset }) {
                         url: `/${assetType}/${relatedAsset.slug}`,
                         lang: langsDict[relatedAsset.lang || 'en'],
                         upperTags: relatedAsset?.technologies?.slice(0, 1) || [],
-                        rightCornerElement: format(new Date(relatedAsset.published_at), 'dd-MM-yyyy')?.replaceAll('-', '/'),
+                        rightCornerElement: '',
                       };
                     })}
                   background={hexColor.lightColor}
@@ -731,7 +733,7 @@ function Page({ eventData, asset }) {
                 actionHandler={handleJoin}
                 handlerText={t('confirm-attendance')}
               />
-              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.blueDefault} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
+              <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding={(readyToJoinEvent) ? '24px' : '10px 20px'} bottom="0" position="sticky" marginBottom="20px" display={{ base: isAuth ? 'block' : 'none', md: 'none' }} textAlign="left">
                 {!finishedEvent ? (
                   <>
                     {!readyToJoinEvent && (
@@ -745,7 +747,7 @@ function Page({ eventData, asset }) {
                           startingAt={event?.starting_at}
                           onFinish={handleOnReadyToStart}
                           color="white"
-                          background="blue.900"
+                          background={hexColor.green}
                           height="40px"
                         />
                       </Box>
@@ -765,7 +767,7 @@ function Page({ eventData, asset }) {
                       <Box display="flex" gap="10px">
                         <Button
                           fontSize="17px"
-                          color="blue.default"
+                          color={hexColor.greenLight}
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
@@ -812,6 +814,7 @@ function Page({ eventData, asset }) {
                           alignItems="center"
                           gridGap="10px"
                           width="100%"
+                          background={hexColor.greenLight}
                         >
                           {t('no-consumables.get-more-workshops')}
                           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
@@ -889,6 +892,7 @@ function Page({ eventData, asset }) {
                   childrenDescription={formInfo?.childrenDescription}
                   readOnly={!event?.slug}
                   position="relative"
+                  borderColor={hexColor.greenLight}
                   gridGap={(existsConsumables || !noConsumablesFound) ? '10px' : '16px'}
                 >
                   {(finishedEvent || isFreeForConsumables || existsConsumables) ? (
@@ -898,7 +902,7 @@ function Page({ eventData, asset }) {
                       variant="default"
                       display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
-                      background={buttonEnabled ? 'blue.default' : 'gray.350'}
+                      background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
                       isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                       _disabled={{
@@ -943,6 +947,7 @@ function Page({ eventData, asset }) {
                             alignItems="center"
                             gridGap="10px"
                             width="100%"
+                            background={hexColor.greenLight}
                           >
                             {t('no-consumables.get-more-workshops')}
                             <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />

@@ -122,6 +122,15 @@
         "grid_gap": {
           "type": "Text",
           "config": { "label": "Grid gap", "placeholder": "" }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
         }
       },
       "items": {},
