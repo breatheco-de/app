@@ -3,7 +3,7 @@
     "title": "Elegir programa"
   },
   "title": "Tus Programas",
-  "welcome-back-user": "Bienvenido de vuelta, {{name}}",
+  "welcome-back-user": "Bienvenido, {{name}}",
   "welcome": "Bienvenido",
   "your-active-programs": "Tus programas activos",
   "join-our-community": "Únete a nuestra comunidad",
