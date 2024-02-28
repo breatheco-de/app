@@ -288,7 +288,7 @@ function Content() {
           setReadmeUrlPathname(finalPathname);
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           if (isIpynb) {
-            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
+            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
@@ -747,7 +747,7 @@ function Content() {
           {ipynbHtmlUrl && (
             <iframe
               id="iframe"
-              src={ipynbHtmlUrl}
+              src={`${ipynbHtmlUrl}&theme=${currentTheme}`}
               style={{
                 width: '100%',
                 height: '99vh',
