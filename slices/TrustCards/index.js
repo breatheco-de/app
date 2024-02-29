@@ -8,7 +8,6 @@ import MktTrustCards from '../../src/common/components/MktTrustCards';
 const TrustCards = ({ slice }) => {
   return (
     <MktTrustCards
-      slice={slice}
       id={slice?.primary?.id_key}
       slice={slice}
       title={slice?.primary?.title}
