@@ -68,8 +68,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     revision_content: {},
   });
   const [stageHistory, setStageHistory] = useState({
-    stage: defaultStage,
-    from: null,
+    current: defaultStage,
+    previous: {},
   });
   const { lightColor, featuredColor, hexColor } = useStyle();
   const storybookTranslation = contextData?.translation || {};
@@ -81,7 +81,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasBeenRejected = revisionStatus === REJECTED;
   const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
-  const stage = stageHistory?.stage;
+  const stage = stageHistory?.current;
 
   const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
   const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
@@ -120,11 +120,28 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     approve: t('alert-message:review-assignment-approve'),
     reject: t('alert-message:review-assignment-reject'),
   };
-  const setStage = (newStage) => {
-    setStageHistory((prevState) => ({
-      stage: newStage,
-      from: prevState.stage,
-    }));
+
+  const setStage = (newStage, type = 'next') => {
+    setStageHistory((prevState) => {
+      if (type === 'next') {
+        const newPrevious = { ...prevState?.previous, [prevState?.current]: true };
+        return {
+          current: newStage,
+          previous: newPrevious,
+        };
+      }
+      if (type === 'back') {
+        const keys = Object.keys(prevState.previous);
+        const lastKey = keys[keys.length - 1];
+        const newCurrent = lastKey || defaultStage;
+        const { [lastKey]: _, ...newPrevious } = prevState.previous;
+        return {
+          current: newCurrent,
+          previous: newPrevious,
+        };
+      }
+      return prevState;
+    });
   };
   const getRepoFiles = async () => {
     try {
@@ -389,28 +406,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           top={isStageWithDefaultStyles ? 2 : 4}
           left={5}
           onClick={() => {
-            if (!isAuthenticatedWithRigobot && stage === stages.approve_or_reject_code_revision) {
-              setStage(stages.file_list);
-            } else {
-              if (isStudent && stage === stages.code_review) {
-                setStage(stages.review_code_revision);
-              }
-              if (!isStudent && stage === stages.code_review) {
-                setStage(stages.file_list);
-                handleResetFlow();
-              }
-              if (stage === stages.file_list || stage === stages.review_code_revision) {
-                setStage(stages.initial);
-              }
-              if ((stage === stages.approve_or_reject_code_revision && stageHistory.from === stages.initial) || reviewStatus) {
-                setStage(stages.initial);
-                setReviewStatus('');
-                setComment('');
-              }
-              if (stage === stages.approve_or_reject_code_revision && contextData?.code_revisions?.length > 0 && stageHistory.from !== stages.initial) {
-                setStage(stages.file_list);
-              }
-            }
+            setStage('', 'back');
           }}
           aria-label={t('common:go-back')}
         >
