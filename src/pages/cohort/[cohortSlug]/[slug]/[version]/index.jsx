@@ -44,7 +44,7 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
-import Feedback from '../../../../../common/components/Feedback';
+// import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -755,7 +755,7 @@ function Dashboard() {
                   subscriptionData={subscriptionData}
                 />
               )}
-              <Feedback />
+              {/* <Feedback /> */}
             </Box>
           )}
         </Flex>
