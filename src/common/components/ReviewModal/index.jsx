@@ -213,7 +213,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   }, [isOpen, externalData]);
   useEffect(() => {
-    setStage(isAuthenticatedWithRigobot ? defaultStage : stages.file_list);
+    setStage((isAuthenticatedWithRigobot && !noFilesToReview) ? defaultStage : stages.file_list);
     if (isOpen && currentTask?.id > 0 && !externalData) {
       if (externalFiles) {
         setFileData(externalFiles);
@@ -400,7 +400,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       }}
       leftButton={showGoBackButton && (
         <Button
-          display={isAuthenticatedWithRigobot === false && stage === stages.file_list ? 'none' : 'flex'}
+          display={(isAuthenticatedWithRigobot === false || noFilesToReview) && stage === stages.file_list ? 'none' : 'flex'}
           position="absolute"
           variant="unstyled"
           top={isStageWithDefaultStyles ? 2 : 4}
