@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { isWindow, removeURLParameter, setStorageItem } from '../../utils';
 import { log } from '../../utils/logging';
 import useAuth from '../hooks/useAuth';
@@ -6,6 +7,7 @@ export const withGuard = (PassedComponent) => {
   function Auth(props) {
     const { isAuthenticated, isLoading } = useAuth();
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
+    const router = useRouter();
     const tokenExists = isWindow && localStorage.getItem('accessToken');
     const pageToRedirect = isWindow ? `/pricing${window.location.search}` : '/pricing';
 
@@ -21,9 +23,9 @@ export const withGuard = (PassedComponent) => {
     const redirectToLogin = () => {
       setTimeout(() => {
         if (isWindow) {
-          setStorageItem('redirect', `${window.location.pathname}${window.location.search}`);
+          setStorageItem('redirect', router.asPath);
         }
-        window.location.href = pageToRedirect;
+        router.push(pageToRedirect);
       }, 150);
     };
 
@@ -39,12 +41,12 @@ export const withGuard = (PassedComponent) => {
         } else {
           localStorage.setItem('redirect', pathname);
         }
-        window.location.href = pageToRedirect;
+        router.push(pageToRedirect);
       }
       if (queryTokenExists && isWindow) {
         localStorage.setItem('accessToken', queryToken);
         setTimeout(() => {
-          window.location.href = cleanUrl;
+          router.push(cleanUrl);
         }, 150);
       } else {
         return (

@@ -157,7 +157,7 @@ function AuthProvider({ children, pageProps }) {
 
     if (token !== undefined && token !== null) {
       const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
-      const isAuthenticatedWithRigobot = respRigobotAuth.status === 200;
+      const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
