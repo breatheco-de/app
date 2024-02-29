@@ -62,11 +62,11 @@ export const withGuard = (PassedComponent) => {
           );
         }
         if (requiresDefaultRedirect) {
-          log('redirect choose-program setted');
+          log(`redirect ${defaultRedirect} setted`);
           localStorage.setItem('redirect', defaultRedirect);
           redirectToLogin();
         } else {
-          log('redirect setted');
+          log(`redirect to ${pathname} setted`);
           localStorage.setItem('redirect', pathname);
           redirectToLogin();
         }
