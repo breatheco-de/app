@@ -17,6 +17,7 @@ import { warn } from '../../utils/logging';
 const initialState = {
   isLoading: true,
   isAuthenticated: false,
+  isAuthenticatedWithRigobot: false,
   user: null,
 };
 
@@ -29,11 +30,12 @@ const langHelper = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isLoading, isAuthenticated, user } = action.payload;
+      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user } = action.payload;
       return {
         ...state,
         isLoading,
         isAuthenticated,
+        isAuthenticatedWithRigobot,
         user,
       };
     }
@@ -154,6 +156,8 @@ function AuthProvider({ children, pageProps }) {
     const token = getToken();
 
     if (token !== undefined && token !== null) {
+      const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
+      const isAuthenticatedWithRigobot = respRigobotAuth.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
@@ -178,7 +182,7 @@ function AuthProvider({ children, pageProps }) {
           .then(({ data }) => {
             dispatch({
               type: 'INIT',
-              payload: { user: data, isAuthenticated: true, isLoading: false },
+              payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
             const permissionsSlug = data.permissions.map((l) => l.codename);
             const settingsLang = data?.settings.lang;

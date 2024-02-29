@@ -19,6 +19,7 @@ import { updateAssignment } from '../../hooks/useModuleHandler';
 import useModuleMap from '../../store/actions/moduleMapAction';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
+import useAuth from '../../hooks/useAuth';
 
 export const stages = {
   initial: 'initial',
@@ -39,6 +40,7 @@ const inputLimit = 500;
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
   projectLink, changeStatusAssignment, disableRate, ...rest }) {
   const { t } = useTranslation('assignments');
+  const { isAuthenticatedWithRigobot } = useAuth();
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
@@ -84,6 +86,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
   const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
+  const showGoBackButton = stage !== stages.initial && !fixedStage;
 
   const statusColor = {
     approve: 'success',
@@ -193,9 +196,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   }, [isOpen, externalData]);
   useEffect(() => {
-    if (defaultStage) {
-      setStage(defaultStage);
-    }
+    setStage(isAuthenticatedWithRigobot ? defaultStage : stages.file_list);
     if (isOpen && currentTask?.id > 0 && !externalData) {
       if (externalFiles) {
         setFileData(externalFiles);
@@ -380,30 +381,35 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       closeButtonStyles={{
         top: isStageWithDefaultStyles ? 2 : 5,
       }}
-      leftButton={stage !== stages.initial && !fixedStage && (
+      leftButton={showGoBackButton && (
         <Button
+          display={isAuthenticatedWithRigobot === false && stage === stages.file_list ? 'none' : 'flex'}
           position="absolute"
           variant="unstyled"
           top={isStageWithDefaultStyles ? 2 : 4}
           left={5}
           onClick={() => {
-            if (isStudent && stage === stages.code_review) {
-              setStage(stages.review_code_revision);
-            }
-            if (!isStudent && stage === stages.code_review) {
+            if (!isAuthenticatedWithRigobot && stage === stages.approve_or_reject_code_revision) {
               setStage(stages.file_list);
-              handleResetFlow();
-            }
-            if (stage === stages.file_list || stage === stages.review_code_revision) {
-              setStage(stages.initial);
-            }
-            if ((stage === stages.approve_or_reject_code_revision && stageHistory.from === stages.initial) || reviewStatus) {
-              setStage(stages.initial);
-              setReviewStatus('');
-              setComment('');
-            }
-            if (stage === stages.approve_or_reject_code_revision && contextData?.code_revisions?.length > 0 && stageHistory.from !== stages.initial) {
-              setStage(stages.file_list);
+            } else {
+              if (isStudent && stage === stages.code_review) {
+                setStage(stages.review_code_revision);
+              }
+              if (!isStudent && stage === stages.code_review) {
+                setStage(stages.file_list);
+                handleResetFlow();
+              }
+              if (stage === stages.file_list || stage === stages.review_code_revision) {
+                setStage(stages.initial);
+              }
+              if ((stage === stages.approve_or_reject_code_revision && stageHistory.from === stages.initial) || reviewStatus) {
+                setStage(stages.initial);
+                setReviewStatus('');
+                setComment('');
+              }
+              if (stage === stages.approve_or_reject_code_revision && contextData?.code_revisions?.length > 0 && stageHistory.from !== stages.initial) {
+                setStage(stages.file_list);
+              }
             }
           }}
           aria-label={t('common:go-back')}
