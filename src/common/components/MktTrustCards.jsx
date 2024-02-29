@@ -153,7 +153,7 @@ function MktTrustCards({
         <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
         </Heading>
-        {slice?.primary?.description && typeof slice.primary.description === 'object' ? (
+        {slice?.primary?.description ? (
           <PrismicTextComponent
             color={slice?.primary?.font_color}
             field={slice?.primary?.description}
