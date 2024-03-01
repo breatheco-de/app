@@ -213,7 +213,9 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   }, [isOpen, externalData]);
   useEffect(() => {
-    setStage((isAuthenticatedWithRigobot && !noFilesToReview) ? defaultStage : stages.file_list);
+    if (defaultStage) {
+      setStage(defaultStage);
+    }
     if (isOpen && currentTask?.id > 0 && !externalData) {
       if (externalFiles) {
         setFileData(externalFiles);
@@ -295,7 +297,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
 
   const widthSizes = {
-    initial: hasFilesToReview ? '36rem' : '28rem',
+    initial: (!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview ? '36rem' : '28rem',
     approve_or_reject_code_revision: '36rem',
     file_list: '42rem',
     code_review: '74rem',
@@ -400,7 +402,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       }}
       leftButton={showGoBackButton && (
         <Button
-          display={(isAuthenticatedWithRigobot === false || noFilesToReview) && stage === stages.file_list ? 'none' : 'flex'}
           position="absolute"
           variant="unstyled"
           top={isStageWithDefaultStyles ? 2 : 4}
@@ -515,7 +516,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Box>
                   </Box>
                 )}
-                {hasFilesToReview && !disableRate && (
+                {(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate && (
                   <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
