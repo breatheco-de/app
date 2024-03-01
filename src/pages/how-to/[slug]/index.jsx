@@ -305,7 +305,7 @@ export default function HowToSlug({ data, markdown }) {
             />
           </Box>
         </Box>
-        <Box position={{ base: 'fixed', md: 'inherit' }} display={{ base: 'initial', md: 'none' }} width="100%" bottom={0} left={0} height="auto">
+        <Box display={{ base: 'initial', md: 'none' }} width="100%" height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
         <RelatedContent
