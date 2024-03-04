@@ -33,6 +33,7 @@ import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import { log } from '../../utils/logging';
+import LoaderScreen from '../../common/components/LoaderScreen';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -147,7 +148,10 @@ function Page({ eventData, asset }) {
   const [applied, setApplied] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
   const [finishedEvent, setFinishedEvent] = useState(false);
-  const [consumables, setConsumables] = useState([]);
+  const [consumables, setConsumables] = useState({
+    isFetching: false,
+    data: null,
+  });
   const [myCohorts, setMyCohorts] = useState([]);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
@@ -273,9 +277,16 @@ function Page({ eventData, asset }) {
       });
   };
   const getCurrentConsumables = () => {
+    setConsumables({
+      ...consumables,
+      isFetching: true,
+    });
     bc.payment().service().consumable()
       .then((res) => {
-        setConsumables(res.data);
+        setConsumables({
+          isFetching: false,
+          data: res?.data,
+        });
       });
   };
 
@@ -316,11 +327,12 @@ function Page({ eventData, asset }) {
       });
   };
 
-  const currentConsumable = consumables?.event_type_sets?.find(
+  const consumableEventList = consumables?.data?.event_type_sets;
+  const currentConsumable = consumableEventList?.length > 0 ? consumableEventList?.find(
     (c) => subscriptions.some(
       (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),
     ),
-  );
+  ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
@@ -847,7 +859,7 @@ function Page({ eventData, asset }) {
           flexDirection="column"
           transition="background 0.2s ease-in-out"
           // width={{ base: '320px', md: 'auto' }}
-          width="auto"
+          width={{ base: '100%', md: '320px' }}
           textAlign="center"
           height="fit-content"
           borderWidth="0px"
@@ -927,7 +939,7 @@ function Page({ eventData, asset }) {
                     </Button>
                   ) : (
                     <>
-                      {noConsumablesFound ? (
+                      {(noConsumablesFound && !consumables.isFetching && consumableEventList?.length === 0) ? (
                         <Box display="flex" flexDirection="column" alignItems="center">
                           <Avatar
                             width="85px"
@@ -954,7 +966,9 @@ function Page({ eventData, asset }) {
                           </Button>
                         </Box>
                       ) : (
-                        <Skeleton marginTop="10px" width="100%" height="40px" borderRadius="4px" />
+                        <Box position="relative" width="180px" height="130px" margin="0 auto">
+                          <LoaderScreen width="100%" height="100%" objectFit="cover" />
+                        </Box>
                       )}
                     </>
                   )}
