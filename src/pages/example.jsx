@@ -61,7 +61,7 @@ export default function Example() {
 
   const description = `The current traditional teaching methods focus on theoretical aspects, neglecting hands-on experience and student engagement, leading to high dropout rates and slow skill acquisition. Bootcamps and similar platforms offer faster, more interactive learning but lack a scientific approach. 
 
-  <br><br>We propose a holistic framework based on four key metrics to create highly effective learning environments. Our solution leverages cutting-edge tech for cost-effective, scalable education, addressing motivation, efficiency, and accessibility.
+  <br><br>Learn to code collaborating with others and become a developer to get your first job in tech.
   `;
 
   const cardDescription = 'Hundreds of interactive exercises, projects, and lessons are available thanks to LearnPack, our interactive engine.';
