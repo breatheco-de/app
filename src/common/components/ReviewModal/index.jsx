@@ -524,7 +524,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                         {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
                       </Text>
                     </Flex>
-                    <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                    <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                       {isStudent
                         ? t('code-review.read-and-rate-the-feedback')
                         : t('code-review.start-code-review')}
@@ -601,7 +601,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       minWidth="128px"
                       mt="8px"
                       onClick={() => setOpenUndoApproval(true)}
-                      color="white"
+                      color="currentColor"
                       borderRadius="3px"
                       fontSize="13px"
                       textTransform="uppercase"
