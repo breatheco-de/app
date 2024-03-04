@@ -86,7 +86,7 @@ function Feedback({ storyConfig }) {
 
   return (isAuthenticated || isStorybookView) && (
     <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
-      <Heading size="14px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
+      <Heading size="16px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
         {translationChooseProgram?.feedback?.title || t('feedback.title')}
       </Heading>
       <Flex flexDirection="column" background={backgroundColor} padding="0 8px" borderRadius="0 0 17px 17px">
