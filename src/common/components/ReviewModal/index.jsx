@@ -613,6 +613,10 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Button>
                     <UndoApprovalModal
                       isOpen={openUndoApproval}
+                      onSuccess={() => {
+                        onClose();
+                        setContextData({});
+                      }}
                       onClose={() => setOpenUndoApproval(false)}
                       updpateAssignment={updpateAssignment}
                       currentTask={currentTask}
