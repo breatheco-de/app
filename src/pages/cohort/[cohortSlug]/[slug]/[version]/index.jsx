@@ -42,7 +42,6 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
-import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
 // import Feedback from '../../../../../common/components/Feedback';
 
@@ -64,10 +63,8 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
-  const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
   const { featuredColor } = useStyle();
 
-  const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -195,9 +192,6 @@ function Dashboard() {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
-      setIsOpenFinalProject(true);
-    }
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
@@ -363,16 +357,6 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      <FinalProjectModal
-        isOpen={isOpenFinalProject}
-        closeOnOverlayClick={false}
-        closeModal={() => {
-          setIsOpenFinalProject(false);
-          setSession({ ...session, closedFinalProjectModal: true });
-        }}
-        studentsData={onlyStudentsActive}
-        cohortData={cohortSession}
-      />
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
