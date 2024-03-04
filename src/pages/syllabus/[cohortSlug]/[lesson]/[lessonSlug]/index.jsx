@@ -562,7 +562,9 @@ function Content() {
       target: 'popup',
     },
   ];
-  const repoUrl = (ipynbHtmlUrl && currentData?.readme_url) ? `${currentData?.readme_url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.readme_url;
+
+  const url = currentData?.url || currentData?.readme_url;
+  const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
