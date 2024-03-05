@@ -96,27 +96,38 @@ function Mentoring({
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.list.map((service) => service?.slug);
 
+    const academies = {};
+    programServices.list.forEach((service) => {
+      const { academy, ...restOfService } = service;
+      if (!academies[academy.id]) {
+        academies[academy.id] = { services: [] };
+      }
+      academies[academy.id].services.push(restOfService);
+    });
+
+    // Convert the object to an array of academies with their services
+    const academyData = Object.entries(academies).map(([academy, values]) => ({
+      id: Number(academy),
+      services: values.services,
+    }));
+
+    academyData.forEach((acad) => {
+      const syll = allAcademySyllabus.find((elem) => elem.id === acad.id);
+      // eslint-disable-next-line no-param-reassign
+      if (syll) acad.syllabus = syll.syllabus;
+    });
+
     if (servicesSlugs.length > 0 || allAcademySyllabus.length > 0) {
-      const mentors = programServices.list.map((service) => bc.mentorship({
-        services: service?.slug,
+      const mentors = academyData.map((academy) => bc.mentorship({
+        services: academy.services.map((s) => s.slug).join(','),
         status: 'ACTIVE',
-        syllabus: slug,
-        academy: service.academy.id,
+        syllabus: academy.syllabus?.join(',') || slug,
+        academy: academy.id,
       }).getMentor()
         .then((res) => {
           const allMentors = res?.data;
           return allMentors;
         }));
-      const metorsBySyllabus = allAcademySyllabus.map((elem) => bc.mentorship({
-        status: 'ACTIVE',
-        syllabus: elem.syllabus.join(','),
-        academy: elem.id,
-      }).getMentor()
-        .then((res) => {
-          const allMentors = res?.data;
-          return allMentors;
-        }));
-      mentors.concat(metorsBySyllabus);
       const mentorsList = (await Promise.all(mentors)).flat();
       return mentorsList;
     }
