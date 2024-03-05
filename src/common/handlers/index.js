@@ -255,9 +255,10 @@ const handlers = {
       return Math.trunc((sumTaskCompleted / sumTaskLength) * 100);
     };
     const percentage = calculateTaskPercentage() || 0;
+    const percentageLimited = percentage > 100 ? 100 : percentage;
     return {
       allTasks: allExistentTasks,
-      percentage,
+      percentage: percentageLimited,
     };
   },
 
@@ -336,12 +337,12 @@ const handlers = {
     const totalCompletedTasks = arrayOfObjects.reduce((acc, task) => acc + task.completed, 0);
     const totalTasks = arrayOfObjects.reduce((acc, task) => acc + task.taskLength, 0);
     const completedTasksPercentage = Math.trunc((totalCompletedTasks / totalTasks) * 100) || 0;
-    const limitedPercentage = completedTasksPercentage > 100 ? 100 : completedTasksPercentage;
+    const percentageLimited = completedTasksPercentage > 100 ? 100 : completedTasksPercentage;
 
     resolve({
       allTasks: arrayOfObjects,
       cohortId,
-      percentage: limitedPercentage,
+      percentage: percentageLimited,
     });
   }),
   getAssetData: (slug) => new Promise((resolve, reject) => {

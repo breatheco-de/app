@@ -30,7 +30,7 @@ function useHandler() {
 
   const redirectToPublicPage = () => {
     if (pathConnector?.[assetType]) {
-      router.push(pathConnector[assetType]);
+      window.location.href = pathConnector[assetType];
     }
   };
   // Fetch cohort assignments (lesson, exercise, project, quiz)

@@ -23,7 +23,10 @@ const Component = (args) => {
     allStudentsWithDays.studentList.forEach((student) => {
       finalPercentage += student.percentage;
     });
-    return calcPercentage((finalPercentage / 100), allStudentsWithDays.studentList.length);
+    const percentage = calcPercentage((finalPercentage / 100), allStudentsWithDays.studentList.length);
+    const percentageLimited = percentage > 100 ? 100 : percentage;
+
+    return percentageLimited;
   };
   return (
     <KPI
