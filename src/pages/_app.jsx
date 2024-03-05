@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
@@ -72,27 +72,25 @@ function App({ Component, pageProps }) {
         <AuthProvider pageProps={pageProps}>
           <SessionProvider>
             <ConnectionProvider>
-              <Fragment key="load-on-client-side">
-                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                {isEnvModified && (
-                <AlertMessage
-                  full
-                  type="warning"
-                  message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                  borderRadius="0px"
-                  justifyContent="center"
-                />
-                )}
-                <InterceptionLoader />
+              <Navbar pageProps={pageProps} translations={pageProps?.translations} />
+              {isEnvModified && (
+              <AlertMessage
+                full
+                type="warning"
+                message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
+                borderRadius="0px"
+                justifyContent="center"
+              />
+              )}
+              <InterceptionLoader />
 
-                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                  <PrismicPreview repositoryName={repositoryName}>
-                    <Component {...pagePropsData} />
-                  </PrismicPreview>
-                </PrismicProvider>
+              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                <PrismicPreview repositoryName={repositoryName}>
+                  <Component {...pagePropsData} />
+                </PrismicPreview>
+              </PrismicProvider>
 
-                <Footer pageProps={pagePropsData} />
-              </Fragment>
+              <Footer pageProps={pagePropsData} />
             </ConnectionProvider>
           </SessionProvider>
         </AuthProvider>
