@@ -699,7 +699,7 @@ function StudentReport() {
               const template = activitiesTemplate[kind];
 
               const isTask = activity.related?.type === 'assignments.Task';
-              const isWorkshop = activity.kind === 'event_checkin_created' || activity.kind === 'event_checkin_assisted';
+              const isWorkshop = kind === 'event_checkin_created' || kind === 'event_checkin_assisted';
               return isTask || isWorkshop ? (
                 <Link
                   href={isTask ? `/${assetsDictionary[activity.meta?.task_type]}/${activity.meta?.associated_slug}` : `/workshops/${activity.meta?.event_slug}`}
