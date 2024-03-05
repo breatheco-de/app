@@ -156,7 +156,7 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
                 minWidth="128px"
                 mt="8px"
                 onClick={() => setOpenUndoApproval(true)}
-                color="white"
+                color="currentColor"
                 borderRadius="3px"
                 fontSize="13px"
                 textTransform="uppercase"
