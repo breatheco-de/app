@@ -168,9 +168,9 @@ const breathecode = {
     };
   },
 
-  cohort: (query = {}) => {
+  cohort: (query = {}, isQueryConnector = false) => {
     const url = `${host}/admissions/academy`;
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, isQueryConnector);
     return {
       get: (id) => axios.get(`${url}/cohort/${id}`),
       join: (id) => breathecode.post(`${host}/admissions/cohort/${id}/join`),
@@ -201,7 +201,7 @@ const breathecode = {
           Authorization: withDefaultToken ? `Token ${BC_ACADEMY_TOKEN}` : undefined,
           ...axios.defaults.headers.common,
         });
-        return axios.get(`${host}/admissions/cohort/user?roles=STUDENT&cohorts=${cohortSlug}${qs}`, {
+        return axios.get(`${host}/admissions/cohort/user?cohorts=${cohortSlug}${qs}`, {
           headers,
         });
       },

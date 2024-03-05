@@ -534,3 +534,10 @@ body.chakra-ui-dark .anchorjs-link {
 .md-editor, .cm-theme, .md-editor-content-editor {
   height: 100% !important;
 }
+/* body {
+	overflow: auto !important;
+}
+
+nextjs-portal {
+	display: none;
+} */

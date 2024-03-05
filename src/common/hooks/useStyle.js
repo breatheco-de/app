@@ -49,6 +49,7 @@ const useStyle = () => {
     yellowDefault: '#FFB718',
     green: '#38A56A',
     greenLight: '#25BF6C',
+    greenLight2: '#A4FFBD',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
   };
   const input = {

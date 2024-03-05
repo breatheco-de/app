@@ -37,7 +37,7 @@ export const getServerSideProps = async ({ locale, query }) => {
   }
   const data = await generateCohortSyllabusModules(idInt);
 
-  const members = await bc.cohort().getStudents2(data.cohort.slug, true)
+  const members = await bc.cohort({ roles: 'STUDENT' }).getStudents2(data.cohort.slug, true)
     .then((resp) => resp.data)
     .catch((err) => error('Error fetching cohort users:', err));
 
