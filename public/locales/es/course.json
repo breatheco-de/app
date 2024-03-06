@@ -1,0 +1,24 @@
+{
+  "faq": [
+    {
+      "id": 1,
+      "title": "¿Necesito conocimientos previos?",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, beatae. Debitis deleniti, molestiae ducimus aliquid voluptatem delectus, a neque, eaque dolor eum consectetur minima fugit aliquam! Veritatis totam laudantium magnam?"
+    },
+    {
+      "id": 2,
+      "title": "¿Cómo funciona la mentoría?",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident hic et porro laborum similique blanditiis, exercitationem rerum rem, harum repudiandae iure cum corporis ratione commodi. Ab voluptatibus commodi iure ut."
+    },
+    {
+      "id": 3,
+      "title": "¿Qué necesito para empezar?",
+      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis molestiae eius eligendi odit. Nostrum tempora animi molestiae sapiente, quaerat sit illo repellat neque aut non iusto harum minus error quis."
+    },
+    {
+      "id": 4,
+      "title": "y Más",
+      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
+    }
+  ]
+}

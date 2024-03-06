@@ -32,6 +32,7 @@ module.exports = {
     '/thank-you': ['thank-you'],
     '/workshops/[event_slug]': ['workshops', 'signup'],
     '/join/cohort/[id]': ['dashboard', 'signup'],
+    '/bootcamp/[course_slug]': ['course'],
   },
   locales: ['en', 'es'],
   defaultLocale: 'en',

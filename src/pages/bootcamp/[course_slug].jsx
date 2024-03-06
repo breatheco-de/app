@@ -2,6 +2,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Flex, Image, Link } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import { parseQuerys } from '../../utils/url';
 import { BREATHECODE_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
@@ -15,6 +16,7 @@ import { adjustNumberBeetwenMinMax } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
+import AcordionList from '../../common/components/AcordionList';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -68,7 +70,9 @@ function Page({ data }) {
     members: [],
     isLoading: true,
   });
-  const { hexColor } = useStyle();
+  const { hexColor, fontColor } = useStyle();
+  const { t } = useTranslation('course');
+  const faqList = t('faq', {}, { returnObjects: true });
   const limitViewStudents = 3;
   const students = cohortData?.members.length > 0 ? cohortData?.members?.filter((student) => student.role === 'STUDENT') : [];
   const technologiesString = cohortData.isLoading === false && cohortData?.cohortSyllabus?.syllabus?.main_technologies.split(',').join(', ');
@@ -92,6 +96,7 @@ function Page({ data }) {
 
   // console.log('cohortData:::', cohortData);
   // console.log('data:::', data);
+  // console.log('faqList:::', faqList);
 
   return (
     <Flex flexDirection="column">
@@ -211,7 +216,7 @@ function Page({ data }) {
           icon=""
           buttonText="Try Rigobot for free"
         >
-          <Text>
+          <Text size="14px">
             Rigobot is our AI model that&apos;s being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!
           </Text>
         </OneColumnWithIcon>
@@ -220,6 +225,18 @@ function Page({ data }) {
         {cohortData?.cohortSyllabus?.syllabus && (
           <CourseContent data={cohortData.cohortSyllabus.syllabus} />
         )}
+
+      </GridContainer>
+      {/* FAQ section */}
+      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor2}>
+        <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
+          <Heading as="h2" size="38px" textAlign="center">
+            FAQ
+          </Heading>
+
+          {/* update styles */}
+          <AcordionList list={faqList} color={fontColor} highlightColor={fontColor} />
+        </Flex>
       </GridContainer>
     </Flex>
   );
