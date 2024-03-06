@@ -16,9 +16,9 @@ import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 
 function ShowOnSignUp({
-  headContent, title, description, childrenDescription, subContent, submitText, padding, isLive,
+  headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
-  conversionTechnologies, setNoConsumablesFound, ...rest
+  conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -86,7 +86,7 @@ function ShowOnSignUp({
       {headContent}
       {subContent}
 
-      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || '0 18px 18px'}>
+      <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || (footerContent ? '0 18px 0 18px' : '0 18px 18px')}>
         {title && (
           <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
             {title}
@@ -129,12 +129,13 @@ function ShowOnSignUp({
             <Signup
               columnLayout
               showLoginLink
+              invertHandlerPosition={invertHandlerPosition}
               showVerifyEmail={false}
               formProps={formProps}
               setFormProps={setFormProps}
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
-              buttonStyles={{ background: hexColor.greenLight }}
+              buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .finally(() => {
@@ -146,11 +147,12 @@ function ShowOnSignUp({
                     });
                   });
               }}
+              formContainerStyle={formContainerStyle}
             />
           </Box>
         )}
       </Box>
-
+      {footerContent}
       <ModalInfo
         isOpen={showAlreadyMember}
         headerStyles={{ textAlign: 'center' }}
@@ -251,6 +253,10 @@ ShowOnSignUp.propTypes = {
   isLive: PropTypes.bool,
   existsConsumables: PropTypes.bool,
   conversionTechnologies: PropTypes.string,
+  footerContent: PropTypes.node,
+  invertHandlerPosition: PropTypes.bool,
+  formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ShowOnSignUp.defaultProps = {
@@ -271,6 +277,10 @@ ShowOnSignUp.defaultProps = {
   isLive: false,
   existsConsumables: false,
   conversionTechnologies: null,
+  footerContent: null,
+  invertHandlerPosition: false,
+  formContainerStyle: {},
+  buttonStyles: {},
 };
 
 export default ShowOnSignUp;
