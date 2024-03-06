@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import Heading from './Heading';
 import Icon from './Icon';
 
-function OneColumnWithIcon({ icon, title, children, buttonText, handleButton, ...rest }) {
+function OneColumnWithIcon({ icon, color, background, title, children, buttonText, handleButton, ...rest }) {
   return (
-    <Flex alignItems="center" position="relative" mt="6.5rem" flexDirection="column" gridGap="16px" background="#00041A" padding="33px 24px 16px 24px" borderRadius="12px" {...rest}>
+    <Flex alignItems="center" color={color} position="relative" mt="4.5rem" flexDirection="column" gridGap="16px" background={background} padding="33px 24px 16px 24px" borderRadius="12px" {...rest}>
       <Flex mt="-6.5rem" alignSelf="center" alignItems="center" justifyContent="center" width="114px" height="114px" background="blue.default" borderRadius="50%">
         {icon ? (
           <Image src={icon} width="54px" height="54px" objectFit="cover" />
@@ -32,6 +32,8 @@ OneColumnWithIcon.propTypes = {
   children: PropTypes.node,
   handleButton: PropTypes.func,
   buttonText: PropTypes.string,
+  color: PropTypes.string,
+  background: PropTypes.string,
 };
 OneColumnWithIcon.defaultProps = {
   icon: '',
@@ -39,6 +41,8 @@ OneColumnWithIcon.defaultProps = {
   children: null,
   handleButton: () => {},
   buttonText: '→',
+  color: 'white',
+  background: '#00041A',
 };
 
 export default OneColumnWithIcon;
