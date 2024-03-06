@@ -21,6 +21,7 @@ const useStyle = () => {
   const featuredLight = useColorModeValue('gray.light3', 'featuredDark');
   const colorMode = useColorModeValue('light', 'dark');
   const reverseColorMode = useColorModeValue('dark', 'light');
+  const complementaryBlue = useColorModeValue('blue.900', 'blue.600');
 
   const featuredCard = {
     background: useColorModeValue('white', '#181a1b'),
@@ -37,6 +38,7 @@ const useStyle = () => {
 
   const hexColor = {
     black: useColorModeValue('#000000', '#ffffff'),
+    disabledColor: useColorModeValue('#A4A4A4', '#CACACA'),
     fontColor3: useColorModeValue('#606060', '#EBEBEB'),
     borderColor: useColorModeValue('#DADADA', '#4A5568'),
     backgroundColor: useColorModeValue('#ffffff', '#17202A'),
@@ -88,6 +90,7 @@ const useStyle = () => {
     featuredCard,
     colorMode,
     reverseColorMode,
+    complementaryBlue,
   };
 };
 
