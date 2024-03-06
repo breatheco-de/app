@@ -17,6 +17,9 @@ import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import AcordionList from '../../common/components/AcordionList';
+import ShowOnSignUp from '../../common/components/ShowOnSignup';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import Instructors from '../../common/components/Instructors';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -70,19 +73,44 @@ function Page({ data }) {
     members: [],
     isLoading: true,
   });
-  const { hexColor, fontColor } = useStyle();
-  const { t } = useTranslation('course');
+  const { hexColor, fontColor, fontColor3, borderColor, complementaryBlue } = useStyle();
+  const { t, lang } = useTranslation('course');
   const faqList = t('faq', {}, { returnObjects: true });
   const limitViewStudents = 3;
-  const students = cohortData?.members.length > 0 ? cohortData?.members?.filter((student) => student.role === 'STUDENT') : [];
+  const students = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
+  const instructors = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
   const technologiesString = cohortData.isLoading === false && cohortData?.cohortSyllabus?.syllabus?.main_technologies.split(',').join(', ');
+  const getAssetCount = () => {
+    const assetType = {
+      lesson: 0,
+      project: 0,
+      quiz: 0,
+      exercise: 0,
+    };
+    if (cohortData?.cohortSyllabus?.syllabus?.modules?.length > 0) {
+      cohortData.cohortSyllabus.syllabus?.modules?.forEach((module) => {
+        module?.content.forEach((task) => {
+          if (task?.task_type) {
+            const taskType = task?.task_type?.toLowerCase();
+            assetType[taskType] += 1;
+          }
+        });
+      });
+    }
+
+    return assetType;
+  };
+  const assetCount = getAssetCount();
 
   const getInitialData = async (cohortId) => {
-    const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+    const cohortSyllabus = await generateCohortSyllabusModules(cohortId, lang);
 
-    const members = await bc.cohort({ roles: 'STUDENT' }, true).getStudents2(cohortSyllabus.cohort.slug, true)
+    const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: 541 }).getPublicMembers()
       .then((resp) => resp.data)
-      .catch((err) => error('Error fetching cohort users:', err));
+      .catch((err) => {
+        error('Error fetching cohort users:', err);
+        return [];
+      });
 
     setcohortData({
       cohortSyllabus,
@@ -97,10 +125,20 @@ function Page({ data }) {
   // console.log('cohortData:::', cohortData);
   // console.log('data:::', data);
   // console.log('faqList:::', faqList);
+  const icon = {
+    readings: 'book',
+    exercises: 'strength',
+    projects: 'laptop-code',
+  };
+  const assetCountByType = {
+    readings: assetCount.lesson,
+    exercises: assetCount.exercise,
+    projects: assetCount.project,
+  };
 
   return (
-    <Flex flexDirection="column">
-      <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px" mt="17px">
+    <Flex flexDirection="column" mt="2rem">
+      <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
         <Flex flexDirection="column" gridColumn="2 / span 8" gridGap="24px">
           {/* Title */}
           <Flex flexDirection="column" gridGap="16px">
@@ -110,9 +148,9 @@ function Page({ data }) {
                 Live bootcamp
               </Text>
             </Flex>
-            <Flex gridGap="16px" alignItems="center">
-              <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" />
-              <Heading as="h1" width="100%" size="64px" fontFamily="Space Grotesk Variable" fontWeight={700}>
+            <Flex gridGap="16px" flexDirection={{ base: 'column', md: 'row' }} alignItems="center">
+              {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
+              <Heading as="h1" width="100%" size={{ base: '42px', md: '64px' }} fontFamily="Space Grotesk Variable" fontWeight={700}>
                 {data?.course_translation?.title}
               </Heading>
             </Flex>
@@ -192,6 +230,7 @@ function Page({ data }) {
             </Flex>
 
             {/* Instructors component here */}
+            <Instructors list={instructors} />
 
             {/* Course description */}
             <Flex flexDirection="column" gridGap="16px">
@@ -206,8 +245,55 @@ function Page({ data }) {
             </Flex>
           </Flex>
         </Flex>
-        <Flex flexDirection="column" gridColumn="10 / span 4">
-          asdsads
+        <Flex flexDirection="column" gridColumn="10 / span 4" mt={{ base: '2rem', md: '0' }}>
+          <ShowOnSignUp
+            title="Joint cohort"
+            description="Create an account and start your bootcamp journey"
+            borderColor="green.400"
+            textAlign="center"
+            gridGap="11px"
+            formContainerStyle={{
+              gridGap: '0px',
+              margin: '0 0 7px 0',
+            }}
+            buttonStyles={{
+              margin: '24px auto 10px auto',
+              fontSize: '14px',
+              width: 'fit-content',
+            }}
+            invertHandlerPosition
+            headContent={(
+              <Flex flexDirection="column" position="relative">
+                <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" />
+                <ReactPlayerV2
+                  url="https://www.youtube.com/watch?v=2iUR01_S7N4&pp=ygUYNGdlZWtzYWNhZGVteSBqYXZhc2NyaXB0"
+                  withThumbnail
+                  withModal
+                  thumbnailStyle={{
+                    borderRadius: '17px 17px 0 0',
+                  }}
+                  margin="0 0 12px 0"
+                />
+              </Flex>
+            )}
+            footerContent={(
+              <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
+                {['readings', 'exercises', 'projects'].map((item, index) => (
+                  <Flex color={fontColor} justifyContent="space-between" borderBottom={index < 2 ? '1px solid' : ''} padding={index < 2 ? '0 0 8px' : '0'} borderColor={borderColor}>
+                    <Flex gridGap="10px">
+                      <Icon icon={icon[item]} width="23px" height="23px" color={hexColor.disabledColor} />
+                      <Text size="14px" color={fontColor3} fontWeight={700} lineHeight="normal">
+                        {t(item)}
+                      </Text>
+                    </Flex>
+                    <Text size="14px">
+                      {assetCountByType[item]}
+                    </Text>
+                  </Flex>
+                ))}
+              </Flex>
+            )}
+          />
         </Flex>
       </GridContainer>
       <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" withContainer gridColumn="2 / span 12">
@@ -216,16 +302,21 @@ function Page({ data }) {
           icon=""
           buttonText="Try Rigobot for free"
         >
-          <Text size="14px">
+          <Text size="14px" color="currentColor">
             Rigobot is our AI model that&apos;s being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!
           </Text>
         </OneColumnWithIcon>
 
         {/* CourseContent comopnent */}
         {cohortData?.cohortSyllabus?.syllabus && (
-          <CourseContent data={cohortData.cohortSyllabus.syllabus} />
+          <CourseContent data={cohortData.cohortSyllabus.syllabus} assetCount={assetCount} />
         )}
 
+      </GridContainer>
+      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor2}>
+        <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
+          Why learn with 4Geeks
+        </Flex>
       </GridContainer>
       {/* FAQ section */}
       <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor2}>
@@ -233,9 +324,21 @@ function Page({ data }) {
           <Heading as="h2" size="38px" textAlign="center">
             FAQ
           </Heading>
-
-          {/* update styles */}
-          <AcordionList list={faqList} color={fontColor} highlightColor={fontColor} />
+          <AcordionList
+            list={faqList}
+            color={fontColor}
+            highlightColor={complementaryBlue}
+            border="0px"
+            borderBottom="1px solid"
+            borderRadius="0"
+            borderBottomColor={borderColor}
+            containerStyles={{
+              gridGap: '0px',
+              border: '1px solid',
+              borderColor,
+              borderRadius: '11px',
+            }}
+          />
         </Flex>
       </GridContainer>
     </Flex>
