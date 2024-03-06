@@ -18,7 +18,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, allCohorts, allAcademySyllabus, programServices, subscriptions, subscriptionData,
+  width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -111,17 +111,11 @@ function Mentoring({
       services: values.services,
     }));
 
-    academyData.forEach((acad) => {
-      const syll = allAcademySyllabus.find((elem) => elem.id === acad.id);
-      // eslint-disable-next-line no-param-reassign
-      if (syll) acad.syllabus = syll.syllabus;
-    });
-
-    if (servicesSlugs.length > 0 || allAcademySyllabus.length > 0) {
+    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
       const mentors = academyData.map((academy) => bc.mentorship({
         services: academy.services.map((s) => s.slug).join(','),
         status: 'ACTIVE',
-        syllabus: academy.syllabus?.join(',') || slug,
+        syllabus: allSyllabus?.join(',') || slug,
         academy: academy.id,
       }).getMentor()
         .then((res) => {
@@ -235,14 +229,14 @@ Mentoring.propTypes = {
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   allCohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  allAcademySyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  allSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Mentoring.defaultProps = {
   width: '100%',
   subscriptions: [],
   allCohorts: [],
-  allAcademySyllabus: [],
+  allSyllabus: [],
 };
 
 export default memo(Mentoring);
