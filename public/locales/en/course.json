@@ -20,5 +20,9 @@
       "title": "and More",
       "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
     }
-  ]
+  ],
+  "readings": "Readings",
+  "exercises": "Exercises",
+  "projects": "Projects",
+  "quiz": "Quiz"
 }
