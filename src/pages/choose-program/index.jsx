@@ -110,23 +110,17 @@ function chooseProgram() {
     return members;
   };
 
-  const groupSyllabusByAcademy = () => {
-    const academies = [];
+  const getAllSyllabus = () => {
+    const syllabus = [];
     const allCohorts = dataQuery?.cohorts || [];
-    // eslint-disable-next-line array-callback-return
-    allCohorts.map(({ cohort }) => {
-      const currentIndex = academies.findIndex((acad) => acad.id === cohort.academy.id);
-      if (currentIndex === -1) {
-        academies.push({
-          id: cohort.academy.id,
-          syllabus: [cohort.syllabus_version.slug],
-        });
-      } else if (!academies[currentIndex].syllabus.includes(cohort.syllabus_version.slug)) academies[currentIndex].syllabus.push(cohort.syllabus_version.slug);
+
+    allCohorts.forEach(({ cohort }) => {
+      if (!syllabus.includes(cohort.syllabus_version.slug)) syllabus.push(cohort.syllabus_version.slug);
     });
-    return academies;
+    return syllabus;
   };
 
-  const allAcademySyllabus = useMemo(groupSyllabusByAcademy, [dataQuery]);
+  const allSyllabus = useMemo(getAllSyllabus, [dataQuery]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -568,7 +562,7 @@ function chooseProgram() {
             {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
                 allCohorts={dataQuery?.cohorts}
-                allAcademySyllabus={allAcademySyllabus}
+                allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
