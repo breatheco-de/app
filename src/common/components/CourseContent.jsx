@@ -1,32 +1,15 @@
 import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 
-function CourseContent({ data }) {
+function CourseContent({ data, assetCount }) {
   const { hexColor } = useStyle();
-
-  const getAssetCount = () => {
-    const assetType = {
-      lesson: 0,
-      project: 0,
-      quiz: 0,
-      exercise: 0,
-    };
-    data?.modules.forEach((module) => {
-      module?.content.forEach((task) => {
-        if (task?.task_type) {
-          const taskType = task?.task_type?.toLowerCase();
-          assetType[taskType] += 1;
-        }
-      });
-    });
-
-    return assetType;
-  };
-  const assetCount = getAssetCount();
+  const { t } = useTranslation('course');
+  const contentCountString = `${assetCount.lesson} ${t('readings')}, ${assetCount.exercise} ${t('exercises')}, ${assetCount.project} ${t('projects')}`;
 
   return (
     <Flex gridGap="12px" flexDirection="column" my="100px">
@@ -34,7 +17,7 @@ function CourseContent({ data }) {
         Course Content
       </Heading>
       <Text size="14px" color={hexColor.fontColor2}>
-        {`${assetCount.lesson} Readings, ${assetCount.exercise} Exercises, ${assetCount.project} Projects`}
+        {contentCountString}
       </Text>
 
       <AcordionList list={data?.modules} />
@@ -43,6 +26,7 @@ function CourseContent({ data }) {
 }
 CourseContent.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])),
+  assetCount: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 CourseContent.defaultProps = {
   data: {},
