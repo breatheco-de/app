@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { calculateDifferenceDays, isPlural, removeStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, getStorageItem, isPlural, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -28,7 +28,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
 import axios from '../../axios';
-import Feedback from '../../common/components/Feedback';
+// import Feedback from '../../common/components/Feedback';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -64,6 +64,10 @@ function chooseProgram() {
   const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [welcomeModal, setWelcomeModal] = useState(false);
+  const [lateModalProps, setLateModalProps] = useState({
+    isOpen: false,
+    data: [],
+  });
   const [mentorshipServices, setMentorshipServices] = useState({
     isLoading: true,
     data: [],
@@ -74,6 +78,7 @@ function chooseProgram() {
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
+  const isClosedLateModal = getStorageItem('isClosedLateModal');
   const TwelveHoursInMinutes = 720;
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
   const welcomeVideoLinks = {
@@ -105,23 +110,17 @@ function chooseProgram() {
     return members;
   };
 
-  const groupSyllabusByAcademy = () => {
-    const academies = [];
+  const getAllSyllabus = () => {
+    const syllabus = [];
     const allCohorts = dataQuery?.cohorts || [];
-    // eslint-disable-next-line array-callback-return
-    allCohorts.map(({ cohort }) => {
-      const currentIndex = academies.findIndex((acad) => acad.id === cohort.academy.id);
-      if (currentIndex === -1) {
-        academies.push({
-          id: cohort.academy.id,
-          syllabus: [cohort.syllabus_version.slug],
-        });
-      } else if (!academies[currentIndex].syllabus.includes(cohort.syllabus_version.slug)) academies[currentIndex].syllabus.push(cohort.syllabus_version.slug);
+
+    allCohorts.forEach(({ cohort }) => {
+      if (!syllabus.includes(cohort.syllabus_version.slug)) syllabus.push(cohort.syllabus_version.slug);
     });
-    return academies;
+    return syllabus;
   };
 
-  const allAcademySyllabus = useMemo(groupSyllabusByAcademy, [dataQuery]);
+  const allSyllabus = useMemo(getAllSyllabus, [dataQuery]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -167,6 +166,11 @@ function chooseProgram() {
       const hasAvailableAsSaas = cohorts.some((elem) => elem.cohort.available_as_saas === true);
       const cohortsSlugs = cohorts.map((elem) => elem.cohort.slug).join(',');
       const cohortsAcademies = cohorts.map((elem) => elem.cohort.academy.slug).join(',');
+      const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
+      setLateModalProps({
+        isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
+        data: cohortWithFinantialStatusLate,
+      });
 
       setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
@@ -246,16 +250,16 @@ function chooseProgram() {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
       dataQuery?.cohorts.map(async (item) => {
         if (item?.cohort?.slug) {
+          const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
           const { academy, syllabus_version: syllabusVersion } = item.cohort;
-
           const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
-          const studentAndTeachers = await bc.cohort({
+          const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
             role: 'TEACHER,ASSISTANT',
             cohorts: item?.cohort?.slug,
             academy: item?.cohort?.academy?.id,
           }).getMembers();
-          const teacher = studentAndTeachers?.data.filter((st) => st.role === 'TEACHER');
-          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT');
+          const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
+          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
           const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
           handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
             .then((assignmentData) => {
@@ -390,7 +394,26 @@ function chooseProgram() {
           />
         </Box>
       </SimpleModal>
-      <Flex minHeight="81lvh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
+      <SimpleModal
+        maxWidth="30rem"
+        isOpen={lateModalProps.isOpen}
+        title={t('late-payment.title')}
+        onClose={() => {
+          setLateModalProps({ ...lateModalProps, isOpen: false });
+          setStorageItem('isClosedLateModal', true);
+        }}
+      >
+        <Text
+          size="md"
+          dangerouslySetInnerHTML={{
+            __html: t('late-payment.description', {
+              cohort_name: lateModalProps.data[0]?.cohort?.name,
+              academy_name: lateModalProps.data?.[0]?.cohort?.academy?.name,
+            }),
+          }}
+        />
+      </SimpleModal>
+      <Flex minHeight="81vh" flexDirection={{ base: 'column', md: 'row' }} gridGap="2rem" maxWidth="1200px" flexFlow={{ base: 'column-reverse', md: '' }} width="100%" margin="0 auto" padding={{ base: '0 10px', md: '0 40px' }}>
         <Box flex={{ base: 1, md: 0.7 }}>
           <Flex flexDirection={{ base: 'column-reverse', md: 'row' }} gridGap={{ base: '1rem', md: '3.5rem' }} position="relative">
             <Box width="100%" flex={{ base: 1, md: 0.7 }}>
@@ -475,7 +498,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} />
+              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (
@@ -539,13 +562,13 @@ function chooseProgram() {
             {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
                 allCohorts={dataQuery?.cohorts}
-                allAcademySyllabus={allAcademySyllabus}
+                allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
               />
             )}
           </Box>
-          <Feedback />
+          {/* <Feedback /> */}
 
           {dataQuery?.cohorts?.length > 0 && (
             <NextChakraLink

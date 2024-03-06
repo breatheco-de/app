@@ -18,6 +18,7 @@ import { usePersistent } from '../../common/hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalCardError from './ModalCardError';
 import { SILENT_CODE } from '../../lib/types';
+import { reportDatalayer } from '../../utils/requests';
 
 function ServiceSummary({ service }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -74,6 +75,24 @@ function ServiceSummary({ service }) {
     bc.payment().service().payConsumable(dataToAssign)
       .then((res) => {
         if (res && res?.status < 400) {
+          reportDatalayer({
+            dataLayer: {
+              event: 'purchase',
+              ecommerce: {
+              // transaction_id: '12345',
+                affiliation: '4Geeks',
+                value: selectedService.priceDiscounted,
+                currency: 'USD',
+                items: [{
+                  item_name: selectedService.title,
+                  item_id: selectedService?.id,
+                  price: selectedService.priceDiscounted,
+                  item_brand: '4Geeks',
+                  item_category: service.serviceInfo.type,
+                  quantity: 1,
+                }],
+              },
+            } });
           setPurchaseCompleted(true);
           setConfirmationOpen(false);
         }
@@ -110,10 +129,48 @@ function ServiceSummary({ service }) {
   };
 
   const handleSubmit = async (_, values) => {
+    if (selectedService?.id) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'select_item',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            items: [{
+              item_name: selectedService.title,
+              item_id: selectedService?.id,
+              price: selectedService.priceDiscounted,
+              item_brand: '4Geeks',
+              item_category: service.serviceInfo.type,
+              quantity: selectedService?.qty,
+            }],
+          },
+        },
+      });
+    }
     const resp = await bc.payment().addCard(values);
     const data = await resp.json();
     setIsSubmittingCard(false);
     if (resp.ok) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'add_payment_info',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            payment_type: 'Credit Card',
+            items: [
+              {
+                item_id: selectedService?.id,
+                item_name: selectedService?.title,
+                item_brand: '4Geeks',
+                item_category: service.serviceInfo.type,
+                price: selectedService?.priceDiscounted,
+                quantity: selectedService?.qty,
+              },
+            ],
+          },
+        } });
       setConfirmationOpen(true);
     } else {
       setOpenDeclinedModal(true);
@@ -121,9 +178,31 @@ function ServiceSummary({ service }) {
     }
   };
 
+  const handleSelectService = (item) => {
+    setSelectedService(item);
+  };
+
   useEffect(() => {
-    if (service.list.length === 1) {
-      setSelectedService(service.list[0]);
+    if (service?.list?.length === 1) {
+      handleSelectService(service.list[0]);
+    }
+    if (service?.list?.length > 0) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'view_item_list',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            items: service?.list.map((item) => ({
+              item_name: item?.title,
+              item_id: item?.id,
+              price: item?.priceDiscounted,
+              item_brand: '4Geeks',
+              item_category: service?.serviceInfo?.type,
+              quantity: item?.qty,
+            })),
+          },
+        } });
     }
   }, [service]);
 
@@ -226,7 +305,7 @@ function ServiceSummary({ service }) {
                       {t('consumables.select-bundle')}
                     </Heading>
                     {selectedService?.id && service.list.length > 1 && (
-                      <Button fontSize="14px" variant="link" onClick={() => setSelectedService({})}>
+                      <Button fontSize="14px" variant="link" onClick={() => handleSelectService({})}>
                         {t('consumables.change-my-selection')}
                       </Button>
                     )}
@@ -239,7 +318,7 @@ function ServiceSummary({ service }) {
                           key={`${item?.slug}-${item?.title}`}
                           display="flex"
                           onClick={() => {
-                            setSelectedService(item);
+                            handleSelectService(item);
                           }}
                           flexDirection="row"
                           width="100%"

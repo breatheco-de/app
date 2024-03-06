@@ -18,7 +18,7 @@ import useAuth from '../../hooks/useAuth';
 import { usePersistent } from '../../hooks/usePersistent';
 
 function Mentoring({
-  width, allCohorts, allAcademySyllabus, programServices, subscriptions, subscriptionData,
+  width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
@@ -96,27 +96,32 @@ function Mentoring({
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.list.map((service) => service?.slug);
 
-    if (servicesSlugs.length > 0 || allAcademySyllabus.length > 0) {
-      const mentors = programServices.list.map((service) => bc.mentorship({
-        services: service?.slug,
+    const academies = {};
+    programServices.list.forEach((service) => {
+      const { academy, ...restOfService } = service;
+      if (!academies[academy.id]) {
+        academies[academy.id] = { services: [] };
+      }
+      academies[academy.id].services.push(restOfService);
+    });
+
+    // Convert the object to an array of academies with their services
+    const academyData = Object.entries(academies).map(([academy, values]) => ({
+      id: Number(academy),
+      services: values.services,
+    }));
+
+    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
+      const mentors = academyData.map((academy) => bc.mentorship({
+        services: academy.services.map((s) => s.slug).join(','),
         status: 'ACTIVE',
-        syllabus: slug,
-        academy: service.academy.id,
+        syllabus: allSyllabus?.join(',') || slug,
+        academy: academy.id,
       }).getMentor()
         .then((res) => {
           const allMentors = res?.data;
           return allMentors;
         }));
-      const metorsBySyllabus = allAcademySyllabus.map((elem) => bc.mentorship({
-        status: 'ACTIVE',
-        syllabus: elem.syllabus.join(','),
-        academy: elem.id,
-      }).getMentor()
-        .then((res) => {
-          const allMentors = res?.data;
-          return allMentors;
-        }));
-      mentors.concat(metorsBySyllabus);
       const mentorsList = (await Promise.all(mentors)).flat();
       return mentorsList;
     }
@@ -224,14 +229,14 @@ Mentoring.propTypes = {
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   allCohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  allAcademySyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  allSyllabus: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 Mentoring.defaultProps = {
   width: '100%',
   subscriptions: [],
   allCohorts: [],
-  allAcademySyllabus: [],
+  allSyllabus: [],
 };
 
 export default memo(Mentoring);

@@ -109,8 +109,8 @@ function Module({
   };
 
   const handleOpen = async (onOpen = () => {}) => {
-    const taskIsAprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
-    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsAprovedOrRejected)) {
+    const taskIsApprovedOrRejected = currentTask?.revision_status === 'APPROVED' || currentTask?.revision_status === 'REJECTED';
+    if (currentTask && currentTask?.task_type === 'PROJECT' && (currentTask.task_status === 'DONE' || taskIsApprovedOrRejected)) {
       const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
       if (assetResp?.status < 400) {
         const assetData = await assetResp.data;

@@ -27,7 +27,7 @@ function Card({ card }) {
   //   return () => clearInterval(intervalId);
   // }, []);
 
-  const formatedDescription = description.length > 39 ? `${description.substring(0, 40)}...` : description;
+  const formatedDescription = description;
 
   const handlePrev = () => {
     setCurrentIndex((curr) => (curr - 1 < 0 ? images.length - 1 : curr - 1));
@@ -145,20 +145,22 @@ function MktTrustCards({
   }, []);
 
   return (
-    <Box id={id} padding={{ base: '30px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} fontFamily={fontFamily} {...rest}>
-      <Box paddingBottom="50px" textAlign="center" px="10px" borderRadius="3px">
-        <Heading as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
+    <Box id={id} padding={{ base: '20px', md: '0' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
+      <Box paddingBottom="50px" textAlign="center" px={{ base: '10px', md: '128px' }} borderRadius="3px">
+        <Heading fontFamily={fontFamily} as="h2" fontSize="40px" color={slice?.primary?.font_color} marginBottom="21px">
           {title}
         </Heading>
         {slice?.primary?.description ? (
           <PrismicTextComponent
             color={slice?.primary?.font_color}
             field={slice?.primary?.description}
+            fontSize="21px"
+            lineHeight="24px"
           />
         ) : (
           <Text
-            fontSize="18px"
-            lineHeight="21px"
+            fontSize="21px"
+            lineHeight="24px"
             color={fontColor2}
           >
             {description}

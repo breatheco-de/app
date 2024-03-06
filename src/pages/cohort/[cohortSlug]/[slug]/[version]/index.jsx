@@ -42,9 +42,8 @@ import useHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
-import FinalProjectModal from '../../../../../common/components/FinalProject/Modal';
 import useStyle from '../../../../../common/hooks/useStyle';
-import Feedback from '../../../../../common/components/Feedback';
+// import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
@@ -64,10 +63,8 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
-  const [isOpenFinalProject, setIsOpenFinalProject] = useState(false);
   const { featuredColor } = useStyle();
 
-  const [session, setSession] = usePersistent('session', {});
   const { user, choose, isLoading, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -175,25 +172,26 @@ function Dashboard() {
         });
       });
   };
-
   useEffect(() => {
     if (isAuthenticated) {
       bc.admissions().me()
         .then((resp) => {
           const data = resp?.data;
           const cohorts = data?.cohorts;
-          const isToShowGithubMessage = cohorts?.some(
-            (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-          );
-          setIsAvailableToShowModalMessage(isToShowGithubMessage);
+          const currentCohort = cohorts?.find((l) => l?.cohort?.slug === cohortSlug);
+          if (currentCohort?.finantial_status === 'LATE' || currentCohort?.educational_status === 'SUSPENDED') {
+            router.push('/choose-program');
+          } else {
+            const isReadyToShowGithubMessage = cohorts?.some(
+              (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+            );
+            setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
+          }
         });
     }
   }, [isAuthenticated]);
 
   useEffect(() => {
-    if (cohortSession?.stage === 'FINAL_PROJECT' && session?.closedFinalProjectModal !== true) {
-      setIsOpenFinalProject(true);
-    }
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
@@ -359,16 +357,6 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      <FinalProjectModal
-        isOpen={isOpenFinalProject}
-        closeOnOverlayClick={false}
-        closeModal={() => {
-          setIsOpenFinalProject(false);
-          setSession({ ...session, closedFinalProjectModal: true });
-        }}
-        studentsData={onlyStudentsActive}
-        cohortData={cohortSession}
-      />
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
@@ -509,7 +497,16 @@ function Dashboard() {
                 />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                  <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
+                  <SupportSidebar
+                    allCohorts={[{
+                      cohort: {
+                        ...cohortSession,
+                        ...cohortSession?.cohort_user,
+                      },
+                    }]}
+                    subscriptions={allSubscriptions}
+                    subscriptionData={subscriptionData}
+                  />
                 )}
               </Box>
             )}
@@ -731,9 +728,18 @@ function Dashboard() {
               />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
-                <SupportSidebar subscriptions={allSubscriptions} subscriptionData={subscriptionData} />
+                <SupportSidebar
+                  allCohorts={[{
+                    cohort: {
+                      ...cohortSession,
+                      ...cohortSession?.cohort_user,
+                    },
+                  }]}
+                  subscriptions={allSubscriptions}
+                  subscriptionData={subscriptionData}
+                />
               )}
-              <Feedback />
+              {/* <Feedback /> */}
             </Box>
           )}
         </Flex>

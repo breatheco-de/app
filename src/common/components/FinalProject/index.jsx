@@ -30,11 +30,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
   const cohortSlug = router?.query?.cohortSlug;
 
   const openModal = () => {
-    if (repoUrl) {
-      setOpenForm(true);
-    } else {
-      setIsOpen(true);
-    }
+    setOpenForm(true);
   };
   const closeModal = () => setIsOpen(false);
 
@@ -76,6 +72,8 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
               currentProject,
               allProjects: res?.data,
             });
+          } else {
+            setIsOpen(true);
           }
         });
     }

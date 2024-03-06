@@ -9,9 +9,10 @@ const TrustCards = ({ slice }) => {
   return (
     <MktTrustCards
       id={slice?.primary?.id_key}
+      slice={slice}
       title={slice?.primary?.title}
-      description={slice?.primary?.description}
       fontFamily={slice?.primary?.fontFamily}
+      padding={{ base: '20px', md: '0' }}
     />
   );
 };

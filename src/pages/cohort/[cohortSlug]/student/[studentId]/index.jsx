@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-curly-brace-presence */
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -97,6 +97,12 @@ const activitiesTemplate = {
     icon: 'success',
     label: 'mentorship_session_checkout',
   },
+};
+
+const assetsDictionary = {
+  LESSON: 'lesson',
+  EXERCISE: 'interactive-exercise',
+  PROJECT: 'interactive-coding-tutorial',
 };
 
 function StudentReport() {
@@ -275,12 +281,12 @@ function StudentReport() {
             label: t('analitics.percentage-attendance'),
             icon: 'list',
             variationColor: hexColor.blueDefault,
-            value: `${Math.round(attendancePercentage * 100) / 100}%`,
+            value: `${(Math.round(attendancePercentage * 100) / 100 || 0)}%`,
           }, {
             label: t('analitics.nps'),
             icon: 'smile',
             variationColor: hexColor.green,
-            value: Math.round(npsAnswered * 100) / 100,
+            value: (Math.round(npsAnswered * 100) / 100),
             max: 10,
           }]);
 
@@ -295,7 +301,8 @@ function StudentReport() {
 
   const lessonStyles = {
     COMPLETED: hexColor.green,
-    UNREAD: hexColor.danger,
+    // UNREAD: hexColor.danger,
+    UNREAD: hexColor.fontColor3,
     STARTED: hexColor.yellowDefault,
     'NOT-OPENED': hexColor.fontColor3,
   };
@@ -527,8 +534,9 @@ function StudentReport() {
           </Box>
         )}
         <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
-          {isFetching && [...Array(4).keys()].map(() => (
-            <SimpleSkeleton borderRadius="10px" height="108px" width="100%" />
+          {isFetching && [...Array(4).keys()].map((e, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <SimpleSkeleton key={`skeleton-${i}`} borderRadius="10px" height="108px" width="100%" />
           ))}
           {!isFetching && report.map((elem) => (
             <KPI
@@ -689,8 +697,36 @@ function StudentReport() {
             {activities.map((activity) => {
               const { kind } = activity;
               const template = activitiesTemplate[kind];
-              return (
-                <Flex my="20px" alignItems="center">
+
+              const isTask = activity.related?.type === 'assignments.Task';
+              const isWorkshop = kind === 'event_checkin_created' || kind === 'event_checkin_assisted';
+              return isTask || isWorkshop ? (
+                <Link
+                  href={isTask ? `/${assetsDictionary[activity.meta?.task_type]}/${activity.meta?.associated_slug}` : `/workshops/${activity.meta?.event_slug}`}
+                  target="_blank"
+                  key={activity.id}
+                >
+                  <Flex my="20px" alignItems="center">
+                    <Box padding="10px">
+                      <Icon icon={template?.icon} width="18px" height="18px" color={hexColor.blueDefault} />
+                    </Box>
+                    <Box>
+                      <Text textTransform="uppercase" color={hexColor.fontColor2} fontWeight="700">
+                        {template?.label ? t(`${activityLabelPrexif}${template.label}`) : kind}
+                      </Text>
+                      {isTask && (
+                        <Text textTransform="uppercase" color={hexColor.fontColor2} fontWeight="700">
+                          {activity.meta?.title}
+                        </Text>
+                      )}
+                      <Text color={hexColor.fontColor2}>
+                        {format(new Date(activity.timestamp), 'MM/dd/yyyy')}
+                      </Text>
+                    </Box>
+                  </Flex>
+                </Link>
+              ) : (
+                <Flex key={activity.id} my="20px" alignItems="center">
                   <Box padding="10px">
                     <Icon icon={template?.icon} width="18px" height="18px" color={hexColor.blueDefault} />
                   </Box>
