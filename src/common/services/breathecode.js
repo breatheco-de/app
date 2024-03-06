@@ -195,6 +195,7 @@ const breathecode = {
           headers,
         });
       },
+      getPublicMembers: () => axios.get(`${host}/admissions/public/cohort/user${qs}`),
       // get students without academy header
       getStudents2: (cohortSlug, withDefaultToken = false) => {
         const headers = cleanObject({
