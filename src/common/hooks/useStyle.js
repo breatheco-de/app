@@ -43,6 +43,7 @@ const useStyle = () => {
     borderColor: useColorModeValue('#DADADA', '#4A5568'),
     backgroundColor: useColorModeValue('#ffffff', '#17202A'),
     featuredColor: useColorModeValue('#EEF9FE', '#283340'),
+    featuredColor2: useColorModeValue('#F5F8FF', '#283340'),
     lightColor: useColorModeValue('#F5F5F5', '#4A5568'),
     lightColor2: useColorModeValue('#F5F5F5', '#283340'),
     white2: useColorModeValue('#ffffff', '#283340'),
