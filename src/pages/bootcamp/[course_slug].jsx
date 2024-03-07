@@ -1,6 +1,6 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Flex, Image, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { parseQuerys } from '../../utils/url';
@@ -16,10 +16,10 @@ import { adjustNumberBeetwenMinMax } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
-import AcordionList from '../../common/components/AcordionList';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
+import Faq from '../../common/components/Faq';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -76,6 +76,7 @@ function Page({ data }) {
   const { hexColor, fontColor, fontColor3, borderColor, complementaryBlue } = useStyle();
   const { t, lang } = useTranslation('course');
   const faqList = t('faq', {}, { returnObjects: true });
+  const features = t('features', {}, { returnObjects: true });
   const limitViewStudents = 3;
   const students = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
   const instructors = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
@@ -282,7 +283,7 @@ function Page({ data }) {
                   <Flex color={fontColor} justifyContent="space-between" borderBottom={index < 2 ? '1px solid' : ''} padding={index < 2 ? '0 0 8px' : '0'} borderColor={borderColor}>
                     <Flex gridGap="10px">
                       <Icon icon={icon[item]} width="23px" height="23px" color={hexColor.disabledColor} />
-                      <Text size="14px" color={fontColor3} fontWeight={700} lineHeight="normal">
+                      <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="normal">
                         {t(item)}
                       </Text>
                     </Flex>
@@ -313,31 +314,72 @@ function Page({ data }) {
         )}
 
       </GridContainer>
-      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor2}>
-        <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
-          Why learn with 4Geeks
+      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.featuredColor2}>
+        <Flex padding="40px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="64px">
+          <Flex flexDirection="column" gridGap="4rem">
+            <Heading size="24px" textAlign="center">
+              Why learn with
+              {' '}
+              <Box as="span" color="blue.default">4Geeks</Box>
+              ?
+            </Heading>
+            <Flex gridGap="2rem">
+              {features.list.map((item) => (
+                <Flex flex={0.33} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor}>
+                  <Flex gridGap="8px" alignItems="center">
+                    <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
+                    <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
+                      {item.title}
+                    </Heading>
+                  </Flex>
+                  <Text
+                    size="14px"
+                    lineHeight="normal"
+                    dangerouslySetInnerHTML={{ __html: item.description }}
+                  />
+                </Flex>
+              ))}
+            </Flex>
+          </Flex>
+          <Flex gridGap="2rem">
+            <Flex flex={0.5} flexDirection="column" gridGap="24px">
+              <Heading size="24px" lineHeight="normal">
+                {features['what-is-learnpack'].title}
+              </Heading>
+              <Text size="18px" lineHeight="normal" color={fontColor3}>
+                {features['what-is-learnpack'].description}
+              </Text>
+              <Button variant="default" width="fit-content">
+                {features['what-is-learnpack'].button}
+              </Button>
+            </Flex>
+            <Flex flex={0.5} flexDirection="column" gridGap="24px">
+              <Image src="/static/images/github-repo-preview.png" width="100%" height="100%" aspectRatio="16 / 9" borderRadius="11px" />
+            </Flex>
+          </Flex>
         </Flex>
       </GridContainer>
       {/* FAQ section */}
-      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor2}>
+      <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor3}>
         <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
-          <Heading as="h2" size="38px" textAlign="center">
-            FAQ
-          </Heading>
-          <AcordionList
-            list={faqList}
-            color={fontColor}
-            highlightColor={complementaryBlue}
-            border="0px"
-            borderBottom="1px solid"
-            borderRadius="0"
-            borderBottomColor={borderColor}
-            containerStyles={{
-              gridGap: '0px',
-              border: '1px solid',
-              borderColor,
-              borderRadius: '11px',
+          <Faq
+            background="transparent"
+            headingStyle={{
+              margin: '0px',
+              fontSize: '38px',
+              padding: '0 0 24px',
             }}
+            padding="0px 15px 15px"
+            highlightColor={complementaryBlue}
+            acordionContainerStyle={{
+              background: hexColor.white2,
+              borderRadius: '15px',
+            }}
+            hideLastBorder
+            items={faqList.map((l) => ({
+              label: l.title,
+              answer: l.description,
+            }))}
           />
         </Flex>
       </GridContainer>
