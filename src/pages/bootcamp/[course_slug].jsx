@@ -314,6 +314,20 @@ function Page({ data }) {
         )}
 
       </GridContainer>
+      <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" withContainer gridColumn="2 / span 12">
+        <Flex flexDirection="column" gridGap="16px">
+          <Heading size="24px" lineHeight="normal" textAlign="center">
+            What you will
+            {' '}
+            <Box as="span" color="blue.default">build</Box>
+          </Heading>
+          <Text size="18px" textAlign="center">
+            This bootcamp is full of practical exercises that will help you improve your experience and build a great portfolio.
+            Enter the world of work by building real projects like these:
+          </Text>
+        </Flex>
+      </GridContainer>
+
       <GridContainer width="100%" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.featuredColor2}>
         <Flex padding="40px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="64px">
           <Flex flexDirection="column" gridGap="4rem">
