@@ -34,6 +34,10 @@ a.black-link {
   text-decoration: underline;
 }
 
+*.link-underlined {
+  text-decoration: underline;
+  cursor: pointer;
+}
 *.link {
   color: #0097CD;
 }
