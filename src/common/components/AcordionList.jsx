@@ -2,9 +2,9 @@ import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPane
 import PropTypes from 'prop-types';
 import Heading from './Heading';
 
-function AcordionList({ list, color, highlightColor, containerStyles, ...rest }) {
+function AcordionList({ defaultIndex, allowMultiple, list, color, highlightColor, containerStyles, ...rest }) {
   return list?.length > 0 && (
-    <Accordion allowMultiple display="flex" flexDirection="column" gridGap="16px" {...containerStyles}>
+    <Accordion defaultIndex={defaultIndex} allowMultiple={allowMultiple} display="flex" flexDirection="column" gridGap="16px" {...containerStyles}>
       {list?.map((item, i) => (
         <AccordionItem display="flex" gridGap="10px" flexDirection="column" key={item?.title} border="1px solid" borderColor="blue.default" borderRadius="17px" {...rest} borderBottom={rest?.borderBottom && i < list.length - 1 ? rest.borderBottom : ''}>
           {({ isExpanded }) => (
@@ -33,12 +33,16 @@ function AcordionList({ list, color, highlightColor, containerStyles, ...rest })
 }
 
 AcordionList.propTypes = {
+  defaultIndex: PropTypes.arrayOf(PropTypes.number),
+  allowMultiple: PropTypes.bool,
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   color: PropTypes.string,
   highlightColor: PropTypes.string,
   containerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
 };
 AcordionList.defaultProps = {
+  defaultIndex: null,
+  allowMultiple: false,
   list: [],
   color: 'currentColor',
   highlightColor: '',
