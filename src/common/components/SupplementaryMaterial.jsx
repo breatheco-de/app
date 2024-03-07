@@ -1,24 +1,45 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import { Box, Flex } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Icon from './Icon';
+import WidgetBox from './WidgetBox';
+import Text from './Text';
 
-function SupplementaryMaterial({ title, children, items }) {
-  console.log('ayeee');
+const dictionaryIcons = {
+  LESSON: 'book',
+  EXERCISE: 'strength',
+  PROJECT: 'laptop-code',
+};
+
+const dictionaryAssets = {
+  LESSON: 'lesson',
+  EXERCISE: 'interactive-exercise',
+  PROJECT: 'interactive-coding-tutorial',
+};
+
+function SupplementaryMaterial({ assets }) {
+  const { t } = useTranslation('common');
+
   return (
-    <Box>
-      hola amiguito!
-    </Box>
+    <WidgetBox
+      mt="20px"
+      title={t('supplementary-material')}
+      items={assets.map((asset) => ({
+        title: t(asset.asset_type.toLowerCase()),
+        description: asset.title,
+        icon: dictionaryIcons[asset.asset_type],
+        href: `/${dictionaryAssets[asset.asset_type]}/${asset.slug}`,
+      }))}
+    >
+      <Text textAlign="center">{t('suggested-material')}</Text>
+    </WidgetBox>
   );
 }
 
 SupplementaryMaterial.propTypes = {
-  // title: PropTypes.string.isRequired,
-  // children: PropTypes.node,
-  // items: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  assets: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
+
 SupplementaryMaterial.defaultProps = {
-  // children: null,
-  // items: [],
+  assets: [],
 };
+
+export default SupplementaryMaterial;

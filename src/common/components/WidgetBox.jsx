@@ -6,11 +6,11 @@ import Link from './NextChakraLink';
 import Heading from './Heading';
 import useStyle from '../hooks/useStyle';
 
-function WidgetBox({ title, children, items }) {
+function WidgetBox({ title, children, items, ...rest }) {
   const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();
 
   return (
-    <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
+    <Box width="100%" maxWidth={{ base: 'none', md: '400px' }} zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor} {...rest}>
       <Heading size="14px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
         {title}
       </Heading>
@@ -18,10 +18,12 @@ function WidgetBox({ title, children, items }) {
         {children}
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {items.map((item) => (
-            <Link href={item.href} _target="blank">
+            <Link key={item.id || item.href} href={item.href} _target="blank">
               <Flex gridGap="8px" _hover={{ background: featuredColor }} cursor="default" borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
                 <Flex gridGap="16px" width="100%" alignItems="center">
-                  <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
+                  <Box display="flex" justifyContent="center" alignItems="center" width="46px" height="46px" background={hexColor.featuredColor} borderRadius="4px">
+                    <Icon icon={item.icon} color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
+                  </Box>
                   <Flex flexDirection="column" gridGap="5px">
                     <Heading size="12px" fontWeight={900}>
                       {item.title}
