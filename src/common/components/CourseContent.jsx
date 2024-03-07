@@ -12,7 +12,7 @@ function CourseContent({ data, assetCount }) {
   const contentCountString = `${assetCount.lesson} ${t('readings')}, ${assetCount.exercise} ${t('exercises')}, ${assetCount.project} ${t('projects')}`;
 
   return (
-    <Flex gridGap="12px" flexDirection="column" my="100px">
+    <Flex gridGap="12px" flexDirection="column">
       <Heading as="h2" size="20px">
         Course Content
       </Heading>

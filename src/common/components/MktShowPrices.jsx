@@ -22,7 +22,7 @@ function Paragraph({ children }, index) {
 }
 
 function BulletComponent({ bullet, isString }) {
-  return (
+  return (bullet?.description || bullet?.features[0]?.description) && (
     <LinkBox
       as="li"
       key={isString ? bullet : bullet?.features[0]?.description}
@@ -51,7 +51,7 @@ function BulletComponent({ bullet, isString }) {
   );
 }
 
-function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
+function MktShowPrices({ id, title, gridColumn1, gridColumn2, description, plan, bullets, ...rest }) {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [offerProps, setOfferProps] = useState({});
@@ -85,19 +85,23 @@ function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
       flexDirection={{ base: 'column', lg: 'row' }}
       {...rest}
     >
-      <Flex gridColumn="2 / span 4" flexDirection="column" margin="1rem 0 1rem 0" gridGap="8px">
+      <Flex gridColumn={gridColumn1} flexDirection="column" margin="1rem 0 1rem 0" gridGap="8px">
         {title && (
           <Heading as="h2" size="l" margin="0 0 1.5rem 0">
             {title}
           </Heading>
         )}
-        {description && (
+        {typeof description !== 'string' ? (
           <PrismicRichText
             field={description}
             components={{
               paragraph: Paragraph,
             }}
           />
+        ) : (
+          <Text size="md">
+            {description}
+          </Text>
         )}
 
         {(bullets?.length > 0 || offerProps?.bullets?.length > 0) && (
@@ -131,7 +135,7 @@ function MktShowPrices({ id, title, description, plan, bullets, ...rest }) {
           </Box>
         )}
       </Flex>
-      <Box gridColumn="6 / span 4">
+      <Box gridColumn={gridColumn2}>
         <ShowPrices
           title={offerProps?.outOfConsumables
             ? t('subscription.upgrade-modal.choose_how_much')
@@ -173,11 +177,15 @@ MktShowPrices.propTypes = {
   plan: PropTypes.string.isRequired,
   description: PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string]),
   id: PropTypes.string,
+  gridColumn1: PropTypes.string,
+  gridColumn2: PropTypes.string,
 };
 MktShowPrices.defaultProps = {
   title: '',
   description: '',
   id: '',
+  gridColumn1: '2 / span 4',
+  gridColumn2: '6 / span 4',
 };
 
 BulletComponent.propTypes = {
