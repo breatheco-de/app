@@ -288,7 +288,7 @@ function Content() {
           setReadmeUrlPathname(finalPathname);
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           if (isIpynb) {
-            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?theme=${currentTheme}&plain=true`);
+            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
             setCurrentData(data);
           } else {
             setIpynbHtmlUrl(null);
@@ -562,7 +562,9 @@ function Content() {
       target: 'popup',
     },
   ];
-  const repoUrl = (ipynbHtmlUrl && currentData?.url) ? `${currentData?.url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : currentData?.url;
+
+  const url = currentData?.url || currentData?.readme_url;
+  const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
@@ -724,7 +726,7 @@ function Content() {
                 gridGap="8px"
                 padding={{ base: '8px 12px', md: '8px' }}
                 background="transparent"
-                href={`${repoUrl}`}
+                href={repoUrl}
                 _hover={{ opacity: 0.7 }}
                 style={{ color: fontColor, textDecoration: 'none' }}
               >
@@ -747,7 +749,7 @@ function Content() {
           {ipynbHtmlUrl && (
             <iframe
               id="iframe"
-              src={ipynbHtmlUrl}
+              src={`${ipynbHtmlUrl}&theme=${currentTheme}`}
               style={{
                 width: '100%',
                 height: '99vh',
@@ -761,7 +763,7 @@ function Content() {
             <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
               <iframe
                 id="iframe"
-                src={`https://assessment.4geeks.com/quiz/${quizSlug}`}
+                src={`https://assessment.4geeks.com/quiz/${quizSlug}?embedded=true`}
                 style={{
                   width: '100%',
                   height: '100%',

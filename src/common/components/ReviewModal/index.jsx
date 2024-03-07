@@ -19,6 +19,7 @@ import { updateAssignment } from '../../hooks/useModuleHandler';
 import useModuleMap from '../../store/actions/moduleMapAction';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
+import useAuth from '../../hooks/useAuth';
 
 export const stages = {
   initial: 'initial',
@@ -39,6 +40,7 @@ const inputLimit = 500;
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
   projectLink, changeStatusAssignment, disableRate, ...rest }) {
   const { t } = useTranslation('assignments');
+  const { isAuthenticatedWithRigobot } = useAuth();
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
@@ -66,8 +68,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     revision_content: {},
   });
   const [stageHistory, setStageHistory] = useState({
-    stage: defaultStage,
-    from: null,
+    current: defaultStage,
+    previous: {},
   });
   const { lightColor, featuredColor, hexColor } = useStyle();
   const storybookTranslation = contextData?.translation || {};
@@ -79,11 +81,12 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasBeenRejected = revisionStatus === REJECTED;
   const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
-  const stage = stageHistory?.stage;
+  const stage = stageHistory?.current;
 
   const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
   const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
+  const showGoBackButton = stage !== stages.initial && !fixedStage;
 
   const statusColor = {
     approve: 'success',
@@ -117,11 +120,28 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     approve: t('alert-message:review-assignment-approve'),
     reject: t('alert-message:review-assignment-reject'),
   };
-  const setStage = (newStage) => {
-    setStageHistory((prevState) => ({
-      stage: newStage,
-      from: prevState.stage,
-    }));
+
+  const setStage = (newStage, type = 'next') => {
+    setStageHistory((prevState) => {
+      if (type === 'next') {
+        const newPrevious = { ...prevState?.previous, [prevState?.current]: true };
+        return {
+          current: newStage,
+          previous: newPrevious,
+        };
+      }
+      if (type === 'back') {
+        const keys = Object.keys(prevState.previous);
+        const lastKey = keys[keys.length - 1];
+        const newCurrent = lastKey || defaultStage;
+        const { [lastKey]: _, ...newPrevious } = prevState.previous;
+        return {
+          current: newCurrent,
+          previous: newPrevious,
+        };
+      }
+      return prevState;
+    });
   };
   const getRepoFiles = async () => {
     try {
@@ -277,7 +297,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
 
   const widthSizes = {
-    initial: hasFilesToReview ? '36rem' : '28rem',
+    initial: (!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview ? '36rem' : '28rem',
     approve_or_reject_code_revision: '36rem',
     file_list: '42rem',
     code_review: '74rem',
@@ -380,31 +400,14 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       closeButtonStyles={{
         top: isStageWithDefaultStyles ? 2 : 5,
       }}
-      leftButton={stage !== stages.initial && !fixedStage && (
+      leftButton={showGoBackButton && (
         <Button
           position="absolute"
           variant="unstyled"
           top={isStageWithDefaultStyles ? 2 : 4}
           left={5}
           onClick={() => {
-            if (isStudent && stage === stages.code_review) {
-              setStage(stages.review_code_revision);
-            }
-            if (!isStudent && stage === stages.code_review) {
-              setStage(stages.file_list);
-              handleResetFlow();
-            }
-            if (stage === stages.file_list || stage === stages.review_code_revision) {
-              setStage(stages.initial);
-            }
-            if ((stage === stages.approve_or_reject_code_revision && stageHistory.from === stages.initial) || reviewStatus) {
-              setStage(stages.initial);
-              setReviewStatus('');
-              setComment('');
-            }
-            if (stage === stages.approve_or_reject_code_revision && contextData?.code_revisions?.length > 0 && stageHistory.from !== stages.initial) {
-              setStage(stages.file_list);
-            }
+            setStage('', 'back');
           }}
           aria-label={t('common:go-back')}
         >
@@ -513,7 +516,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Box>
                   </Box>
                 )}
-                {hasFilesToReview && !disableRate && (
+                {(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate && (
                   <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
@@ -521,7 +524,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                         {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
                       </Text>
                     </Flex>
-                    <Button height="auto" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                    <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                       {isStudent
                         ? t('code-review.read-and-rate-the-feedback')
                         : t('code-review.start-code-review')}
@@ -598,7 +601,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       minWidth="128px"
                       mt="8px"
                       onClick={() => setOpenUndoApproval(true)}
-                      color="white"
+                      color="currentColor"
                       borderRadius="3px"
                       fontSize="13px"
                       textTransform="uppercase"
@@ -610,6 +613,10 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Button>
                     <UndoApprovalModal
                       isOpen={openUndoApproval}
+                      onSuccess={() => {
+                        onClose();
+                        setContextData({});
+                      }}
                       onClose={() => setOpenUndoApproval(false)}
                       updpateAssignment={updpateAssignment}
                       currentTask={currentTask}

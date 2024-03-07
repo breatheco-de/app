@@ -15,7 +15,7 @@ import useAuth from '../common/hooks/useAuth';
 import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem } from '../utils';
 import Summary from '../js_modules/checkout/Summary';
 import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -119,6 +119,7 @@ function Checkout() {
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
   useEffect(() => {
+    removeStorageItem('redirect');
     const translations = getTranslations(t);
     const defaultPlan = (plan && encodeURIComponent(plan)) || encodeURIComponent(BASE_PLAN);
     bc.payment().getPlan(defaultPlan).then(async (resp) => {

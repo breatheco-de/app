@@ -19,8 +19,9 @@ function ProgressBar({
   const [programsList] = usePersistent('programsList', {});
   const [taskCount, setTaskCount] = useState({});
   const currentCohortInfo = programsList[cohortSession.slug || {}];
-
   const { allTasks, percentage } = handlers.handleTasks({ tasks: taskTodo, cohortInfo: currentCohortInfo });
+  const percentageLimited = percentage > 100 ? 100 : percentage;
+  const taskPercentageLimited = taskCount?.percentage > 100 ? 100 : taskCount?.percentage;
 
   useEffect(() => {
     if (allTasks?.cohortId !== undefined) return;
@@ -40,14 +41,14 @@ function ProgressBar({
     <Box width={width || '100%'}>
       <Flex marginBottom="15px" gridGap="10px" align="center">
         <Heading fontSize="22px" marginY="0">
-          <Counter valueTo={percentage || taskCount?.percentage} totalDuration={2} />
+          <Counter valueTo={percentageLimited || taskPercentageLimited} totalDuration={2} />
           %
         </Heading>
         <Text size="l" marginY="0">
           {progressText}
         </Text>
       </Flex>
-      <Progress percents={percentage} />
+      <Progress percents={percentageLimited} />
       <Flex justifyContent="space-around" marginTop="18px" flexWrap="wrap" gridGap="6px">
         {tasksList?.length > 0 && tasksList.map((program) => (
           <Box key={program.title} display="flex">
