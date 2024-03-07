@@ -18,6 +18,8 @@ const dictionaryAssets = {
 function SupplementaryMaterial({ assets }) {
   const { t } = useTranslation('common');
 
+  if (assets.length === 0) return null;
+
   return (
     <WidgetBox
       mt="20px"
