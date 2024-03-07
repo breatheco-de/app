@@ -21,6 +21,26 @@
       "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
     }
   ],
+  "features-list": [
+    {
+      "id": 1,
+      "icon": "tv-live",
+      "title": "Aprendizaje en Vivo",
+      "description": "Tenemos muchos talleres y eventos en vivo presentados por expertos cada semana."
+    },
+    {
+      "id": 2,
+      "icon": "code-bracket",
+      "title": "Talleres en Vivo",
+      "description": "Cientos de ejercicios interactivos, proyectos y lecciones están disponibles <a class='link-underlined' href='https://www.learnpack.co/'>gracias a LearnPack, nuestro motor interactivo</a>."
+    },
+    {
+      "id": 3,
+      "icon": "window-tab",
+      "title": "Sesión de mentoría uno a uno",
+      "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándote oportunidades para mejorar tus habilidades existentes o adentrarte en nuevas."
+    }
+  ],
   "readings": "Lecturas",
   "exercises": "Ejercicios",
   "projects": "Proyectos",

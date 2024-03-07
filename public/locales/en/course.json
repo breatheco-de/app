@@ -21,6 +21,26 @@
       "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
     }
   ],
+  "features-list": [
+    {
+      "id": 1,
+      "icon": "tv-live",
+      "title": "Live Learning",
+      "description": "We have many workshops and Live Events hosted by experts every week."
+    },
+    {
+      "id": 2,
+      "icon": "code-bracket",
+      "title": "Live Workshops",
+      "description": "Hundreds of interactive exercises, projects, and lessons are available <a class='link-underlined' href='https://www.learnpack.co/'>thanks to LearnPack, our interactive engine</a>."
+    },
+    {
+      "id": 3,
+      "icon": "window-tab",
+      "title": "One - on - one mentoring session",
+      "description": "We offer a diverse range of courses across various technologies, providing you with opportunities to enhance your existing skills or delve into new ones."
+    }
+  ],
   "readings": "Readings",
   "exercises": "Exercises",
   "projects": "Projects",
