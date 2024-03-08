@@ -20,7 +20,7 @@ function CourseContent({ data, assetCount }) {
         {contentCountString}
       </Text>
 
-      <AcordionList defaultIndex={0} list={data?.modules} />
+      <AcordionList defaultIndex={0} list={data} />
     </Flex>
   );
 }

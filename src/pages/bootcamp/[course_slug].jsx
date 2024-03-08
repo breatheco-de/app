@@ -278,6 +278,12 @@ function Page({ data, cohortData }) {
     projects: assetCount.project,
   };
 
+  const courseContentList = data?.course_translation?.course_modules.length > 0
+    ? data?.course_translation?.course_modules.map((module) => ({
+      title: module.name,
+      description: module.description,
+    })) : [];
+
   return (
     <Flex flexDirection="column" mt="2rem">
       <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
@@ -497,7 +503,7 @@ function Page({ data, cohortData }) {
         <Flex flexDirection="column" gridColumn="2 / span 12">
           {/* CourseContent comopnent */}
           {cohortData?.cohortSyllabus?.syllabus && (
-            <CourseContent data={cohortData.cohortSyllabus.syllabus} assetCount={assetCount} />
+            <CourseContent data={courseContentList} assetCount={assetCount} />
           )}
         </Flex>
         <Flex flexDirection="column" gridGap="16px">
