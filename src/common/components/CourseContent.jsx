@@ -14,7 +14,7 @@ function CourseContent({ data, assetCount }) {
   return (
     <Flex gridGap="12px" flexDirection="column">
       <Heading as="h2" size="20px">
-        Course Content
+        {t('course-content-text')}
       </Heading>
       <Text size="14px" color={hexColor.fontColor2}>
         {contentCountString}

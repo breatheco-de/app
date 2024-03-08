@@ -1,4 +1,47 @@
 {
+  "course-content-text": "Course content",
+  "students-enrolled-count": "+{{count}} students enrolled",
+  "join-cohort": "Join cohort",
+  "join-cohort-description": "Join a cohort and start your bootcamp journey",
+  "create-account-text": "Create an account and start your bootcamp journey",
+  "live-bootcamp": "Live bootcamp",
+  "build-connector": {
+    "what-you-will": "What you will",
+    "description": "This bootcamp is full of practical exercises that will help you improve your experience and build a great portfolio. Enter the world of work by building real projects like these:",
+    "build": "build"
+  },
+  "why-learn-4geeks-connector": {
+    "why-learn-with": "Why learn with",
+    "benefits-connector": "Do you want to know more about what make us different? These are the benefits of our study model.",
+    "benefits": "Learn live + learn by doing + learn in community."
+  },
+  "show-prices": {
+    "title": "Money is no longer a concern!",
+    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning. That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
+  },
+  "technology-connector": {
+    "become": "Become a",
+    "and-get-job": "and get to your first job"
+  },
+  "rigobot": {
+    "title": "Meet Rigobot, your guide of your learning journey",
+    "description": "Rigobot is our AI model that's being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "button": "Try Rigobot for free"
+  },
+  "learnpack-connector": {
+    "get-experience-with": "Get the best of the exterience with",
+    "learnpack-tool": "LearnPack, our powerful AI tool",
+    "do-you-want-to-know": "Do you want to know more?"
+  },
+  "syllabus-connector": {
+    "follow-structured-syllabus": "Follow a structured syllabus with",
+    "interactive-tutorials": "1000+ exercises and interactive tutorials."
+  },
+  "mentoring-connector": {
+    "boost-experience-with": "Boost your experience with",
+    "one-one-mentoring": "live one-on-one mentoring sessions",
+    "with-our-experts": "with industry experts who have already been down this path."
+  },
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
     "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students graduated from our bootcamp got hired!"

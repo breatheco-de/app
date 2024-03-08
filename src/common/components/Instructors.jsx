@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import { Avatar, Flex } from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
@@ -8,11 +9,13 @@ import Heading from './Heading';
 import Icon from './Icon';
 
 function Instructors({ list }) {
+  const { t } = useTranslation('common');
   const { featuredColor } = useStyle();
+
   return (
     <Flex flexDirection="column" gridGap="16px" margin="8px 0">
       <Heading size="18px" fontWeight={700}>
-        Your tutors in this cohort:
+        {t('your-tutors-in-this-cohort')}
       </Heading>
       <Flex gridGap="21px">
         {list.length > 0 && list.map((instructor) => {
@@ -30,7 +33,7 @@ function Instructors({ list }) {
                   {`${instructor?.user?.first_name} ${instructor?.user?.last_name}`}
                 </Text>
                 <Text size="14px" lineHeight="normal">
-                  {instructor?.role === 'TEACHER' ? 'Main Instructor' : 'Teacher Assistant'}
+                  {instructor?.role === 'TEACHER' ? t('main-instructor') : t('teacher-assistant')}
                 </Text>
 
               </Flex>
@@ -42,10 +45,10 @@ function Instructors({ list }) {
           <Icon icon="rigo-ai" width="36px" height="42px" />
           <Flex flexDirection="column" gridGap="6px">
             <Text size="14px" fontWeight={700} lineHeight="normal">
-              Rigo
+              {t('rigo')}
             </Text>
             <Text size="14px" lineHeight="normal">
-              AI Tutor
+              {t('ai-tutor')}
             </Text>
           </Flex>
         </Flex>

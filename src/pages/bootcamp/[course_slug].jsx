@@ -1,6 +1,6 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -13,7 +13,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -25,6 +25,11 @@ import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
+import useAuth from '../../common/hooks/useAuth';
+import { SUBS_STATUS, getAllMySubscriptions } from '../../common/handlers/subscriptions';
+import axiosInstance from '../../axios';
+import { usePersistent } from '../../common/hooks/usePersistent';
+import { reportDatalayer } from '../../utils/requests';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -60,6 +65,19 @@ export async function getStaticProps({ locale, params }) {
   const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
   const data = resp?.data;
   console.log(`/v1/marketing/course/${courseSlug}?lang=${locale}`);
+  const cohortId = data?.cohort?.id;
+  const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+
+  const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: cohortId }).getPublicMembers()
+    .then((respMembers) => respMembers.data)
+    .catch((err) => {
+      error('Error fetching cohort users:', err);
+      return [];
+    });
+  const cohortData = {
+    cohortSyllabus,
+    members,
+  };
   if (resp?.status >= 400) {
     console.error(`ERROR with /bootcamp/course/${courseSlug}: something went wrong fetching "${endpoint}"`);
     return {
@@ -69,25 +87,121 @@ export async function getStaticProps({ locale, params }) {
   return {
     props: {
       data,
+      cohortData,
     },
   };
 }
 
-function Page({ data }) {
-  const [cohortData, setcohortData] = useState({
-    cohortSyllabus: null,
-    members: [],
-    isLoading: true,
-  });
+function Page({ data, cohortData }) {
+  const { isAuthenticated, choose } = useAuth();
   const { hexColor, fontColor, fontColor3, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const toast = useToast();
+  const [isFetching, setIsFetching] = useState(false);
+  const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [relatedSubscription, setRelatedSubscription] = useState(null);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const faqList = t('faq', {}, { returnObjects: true });
   const features = t('features', {}, { returnObjects: true });
   const limitViewStudents = 3;
-  const students = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
-  const instructors = cohortData?.members.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
+
+  const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
+  const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
   const technologiesString = cohortData.isLoading === false && cohortData?.cohortSyllabus?.syllabus?.main_technologies.split(',').join(', ');
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
+  const cohortId = data?.cohort?.id;
+
+  const joinCohort = () => {
+    if (isAuthenticated && existsRelatedSubscription) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: cohortId,
+        },
+      });
+      setIsFetching(true);
+      bc.cohort().join(cohortId)
+        .then(async (resp) => {
+          const dataRequested = await resp.json();
+          if (dataRequested?.status === 'ACTIVE') {
+            setReadyToRefetch(true);
+          }
+          if (dataRequested?.status_code === 400) {
+            toast({
+              position: 'top',
+              title: dataRequested?.detail,
+              status: 'info',
+              duration: 5000,
+              isClosable: true,
+            });
+            setTimeout(() => {
+              router.push('/choose-program');
+            }, 600);
+          }
+          if (dataRequested?.status_code > 400) {
+            toast({
+              position: 'top',
+              title: dataRequested?.detail,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+            router.push('#pricing');
+          }
+        })
+        .catch(() => {
+          setTimeout(() => {
+            setIsFetching(false);
+          }, 600);
+        });
+    } else {
+      router.push('#pricing');
+    }
+  };
+
+  const redirectTocohort = () => {
+    const cohort = cohortData?.cohortSyllabus?.cohort;
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const syllabusVersion = cohort?.syllabus_version;
+    choose({
+      version: syllabusVersion?.version,
+      slug: syllabusVersion?.slug,
+      cohort_name: cohort.name,
+      cohort_slug: cohort?.slug,
+      syllabus_name: syllabusVersion,
+      academy_id: cohort.academy.id,
+    });
+    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
+    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    setCohortSession({
+      ...cohort,
+      selectedProgramSlug: cohortDashboardLink,
+    });
+    router.push(cohortDashboardLink);
+  };
+  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => {} } = {}) => {
+    bc.admissions().me().then((resp) => {
+      const joinedCohortsData = resp?.data;
+      const alreadyHaveThisCohort = joinedCohortsData?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohortId);
+
+      if (alreadyHaveThisCohort) {
+        callback();
+
+        setIsFetching(false);
+        if (withAlert) {
+          toast({
+            position: 'top',
+            title: t('dashboard:already-have-this-cohort'),
+            status: 'info',
+            duration: 5000,
+          });
+        }
+        redirectTocohort();
+      }
+    });
+  };
   const getModulesInfo = () => {
     const assetTypeCount = {
       lesson: 0,
@@ -121,27 +235,37 @@ function Page({ data }) {
   };
   const { count: assetCount, assignmentList } = getModulesInfo();
 
-  const getInitialData = async (cohortId) => {
-    const cohortSyllabus = await generateCohortSyllabusModules(cohortId, lang);
+  useEffect(() => {
+    if (isAuthenticated) {
+      getAllMySubscriptions().then((subscriptions) => {
+        const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
+          const isRelated = sbs?.selected_cohort_set?.cohorts.some((elmnt) => elmnt?.id === cohortId);
+          return isRelated;
+        }) : null;
 
-    const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: cohortId }).getPublicMembers()
-      .then((resp) => resp.data)
-      .catch((err) => {
-        error('Error fetching cohort users:', err);
-        return [];
+        setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
 
-    setcohortData({
-      cohortSyllabus,
-      members,
-      isLoading: false,
-    });
-  };
-  useEffect(() => {
-    if (data?.cohort?.id) {
-      getInitialData(data?.cohort?.id);
+      redirectToCohortIfItsReady();
     }
-  }, []);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    let interval;
+    if (readyToRefetch && timeElapsed < 10) {
+      interval = setInterval(() => {
+        setTimeElapsed((prevTime) => prevTime + 1);
+        redirectToCohortIfItsReady({
+          withAlert: false,
+          callback: () => clearInterval(interval),
+        });
+      }, 1500);
+    }
+    if (readyToRefetch === false) {
+      setTimeElapsed(0);
+      clearInterval(interval);
+    }
+  }, [readyToRefetch]);
 
   const icon = {
     readings: 'book',
@@ -163,7 +287,7 @@ function Page({ data }) {
             <Flex color="danger" width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background="red.light">
               <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />
               <Text size="12px" fontWeight={700} color="currentColor">
-                Live bootcamp
+                {t('live-bootcamp')}
               </Text>
             </Flex>
             <Flex gridGap="16px" flexDirection={{ base: 'column', md: 'row' }} alignItems="center">
@@ -199,50 +323,50 @@ function Page({ data }) {
               })}
             </Flex>
             <Text size="16px" color="currentColor" fontWeight={400}>
-              {students.length > limitViewStudents ? `+${students.length - limitViewStudents} students enrolled` : ''}
+              {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
             </Text>
           </Flex>
 
           <Flex flexDirection="column" gridGap="24px">
             <Text size="24px" fontWeight={700}>
-              Become a
+              {t('technology-connector.become')}
               {' '}
               <Text as="span" size="24px" color="blue.default" fontWeight={700}>
                 {technologiesString}
               </Text>
               {' '}
-              and get to your first job
+              {t('technology-connector.and-get-job')}
             </Text>
             <Flex flexDirection="column" gridGap="16px">
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  Get the best of the exterience with
+                  {t('learnpack-connector.get-experience-with')}
                   {' '}
-                  <strong>LearnPack, our powerful AI tool</strong>
+                  <strong>{t('learnpack-connector.learnpack-tool')}</strong>
                   .
                   <br />
-                  <Link fontSize="16px" variant="default" href="/">
-                    Do you want to know more?
+                  <Link fontSize="16px" variant="default" href="https://www.learnpack.co/" target="_blank" rel="noopener noreferrer">
+                    {t('learnpack-connector.do-you-want-to-know')}
                   </Link>
                 </Text>
               </Flex>
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  Follow a structured syllabus with
+                  {t('syllabus-connector.follow-structured-syllabus')}
                   {' '}
-                  <strong>1000+ exercises and interactive tutorials.</strong>
+                  <strong>{t('syllabus-connector.interactive-tutorials')}</strong>
                 </Text>
               </Flex>
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  Boost your experience with
+                  {t('mentoring-connector.boost-experience-with')}
                   {' '}
-                  <strong>live one-on-one mentoring sessions</strong>
+                  <strong>{t('mentoring-connector.one-one-mentoring')}</strong>
                   {' '}
-                  with industry experts who have already been down this path.
+                  {t('mentoring-connector.with-our-experts')}
                 </Text>
               </Flex>
             </Flex>
@@ -265,8 +389,8 @@ function Page({ data }) {
         </Flex>
         <Flex flexDirection="column" gridColumn="10 / span 4" mt={{ base: '2rem', md: '0' }}>
           <ShowOnSignUp
-            title="Joint cohort"
-            description="Create an account and start your bootcamp journey"
+            title={t('join-cohort')}
+            description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
             borderColor="green.400"
             textAlign="center"
             gridGap="11px"
@@ -298,32 +422,44 @@ function Page({ data }) {
             footerContent={(
               <Flex flexDirection="column">
                 <Flex flexDirection="column" gridGap="10px" padding="18px">
-                  <Button
-                    variant="default"
-                    backgroundColor="green.400"
-                    color="white"
-                    onClick={() => {
-                      router.push(`/checkout?plan=${data?.plan_slug}`);
-                      setStorageItem('redirect', router?.asPath);
-                    }}
-                  >
-                    Enroll now
-                  </Button>
-                  <Button
-                    variant="outline"
-                    color="green.400"
-                    borderColor="currentColor"
-                    onClick={() => {
-                      router.push('#pricing');
-                    }}
-                  >
-                    See financing options
-                  </Button>
-                  <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
-                    {t('signup:already-have-account')}
-                    {' '}
-                    <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
-                  </Flex>
+                  {(isAuthenticated && existsRelatedSubscription) ? (
+                    <Button
+                      variant="default"
+                      isLoading={isFetching}
+                      textTransform="uppercase"
+                      onClick={() => joinCohort()}
+                    >
+                      {t('join-cohort')}
+                    </Button>
+                  ) : (
+                    <>
+                      <Button
+                        variant="default"
+                        background="green.400"
+                        color="white"
+                        onClick={() => {
+                          router.push(`/checkout?plan=${data?.plan_slug}`);
+                        }}
+                      >
+                        {t('common:enroll')}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        color="green.400"
+                        borderColor="currentColor"
+                        onClick={() => {
+                          router.push('#pricing');
+                        }}
+                      >
+                        {t('common:see-financing-options')}
+                      </Button>
+                      <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
+                        {t('signup:already-have-account')}
+                        {' '}
+                        <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('signup:login-here')}</NextChakraLink>
+                      </Flex>
+                    </>
+                  )}
                 </Flex>
                 <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
                   {['readings', 'exercises', 'projects'].map((item, index) => (
@@ -348,12 +484,13 @@ function Page({ data }) {
       <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} withContainer gridColumn="2 / span 12">
         <Flex flexDirection="column" gridColumn="2 / span 12">
           <OneColumnWithIcon
-            title="Meet Rigobot, your guide of your learning journey"
+            title={t('rigobot.title')}
             icon=""
-            buttonText="Try Rigobot for free"
+            handleButton={() => router.push('#pricing')}
+            buttonText={t('rigobot.button')}
           >
             <Text size="14px" color="currentColor">
-              Rigobot is our AI model that&apos;s being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!
+              {t('rigobot.description')}
             </Text>
           </OneColumnWithIcon>
         </Flex>
@@ -365,13 +502,12 @@ function Page({ data }) {
         </Flex>
         <Flex flexDirection="column" gridGap="16px">
           <Heading size="24px" lineHeight="normal" textAlign="center">
-            What you will
+            {t('build-connector.what-you-will')}
             {' '}
-            <Box as="span" color="blue.default">build</Box>
+            <Box as="span" color="blue.default">{t('build-connector.build')}</Box>
           </Heading>
           <Text size="18px" textAlign="center">
-            This bootcamp is full of practical exercises that will help you improve your experience and build a great portfolio.
-            Enter the world of work by building real projects like these:
+            {t('build-connector.description')}
           </Text>
           <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
             {assignmentList.slice(0, 3).map((item) => {
@@ -406,19 +542,19 @@ function Page({ data }) {
           <Flex flexDirection="column" gridGap="4rem">
             <Flex flexDirection="column" gridGap="1rem">
               <Heading size="24px" textAlign="center">
-                Why learn with
+                {t('why-learn-4geeks-connector.why-learn-with')}
                 {' '}
                 <Box as="span" color="blue.default">4Geeks</Box>
                 ?
               </Heading>
               <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
-                Do you want to know more about what make us different? These are the benefits of our study model.
+                {t('why-learn-4geeks-connector.benefits-connector')}
                 {' '}
-                <strong>Learn live + learn by doing + learn in community.</strong>
+                <strong>{t('why-learn-4geeks-connector.benefits')}</strong>
               </Text>
             </Flex>
             <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
-              {features.list.map((item) => (
+              {features?.list?.length > 0 && features?.list?.map((item) => (
                 <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor}>
                   <Flex gridGap="8px" alignItems="center">
                     <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
@@ -460,10 +596,8 @@ function Page({ data }) {
         gridTemplateColumns="1fr repeat(12, 1fr) 1fr"
         gridColumn1="1 / span 8"
         gridColumn2="9 / span 7"
-        title="Money is no longer a concern!"
-        description="We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don’t want money to stop you from learning.
-
-        That’s why our bootcamps have an affordable price and different financing options so you don’t have to worry again because of money."
+        title={t('show-prices.title')}
+        description={t('show-prices.description')}
         plan={data?.plan_slug}
       />
 
@@ -503,10 +637,12 @@ function Page({ data }) {
 
 Page.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
+  cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
 };
 
 Page.defaultProps = {
   data: {},
+  cohortData: {},
 };
 
 export default Page;

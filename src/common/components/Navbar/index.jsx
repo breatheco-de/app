@@ -136,7 +136,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           description: item?.course_translation?.description,
           subMenu: [
             {
-              href: `/${item?.slug}`,
+              href: `/bootcamp/${item?.slug}`,
               label: t('course-details'),
             },
           ],
