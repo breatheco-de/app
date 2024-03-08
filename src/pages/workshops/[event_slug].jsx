@@ -939,7 +939,7 @@ function Page({ eventData, asset }) {
                     </Button>
                   ) : (
                     <>
-                      {(noConsumablesFound && !consumables.isFetching && consumableEventList?.length === 0) ? (
+                      {(noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0) ? (
                         <Box display="flex" flexDirection="column" alignItems="center">
                           <Avatar
                             width="85px"

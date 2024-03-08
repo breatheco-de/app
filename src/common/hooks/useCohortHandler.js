@@ -1,39 +1,52 @@
+import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { devLog } from '../../utils';
-import { DOMAIN_NAME } from '../../utils/variables';
+import { devLog, getStorageItem } from '../../utils';
 // import { useState, useEffect } from 'react';
 // import { usePersistent } from '../../hooks/usePersistent';
 import bc from '../services/breathecode';
 import { usePersistent } from './usePersistent';
+import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
 function useHandler() {
   const router = useRouter();
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
   const [sortedAssignments, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [taskTodo, setTaskTodo] = usePersistent('taskTodo', []);
   const [taskTodoState, setTaskTodoState] = useState([]);
   const [taskCohortNull, setTaskCohortNull] = useState([]);
   const toast = useToast();
+  const accessToken = getStorageItem('accessToken');
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
-
-  const pathConnector = {
-    read: `${router.locale === 'en' ? `${DOMAIN_NAME}/lesson/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/lesson/${assetSlug}`}`,
-    practice: `${router.locale === 'en' ? `${DOMAIN_NAME}/interactive-exercise/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/interactive-exercise/${assetSlug}`}`,
-    project: `${router.locale === 'en' ? `${DOMAIN_NAME}/project/${assetSlug}` : `${DOMAIN_NAME}/${router.locale}/project/${assetSlug}`}`,
-    answer: `https://assessment.4geeks.com/quiz/${assetSlug}`,
+  const assetTypes = {
+    read: 'lesson',
+    practice: 'exercise',
+    project: 'project',
+    answer: 'quiz',
   };
 
-  const redirectToPublicPage = () => {
-    if (pathConnector?.[assetType]) {
-      router.push(pathConnector[assetType]);
+  const redirectToPublicPage = (data) => {
+    const englishSlug = {
+      en: data?.translations?.us,
+    };
+    const assetTypeValue = data?.asset_type || assetTypes[assetType];
+    const assetTypeLower = assetTypeValue.toLowerCase();
+    const translationSlug = englishSlug?.[lang] || data?.translations?.[lang] || assetSlug;
+
+    const pathConnector = {
+      lesson: `${lang === 'en' ? `${DOMAIN_NAME}/lesson/${translationSlug}` : `${DOMAIN_NAME}/${lang}/lesson/${translationSlug}`}`,
+      exercise: `${lang === 'en' ? `${DOMAIN_NAME}/interactive-exercise/${translationSlug}` : `${DOMAIN_NAME}/${lang}/interactive-exercise/${translationSlug}`}`,
+      project: `${lang === 'en' ? `${DOMAIN_NAME}/project/${translationSlug}` : `${DOMAIN_NAME}/${lang}/project/${translationSlug}`}`,
+    };
+    if (pathConnector?.[assetTypeLower]) {
+      window.location.href = pathConnector[assetTypeLower];
     }
   };
-  // Fetch cohort assignments (lesson, exercise, project, quiz)
+
   const getCohortAssignments = ({
     user, setContextState, slug,
   }) => {
@@ -80,11 +93,23 @@ function useHandler() {
     }
   };
 
+  const handleRedirectToPublicPage = () => {
+    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`)
+      .then((response) => {
+        if (response?.data?.asset_type) {
+          redirectToPublicPage(response.data);
+        }
+      })
+      .catch(() => {
+        router.push('/404');
+      });
+  };
+
   const getCohortData = ({
     choose, cohortSlug,
   }) => new Promise((resolve, reject) => {
     // Fetch cohort data with pathName structure
-    if (cohortSlug) {
+    if (cohortSlug && accessToken) {
       bc.admissions().me().then(({ data }) => {
         if (!data) throw new Error('No data');
         const { cohorts } = data;
@@ -94,7 +119,7 @@ function useHandler() {
         const version = currentCohort?.syllabus_version?.version;
         const name = currentCohort?.syllabus_version?.name;
         if (!cohortSession?.academy?.id || !currentCohort) {
-          redirectToPublicPage();
+          handleRedirectToPublicPage();
         }
         if (currentCohort) {
           setCohortSession({
@@ -123,7 +148,7 @@ function useHandler() {
           resolve(currentCohort);
         }
       }).catch((error) => {
-        redirectToPublicPage();
+        handleRedirectToPublicPage();
         toast({
           position: 'top',
           title: t('alert-message:invalid-cohort-slug'),
@@ -137,6 +162,8 @@ function useHandler() {
           localStorage.removeItem('cohortSession');
         }, 4000);
       });
+    } else {
+      handleRedirectToPublicPage();
     }
   });
 

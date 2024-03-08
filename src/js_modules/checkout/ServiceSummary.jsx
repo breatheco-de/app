@@ -75,23 +75,24 @@ function ServiceSummary({ service }) {
     bc.payment().service().payConsumable(dataToAssign)
       .then((res) => {
         if (res && res?.status < 400) {
-          // reportDatalayer({
-          //   event: 'purchase',
-          //   ecommerce: {
-          //     transaction_id: '12345',
-          //     affiliation: '4Geeks',
-          //     value: selectedService.priceDiscounted,
-          //     currency: 'USD',
-          //     items: [{
-          //       item_name: selectedService.title,
-          //       item_id: selectedService?.id,
-          //       price: selectedService.priceDiscounted,
-          //       item_brand: '4Geeks',
-          //       item_category: service.serviceInfo.type,
-          //       quantity: 1,
-          //     }],
-          //   },
-          // });
+          reportDatalayer({
+            dataLayer: {
+              event: 'purchase',
+              ecommerce: {
+              // transaction_id: '12345',
+                affiliation: '4Geeks',
+                value: selectedService.priceDiscounted,
+                currency: 'USD',
+                items: [{
+                  item_name: selectedService.title,
+                  item_id: selectedService?.id,
+                  price: selectedService.priceDiscounted,
+                  item_brand: '4Geeks',
+                  item_category: service.serviceInfo.type,
+                  quantity: 1,
+                }],
+              },
+            } });
           setPurchaseCompleted(true);
           setConfirmationOpen(false);
         }
@@ -104,12 +105,6 @@ function ServiceSummary({ service }) {
     setIsSubmitting(false);
     actions?.setSubmitting(false);
     callback();
-    // reportDatalayer({
-    //   event: 'error',
-    //   eventCategory: 'payment',
-    //   eventAction: 'error',
-    //   eventLabel: silentCode,
-    // });
     if (silentCode === SILENT_CODE.CARD_ERROR) {
       setOpenDeclinedModal(true);
       setDeclinedModalProps({
@@ -136,18 +131,20 @@ function ServiceSummary({ service }) {
   const handleSubmit = async (_, values) => {
     if (selectedService?.id) {
       reportDatalayer({
-        event: 'select_item',
-        item_list_name: service.serviceInfo.slug,
-        ecommerce: {
-          currency: 'USD',
-          items: [{
-            item_name: selectedService.title,
-            item_id: selectedService?.id,
-            price: selectedService.priceDiscounted,
-            item_brand: '4Geeks',
-            item_category: service.serviceInfo.type,
-            quantity: selectedService?.qty,
-          }],
+        dataLayer: {
+          event: 'select_item',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            items: [{
+              item_name: selectedService.title,
+              item_id: selectedService?.id,
+              price: selectedService.priceDiscounted,
+              item_brand: '4Geeks',
+              item_category: service.serviceInfo.type,
+              quantity: selectedService?.qty,
+            }],
+          },
         },
       });
     }
@@ -156,23 +153,24 @@ function ServiceSummary({ service }) {
     setIsSubmittingCard(false);
     if (resp.ok) {
       reportDatalayer({
-        event: 'add_payment_info',
-        item_list_name: service.serviceInfo.slug,
-        ecommerce: {
-          currency: 'USD',
-          payment_type: 'Credit Card',
-          items: [
-            {
-              item_id: selectedService?.id,
-              item_name: selectedService?.title,
-              item_brand: '4Geeks',
-              item_category: service.serviceInfo.type,
-              price: selectedService?.priceDiscounted,
-              quantity: selectedService?.qty,
-            },
-          ],
-        },
-      });
+        dataLayer: {
+          event: 'add_payment_info',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            payment_type: 'Credit Card',
+            items: [
+              {
+                item_id: selectedService?.id,
+                item_name: selectedService?.title,
+                item_brand: '4Geeks',
+                item_category: service.serviceInfo.type,
+                price: selectedService?.priceDiscounted,
+                quantity: selectedService?.qty,
+              },
+            ],
+          },
+        } });
       setConfirmationOpen(true);
     } else {
       setOpenDeclinedModal(true);
@@ -190,20 +188,21 @@ function ServiceSummary({ service }) {
     }
     if (service?.list?.length > 0) {
       reportDatalayer({
-        event: 'view_item_list',
-        item_list_name: service.serviceInfo.slug,
-        ecommerce: {
-          currency: 'USD',
-          items: service?.list.map((item) => ({
-            item_name: item?.title,
-            item_id: item?.id,
-            price: item?.priceDiscounted,
-            item_brand: '4Geeks',
-            item_category: service?.serviceInfo?.type,
-            quantity: item?.qty,
-          })),
-        },
-      });
+        dataLayer: {
+          event: 'view_item_list',
+          item_list_name: service.serviceInfo.slug,
+          ecommerce: {
+            currency: 'USD',
+            items: service?.list.map((item) => ({
+              item_name: item?.title,
+              item_id: item?.id,
+              price: item?.priceDiscounted,
+              item_brand: '4Geeks',
+              item_category: service?.serviceInfo?.type,
+              quantity: item?.qty,
+            })),
+          },
+        } });
     }
   }, [service]);
 
