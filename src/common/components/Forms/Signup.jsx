@@ -132,28 +132,16 @@ function SignupForm({
             },
             state: true,
           });
-          if (redirectStorageAlreadyExists) {
-            const { enableRedirect: enabRed, ...restOfQuery } = router.query;
-            router.push({
-              pathname: redirectStorage,
-              query: {
-                ...restOfQuery,
-                token: data.access_token,
-              },
-            });
-            localStorage.removeItem('redirect');
-          } else {
-            router.push({
-              query: {
-                ...router.query,
-                token: data.access_token,
-              },
-            });
-            onHandleSubmit({
-              ...allValues,
-              ...data,
-            });
-          }
+          router.push({
+            query: {
+              ...router.query,
+              token: data.access_token,
+            },
+          });
+          onHandleSubmit({
+            ...allValues,
+            ...data,
+          });
         }
       }
 
