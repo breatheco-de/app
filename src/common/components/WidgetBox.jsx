@@ -18,8 +18,8 @@ function WidgetBox({ title, children, items, ...rest }) {
         {children}
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {items.map((item) => (
-            <Link key={item.id || item.href} href={item.href} _target="blank">
-              <Flex gridGap="8px" _hover={{ background: featuredColor }} cursor="default" borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
+            <Link key={item.id || item.href} cursor="pointer" href={item.href} _target="blank">
+              <Flex gridGap="8px" _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
                 <Flex gridGap="16px" width="100%" alignItems="center">
                   <Box display="flex" justifyContent="center" alignItems="center" width="46px" height="46px" background={hexColor.featuredColor} borderRadius="4px">
                     <Icon icon={item.icon} color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />

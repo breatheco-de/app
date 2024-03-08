@@ -2,15 +2,19 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import WidgetBox from './WidgetBox';
 import Text from './Text';
+import { categoriesFor } from '../../utils/variables';
 
 const dictionaryIcons = {
   LESSON: 'book',
+  ARTICLE: 'book',
   EXERCISE: 'strength',
   PROJECT: 'laptop-code',
 };
 
 const dictionaryAssets = {
   LESSON: 'lesson',
+  ARTICLE: 'lesson',
+  HOWTO: 'how-to',
   EXERCISE: 'interactive-exercise',
   PROJECT: 'interactive-coding-tutorial',
 };
@@ -24,12 +28,16 @@ function SupplementaryMaterial({ assets }) {
     <WidgetBox
       mt="20px"
       title={t('supplementary-material')}
-      items={assets.map((asset) => ({
-        title: t(asset.asset_type.toLowerCase()),
-        description: asset.title,
-        icon: dictionaryIcons[asset.asset_type],
-        href: `/${dictionaryAssets[asset.asset_type]}/${asset.slug}`,
-      }))}
+      items={assets.map((asset) => {
+        const isHowTo = categoriesFor.howTo.includes(asset.category.slug);
+        const typeUrl = isHowTo ? dictionaryAssets.HOWTO : dictionaryAssets[asset.asset_type];
+        return {
+          title: t(isHowTo ? 'how-to' : asset.asset_type.toLowerCase()),
+          description: asset.title,
+          icon: dictionaryIcons[asset.asset_type],
+          href: `/${typeUrl}/${asset.slug}`,
+        };
+      })}
     >
       <Text textAlign="center">{t('suggested-material')}</Text>
     </WidgetBox>
