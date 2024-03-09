@@ -26,7 +26,8 @@
   "rigobot": {
     "title": "Meet Rigobot, your guide of your learning journey",
     "description": "Rigobot is our AI model that's being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
-    "button": "Try Rigobot for free"
+    "button": "Try Rigobot for free",
+    "link": "#pricing"
   },
   "learnpack-connector": {
     "get-experience-with": "Get the best of the exterience with",
@@ -72,7 +73,8 @@
     "what-is-learnpack": {
       "title": "What is LearnPack?",
       "description": "LearnPack is a software that allows you to learn through interactive tutorials inside your development environment like VSCode. It has Rigobot (Our AI model) included, so you can get instant feedback while you code!",
-      "button": "Try learnpack for free"
+      "button": "Try learnpack for free",
+      "link": "#pricing"
     },
     "list": [
       {

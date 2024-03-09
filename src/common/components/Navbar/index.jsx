@@ -524,7 +524,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 display={{ base: 'none', md: 'block' }}
                 href="/login"
                 fontWeight="700"
-                fontSize="13px"
+                fontSize="14px"
                 padding="12px 0"
                 lineHeight="22px"
                 _hover={{
@@ -534,9 +534,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href="/pricing">
+              {/* <Link variant="buttonDefault" href="/pricing">
                 {t('get-started')}
-              </Link>
+              </Link> */}
             </Box>
           )}
         </Stack>

@@ -103,8 +103,8 @@ function Page({ data, cohortData }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
-  const faqList = t('faq', {}, { returnObjects: true });
-  const features = t('features', {}, { returnObjects: true });
+  const faqList = t('faq', {}, { returnObjects: true }) || [];
+  const features = t('features', {}, { returnObjects: true }) || {};
   const limitViewStudents = 3;
 
   const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
@@ -285,6 +285,7 @@ function Page({ data, cohortData }) {
       description: module.description,
     })) : [];
 
+  console.log('courseContentList:::', courseContentList);
   return (
     <Flex flexDirection="column" mt="2rem">
       <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
@@ -493,7 +494,7 @@ function Page({ data, cohortData }) {
           <OneColumnWithIcon
             title={t('rigobot.title')}
             icon=""
-            handleButton={() => router.push('#pricing')}
+            handleButton={() => router.push(t('rigobot.link'))}
             buttonText={t('rigobot.button')}
           >
             <Text size="14px" color="currentColor">
@@ -501,12 +502,14 @@ function Page({ data, cohortData }) {
             </Text>
           </OneColumnWithIcon>
         </Flex>
-        <Flex flexDirection="column" gridColumn="2 / span 12">
-          {/* CourseContent comopnent */}
-          {cohortData?.cohortSyllabus?.syllabus && (
-            <CourseContent data={courseContentList} assetCount={assetCount} />
-          )}
-        </Flex>
+        {courseContentList?.length > 0 && (
+          <Flex flexDirection="column" gridColumn="2 / span 12">
+            {/* CourseContent comopnent */}
+            {cohortData?.cohortSyllabus?.syllabus && (
+              <CourseContent data={courseContentList} assetCount={assetCount} />
+            )}
+          </Flex>
+        )}
         <Flex flexDirection="column" gridGap="16px">
           <Heading size="24px" lineHeight="normal" textAlign="center">
             {t('build-connector.what-you-will')}
@@ -582,13 +585,13 @@ function Page({ data, cohortData }) {
           <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
             <Flex flex={{ base: 1, md: 0.5 }} flexDirection="column" gridGap="24px">
               <Heading size="24px" lineHeight="normal">
-                {features['what-is-learnpack'].title}
+                {features?.['what-is-learnpack']?.title}
               </Heading>
               <Text size="18px" lineHeight="normal" color={fontColor3}>
-                {features['what-is-learnpack'].description}
+                {features?.['what-is-learnpack']?.description}
               </Text>
-              <Button variant="default" width="fit-content">
-                {features['what-is-learnpack'].button}
+              <Button onClick={() => router.push(t(features?.['what-is-learnpack']?.link))} variant="default" width="fit-content">
+                {features?.['what-is-learnpack']?.button}
               </Button>
             </Flex>
             <Flex flex={{ base: 1, md: 0.5 }} flexDirection="column" gridGap="24px">
@@ -607,6 +610,7 @@ function Page({ data, cohortData }) {
         title={t('show-prices.title')}
         description={t('show-prices.description')}
         plan={data?.plan_slug}
+        cohortId={cohortId}
       />
 
       <GridContainer width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridColumn="2 / 12 span" gridTemplateColumns="1fr repeat(12, 1fr) 1fr">
@@ -618,25 +622,27 @@ function Page({ data, cohortData }) {
       {/* FAQ section */}
       <GridContainer width="100%" mt="6.25rem" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor3}>
         <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
-          <Faq
-            background="transparent"
-            headingStyle={{
-              margin: '0px',
-              fontSize: '38px',
-              padding: '0 0 24px',
-            }}
-            padding="0px 15px 15px"
-            highlightColor={complementaryBlue}
-            acordionContainerStyle={{
-              background: hexColor.white2,
-              borderRadius: '15px',
-            }}
-            hideLastBorder
-            items={faqList.map((l) => ({
-              label: l.title,
-              answer: l.description,
-            }))}
-          />
+          {Array.isArray(faqList) && faqList?.length > 0 && (
+            <Faq
+              background="transparent"
+              headingStyle={{
+                margin: '0px',
+                fontSize: '38px',
+                padding: '0 0 24px',
+              }}
+              padding="0px 15px 15px"
+              highlightColor={complementaryBlue}
+              acordionContainerStyle={{
+                background: hexColor.white2,
+                borderRadius: '15px',
+              }}
+              hideLastBorder
+              items={faqList.map((l) => ({
+                label: l.title,
+                answer: l.description,
+              }))}
+            />
+          )}
         </Flex>
       </GridContainer>
     </Flex>

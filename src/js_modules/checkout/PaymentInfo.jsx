@@ -16,7 +16,7 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
-import { getStorageItem } from '../../utils';
+import { getQueryString, getStorageItem } from '../../utils';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import Text from '../../common/components/Text';
 import { getCohort } from '../../common/handlers/cohorts';
@@ -54,6 +54,7 @@ function PaymentInfo() {
   const { choose } = useAuth();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
   const [, setCohortSession] = usePersistent('cohortSession', {});
+  const queryCohortId = getQueryString('cohort');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -130,6 +131,7 @@ function PaymentInfo() {
         }
       })
       .catch(() => {
+        setIsSubmitting(false);
         setTimeout(() => {
           setReadyToRefetch(false);
         }, 600);
@@ -181,8 +183,9 @@ function PaymentInfo() {
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
             if (isPurchasedPlanFound) {
-              if (currentSubscription.selected_cohort_set.cohorts[0]) {
-                getCohort(currentSubscription.selected_cohort_set.cohorts[0].id)
+              const cohortId = currentSubscription?.selected_cohort_set?.cohorts?.[0]?.id || Number(queryCohortId);
+              if (cohortId) {
+                getCohort(cohortId)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })

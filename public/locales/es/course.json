@@ -8,7 +8,8 @@
   "build-connector": {
     "what-you-will": "Qué vas a",
     "description": "Este bootcamp está lleno de ejercicios prácticos que te ayudarán a mejorar tu experiencia y construir un gran portafolio. Entra en el mundo laboral construyendo proyectos reales como estos:",
-    "build": "construir"
+    "build": "construir",
+    "link": "#pricing"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Por qué aprender con",
@@ -72,7 +73,8 @@
     "what-is-learnpack": {
       "title": "¿Qué es LearnPack?",
       "description": "LearnPack es un software que te permite aprender a través de tutoriales interactivos dentro de tu entorno de desarrollo como VSCode. ¡Incluye a Rigobot (Nuestro modelo de IA), por lo que puedes obtener retroalimentación instantánea mientras programas!",
-      "button": "Prueba LearnPack gratis"
+      "button": "Prueba LearnPack gratis",
+      "link": "#pricing"
     },
     "list": [
       {
