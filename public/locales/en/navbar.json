@@ -17,7 +17,7 @@
       "label": "Bootcamps",
       "icon": "graduationCap",
       "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
-      "asPath": "/courses",
+      "asPath": "/bootcamps",
       "subMenu": [],
       "position": 1
     },
