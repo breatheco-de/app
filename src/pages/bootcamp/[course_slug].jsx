@@ -285,7 +285,6 @@ function Page({ data, cohortData }) {
       description: module.description,
     })) : [];
 
-  console.log('courseContentList:::', courseContentList);
   return (
     <Flex flexDirection="column" mt="2rem">
       <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
