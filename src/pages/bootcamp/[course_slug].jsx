@@ -109,7 +109,8 @@ function Page({ data, cohortData }) {
 
   const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
   const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
-  const technologiesString = cohortData.isLoading === false && cohortData?.cohortSyllabus?.syllabus?.main_technologies.split(',').join(', ');
+  const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
+  const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const cohortId = data?.cohort?.id;
 
@@ -527,8 +528,9 @@ function Page({ data, cohortData }) {
               return (
                 <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                   <Flex alignItems="center" justifyContent="space-between">
-                    <TagCapsule tags={['Python']} marginY={0} />
-                    <Text size="9px" color="currentColor">06/21/2023</Text>
+                    {technologies?.length > 0 && (
+                      <TagCapsule tags={technologies} marginY={0} />
+                    )}
                   </Flex>
                   <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
                     {(lang === 'en' && item?.translations?.us.title)
