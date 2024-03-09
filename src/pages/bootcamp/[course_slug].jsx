@@ -279,7 +279,7 @@ function Page({ data, cohortData }) {
     projects: assetCount.project,
   };
 
-  const courseContentList = data?.course_translation?.course_modules.length > 0
+  const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
       title: module.name,
       description: module.description,

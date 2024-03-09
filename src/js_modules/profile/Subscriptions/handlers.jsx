@@ -110,10 +110,10 @@ function profileHandlers({
             // const outOfConsumables = currentPlan?.service_items.some((item) => item?.how_many === 0);
 
             // -------------------------------------------------- PREPARING PRICES --------------------------------------------------
-            const existsAmountPerHalf = data?.amount_per_half > 0;
-            const existsAmountPerMonth = data?.amount_per_month > 0;
-            const existsAmountPerQuarter = data?.amount_per_quarter > 0;
-            const existsAmountPerYear = data?.amount_per_year > 0;
+            const existsAmountPerHalf = data?.amount_per_half > 0 || data?.price_per_half > 0;
+            const existsAmountPerMonth = data?.amount_per_month > 0 || data?.price_per_month > 0;
+            const existsAmountPerQuarter = data?.amount_per_quarter > 0 || data?.price_per_quarter > 0;
+            const existsAmountPerYear = data?.amount_per_year > 0 || data?.price_per_year > 0;
 
             const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
             const financingOptionsExists = planData?.financing_options?.length > 0;
@@ -167,7 +167,7 @@ function profileHandlers({
             };
 
             const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
-              title: t('subscription.upgrade-modal.monthly_payment'),
+              title: t('subscription.upgrade-modal.one_payment'),
               price: item?.monthly_price,
               priceText: `$${item?.monthly_price}`,
               period: 'FINANCING',
@@ -361,7 +361,7 @@ function profileHandlers({
               show: true,
             })) : [];
 
-            const trialPlan = (!financingOptionsManyMonthsExists) ? {
+            const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
               title: t('subscription.upgrade-modal.free_trial'),
               price: 0,
               priceText: getTrialLabel().priceText,

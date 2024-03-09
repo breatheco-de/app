@@ -66,7 +66,7 @@ function MktShowPrices({ id, title, gridColumn1, gridColumn2, description, plan,
 
   useEffect(() => {
     handleGetPlan();
-  }, []);
+  }, [router]);
 
   const isTotallyFree = offerProps?.isTotallyFree === true;
 
