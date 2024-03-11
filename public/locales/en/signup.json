@@ -12,6 +12,12 @@
     "read-more" :"Read the science behind it.",
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
+  "one_payment_description": "Full access to all features for the duration of the course.",
+  "monthly_payment_description": "Full access to all features for the duration of the course.",
+  "quarterly_payment_description": "Full access to all features for the duration of the course.",
+  "half_yearly_payment_description": "Full access to all features for the duration of the course.",
+  "yearly_payment_description": "Full access to all features for the duration of the course.",
+  "connector_duration_trial": "trial",
   "what-includes": "What includes?",
   "continue-learning": "Continue learning",
   "switch-user-connector": "You are not {{name}}?",
