@@ -534,9 +534,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              {/* <Link variant="buttonDefault" href="/pricing">
+              <Link variant="buttonDefault" href="/pricing">
                 {t('get-started')}
-              </Link> */}
+              </Link>
             </Box>
           )}
         </Stack>
