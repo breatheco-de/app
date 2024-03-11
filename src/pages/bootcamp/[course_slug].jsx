@@ -600,17 +600,19 @@ function Page({ data, cohortData }) {
         </Flex>
       </GridContainer>
       {/* Pricing */}
-      <MktShowPrices
-        id="pricing"
-        mt="6.25rem"
-        gridTemplateColumns="1fr repeat(12, 1fr) 1fr"
-        gridColumn1="1 / span 8"
-        gridColumn2="9 / span 7"
-        title={t('show-prices.title')}
-        description={t('show-prices.description')}
-        plan={data?.plan_slug}
-        cohortId={cohortId}
-      />
+      {data?.plan_slug && (
+        <MktShowPrices
+          id="pricing"
+          mt="6.25rem"
+          gridTemplateColumns="1fr repeat(12, 1fr) 1fr"
+          gridColumn1="1 / span 8"
+          gridColumn2="9 / span 7"
+          title={t('show-prices.title')}
+          description={t('show-prices.description')}
+          plan={data?.plan_slug}
+          cohortId={cohortId}
+        />
+      )}
 
       <GridContainer width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridColumn="2 / 12 span" gridTemplateColumns="1fr repeat(12, 1fr) 1fr">
         <MktTrustCards

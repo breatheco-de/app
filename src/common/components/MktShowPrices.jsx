@@ -66,8 +66,6 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
     handleGetPlan();
   }, [router]);
 
-  // console.log('planProps:::', planProps);
-
   const isTotallyFree = planProps?.isTotallyFree === true;
 
   const getDefaultFinanceIndex = () => {
