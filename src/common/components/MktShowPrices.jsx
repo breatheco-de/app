@@ -5,13 +5,13 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { Box, Flex, LinkBox } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
-import profileHandlers from '../../js_modules/profile/Subscriptions/handlers';
 import ShowPrices from './ShowPrices';
 import { parseQuerys } from '../../utils/url';
 import Text from './Text';
 import Icon from './Icon';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
+import { generatePlan, getTranslations } from '../handlers/subscriptions';
 
 function Paragraph({ children }, index) {
   return (
@@ -55,18 +55,18 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
-  const {
-    getPlan,
-  } = profileHandlers({});
+  const translationsObj = getTranslations(t);
 
   const handleGetPlan = async () => {
-    const data = await getPlan({ slug: plan, disableRedirects: true, withCurrentPlan: true }).then((res) => res);
+    const data = await generatePlan(plan, translationsObj).then((finalData) => finalData);
     setPlanProps(data);
   };
 
   useEffect(() => {
     handleGetPlan();
   }, [router]);
+
+  // console.log('planProps:::', planProps);
 
   const isTotallyFree = planProps?.isTotallyFree === true;
 
@@ -104,7 +104,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
           </Text>
         )}
 
-        {(bullets?.length > 0 || planProps?.bullets?.length > 0) && (
+        {(bullets?.length > 0 || planProps?.featured_info?.length > 0) && (
           <Box display="flex" flexDirection="column" gridGap="15px">
             <Text fontSize="14px" textTransform="uppercase" color="blue.default" fontWeight="700" lineHeight="31px">
               {t('subscription.what-you-will-get')}
@@ -128,7 +128,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
                     }}
                   />
                 )
-                : planProps?.bullets.map((bullet) => (
+                : planProps?.featured_info.map((bullet) => (
                   <BulletComponent key={bullet?.features[0]?.description} bullet={bullet} />
                 ))}
             </Box>
@@ -148,11 +148,11 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
           onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
           financeTextLabel={t('subscription.upgrade-modal.finance')}
           handleUpgrade={(item) => {
-            const hasAvailableCohorts = item?.suggested_plan?.has_available_cohorts;
+            const hasAvailableCohorts = planProps?.suggested_plan?.has_available_cohorts;
             const period = item?.period;
 
             const querys = parseQuerys({
-              plan: item?.suggested_plan?.slug,
+              plan: planProps?.suggested_plan?.slug,
               plan_id: item?.plan_id,
               has_available_cohorts: hasAvailableCohorts,
               price: item?.price,
