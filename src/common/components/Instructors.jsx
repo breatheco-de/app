@@ -41,8 +41,7 @@ function Instructors({ list }) {
           );
         })}
         <Flex alignItems="center" gridGap="8px" minWidth="144px" padding="4px 8px" background={featuredColor} borderRadius="43">
-          {/* <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} /> */}
-          <Icon icon="rigo-ai" width="36px" height="42px" />
+          <Icon icon="avatar-glasses" width="36px" height="42px" />
           <Flex flexDirection="column" gridGap="6px">
             <Text size="14px" fontWeight={700} lineHeight="normal">
               {t('rigo')}
