@@ -572,8 +572,8 @@ function Page({ data, cohortData }) {
               </Flex>
               <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
                 {features?.list?.length > 0 && features?.list?.map((item) => (
-                  <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor}>
-                    <Flex gridGap="8px" alignItems="center" background={hexColor.featuredColor}>
+                  <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
+                    <Flex gridGap="8px" alignItems="center">
                       <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
                       <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
                         {item.title}
