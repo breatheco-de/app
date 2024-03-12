@@ -18,7 +18,7 @@
   },
   "show-prices": {
     "title": "¡El dinero ya no es un problema!",
-    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender. Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
+    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
   },
   "technology-connector": {
     "become": "Conviértete en",
@@ -96,6 +96,13 @@
         "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándote oportunidades para mejorar tus habilidades existentes o adentrarte en nuevas."
       }
     ]
+  },
+  "certificate": {
+    "image": "/static/images/certificate-preview.png",
+    "title": "Certificado en tu tecnología favorita",
+    "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
+    "button": "Ver precios",
+    "button-link": "#pricing"
   },
   "readings": "Lecturas",
   "exercises": "Ejercicios",
