@@ -42,7 +42,7 @@ function Summary() {
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
-  const planId = getQueryString('plan_id');
+  const planId = getQueryString('plan');
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -125,10 +125,9 @@ function Summary() {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
     if (findedPlan) {
       setLoader('plan', false);
-      if (findedPlan) {
-        setSelectedPlanCheckoutData(findedPlan);
-        getPlanProps(findedPlan);
-      }
+
+      setSelectedPlanCheckoutData(findedPlan);
+      getPlanProps(findedPlan);
     }
 
     if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
@@ -366,7 +365,6 @@ function Summary() {
                       onClick={() => {
                         setSelectedIndex(i);
                         // setPlanData(item);
-                        getPlanProps(item);
                         setSelectedPlanCheckoutData(item);
                       }}
                       flexDirection="row"
