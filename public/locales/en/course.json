@@ -12,25 +12,25 @@
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Do you want to know more about what make us different? These are the benefits of our study model.",
+    "benefits-connector": "Do you want to know more about what makes us different? These are the benefits of our study model.",
     "benefits": "Learn live + learn by doing + learn in community."
   },
   "show-prices": {
     "title": "Money is no longer a concern!",
-    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
+    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/><br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
   },
   "technology-connector": {
     "become": "Join our",
     "and-get-job": " Bootcamp, and get to your first job"
   },
   "rigobot": {
-    "title": "Meet Rigobot, your guide of your learning journey",
-    "description": "Rigobot is our AI model that's being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "title": "Meet Rigobot, the guide of your learning journey",
+    "description": "Rigobot is our AI model that's been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
     "link": "https://github.com/breatheco-de/exercise-postcard"
   },
   "learnpack-connector": {
-    "get-experience-with": "Get the best of the exterience with",
+    "get-experience-with": "Get the best of the experience with",
     "learnpack-tool": "LearnPack, our powerful AI tool",
     "do-you-want-to-know": "Do you want to know more?"
   },
@@ -55,45 +55,45 @@
     },
     {
       "id": 2,
-      "title": "How do mentoring work?",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident hic et porro laborum similique blanditiis, exercitationem rerum rem, harum repudiandae iure cum corporis ratione commodi. Ab voluptatibus commodi iure ut."
-    },
-    {
-      "id": 3,
-      "title": "What do I need to start?",
-      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis molestiae eius eligendi odit. Nostrum tempora animi molestiae sapiente, quaerat sit illo repellat neque aut non iusto harum minus error quis."
+      "title": "How does mentoring work?",
+      "description": "You can schedule the mentoring sessions "
     },
     {
       "id": 4,
-      "title": "and More",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
+      "title": "What kind of support is available to learners?",
+      "description": "You'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience."
+    },
+    {
+      "id": 5,
+      "title": "What are one-on-one mentoring sessions?",
+      "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
     }
   ],
   "features": {
     "what-is-learnpack": {
       "title": "What is LearnPack?",
       "description": "LearnPack is a software that allows you to learn through interactive tutorials inside your development environment like VSCode. It has Rigobot (Our AI model) included, so you can get instant feedback while you code!",
-      "button": "Try learnpack for free",
+      "button": "Try LearnPack for free",
       "link": "#pricing"
     },
     "list": [
       {
         "id": 1,
         "icon": "tv-live",
-        "title": "Live Learning",
-        "description": "We have many workshops and Live Events hosted by experts every week."
+        "title": "Learn with AI",
+        "description": "Use AI to learn to code getting instant and relevant feedback about your code. Get help from Rigobot to answer all your questions and get your projects reviewed!"
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Live Workshops",
-        "description": "Hundreds of interactive exercises, projects, and lessons are available <a class='link-underlined' href='https://www.learnpack.co/'>thanks to LearnPack, our interactive engine</a>."
+        "title": "Live Learning",
+        "description": "Learn live with our workshops about technical or career subjects, hosted by expert from the tech industry."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "One - on - one mentoring session",
-        "description": "We offer a diverse range of courses across various technologies, providing you with opportunities to enhance your existing skills or delve into new ones."
+        "title": "One-on-one mentoring sessions",
+        "description": "You can schedule private mentoring sessions ono-on-one with expert mentors to get help on your questions and learn new concepts whenever you need!"
       }
     ]
   },
