@@ -1,0 +1,39 @@
+{
+  "header": {
+    "title": "Podcast: Code sets you free",
+    "description": "Multilingual tech-culture podcast where you learn to fight to become a successful professional in tech. Break the entry barriers, learn the skills, keep motivated, find jobs, network, successfully use AI, and stay up-to-date.",
+    "image": "/static/images/podcast.png",
+    "listen-on": "Listen on",
+    "links": [{
+      "platform": "Spotify",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png",
+      "href": "https://open.spotify.com/show/4jOf9ngqajCcVgOEXmtiNW"
+    }, {
+      "platform": "Amazon music",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Amazon_Music_logo.svg/2560px-Amazon_Music_logo.svg.png",
+      "href": "https://music.amazon.com/podcasts/56608869-3ce0-44eb-b725-2ddcd827bfee"
+    }]
+  },
+  "meet-the-hosts": "Meet the hosts",
+  "hosts": [{
+    "name": "Alejandro Sanchez",
+    "description": "4Geeks Academy co-founder",
+    "profile-picture": "https://techhubsouthflorida.org/wp-content/uploads/2023/09/Alejandro-Sanchez.jpeg",
+    "bio": "Alejandro, a tech prodigy since age 13, has redefined the landscape of coding education. From coding interactive websites as a teenager to co-founding his first startup at 16, his journey has been marked by innovation. Notable successes include Hack, a coding school acquired in 2016, and 4Geeks Developer Community, a dev shop acquired in 2015. Today, Alejandro's mission with 4Geeks Academy is to democratize coding education worldwide, with thousands of students graduating every year and +$20,000,000 in scholarships thanks to partnerships with several governments and the most prominent non-profit organizations worldwide. He continues to inspire through relentless dedication to innovation and education.",
+    "media": [{
+      "name": "linkedin",
+      "logo": "linkedin",
+      "href": "https://www.linkedin.com/in/alesanchezr/"
+    }]
+  }, {
+    "name": "Tomas Gonzalez",
+    "description": "4Geeks Academy co-founder",
+    "profile-picture": "https://media.licdn.com/dms/image/C5603AQH-T8ZePCIzYg/profile-displayphoto-shrink_400_400/0/1649829192473?e=2147483647&v=beta&t=jj9Bh0mC2ktumfuC64pNwWdS-e1aMRLechr_uxW5CvE",
+    "bio": "A passionate coder, Tomas embarked on his programming journey four years ago after graduating as a Full Stack developer from the renowned 4Geeks Academy bootcamp. Overcoming numerous challenges, he honed his skills and became a proficient developer. Today, as Co-founder of 4Geeks.com, Tomas leverages his expertise to lead a team of six programmers and continues to make strides in the tech world. With a background in teaching at 4Geeks Academy Miami and creating various programming courses in different languages, Tomas is dedicated to empowering others through education and innovation.",
+    "media": [{
+      "name": "linkedin",
+      "logo": "linkedin",
+      "href": "https://www.linkedin.com/in/tomasgonzaleza"
+    }]
+  }]
+}
