@@ -30,6 +30,7 @@ import { SUBS_STATUS, getAllMySubscriptions } from '../../common/handlers/subscr
 import axiosInstance from '../../axios';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import { reportDatalayer } from '../../utils/requests';
+import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -94,7 +95,7 @@ export async function getStaticProps({ locale, params }) {
 
 function Page({ data, cohortData }) {
   const { isAuthenticated, choose } = useAuth();
-  const { hexColor, fontColor, fontColor3, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
@@ -287,8 +288,8 @@ function Page({ data, cohortData }) {
 
   return (
     <Flex flexDirection="column" mt="2rem">
-      <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
-        <Flex flexDirection="column" gridColumn="2 / span 8" gridGap="24px">
+      <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
+        <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
           {/* Title */}
           <Flex flexDirection="column" gridGap="16px">
             <Flex color="danger" width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background="red.light">
@@ -339,7 +340,7 @@ function Page({ data, cohortData }) {
               {t('technology-connector.become')}
               {' '}
               <Text as="span" size="24px" color="blue.default" fontWeight={700}>
-                {technologiesString}
+                {technologiesString || data?.course_translation?.title}
               </Text>
               {' '}
               {t('technology-connector.and-get-job')}
@@ -394,9 +395,10 @@ function Page({ data, cohortData }) {
             </Flex>
           </Flex>
         </Flex>
-        <Flex flexDirection="column" gridColumn="10 / span 4" mt={{ base: '2rem', md: '0' }}>
+        <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }}>
           <ShowOnSignUp
             title={t('join-cohort')}
+            maxWidth="396px"
             description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
             borderColor="green.400"
             textAlign="center"
@@ -488,8 +490,8 @@ function Page({ data, cohortData }) {
           />
         </Flex>
       </GridContainer>
-      <GridContainer gridTemplateColumns="1fr repeat(12, 1fr) 1fr" childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} withContainer gridColumn="2 / span 12">
-        <Flex flexDirection="column" gridColumn="2 / span 12">
+      <GridContainer maxWidth="1280px" padding="0 10px" gridTemplateColumns="repeat(12, 1fr)" childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} withContainer gridColumn="1 / span 12">
+        <Flex flexDirection="column">
           <OneColumnWithIcon
             title={t('rigobot.title')}
             icon=""
@@ -547,66 +549,95 @@ function Page({ data, cohortData }) {
         </Flex>
       </GridContainer>
       {/* Features section */}
-      <GridContainer width="100%" mt="6.25rem" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.featuredColor2}>
-        <Flex padding="40px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="64px">
-          <Flex flexDirection="column" gridGap="4rem">
-            <Flex flexDirection="column" gridGap="1rem">
-              <Heading size="24px" textAlign="center">
-                {t('why-learn-4geeks-connector.why-learn-with')}
-                {' '}
-                <Box as="span" color="blue.default">4Geeks</Box>
-                ?
-              </Heading>
-              <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
-                {t('why-learn-4geeks-connector.benefits-connector')}
-                {' '}
-                <strong>{t('why-learn-4geeks-connector.benefits')}</strong>
-              </Text>
-            </Flex>
-            <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
-              {features?.list?.length > 0 && features?.list?.map((item) => (
-                <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor}>
-                  <Flex gridGap="8px" alignItems="center">
-                    <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
-                    <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
-                      {item.title}
-                    </Heading>
+      <Box background={hexColor.featuredColor2} mt="6.25rem">
+        <GridContainer
+          maxWidth="1280px"
+          width="100%"
+          gridTemplateColumns="repeat(12, 1fr)"
+        >
+          <Flex padding="40px 10px" gridColumn="1 / span 12" flexDirection="column" gridGap="64px">
+            <Flex flexDirection="column" gridGap="4rem">
+              <Flex flexDirection="column" gridGap="1rem">
+                <Heading size="24px" textAlign="center">
+                  {t('why-learn-4geeks-connector.why-learn-with')}
+                  {' '}
+                  <Box as="span" color="blue.default">4Geeks</Box>
+                  ?
+                </Heading>
+                <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
+                  {t('why-learn-4geeks-connector.benefits-connector')}
+                  {' '}
+                  <strong>{t('why-learn-4geeks-connector.benefits')}</strong>
+                </Text>
+              </Flex>
+              <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
+                {features?.list?.length > 0 && features?.list?.map((item) => (
+                  <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor}>
+                    <Flex gridGap="8px" alignItems="center">
+                      <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
+                      <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
+                        {item.title}
+                      </Heading>
+                    </Flex>
+                    <Text
+                      size="14px"
+                      lineHeight="normal"
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    />
                   </Flex>
-                  <Text
-                    size="14px"
-                    lineHeight="normal"
-                    dangerouslySetInnerHTML={{ __html: item.description }}
-                  />
-                </Flex>
-              ))}
+                ))}
+              </Flex>
             </Flex>
+            <MktTwoColumnSideImage
+              background="transparent"
+              imagePosition="right"
+              imageUrl="/static/images/github-repo-preview.png"
+              title={features?.['what-is-learnpack']?.title}
+              description={features?.['what-is-learnpack']?.description}
+              informationSize="Medium"
+              buttonUrl={features?.['what-is-learnpack']?.link}
+              buttonLabel={features?.['what-is-learnpack']?.button}
+              textSideProps={{
+                padding: '24px 0px',
+              }}
+              imageSideProps={{
+                borderRadius: '11px',
+              }}
+              containerProps={{
+                padding: '0px',
+                marginTop: '0px',
+                gridGap: '32px',
+                alignItems: 'start',
+              }}
+            />
           </Flex>
-          <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
-            <Flex flex={{ base: 1, md: 0.5 }} flexDirection="column" gridGap="24px">
-              <Heading size="24px" lineHeight="normal">
-                {features?.['what-is-learnpack']?.title}
-              </Heading>
-              <Text size="18px" lineHeight="normal" color={fontColor3}>
-                {features?.['what-is-learnpack']?.description}
-              </Text>
-              <Button onClick={() => router.push(t(features?.['what-is-learnpack']?.link))} variant="default" width="fit-content">
-                {features?.['what-is-learnpack']?.button}
-              </Button>
-            </Flex>
-            <Flex flex={{ base: 1, md: 0.5 }} flexDirection="column" gridGap="24px">
-              <Image src="/static/images/github-repo-preview.png" width="100%" height="100%" aspectRatio="16 / 9" borderRadius="11px" />
-            </Flex>
-          </Flex>
-        </Flex>
-      </GridContainer>
+        </GridContainer>
+      </Box>
+
+      <MktTwoColumnSideImage
+        mt="6.25rem"
+        imageUrl={t('certificate.image')}
+        title={t('certificate.title')}
+        description={t('certificate.description')}
+        informationSize="Medium"
+        buttonUrl={t('certificate.button-link')}
+        buttonLabel={t('certificate.button')}
+        containerProps={{
+          padding: '0px',
+          marginTop: '0px',
+          gridGap: '32px',
+          alignItems: 'start',
+        }}
+      />
       {/* Pricing */}
       {data?.plan_slug && (
         <MktShowPrices
           id="pricing"
           mt="6.25rem"
-          gridTemplateColumns="1fr repeat(12, 1fr) 1fr"
-          gridColumn1="1 / span 8"
-          gridColumn2="9 / span 7"
+          gridTemplateColumns="repeat(12, 1fr)"
+          gridColumn1="1 / span 7"
+          gridColumn2="8 / span 5"
+          gridGap="3rem"
           title={t('show-prices.title')}
           description={t('show-prices.description')}
           plan={data?.plan_slug}
@@ -614,24 +645,25 @@ function Page({ data, cohortData }) {
         />
       )}
 
-      <GridContainer width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridColumn="2 / 12 span" gridTemplateColumns="1fr repeat(12, 1fr) 1fr">
+      <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
         <MktTrustCards
           title={t('why-learn-with-4geeks.title')}
           description={t('why-learn-with-4geeks.description')}
         />
       </GridContainer>
       {/* FAQ section */}
-      <GridContainer width="100%" mt="6.25rem" gridTemplateColumns="1fr repeat(12, 1fr) 1fr" background={hexColor.lightColor3}>
-        <Flex padding="24px 10px" gridColumn="2 / span 12" flexDirection="column" gridGap="54px">
+      <Box mt="6.25rem" background={hexColor.lightColor}>
+        <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
           {Array.isArray(faqList) && faqList?.length > 0 && (
             <Faq
+              gridColumn="1 / span 12"
               background="transparent"
               headingStyle={{
                 margin: '0px',
                 fontSize: '38px',
                 padding: '0 0 24px',
               }}
-              padding="0px 15px 15px"
+              padding="1.5rem 0"
               highlightColor={complementaryBlue}
               acordionContainerStyle={{
                 background: hexColor.white2,
@@ -644,8 +676,8 @@ function Page({ data, cohortData }) {
               }))}
             />
           )}
-        </Flex>
-      </GridContainer>
+        </GridContainer>
+      </Box>
     </Flex>
   );
 }
