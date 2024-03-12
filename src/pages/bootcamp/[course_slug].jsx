@@ -495,7 +495,9 @@ function Page({ data, cohortData }) {
           <OneColumnWithIcon
             title={t('rigobot.title')}
             icon=""
-            handleButton={() => router.push(t('rigobot.link'))}
+            handleButton={() => {
+              window.open(`https://github.com/codespaces/new/?repo=${t('rigobot.link').replace('https://github.com/', '')}`, '_blank').focus();
+            }}
             buttonText={t('rigobot.button')}
           >
             <Text size="14px" color="currentColor">
