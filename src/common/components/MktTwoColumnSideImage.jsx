@@ -40,6 +40,9 @@ function MktTwoColumnSideImage({
   imageAlt,
   gridGap,
   fontFamily,
+  textSideProps,
+  imageSideProps,
+  containerProps,
   ...rest
 }) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -78,6 +81,7 @@ function MktTwoColumnSideImage({
         titleSize: '26px',
         titleLineHeight: '1.2',
         subtitleSize: '14px',
+        descriptionLineHeight: 'normal',
         descriptionSize: '12px',
       };
     }
@@ -87,6 +91,7 @@ function MktTwoColumnSideImage({
         titleLineHeight: '1.2',
         subtitleSize: '21px',
         descriptionSize: '18px',
+        descriptionLineHeight: 'normal',
         padding: '24px 14px',
       };
     }
@@ -96,6 +101,7 @@ function MktTwoColumnSideImage({
         titleLineHeight: '54px',
         subtitleSize: '21px',
         descriptionSize: '14px',
+        descriptionLineHeight: 'normal',
         padding: '34px',
       };
     }
@@ -130,8 +136,9 @@ function MktTwoColumnSideImage({
         style={{
           direction: flexDirection[imagePosition],
         }}
+        {...containerProps}
       >
-        <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }}>
+        <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }} {...textSideProps}>
           <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
             <Heading fontFamily={fontFamily} as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
@@ -141,7 +148,7 @@ function MktTwoColumnSideImage({
                 {subTitle}
               </Heading>
             )}
-            {slice.primary.description ? (
+            {slice?.primary?.description ? (
               <PrismicTextComponent
                 field={slice?.primary?.description}
                 color={slice?.primary?.description_color || 'currentColor'}
@@ -149,7 +156,7 @@ function MktTwoColumnSideImage({
             ) : (
               <Text
                 fontSize={prismicStyles.descriptionSize}
-                lineHeight="14px"
+                lineHeight={prismicStyles.descriptionLineHeight || '14px'}
                 margin="15px 0"
                 color={fontColor2}
               >
@@ -195,6 +202,7 @@ function MktTwoColumnSideImage({
             title={imageAlt}
             borderRadius="3px"
             width={imageProps?.width}
+            {...imageSideProps}
           />
         </Box>
       </Flex>
@@ -223,6 +231,9 @@ MktTwoColumnSideImage.propTypes = {
   id: PropTypes.string,
   gridGap: PropTypes.string,
   fontFamily: PropTypes.string,
+  textSideProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  imageSideProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  containerProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -246,6 +257,9 @@ MktTwoColumnSideImage.defaultProps = {
   id: '',
   gridGap: '24px',
   fontFamily: 'Lato',
+  textSideProps: {},
+  imageSideProps: {},
+  containerProps: {},
 };
 
 export default MktTwoColumnSideImage;

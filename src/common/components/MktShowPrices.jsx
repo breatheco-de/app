@@ -97,9 +97,10 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
             }}
           />
         ) : (
-          <Text size="md">
-            {description}
-          </Text>
+          <Text
+            size="md"
+            dangerouslySetInnerHTML={{ __html: description }}
+          />
         )}
 
         {(bullets?.length > 0 || planProps?.featured_info?.length > 0) && (
