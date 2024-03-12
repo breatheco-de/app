@@ -27,7 +27,7 @@
     "title": "Meet Rigobot, your guide of your learning journey",
     "description": "Rigobot is our AI model that's being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
-    "link": "#pricing"
+    "link": "https://github.com/breatheco-de/exercise-postcard"
   },
   "learnpack-connector": {
     "get-experience-with": "Get the best of the exterience with",
