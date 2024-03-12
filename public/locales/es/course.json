@@ -18,7 +18,7 @@
   },
   "show-prices": {
     "title": "¡El dinero ya no es un problema!",
-    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
+    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
   },
   "technology-connector": {
     "become": "Únete a nuestro Bootcamp de",
@@ -80,21 +80,21 @@
     "list": [
       {
         "id": 1,
-        "icon": "tv-live",
-        "title": "Aprendizaje en Vivo",
-        "description": "Tenemos muchos talleres y eventos en vivo presentados por expertos cada semana."
+        "icon": "learn-with-ai",
+        "title": "Aprende con IA",
+        "description": "Usa IA para aprender a programar obteniendo feedback instantáneo y relevante sobre tu código. ¡Obtén ayuda de Rigobot para que responda tus preguntas y revise tus proyectos!"
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Talleres en Vivo",
-        "description": "Cientos de ejercicios interactivos, proyectos y lecciones están disponibles <a class='link-underlined' href='https://www.learnpack.co/'>gracias a LearnPack, nuestro motor interactivo</a>."
+        "title": "Aprendizaje en Vivo",
+        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "Sesión de mentoría uno a uno",
-        "description": "Ofrecemos una amplia gama de cursos en diversas tecnologías, brindándote oportunidades para mejorar tus habilidades existentes o adentrarte en nuevas."
+        "title": "Sesiones de mentoría uno a uno",
+        "description": "¡Puedes pedir mentorías privadas uno a uno con mentores expertos que actualmente trabajan como desarrolladores, para aclarar así todas tus dudas y aprender nuevos conceptos al momento que tu lo necesites!"
       }
     ]
   },
