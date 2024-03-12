@@ -27,7 +27,8 @@
   "rigobot": {
     "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje",
     "description": "Rigobot es nuestro modelo de IA que ha estado siendo entrenado en los últimos años para ayudarte en tu viaje de aprendizaje. Rigobot está listo para ayudarte mientras programas, ya sea en uno de nuestros tutoriales interactivos o codificando un proyecto, revisará tu código y te dará retroalimentación instantánea para aprender más rápido y mejor!",
-    "button": "Prueba Rigobot gratis"
+    "button": "Prueba Rigobot gratis",
+    "link": "https://github.com/breatheco-de/exercise-postcard"
   },
   "learnpack-connector": {
     "get-experience-with": "Obtén lo mejor de la experiencia con",
