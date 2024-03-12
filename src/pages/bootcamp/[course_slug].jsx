@@ -211,7 +211,8 @@ function Page({ data, cohortData }) {
       quiz: 0,
       exercise: 0,
     };
-    const assignments = [];
+    const projects = [];
+    const exercises = [];
     if (cohortData?.cohortSyllabus?.syllabus?.modules?.length > 0) {
       cohortData.cohortSyllabus.syllabus?.modules?.forEach((module) => {
         module?.content.forEach((task) => {
@@ -219,20 +220,20 @@ function Page({ data, cohortData }) {
             const taskType = task?.task_type?.toLowerCase();
             assetTypeCount[taskType] += 1;
           }
-          if (task?.task_type === 'PROJECT' || task?.task_type === 'EXERCISE') {
-            assignments.push(task);
+          if (task?.task_type === 'PROJECT') {
+            projects.push(task);
+          }
+          if (task?.task_type === 'EXERCISE') {
+            exercises.push(task);
           }
         });
       });
     }
-    const sortedAssignmentsByTaskTypeProjectFirst = assignments.sort((a, b) => {
-      if (a?.task_type === 'PROJECT' && b?.task_type === 'EXERCISE') return -1;
-      if (a?.task_type === 'EXERCISE' && b?.task_type === 'PROJECT') return 1;
-      return 0;
-    });
+    const lastProjects = projects.slice(-3);
+    const lastExercises = exercises.slice(-3);
     return {
       count: assetTypeCount || {},
-      assignmentList: sortedAssignmentsByTaskTypeProjectFirst || [],
+      assignmentList: [...lastProjects, ...lastExercises] || [],
     };
   };
   const { count: assetCount, assignmentList } = getModulesInfo();
