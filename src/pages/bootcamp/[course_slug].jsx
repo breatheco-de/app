@@ -527,7 +527,7 @@ function Page({ data, cohortData }) {
                 project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
                 exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
               };
-              const link = `${pathConnector[item?.task_type?.toLowerCase()]}${taskTranslations.slug}`;
+              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations.slug}`;
 
               return (
                 <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
