@@ -40,7 +40,7 @@ function BulletComponent({ bullet, isString }) {
       />
       {bullet?.description && (
       <Box
-        fontSize="14px"
+        fontSize="18px"
         fontWeight="600"
         letterSpacing="0.05em"
         dangerouslySetInnerHTML={{ __html: bullet?.description }}
