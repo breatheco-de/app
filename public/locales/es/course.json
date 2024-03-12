@@ -98,7 +98,7 @@
     ]
   },
   "certificate": {
-    "image": "/static/images/certificate-preview.png",
+    "image": "/static/images/certificate-preview.webp",
     "title": "Certificado en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
     "button": "Ver precios",
