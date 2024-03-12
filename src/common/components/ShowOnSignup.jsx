@@ -14,6 +14,7 @@ import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
+import { error } from '../../utils/logging';
 
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
@@ -50,7 +51,7 @@ function ShowOnSignUp({
   useEffect(() => {
     getUserLocation()
       .then((loc) => setLocation(loc))
-      .catch((e) => console.log(e));
+      .catch((e) => error('function getUserLocation()', e));
   }, [gmapStatus]);
 
   useEffect(() => {
@@ -88,7 +89,7 @@ function ShowOnSignUp({
 
       <Box display="flex" flexDirection="column" gridGap={rest?.gridGap || '10px'} padding={padding || (footerContent ? '0 18px 0 18px' : '0 18px 18px')}>
         {title && (
-          <Text textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
+          <Text as="h2" textAlign="center" size="21px" fontWeight={700} lineHeight="25px">
             {title}
           </Text>
         )}

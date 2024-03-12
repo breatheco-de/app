@@ -403,6 +403,7 @@ function Page({ data, cohortData }) {
             borderColor="green.400"
             textAlign="center"
             gridGap="11px"
+            padding={data?.course_translation?.video_url ? '0' : '24px 0 0 0'}
             formContainerStyle={{
               gridGap: '0px',
               margin: '0 0 7px 0',
@@ -414,11 +415,11 @@ function Page({ data, cohortData }) {
             }}
             hideForm
             invertHandlerPosition
-            headContent={(
+            headContent={data?.course_translation?.video_url && (
               <Flex flexDirection="column" position="relative">
                 <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" />
                 <ReactPlayerV2
-                  url="https://www.youtube.com/watch?v=2iUR01_S7N4&pp=ygUYNGdlZWtzYWNhZGVteSBqYXZhc2NyaXB0"
+                  url={data?.course_translation?.video_url}
                   withThumbnail
                   withModal
                   thumbnailStyle={{
