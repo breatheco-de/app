@@ -91,7 +91,6 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
         )}
         {typeof description !== 'string' ? (
           <PrismicRichText
-            style={{fontSize: "18px"}}
             field={description}
             components={{
               paragraph: Paragraph,
@@ -100,6 +99,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
         ) : (
           <Text
             size="md"
+            fontSize="18px"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         )}
