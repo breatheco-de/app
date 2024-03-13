@@ -40,7 +40,7 @@ function BulletComponent({ bullet, isString }) {
       />
       {bullet?.description && (
       <Box
-        fontSize="14px"
+        fontSize="18px"
         fontWeight="600"
         letterSpacing="0.05em"
         dangerouslySetInnerHTML={{ __html: bullet?.description }}
@@ -99,13 +99,14 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
         ) : (
           <Text
             size="md"
+            fontSize="18px"
             dangerouslySetInnerHTML={{ __html: description }}
           />
         )}
 
         {(bullets?.length > 0 || planProps?.featured_info?.length > 0) && (
           <Box display="flex" flexDirection="column" gridGap="15px">
-            <Text fontSize="14px" textTransform="uppercase" color="blue.default" fontWeight="700" lineHeight="31px">
+            <Text fontSize="18px" textTransform="uppercase" color="blue.default" fontWeight="700" lineHeight="31px">
               {t('subscription.what-you-will-get')}
             </Text>
 

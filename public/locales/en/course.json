@@ -12,25 +12,25 @@
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Do you want to know more about what make us different? These are the benefits of our study model.",
+    "benefits-connector": "Do you want to know more about what makes us different? These are the benefits of our study model.",
     "benefits": "Learn live + learn by doing + learn in community."
   },
   "show-prices": {
     "title": "Money is no longer a concern!",
-    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
+    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/><br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
   },
   "technology-connector": {
     "become": "Join our",
     "and-get-job": " Bootcamp, and get to your first job"
   },
   "rigobot": {
-    "title": "Meet Rigobot, your guide of your learning journey",
-    "description": "Rigobot is our AI model that's being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "title": "Meet Rigobot, the guide of your learning journey",
+    "description": "Rigobot is our AI model that's been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
     "link": "https://github.com/breatheco-de/exercise-postcard"
   },
   "learnpack-connector": {
-    "get-experience-with": "Get the best of the exterience with",
+    "get-experience-with": "Get the best of the experience with",
     "learnpack-tool": "LearnPack, our powerful AI tool",
     "do-you-want-to-know": "Do you want to know more?"
   },
@@ -51,49 +51,49 @@
     {
       "id": 1,
       "title": "Do I need prior knowledge?",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, beatae. Debitis deleniti, molestiae ducimus aliquid voluptatem delectus, a neque, eaque dolor eum consectetur minima fugit aliquam! Veritatis totam laudantium magnam?"
+      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
     },
     {
       "id": 2,
-      "title": "How do mentoring work?",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident hic et porro laborum similique blanditiis, exercitationem rerum rem, harum repudiandae iure cum corporis ratione commodi. Ab voluptatibus commodi iure ut."
+      "title": "How to schedule a mentoring session?",
+      "description": "To schedule a mentoring session, you must go to the dashboard, and choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
     },
     {
       "id": 3,
-      "title": "What do I need to start?",
-      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis molestiae eius eligendi odit. Nostrum tempora animi molestiae sapiente, quaerat sit illo repellat neque aut non iusto harum minus error quis."
-    },
+      "title": "What are one-on-one mentoring sessions?",
+      "description": "One-on-one mentoring sessions are 45-minute meetings between you and an expert mentor, where you can ask all the questions related to problems you have on your code, or concepts you don't understand, about almost any technology, and at the day and time that best fits you."
+    }
     {
       "id": 4,
-      "title": "and More",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
-    }
+      "title": "What other kind of support do I get when learning?",
+      "description": "You'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience. Plus, you'll have access to our slack community where we have a channel specialized for coding-related help, with fast response rates!"
+    },
   ],
   "features": {
     "what-is-learnpack": {
       "title": "What is LearnPack?",
       "description": "LearnPack is a software that allows you to learn through interactive tutorials inside your development environment like VSCode. It has Rigobot (Our AI model) included, so you can get instant feedback while you code!",
-      "button": "Try learnpack for free",
+      "button": "Try LearnPack",
       "link": "#pricing"
     },
     "list": [
       {
         "id": 1,
         "icon": "tv-live",
-        "title": "Live Learning",
-        "description": "We have many workshops and Live Events hosted by experts every week."
+        "title": "Learn Live",
+        "description": "Learn live with our workshops about technical or career subjects, hosted by tech industry experts."
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Live Workshops",
-        "description": "Hundreds of interactive exercises, projects, and lessons are available <a class='link-underlined' href='https://www.learnpack.co/'>thanks to LearnPack, our interactive engine</a>."
+        "title": "Live by doing",
+        "description": "Learn by doing with more than 25 real-life projects and 500+ interactive exercises."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "One - on - one mentoring session",
-        "description": "We offer a diverse range of courses across various technologies, providing you with opportunities to enhance your existing skills or delve into new ones."
+        "title": "Learn with community",
+        "description": "Join our community and connect with thousands of developers who are learning the same as you are!"
       }
     ]
   },
