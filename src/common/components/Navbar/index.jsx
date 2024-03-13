@@ -24,7 +24,7 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { isWindow } from '../../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BASE_PLAN } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
@@ -136,7 +136,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           description: item?.course_translation?.description,
           subMenu: [
             {
-              href: `/${item?.slug}`,
+              href: `/bootcamp/${item?.slug}`,
               label: t('course-details'),
             },
           ],
@@ -524,7 +524,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 display={{ base: 'none', md: 'block' }}
                 href="/login"
                 fontWeight="700"
-                fontSize="13px"
+                fontSize="14px"
                 padding="12px 0"
                 lineHeight="22px"
                 _hover={{
@@ -534,7 +534,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href="/pricing">
+              <Link variant="buttonDefault" href={`/checkout?plan=${BASE_PLAN}`}>
                 {t('get-started')}
               </Link>
             </Box>

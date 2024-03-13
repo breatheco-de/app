@@ -637,7 +637,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
             </Text>
             <Textarea aria-label="feedback input" fontSize="12px" onChange={onChangeComment} minHeight="134" placeholder={t('code-review.start-review-here')} />
             <Box position="absolute" bottom={1.5} right={3} color={comment.length < 10 ? '#EB5757' : 'currentColor'}>
-              {`${comment.length}/ ${inputLimit}`}
+              {`${comment.length} / ${inputLimit}`}
             </Box>
           </Box>
           <Button isLoading={loaders.isApprovingOrRejecting} variant="default" alignSelf="flex-end" isDisabled={comment.length < 10 || revisionStatusUpperCase[reviewStatus] === undefined} onClick={approveOrRejectProject}>

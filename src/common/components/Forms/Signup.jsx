@@ -30,6 +30,7 @@ import modifyEnv from '../../../../modifyEnv';
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
+  invertHandlerPosition, formContainerStyle,
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -131,28 +132,16 @@ function SignupForm({
             },
             state: true,
           });
-          if (redirectStorageAlreadyExists) {
-            const { enableRedirect: enabRed, ...restOfQuery } = router.query;
-            router.push({
-              pathname: redirectStorage,
-              query: {
-                ...restOfQuery,
-                token: data.access_token,
-              },
-            });
-            localStorage.removeItem('redirect');
-          } else {
-            router.push({
-              query: {
-                ...router.query,
-                token: data.access_token,
-              },
-            });
-            onHandleSubmit({
-              ...allValues,
-              ...data,
-            });
-          }
+          router.push({
+            query: {
+              ...router.query,
+              token: data.access_token,
+            },
+          });
+          onHandleSubmit({
+            ...allValues,
+            ...data,
+          });
         }
       }
 
@@ -212,6 +201,7 @@ function SignupForm({
               display: 'flex',
               flexDirection: 'column',
               gridGap: containerGap,
+              ...formContainerStyle,
             }}
           >
             <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap={columnLayout ? '18px' : '24px'}>
@@ -289,7 +279,7 @@ function SignupForm({
                   .
                 </Text>
               </Checkbox>
-              {showLoginLink && (
+              {!invertHandlerPosition && showLoginLink && (
                 <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
                   {t('already-have-account')}
                   {' '}
@@ -308,6 +298,13 @@ function SignupForm({
             >
               {t('create-account')}
             </Button>
+            {invertHandlerPosition && showLoginLink && (
+              <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
+                {t('already-have-account')}
+                {' '}
+                <NextChakraLink onClick={() => setStorageItem('redirect', router?.asPath)} href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+              </Flex>
+            )}
           </Form>
         )}
       </Formik>
@@ -409,6 +406,8 @@ SignupForm.propTypes = {
   subscribeValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   showLoginLink: PropTypes.bool,
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  invertHandlerPosition: PropTypes.bool,
+  formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 SignupForm.defaultProps = {
   onHandleSubmit: () => {},
@@ -423,6 +422,8 @@ SignupForm.defaultProps = {
   conversionTechnologies: null,
   showLoginLink: false,
   buttonStyles: {},
+  invertHandlerPosition: false,
+  formContainerStyle: {},
 };
 
 export default SignupForm;

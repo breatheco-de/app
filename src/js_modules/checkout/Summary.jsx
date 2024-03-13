@@ -15,9 +15,15 @@ import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../u
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import SimpleModal from '../../common/components/SimpleModal';
+import axiosInstance from '../../axios';
+import { usePersistent } from '../../common/hooks/usePersistent';
+import useAuth from '../../common/hooks/useAuth';
+import { getCohort } from '../../common/handlers/cohorts';
 
 function Summary() {
-  const { t } = useTranslation('signup');
+  const { t, lang } = useTranslation('signup');
+  const { choose } = useAuth();
+  const [, setCohortSession] = usePersistent('cohortSession', {});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [disableHandler, setDisableHandler] = useState(false);
@@ -92,6 +98,56 @@ function Summary() {
     });
   }, []);
 
+  const redirectTocohort = (cohort) => {
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const syllabusVersion = cohort?.syllabus_version;
+    choose({
+      version: syllabusVersion?.version,
+      slug: syllabusVersion?.slug,
+      cohort_name: cohort.name,
+      cohort_slug: cohort?.slug,
+      syllabus_name: syllabusVersion,
+      academy_id: cohort.academy.id,
+    });
+    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
+    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    setCohortSession({
+      ...cohort,
+      selectedProgramSlug: cohortDashboardLink,
+    });
+    router.push(cohortDashboardLink);
+  };
+  const joinCohort = (cohort) => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'join_cohort',
+        cohort_id: cohort?.id,
+      },
+    });
+    bc.cohort().join(cohort?.id)
+      .then(async (resp) => {
+        const dataRequested = await resp.json();
+        if (dataRequested?.status === 'ACTIVE') {
+          redirectTocohort(cohort);
+        }
+        if (dataRequested?.status_code >= 400) {
+          toast({
+            position: 'top',
+            title: dataRequested?.detail,
+            status: 'info',
+            duration: 5000,
+            isClosable: true,
+          });
+          setReadyToRefetch(false);
+        }
+      })
+      .catch(() => {
+        setTimeout(() => {
+          setReadyToRefetch(false);
+        }, 600);
+      });
+  };
+
   useEffect(() => {
     let interval;
     if (readyToRefetch && timeElapsed < 10) {
@@ -99,17 +155,32 @@ function Summary() {
         setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
+            const currentSubscription = subscriptions?.find(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
+
             if (isPurchasedPlanFound) {
-              clearInterval(interval);
-              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-                router.push(redirect || redirectedFrom);
-                localStorage.removeItem('redirect');
-                localStorage.removeItem('redirected-from');
+              if (currentSubscription.selected_cohort_set.cohorts[0]) {
+                getCohort(currentSubscription.selected_cohort_set.cohorts[0].id)
+                  .then((cohort) => {
+                    joinCohort(cohort);
+                  })
+                  .finally(() => {
+                    clearInterval(interval);
+                    setReadyToRefetch(false);
+                  });
               } else {
-                router.push('/choose-program');
+                clearInterval(interval);
+                if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                  router.push(redirect || redirectedFrom);
+                  localStorage.removeItem('redirect');
+                  localStorage.removeItem('redirected-from');
+                } else {
+                  router.push('/choose-program');
+                }
               }
             }
           });

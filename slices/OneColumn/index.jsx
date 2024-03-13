@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import MktOneColumn from '../../src/common/components/MktOneColumn';
+import MktOneColumnKPI from '../../src/common/components/MktOneColumnKPI';
 
 /**
  * @typedef {import("@prismicio/client").Content.OneColumnSlice} OneColumnSlice
@@ -27,7 +27,7 @@ function OneColumn({ slice }) {
   ].filter((item) => item?.title && item?.description);
 
   return (
-    <MktOneColumn
+    <MktOneColumnKPI
       id={slice?.primary?.id_key}
       slice={slice}
       title={slice.primary.title}

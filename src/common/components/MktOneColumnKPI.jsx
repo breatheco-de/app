@@ -41,7 +41,7 @@ function MktKPI({ kpiTitle, kpiDescription, color }) {
   );
 }
 
-function MktOneColumn({
+function MktOneColumnKPI({
   id,
   title,
   subTitle,
@@ -115,7 +115,7 @@ function MktOneColumn({
   );
 }
 
-MktOneColumn.propTypes = {
+MktOneColumnKPI.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
@@ -128,7 +128,7 @@ MktOneColumn.propTypes = {
   id: PropTypes.string,
 };
 
-MktOneColumn.defaultProps = {
+MktOneColumnKPI.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
@@ -141,4 +141,4 @@ MktOneColumn.defaultProps = {
   id: '',
 };
 
-export default MktOneColumn;
+export default MktOneColumnKPI;
