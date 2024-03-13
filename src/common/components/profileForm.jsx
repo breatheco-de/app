@@ -286,18 +286,24 @@ function ProfileForm({ profile }) {
                     </Text>
                   </>
                 ) : (
-                  <Text
+                  <Button
+                    variant="link"
+                    fontSize="16px"
+                    isDisabled={!profile?.github?.username}
+                    _hover={{ textDecoration: 'none' }}
                     margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
                     textAlign="start"
                     color="blue.default"
                     cursor="pointer"
                     onClick={(e) => {
                       e.preventDefault();
-                      window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      if (profile?.github?.username) {
+                        window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      }
                     }}
                   >
                     {t('connect-rigobot')}
-                  </Text>
+                  </Button>
                 )}
               </Box>
             </InputGroup>
