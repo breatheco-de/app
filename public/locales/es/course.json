@@ -80,21 +80,21 @@
     "list": [
       {
         "id": 1,
-        "icon": "learn-with-ai",
-        "title": "Aprende con IA",
-        "description": "Usa IA para aprender a programar obteniendo feedback instantáneo y relevante sobre tu código. ¡Obtén ayuda de Rigobot para que responda tus preguntas y revise tus proyectos!"
+        "icon": "tv-live",
+        "title": "Aprende en vivo",
+        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Aprendizaje en Vivo",
-        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
+        "title": "Aprende haciendo",
+        "description": "Aprende mientras haces más de 25 proyectos de casos reales y más de 500 ejercicios interactivos."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "Sesiones de mentoría uno a uno",
-        "description": "¡Puedes pedir mentorías privadas uno a uno con mentores expertos que actualmente trabajan como desarrolladores, para aclarar así todas tus dudas y aprender nuevos conceptos al momento que tu lo necesites!"
+        "title": "Aprende en comunidad",
+        "description": "¡Únete a nuestra comunidad y aprende junto miles de desarrolladores que están aprendiendo lo mismo que tu!"
       }
     ]
   },
