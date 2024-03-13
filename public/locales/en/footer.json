@@ -83,19 +83,19 @@
       "title": "Start coding using Javascript",
       "icon": "javascript",
       "text": "Get started in coding with the world's most popular language. Build your first projects with an Excuse Generator, Domain name finder, and more than 300 exercises.",
-      "href": "/start-coding-using-javascript"
+      "href": "/bootcamp/start-coding-using-javascript"
     },
     {
       "title": "Full Stack Coding Bootcamp",
       "icon": "coding",
       "text": "Become a Full Stack software developer using Python, React and Javascript. The most in-demand skills. Find a job as a developer.",
-      "href": "https://4geeksacademy.com/us/coding-bootcamps/part-time-full-stack-developer"
+      "href": "/bootcamp/full-stack-development"
     },
     {
       "title": "Start coding using Python",
       "icon": "python",
       "text": "Get started in coding with the world's most popular language. Build your first projects and practice with more than 300 exercises.",
-      "href": "https://4geeks.com/start-coding-using-python"
+      "href": "/bootcamp/start-coding-using-python"
     },
     {
       "title": "Data Science and ML",
