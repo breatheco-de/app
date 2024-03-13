@@ -65,7 +65,6 @@ export async function getStaticProps({ locale, params }) {
   const endpoint = `/v1/marketing/course/${courseSlug}?lang=${locale}`;
   const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
   const data = resp?.data;
-  console.log(`/v1/marketing/course/${courseSlug}?lang=${locale}`);
   const cohortId = data?.cohort?.id;
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
 
@@ -104,7 +103,8 @@ export async function getStaticProps({ locale, params }) {
       const lastProjects = projects.slice(-3);
       const lastExercises = exercises.slice(-3);
       const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
-      const assignmentsFetch = await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.slug}`)
+      const lang = locale === 'en' ? 'us' : locale;
+      const assignmentsFetch = await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
         .then((assignmentResp) => assignmentResp.json())
         .then((respData) => respData)));
 
