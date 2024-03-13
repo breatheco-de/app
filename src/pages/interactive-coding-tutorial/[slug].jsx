@@ -25,6 +25,7 @@ import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MktEventCards from '../../common/components/MktEventCards';
+import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -271,6 +272,7 @@ function ProjectSlug({ project, markdown }) {
               {project ? (
                 <>
                   <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+                  <SupplementaryMaterial assets={project?.assets_related} />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -324,6 +326,7 @@ function ProjectSlug({ project, markdown }) {
           {project ? (
             <>
               <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+              <SupplementaryMaterial assets={project?.assets_related} />
               <DynamicCallToAction
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
