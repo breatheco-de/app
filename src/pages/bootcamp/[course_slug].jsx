@@ -103,7 +103,8 @@ export async function getStaticProps({ locale, params }) {
       }
       const lastProjects = projects.slice(-3);
       const lastExercises = exercises.slice(-3);
-      const assignmentsFetch = await Promise.all([...lastProjects, ...lastExercises].map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.slug}`)
+      const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+      const assignmentsFetch = await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.slug}`)
         .then((assignmentResp) => assignmentResp.json())
         .then((respData) => respData)));
 
