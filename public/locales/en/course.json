@@ -80,20 +80,20 @@
       {
         "id": 1,
         "icon": "tv-live",
-        "title": "Learn with AI",
-        "description": "Use AI to learn to code getting instant and relevant feedback about your code. Get help from Rigobot to answer all your questions and get your projects reviewed!"
+        "title": "Learn Live",
+        "description": "Learn live with our workshops about technical or career subjects, hosted by tech industry experts."
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Live Learning",
-        "description": "Learn live with our workshops about technical or career subjects, hosted by expert from the tech industry."
+        "title": "Live by doing",
+        "description": "Learn by doing with more than 25 real-life projects and 500+ interactive exercises."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "One-on-one mentoring sessions",
-        "description": "You can schedule private mentoring sessions ono-on-one with expert mentors to get help on your questions and learn new concepts whenever you need!"
+        "title": "Learn with community",
+        "description": "Join our community and connect with thousands of developers who are learning the same as you are!"
       }
     ]
   },
