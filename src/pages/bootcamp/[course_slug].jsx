@@ -519,7 +519,7 @@ function Page({ data, cohortData }) {
           <Heading size="24px" lineHeight="normal" textAlign="center">
             {t('build-connector.what-you-will')}
             {' '}
-            <Box as="span" color="blue.default">{t('build-connector.build')}</Box>
+            <Box as="span" color="blue.default">{t('build-connector.build')}?</Box>
           </Heading>
           <Text size="18px" textAlign="center">
             {t('build-connector.description')}
