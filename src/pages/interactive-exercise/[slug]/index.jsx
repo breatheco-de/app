@@ -31,6 +31,7 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
+import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -284,6 +285,7 @@ function Exercise({ exercise, markdown }) {
             {exercise?.slug ? (
               <>
                 <TabletWithForm asset={exercise} href="/interactive-exercises" />
+                <SupplementaryMaterial assets={exercise?.assets_related} />
                 <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
@@ -339,6 +341,7 @@ function Exercise({ exercise, markdown }) {
           {exercise?.slug ? (
             <>
               <TabletWithForm asset={exercise} href="/interactive-exercises" />
+              <SupplementaryMaterial assets={exercise?.assets_related} />
               <DynamicCallToAction
                 assetId={exercise.id}
                 assetTechnologies={exercise.technologies?.map((item) => item?.slug)}

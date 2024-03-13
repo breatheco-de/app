@@ -31,6 +31,8 @@ module.exports = {
     '/profile/[slug]': ['profile'],
     '/thank-you': ['thank-you'],
     '/workshops/[event_slug]': ['workshops', 'signup'],
+    '/join/cohort/[id]': ['dashboard', 'signup'],
+    '/podcast': ['podcast'],
     '/bootcamp/[course_slug]': ['course', 'dashboard'],
   },
   locales: ['en', 'es'],
