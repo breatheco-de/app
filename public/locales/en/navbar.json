@@ -13,17 +13,17 @@
       "href": "{{selectedProgramSlug}}"
     },
     {
-      "id": "courses",
-      "label": "Courses",
+      "id": "bootcamps",
+      "label": "Bootcamps",
       "icon": "graduationCap",
       "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
-      "asPath": "/courses",
+      "asPath": "/bootcamps",
       "subMenu": [],
       "position": 1
     },
     {
-      "id": "bootcamp",
-      "label": "Coding Bootcamp",
+      "id": "academy",
+      "label": "Academy",
       "href": "https://4geeksacademy.com",
       "hide_on_auth": true,
       "position": 2
@@ -120,13 +120,6 @@
         }
       ],
       "position": 4
-    },
-    {
-      "id": "pricing",
-      "label": "Pricing",
-      "href": "/pricing",
-      "hide_on_auth": true,
-      "position": 5
     }
   ],
 

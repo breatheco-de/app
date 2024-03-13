@@ -23,14 +23,15 @@ export const SUBS_STATUS = {
  * @param {object} translations - Translations for plan content (optional)
  * @returns {Promise<object>} - The processed plans data
  */
-export const processPlans = (data, {
+export const processPlans = async (data, {
   monthly = true,
   quarterly = true,
   halfYearly = true,
   yearly = true,
   planType = '',
-} = {}, translations = {}) => bc.payment().getPlanProps(data?.slug)
-  .then((resp) => {
+} = {}, translations = {}) => {
+  try {
+    const resp = await bc.payment().getPlanProps(data?.slug);
     if (!resp) {
       throw new Error('The plan does not exist');
     }
@@ -43,7 +44,7 @@ export const processPlans = (data, {
     const financingOptionsExists = data?.financing_options?.length > 0;
     const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
     const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
-    const singlePlan = data?.plans?.length > 0 ? data?.plans[0] : data;
+    const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
     const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0 && !financingOptionsExists;
 
     const financingOptions = financingOptionsManyMonthsExists
@@ -88,6 +89,9 @@ export const processPlans = (data, {
         financing: translations?.financing || 'Financing',
       },
     };
+    const trialPlanDescription = isTotallyFree
+      ? textInfo.totally_free
+      : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit);
 
     const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
       ...relevantInfo,
@@ -97,6 +101,7 @@ export const processPlans = (data, {
       period: 'FINANCING',
       period_label: textInfo.label.financing,
       plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+      description: translations?.one_payment_description || '',
       how_many_months: item?.how_many_months,
       type: 'PAYMENT',
       show: true,
@@ -108,10 +113,9 @@ export const processPlans = (data, {
       price: 0,
       priceText: isTotallyFree ? textInfo.free : textInfo.free_trial,
       plan_id: `p-${singlePlan?.trial_duration}-trial`,
+      description: trialPlanDescription,
       period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
-      period_label: isTotallyFree
-        ? textInfo.totally_free
-        : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit),
+      period_label: trialPlanDescription,
       type: isTotallyFree ? 'FREE' : 'TRIAL',
       isFree: true,
     } : {};
@@ -122,6 +126,7 @@ export const processPlans = (data, {
       price: data?.price_per_month,
       priceText: `$${data?.price_per_month}`,
       plan_id: `p-${data?.price_per_month}`,
+      description: translations?.yearly_payment_description || '',
       period: 'MONTH',
       period_label: textInfo.label.monthly,
       type: 'PAYMENT',
@@ -133,6 +138,7 @@ export const processPlans = (data, {
       price: data?.price_per_quarter,
       priceText: `$${data?.price_per_quarter}`,
       plan_id: `p-${data?.price_per_quarter}`,
+      description: translations?.quarterly_payment_description || '',
       period: 'QUARTER',
       period_label: textInfo.label.quarterly,
       type: 'PAYMENT',
@@ -144,6 +150,7 @@ export const processPlans = (data, {
       price: data?.price_per_half,
       priceText: `$${data?.price_per_half}`,
       plan_id: `p-${data?.price_per_half}`,
+      description: translations?.half_yearly_payment_description || '',
       period: 'HALF',
       period_label: textInfo.label.half_yearly,
       type: 'PAYMENT',
@@ -155,6 +162,7 @@ export const processPlans = (data, {
       price: data?.price_per_year,
       priceText: `$${data?.price_per_year}`,
       plan_id: `p-${data?.price_per_year}`,
+      description: translations?.yearly_payment_description || '',
       period: 'YEAR',
       period_label: textInfo.label.yearly,
       type: 'PAYMENT',
@@ -162,6 +170,7 @@ export const processPlans = (data, {
 
     const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
       const financingTitle = item?.how_many_months === 1 ? textInfo.one_payment : translations.many_months_payment(item?.how_many_months);
+      const financingOptionsDescription = item?.how_many_months === 1 ? translations.one_payment_description : translations?.financing_description(item?.monthly_price, item?.how_many_months);
       return ({
         ...relevantInfo,
         financingId: index + 1,
@@ -169,6 +178,7 @@ export const processPlans = (data, {
         price: item?.monthly_price,
         priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+        description: financingOptionsDescription || '',
         period: 'FINANCING',
         period_label: textInfo.label.financing,
         how_many_months: item?.how_many_months,
@@ -177,15 +187,24 @@ export const processPlans = (data, {
     }) : [{}];
 
     const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
+    const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+    const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
     return ({
       ...data,
       title: data?.title || slugToTitle(data?.slug),
+      isTotallyFree,
       isTrial: !isNotTrial && !financingOptionsExists,
       plans: planList,
       featured_info: planPropsData || [],
+      paymentOptions: paymentList,
+      financingOptions: financingList,
     });
-  });
+  } catch (error) {
+    console.error('Error processing plans:', error);
+    return {};
+  }
+};
 
 /**
  * @param {String} planSlug // Base plan slug to generate list of prices
@@ -232,6 +251,12 @@ export const getTranslations = (t = () => {}) => {
       const periodText = qty > 1 ? pluralTranslation[periodValue] : singularTranslation[periodValue];
       return t('signup:info.free-trial-period', { qty, period: periodText });
     },
+    one_payment_description: t('signup:one_payment_description'),
+    monthly_payment_description: t('signup:monthly_payment_description'),
+    quarterly_payment_description: t('signup:quarterly_payment_description'),
+    half_yearly_payment_description: t('signup:half_yearly_payment_description'),
+    yearly_payment_description: t('signup:yearly_payment_description'),
+    financing_description: (price, months) => t('subscription.upgrade-modal.many_months_description', { monthly_price: price, many_months: months }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),
     half_yearly: t('signup:info.half-yearly'),

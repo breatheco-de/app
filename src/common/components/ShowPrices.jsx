@@ -128,6 +128,7 @@ function ShowPrices({
   const paymentTabStyle = getTabColor(0, list?.length > 0);
   const financeTabStyle = getTabColor(1, finance?.length > 0);
   const existMoreThanOne = financeSelected[selectedFinanceIndex].length > 1;
+  const isOnlyOneItem = [...finance, ...list].length === 1;
 
   return (
     <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
@@ -135,7 +136,7 @@ function ShowPrices({
         <Heading as="h2" size="sm">
           {title || data?.pricing['choose-plan']}
         </Heading>
-        {!isTotallyFree && financeSelected[1] && (
+        {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
           <Box display="flex">
             <Box
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}

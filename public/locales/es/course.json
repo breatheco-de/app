@@ -1,0 +1,112 @@
+{
+  "course-content-text": "Contenido del curso",
+  "students-enrolled-count": "+{{count}} estudiantes inscritos",
+  "join-cohort": "Unirse a la cohorte",
+  "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
+  "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
+  "live-bootcamp": "Bootcamp en vivo",
+  "build-connector": {
+    "what-you-will": "Qué vas a",
+    "description": "Este bootcamp está lleno de ejercicios prácticos que te ayudarán a mejorar tu experiencia y construir un gran portafolio. Entra en el mundo laboral construyendo proyectos reales como estos:",
+    "build": "construir",
+    "link": "#pricing"
+  },
+  "why-learn-4geeks-connector": {
+    "why-learn-with": "Por qué aprender con",
+    "benefits-connector": "¿Quieres saber más sobre qué nos hace diferentes? Estos son los beneficios de nuestro modelo de estudio.",
+    "benefits": "Aprende en vivo + aprende creando + aprende en comunidad."
+  },
+  "show-prices": {
+    "title": "¡El dinero ya no es un problema!",
+    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
+  },
+  "technology-connector": {
+    "become": "Únete a nuestro Bootcamp de",
+    "and-get-job": "y consigue tu primer trabajo"
+  },
+  "rigobot": {
+    "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje",
+    "description": "Rigobot es nuestro modelo de IA que ha estado siendo entrenado en los últimos años para ayudarte en tu viaje de aprendizaje. Rigobot está listo para ayudarte mientras programas, ya sea en uno de nuestros tutoriales interactivos o codificando un proyecto, revisará tu código y te dará retroalimentación instantánea para aprender más rápido y mejor!",
+    "button": "Prueba Rigobot gratis",
+    "link": "https://github.com/breatheco-de/exercise-postcard"
+  },
+  "learnpack-connector": {
+    "get-experience-with": "Obtén lo mejor de la experiencia con",
+    "learnpack-tool": "LearnPack, nuestra poderosa herramienta de IA",
+    "do-you-want-to-know": "¿Quieres saber más?"
+  },
+  "syllabus-connector": {
+    "follow-structured-syllabus": "Sigue un plan de estudios estructurado con",
+    "interactive-tutorials": "Más de 1000 ejercicios y tutoriales interactivos."
+  },
+  "mentoring-connector": {
+    "boost-experience-with": "Potencia tu experiencia con",
+    "one-one-mentoring": "sesiones de tutoría en vivo uno a uno",
+    "with-our-experts": "con expertos de la industria que ya han recorrido este camino."
+  },
+  "why-learn-with-4geeks": {
+    "title": "¿Por qué debería aprender con 4Geeks?",
+    "description": "¡Llevamos más de 9 años ayudando a la gente a aprender a programar, más de 4000 estudiantes graduados, y el 84% de nuestros estudiantes graduados de nuestro bootcamp consiguieron trabajo!"
+  },
+  "faq": [
+    {
+      "id": 1,
+      "title": "¿Necesito conocimientos previos?",
+      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
+    },
+    {
+      "id": 2,
+      "title": "¿Cómo agendar mentorías?",
+      "description": "Para agendar una mentoría, debes acceder desde tu dashboard, seleccionar el tipo de mentoría que necesitas, escoger el mentor que más te guste o que esté disponible en el horario que desees y luego escoger el día y hora de la mentoría! Puedes ver más sobre cómo funcionan las mentorías <a href='https://4geeks.com/es/docs/knowledge-base-4geeks/sesiones-de-tutoria' target='_blank'>aqui</a>."
+    },
+    {
+      "id": 3,
+      "title": "¿Qué son las mentorías uno a uno?",
+      "description": "Las mentorías uno a uno son videollamadas de 30 minutos con un experto, este tiempo lo puedes aprovechar para pedir ayuda con algún ejercicio que no sabes como resolver, con ayuda para seguir avanzando con alguno de tus proyectos, o incluso para que te ayuden a entender algún concepto nuevo que no tienes muy claro."
+    },
+    {
+      "id": 4,
+      "title": "¿Qué tipo de ayuda recibo mientras estoy aprendiendo?",
+      "description": "Al entrar en cualquiera de nuestros programas de 4Geeks, obtienes acceso a nuestra comunidad en slack, en la que tenemos un canal especializado para ayudarte con problemas de código, con un tiempo de respuesta rápido. Además cuentas con la ayuda de Rigobot, nuestro modelo de inteligencia artificial entrenado para darte feedback de los ejercicios y proyectos que realizas, también puedes hablar en un chat con el, quien te dará una ayuda personalizada en base a lo que estas aprendiendo en el momento! Por otro lado, tienes acceso a las mentorías, que de agotarse, puedes solicitar más por un precio adicional para seguir utilizandolas"
+    }
+  ],
+  "features": {
+    "what-is-learnpack": {
+      "title": "¿Qué es LearnPack?",
+      "description": "LearnPack es un software que te permite aprender a través de tutoriales interactivos dentro de tu entorno de desarrollo como VSCode. ¡Incluye a Rigobot (Nuestro modelo de IA), por lo que puedes obtener retroalimentación instantánea mientras programas!",
+      "button": "Prueba LearnPack",
+      "link": "#pricing"
+    },
+    "list": [
+      {
+        "id": 1,
+        "icon": "tv-live",
+        "title": "Aprende en vivo",
+        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
+      },
+      {
+        "id": 2,
+        "icon": "code-bracket",
+        "title": "Aprende haciendo",
+        "description": "Aprende mientras haces más de 25 proyectos de casos reales y más de 500 ejercicios interactivos."
+      },
+      {
+        "id": 3,
+        "icon": "window-tab",
+        "title": "Aprende en comunidad",
+        "description": "¡Únete a nuestra comunidad y aprende junto miles de desarrolladores que están aprendiendo lo mismo que tu!"
+      }
+    ]
+  },
+  "certificate": {
+    "image": "/static/images/certificate-preview.webp",
+    "title": "Certificado en tu tecnología favorita",
+    "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
+    "button": "Ver precios",
+    "button-link": "#pricing"
+  },
+  "readings": "Lecturas",
+  "exercises": "Ejercicios",
+  "projects": "Proyectos",
+  "quiz": "Cuestionario"
+}

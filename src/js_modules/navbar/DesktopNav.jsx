@@ -23,7 +23,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const itemListAsc = allItems.sort((a, b) => a.position - b.position);
 
   const prepareSubMenuData = (item) => {
-    if (item.id === 'courses') {
+    if (item.id === 'bootcamps') {
       return extraContent;
     }
     return item?.subMenu;

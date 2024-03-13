@@ -16,8 +16,12 @@ import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
-import { getStorageItem } from '../../utils';
+import { getQueryString, getStorageItem } from '../../utils';
+import { usePersistent } from '../../common/hooks/usePersistent';
 import Text from '../../common/components/Text';
+import { getCohort } from '../../common/handlers/cohorts';
+import useAuth from '../../common/hooks/useAuth';
+import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import ModalCardError from './ModalCardError';
@@ -42,13 +46,15 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
 });
 
 function PaymentInfo() {
-  const { t } = useTranslation('signup');
+  const { t, lang } = useTranslation('signup');
 
   const {
     state, setPaymentInfo, handlePayment, getPaymentText,
   } = useSignup();
+  const { choose } = useAuth();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
-
+  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const queryCohortId = getQueryString('cohort');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -79,6 +85,57 @@ function PaymentInfo() {
       if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
     }
     return t('free-trial');
+  };
+
+  const redirectTocohort = (cohort) => {
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const syllabusVersion = cohort?.syllabus_version;
+    choose({
+      version: syllabusVersion?.version,
+      slug: syllabusVersion?.slug,
+      cohort_name: cohort.name,
+      cohort_slug: cohort?.slug,
+      syllabus_name: syllabusVersion,
+      academy_id: cohort.academy.id,
+    });
+    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
+    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    setCohortSession({
+      ...cohort,
+      selectedProgramSlug: cohortDashboardLink,
+    });
+    router.push(cohortDashboardLink);
+  };
+  const joinCohort = (cohort) => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'join_cohort',
+        cohort_id: cohort?.id,
+      },
+    });
+    bc.cohort().join(cohort?.id)
+      .then(async (resp) => {
+        const dataRequested = await resp.json();
+        if (dataRequested?.status === 'ACTIVE') {
+          redirectTocohort(cohort);
+        }
+        if (dataRequested?.status_code >= 400) {
+          toast({
+            position: 'top',
+            title: dataRequested?.detail,
+            status: 'info',
+            duration: 5000,
+            isClosable: true,
+          });
+          setReadyToRefetch(false);
+        }
+      })
+      .catch(() => {
+        setIsSubmitting(false);
+        setTimeout(() => {
+          setReadyToRefetch(false);
+        }, 600);
+      });
   };
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
@@ -119,17 +176,32 @@ function PaymentInfo() {
         setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
+            const currentSubscription = subscriptions?.find(
+              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+            );
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
             if (isPurchasedPlanFound) {
-              clearInterval(interval);
-              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-                router.push(redirect || redirectedFrom);
-                localStorage.removeItem('redirect');
-                localStorage.removeItem('redirected-from');
+              const cohortId = currentSubscription?.selected_cohort_set?.cohorts?.[0]?.id || Number(queryCohortId);
+              if (cohortId) {
+                getCohort(cohortId)
+                  .then((cohort) => {
+                    joinCohort(cohort);
+                  })
+                  .finally(() => {
+                    clearInterval(interval);
+                    setReadyToRefetch(false);
+                  });
               } else {
-                router.push('/choose-program');
+                clearInterval(interval);
+                if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                  router.push(redirect || redirectedFrom);
+                  localStorage.removeItem('redirect');
+                  localStorage.removeItem('redirected-from');
+                } else {
+                  router.push('/choose-program');
+                }
               }
             }
           });

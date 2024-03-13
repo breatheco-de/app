@@ -21,6 +21,7 @@ import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
 import useProgramList from '../store/actions/programListAction';
+import { isWindow } from '../../utils';
 
 function ProfilesSection({
   title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
@@ -36,7 +37,7 @@ function ProfilesSection({
   const singleTeacher = teacher[0];
   const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
 
-  const alumniGeeksContainer = document !== undefined && document.querySelector('.alumni-geeks-container');
+  const alumniGeeksContainer = isWindow && document.querySelector('.alumni-geeks-container');
 
   return (
     <Box display="block">
@@ -158,8 +159,8 @@ function ProfilesSection({
                       ),
                     });
                     setTimeout(() => {
-                      alumniGeeksContainer.scrollTo({
-                        top: alumniGeeksContainer.scrollHeight,
+                      alumniGeeksContainer?.scrollTo({
+                        top: alumniGeeksContainer?.scrollHeight,
                         behavior: 'smooth',
                       });
                     }, [600]);
