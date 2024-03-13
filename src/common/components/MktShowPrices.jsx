@@ -152,8 +152,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
             const period = item?.period;
 
             const querys = parseQuerys({
-              plan: planProps?.suggested_plan?.slug,
-              plan_id: item?.plan_id,
+              plan: item?.slug,
               has_available_cohorts: hasAvailableCohorts,
               price: item?.price,
               period,
