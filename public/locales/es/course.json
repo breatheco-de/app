@@ -74,7 +74,7 @@
     "what-is-learnpack": {
       "title": "¿Qué es LearnPack?",
       "description": "LearnPack es un software que te permite aprender a través de tutoriales interactivos dentro de tu entorno de desarrollo como VSCode. ¡Incluye a Rigobot (Nuestro modelo de IA), por lo que puedes obtener retroalimentación instantánea mientras programas!",
-      "button": "Prueba LearnPack gratis",
+      "button": "Prueba LearnPack",
       "link": "#pricing"
     },
     "list": [
