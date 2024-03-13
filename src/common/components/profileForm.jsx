@@ -271,7 +271,7 @@ function ProfileForm({ profile }) {
                 h="3.125rem"
                 border="1px solid"
                 borderRightRadius="3px"
-                display="flex"
+                display={profile?.github?.username ? 'flex' : 'none'}
                 borderColor="gray.default"
                 alignItems="center"
               >
