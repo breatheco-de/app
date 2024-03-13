@@ -52,22 +52,22 @@
     {
       "id": 1,
       "title": "¿Necesito conocimientos previos?",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vitae, beatae. Debitis deleniti, molestiae ducimus aliquid voluptatem delectus, a neque, eaque dolor eum consectetur minima fugit aliquam! Veritatis totam laudantium magnam?"
+      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
     },
     {
       "id": 2,
-      "title": "¿Cómo funciona la mentoría?",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident hic et porro laborum similique blanditiis, exercitationem rerum rem, harum repudiandae iure cum corporis ratione commodi. Ab voluptatibus commodi iure ut."
+      "title": "¿Cómo agendar mentorías?",
+      "description": "Para agendar una mentoría, debes acceder desde tu dashboard, seleccionar el tipo de mentoría que necesitas, escoger el mentor que más te guste o que esté disponible en el horario que desees y luego escoger el día y hora de la mentoría! Puedes ver más sobre cómo funcionan las mentorías <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>aqui</a>."
     },
     {
       "id": 3,
-      "title": "¿Qué necesito para empezar?",
-      "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Reiciendis molestiae eius eligendi odit. Nostrum tempora animi molestiae sapiente, quaerat sit illo repellat neque aut non iusto harum minus error quis."
+      "title": "¿Qué son las mentorías uno a uno?",
+      "description": "Las mentorías uno a uno son videollamadas de 30 minutos con un experto, este tiempo lo puedes aprovechar para pedir ayuda con algún ejercicio que no sabes como resolver, con ayuda para seguir avanzando con alguno de tus proyectos, o incluso para que te ayuden a entender algún concepto nuevo que no tienes muy claro."
     },
     {
       "id": 4,
-      "title": "y Más",
-      "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex recusandae, nulla dicta in, adipisci distinctio laborum, vitae nesciunt sint ratione hic reprehenderit libero necessitatibus suscipit nemo tenetur soluta quo minus!"
+      "title": "¿Qué tipo de ayuda recibo mientras estoy aprendiendo?",
+      "description": "Al entrar en cualquiera de nuestros programas de 4Geeks, obtienes acceso a nuestra comunidad en slack, en la que tenemos un canal especializado para ayudarte con problemas de código, con un tiempo de respuesta rápido. Además cuentas con la ayuda de Rigobot, nuestro modelo de inteligencia artificial entrenado para darte feedback de los ejercicios y proyectos que realizas, también puedes hablar en un chat con el, quien te dará una ayuda personalizada en base a lo que estas aprendiendo en el momento! Por otro lado, tienes acceso a las mentorías, que de agotarse, puedes solicitar más por un precio adicional para seguir utilizandolas"
     }
   ],
   "features": {
