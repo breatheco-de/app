@@ -106,7 +106,8 @@ export async function getStaticProps({ locale, params }) {
       const lang = locale === 'en' ? 'us' : locale;
       const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
         .then((assignmentResp) => assignmentResp.json())
-        .then((respData) => respData))) : [];
+        .then((respData) => respData)
+        .catch(() => []))) : [];
 
       return {
         count: assetTypeCount || {},
