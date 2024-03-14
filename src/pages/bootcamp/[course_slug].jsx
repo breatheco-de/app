@@ -13,7 +13,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax } from '../../utils';
+import { adjustNumberBeetwenMinMax, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -94,7 +94,7 @@ export async function getStaticProps({ locale, params }) {
 }
 
 function Page({ data, cohortData }) {
-  const { isAuthenticated, choose } = useAuth();
+  const { isAuthenticated, user, logout, choose } = useAuth();
   const { hexColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const toast = useToast();
@@ -404,7 +404,7 @@ function Page({ data, cohortData }) {
             borderColor="green.400"
             textAlign="center"
             gridGap="11px"
-            padding={data?.course_translation?.video_url ? '0' : '24px 0 0 0'}
+            padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
             formContainerStyle={{
               gridGap: '0px',
               margin: '0 0 7px 0',
@@ -415,6 +415,7 @@ function Page({ data, cohortData }) {
               width: 'fit-content',
             }}
             hideForm
+            hideSwitchUser
             invertHandlerPosition
             headContent={data?.course_translation?.video_url && (
               <Flex flexDirection="column" position="relative">
@@ -464,11 +465,30 @@ function Page({ data, cohortData }) {
                       >
                         {t('common:see-financing-options')}
                       </Button>
-                      <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
-                        {t('signup:already-have-account')}
-                        {' '}
-                        <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('signup:login-here')}</NextChakraLink>
-                      </Flex>
+                      {isAuthenticated ? (
+                        <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
+                          {t('signup:switch-user-connector', { name: user?.first_name })}
+                          {' '}
+                          <Button
+                            variant="link"
+                            fontSize="13px"
+                            height="auto"
+                            onClick={() => {
+                              logout();
+                              setStorageItem('redirect', router?.asPath);
+                              window.location.href = '/login';
+                            }}
+                          >
+                            {`${t('common:logout-and-switch-user')}.`}
+                          </Button>
+                        </Text>
+                      ) : (
+                        <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
+                          {t('signup:already-have-account')}
+                          {' '}
+                          <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('signup:login-here')}</NextChakraLink>
+                        </Flex>
+                      )}
                     </>
                   )}
                 </Flex>
@@ -519,7 +539,10 @@ function Page({ data, cohortData }) {
           <Heading size="24px" lineHeight="normal" textAlign="center">
             {t('build-connector.what-you-will')}
             {' '}
-            <Box as="span" color="blue.default">{t('build-connector.build')}</Box>
+            <Box as="span" color="blue.default">
+              {t('build-connector.build')}
+              ?
+            </Box>
           </Heading>
           <Text size="18px" textAlign="center">
             {t('build-connector.description')}
