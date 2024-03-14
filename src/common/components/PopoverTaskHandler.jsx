@@ -147,6 +147,7 @@ function PopoverTaskHandler({
     if (fileProp.length > 0) {
       Array.from(fileProp).forEach((file) => {
         const { type, name, size } = file;
+        console.log('file', file);
         const formatExists = formatFileArr.some((l) => String(type).includes(l));
         const formatError = !formatExists;
         const sizeError = size > maxFileSize;
