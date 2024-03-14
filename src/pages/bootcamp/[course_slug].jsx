@@ -46,9 +46,9 @@ export async function getStaticPaths({ locales }) {
   const filterByTranslations = getAllCourses.flat().filter((item) => item?.course_translation !== null);
   const paths = filterByTranslations.flatMap((course) => {
     const locale = course?.course_translation?.lang?.split('-')[0];
-    return ({
+    return course?.slug && ({
       params: {
-        course_slug: course.slug,
+        course_slug: course?.slug,
       },
       locale,
     });
@@ -100,13 +100,13 @@ export async function getStaticProps({ locale, params }) {
           });
         });
       }
-      const lastProjects = projects.slice(-3);
-      const lastExercises = exercises.slice(-3);
+      const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
+      const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
       const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
       const lang = locale === 'en' ? 'us' : locale;
-      const assignmentsFetch = await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
+      const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
         .then((assignmentResp) => assignmentResp.json())
-        .then((respData) => respData)));
+        .then((respData) => respData))) : [];
 
       return {
         count: assetTypeCount || {},
@@ -570,7 +570,7 @@ function Page({ data, cohortData }) {
                 project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
                 exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
               };
-              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations.slug}`;
+              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations?.slug}`;
 
               return (
                 <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
@@ -580,7 +580,7 @@ function Page({ data, cohortData }) {
                     )}
                   </Flex>
                   <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
-                    {(lang === 'en' && item?.translations?.us.title)
+                    {(lang === 'en' && item?.translations?.us?.title)
                     || item?.translations?.[lang]?.title
                     || item?.title}
                     <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
@@ -619,7 +619,7 @@ function Page({ data, cohortData }) {
                     <Flex gridGap="8px" alignItems="center">
                       <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
                       <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
-                        {item.title}
+                        {item?.title}
                       </Heading>
                     </Flex>
                     <Text
@@ -714,8 +714,8 @@ function Page({ data, cohortData }) {
               }}
               hideLastBorder
               items={faqList.map((l) => ({
-                label: l.title,
-                answer: l.description,
+                label: l?.title,
+                answer: l?.description,
               }))}
             />
           )}
