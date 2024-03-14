@@ -180,6 +180,7 @@ function PopoverTaskHandler({
     const formdata = new FormData();
     Array.from(fileProps).forEach(({ file }) => {
       formdata.append('file', file);
+      console.log('file', file);
     });
     const resp = await bc.todo({ academy: cohortSession.academy.id }).uploadFile(currentTask.id, formdata);
 
