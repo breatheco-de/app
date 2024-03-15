@@ -20,6 +20,7 @@ import useModuleMap from '../../store/actions/moduleMapAction';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
+import { error } from '../../../utils/logging';
 
 export const stages = {
   initial: 'initial',
@@ -88,10 +89,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
   const showGoBackButton = stage !== stages.initial && !fixedStage;
 
-  const statusColor = {
-    approve: 'success',
-    reject: 'error',
-  };
   const buttonColor = {
     approve: 'success',
     reject: 'danger',
@@ -167,8 +164,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           },
         }));
       }
-    } catch (error) {
-      error('Error fetching repo files:', error);
+    } catch (errorMsg) {
+      error('Error fetching repo files:', errorMsg);
     }
   };
   const getCodeRevisions = async () => {
@@ -188,15 +185,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       } else {
         toast({
           title: t('alert-message:something-went-wrong'),
-          description: 'Cannot get code revisions',
+          description: `Cannot get code revisions: ${data?.detail}`,
           status: 'error',
           duration: 5000,
           position: 'top',
           isClosable: true,
         });
       }
-    } catch (error) {
-      console.error('Error fetching code revisions:', error);
+    } catch (errorMsg) {
+      error('Error fetching code revisions:', errorMsg);
     } finally {
       setLoaders((prevState) => ({
         ...prevState,
@@ -249,7 +246,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           toast({
             position: 'top',
             title: alertStatus[reviewStatus],
-            status: statusColor[reviewStatus],
+            status: 'success',
             duration: 5000,
             isClosable: true,
           });

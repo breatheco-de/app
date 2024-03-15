@@ -35,6 +35,7 @@ import DottedTimeline from '../../../../../common/components/DottedTimeline';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
+import axiosInstance from '../../../../../axios';
 
 const activitiesTemplate = {
   invite_created: {
@@ -186,6 +187,7 @@ function StudentReport() {
   };
 
   useEffect(() => {
+    axiosInstance.defaults.headers.common.academy = academy;
     bc.admissions({ users: studentId }).cohortUsers(academy)
       .then((res) => {
         setCohortUsers(res.data);
@@ -468,6 +470,16 @@ function StudentReport() {
     setOpenFilter(false);
   };
 
+  const updpateAssignment = (taskUpdated) => {
+    const newStudentAssignments = studentAssignments.projects.map((project) => {
+      if (project.id === taskUpdated.id) {
+        return taskUpdated;
+      }
+      return project;
+    });
+    setStudentAssignments({ ...studentAssignments, projects: newStudentAssignments });
+  };
+
   return (
     <Box>
       <Box
@@ -640,6 +652,7 @@ function StudentReport() {
             }project/${currentProject?.slug}`}
             isOpen={currentProject && currentProject.status === 'DELIVERED'}
             onClose={onCloseProject}
+            updpateAssignment={updpateAssignment}
             readOnly
           />
           <NoInfoModal
@@ -653,6 +666,7 @@ function StudentReport() {
             }project/${currentProject?.slug}`}
             isOpen={currentProject && (currentProject.status === 'UNDELIVERED' || currentProject.status === 'REJECTED')}
             onClose={onCloseProject}
+            updpateAssignment={updpateAssignment}
             deliveryUrl={deliveryUrl}
             readOnly
           />
@@ -663,6 +677,7 @@ function StudentReport() {
             }project/${currentProject?.slug}`}
             isOpen={currentProject && currentProject.status === 'APPROVED'}
             onClose={onCloseProject}
+            updpateAssignment={updpateAssignment}
             readOnly
           />
         </Box>
