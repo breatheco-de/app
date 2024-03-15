@@ -288,7 +288,7 @@ function StudentReport() {
             label: t('analitics.nps'),
             icon: 'smile',
             variationColor: hexColor.green,
-            value: (Math.round(npsAnswered * 100) / 100),
+            value: (Math.round(npsAnswered * 100) / 100) || 0,
             max: 10,
           }]);
 
