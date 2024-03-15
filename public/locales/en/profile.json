@@ -13,6 +13,7 @@
   "connect-github": "Connect with GitHub",
   "connect-rigobot": "Connect with Rigo AI",
   "connected-with-rigobot": "You are connected to Rigo AI",
+  "rigobot-requires-github-connection": "Rigo AI requires a GitHub connection",
   "save-changes": "Save changes",
   "certificate-preview-not-available": "Certificate Preview Not Available",
   "tabList": [
