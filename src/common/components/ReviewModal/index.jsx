@@ -81,11 +81,12 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasBeenApproved = revisionStatus === APPROVED;
   const hasBeenRejected = revisionStatus === REJECTED;
   const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
+  const codeRevisionsNotExists = typeof contextData?.code_revisions === 'undefined';
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.current;
 
   const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
-  const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
+  const isReadyToApprove = (contextData?.code_revisions?.length >= minimumReviews || codeRevisionsNotExists) && taskStatus === 'DONE';
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
   const showGoBackButton = stage !== stages.initial && !fixedStage;
 
@@ -518,7 +519,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
                       <Text size="14px" fontWeight={700}>
-                        {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
+                        {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
                       </Text>
                     </Flex>
                     <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
