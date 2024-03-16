@@ -86,8 +86,7 @@ function SignupForm({
       const data = await resp.json();
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
-      }
-      else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
+      } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
         toast({
           position: 'top',
           title: data?.detail,
