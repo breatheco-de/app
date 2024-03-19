@@ -585,7 +585,7 @@ function chooseProgram() {
               justifyContent="space-between"
               borderColor={hexColor.borderColor}
             >
-              <Flex gridGap="30px">
+              <Flex gridGap="30px" alignItems="center">
                 <Icon icon="slack" width="20px" height="20px" />
                 <Text size="15px" fontWeight={700}>
                   {t('sidebar.join-our-community')}
