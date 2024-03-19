@@ -64,6 +64,7 @@ export const processPlans = async (data, {
       trial_duration: singlePlan?.trial_duration || 0,
       trial_duration_unit: singlePlan?.trial_duration_unit || '',
       planType,
+      show: true,
     };
 
     const textInfo = {
@@ -104,7 +105,6 @@ export const processPlans = async (data, {
       description: translations?.one_payment_description || '',
       how_many_months: item?.how_many_months,
       type: 'PAYMENT',
-      show: true,
     })) : [{}];
 
     const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
@@ -142,6 +142,7 @@ export const processPlans = async (data, {
       period: 'QUARTER',
       period_label: textInfo.label.quarterly,
       type: 'PAYMENT',
+      show: false,
     } : {};
 
     const halfPlan = halfYearly && existsAmountPerHalf ? {
@@ -154,6 +155,7 @@ export const processPlans = async (data, {
       period: 'HALF',
       period_label: textInfo.label.half_yearly,
       type: 'PAYMENT',
+      show: false,
     } : {};
 
     const yearPlan = yearly && existsAmountPerYear ? {
