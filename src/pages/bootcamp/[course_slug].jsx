@@ -180,7 +180,7 @@ function Page({ data, cohortData }) {
     price: firstPaymentPlan?.price,
     period: firstPaymentPlan?.period,
     cohort: cohortId,
-  }) : `?plan=${data?.plan_slug}`;
+  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
   const getPlanPrice = () => {
     if (payableList?.length > 0) {
