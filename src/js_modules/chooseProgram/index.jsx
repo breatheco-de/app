@@ -135,7 +135,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
                 icon="coding"
                 iconLink={item?.icon_url}
                 iconBackground="blue.default"
-                handleChoose={() => router.push(`/${item?.slug}`)}
+                handleChoose={() => router.push(item?.course_translation?.landing_url)}
                 programName={item?.course_translation.title}
                 programDescription={item?.course_translation?.description}
                 bullets={item?.course_translation?.course_modules}

@@ -185,7 +185,7 @@ function Information() {
                     <Box position="absolute" onClick={() => { setImages([]); setDragOver(false); }} zIndex={99} top="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                       <Icon icon="arrowLeft2" width="25px" height="25px" />
                     </Box>
-                    {/* Focus butotn not changes to center position */}
+                    {/* Focus button not changes to center position */}
                     <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                       <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
                     </Box>

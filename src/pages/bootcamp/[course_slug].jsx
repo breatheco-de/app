@@ -46,9 +46,9 @@ export async function getStaticPaths({ locales }) {
   const filterByTranslations = getAllCourses.flat().filter((item) => item?.course_translation !== null);
   const paths = filterByTranslations.flatMap((course) => {
     const locale = course?.course_translation?.lang?.split('-')[0];
-    return ({
+    return course?.slug && ({
       params: {
-        course_slug: course.slug,
+        course_slug: course?.slug,
       },
       locale,
     });
@@ -65,7 +65,6 @@ export async function getStaticProps({ locale, params }) {
   const endpoint = `/v1/marketing/course/${courseSlug}?lang=${locale}`;
   const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
   const data = resp?.data;
-  console.log(`/v1/marketing/course/${courseSlug}?lang=${locale}`);
   const cohortId = data?.cohort?.id;
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
 
@@ -75,9 +74,59 @@ export async function getStaticProps({ locale, params }) {
       error('Error fetching cohort users:', err);
       return [];
     });
+  const getModulesInfo = async () => {
+    try {
+      const assetTypeCount = {
+        lesson: 0,
+        project: 0,
+        quiz: 0,
+        exercise: 0,
+      };
+      const projects = [];
+      const exercises = [];
+      if (cohortSyllabus?.syllabus?.modules?.length > 0) {
+        cohortSyllabus.syllabus?.modules?.forEach((module) => {
+          module?.content.forEach((task) => {
+            if (task?.task_type) {
+              const taskType = task?.task_type?.toLowerCase();
+              assetTypeCount[taskType] += 1;
+            }
+            if (task?.task_type === 'PROJECT') {
+              projects.push(task);
+            }
+            if (task?.task_type === 'EXERCISE') {
+              exercises.push(task);
+            }
+          });
+        });
+      }
+      const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
+      const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
+      const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+      const lang = locale === 'en' ? 'us' : locale;
+      const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
+        .then((assignmentResp) => assignmentResp.json())
+        .then((respData) => respData)
+        .catch(() => []))) : [];
+
+      return {
+        count: assetTypeCount || {},
+        assignmentList: assignmentsFetch || [],
+      };
+    } catch (errorMsg) {
+      error('Error fetching module info:', errorMsg);
+      return {
+        count: {},
+        assignmentList: [],
+      };
+    }
+  };
+  const modulesInfo = await getModulesInfo();
+
   const cohortData = {
     cohortSyllabus,
     members,
+    modulesInfo,
   };
   if (resp?.status >= 400) {
     console.error(`ERROR with /bootcamp/course/${courseSlug}: something went wrong fetching "${endpoint}"`);
@@ -204,39 +253,7 @@ function Page({ data, cohortData }) {
       }
     });
   };
-  const getModulesInfo = () => {
-    const assetTypeCount = {
-      lesson: 0,
-      project: 0,
-      quiz: 0,
-      exercise: 0,
-    };
-    const projects = [];
-    const exercises = [];
-    if (cohortData?.cohortSyllabus?.syllabus?.modules?.length > 0) {
-      cohortData.cohortSyllabus.syllabus?.modules?.forEach((module) => {
-        module?.content.forEach((task) => {
-          if (task?.task_type) {
-            const taskType = task?.task_type?.toLowerCase();
-            assetTypeCount[taskType] += 1;
-          }
-          if (task?.task_type === 'PROJECT') {
-            projects.push(task);
-          }
-          if (task?.task_type === 'EXERCISE') {
-            exercises.push(task);
-          }
-        });
-      });
-    }
-    const lastProjects = projects.slice(-3);
-    const lastExercises = exercises.slice(-3);
-    return {
-      count: assetTypeCount || {},
-      assignmentList: [...lastProjects, ...lastExercises] || [],
-    };
-  };
-  const { count: assetCount, assignmentList } = getModulesInfo();
+  const { count: assetCount, assignmentList } = cohortData.modulesInfo;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -276,9 +293,9 @@ function Page({ data, cohortData }) {
     projects: 'laptop-code',
   };
   const assetCountByType = {
-    readings: assetCount.lesson,
-    exercises: assetCount.exercise,
-    projects: assetCount.project,
+    readings: assetCount?.lesson,
+    exercises: assetCount?.exercise,
+    projects: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -548,23 +565,23 @@ function Page({ data, cohortData }) {
             {t('build-connector.description')}
           </Text>
           <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
-            {assignmentList.slice(0, 3).map((item) => {
+            {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
               const taskTranslations = lang === 'en' ? (item?.translations?.en || item?.translations?.us) : (item?.translations?.[lang] || {});
               const pathConnector = {
                 project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
                 exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
               };
-              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations.slug}`;
+              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations?.slug}`;
 
               return (
                 <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                   <Flex alignItems="center" justifyContent="space-between">
-                    {technologies?.length > 0 && (
-                      <TagCapsule tags={technologies} marginY={0} />
+                    {item?.technologies?.length > 0 && (
+                      <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
                     )}
                   </Flex>
                   <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
-                    {(lang === 'en' && item?.translations?.us.title)
+                    {(lang === 'en' && item?.translations?.us?.title)
                     || item?.translations?.[lang]?.title
                     || item?.title}
                     <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
@@ -603,7 +620,7 @@ function Page({ data, cohortData }) {
                     <Flex gridGap="8px" alignItems="center">
                       <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
                       <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
-                        {item.title}
+                        {item?.title}
                       </Heading>
                     </Flex>
                     <Text
@@ -698,8 +715,8 @@ function Page({ data, cohortData }) {
               }}
               hideLastBorder
               items={faqList.map((l) => ({
-                label: l.title,
-                answer: l.description,
+                label: l?.title,
+                answer: l?.description,
               }))}
             />
           )}
