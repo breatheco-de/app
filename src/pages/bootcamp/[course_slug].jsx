@@ -172,20 +172,29 @@ function Page({ data, cohortData }) {
   const cohortId = data?.cohort?.id;
   const plans = data?.planData?.plans || [];
   const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
+  const firstPaymentPlan = payableList?.[0];
+  const enrollQuerys = payableList?.length > 0 ? parseQuerys({
+    plan: firstPaymentPlan?.plan_slug,
+    plan_id: firstPaymentPlan?.plan_id,
+    has_available_cohorts: data?.planData?.has_available_cohorts,
+    price: firstPaymentPlan?.price,
+    period: firstPaymentPlan?.period,
+    cohort: cohortId,
+  }) : `?plan=${data?.plan_slug}`;
 
   const getPlanPrice = () => {
     if (payableList?.length > 0) {
-      if (payableList?.[0].period === 'MONTH') {
-        return `${payableList?.[0].priceText} ${t('signup:info.monthly')}`;
+      if (firstPaymentPlan.period === 'MONTH') {
+        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
       }
-      if (payableList?.[0].period === 'YEAR') {
-        return `${payableList?.[0].priceText} ${t('signup:info.monthly')}`;
+      if (firstPaymentPlan.period === 'YEAR') {
+        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
       }
-      if (payableList?.[0].period === 'ONE_TIME') {
-        return `${payableList?.[0].priceText}, ${t('signup:info.one-time')}`;
+      if (firstPaymentPlan.period === 'ONE_TIME') {
+        return `${firstPaymentPlan.priceText}, ${t('signup:info.one-time')}`;
       }
-      if (payableList?.[0].period === 'FINANCING') {
-        return `${payableList?.[0].priceText} ${t('signup:info.installments')}`;
+      if (firstPaymentPlan.period === 'FINANCING') {
+        return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
       }
     }
     return t('common:enroll');
@@ -496,7 +505,7 @@ function Page({ data, cohortData }) {
                         background="green.400"
                         color="white"
                         onClick={() => {
-                          router.push(`/checkout?plan=${data?.plan_slug}`);
+                          router.push(`/checkout${enrollQuerys}`);
                         }}
                       >
                         {payableList?.length > 0

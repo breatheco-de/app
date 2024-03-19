@@ -116,8 +116,8 @@ function MentoringConsumables({
 
   const calculateExistenceOfConsumable = () => {
     if (consumableOfService.available_as_saas === false) return true;
-    if (consumableOfService?.balance) return consumableOfService?.balance?.unit > 0;
-    return consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && currentBalance > 0;
+    if (consumableOfService?.balance) return consumableOfService?.balance?.unit > 0 || consumableOfService?.balance?.unit === -1;
+    return consumables?.mentorship_service_sets?.length > 0 && Object.values(mentorshipService).length > 0 && (currentBalance > 0 || currentBalance === -1);
   };
   const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 

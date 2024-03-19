@@ -36,7 +36,7 @@ const statusList = {
   REJECTED: 'REJECTED',
 };
 const { APPROVED, PENDING, REJECTED } = statusList;
-const inputLimit = 500;
+const inputLimit = 450;
 
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
   projectLink, changeStatusAssignment, disableRate, ...rest }) {
