@@ -4,6 +4,7 @@ import { Box, Button, Flex, Image, Link, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import getT from 'next-translate/getT';
 import { parseQuerys } from '../../utils/url';
 import { BREATHECODE_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import Icon from '../../common/components/Icon';
@@ -26,7 +27,7 @@ import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
-import { SUBS_STATUS, getAllMySubscriptions } from '../../common/handlers/subscriptions';
+import { SUBS_STATUS, generatePlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import { reportDatalayer } from '../../utils/requests';
@@ -61,12 +62,14 @@ export async function getStaticPaths({ locales }) {
 }
 export async function getStaticProps({ locale, params }) {
   const { course_slug: courseSlug } = params;
+  const t = await getT(locale, 'course');
 
   const endpoint = `/v1/marketing/course/${courseSlug}?lang=${locale}`;
   const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
   const data = resp?.data;
   const cohortId = data?.cohort?.id;
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+  const translationsObj = getTranslations(t);
 
   const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: cohortId }).getPublicMembers()
     .then((respMembers) => respMembers.data)
@@ -122,6 +125,7 @@ export async function getStaticProps({ locale, params }) {
     }
   };
   const modulesInfo = await getModulesInfo();
+  const planData = await generatePlan(data.plan_slug, translationsObj).then((finalData) => finalData);
 
   const cohortData = {
     cohortSyllabus,
@@ -136,7 +140,10 @@ export async function getStaticProps({ locale, params }) {
   }
   return {
     props: {
-      data,
+      data: {
+        ...data,
+        planData,
+      },
       cohortData,
     },
   };
@@ -163,6 +170,27 @@ function Page({ data, cohortData }) {
   const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const cohortId = data?.cohort?.id;
+  const plans = data?.planData?.plans || [];
+  const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
+
+  const getPlanPrice = () => {
+    if (payableList?.length > 0) {
+      if (payableList?.[0].period === 'MONTH') {
+        return `${payableList?.[0].priceText} ${t('signup:info.monthly')}`;
+      }
+      if (payableList?.[0].period === 'YEAR') {
+        return `${payableList?.[0].priceText} ${t('signup:info.monthly')}`;
+      }
+      if (payableList?.[0].period === 'ONE_TIME') {
+        return `${payableList?.[0].priceText}, ${t('signup:info.one-time')}`;
+      }
+      if (payableList?.[0].period === 'FINANCING') {
+        return `${payableList?.[0].priceText} ${t('signup:info.installments')}`;
+      }
+    }
+    return t('common:enroll');
+  };
+  const featurePrice = getPlanPrice().toLocaleLowerCase();
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
@@ -253,7 +281,8 @@ function Page({ data, cohortData }) {
       }
     });
   };
-  const { count: assetCount, assignmentList } = cohortData.modulesInfo;
+  const assetCount = cohortData?.modulesInfo?.count;
+  const assignmentList = cohortData?.modulesInfo?.assignmentList;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -470,7 +499,9 @@ function Page({ data, cohortData }) {
                           router.push(`/checkout?plan=${data?.plan_slug}`);
                         }}
                       >
-                        {t('common:enroll')}
+                        {payableList?.length > 0
+                          ? `${t('common:enroll-for-connector')} ${featurePrice}`
+                          : t('common:enroll')}
                       </Button>
                       <Button
                         variant="outline"

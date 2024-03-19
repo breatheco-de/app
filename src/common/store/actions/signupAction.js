@@ -455,17 +455,20 @@ const useSignup = ({ disableRedirectAfterSuccess = false } = {}) => {
         && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 0
       ) return t('info.will-pay-now', { price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price });
 
-      if (selectedPlanCheckoutData?.period === 'MONTH') {
+      if (period === 'MONTH') {
         return t('info.will-pay-per-month', { price: selectedPlanCheckoutData?.price });
       }
-      if (selectedPlanCheckoutData?.period === 'QUARTER') {
+      if (period === 'QUARTER') {
         return t('info.will-pay-per-quarter', { price: selectedPlanCheckoutData?.price });
       }
-      if (selectedPlanCheckoutData?.period === 'HALF') {
+      if (period === 'HALF') {
         return t('info.will-pay-per-half-year', { price: selectedPlanCheckoutData?.price });
       }
-      if (selectedPlanCheckoutData?.period === 'YEAR') {
+      if (period === 'YEAR') {
         return t('info.will-pay-per-year', { price: selectedPlanCheckoutData?.price });
+      }
+      if (period === 'ONE_TIME') {
+        return `${selectedPlanCheckoutData?.price}, ${t('info.one-time')}`;
       }
     }
 
