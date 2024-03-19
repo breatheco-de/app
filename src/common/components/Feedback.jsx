@@ -38,7 +38,7 @@ function Feedback({ storyConfig }) {
   const handleOpen = (data) => {
     const isFileCodeBase64 = base64regex.test(data?.file?.content);
     const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const updatedCode = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
+    const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
     const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
     setSelectedData({
       code_revisions: codeRevisions,
@@ -47,11 +47,11 @@ function Feedback({ storyConfig }) {
         path: data?.file?.name,
         url: data?.file?.file_url,
         name: data?.file?.name,
-        code: originalCode,
+        code: fileContent,
       },
       revision_content: {
         ...data,
-        code: updatedCode,
+        code: originalCode,
       },
     });
     setIsOpen(true);
