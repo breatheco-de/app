@@ -1,6 +1,7 @@
 {
   "course-content-text": "Course content",
   "students-enrolled-count": "+{{count}} students enrolled",
+  "enroll-now-for-price": "Enroll now for {{price}} monthly",
   "join-cohort": "Join cohort",
   "join-cohort-description": "Join a cohort and start your bootcamp journey",
   "create-account-text": "Create an account and start your bootcamp journey",

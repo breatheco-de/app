@@ -99,7 +99,7 @@ export const processPlans = async (data, {
       title: textInfo.one_payment,
       price: item?.monthly_price,
       priceText: `$${item?.monthly_price}`,
-      period: 'FINANCING',
+      period: 'ONE_TIME',
       period_label: textInfo.label.financing,
       plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
       description: translations?.one_payment_description || '',
@@ -188,7 +188,7 @@ export const processPlans = async (data, {
       });
     }) : [{}];
 
-    const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0);
+    const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
     const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
     const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
