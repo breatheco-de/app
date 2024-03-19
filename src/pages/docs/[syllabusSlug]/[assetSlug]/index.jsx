@@ -307,6 +307,7 @@ function Docs({ syllabusData, moduleMap }) {
                             _hover={{
                               textDecoration: 'none',
                             }}
+                            style={{ fontSize: '14px' }}
                           >
                             {assetData.title}
                           </Link>
