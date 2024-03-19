@@ -28,7 +28,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
 import axios from '../../axios';
-// import Feedback from '../../common/components/Feedback';
+import Feedback from '../../common/components/Feedback';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -568,7 +568,7 @@ function chooseProgram() {
               />
             )}
           </Box>
-          {/* <Feedback /> */}
+          <Feedback />
 
           {dataQuery?.cohorts?.length > 0 && (
             <NextChakraLink
