@@ -20,6 +20,7 @@ import useModuleMap from '../../store/actions/moduleMapAction';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
+import { error } from '../../../utils/logging';
 
 export const stages = {
   initial: 'initial',
@@ -80,18 +81,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasBeenApproved = revisionStatus === APPROVED;
   const hasBeenRejected = revisionStatus === REJECTED;
   const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
+  const codeRevisionsNotExists = typeof contextData?.code_revisions === 'undefined';
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.current;
 
   const minimumReviews = 0; // The minimun number of reviews until the project is ready to be approved or rejected
-  const isReadyToApprove = contextData?.code_revisions?.length >= minimumReviews && taskStatus === 'DONE';
+  const isReadyToApprove = (contextData?.code_revisions?.length >= minimumReviews || codeRevisionsNotExists) && taskStatus === 'DONE';
   const isStageWithDefaultStyles = hasBeenApproved || (stage === stages.initial || stage === stages.approve_or_reject_code_revision || noFilesToReview);
   const showGoBackButton = stage !== stages.initial && !fixedStage;
 
-  const statusColor = {
-    approve: 'success',
-    reject: 'error',
-  };
   const buttonColor = {
     approve: 'success',
     reject: 'danger',
@@ -167,8 +165,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           },
         }));
       }
-    } catch (error) {
-      error('Error fetching repo files:', error);
+    } catch (errorMsg) {
+      error('Error fetching repo files:', errorMsg);
     }
   };
   const getCodeRevisions = async () => {
@@ -188,15 +186,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       } else {
         toast({
           title: t('alert-message:something-went-wrong'),
-          description: 'Cannot get code revisions',
+          description: `Cannot get code revisions: ${data?.detail}`,
           status: 'error',
           duration: 5000,
           position: 'top',
           isClosable: true,
         });
       }
-    } catch (error) {
-      console.error('Error fetching code revisions:', error);
+    } catch (errorMsg) {
+      error('Error fetching code revisions:', errorMsg);
     } finally {
       setLoaders((prevState) => ({
         ...prevState,
@@ -249,7 +247,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           toast({
             position: 'top',
             title: alertStatus[reviewStatus],
-            status: statusColor[reviewStatus],
+            status: 'success',
             duration: 5000,
             isClosable: true,
           });
@@ -521,7 +519,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />
                       <Text size="14px" fontWeight={700}>
-                        {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length })}
+                        {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
                       </Text>
                     </Flex>
                     <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">

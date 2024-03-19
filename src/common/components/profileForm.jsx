@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, FormControl, FormErrorMessage, FormLabel, Heading, Input,
   InputGroup, InputLeftAddon, Modal, ModalBody, ModalCloseButton, ModalContent,
-  ModalHeader, ModalOverlay, Stack, Text, useToast,
+  ModalHeader, ModalOverlay, Stack, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 // import Icon from '../../common/components/Icon';
@@ -286,18 +286,26 @@ function ProfileForm({ profile }) {
                     </Text>
                   </>
                 ) : (
-                  <Text
-                    margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
-                    textAlign="start"
-                    color="blue.default"
-                    cursor="pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
-                    }}
-                  >
-                    {t('connect-rigobot')}
-                  </Text>
+                  <Tooltip label={!profile?.github?.username ? t('rigobot-requires-github-connection') : ''} placement="top">
+                    <Button
+                      variant="link"
+                      fontSize="16px"
+                      isDisabled={!profile?.github?.username}
+                      _hover={{ textDecoration: 'none' }}
+                      margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
+                      textAlign="start"
+                      color="blue.default"
+                      cursor="pointer"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (profile?.github?.username) {
+                          window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                        }
+                      }}
+                    >
+                      {t('connect-rigobot')}
+                    </Button>
+                  </Tooltip>
                 )}
               </Box>
             </InputGroup>

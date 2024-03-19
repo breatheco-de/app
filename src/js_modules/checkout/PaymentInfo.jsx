@@ -53,8 +53,8 @@ function PaymentInfo() {
   } = useSignup();
   const { choose } = useAuth();
   const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
+  const cohortId = Number(getQueryString('cohort'));
   const [, setCohortSession] = usePersistent('cohortSession', {});
-  const queryCohortId = getQueryString('cohort');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -182,10 +182,14 @@ function PaymentInfo() {
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
+            const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
+            const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
+              (cohort) => cohort?.id === cohortId,
+            ) : {};
+
             if (isPurchasedPlanFound) {
-              const cohortId = currentSubscription?.selected_cohort_set?.cohorts?.[0]?.id || Number(queryCohortId);
-              if (cohortId) {
-                getCohort(cohortId)
+              if (findedCohort) {
+                getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })
@@ -501,7 +505,7 @@ function PaymentInfo() {
                         setPaymentInfo('exp', value);
                       }}
                       pattern="[0-9]*"
-                      label={t('exp')}
+                      label={t('expiration-date')}
                     />
                   </Box>
                   <FieldForm

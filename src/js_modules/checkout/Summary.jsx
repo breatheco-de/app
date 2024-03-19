@@ -49,6 +49,7 @@ function Summary() {
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan');
+  const cohortId = Number(getQueryString('cohort'));
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
@@ -161,10 +162,14 @@ function Summary() {
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
               (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
             );
+            const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
+            const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
+              (cohort) => cohort?.id === cohortId,
+            ) : {};
 
             if (isPurchasedPlanFound) {
-              if (currentSubscription.selected_cohort_set.cohorts[0]) {
-                getCohort(currentSubscription.selected_cohort_set.cohorts[0].id)
+              if (findedCohort) {
+                getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })

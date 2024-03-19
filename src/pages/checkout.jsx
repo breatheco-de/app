@@ -97,9 +97,7 @@ function Checkout() {
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
 
-  const {
-    course, cohort,
-  } = router.query;
+  const { course } = router.query;
   const courseChoosed = course;
 
   const [formProps, setFormProps] = useState({
@@ -333,7 +331,7 @@ function Checkout() {
         phone: '',
       });
     }
-  }, [user?.id, cohort]);
+  }, [user?.id]);
 
   const handleGoBack = () => {
     const handler = () => {
