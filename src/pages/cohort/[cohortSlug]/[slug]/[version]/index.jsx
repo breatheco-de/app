@@ -65,7 +65,7 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const { featuredColor } = useStyle();
 
-  const { user, choose, isLoading, isAuthenticated } = useAuth();
+  const { user, choose, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [currentCohortProps, setCurrentCohortProps] = useState({});
@@ -289,12 +289,12 @@ function Dashboard() {
 
   // Fetch cohort assignments (lesson, exercise, project, quiz)
   useEffect(() => {
-    if (!isLoading) {
+    if (isAuthenticated) {
       getCohortAssignments({
         user, setContextState, slug,
       });
     }
-  }, [user]);
+  }, [isAuthenticated, user]);
 
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });

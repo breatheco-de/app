@@ -505,7 +505,7 @@ function PaymentInfo() {
                         setPaymentInfo('exp', value);
                       }}
                       pattern="[0-9]*"
-                      label={t('exp')}
+                      label={t('expiration-date')}
                     />
                   </Box>
                   <FieldForm
