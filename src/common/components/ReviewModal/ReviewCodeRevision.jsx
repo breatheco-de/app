@@ -52,7 +52,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
   };
   const selectCodeRevision = (revision, resetReviewRate = true) => {
     const content = revision?.original_code;
-    const commitFile = data?.fileList?.length > 0
+    const fileContent = data?.fileList?.length > 0
       ? data?.fileList.find((l) => l.id === revision?.file?.id)
       : {};
     const decodedReviewCodeContent = atob(content);
@@ -62,9 +62,9 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
     setContextData((prevState) => ({
       ...prevState,
       commitFile: {
-        ...commitFile,
+        ...fileContent,
         task: data?.task || {},
-        code: commitFile?.content,
+        code: fileContent?.content,
       },
       revision_content: {
         path: revision?.file?.name,
