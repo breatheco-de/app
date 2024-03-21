@@ -180,7 +180,7 @@ function Page({ data, cohortData }) {
     price: firstPaymentPlan?.price,
     period: firstPaymentPlan?.period,
     cohort: cohortId,
-  }) : `?plan=${data?.plan_slug}`;
+  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
   const getPlanPrice = () => {
     if (payableList?.length > 0) {
@@ -606,12 +606,12 @@ function Page({ data, cohortData }) {
           </Text>
           <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
             {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
-              const taskTranslations = lang === 'en' ? (item?.translations?.en || item?.translations?.us) : (item?.translations?.[lang] || {});
+              const taskTranslations = lang === 'en' ? item?.translations?.us : (item?.translations?.[lang] || {});
               const pathConnector = {
                 project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
                 exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
               };
-              const link = `${pathConnector[item?.task_type?.toLowerCase()]}/${taskTranslations?.slug}`;
+              const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
 
               return (
                 <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>

@@ -90,7 +90,7 @@ function UpgradeForConsumableView({ externalData }) {
   };
 
   return (
-    <Flex flexDirection="column" gridGap="16px">
+    <Flex flexDirection="column" gridGap="16px" padding="15px">
       <Heading size="21px">
         {isEventConsumable
           ? t('consumables.ran-out-of-events')

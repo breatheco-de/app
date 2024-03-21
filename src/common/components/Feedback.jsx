@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
@@ -12,12 +12,13 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import { error } from '../../utils/logging';
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
 function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const accessToken = getStorageItem('accessToken');
   const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();
   const [selectedData, setSelectedData] = useState({});
@@ -27,6 +28,7 @@ function Feedback({ storyConfig }) {
   const isStorybookView = storyConfig?.externalCodeRevisions;
   const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
   const storybookTranslation = storyConfig?.translation?.[storyConfig?.locale];
+  const isConnectedWithGithub = user?.github?.username;
 
   const learnWhyLink = {
     en: 'https://4geeks.com/mastering-technical-knowledge#feedback-quality-and-frequency',
@@ -36,7 +38,7 @@ function Feedback({ storyConfig }) {
   const handleOpen = (data) => {
     const isFileCodeBase64 = base64regex.test(data?.file?.content);
     const isReviewCodeBase64 = base64regex.test(data?.original_code);
-    const updatedCode = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
+    const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
     const originalCode = isReviewCodeBase64 ? decodeBase64(data.original_code) : data.original_code;
     setSelectedData({
       code_revisions: codeRevisions,
@@ -45,11 +47,11 @@ function Feedback({ storyConfig }) {
         path: data?.file?.name,
         url: data?.file?.file_url,
         name: data?.file?.name,
-        code: originalCode,
+        code: fileContent,
       },
       revision_content: {
         ...data,
-        code: updatedCode,
+        code: originalCode,
       },
     });
     setIsOpen(true);
@@ -57,12 +59,14 @@ function Feedback({ storyConfig }) {
 
   const getCodeRevisions = async () => {
     try {
-      const response = await bc.assignments().getPersonalCodeRevisions();
-      const data = await response.json();
+      if (isConnectedWithGithub) {
+        const response = await bc.assignments().getPersonalCodeRevisions();
+        const data = await response.json();
 
-      if (response.ok) {
-        const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        setCodeRevisions(codeRevisionsSortedByDate);
+        if (response.ok) {
+          const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          setCodeRevisions(codeRevisionsSortedByDate);
+        }
       }
     } catch (errorData) {
       error('Error fetching code revisions:', errorData);
@@ -105,14 +109,38 @@ function Feedback({ storyConfig }) {
               gridGap="10px"
               secondColor="transparent"
             >
-              <Text size="12px" textAlign="start">
-                {translationChooseProgram?.feedback?.['connect-rigobot-text'] || t('feedback.connect-rigobot-text')}
-                {' '}
-                <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
-                  {translationChooseProgram?.feedback?.['connect-rigobot'] || t('feedback.connect-rigobot')}
-                </Link>
-                .
-              </Text>
+              {isConnectedWithGithub ? (
+                <Text size="12px" textAlign="start">
+                  {translationChooseProgram?.feedback?.['connect-rigobot-text'] || t('feedback.connect-rigobot-text')}
+                  {' '}
+                  <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
+                    {translationChooseProgram?.feedback?.['connect-rigobot'] || t('feedback.connect-rigobot')}
+                  </Link>
+                  .
+                </Text>
+              ) : (
+                <Text size="12px" textAlign="start">
+                  <Button
+                    variant="link"
+                    height="auto"
+                    as="span"
+                    textAlign="start"
+                    color="currentColor"
+                    fontWeight="normal"
+                    cursor="pointer"
+                    textDecoration="underline"
+                    fontSize="12px"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
+                    }}
+                  >
+                    {t('common:connect-with-github')}
+                  </Button>
+                  {' '}
+                  {t('feedback.connect-github-connector')}
+                </Text>
+              )}
             </AlertMessage>
           )}
           <Text size="12px" textAlign="center">

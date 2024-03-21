@@ -44,7 +44,8 @@
     "why-feedback-text": "La retroalimentación juega un papel importante al aprender habilidades técnicas",
     "learn-why": "Aprende por qué",
     "code-review": "Revisión de código",
-    "no-code-reviews-text": "En este espacio, tendrás acceso a la retroalimentación proporcionada por tu profesor una vez que hayas entregado tu proyecto."
+    "no-code-reviews-text": "En este espacio, tendrás acceso a la retroalimentación proporcionada por tu profesor una vez que hayas entregado tu proyecto.",
+    "connect-github-connector": "antes de poder usar Rigobot y poder obtener retroalimentación de tu código."
   },
   "late-payment": {
     "title": "Acción requerida: Pagos atrasados",
