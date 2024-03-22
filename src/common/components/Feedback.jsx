@@ -72,6 +72,13 @@ function Feedback({ storyConfig }) {
       error('Error fetching code revisions:', errorData);
     }
   };
+  const verifyRigobotConnection = async () => {
+    const resp = await bc.auth().verifyRigobotConnection(accessToken);
+    const data = await resp.json();
+    if (data) {
+      setIsAuthenticatedWithRigobot(true);
+    }
+  };
 
   useEffect(() => {
     if (isStorybookView) {
@@ -79,12 +86,7 @@ function Feedback({ storyConfig }) {
     }
     if (isAuthenticated) {
       getCodeRevisions();
-      bc.auth().verifyRigobotConnection(accessToken)
-        .then((response) => {
-          if (response?.data) {
-            setIsAuthenticatedWithRigobot(true);
-          }
-        });
+      verifyRigobotConnection();
     }
   }, [isAuthenticated, isStorybookView]);
 

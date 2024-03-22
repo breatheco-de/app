@@ -32,7 +32,6 @@ import modifyEnv from '../../../modifyEnv';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
-import { log } from '../../utils/logging';
 import LoaderScreen from '../../common/components/LoaderScreen';
 
 const arrayOfImages = [
@@ -160,7 +159,6 @@ function Page({ eventData, asset }) {
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
-  log('event_data:', event);
 
   const router = useRouter();
   const { locale } = router;
@@ -287,6 +285,12 @@ function Page({ eventData, asset }) {
           isFetching: false,
           data: res?.data,
         });
+      })
+      .finally(() => {
+        setConsumables((prev) => ({
+          ...prev,
+          isFetching: false,
+        }));
       });
   };
 
@@ -327,7 +331,7 @@ function Page({ eventData, asset }) {
       });
   };
 
-  const consumableEventList = consumables?.data?.event_type_sets;
+  const consumableEventList = consumables?.data?.event_type_sets || [];
   const currentConsumable = consumableEventList?.length > 0 ? consumableEventList?.find(
     (c) => subscriptions.some(
       (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),

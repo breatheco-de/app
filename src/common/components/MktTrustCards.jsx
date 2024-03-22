@@ -51,32 +51,32 @@ function Card({ card }) {
       overflow="hidden"
     >
       <Box width="100%" height="95px" marginBottom="16px" position="relative">
-        <IconButton
-          isRound
-          position="absolute"
-          top="50%"
-          left="1"
-          zIndex="10"
-          variant="ghost"
-          _hover={{ bg: '#DADADA' }}
-          onClick={handlePrev}
-          size="xs"
-          background="#DADADA"
-          icon={<ChevronLeftIcon w={4} h={4} color="black" />}
-        />
-        <IconButton
-          isRound
-          position="absolute"
-          top="50%"
-          right="1"
-          zIndex="10"
-          variant="ghost"
-          _hover={{ bg: '#DADADA' }}
-          onClick={handleNext}
-          size="xs"
-          background="#DADADA"
-          icon={<ChevronRightIcon w={4} h={4} color="black" />}
-        />
+        <Box display={images?.length > 1 ? 'block' : 'none'} width="100%" height="100%" position="absolute" left={0} top={0} opacity={0} _hover={{ opacity: 1 }} transition="opacity 300ms ease-in-out" zIndex={10}>
+          <IconButton
+            isRound
+            position="absolute"
+            top="50%"
+            left="3"
+            variant="ghost"
+            _hover={{ bg: '#DADADA' }}
+            onClick={handlePrev}
+            size="xs"
+            background="#DADADA"
+            icon={<ChevronLeftIcon w={4} h={4} color="black" />}
+          />
+          <IconButton
+            isRound
+            position="absolute"
+            top="50%"
+            right="3"
+            variant="ghost"
+            _hover={{ bg: '#DADADA' }}
+            onClick={handleNext}
+            size="xs"
+            background="#DADADA"
+            icon={<ChevronRightIcon w={4} h={4} color="black" />}
+          />
+        </Box>
         {images.map((image, i) => (
           <Fade in={currentIndex === i}>
             <Img
