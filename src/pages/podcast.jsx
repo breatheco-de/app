@@ -37,7 +37,12 @@ const podcastPage = () => {
             <Box marginTop="10px" display="flex" gap="16px" flexWrap="wrap">
               {links.map((elem) => (
                 <Link href={elem.href} key={elem.href} target="_blank">
-                  <Image src={elem.logo} alt={elem.platform} width="21px" height="21px" />
+                  <Box
+                    width="25px"
+                    height="30px"
+                    backgroundImage="url(/static/images/podcast-logos.svg)"
+                    backgroundPosition={`0px ${elem.position}`}
+                  />
                 </Link>
               ))}
             </Box>
