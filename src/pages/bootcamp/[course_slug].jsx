@@ -713,10 +713,10 @@ function Page({ data, cohortData }) {
         informationSize="Medium"
         buttonUrl={t('job-section.button-link')}
         buttonLabel={t('job-section.button')}
-        imagePosition='right'
-        textBackgroundColor='#EEF9FE'
-        titleColor='#0097CF'
-        subtitleColor='#01455E'
+        imagePosition="right"
+        textBackgroundColor="#EEF9FE"
+        titleColor="#0097CF"
+        subtitleColor="#01455E"
         containerProps={{
           padding: '0px',
           marginTop: '0px',
