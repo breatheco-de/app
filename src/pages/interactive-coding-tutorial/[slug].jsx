@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react';
 import {
   Box, useColorModeValue, Flex, useColorMode, Skeleton,
 } from '@chakra-ui/react';
@@ -8,6 +9,8 @@ import Head from 'next/head';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
+import useAuth from '../../common/hooks/useAuth';
+import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TabletWithForm from '../../js_modules/projects/TabletWithForm';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -18,7 +21,7 @@ import MktRecommendedCourses from '../../common/components/MktRecommendedCourses
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { cleanObject } from '../../utils/index';
+import { cleanObject, isWindow } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
@@ -206,8 +209,39 @@ function TableInfo({ t, project, commonTextColor }) {
 
 function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
+  const { isAuthenticated } = useAuth();
+  const [isCtaVisible, setIsCtaVisible] = useState(true);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { colorMode } = useColorMode();
+  const tabletWithFormRef = useRef(null);
+
+  const getElementTopOffset = (elem) => {
+    if (elem && isWindow) {
+      const rect = elem.getBoundingClientRect();
+
+      const { scrollY } = window;
+
+      return rect.top + scrollY;
+    }
+    return 0;
+  };
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (isWindow) {
+      window.addEventListener('scroll', () => {
+        if (tabletWithFormRef.current) {
+          const { scrollY } = window;
+          const top = getElementTopOffset(tabletWithFormRef.current);
+
+          if (top - scrollY > 700) setIsCtaVisible(true);
+          else setIsCtaVisible(false);
+        }
+      });
+
+      return () => window.removeEventListener('scroll', () => {});
+    }
+  }, []);
 
   return (
     <>
@@ -219,6 +253,11 @@ function ProjectSlug({ project, markdown }) {
           />
         </Head>
       )}
+      <FixedBottomCta
+        isCtaVisible={isCtaVisible && !isAuthenticated}
+        asset={project}
+        onClick={() => tabletWithFormRef.current?.scrollIntoView()}
+      />
       <GridContainer
         height="100%"
         flexDirection="column"
@@ -271,7 +310,16 @@ function ProjectSlug({ project, markdown }) {
             >
               {project ? (
                 <>
-                  <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+                  <SimpleTable
+                    href="/interactive-exercises"
+                    difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
+                    repository={project.url}
+                    duration={project.duration}
+                    videoAvailable={project.gitpod ? project.solution_video_url : null}
+                    solution={project.gitpod ? project.solution_url : null}
+                    liveDemoAvailable={project.intro_video_url}
+                    technologies={project?.technologies}
+                  />
                   <SupplementaryMaterial assets={project?.assets_related} />
                   <DynamicCallToAction
                     assetId={project.id}
@@ -304,6 +352,9 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
+              <Box display={{ base: 'block', md: 'none' }} mt="20px">
+                <TabletWithForm showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+              </Box>
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 marginTop="15px"

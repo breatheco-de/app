@@ -1,4 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
+import React, { useState, forwardRef } from 'react';
 import {
   Box,
   useColorModeValue,
@@ -18,7 +19,6 @@ import {
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
-import React, { useState } from 'react';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -31,13 +31,14 @@ import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function TabletWithForm({
+const TabletWithForm = forwardRef(({
   asset,
   commonTextColor,
   commonBorderColor,
   technologies,
+  showSimpleTable,
   href,
-}) {
+}, ref) => {
   const { t } = useTranslation('exercises');
   const { user } = useAuth();
   const toast = useToast();
@@ -83,19 +84,22 @@ function TabletWithForm({
 
   return (
     <>
-      <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
-        <SimpleTable
-          href={href}
-          difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-          repository={asset.url}
-          duration={asset.duration}
-          videoAvailable={asset.gitpod ? asset.solution_video_url : null}
-          solution={asset.gitpod ? asset.solution_url : null}
-          liveDemoAvailable={asset.intro_video_url}
-          technologies={technologies}
-        />
-      </Box>
+      {showSimpleTable && (
+        <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
+          <SimpleTable
+            href={href}
+            difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
+            repository={asset.url}
+            duration={asset.duration}
+            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
+            solution={asset.gitpod ? asset.solution_url : null}
+            liveDemoAvailable={asset.intro_video_url}
+            technologies={technologies}
+          />
+        </Box>
+      )}
       <Box
+        ref={ref}
         backgroundColor={useColorModeValue('white', 'featuredDark')}
         transition="background 0.2s ease-in-out"
         borderRadius="17px"
@@ -511,7 +515,7 @@ function TabletWithForm({
       </Box>
     </>
   );
-}
+});
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,
@@ -519,12 +523,14 @@ TabletWithForm.propTypes = {
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
+  showSimpleTable: PropTypes.bool,
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
   commonBorderColor: null,
+  showSimpleTable: true,
 };
 
 export default TabletWithForm;
