@@ -128,7 +128,7 @@
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match",
-    "termns-and-conditions-required": "I accept to receive information to my email about coding workshops, events, courses, and other marketing materials. We'll never share your email,"
+    "termns-and-conditions-required": "I agree to receive information in my email about coding workshops, events, courses, and other marketing materials. We'll never share your email,"
   },
   "no-date-available": "We currently have no dates available for the location entered",
   "alert-message": {
