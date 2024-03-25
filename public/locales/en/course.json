@@ -77,6 +77,40 @@
       "button": "Try LearnPack",
       "link": "#pricing"
     },
+    "showOnSignup": [
+      {
+        "type": "lesson",
+        "title": "Readings",
+        "icon": "book"
+      },
+      {
+        "type": "exercise",
+        "title": "Exercises",
+        "icon": "strength"
+      },
+      {
+        "type": "project",
+        "title": "Projects",
+        "icon": "laptop-code"
+      },
+      {
+        "type": "ai-feedback",
+        "title": "Real Time AI Feedback",
+        "qty": 2,
+        "icon": "brain"
+      },
+      {
+        "type": "workshop",
+        "title": "Workshops every week",
+        "qty": 3,
+        "icon": "tv-live"
+      },
+      {
+        "type": "community",
+        "title": "Community Gatherings.",
+        "icon": "community"
+      }
+    ],
     "list": [
       {
         "id": 1,
@@ -104,9 +138,5 @@
     "description": "Your 4Geeks certificate serves as a gateway to professional prospects, supported by a widespread network of companies throughout LATAM and across the globe. Backed by endorsements from numerous international institutions, it symbolizes a globally recognized standard of excellence, paving the way for diverse career opportunities.",
     "button": "See prices",
     "button-link": "#pricing"
-  },
-  "readings": "Readings",
-  "exercises": "Exercises",
-  "projects": "Projects",
-  "quiz": "Quiz"
+  }
 }

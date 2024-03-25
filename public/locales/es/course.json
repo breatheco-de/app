@@ -78,6 +78,37 @@
       "button": "Prueba LearnPack",
       "link": "#pricing"
     },
+    "showOnSignup": [
+      {
+        "title": "Lecturas",
+        "icon": "book"
+      },
+      {
+        "title": "Ejercicios",
+        "icon": "strength"
+      },
+      {
+        "title": "Proyectos",
+        "icon": "laptop-code"
+      },
+      {
+        "type": "ai-feedback",
+        "title": "Retroalimentación en tiempo real de IA",
+        "qty": 2,
+        "icon": "brain"
+      },
+      {
+        "type": "workshop",
+        "title": "Talleres todas las semanas",
+        "qty": 3,
+        "icon": "tv-live"
+      },
+      {
+        "type": "community",
+        "title": "Encuentros de la comunidad.",
+        "icon": "community"
+      }
+    ],
     "list": [
       {
         "id": 1,
@@ -105,9 +136,5 @@
     "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
     "button": "Ver precios",
     "button-link": "#pricing"
-  },
-  "readings": "Lecturas",
-  "exercises": "Ejercicios",
-  "projects": "Proyectos",
-  "quiz": "Cuestionario"
+  }
 }

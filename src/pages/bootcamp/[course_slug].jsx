@@ -325,15 +325,10 @@ function Page({ data, cohortData }) {
     }
   }, [readyToRefetch]);
 
-  const icon = {
-    readings: 'book',
-    exercises: 'strength',
-    projects: 'laptop-code',
-  };
   const assetCountByType = {
-    readings: assetCount?.lesson,
-    exercises: assetCount?.exercise,
-    projects: assetCount?.project,
+    lesson: assetCount?.lesson,
+    exercise: assetCount?.exercise,
+    project: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -341,6 +336,9 @@ function Page({ data, cohortData }) {
       title: module.name,
       description: module.description,
     })) : [];
+
+  console.log('data:::', data);
+  console.log('cohortData:::', cohortData);
 
   return (
     <Flex flexDirection="column" mt="2rem">
@@ -550,19 +548,24 @@ function Page({ data, cohortData }) {
                   )}
                 </Flex>
                 <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
-                  {['readings', 'exercises', 'projects'].map((item, index) => (
-                    <Flex color={fontColor} justifyContent="space-between" borderBottom={index < 2 ? '1px solid' : ''} padding={index < 2 ? '0 0 8px' : '0'} borderColor={borderColor}>
-                      <Flex gridGap="10px">
-                        <Icon icon={icon[item]} width="23px" height="23px" color={hexColor.disabledColor} />
-                        <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="normal">
-                          {t(item)}
+                  {features.showOnSignup.map((item, index) => {
+                    const lastNumberForBorder = features.showOnSignup.length - 1;
+                    return (
+                      <Flex key={item.title} color={fontColor} justifyContent="space-between" borderBottom={index < lastNumberForBorder ? '1px solid' : ''} padding={index < lastNumberForBorder ? '0 0 8px' : '0'} borderColor={borderColor}>
+                        <Flex gridGap="10px">
+                          <Icon icon={item.icon} width="23px" height="23px" color={hexColor.disabledColor} />
+                          <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="20px">
+                            {item.title}
+                          </Text>
+                        </Flex>
+                        {(assetCountByType?.[item?.type] || item?.qty) && (
+                        <Text size="14px">
+                          {assetCountByType[item?.type] || item?.qty}
                         </Text>
+                        )}
                       </Flex>
-                      <Text size="14px">
-                        {assetCountByType[item]}
-                      </Text>
-                    </Flex>
-                  ))}
+                    );
+                  })}
                 </Flex>
               </Flex>
             )}
