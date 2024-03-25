@@ -101,6 +101,14 @@
     "button": "See prices",
     "button-link": "#pricing"
   },
+  "job-section": {
+    "image": "/static/images/happy-male-with-laptop.png",
+    "title": "Get prepared for your next job",
+    "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
+    "description": "Get access to exercises that simulate real-life interviews curated from the companies actively hiring.<br /><br />At no additional cost to you and without deducting anything from the salary of the job offer you get.",
+    "button": "Join now!",
+    "button-link": "#pricing"
+  },
   "readings": "Readings and videos",
   "exercises": "Interactive Exercises",
   "projects": "Interactive Projects",
