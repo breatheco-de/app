@@ -6,12 +6,32 @@
     "listen-on": "Listen on",
     "links": [{
       "platform": "Spotify",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png",
-      "href": "https://open.spotify.com/show/4jOf9ngqajCcVgOEXmtiNW"
+      "position": "-40px",
+      "href": "https://open.spotify.com/show/4jOf9ngqajCcVgOEXmtiNW?si=817061bc53cc4ace"
     }, {
       "platform": "Amazon music",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Amazon_Music_logo.svg/2560px-Amazon_Music_logo.svg.png",
+      "position": "-675px",
       "href": "https://music.amazon.com/podcasts/56608869-3ce0-44eb-b725-2ddcd827bfee"
+    }, {
+      "platform": "Podcast index",
+      "position": "-842px",
+      "href": "https://podcastindex.org/podcast/6786260"
+    }, {
+      "platform": "I Heart",
+      "position": "-161px",
+      "href": "https://www.iheart.com/podcast/269-code-sets-you-free-148526053/"
+    }, {
+      "platform": "Podcast Addict",
+      "position": "-543px",
+      "href": "https://podcastaddict.com/podcast/code-sets-you-free/4848181"
+    }, {
+      "platform": "Podchaser",
+      "position": "-457px",
+      "href": "https://www.podchaser.com/podcasts/code-sets-you-free-5617911"
+    }, {
+      "platform": "Pocket Cast",
+      "position": "-331px",
+      "href": "https://pca.st/f7ir3ozz"
     }]
   },
   "meet-the-hosts": "Meet the hosts",

@@ -4,20 +4,42 @@
     "description": "Podcast multilingüe de cultura tecnológica donde aprenderás a luchar para convertirte en un profesional exitoso en tecnología. Rompe las barreras de entrada, aprende habilidades, mantente motivado, encuentra trabajos, establece contactos, utilice la IA con éxito y mantente actualizado.",
     "image": "/static/images/podcast.png",
     "listen-on": "Escuchar en",
-    "links": [
-      {
-        "platform": "Spotify",
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/2048px-Spotify_logo_without_text.svg.png",
-        "href": "https://open.spotify.com/show/4jOf9ngqajCcVgOEXmtiNW"
-      }
-    ]
+    "links": [{
+      "platform": "Spotify",
+      "position": "-40px",
+      "href": "https://open.spotify.com/show/4jOf9ngqajCcVgOEXmtiNW?si=817061bc53cc4ace"
+    }, {
+      "platform": "Amazon music",
+      "position": "-675px",
+      "href": "https://music.amazon.com/podcasts/56608869-3ce0-44eb-b725-2ddcd827bfee"
+    }, {
+      "platform": "Podcast index",
+      "position": "-842px",
+      "href": "https://podcastindex.org/podcast/6786260"
+    }, {
+      "platform": "I Heart",
+      "position": "-161px",
+      "href": "https://www.iheart.com/podcast/269-code-sets-you-free-148526053/"
+    }, {
+      "platform": "Podcast Addict",
+      "position": "-543px",
+      "href": "https://podcastaddict.com/podcast/code-sets-you-free/4848181"
+    }, {
+      "platform": "Podchaser",
+      "position": "-457px",
+      "href": "https://www.podchaser.com/podcasts/code-sets-you-free-5617911"
+    }, {
+      "platform": "Pocket Cast",
+      "position": "-331px",
+      "href": "https://pca.st/f7ir3ozz"
+    }]
   },
   "meet-the-hosts": "Conoce a los Hosts",
   "hosts": [{
     "name": "Alejandro Sanchez",
     "description": "4Geeks Academy co-founder",
     "profile-picture": "https://techhubsouthflorida.org/wp-content/uploads/2023/09/Alejandro-Sanchez.jpeg",
-    "bio": "Alejandro, a tech prodigy since age 13, has redefined the landscape of coding education. From coding interactive websites as a teenager to co-founding his first startup at 16, his journey has been marked by innovation. Notable successes include Hack, a coding school acquired in 2016, and 4Geeks Developer Community, a dev shop acquired in 2015. Today, Alejandro's mission with 4Geeks Academy is to democratize coding education worldwide, with thousands of students graduating every year and +$20,000,000 in scholarships thanks to partnerships with several governments and the most prominent non-profit organizations worldwide. He continues to inspire through relentless dedication to innovation and education.",
+    "bio": "Alejandro, un prodigio de la tecnología desde los 13 años, ha redefinido el panorama de la educación en programación. Desde programar sitios web interactivos cuando era adolescente hasta cofundar su primera startup a los 16 años, su viaje ha estado marcado por la innovación. Los éxitos notables incluyen Hack, una escuela de programación adquirida en 2016, y 4Geeks Developer Community, una tienda de desarrollo adquirida en 2015. Hoy en día, la misión de Alejandro con 4Geeks Academy es democratizar la educación en programación en todo el mundo, con miles de estudiantes que se gradúan cada año y más de $20 000 000 en becas. gracias a asociaciones con varios gobiernos y las organizaciones sin fines de lucro más destacadas del mundo. Continúa inspirando a través de una dedicación incesante a la innovación y la educación.",
     "media": [{
       "name": "linkedin",
       "logo": "linkedin",
@@ -27,7 +49,7 @@
     "name": "Tomas Gonzalez",
     "description": "4Geeks Academy co-founder",
     "profile-picture": "https://media.licdn.com/dms/image/C5603AQH-T8ZePCIzYg/profile-displayphoto-shrink_400_400/0/1649829192473?e=2147483647&v=beta&t=jj9Bh0mC2ktumfuC64pNwWdS-e1aMRLechr_uxW5CvE",
-    "bio": "A passionate coder, Tomas embarked on his programming journey four years ago after graduating as a Full Stack developer from the renowned 4Geeks Academy bootcamp. Overcoming numerous challenges, he honed his skills and became a proficient developer. Today, as Co-founder of 4Geeks.com, Tomas leverages his expertise to lead a team of six programmers and continues to make strides in the tech world. With a background in teaching at 4Geeks Academy Miami and creating various programming courses in different languages, Tomas is dedicated to empowering others through education and innovation.",
+    "bio": "Tomas, un programador apasionado, se embarcó en su viaje de programación hace cuatro años después de graduarse como desarrollador Full Stack en el reconocido bootcamp 4Geeks Academy. Superando numerosos desafíos, perfeccionó sus habilidades y se convirtió en un desarrollador competente. Hoy, como cofundador de 4Geeks.com, Tomas aprovecha su experiencia para liderar un equipo de seis programadores y continúa avanzando en el mundo de la tecnología. Con experiencia en la enseñanza en 4Geeks Academy Miami y la creación de varios cursos de programación en diferentes idiomas, Tomas se dedica a empoderar a otros a través de la educación y la innovación.",
     "media": [{
       "name": "linkedin",
       "logo": "linkedin",
