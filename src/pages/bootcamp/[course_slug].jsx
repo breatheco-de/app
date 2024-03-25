@@ -332,7 +332,7 @@ function Page({ data, cohortData }) {
   };
   const assetCountByType = {
     readings: 41, // assetCount?.lesson,
-    exercises: 600, // assetCount?.exercise,
+    exercises: 584, // assetCount?.exercise,
     projects: 26, // assetCount?.project,
   };
 
