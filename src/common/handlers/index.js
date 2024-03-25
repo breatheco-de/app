@@ -16,7 +16,12 @@ const taskIcons = {
 };
 
 const getCompletedTasksFromModule = (module, taskTodo) => (module?.length > 0 ? module.filter(
-  (assignment) => taskTodo.some((task) => task?.associated_slug === assignment?.slug && task?.task_status === 'DONE'),
+  (assignment) => taskTodo.some((task) => {
+    if (task?.task_status === 'DONE') {
+      return task?.associated_slug === assignment?.slug;
+    }
+    return false;
+  }),
 ) : []);
 
 const handlers = {
