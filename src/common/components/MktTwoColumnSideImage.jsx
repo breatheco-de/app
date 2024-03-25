@@ -159,7 +159,6 @@ function MktTwoColumnSideImage({
                 lineHeight={prismicStyles.descriptionLineHeight || '14px'}
                 margin="15px 0"
                 color={fontColor2}
-                dangerouslySetInnerHTML={{ __html: description }}
               >
                 {description}
               </Text>
