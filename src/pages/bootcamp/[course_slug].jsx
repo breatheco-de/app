@@ -703,6 +703,27 @@ function Page({ data, cohortData }) {
           alignItems: 'start',
         }}
       />
+
+      <MktTwoColumnSideImage
+        mt="6.25rem"
+        imageUrl={t('job-section.image')}
+        title={t('job-section.title')}
+        subTitle={t('job-section.subtitle')}
+        description={t('job-section.description')}
+        informationSize="Medium"
+        buttonUrl={t('job-section.button-link')}
+        buttonLabel={t('job-section.button')}
+        imagePosition='right'
+        textBackgroundColor='#EEF9FE'
+        titleColor='#0097CF'
+        subtitleColor='#01455E'
+        containerProps={{
+          padding: '0px',
+          marginTop: '0px',
+          gridGap: '32px',
+          alignItems: 'start',
+        }}
+      />
       {/* Pricing */}
       {data?.plan_slug && (
         <MktShowPrices
