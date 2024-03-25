@@ -8,12 +8,12 @@
   "live-bootcamp": "Live bootcamp",
   "build-connector": {
     "what-you-will": "Learn by building",
-    "description": "To learn to code at your own pace effectively, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be very similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
+    "description": "To learn to code at your own pace effectively, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
     "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Learn by your own is hard, and we have designed the tools to avoid having problems, lose motivation, and accelerate your learning."
+    "benefits-connector": "Learning on your own is hard, and we have designed the tools to avoid having problems, losing motivation, and accelerate your learning."
   },
   "show-prices": {
     "title": "Learning to code alone is possible without a big investment!",
@@ -25,7 +25,7 @@
   },
   "rigobot": {
     "title": "Meet Rigobot, the guide of your learning journey",
-    "description": "Rigobot is our AI model that's been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "description": "Rigobot is our AI model that has been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
     "link": "https://github.com/breatheco-de/exercise-postcard"
   },
@@ -53,7 +53,7 @@
     {
       "id": 2,
       "title": "How to schedule a mentoring session?",
-      "description": "To schedule a mentoring session, you must go to the dashboard, and choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      "description": "To schedule a mentoring session, you must go to the dashboard, choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
     },
     {
       "id": 3,
@@ -99,6 +99,14 @@
     "title": "Certificate in your favorite technology",
     "description": "Your 4Geeks certificate serves as a gateway to professional prospects, supported by a widespread network of companies throughout LATAM and across the globe. Backed by endorsements from numerous international institutions, it symbolizes a globally recognized standard of excellence, paving the way for diverse career opportunities.",
     "button": "See prices",
+    "button-link": "#pricing"
+  },
+  "job-section": {
+    "image": "/static/images/happy-male-with-laptop.png",
+    "title": "Get prepared for your next job",
+    "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
+    "description": "Get access to exercises that simulate real-life interviews curated from the companies actively hiring. At no additional cost to you and without deducting anything from the salary of the job offer you get.",
+    "button": "Join now!",
     "button-link": "#pricing"
   },
   "readings": "Readings and videos",
