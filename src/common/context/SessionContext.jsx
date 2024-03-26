@@ -55,7 +55,7 @@ function SessionProvider({ children }) {
       const utm_source = getQueryString('utm_source') || storedSession?.utm_source;
       const utm_term = getQueryString('utm_term') || storedSession?.utm_term;
       const utm_content = getQueryString('utm_content') || storedSession?.utm_content;
-      const utm_content = getQueryString('utm_campaign') || storedSession?.utm_campaign;
+      const utm_campaign = getQueryString('utm_campaign') || storedSession?.utm_campaign;
       const internal_cta_placement = getQueryString('internal_cta_placement') || storedSession?.internal_cta_placement;
       const internal_cta_content = getQueryString('internal_cta_content') || storedSession?.internal_cta_content;
       const internal_cta_campaign = getQueryString('internal_cta_campaign') || storedSession?.internal_cta_campaign;
