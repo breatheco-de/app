@@ -572,7 +572,7 @@ function Page({ data, cohortData }) {
             }}
             buttonText={t('rigobot.button')}
           >
-            <Text size="14px" color="currentColor">
+            <Text size="16px" color="currentColor">
               {t('rigobot.description')}
             </Text>
           </OneColumnWithIcon>
@@ -721,7 +721,7 @@ function Page({ data, cohortData }) {
           padding: '0px',
           marginTop: '0px',
           gridGap: '32px',
-          alignItems: 'start',
+          alignItems: 'center',
         }}
       />
       {/* Pricing */}
