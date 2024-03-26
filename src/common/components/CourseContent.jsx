@@ -9,7 +9,6 @@ import AcordionList from './AcordionList';
 function CourseContent({ data, assetCount }) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('course');
-  const contentCountString = `${assetCount.lesson} ${t('readings')}, ${assetCount.exercise} ${t('exercises')}, ${assetCount.project} ${t('projects')}`;
 
   return (
     <Flex gridGap="12px" flexDirection="column">
@@ -17,7 +16,7 @@ function CourseContent({ data, assetCount }) {
         {t('course-content-text')}
       </Heading>
       <Text size="14px" color={hexColor.fontColor2}>
-        {contentCountString}
+        {t('course-content-description')}
       </Text>
 
       <AcordionList defaultIndex={0} list={data} />
