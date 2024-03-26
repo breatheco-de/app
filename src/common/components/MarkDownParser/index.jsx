@@ -25,19 +25,25 @@ import SubTasks from './SubTasks';
 import modifyEnv from '../../../../modifyEnv';
 import DynamicCallToAction from '../DynamicCallToAction';
 
-function MarkdownH2Heading({ ...props }) {
+function MarkdownH2Heading({ children }) {
   return (
-    <MDHeading tagType="h2" {...props} />
+    <MDHeading tagType="h2">
+      {children}
+    </MDHeading>
   );
 }
-function MarkdownH3Heading({ ...props }) {
+function MarkdownH3Heading({ children }) {
   return (
-    <MDHeading tagType="h3" {...props} />
+    <MDHeading tagType="h3">
+      {children}
+    </MDHeading>
   );
 }
-function MarkdownH4Heading({ ...props }) {
+function MarkdownH4Heading({ children }) {
   return (
-    <MDHeading tagType="h4" {...props} />
+    <MDHeading tagType="h4">
+      {children}
+    </MDHeading>
   );
 }
 function UlComponent({ children }) {
@@ -49,14 +55,14 @@ function OlComponent({ children }) {
 function ImgComponent(props) {
   return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
-function ParagraphComponent({ ...props }) {
-  return (<MDText id={props?.node?.children?.[0]?.properties?.alt} {...props} />);
+function ParagraphComponent({ node, children }) {
+  return (<MDText id={node?.children?.[0]?.properties?.alt}>{children}</MDText>);
 }
-function HrComponent({ ...props }) {
-  return (<MDHr {...props} />);
+function HrComponent() {
+  return (<MDHr />);
 }
-function IframeComponent({ ...props }) {
-  return (<iframe title={props.title || 'iframe-content'} className="MDIframe" {...props} />);
+function IframeComponent({ src, title, width, height }) {
+  return (<iframe src={src} width={width} height={height} title={title || 'iframe-content'} className="MDIframe" />);
 }
 function OnlyForComponent({ cohortSession, profile, ...props }) {
   return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
