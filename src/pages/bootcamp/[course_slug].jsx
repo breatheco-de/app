@@ -721,7 +721,7 @@ function Page({ data, cohortData }) {
           padding: '0px',
           marginTop: '0px',
           gridGap: '32px',
-          alignItems: 'start',
+          alignItems: 'center',
         }}
       />
       {/* Pricing */}
