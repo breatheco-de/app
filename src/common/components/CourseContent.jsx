@@ -15,7 +15,7 @@ function CourseContent({ data, assetCount }) {
       <Heading as="h2" size="20px">
         {t('course-content-text')}
       </Heading>
-      <Text size="14px" color={hexColor.fontColor2}>
+      <Text size="16px" color={hexColor.fontColor2}>
         {t('course-content-description')}
       </Text>
 
