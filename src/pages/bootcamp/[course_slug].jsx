@@ -326,9 +326,9 @@ function Page({ data, cohortData }) {
   }, [readyToRefetch]);
 
   const assetCountByType = {
-    readings: 41, // assetCount?.lesson,
-    exercises: 584, // assetCount?.exercise,
-    projects: 26, // assetCount?.project,
+    readings: assetCount?.lesson,
+    exercises: assetCount?.exercise,
+    projects: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
