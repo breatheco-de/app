@@ -1,5 +1,6 @@
 {
-  "course-content-text": "Course content",
+  "course-content-text": "Syllabus optimized to get a job!",
+  "course-content-description": "We have battle-tested this syllabus with hundreds of job positions to give you the necessary skills to find a job in tech.",
   "students-enrolled-count": "+{{count}} students enrolled",
   "enroll-now-for-price": "Enroll now for {{price}} monthly",
   "join-cohort": "Join cohort",
@@ -8,7 +9,7 @@
   "live-bootcamp": "Live bootcamp",
   "build-connector": {
     "what-you-will": "Learn by building",
-    "description": "To learn to code at your own pace effectively, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
+    "description": "When learning to code at your own pace, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
     "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
@@ -24,10 +25,10 @@
     "by-your-own-pace": "by learning at your own pace"
   },
   "rigobot": {
-    "title": "Meet Rigobot, the guide of your learning journey",
-    "description": "Rigobot is our AI model that has been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "title": "Meet Rigobot, our internal AI designed for solo learners",
+    "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
     "button": "Try Rigobot for free",
-    "link": "https://github.com/breatheco-de/exercise-postcard"
+    "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "live-workshops-connector": {
     "join-one-or-more-workshops": "Join one or more live workshops with mentors coding the projects you need to practice."
@@ -77,20 +78,20 @@
       {
         "id": 1,
         "icon": "tv-live",
-        "title": "Learn Live",
-        "description": "Learn live with our workshops about technical or career subjects, hosted by tech industry experts."
+        "title": "AI feedback",
+        "description": "Our AI can review your code to give you instant feedback, help you with an exercise, and more!"
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Live by doing",
-        "description": "Learn by doing with more than 25 real-life projects and 500+ interactive exercises."
+        "title": "One-on-one mentorships",
+        "description": "Ask for a mentoring session with an expert whenever you want and at the time that best fits you."
       },
       {
         "id": 3,
         "icon": "window-tab",
-        "title": "Learn with community",
-        "description": "Join our community and connect with thousands of developers who are learning the same as you are!"
+        "title": "Learn with the community",
+        "description": "Learning with others is more fun, is easier, and you can get farther. Our community won't leave you behind!"
       }
     ]
   },
