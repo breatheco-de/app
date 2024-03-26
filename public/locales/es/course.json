@@ -7,23 +7,22 @@
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
   "live-bootcamp": "Bootcamp en vivo",
   "build-connector": {
-    "what-you-will": "¿Qué vas a",
-    "description": "Este bootcamp está lleno de ejercicios prácticos que te ayudarán a mejorar tu experiencia y construir un gran portafolio. Entra en el mundo laboral construyendo proyectos reales como estos:",
-    "build": "construir",
+    "what-you-will": "Aprende contruyendo",
+    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, contruirás proyectos reales como estos:",
+    "build": "proyectos de la vida real",
     "link": "#pricing"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "¿Por qué aprender con",
-    "benefits-connector": "¿Quieres saber más sobre qué nos hace diferentes? Estos son los beneficios de nuestro modelo de estudio.",
-    "benefits": "Aprende en vivo + aprende creando + aprende en comunidad."
+    "benefits-connector": "Aprender por tu cuenta es difícil, y nosotros hemos diseñado las herramientas para evitar que tengas problemas, pierdas tu motivación y aceleres tu aprendizaje."
   },
   "show-prices": {
-    "title": "¡El dinero ya no es un problema!",
+    "title": "¡Aprender a programar por tu cuenta es posible sin una gran inversión!",
     "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
   },
-  "technology-connector": {
-    "become": "Únete a nuestro Bootcamp de",
-    "and-get-job": "y consigue tu primer trabajo"
+  "get-the-skills": {
+    "get-the-skills": "Obtén las habilidades y una nueva carrera en",
+    "by-your-own-pace": "aprendiendo a tu propio ritmo"
   },
   "rigobot": {
     "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje",
@@ -31,19 +30,16 @@
     "button": "Prueba Rigobot gratis",
     "link": "https://github.com/breatheco-de/exercise-postcard"
   },
-  "learnpack-connector": {
-    "get-experience-with": "Obtén lo mejor de la experiencia con",
-    "learnpack-tool": "LearnPack, nuestra poderosa herramienta de IA",
-    "do-you-want-to-know": "¿Quieres saber más?"
+  "live-workshops-connector": {
+    "join-one-or-more-workshops": "Únete a uno o más workshops con mentores mientras desarrollan proyectos que te ayudan a practicar."
   },
-  "syllabus-connector": {
-    "follow-structured-syllabus": "Sigue un plan de estudios estructurado con",
-    "interactive-tutorials": "Más de 1000 ejercicios y tutoriales interactivos."
+  "career-connector": {
+    "receive-guidance": "Recibe guía sobre cómo crear tu curriculum, perfil de LinkedIn y otras actividades relevantes de carrera."
   },
   "mentoring-connector": {
-    "boost-experience-with": "Potencia tu experiencia con",
-    "one-one-mentoring": "sesiones de tutoría en vivo uno a uno",
-    "with-our-experts": "con expertos de la industria que ya han recorrido este camino."
+    "get-help-with": "Obtén ayuda con",
+    "one-one-mentoring": "sesiones de mentoría en vivo uno a uno",
+    "every-month": "cada mes."
   },
   "why-learn-with-4geeks": {
     "title": "¿Por qué debería aprender con 4Geeks?",
@@ -135,6 +131,14 @@
     "title": "Certificado en tu tecnología favorita",
     "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
     "button": "Ver precios",
+    "button-link": "#pricing"
+  },
+  "job-section": {
+    "image": "/static/images/happy-male-with-laptop.png",
+    "title": "Prepárate para to próximo trabajo",
+    "subtitle": "Mejora tu CV, portafolio, perfil de GitHub, y el perfil de tus redes sociales.",
+    "description": "Obtén acceso a ejercicios que simulan entrevistas de la vida real, obtenidas de empresas que están contratando activamente. Por ningún costo adicional para ti y sin quitarte nada del salario de la oferta de trabajo que obtengas.",
+    "button": "Únete ahora",
     "button-link": "#pricing"
   }
 }

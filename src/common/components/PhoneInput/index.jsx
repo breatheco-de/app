@@ -10,7 +10,7 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Box, FormControl, FormErrorMessage } from '@chakra-ui/react';
 import { Field } from 'formik';
-import countriesList from './countriesList';
+import countriesList from './countriesList.json';
 // import { Colors } from '../../Styling';
 
 function PhoneInput({
@@ -57,55 +57,24 @@ function PhoneInput({
   const highlightCountryIndex = 0;
 
   const getCountryPhoneMask = () => {
-    const maskList = [
-      { us: `+${selectedCountry.dialCode || '1'} (999) 999-9999` },
-      { cl: `+${selectedCountry.dialCode || '99'}9 9999 9999` },
-      {
-        default: defaultMask || `+${selectedCountry.dialCode} 999 999 999 999`,
-      },
-    ];
-    const getMask = maskList.find(
-      (code) => code[selectedCountry.iso2] || code.default,
+    const getMask = countriesList.find(
+      (mask) => mask.iso === selectedCountry?.iso2?.toUpperCase(),
     );
-    const mask = getMask[selectedCountry.iso2] || getMask.default;
+    const mask = getMask ? `+${selectedCountry.dialCode} ${getMask.mask}` : `+${selectedCountry.dialCode} 9999 9999 9999`;
     return mask;
   };
 
-  const rawCountries = JSON.parse(JSON.stringify(countriesList));
-  let hiddenAreaCodes = [];
-
-  const initializedCountries = [].concat(
-    ...rawCountries.map((country) => {
-      const countryItem = {
-        name: country[0],
-        locations: country[1],
-        iso2: country[2],
-        countryCode: country[3],
-        dialCode: country[3],
-        priority: country[5] || 0,
-      };
-
-      const areaItems = [];
-
-      country[6]
-        && country[6].map((areaCode) => {
-          const areaItem = { ...countryItem };
-          areaItem.dialCode = country[3] + areaCode;
-          areaItem.isAreaCode = true;
-          areaItem.areaCodeLength = areaCode.length;
-
-          areaItems.push(areaItem);
-        });
-
-      if (areaItems.length > 0) {
-        countryItem.mainCode = true;
-        hiddenAreaCodes = hiddenAreaCodes.concat(areaItems);
-        return [countryItem];
-      }
-
-      return [countryItem];
-    }),
-  );
+  const initializedCountries = countriesList.map((country) => {
+    const countryItem = {
+      name: country.name,
+      locations: country.locations,
+      iso2: country?.iso?.toLocaleLowerCase(),
+      countryCode: country.code,
+      dialCode: country.code,
+      priority: country?.priority || 0,
+    };
+    return countryItem;
+  });
 
   const getLocationCoincidence = (country, sessionLocation) => {
     if (country.name === sessionLocation.country || country.name === sessionLocation.name) {

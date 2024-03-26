@@ -1,0 +1,1487 @@
+[
+  {
+    "name": "Afghanistan",
+    "locations": ["asia"],
+    "code": "93",
+    "iso": "AF",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Albania",
+    "locations": ["europe"],
+    "code": "355",
+    "iso": "AL",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Algeria",
+    "locations": ["africa", "north-africa"],
+    "code": "213",
+    "iso": "DZ",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Andorra",
+    "locations": ["europe"],
+    "code": "376",
+    "iso": "AD",
+    "mask": "999 999"
+  },
+  {
+    "name": "Angola",
+    "locations": ["africa"],
+    "code": "244",
+    "iso": "AO",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Antigua and Barbuda",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "AG",
+    "mask": "(268)999 9999"
+  },
+  {
+    "name": "Argentina",
+    "locations": ["america", "buenosaires-argentina", "south-america"],
+    "code": "54",
+    "iso": "AR",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Armenia",
+    "locations": ["asia", " ex-ussr"],
+    "code": "374",
+    "iso": "AM",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Aruba",
+    "locations": ["america", "carribean"],
+    "code": "297",
+    "iso": "AW",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Australia",
+    "locations": ["oceania"],
+    "code": "61",
+    "iso": "AU",
+    "mask": "9 9999 9999"
+  },
+  {
+    "name": "Austria",
+    "locations": ["europe", "eu-union"],
+    "code": "43",
+    "iso": "AT",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Azerbaijan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "994",
+    "iso": "AZ",
+    "mask": "99 999 99 99"
+  },
+  {
+    "name": "Bahamas",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "BS",
+    "mask": "(242)999 9999"
+  },
+  {
+    "name": "Bahrain",
+    "locations": ["middle-east"],
+    "code": "973",
+    "iso": "BH",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Bangladesh",
+    "locations": ["asia"],
+    "code": "880",
+    "iso": "BD",
+    "mask": "1999 999999"
+  },
+  {
+    "name": "Barbados",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "BB",
+    "mask": "(246)999 9999"
+  },
+  {
+    "name": "Belarus",
+    "locations": ["europe", " ex-ussr"],
+    "code": "375",
+    "iso": "BY",
+    "mask": "(99)999 99 99"
+  },
+  {
+    "name": "Belgium",
+    "locations": ["europe", "eu-union"],
+    "code": "32",
+    "iso": "BE",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Belize",
+    "locations": ["america", "central-america"],
+    "code": "501",
+    "iso": "BZ",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Benin",
+    "locations": ["africa"],
+    "code": "229",
+    "iso": "BJ",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Bhutan",
+    "locations": ["asia"],
+    "code": "975",
+    "iso": "BT",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Bolivia",
+    "locations": ["america", "lapaz-bolivia", "south-america"],
+    "code": "591",
+    "iso": "BO",
+    "mask": "9 999 9999"
+  },
+  {
+    "name": "Bosnia and Herzegovina",
+    "locations": ["europe", "ex-yugos"],
+    "code": "387",
+    "iso": "BA",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Botswana",
+    "locations": ["africa"],
+    "code": "267",
+    "iso": "BW",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Brazil",
+    "locations": ["america", "south-america"],
+    "code": "55",
+    "iso": "BR",
+    "mask": "(99) 99999999"
+  },
+  {
+    "name": "British Indian Ocean Territory",
+    "locations": ["asia"],
+    "code": "246",
+    "iso": "IO",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Brunei Darussalam",
+    "locations": ["asia"],
+    "code": "673",
+    "iso": "BN",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Bulgaria",
+    "locations": ["europe", "eu-union"],
+    "code": "359",
+    "iso": "BG",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Burkina Faso",
+    "locations": ["africa"],
+    "code": "226",
+    "iso": "BF",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Burundi",
+    "locations": ["africa"],
+    "code": "257",
+    "iso": "BI",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Cambodia",
+    "locations": ["asia"],
+    "code": "855",
+    "iso": "KH",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Cameroon",
+    "locations": ["africa"],
+    "code": "237",
+    "iso": "CM",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Canada",
+    "locations": ["america", "north-america"],
+    "code": "1",
+    "iso": "CA",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Cape Verde",
+    "locations": ["africa"],
+    "code": "238",
+    "iso": "CV",
+    "mask": "(999)99 99"
+  },
+  {
+    "name": "Caribbean Netherlands",
+    "locations": ["america", "carribean"],
+    "code": "599",
+    "iso": "BQ",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Central African Republic",
+    "locations": ["africa"],
+    "code": "236",
+    "iso": "CF",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Chad",
+    "locations": ["africa"],
+    "code": "235",
+    "iso": "TD",
+    "mask": "99 99 99 99"
+  },
+  {
+    "name": "Chile",
+    "locations": ["america", "south-america"],
+    "code": "56",
+    "iso": "CL",
+    "mask": "9 9999 9999"
+  },
+  {
+    "name": "China",
+    "locations": ["asia"],
+    "code": "86",
+    "iso": "CN",
+    "mask": "99 99999 99999"
+  },
+  {
+    "name": "Colombia",
+    "locations": ["america", "south-america"],
+    "code": "57",
+    "iso": "CO",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Comoros",
+    "locations": ["africa"],
+    "code": "269",
+    "iso": "KM",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Congo",
+    "locations": ["africa"],
+    "code": "242",
+    "iso": "CG",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Costa Rica",
+    "locations": ["america", "central-america"],
+    "code": "506",
+    "iso": "CR",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Croatia",
+    "locations": ["europe", "eu-union", "ex-yugos"],
+    "code": "385",
+    "iso": "HR",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Cuba",
+    "locations": ["america", "carribean"],
+    "code": "53",
+    "iso": "CU",
+    "mask": "9 999 9999"
+  },
+  {
+    "name": "Curaçao",
+    "locations": ["america", "carribean"],
+    "code": "599",
+    "iso": "CW",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Cyprus",
+    "locations": ["europe"],
+    "code": "357",
+    "iso": "CY",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Czech Republic",
+    "locations": ["europe", "eu-union"],
+    "code": "420",
+    "iso": "CZ",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Democratic Republic of the Congo",
+    "locations": ["africa"],
+    "code": "243",
+    "iso": "CD",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Denmark",
+    "locations": ["europe", "eu-union"],
+    "code": "45",
+    "iso": "DK",
+    "mask": "99 99 99 99"
+  },
+  {
+    "name": "Djibouti",
+    "locations": ["africa"],
+    "code": "253",
+    "iso": "DJ",
+    "mask": "99 99 99 99"
+  },
+  {
+    "name": "Dominica",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "DM",
+    "mask": "(767)999 9999"
+  },
+  {
+    "name": "Dominican Republic",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "DO",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Ecuador",
+    "locations": ["america", "south-america"],
+    "code": "593",
+    "iso": "EC",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Egypt",
+    "locations": ["africa", "north-africa"],
+    "code": "20",
+    "iso": "EG",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "El Salvador",
+    "locations": ["america", "central-america"],
+    "code": "503",
+    "iso": "SV",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Equatorial Guinea",
+    "locations": ["africa"],
+    "code": "240",
+    "iso": "GQ",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Eritrea",
+    "locations": ["africa"],
+    "code": "291",
+    "iso": "ER",
+    "mask": "9 999 999"
+  },
+  {
+    "name": "Estonia",
+    "locations": ["europe", "eu-union"],
+    "code": "372",
+    "iso": "EE",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Ethiopia",
+    "locations": ["africa"],
+    "code": "251",
+    "iso": "ET",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Fiji",
+    "locations": ["oceania"],
+    "code": "679",
+    "iso": "FJ",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Finland",
+    "locations": ["europe", "eu-union"],
+    "code": "358",
+    "iso": "FI",
+    "mask": "(999)999 99 99"
+  },
+  {
+    "name": "France",
+    "locations": ["europe", "eu-union"],
+    "code": "33",
+    "iso": "FR",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "French Guiana",
+    "locations": ["america", "south-america"],
+    "code": "594",
+    "iso": "GF",
+    "mask": "99999 9999"
+  },
+  {
+    "name": "French Polynesia",
+    "locations": ["oceania"],
+    "code": "689",
+    "iso": "PF",
+    "mask": "99 99 99"
+  },
+  {
+    "name": "Gabon",
+    "locations": ["africa"],
+    "code": "241",
+    "iso": "GA",
+    "mask": "9 99 99 99"
+  },
+  {
+    "name": "Gambia",
+    "locations": ["africa"],
+    "code": "220",
+    "iso": "GM",
+    "mask": "(999)99 99"
+  },
+  {
+    "name": "Georgia",
+    "locations": ["asia"],
+    "code": "995",
+    "iso": "GE",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Germany",
+    "locations": ["europe", "eu-union"],
+    "code": "49",
+    "iso": "DE",
+    "mask": "9999 99999999"
+  },
+  {
+    "name": "Ghana",
+    "locations": ["africa"],
+    "code": "233",
+    "iso": "GH",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Greece",
+    "locations": ["europe", "eu-union"],
+    "code": "30",
+    "iso": "GR",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Grenada",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "GD",
+    "mask": "(473)999 9999"
+  },
+  {
+    "name": "Guadeloupe",
+    "locations": ["america", "carribean"],
+    "code": "590",
+    "iso": "GP",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Guam",
+    "locations": ["oceania"],
+    "code": "1",
+    "iso": "GU",
+    "mask": "(671)999 9999"
+  },
+  {
+    "name": "Guatemala",
+    "locations": ["america", "central-america"],
+    "code": "502",
+    "iso": "GT",
+    "mask": "9 999 9999"
+  },
+  {
+    "name": "Guinea",
+    "locations": ["africa"],
+    "code": "224",
+    "iso": "GN",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Guinea Bissau",
+    "locations": ["africa"],
+    "code": "245",
+    "iso": "GW",
+    "mask": "9 999999"
+  },
+  {
+    "name": "Guyana",
+    "locations": ["america"],
+    "code": "592",
+    "iso": "GY",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Haiti",
+    "locations": ["america", "carribean"],
+    "code": "509",
+    "iso": "HT",
+    "mask": "99 99 9999"
+  },
+
+  {
+    "name": "Honduras",
+    "locations": ["america", "central-america"],
+    "code": "504",
+    "iso": "HN",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Hong Kong",
+    "locations": ["asia"],
+    "code": "852",
+    "iso": "HK",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Hungary",
+    "locations": ["europe", "eu-union"],
+    "code": "36",
+    "iso": "HU",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Iceland",
+    "locations": ["europe"],
+    "code": "354",
+    "iso": "IS",
+    "mask": "999 9999"
+  },
+  {
+    "name": "India",
+    "locations": ["asia"],
+    "code": "91",
+    "iso": "IN",
+    "mask": "(9999)999 999"
+  },
+  {
+    "name": "Indonesia",
+    "locations": ["asia"],
+    "code": "62",
+    "iso": "ID",
+    "mask": "(899)999 999"
+  },
+  {
+    "name": "Iran",
+    "locations": ["asia"],
+    "code": "98",
+    "iso": "IR",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Iraq",
+    "locations": ["middle-east"],
+    "code": "964",
+    "iso": "IQ",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Ireland",
+    "locations": ["europe", "eu-union"],
+    "code": "353",
+    "iso": "IE",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Israel",
+    "locations": ["middle-east"],
+    "code": "972",
+    "iso": "IL",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Italy",
+    "locations": ["europe", "eu-union"],
+    "code": "39",
+    "iso": "IT",
+    "mask": "(999)9999 999"
+  },
+  {
+    "name": "Ivory Coast / Cote d'Ivoire",
+    "locations": ["africa"],
+    "code": "225",
+    "iso": "CI",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Jamaica",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "JM",
+    "mask": "(876)999 9999"
+  },
+  {
+    "name": "Japan",
+    "locations": ["asia"],
+    "code": "81",
+    "iso": "JP",
+    "mask": "99 9999 9999"
+  },
+  {
+    "name": "Jordan",
+    "locations": ["middle-east"],
+    "code": "962",
+    "iso": "JO",
+    "mask": "9 9999 9999"
+  },
+  {
+    "name": "Kazakhstan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "77",
+    "iso": "KZ",
+    "mask": "(999)999 99 99"
+  },
+  {
+    "name": "Kenya",
+    "locations": ["africa"],
+    "code": "254",
+    "iso": "KE",
+    "mask": "999 999999"
+  },
+  {
+    "name": "Kiribati",
+    "locations": ["oceania"],
+    "code": "686",
+    "iso": "KI",
+    "mask": "99 999"
+  },
+  {
+    "name": "Kosovo",
+    "locations": ["oceania"],
+    "code": "383",
+    "iso": "XK",
+    "mask": "999 999 999"
+  },
+  {
+    "name": "Kuwait",
+    "locations": ["middle-east"],
+    "code": "965",
+    "iso": "KW",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Kyrgyzstan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "996",
+    "iso": "KG",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Laos",
+    "locations": ["asia"],
+    "code": "856",
+    "iso": "LA",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Latvia",
+    "locations": ["europe", "eu-union"],
+    "code": "371",
+    "iso": "LV",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Lebanon",
+    "locations": ["middle-east"],
+    "code": "961",
+    "iso": "LB",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Lesotho",
+    "locations": ["africa"],
+    "code": "266",
+    "iso": "LS",
+    "mask": "9 999 9999"
+  },
+  {
+    "name": "Liberia",
+    "locations": ["africa"],
+    "code": "231",
+    "iso": "LR",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Libya",
+    "locations": ["africa", "north-africa"],
+    "code": "218",
+    "iso": "LY",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Liechtenstein",
+    "locations": ["europe"],
+    "code": "423",
+    "iso": "LI",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Lithuania",
+    "locations": ["europe", "eu-union"],
+    "code": "370",
+    "iso": "LT",
+    "mask": "(999)99 999"
+  },
+  {
+    "name": "Luxembourg",
+    "locations": ["europe", "eu-union"],
+    "code": "352",
+    "iso": "LU",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Macau",
+    "locations": ["asia"],
+    "code": "853",
+    "iso": "MO",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Macedonia",
+    "locations": ["europe"],
+    "code": "389",
+    "iso": "MK",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Madagascar",
+    "locations": ["africa"],
+    "code": "261",
+    "iso": "MG",
+    "mask": "99 99 99999"
+  },
+  {
+    "name": "Malawi",
+    "locations": ["africa"],
+    "code": "265",
+    "iso": "MW",
+    "mask": "9 9999 9999"
+  },
+  {
+    "name": "Malaysia",
+    "locations": ["asia"],
+    "code": "60",
+    "iso": "MY",
+    "mask": "99 9999 9999"
+  },
+  {
+    "name": "Maldives",
+    "locations": ["asia"],
+    "code": "960",
+    "iso": "MV",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Mali",
+    "locations": ["africa"],
+    "code": "223",
+    "iso": "ML",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Malta",
+    "locations": ["europe", "eu-union"],
+    "code": "356",
+    "iso": "MT",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Marshall Islands",
+    "locations": ["oceania"],
+    "code": "692",
+    "iso": "MH",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Martinique",
+    "locations": ["america", "carribean"],
+    "code": "596",
+    "iso": "MQ",
+    "mask": "(999)99 99 99"
+  },
+  {
+    "name": "Mauritania",
+    "locations": ["africa"],
+    "code": "222",
+    "iso": "MR",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Mauritius",
+    "locations": ["africa"],
+    "code": "230",
+    "iso": "MU",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Mexico",
+    "locations": ["america", "north-america"],
+    "code": "52",
+    "iso": "MX",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Micronesia",
+    "locations": ["oceania"],
+    "code": "691",
+    "iso": "FM",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Moldova",
+    "locations": ["europe", " ex-ussr"],
+    "code": "373",
+    "iso": "MD",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Monaco",
+    "locations": ["europe"],
+    "code": "377",
+    "iso": "MC",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Mongolia",
+    "locations": ["asia"],
+    "code": "976",
+    "iso": "MN",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Montenegro",
+    "locations": ["europe"],
+    "code": "382",
+    "iso": "ME",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Morocco",
+    "locations": ["africa", "north-africa"],
+    "code": "212",
+    "iso": "MA",
+    "mask": "99 9999 999"
+  },
+  {
+    "name": "Mozambique",
+    "locations": ["africa"],
+    "code": "258",
+    "iso": "MZ",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Myanmar",
+    "locations": ["asia"],
+    "code": "95",
+    "iso": "MM",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Namibia",
+    "locations": ["africa"],
+    "code": "264",
+    "iso": "NA",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Nauru",
+    "locations": ["oceania"],
+    "code": "674",
+    "iso": "NR",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Nepal",
+    "locations": ["asia"],
+    "code": "977",
+    "iso": "NP",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Netherlands",
+    "locations": ["europe", "eu-union"],
+    "code": "31",
+    "iso": "NL",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "New Caledonia",
+    "locations": ["oceania"],
+    "code": "687",
+    "iso": "NC",
+    "mask": "99 9999"
+  },
+  {
+    "name": "New Zealand",
+    "locations": ["oceania"],
+    "code": "64",
+    "iso": "NZ",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Nicaragua",
+    "locations": ["america", "central-america"],
+    "code": "505",
+    "iso": "NI",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Niger",
+    "locations": ["africa"],
+    "code": "227",
+    "iso": "NE",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Nigeria",
+    "locations": ["africa"],
+    "code": "234",
+    "iso": "NG",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "North Korea",
+    "locations": ["asia"],
+    "code": "850",
+    "iso": "KP",
+    "mask": "999 9999 999"
+  },
+  {
+    "name": "Norway",
+    "locations": ["europe"],
+    "code": "47",
+    "iso": "NO",
+    "mask": "(999)99 999"
+  },
+  {
+    "name": "Oman",
+    "locations": ["middle-east"],
+    "code": "968",
+    "iso": "OM",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Pakistan",
+    "locations": ["asia"],
+    "code": "92",
+    "iso": "PK",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Palau",
+    "locations": ["oceania"],
+    "code": "680",
+    "iso": "PW",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Palestine",
+    "locations": ["middle-east"],
+    "code": "970",
+    "iso": "PS",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Panama",
+    "locations": ["america", "central-america"],
+    "code": "507",
+    "iso": "PA",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Papua New Guinea",
+    "locations": ["oceania"],
+    "code": "675",
+    "iso": "PG",
+    "mask": "(999)99 999"
+  },
+  {
+    "name": "Paraguay",
+    "locations": ["america", "south-america"],
+    "code": "595",
+    "iso": "PY",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Peru",
+    "locations": ["america", "south-america"],
+    "code": "51",
+    "iso": "PE",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Philippines",
+    "locations": ["asia"],
+    "code": "63",
+    "iso": "PH",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Poland",
+    "locations": ["europe", "eu-union"],
+    "code": "48",
+    "iso": "PL",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Portugal",
+    "locations": ["europe", "eu-union"],
+    "code": "351",
+    "iso": "PT",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Puerto Rico",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "PR",
+    "mask": "(999) 999 9999"
+  },
+  {
+    "name": "Qatar",
+    "locations": ["middle-east"],
+    "code": "974",
+    "iso": "QA",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Reunion",
+    "locations": ["africa"],
+    "code": "262",
+    "iso": "RE",
+    "mask": "99999 9999"
+  },
+  {
+    "name": "Romania",
+    "locations": ["europe", "eu-union"],
+    "code": "40",
+    "iso": "RO",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Russia",
+    "locations": ["europe", "asia", " ex-ussr", "baltic"],
+    "code": "7",
+    "iso": "RU",
+    "mask": "(999)999 99 99"
+  },
+  {
+    "name": "Rwanda",
+    "locations": ["africa"],
+    "code": "250",
+    "iso": "RW",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Saint Kitts and Nevis",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "KN",
+    "mask": "(869)999 9999"
+  },
+  {
+    "name": "Saint Lucia",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "LC",
+    "mask": "(758)999 9999"
+  },
+  {
+    "name": "Saint Martin",
+    "locations": ["america", "carribean"],
+    "code": "590",
+    "iso": "MF",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Saint Vincent and the Grenadines",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "VC",
+    "mask": "(784)999 9999"
+  },
+  {
+    "name": "Samoa",
+    "locations": ["oceania"],
+    "code": "685",
+    "iso": "WS",
+    "mask": "99 9999"
+  },
+  {
+    "name": "San Marino",
+    "locations": ["europe"],
+    "code": "378",
+    "iso": "SM",
+    "mask": "9999 999999"
+  },
+  {
+    "name": "Sao Tome and Principe",
+    "locations": ["africa"],
+    "code": "239",
+    "iso": "ST",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Saudi Arabia",
+    "locations": ["middle-east"],
+    "code": "966",
+    "iso": "SA",
+    "mask": "99 9999 9999"
+  },
+  {
+    "name": "Senegal",
+    "locations": ["africa"],
+    "code": "221",
+    "iso": "SN",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Serbia",
+    "locations": ["europe"],
+    "code": "381",
+    "iso": "RS",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Seychelles",
+    "locations": ["africa"],
+    "code": "248",
+    "iso": "SC",
+    "mask": "9 999 999"
+  },
+  {
+    "name": "Sierra Leone",
+    "locations": ["africa"],
+    "code": "232",
+    "iso": "SL",
+    "mask": "99 999999"
+  },
+  {
+    "name": "Singapore",
+    "locations": ["asia"],
+    "code": "65",
+    "iso": "SG",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Slovakia",
+    "locations": ["europe", "eu-union"],
+    "code": "421",
+    "iso": "SK",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Slovenia",
+    "locations": ["europe", "eu-union"],
+    "code": "386",
+    "iso": "SI",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Solomon Islands",
+    "locations": ["oceania"],
+    "code": "677",
+    "iso": "SB",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Somalia",
+    "locations": ["africa"],
+    "code": "252",
+    "iso": "SO",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "South Africa",
+    "locations": ["africa"],
+    "code": "27",
+    "iso": "ZA",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "South Korea",
+    "locations": ["asia"],
+    "code": "82",
+    "iso": "KR",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "South Sudan",
+    "locations": ["africa", "north-africa"],
+    "code": "211",
+    "iso": "SS",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Spain",
+    "locations": ["europe", "eu-union"],
+    "code": "34",
+    "iso": "ES",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Sri Lanka",
+    "locations": ["asia"],
+    "code": "94",
+    "iso": "LK",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Sudan",
+    "locations": ["africa"],
+    "code": "249",
+    "iso": "SD",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Suriname",
+    "locations": ["america"],
+    "code": "597",
+    "iso": "SR",
+    "mask": "999 9999"
+  },
+  {
+    "name": "Swaziland",
+    "locations": ["africa"],
+    "code": "268",
+    "iso": "SZ",
+    "mask": "99 99 9999"
+  },
+  {
+    "name": "Sweden",
+    "locations": ["europe", "eu-union"],
+    "code": "46",
+    "iso": "SE",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Switzerland",
+    "locations": ["europe"],
+    "code": "41",
+    "iso": "CH",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Syria",
+    "locations": ["middle-east"],
+    "code": "963",
+    "iso": "SY",
+    "mask": "99 9999 999"
+  },
+  {
+    "name": "Taiwan",
+    "locations": ["asia"],
+    "code": "886",
+    "iso": "TW",
+    "mask": "9999 9999"
+  },
+  {
+    "name": "Tajikistan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "992",
+    "iso": "TJ",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Tanzania",
+    "locations": ["africa"],
+    "code": "255",
+    "iso": "TZ",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Thailand",
+    "locations": ["asia"],
+    "code": "66",
+    "iso": "TH",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Timor Leste",
+    "locations": ["asia"],
+    "code": "670",
+    "iso": "TL",
+    "mask": "999 99999"
+  },
+  {
+    "name": "Togo",
+    "locations": ["africa"],
+    "code": "228",
+    "iso": "TG",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Tonga",
+    "locations": ["oceania"],
+    "code": "676",
+    "iso": "TO",
+    "mask": "99999"
+  },
+  {
+    "name": "Trinidad and Tobago",
+    "locations": ["america", "carribean"],
+    "code": "1",
+    "iso": "TT",
+    "mask": "(868)999 9999"
+  },
+  {
+    "name": "Tunisia",
+    "locations": ["africa", "north-africa"],
+    "code": "216",
+    "iso": "TN",
+    "mask": "99 999 999"
+  },
+  {
+    "name": "Turkey",
+    "locations": ["europe", "middle-east"],
+    "code": "90",
+    "iso": "TR",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Turkmenistan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "993",
+    "iso": "TM",
+    "mask": "9 999 9999"
+  },
+  {
+    "name": "Tuvalu",
+    "locations": ["oceania"],
+    "code": "688",
+    "iso": "TV",
+    "mask": "999999"
+  },
+  {
+    "name": "Uganda",
+    "locations": ["africa"],
+    "code": "256",
+    "iso": "UG",
+    "mask": "(999)999 999"
+  },
+  {
+    "name": "Ukraine",
+    "locations": ["europe", " ex-ussr"],
+    "code": "380",
+    "iso": "UA",
+    "mask": "(99)999 99 99"
+  },
+  {
+    "name": "United Arab Emirates",
+    "locations": ["middle-east"],
+    "code": "971",
+    "iso": "AE",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "United Kingdom",
+    "locations": ["europe"],
+    "code": "44",
+    "iso": "GB",
+    "mask": "99 9999 9999"
+  },
+  {
+    "name": "United States",
+    "locations": ["america", "north-america"],
+    "code": "1",
+    "iso": "US",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Uruguay",
+    "locations": ["america", "south-america"],
+    "code": "598",
+    "iso": "UY",
+    "mask": "9 999 99 99"
+  },
+  {
+    "name": "Uzbekistan",
+    "locations": ["asia", " ex-ussr"],
+    "code": "998",
+    "iso": "UZ",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Vanuatu",
+    "locations": ["oceania"],
+    "code": "678",
+    "iso": "VU",
+    "mask": "99 99999"
+  },
+  {
+    "name": "Vatican City",
+    "locations": ["europe"],
+    "code": "39",
+    "iso": "VA",
+    "mask": "06 69899999"
+  },
+  {
+    "name": "Venezuela",
+    "locations": ["america", "south-america"],
+    "code": "58",
+    "iso": "VE",
+    "mask": "(999)999 9999"
+  },
+  {
+    "name": "Vietnam",
+    "locations": ["asia"],
+    "code": "84",
+    "iso": "VN",
+    "mask": "99 9999 999"
+  },
+  {
+    "name": "Yemen",
+    "locations": ["middle-east"],
+    "code": "967",
+    "iso": "YE",
+    "mask": "999 999 999"
+  },
+  {
+    "name": "Zambia",
+    "locations": ["africa"],
+    "code": "260",
+    "iso": "ZM",
+    "mask": "99 999 9999"
+  },
+  {
+    "name": "Zimbabwe",
+    "locations": ["africa"],
+    "code": "263",
+    "iso": "ZW",
+    "mask": "9 999999"
+  }
+]

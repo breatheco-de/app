@@ -7,42 +7,38 @@
   "create-account-text": "Create an account and start your bootcamp journey",
   "live-bootcamp": "Live bootcamp",
   "build-connector": {
-    "what-you-will": "What you will",
-    "description": "This bootcamp is full of practical exercises that will help you improve your experience and build a great portfolio. Enter the world of work by building real projects like these:",
-    "build": "build"
+    "what-you-will": "Learn by building",
+    "description": "To learn to code at your own pace effectively, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
+    "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Do you want to know more about what makes us different? These are the benefits of our study model.",
-    "benefits": "Learn live + learn by doing + learn in community."
+    "benefits-connector": "Learning on your own is hard, and we have designed the tools to avoid having problems, losing motivation, and accelerate your learning."
   },
   "show-prices": {
-    "title": "Money is no longer a concern!",
+    "title": "Learning to code alone is possible without a big investment!",
     "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/><br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
   },
   "technology-connector": {
-    "become": "Join our",
-    "and-get-job": "Bootcamp, and get your first job"
+    "get-the-skills": "Get the skills and a new career in",
+    "by-your-own-pace": "by learning at your own pace"
   },
   "rigobot": {
     "title": "Meet Rigobot, the guide of your learning journey",
-    "description": "Rigobot is our AI model that's been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "description": "Rigobot is our AI model that has been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
     "link": "https://github.com/breatheco-de/exercise-postcard"
   },
-  "learnpack-connector": {
-    "get-experience-with": "Get the best of the experience with",
-    "learnpack-tool": "LearnPack, our powerful AI tool",
-    "do-you-want-to-know": "Do you want to know more?"
+  "live-workshops-connector": {
+    "join-one-or-more-workshops": "Join one or more live workshops with mentors coding the projects you need to practice."
   },
-  "syllabus-connector": {
-    "follow-structured-syllabus": "Follow a structured syllabus with",
-    "interactive-tutorials": "1000+ exercises and interactive tutorials."
+  "career-connector": {
+    "receive-guidance": "Receive guidance on how to build your resume, LinkedIn, and other relevant career activities."
   },
   "mentoring-connector": {
-    "boost-experience-with": "Boost your experience with",
+    "get-help-with": "Get help with",
     "one-one-mentoring": "live one-on-one mentoring sessions",
-    "with-our-experts": "with industry experts who have already been down this path."
+    "every-month": "every month."
   },
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
@@ -57,7 +53,7 @@
     {
       "id": 2,
       "title": "How to schedule a mentoring session?",
-      "description": "To schedule a mentoring session, you must go to the dashboard, and choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
+      "description": "To schedule a mentoring session, you must go to the dashboard, choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
     },
     {
       "id": 3,
@@ -137,6 +133,14 @@
     "title": "Certificate in your favorite technology",
     "description": "Your 4Geeks certificate serves as a gateway to professional prospects, supported by a widespread network of companies throughout LATAM and across the globe. Backed by endorsements from numerous international institutions, it symbolizes a globally recognized standard of excellence, paving the way for diverse career opportunities.",
     "button": "See prices",
+    "button-link": "#pricing"
+  },
+  "job-section": {
+    "image": "/static/images/happy-male-with-laptop.png",
+    "title": "Get prepared for your next job",
+    "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
+    "description": "Get access to exercises that simulate real-life interviews curated from the companies actively hiring. At no additional cost to you and without deducting anything from the salary of the job offer you get.",
+    "button": "Join now!",
     "button-link": "#pricing"
   }
 }
