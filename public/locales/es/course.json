@@ -93,7 +93,7 @@
       },
       {
         "type": "ai-feedback",
-        "title": "Retroalimentación en tiempo real de IA",
+        "title": "Feedback en tiempo real de IA",
         "qty": 2,
         "icon": "brain"
       },
