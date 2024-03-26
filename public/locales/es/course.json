@@ -76,15 +76,20 @@
     },
     "showOnSignup": [
       {
+        "type": "lesson",
         "title": "Lecturas",
         "icon": "book"
       },
       {
-        "title": "Ejercicios",
+        "type": "exercise",
+        "title": "Ejercicios interactivos",
+        "qty": 584,
         "icon": "strength"
       },
       {
-        "title": "Proyectos",
+        "type": "project",
+        "title": "Proyectos interactivos",
+        "qty": 28,
         "icon": "laptop-code"
       },
       {
