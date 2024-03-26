@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 
-function CourseContent({ data, assetCount }) {
+function CourseContent({ data }) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('course');
 
@@ -25,7 +25,6 @@ function CourseContent({ data, assetCount }) {
 }
 CourseContent.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])),
-  assetCount: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 CourseContent.defaultProps = {
   data: {},
