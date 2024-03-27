@@ -570,25 +570,41 @@ function StudentReport() {
         padding="0 10px"
       >
         <Box width="100%" maxWidth="695px" marginTop="2%" overflow="hidden">
-          <Box marginBottom="20px" width="100%">
-            <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
-            <Box marginTop="20px">
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="list"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('attendance')}</p>
-                  </Flex>
-                )}
-                dots={attendanceDots}
-              />
+          {!isFetching && (
+            <Box marginBottom="20px" width="100%">
+              <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+              <Box marginTop="20px" display="flex" flexDirection="column" gap="20px">
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="list"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('attendance')}</p>
+                    </Flex>
+                  )}
+                  dots={attendanceDots}
+                />
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="calendar"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('event-order')}</p>
+                    </Flex>
+                  )}
+                  dots={attendanceDots}
+                />
+              </Box>
             </Box>
-          </Box>
+          )}
           {isFetching ? (
             <DottedTimelineSkeleton />
           ) : (
