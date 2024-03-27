@@ -332,9 +332,9 @@ function Page({ data, cohortData }) {
   }, [readyToRefetch]);
 
   const assetCountByType = {
-    lesson: assetCount?.lesson,
-    exercise: assetCount?.exercise,
-    project: assetCount?.project,
+    readings: assetCount?.lesson,
+    exercises: assetCount?.exercise,
+    projects: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -359,6 +359,8 @@ function Page({ data, cohortData }) {
               {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
               <Heading as="h1" width="100%" size={{ base: '42px', md: '64px' }} fontFamily="Space Grotesk Variable" fontWeight={700}>
                 {data?.course_translation?.title}
+                {' '}
+                solo
               </Heading>
             </Flex>
           </Flex>
@@ -394,44 +396,35 @@ function Page({ data, cohortData }) {
 
           <Flex flexDirection="column" gridGap="24px">
             <Text size="24px" fontWeight={700}>
-              {t('technology-connector.become')}
+              {t('technology-connector.get-the-skills')}
               {' '}
               <Text as="span" size="24px" color="blue.default" fontWeight={700}>
                 {technologiesString || data?.course_translation?.title}
               </Text>
               {' '}
-              {t('technology-connector.and-get-job')}
+              {t('technology-connector.by-your-own-pace')}
             </Text>
             <Flex flexDirection="column" gridGap="16px">
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  {t('learnpack-connector.get-experience-with')}
-                  {' '}
-                  <strong>{t('learnpack-connector.learnpack-tool')}</strong>
-                  .
-                  <br />
-                  <Link fontSize="16px" variant="default" href="https://www.learnpack.co/" target="_blank" rel="noopener noreferrer">
-                    {t('learnpack-connector.do-you-want-to-know')}
-                  </Link>
+                  {t('live-workshops-connector.join-one-or-more-workshops')}
                 </Text>
               </Flex>
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  {t('syllabus-connector.follow-structured-syllabus')}
-                  {' '}
-                  <strong>{t('syllabus-connector.interactive-tutorials')}</strong>
+                  {t('career-connector.receive-guidance')}
                 </Text>
               </Flex>
               <Flex gridGap="9px" alignItems="center">
                 <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                 <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                  {t('mentoring-connector.boost-experience-with')}
+                  {t('mentoring-connector.get-help-with')}
                   {' '}
                   <strong>{t('mentoring-connector.one-one-mentoring')}</strong>
                   {' '}
-                  {t('mentoring-connector.with-our-experts')}
+                  {t('mentoring-connector.every-month')}
                 </Text>
               </Flex>
             </Flex>
@@ -604,7 +597,6 @@ function Page({ data, cohortData }) {
             {' '}
             <Box as="span" color="blue.default">
               {t('build-connector.build')}
-              ?
             </Box>
           </Heading>
           <Text size="18px" textAlign="center">
@@ -656,8 +648,6 @@ function Page({ data, cohortData }) {
                 </Heading>
                 <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
                   {t('why-learn-4geeks-connector.benefits-connector')}
-                  {' '}
-                  <strong>{t('why-learn-4geeks-connector.benefits')}</strong>
                 </Text>
               </Flex>
               <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
@@ -712,6 +702,27 @@ function Page({ data, cohortData }) {
         informationSize="Medium"
         buttonUrl={t('certificate.button-link')}
         buttonLabel={t('certificate.button')}
+        containerProps={{
+          padding: '0px',
+          marginTop: '0px',
+          gridGap: '32px',
+          alignItems: 'start',
+        }}
+      />
+
+      <MktTwoColumnSideImage
+        mt="6.25rem"
+        imageUrl={t('job-section.image')}
+        title={t('job-section.title')}
+        subTitle={t('job-section.subtitle')}
+        description={t('job-section.description')}
+        informationSize="Medium"
+        buttonUrl={t('job-section.button-link')}
+        buttonLabel={t('job-section.button')}
+        imagePosition="right"
+        textBackgroundColor="#EEF9FE"
+        titleColor="#0097CF"
+        subtitleColor="#01455E"
         containerProps={{
           padding: '0px',
           marginTop: '0px',
