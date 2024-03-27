@@ -5,10 +5,11 @@ import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const RIGOBOT_HOST = modifyEnv({ queryString: 'host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
-const rigoHostV1 = 'https://rigobot.herokuapp.com/v1';
+const rigoHostV1 = `${RIGOBOT_HOST}/v1`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -51,7 +52,7 @@ const breathecode = {
           user_agent: 'bc/student',
         }),
       }),
-      verifyRigobotConnection: (token) => axios.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
+      verifyRigobotConnection: (token) => breathecode.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
