@@ -231,6 +231,8 @@ function Exercise({ exercise, markdown }) {
         isCtaVisible={isCtaVisible && !isAuthenticated}
         asset={exercise}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
+        width="calc(100vw - 15px)"
+        left="7.5px"
       />
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}

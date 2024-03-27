@@ -9,7 +9,7 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
 
@@ -31,6 +31,7 @@ function StickyBottomCta({ asset, onClick, isCtaVisible }) {
       background={hexColor.backgroundColor}
       textAlign="center"
       display={{ base: 'block', md: 'none' }}
+      {...rest}
     >
       <ReactPlayerV2
         title="Video tutorial"

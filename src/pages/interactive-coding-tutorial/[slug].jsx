@@ -257,6 +257,8 @@ function ProjectSlug({ project, markdown }) {
         isCtaVisible={isCtaVisible && !isAuthenticated}
         asset={project}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
+        width="calc(100vw - 15px)"
+        left="7.5px"
       />
       <GridContainer
         height="100%"
@@ -266,7 +268,7 @@ function ProjectSlug({ project, markdown }) {
         padding="0 15px"
         gridGap="36px"
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: 'repeat(12, 1fr)' }}
-        display={{ base: 'block', sm: 'grid' }}
+        // display={{ base: 'block', sm: 'grid' }}
       >
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
           <Box flex="1" width="-webkit-fill-available">
@@ -320,7 +322,7 @@ function ProjectSlug({ project, markdown }) {
                     liveDemoAvailable={project.intro_video_url}
                     technologies={project?.technologies}
                   />
-                  <SupplementaryMaterial assets={project?.assets_related} />
+                  <SupplementaryMaterial assets={project?.assets_related} maxWidth="none" />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -352,7 +354,7 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
-              <Box display={{ base: 'block', md: 'none' }} mt="20px">
+              <Box display={{ base: 'block', lg: 'none' }} mt="20px">
                 <TabletWithForm showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               </Box>
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
