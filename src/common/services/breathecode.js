@@ -8,7 +8,7 @@ const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREAT
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
-const rigoHostV1 = 'https://rigobot.herokuapp.com/v1';
+const rigoHostV1 = `${RIGOBOT_HOST}/v1`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
