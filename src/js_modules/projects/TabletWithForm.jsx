@@ -3,12 +3,6 @@ import {
   Box,
   useColorModeValue,
   Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Grid,
   GridItem,
 } from '@chakra-ui/react';
@@ -32,7 +26,6 @@ import SimpleModal from '../../common/components/SimpleModal';
 function TabletWithForm({
   asset,
   commonTextColor,
-  commonBorderColor,
   technologies,
   href,
   hideCloneButton,
@@ -44,7 +37,6 @@ function TabletWithForm({
   const [showCloneModal, setShowCloneModal] = useState(false);
   const { hexColor, lightColor } = useStyle();
   const textColor = commonTextColor || lightColor;
-  const borderColor = commonBorderColor || useColorModeValue('gray.250', 'gray.900');
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
 
   const getTitleMessage = () => {
@@ -275,115 +267,109 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
             )}
           </>
         </ShowOnSignUp>
-        <Modal
+        <SimpleModal
+          maxWidth="xl"
           isOpen={showModal}
-          size="xl"
-          margin="0 10px"
           onClose={() => {
             setShowModal(false);
           }}
+          title={t('modal.title')}
+          headerStyles={{
+            textAlign: 'center',
+            textTransform: 'uppercase',
+          }}
         >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
-              {t('modal.title')}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody padding={{ base: '30px' }}>
-              <Text marginBottom="15px" fontSize="14px" lineHeight="24px" textAlign="center">
-                {t('modal.text-part-one')}
-              </Text>
-              <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor('gitpod');
-                        window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                    Gitpod
-                  </Button>
-                </GridItem>
-                <GridItem w="100%">
-                  <Button
-                    borderRadius="3px"
-                    width="100%"
-                    fontSize="14px"
-                    padding="0"
-                    whiteSpace="normal"
-                    variant="otuline"
-                    border="1px solid"
-                    borderColor="blue.default"
-                    fontWeight="700"
-                    color="blue.default"
-                    onClick={() => {
-                      if (typeof window !== 'undefined') {
-                        ReportOpenInProvisioningVendor('codespaces');
-                        window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
-                      }
-                    }}
-                  >
-                    {'  '}
-                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                    Github Codespaces
-                  </Button>
-                </GridItem>
-              </Grid>
-              <Text
-                // cursor="pointer"
-                id="command-container"
-                padding="9px"
-                background={useColorModeValue('featuredLight', 'darkTheme')}
-                fontWeight="400"
-                marginBottom="5px"
-                style={{ borderRadius: '5px' }}
-                textAlign="center"
+          <Text marginBottom="15px" fontSize="14px" lineHeight="24px" textAlign="center">
+            {t('modal.text-part-one')}
+          </Text>
+          <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
+            <GridItem w="100%">
+              <Button
+                borderRadius="3px"
+                width="100%"
                 fontSize="14px"
-                lineHeight="24px"
+                padding="0"
+                whiteSpace="normal"
+                variant="otuline"
+                border="1px solid"
+                borderColor="blue.default"
+                fontWeight="700"
+                color="blue.default"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    ReportOpenInProvisioningVendor('gitpod');
+                    window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
+                  }
+                }}
               >
-                {t('modal.text-part-two')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/how-to-use-gitpod`}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                  color="blue.default"
-                >
-                  Gitpod
-                </Link>
-                {t('modal.or')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
-                  color="blue.default"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Github Codespaces
-                </Link>
-              </Text>
-
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+                {'  '}
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
+                Gitpod
+              </Button>
+            </GridItem>
+            <GridItem w="100%">
+              <Button
+                borderRadius="3px"
+                width="100%"
+                fontSize="14px"
+                padding="0"
+                whiteSpace="normal"
+                variant="otuline"
+                border="1px solid"
+                borderColor="blue.default"
+                fontWeight="700"
+                color="blue.default"
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    ReportOpenInProvisioningVendor('codespaces');
+                    window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
+                  }
+                }}
+              >
+                {'  '}
+                <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
+                Github Codespaces
+              </Button>
+            </GridItem>
+          </Grid>
+          <Text
+            // cursor="pointer"
+            id="command-container"
+            padding="9px"
+            background={useColorModeValue('featuredLight', 'featuredDark')}
+            fontWeight="400"
+            marginBottom="5px"
+            style={{ borderRadius: '5px' }}
+            textAlign="center"
+            fontSize="14px"
+            lineHeight="24px"
+          >
+            {t('modal.text-part-two')}
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`${ORIGIN_HOST}/lesson/how-to-use-gitpod`}
+              display="inline-block"
+              letterSpacing="0.05em"
+              fontFamily="Lato, Sans-serif"
+              color="blue.default"
+            >
+              Gitpod
+            </Link>
+            {t('modal.or')}
+            <Link
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
+              color="blue.default"
+              display="inline-block"
+              letterSpacing="0.05em"
+              fontFamily="Lato, Sans-serif"
+            >
+              Github Codespaces
+            </Link>
+          </Text>
+        </SimpleModal>
         <SimpleModal
           maxWidth="xl"
           title={t('clone-modal.title')}
@@ -393,6 +379,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           }}
           headerStyles={{
             textAlign: 'center',
+            textTransform: 'uppercase',
           }}
           bodyStyles={{
             className: 'markdown-body',
@@ -474,7 +461,6 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,
-  commonBorderColor: PropTypes.string,
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
@@ -484,7 +470,6 @@ TabletWithForm.propTypes = {
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
-  commonBorderColor: null,
   hideCloneButton: false,
 };
 
