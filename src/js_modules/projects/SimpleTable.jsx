@@ -273,7 +273,7 @@ function SimpleTable({
             alignItems="center"
           >
             <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-              <Icon icon="video" color="#A9A9A9" width="32px" height="32px" />
+              <Icon icon="video" color="#A9A9A9" width="28px" height="28px" />
               {t('common:video-solution')}
             </Text>
             <Link
@@ -298,7 +298,7 @@ function SimpleTable({
             alignItems="center"
           >
             <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-              <Icon icon="coding" color="#A9A9A9" width="32px" height="32px" />
+              <Icon icon="coding" color="#A9A9A9" width="28px" height="28px" />
               {t('common:solution-code')}
             </Text>
             <Link
@@ -323,7 +323,7 @@ function SimpleTable({
             alignItems="center"
           >
             <Text size="l" color={commonTextColor} display="flex" gap="8px" alignItems="center">
-              <Icon icon="github" color="#A9A9A9" width="32px" height="32px" />
+              <Icon icon="github" color="#A9A9A9" width="26px" height="26px" />
               {t('common:repository')}
             </Text>
             <Link

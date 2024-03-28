@@ -3,7 +3,6 @@ import {
   Box,
   useColorModeValue,
   Button,
-  useToast,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,11 +11,8 @@ import {
   ModalOverlay,
   Grid,
   GridItem,
-  ListItem,
-  OrderedList,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 import useTranslation from 'next-translate/useTranslation';
 import React, { useState } from 'react';
 import useAuth from '../../common/hooks/useAuth';
@@ -30,6 +26,8 @@ import useStyle from '../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import MarkDownParser from '../../common/components/MarkDownParser';
+import SimpleModal from '../../common/components/SimpleModal';
 
 function TabletWithForm({
   asset,
@@ -39,9 +37,8 @@ function TabletWithForm({
   href,
   hideCloneButton,
 }) {
-  const { t } = useTranslation('exercises');
+  const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
-  const toast = useToast();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
@@ -73,14 +70,51 @@ function TabletWithForm({
     });
   };
 
-  const UrlInput = styled.input`
-    cursor: pointer;
-    background: none;
-    width: 100%;
-    &:focus {
-      outline: none;
-    }
-  `;
+  const urlToClone = asset?.url || asset?.readme_url.split('/blob')?.[0];
+  const repoName = urlToClone.split('/').pop();
+  const cloneInstructions = {
+    en: `This exercise can be downloaded and run locally if you have node.js installed on your <a class="link" href="https://4geeks.com/how-to/install-node-nvm-mac-osx">Mac</a> or <a class="link" href="https://4geeks.com/how-to/nvm-install-windows">PC</a>. Start by installing learnpack and clone this project into your computer by typing the following command on your terminal:
+
+\`\`\` bash
+$ npm i @learnpack/learnpack -g
+$ git clone ${urlToClone}
+\`\`\`
+Note: This will create a new folder <strong>"${repoName}"</strong> in your computer with the project code inside.
+
+If the \`config.editor.agent == 'vscode'\`:
+
+Open this folder in VSCode and type \`learnpack start\` on your vscode terminal.
+
+If the \`config.editor.agent == 'os'\`:
+
+Using the terminal get inside your recently created folder and start learnpack:
+
+\`\`\`bash
+$ cd ${repoName}
+$ learnpack start
+\`\`\`
+Read the <a class="link" href="${asset?.readme_url}">README.md</a> file and follow the rest of the instructions.`,
+    es: `Este ejercicio se puede descargar y ejecutar localmente si tienes node.js instalado en tu <a class="link" href="https://4geeks.com/how-to/install-node-nvm-mac-osx">Mac</a> o <a class="link" href="https://4geeks.com/es/how-to/como-instalar-nvm-en-windows">PC</a>. Comienza instalando learnpack y clona este proyecto en tu computadora escribiendo el siguiente comando en tu terminal:
+\`\`\`bash
+$ npm i @learnpack/learnpack -g
+$ git clone ${urlToClone}
+\`\`\`
+Nota: Esto creará una nueva carpeta <strong>"${repoName}"</strong> en tu computadora con el código del proyecto dentro.
+
+Si \`config.editor.agent == 'vscode'\`:
+
+Abre esta carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
+
+Si \`config.editor.agent == 'os'\`:
+
+Usando la terminal, entra en la carpeta recién creada y comienza learnpack:
+
+\`\`\`bash
+$ cd ${repoName}
+$ learnpack start
+\`\`\`
+Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue el resto de las instrucciones.`,
+  };
 
   return (
     <>
@@ -350,155 +384,77 @@ function TabletWithForm({
             </ModalBody>
           </ModalContent>
         </Modal>
-        <Modal
+        <SimpleModal
+          maxWidth="xl"
+          title={t('clone-modal.title')}
           isOpen={showCloneModal}
-          size="md"
-          margin="0 10px"
           onClose={() => {
             setShowCloneModal(false);
           }}
+          headerStyles={{
+            textAlign: 'center',
+          }}
+          bodyStyles={{
+            className: 'markdown-body',
+            padding: { base: '10px 30px' },
+          }}
         >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={borderColor} textAlign="center">
-              {t('clone-modal.title')}
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody padding={{ base: '30px' }}>
-              <Text marginBottom="15px" fontSize="14px" lineHeight="24px">
-                {t('clone-modal.text-part-one')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode"
-                  color={useColorModeValue('blue.default', 'blue.300')}
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                >
-                  Learnpack Plugin
-                </Link>
-                {t('clone-modal.text-part-two')}
-              </Text>
-              {!hideCloneButton && (
-                <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-                  <GridItem w="100%">
-                    <Button
-                      borderRadius="3px"
-                      width="100%"
-                      fontSize="14px"
-                      padding="0"
-                      whiteSpace="normal"
-                      variant="otuline"
-                      border="1px solid"
-                      borderColor="blue.default"
-                      fontWeight="700"
-                      color="blue.default"
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
-                        }
-                      }}
-                    >
-                      {'  '}
-                      <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                      Gitpod
-                    </Button>
-                  </GridItem>
-                  <GridItem w="100%">
-                    <Button
-                      borderRadius="3px"
-                      width="100%"
-                      fontSize="14px"
-                      padding="0"
-                      whiteSpace="normal"
-                      variant="otuline"
-                      border="1px solid"
-                      borderColor="blue.default"
-                      fontWeight="700"
-                      color="blue.default"
-                      onClick={() => {
-                        if (typeof window !== 'undefined') {
-                          window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
-                        }
-                      }}
-                    >
-                      {'  '}
-                      <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                      Github Codespaces
-                    </Button>
-                  </GridItem>
-                </Grid>
-              )}
-              <Text
-                // cursor="pointer"
-                id="command-container"
-                padding="9px"
-                background={useColorModeValue('featuredLight', 'darkTheme')}
-                fontWeight="400"
-                marginBottom="5px"
-                style={{ borderRadius: '5px' }}
-                textAlign="center"
-                fontSize="14px"
-                lineHeight="24px"
-              >
-                <UrlInput
-                  id="clone-command"
-                  value={`git clone ${asset.url}`}
-                  type="text"
-                  readOnly
-                  onClick={(e) => {
-                    e.target.select();
-                    navigator.clipboard.writeText(`git clone ${asset.url}`);
-                    toast({
-                      title: t('clone-modal.copy-command'),
-                      status: 'success',
-                      duration: 7000,
-                      isClosable: true,
-                    });
+          <MarkDownParser
+            content={cloneInstructions[lang]}
+            showLineNumbers={false}
+          />
+          {!hideCloneButton && (
+            <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
+              <GridItem w="100%">
+                <Button
+                  borderRadius="3px"
+                  width="100%"
+                  fontSize="14px"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="otuline"
+                  border="1px solid"
+                  borderColor="blue.default"
+                  fontWeight="700"
+                  color="blue.default"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
+                    }
                   }}
-                />
-              </Text>
-              <Text marginBottom="15px" fontSize="12px" fontWeight="700" lineHeight="24px">
-                {t('clone-modal.note', { folder: asset?.url ? asset?.url?.substr(asset?.url?.lastIndexOf('/') + 1, asset?.url?.length) : '' })}
-              </Text>
-              <OrderedList>
-                {t('clone-modal.steps', {}, { returnObjects: true }).map((step) => (
-                  <ListItem key={step} fontSize="14px">{step}</ListItem>
-                ))}
-              </OrderedList>
-              <Text display="flex" alignItems="center" marginTop="15px">
-                <span>
-                  <Icon width="19px" height="19px" style={{ display: 'inline-block' }} icon="help" />
-                </span>
-                <Link
-                  href={t('clone-link')}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
-                  color="blue.default"
                 >
+                  {'  '}
+                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
                   Gitpod
-                </Link>
-                {t('modal.or')}
-                <Link
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href={`${ORIGIN_HOST}/lesson/what-is-github-codespaces`}
+                </Button>
+              </GridItem>
+              <GridItem w="100%">
+                <Button
+                  borderRadius="3px"
+                  width="100%"
+                  fontSize="14px"
+                  padding="0"
+                  whiteSpace="normal"
+                  variant="otuline"
+                  border="1px solid"
+                  borderColor="blue.default"
+                  fontWeight="700"
                   color="blue.default"
-                  display="inline-block"
-                  letterSpacing="0.05em"
-                  fontFamily="Lato, Sans-serif"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') {
+                      window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
+                    }
+                  }}
                 >
+                  {'  '}
+                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
                   Github Codespaces
-                </Link>
-              </Text>
+                </Button>
+              </GridItem>
+            </Grid>
+          )}
 
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        </SimpleModal>
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
             href={href}
