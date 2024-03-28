@@ -271,7 +271,7 @@ function ProjectSlug({ project, markdown }) {
             >
               {project ? (
                 <>
-                  <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+                  <TabletWithForm hideCloneButton asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
                   <SupplementaryMaterial assets={project?.assets_related} />
                   <DynamicCallToAction
                     assetId={project.id}
@@ -325,7 +325,7 @@ function ProjectSlug({ project, markdown }) {
         >
           {project ? (
             <>
-              <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+              <TabletWithForm hideCloneButton asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               <SupplementaryMaterial assets={project?.assets_related} />
               <DynamicCallToAction
                 assetId={project.id}

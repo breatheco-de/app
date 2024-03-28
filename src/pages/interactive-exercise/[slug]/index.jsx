@@ -202,7 +202,7 @@ function Exercise({ exercise, markdown }) {
           margin="0 auto"
           withContainer
           gridTemplateColumns="repeat(12, 1fr)"
-          gridColumn={{ base: '2 / span 12', lg: '2 / span 7' }}
+          gridColumn="2 / span 12"
           gridGap="36px"
           childrenStyle={{
             padding: '0 30px 0 0',
@@ -330,7 +330,7 @@ function Exercise({ exercise, markdown }) {
         <Box
           display={{ base: 'none', md: 'flex' }}
           gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
-          margin={{ base: '20px 0 0 auto', lg: '-10rem 0 0 auto' }}
+          margin="20px 0 0 auto"
           flexDirection="column"
           width={{ base: '300px', lg: '350px', xl: '350px' }}
           minWidth="250px"

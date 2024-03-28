@@ -9,7 +9,7 @@ export const withGuard = (PassedComponent) => {
     const isNotAuthenticated = !isLoading && isWindow && !isAuthenticated;
     const router = useRouter();
     const tokenExists = isWindow && localStorage.getItem('accessToken');
-    const pageToRedirect = isWindow ? `/pricing${window.location.search}` : '/pricing';
+    const pageToRedirect = isWindow ? `/login${window.location.search}` : '/login';
 
     const query = isWindow && new URLSearchParams(window.location.search || '');
     const queryToken = isWindow && query.get('token')?.split('?')[0];

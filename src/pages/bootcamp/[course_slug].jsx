@@ -71,7 +71,7 @@ export async function getStaticProps({ locale, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: cohortId }).getPublicMembers()
+  const members = await bc.public().syllabusMembers(data?.syllabus?.[0]?.slug)
     .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
@@ -165,7 +165,13 @@ function Page({ data, cohortData }) {
   const limitViewStudents = 3;
 
   const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
+  const uniqueStudents = students?.filter((student, index, self) => self.findIndex((l) => (
+    l.user.id === student.user.id
+  )) === index);
   const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
+  const uniqueInstructors = instructors?.filter((instructor, index, self) => self.findIndex((l) => (
+    l.user.id === instructor.user.id
+  )) === index);
   const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
   const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
@@ -325,15 +331,10 @@ function Page({ data, cohortData }) {
     }
   }, [readyToRefetch]);
 
-  const icon = {
-    readings: 'book',
-    exercises: 'strength',
-    projects: 'laptop-code',
-  };
   const assetCountByType = {
-    readings: 41, // assetCount?.lesson,
-    exercises: 584, // assetCount?.exercise,
-    projects: 26, // assetCount?.project,
+    readings: assetCount?.lesson,
+    exercises: assetCount?.exercise,
+    projects: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -367,16 +368,16 @@ function Page({ data, cohortData }) {
           {/* Students count */}
           <Flex alignItems="center" gridGap="16px">
             <Flex>
-              {students.slice(0, limitViewStudents).map((student, index) => {
-                const existsAvatar = student.profile?.avatar_url;
+              {uniqueStudents.slice(0, limitViewStudents).map((student, index) => {
+                const existsAvatar = student.user.profile?.avatar_url;
                 const avatarNumber = adjustNumberBeetwenMinMax({
-                  number: student?.id,
+                  number: student.user?.id,
                   min: 1,
                   max: 20,
                 });
                 return (
                   <Image
-                    key={student?.profile?.full_name}
+                    key={student.user?.profile?.full_name}
                     margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
                     src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
                     width="40px"
@@ -429,7 +430,7 @@ function Page({ data, cohortData }) {
             </Flex>
 
             {/* Instructors component here */}
-            <Instructors list={instructors} />
+            <Instructors list={uniqueInstructors} />
 
             {/* Course description */}
             <Flex flexDirection="column" gridGap="16px">
@@ -543,19 +544,24 @@ function Page({ data, cohortData }) {
                   )}
                 </Flex>
                 <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
-                  {['readings', 'exercises', 'projects'].map((item, index) => (
-                    <Flex color={fontColor} justifyContent="space-between" borderBottom={index < 2 ? '1px solid' : ''} padding={index < 2 ? '0 0 8px' : '0'} borderColor={borderColor}>
-                      <Flex gridGap="10px">
-                        <Icon icon={icon[item]} width="23px" height="23px" color={hexColor.disabledColor} />
-                        <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="normal">
-                          {t(item)}
+                  {features?.showOnSignup?.length > 0 && features?.showOnSignup?.map((item, index) => {
+                    const lastNumberForBorder = features.showOnSignup.length - 1;
+                    return (
+                      <Flex key={item.title} color={fontColor} justifyContent="space-between" borderBottom={index < lastNumberForBorder ? '1px solid' : ''} padding={index < lastNumberForBorder ? '0 0 8px' : '0'} borderColor={borderColor}>
+                        <Flex gridGap="10px">
+                          <Icon icon={item.icon} width="23px" height="23px" color={hexColor.disabledColor} />
+                          <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="20px">
+                            {item.title}
+                          </Text>
+                        </Flex>
+                        {(assetCountByType?.[item?.type] || item?.qty) && (
+                        <Text size="14px">
+                          {assetCountByType[item?.type] || item?.qty}
                         </Text>
+                        )}
                       </Flex>
-                      <Text size="14px">
-                        {assetCountByType[item]}
-                      </Text>
-                    </Flex>
-                  ))}
+                    );
+                  })}
                 </Flex>
               </Flex>
             )}
