@@ -1,6 +1,7 @@
 {
   "course-content-text": "Contenido del curso",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
+  "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
   "join-cohort": "Unirse a la cohorte",
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
