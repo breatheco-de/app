@@ -106,12 +106,6 @@ function ShowPrices({
     setSelectedIndex(0);
     onSelect(financeSelected[defaultFinanceIndex][defaultIndex || 0]);
   };
-  useEffect(() => {
-    if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0) {
-      handleSelectFinance(externalSelection.selectedFinanceIndex);
-      handleSelect(externalSelection.selectedIndex);
-    }
-  }, [externalSelection]);
 
   const getTabColor = (index, tabIsAvailable = true) => {
     if (selectedFinanceIndex === index) {
@@ -136,6 +130,12 @@ function ShowPrices({
   const financeTabStyle = getTabColor(1, finance?.length > 0);
   const existMoreThanOne = financeSelected[selectedFinanceIndex].length > 1;
   const isOnlyOneItem = [...finance, ...list].length === 1;
+  useEffect(() => {
+    if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && financeSelected[externalSelection?.selectedFinanceIndex]?.length > 0) {
+      handleSelectFinance(externalSelection.selectedFinanceIndex);
+      handleSelect(externalSelection.selectedIndex);
+    }
+  }, [externalSelection]);
 
   return (
     <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
