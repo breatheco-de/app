@@ -62,7 +62,7 @@
   },
   "event-status": {
     "event_checkin_assisted": "Event Attendance",
-    "event_checkin_created": "Event Order"
+    "event_checkin_created": "Event Registration"
   },
   "exercise-status": {
     "completed": "Marked as completed",
