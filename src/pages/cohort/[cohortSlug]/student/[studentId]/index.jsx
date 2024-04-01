@@ -35,6 +35,7 @@ import DottedTimeline from '../../../../../common/components/DottedTimeline';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
+import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
 
 const activitiesTemplate = {
@@ -121,6 +122,7 @@ function StudentReport() {
   const [currentProject, setCurrentProject] = useState(null);
   const [cohortUsers, setCohortUsers] = useState([]);
   const [attendance, setAttendance] = useState([]);
+  const [events, setEvents] = useState([]);
   const [activities, setActivities] = useState([]);
   const [fetchMoreActivities, setFetchMoreActivities] = useState(true);
   const [isFetchingActivities, setIsFetchingActivities] = useState(true);
@@ -152,6 +154,7 @@ function StudentReport() {
   };
 
   const activitiesLabels = t('activities-section.activities', {}, { returnObjects: true });
+  const eventsLabels = t('event-status', {}, { returnObjects: true });
   const activitiesOptions = Object.keys(activitiesLabels).map((act) => ({ label: activitiesLabels[act], value: act }));
   const limit = 10;
 
@@ -160,6 +163,11 @@ function StudentReport() {
     ABSENT: hexColor.danger,
     'NO-INFO': hexColor.yellowDefault,
     'NOT-TAKEN': hexColor.fontColor3,
+  };
+
+  const eventsStyles = {
+    event_checkin_assisted: hexColor.green,
+    event_checkin_created: hexColor.yellowDefault,
   };
 
   const getAttendanceStatus = (day) => {
@@ -204,7 +212,8 @@ function StudentReport() {
   useEffect(() => {
     if (selectedCohortUser) {
       setIsFetching(true);
-      const mentorshipQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
+      const npsQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
+      const mentorshipsQueryObject = { filter: { user_id: selectedCohortUser.user.id, kind: 'mentorship_session_checkin' }, grouping_function: { count: ['kind'] } };
       const projectsQueryObject = {
         filter: {
           'meta.task_type': 'PROJECT',
@@ -214,6 +223,12 @@ function StudentReport() {
           'meta.cohort': selectedCohortUser.cohort.id,
         },
         grouping_function: { count: ['kind'] },
+      };
+      const eventsQueryObject = {
+        filter: {
+          user_id: selectedCohortUser.user.id,
+          kind__like: 'event_checkin%',
+        },
       };
       Promise.all([
         bc
@@ -228,8 +243,10 @@ function StudentReport() {
           })
           .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
-        bc.activity({ query: JSON.stringify(mentorshipQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
+        bc.activity({ query: JSON.stringify(npsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
         bc.activity({ query: JSON.stringify(projectsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
+        bc.activity({ query: JSON.stringify(eventsQueryObject), order: 'timestamp' }).getActivityReport(academy),
+        bc.activity({ query: JSON.stringify(mentorshipsQueryObject) }).getActivityReport(academy),
       ])
         .then(async (res) => {
           const currentDaysLog = res[0].data;
@@ -261,18 +278,29 @@ function StudentReport() {
               exercises,
             });
           }
-          const [,,, resMentorships, resProjects] = res;
+          const [,,, resNps, resProjects, resEvents, resMentorships] = res;
+
+          const processedEvents = resEvents.data.reduce((acum, elem) => {
+            const index = acum.findIndex((e) => e.meta.event_id === elem.meta.event_id);
+            if (index > -1) {
+              const copy = [...acum];
+              if (elem.kind === 'event_checkin_assisted') copy[index] = elem;
+              return copy;
+            }
+            return [...acum, elem];
+          }, []);
+          setEvents(processedEvents);
 
           const attendanceTaken = days.filter((day) => getAttendanceStatus(day) !== 'NOT-TAKEN');
           const attendancePresent = days.filter((day) => getAttendanceStatus(day) === 'ATTENDED');
-          const npsAnswered = resMentorships.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score;
+          const npsAnswered = resNps.data?.find((obj) => obj.kind === 'nps_answered')?.avg__meta__score;
 
           const attendancePercentage = (attendancePresent.length * 100) / attendanceTaken.length;
           setReport([{
             label: t('analitics.total-mentorships'),
             icon: 'book',
             variationColor: hexColor.blueDefault,
-            value: resMentorships.data?.find((obj) => obj.kind === 'mentoring_session_scheduled')?.count__kind,
+            value: resMentorships.data[0].count__kind,
           }, {
             label: t('analitics.projects-completed'),
             icon: 'bookClosed',
@@ -363,6 +391,16 @@ function StudentReport() {
       </>
     );
     return { label, color: attendanceStyles[status] };
+  });
+
+  const eventsDots = events.map((event) => {
+    const label = (
+      <>
+        <Text textAlign="center">{eventsLabels[event.kind]}</Text>
+        <Text textAlign="center">{event.meta.event_slug}</Text>
+      </>
+    );
+    return { label, color: eventsStyles[event.kind], event_slug: event.meta.event_slug };
   });
 
   const lessonsDots = cohortAssignments.lessons.map((lesson) => {
@@ -600,7 +638,8 @@ function StudentReport() {
                       <p>{t('event-order')}</p>
                     </Flex>
                   )}
-                  dots={attendanceDots}
+                  onClickDots={(dot) => isWindow && window.open(`/workshops/${dot.event_slug}`)}
+                  dots={eventsDots}
                 />
               </Box>
             </Box>

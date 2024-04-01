@@ -60,6 +60,10 @@
     "not-taken": "Not taken",
     "no-info": "No information"
   },
+  "event-status": {
+    "event_checkin_assisted": "Event Attendance",
+    "event_checkin_created": "Event Order"
+  },
   "exercise-status": {
     "completed": "Marked as completed",
     "not-opened": "Not opened",
