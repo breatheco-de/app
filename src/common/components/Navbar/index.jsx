@@ -179,23 +179,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
 
   if (pageProps?.previewMode) return null;
 
-  const logo = useColorModeValue(
-    <Image
-      src="/static/images/4geeks.png"
-      width={105}
-      height={35}
-      style={{
-        maxHeight: '35px',
-        minHeight: '35px',
-        objectFit: 'cover',
-      }}
-      alt="4Geeks logo"
-    />,
-    <Box padding="5px 5px">
-      <Icon icon="4Geeks-logo" width="95px" height="35px" />
-    </Box>,
-  );
-
   return (
     <Box position="relative" zIndex={100}>
       <Flex
@@ -253,7 +236,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
               />
-            ) : logo}
+            ) : <Icon icon="4Geeks-logo" secondColor={hexColor.black} width="95px" height="35px" />}
           </NextLink>
         </Flex>
 
@@ -275,7 +258,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 }}
                 alt={logoData?.name ? `${logoData.name} logo` : '4Geeks logo'}
               />
-            ) : logo}
+            ) : <Icon icon="4Geeks-logo" secondColor={hexColor.black} width="95px" height="35px" />}
           </NextLink>
 
           <Flex display="flex" ml={10}>
