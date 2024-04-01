@@ -157,6 +157,7 @@ function Page({ data, cohortData }) {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const [financeSelected, setFinanceSelected] = useState({});
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
@@ -512,6 +513,10 @@ function Page({ data, cohortData }) {
                         borderColor="currentColor"
                         onClick={() => {
                           router.push('#pricing');
+                          setFinanceSelected({
+                            selectedFinanceIndex: 1,
+                            selectedIndex: 0,
+                          });
                         }}
                       >
                         {t('common:see-financing-options')}
@@ -612,7 +617,7 @@ function Page({ data, cohortData }) {
               const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
 
               return (
-                <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
+                <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                   <Flex alignItems="center" justifyContent="space-between">
                     {item?.technologies?.length > 0 && (
                       <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
@@ -652,7 +657,7 @@ function Page({ data, cohortData }) {
               </Flex>
               <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
                 {features?.list?.length > 0 && features?.list?.map((item) => (
-                  <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
+                  <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
                     <Flex gridGap="8px" alignItems="center">
                       <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
                       <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
@@ -735,6 +740,7 @@ function Page({ data, cohortData }) {
         <MktShowPrices
           id="pricing"
           mt="6.25rem"
+          externalSelection={financeSelected}
           gridTemplateColumns="repeat(12, 1fr)"
           gridColumn1="1 / span 7"
           gridColumn2="8 / span 5"
