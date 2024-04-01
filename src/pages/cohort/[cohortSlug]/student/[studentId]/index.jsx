@@ -635,7 +635,7 @@ function StudentReport() {
                         width="20px"
                         height="20px"
                       />
-                      <p>{t('event-order')}</p>
+                      <p>{t('workshops')}</p>
                     </Flex>
                   )}
                   onClickDots={(dot) => isWindow && window.open(`/workshops/${dot.event_slug}`)}
