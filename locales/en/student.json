@@ -2,6 +2,7 @@
   "back-to": "Back to Dashboard",
   "relevant-activities": "Relevant Activities",
   "attendance": "Attendance",
+  "workshops": "Workshops",
   "deliverables": "Deliverables",
   "deliverables-section": {
     "lessons": "Lessons completed",
@@ -58,6 +59,10 @@
     "absent": "Absent",
     "not-taken": "Not taken",
     "no-info": "No information"
+  },
+  "event-status": {
+    "event_checkin_assisted": "Event Attendance",
+    "event_checkin_created": "Event Registration"
   },
   "exercise-status": {
     "completed": "Marked as completed",
