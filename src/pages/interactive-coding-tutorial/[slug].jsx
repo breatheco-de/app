@@ -322,7 +322,6 @@ function ProjectSlug({ project, markdown }) {
                     liveDemoAvailable={project.intro_video_url}
                     technologies={project?.technologies}
                   />
-                  <SupplementaryMaterial assets={project?.assets_related} maxWidth="none" />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}

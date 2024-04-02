@@ -334,7 +334,6 @@ function Exercise({ exercise, markdown }) {
                   solution={exercise.gitpod ? exercise.solution_url : null}
                   liveDemoAvailable={exercise.intro_video_url}
                 />
-                <SupplementaryMaterial assets={exercise?.assets_related} />
                 <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
