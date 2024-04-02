@@ -19,7 +19,7 @@ const dictionaryAssets = {
   PROJECT: 'interactive-coding-tutorial',
 };
 
-function SupplementaryMaterial({ assets }) {
+function SupplementaryMaterial({ assets, ...rest }) {
   const { t } = useTranslation('common');
 
   if (assets.length === 0) return null;
@@ -38,6 +38,7 @@ function SupplementaryMaterial({ assets }) {
           href: `/${typeUrl}/${asset.slug}`,
         };
       })}
+      {...rest}
     >
       <Text textAlign="center">{t('suggested-material')}</Text>
     </WidgetBox>
