@@ -19,10 +19,10 @@ function Component({ storyTranslation, withBanner, children }) {
         </Box>
         <Box my="1rem" display="flex" padding={{ base: '0 16px', sm: '0' }} flexDirection="column" gridGap="24px" width="100%">
           <Box p={{ base: '0', sm: '0 26px 0 0' }} fontSize="18px" fontWeight="700">
-            {storyTranslation?.['upgrade-plan'].title || t('upgrade-plan.title')}
+            {storyTranslation?.['upgrade-plan']?.title || t('upgrade-plan.title')}
           </Box>
           <Button variant="default" onClick={() => router.push('/login')} w="fit-content" textTransform="uppercase" fontSize="14px" letterSpacing="0.05em">
-            {storyTranslation?.['upgrade-plan'].button || t('upgrade-plan.button')}
+            {storyTranslation?.['upgrade-plan']?.button || t('upgrade-plan.button')}
           </Button>
         </Box>
       </Box>

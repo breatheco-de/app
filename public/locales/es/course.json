@@ -2,6 +2,7 @@
   "course-content-text": "Contenido del curso",
   "course-content-description": "Hemos probado a fondo este plan de estudios con cientos de puestos de trabajo para brindarte las habilidades necesarias para encontrar un trabajo en tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
+  "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
   "join-cohort": "Unirse a la cohorte",
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
@@ -75,6 +76,42 @@
       "button": "Prueba LearnPack",
       "link": "#pricing"
     },
+    "showOnSignup": [
+      {
+        "type": "lesson",
+        "title": "Lecturas",
+        "icon": "book"
+      },
+      {
+        "type": "exercise",
+        "title": "Ejercicios interactivos",
+        "qty": 584,
+        "icon": "strength"
+      },
+      {
+        "type": "project",
+        "title": "Proyectos interactivos",
+        "qty": 28,
+        "icon": "laptop-code"
+      },
+      {
+        "type": "ai-feedback",
+        "title": "Feedback en tiempo real de IA",
+        "qty": 2,
+        "icon": "brain"
+      },
+      {
+        "type": "workshop",
+        "title": "Talleres todas las semanas",
+        "qty": 3,
+        "icon": "tv-live"
+      },
+      {
+        "type": "community",
+        "title": "Encuentros de la comunidad.",
+        "icon": "community"
+      }
+    ],
     "list": [
       {
         "id": 1,
@@ -110,12 +147,5 @@
     "description": "Obtén acceso a ejercicios que simulan entrevistas de la vida real, obtenidas de empresas que están contratando activamente. Por ningún costo adicional para ti y sin quitarte nada del salario de la oferta de trabajo que obtengas.",
     "button": "Únete ahora",
     "button-link": "#pricing"
-  },
-  "readings": "Lecturas y videos",
-  "exercises": "Ejercicios interactivos",
-  "projects": "Proyectos interactivos",
-  "quiz": "Cuestionario",
-  "real-time-ai-feedback": "Feedback de IA en tiempo real",
-  "workshops-every-week": "Workshops todas las semanas",
-  "community-gathering": "Actividades con la comunidad"
+  }
 }

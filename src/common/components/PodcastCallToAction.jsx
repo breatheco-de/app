@@ -15,6 +15,7 @@ function PodcastCallToAction({ placement, stTranslation, ...rest }) {
       background: 'blue.light',
       borderColor: hexColor.blueDefault,
       color: 'black',
+      maxWidth: 'none',
     },
   };
 

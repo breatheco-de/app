@@ -4,7 +4,6 @@ import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { createClient } from '../../prismicio';
 import { components } from '../../slices';
@@ -14,15 +13,14 @@ import { ORIGIN_HOST } from '../utils/variables';
 const usedPageId = ['home'];
 
 function Page({ page }) {
-  const router = useRouter();
   const landingUrl = page?.data?.landing_url;
 
   useEffect(() => {
     if (!page?.id) {
-      router.push('/404');
+      window.location.href = '/404';
     }
     if (landingUrl?.length > 0) {
-      router.push(landingUrl);
+      window.location.href = landingUrl;
     }
   }, []);
 

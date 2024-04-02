@@ -51,7 +51,7 @@ function BulletComponent({ bullet, isString }) {
   );
 }
 
-function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, ...rest }) {
+function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, externalSelection, ...rest }) {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
@@ -144,6 +144,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
           planSlug={planProps?.slug}
           notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
           defaultFinanceIndex={getDefaultFinanceIndex()}
+          externalSelection={externalSelection}
           list={planProps?.paymentOptions?.length > 0 ? planProps?.paymentOptions : planProps?.consumableOptions}
           onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
           financeTextLabel={t('subscription.upgrade-modal.finance')}
@@ -182,6 +183,7 @@ MktShowPrices.propTypes = {
   gridColumn1: PropTypes.string,
   gridColumn2: PropTypes.string,
   cohortId: PropTypes.number,
+  externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 MktShowPrices.defaultProps = {
   title: '',
@@ -190,6 +192,7 @@ MktShowPrices.defaultProps = {
   gridColumn1: '2 / span 4',
   gridColumn2: '6 / span 4',
   cohortId: null,
+  externalSelection: {},
 };
 
 BulletComponent.propTypes = {

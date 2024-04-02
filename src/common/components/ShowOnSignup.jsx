@@ -19,7 +19,8 @@ import { error } from '../../utils/logging';
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
-  conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles, ...rest
+  conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
+  onLastAttempt, attemptsToRefetch, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -34,7 +35,7 @@ function ShowOnSignUp({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [attempts, setAttempts] = useState(0);
   const { t } = useTranslation('signup');
   const router = useRouter();
   const toast = useToast();
@@ -57,18 +58,19 @@ function ShowOnSignUp({
   useEffect(() => {
     const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
-    if (alreadyLogged && !existsConsumables && timeElapsed < 10) {
-      intervalId = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
-        refetchAfterSuccess();
-      }, 1000);
-    }
-    if (isLogged && ((!existsConsumables && typeof intervalId === 'undefined') || timeElapsed >= 10)) {
+    if (isLogged && !existsConsumables && attempts === attemptsToRefetch) {
       setNoConsumablesFound(true);
+      onLastAttempt();
+    }
+    if (alreadyLogged && !existsConsumables && attempts < attemptsToRefetch) {
+      intervalId = setInterval(() => {
+        setAttempts((prevTime) => prevTime + 1);
+        refetchAfterSuccess();
+      }, 2000);
     }
 
     return () => clearInterval(intervalId);
-  }, [isAuthenticated, timeElapsed, alreadyLogged, existsConsumables]);
+  }, [isAuthenticated, attempts, alreadyLogged, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
@@ -258,6 +260,8 @@ ShowOnSignUp.propTypes = {
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  attemptsToRefetch: PropTypes.number,
+  onLastAttempt: PropTypes.func,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -282,6 +286,8 @@ ShowOnSignUp.defaultProps = {
   invertHandlerPosition: false,
   formContainerStyle: {},
   buttonStyles: {},
+  attemptsToRefetch: 10,
+  onLastAttempt: () => {},
 };
 
 export default ShowOnSignUp;
