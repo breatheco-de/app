@@ -355,7 +355,7 @@ function ProjectSlug({ project, markdown }) {
                 <MDSkeleton />
               )}
               <Box display={{ base: 'block', lg: 'none' }} mt="20px">
-                <TabletWithForm showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+                <TabletWithForm hideCloneButton showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               </Box>
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
@@ -378,7 +378,7 @@ function ProjectSlug({ project, markdown }) {
         >
           {project ? (
             <>
-              <TabletWithForm asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+              <TabletWithForm hideCloneButton asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               <SupplementaryMaterial assets={project?.assets_related} />
               <DynamicCallToAction
                 assetId={project.id}

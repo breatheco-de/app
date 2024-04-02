@@ -312,6 +312,7 @@ const breathecode = {
       events: () => axios.get(`${host}/events/all${qs}`),
       singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
+      syllabusMembers: (courseSyllabus) => axios.get(`${url}/cohort/user?syllabus=${courseSyllabus}${qs}`),
     };
   },
   payment: (query = {}) => {

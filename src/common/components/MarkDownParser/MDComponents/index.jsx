@@ -43,7 +43,7 @@ export function MDLink({ children, href }) {
   );
 }
 
-export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children, ...props }) {
+export function Code({ inline, showLineNumbers, showInlineLineNumbers, className, children }) {
   const match = /language-(\w+)/.exec(className || '');
 
   return !inline && match ? (
@@ -60,7 +60,7 @@ export function Code({ inline, showLineNumbers, showInlineLineNumbers, className
       {String(children).replace(/\n$/, '')}
     </SyntaxHighlighter>
   ) : (
-    <code className={`${className} highlight`} {...props}>
+    <code className={`${className ?? ''} highlight`}>
       {children}
     </code>
   );

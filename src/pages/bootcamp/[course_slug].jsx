@@ -71,7 +71,7 @@ export async function getStaticProps({ locale, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const members = await bc.cohort({ roles: 'STUDENT,TEACHER,ASSISTANT', cohort_id: cohortId }).getPublicMembers()
+  const members = await bc.public().syllabusMembers(data?.syllabus?.[0]?.slug)
     .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
@@ -157,6 +157,7 @@ function Page({ data, cohortData }) {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const [financeSelected, setFinanceSelected] = useState({});
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
@@ -165,7 +166,13 @@ function Page({ data, cohortData }) {
   const limitViewStudents = 3;
 
   const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
+  const uniqueStudents = students?.filter((student, index, self) => self.findIndex((l) => (
+    l.user.id === student.user.id
+  )) === index);
   const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
+  const uniqueInstructors = instructors?.filter((instructor, index, self) => self.findIndex((l) => (
+    l.user.id === instructor.user.id
+  )) === index);
   const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
   const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
@@ -325,15 +332,10 @@ function Page({ data, cohortData }) {
     }
   }, [readyToRefetch]);
 
-  const icon = {
-    readings: 'book',
-    exercises: 'strength',
-    projects: 'laptop-code',
-  };
   const assetCountByType = {
-    readings: 41, // assetCount?.lesson,
-    exercises: 584, // assetCount?.exercise,
-    projects: 26, // assetCount?.project,
+    readings: assetCount?.lesson,
+    exercises: assetCount?.exercise,
+    projects: assetCount?.project,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -367,16 +369,16 @@ function Page({ data, cohortData }) {
           {/* Students count */}
           <Flex alignItems="center" gridGap="16px">
             <Flex>
-              {students.slice(0, limitViewStudents).map((student, index) => {
-                const existsAvatar = student.profile?.avatar_url;
+              {uniqueStudents.slice(0, limitViewStudents).map((student, index) => {
+                const existsAvatar = student.user.profile?.avatar_url;
                 const avatarNumber = adjustNumberBeetwenMinMax({
-                  number: student?.id,
+                  number: student.user?.id,
                   min: 1,
                   max: 20,
                 });
                 return (
                   <Image
-                    key={student?.profile?.full_name}
+                    key={student.user?.profile?.full_name}
                     margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
                     src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
                     width="40px"
@@ -429,7 +431,7 @@ function Page({ data, cohortData }) {
             </Flex>
 
             {/* Instructors component here */}
-            <Instructors list={instructors} />
+            <Instructors list={uniqueInstructors} />
 
             {/* Course description */}
             <Flex flexDirection="column" gridGap="16px">
@@ -511,6 +513,10 @@ function Page({ data, cohortData }) {
                         borderColor="currentColor"
                         onClick={() => {
                           router.push('#pricing');
+                          setFinanceSelected({
+                            selectedFinanceIndex: 1,
+                            selectedIndex: 0,
+                          });
                         }}
                       >
                         {t('common:see-financing-options')}
@@ -543,19 +549,24 @@ function Page({ data, cohortData }) {
                   )}
                 </Flex>
                 <Flex flexDirection="column" mt="1rem" gridGap="14px" padding="0 18px 18px">
-                  {['readings', 'exercises', 'projects'].map((item, index) => (
-                    <Flex color={fontColor} justifyContent="space-between" borderBottom={index < 2 ? '1px solid' : ''} padding={index < 2 ? '0 0 8px' : '0'} borderColor={borderColor}>
-                      <Flex gridGap="10px">
-                        <Icon icon={icon[item]} width="23px" height="23px" color={hexColor.disabledColor} />
-                        <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="normal">
-                          {t(item)}
+                  {features?.showOnSignup?.length > 0 && features?.showOnSignup?.map((item, index) => {
+                    const lastNumberForBorder = features.showOnSignup.length - 1;
+                    return (
+                      <Flex key={item.title} color={fontColor} justifyContent="space-between" borderBottom={index < lastNumberForBorder ? '1px solid' : ''} padding={index < lastNumberForBorder ? '0 0 8px' : '0'} borderColor={borderColor}>
+                        <Flex gridGap="10px">
+                          <Icon icon={item.icon} width="23px" height="23px" color={hexColor.disabledColor} />
+                          <Text size="14px" color={hexColor.fontColor3} fontWeight={700} lineHeight="20px">
+                            {item.title}
+                          </Text>
+                        </Flex>
+                        {(assetCountByType?.[item?.type] || item?.qty) && (
+                        <Text size="14px">
+                          {assetCountByType[item?.type] || item?.qty}
                         </Text>
+                        )}
                       </Flex>
-                      <Text size="14px">
-                        {assetCountByType[item]}
-                      </Text>
-                    </Flex>
-                  ))}
+                    );
+                  })}
                 </Flex>
               </Flex>
             )}
@@ -606,7 +617,7 @@ function Page({ data, cohortData }) {
               const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
 
               return (
-                <Flex flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
+                <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                   <Flex alignItems="center" justifyContent="space-between">
                     {item?.technologies?.length > 0 && (
                       <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
@@ -646,7 +657,7 @@ function Page({ data, cohortData }) {
               </Flex>
               <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
                 {features?.list?.length > 0 && features?.list?.map((item) => (
-                  <Flex flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
+                  <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
                     <Flex gridGap="8px" alignItems="center">
                       <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
                       <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
@@ -729,6 +740,7 @@ function Page({ data, cohortData }) {
         <MktShowPrices
           id="pricing"
           mt="6.25rem"
+          externalSelection={financeSelected}
           gridTemplateColumns="repeat(12, 1fr)"
           gridColumn1="1 / span 7"
           gridColumn2="8 / span 5"

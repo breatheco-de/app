@@ -70,6 +70,7 @@ function ShowPrices({
   onSelect,
   defaultIndex,
   defaultFinanceIndex,
+  externalSelection,
   outOfConsumables,
   stTranslation,
   handleUpgrade,
@@ -129,6 +130,12 @@ function ShowPrices({
   const financeTabStyle = getTabColor(1, finance?.length > 0);
   const existMoreThanOne = financeSelected[selectedFinanceIndex].length > 1;
   const isOnlyOneItem = [...finance, ...list].length === 1;
+  useEffect(() => {
+    if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && financeSelected[externalSelection?.selectedFinanceIndex]?.length > 0) {
+      handleSelectFinance(externalSelection.selectedFinanceIndex);
+      handleSelect(externalSelection.selectedIndex);
+    }
+  }, [externalSelection]);
 
   return (
     <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
@@ -166,7 +173,7 @@ function ShowPrices({
         )}
       </Box>
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
-        <PlanCard item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       {existMoreThanOne && financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
         <Box display="flex" alignItems="center">
@@ -178,7 +185,7 @@ function ShowPrices({
         </Box>
       )}
       {financeSelected[selectedFinanceIndex].filter((l) => l.show === true && l?.isFree).map((item, i) => (
-        <PlanCard item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       <Box mt="38px">
         {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
@@ -223,6 +230,7 @@ ShowPrices.propTypes = {
   stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
+  externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ShowPrices.defaultProps = {
@@ -240,6 +248,7 @@ ShowPrices.defaultProps = {
   stTranslation: null,
   handleUpgrade: false,
   isTotallyFree: false,
+  externalSelection: {},
 };
 
 export default ShowPrices;
