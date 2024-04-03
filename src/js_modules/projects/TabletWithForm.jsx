@@ -29,7 +29,6 @@ const TabletWithForm = forwardRef(({
   technologies,
   showSimpleTable,
   href,
-  hideCloneButton,
 }, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
@@ -386,57 +385,6 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
             content={cloneInstructions[lang]}
             showLineNumbers={false}
           />
-          {!hideCloneButton && (
-            <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-              <GridItem w="100%">
-                <Button
-                  borderRadius="3px"
-                  width="100%"
-                  fontSize="14px"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="otuline"
-                  border="1px solid"
-                  borderColor="blue.default"
-                  fontWeight="700"
-                  color="blue.default"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
-                    }
-                  }}
-                >
-                  {'  '}
-                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                  Gitpod
-                </Button>
-              </GridItem>
-              <GridItem w="100%">
-                <Button
-                  borderRadius="3px"
-                  width="100%"
-                  fontSize="14px"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="otuline"
-                  border="1px solid"
-                  borderColor="blue.default"
-                  fontWeight="700"
-                  color="blue.default"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
-                    }
-                  }}
-                >
-                  {'  '}
-                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                  Github Codespaces
-                </Button>
-              </GridItem>
-            </Grid>
-          )}
-
         </SimpleModal>
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
@@ -461,14 +409,12 @@ TabletWithForm.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
   showSimpleTable: PropTypes.bool,
-  hideCloneButton: PropTypes.bool,
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
   showSimpleTable: true,
-  hideCloneButton: false,
 };
 
 export default TabletWithForm;
