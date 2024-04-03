@@ -1,5 +1,6 @@
 {
   "course-content-text": "Contenido del curso",
+  "course-content-description": "Hemos probado a fondo este plan de estudios con cientos de puestos de trabajo para brindarte las habilidades necesarias para encontrar un trabajo en tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
@@ -26,10 +27,10 @@
     "by-your-own-pace": "aprendiendo a tu propio ritmo"
   },
   "rigobot": {
-    "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje",
-    "description": "Rigobot es nuestro modelo de IA que ha estado siendo entrenado en los últimos años para ayudarte en tu viaje de aprendizaje. Rigobot está listo para ayudarte mientras programas, ya sea en uno de nuestros tutoriales interactivos o codificando un proyecto, revisará tu código y te dará retroalimentación instantánea para aprender más rápido y mejor!",
+    "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
+    "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
     "button": "Prueba Rigobot gratis",
-    "link": "https://github.com/breatheco-de/exercise-postcard"
+    "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "live-workshops-connector": {
     "join-one-or-more-workshops": "Únete a uno o más workshops con mentores mientras desarrollan proyectos que te ayudan a practicar."
@@ -115,20 +116,20 @@
       {
         "id": 1,
         "icon": "tv-live",
-        "title": "Aprende en vivo",
-        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
+        "title": "Feedback de IA",
+        "description": "¡Nuestra inteligencia artificial puede revisar tu código para darte feedback instantáneo, ayudarte con tus ejercicios y más!"
       },
       {
         "id": 2,
         "icon": "code-bracket",
-        "title": "Aprende haciendo",
-        "description": "Aprende mientras haces más de 25 proyectos de casos reales y más de 500 ejercicios interactivos."
+        "title": "Mentorías uno a uno",
+        "description": "Pide una sesión de mentoría con un experto cuando quieras y en el momento que mejor te convenga."
       },
       {
         "id": 3,
         "icon": "window-tab",
         "title": "Aprende en comunidad",
-        "description": "¡Únete a nuestra comunidad y aprende junto miles de desarrolladores que están aprendiendo lo mismo que tu!"
+        "description": "Aprender con otros es más divertido, más fácil y puedes llegar más lejos. ¡Nuestra comunidad nunca te dejará atrás!"
       }
     ]
   },
