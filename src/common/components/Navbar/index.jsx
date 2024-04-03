@@ -126,7 +126,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   useEffect(() => {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
       .then((response) => {
-        const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null);
+        const filterByTranslations = response?.data?.filter((item) => item?.course_translation !== null && item?.visibility !== 'UNLISTED');
         const coursesStruct = filterByTranslations?.map((item) => ({
           ...item,
           slug: item?.slug,

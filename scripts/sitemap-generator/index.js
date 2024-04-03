@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import globby from 'globby';
-import { getPrismicPages, getPublicSyllabus } from '../../src/utils/requests';
+import { getPrismicPages, getPublicSyllabus, getMktCourses } from '../../src/utils/requests';
 import {
   privateRoutes,
   sitemapTemplate,
@@ -23,6 +23,7 @@ async function generateSitemap() {
 
   const prismicPages = await getPrismicPages();
   const readPages = await getPublicSyllabus();
+  const mktCoursesPages = await getMktCourses();
   const lessonsPages = assetLists.lessons;
   const exercisesPages = assetLists.excersises;
   const projectsPages = assetLists.projects;
@@ -122,6 +123,7 @@ async function generateSitemap() {
   };
 
   const prismicTypePages = generatePrismicSlugByLang(prismicPages);
+  const mktCoursesRoute = generateSlugByLang(mktCoursesPages, 'bootcamp');
   const readRoute = generateSlug(readPages, 'read');
   const lessonsRoute = generateSlugByLang(lessonsPages, 'lesson', true);
   const exercisesRoute = generateSlugByLang(exercisesPages, 'interactive-exercise', true);
@@ -172,6 +174,7 @@ async function generateSitemap() {
       ...whiteLabelPages,
     ], prismicPagesSitemap);
 
+  const mktCoursesSitemap = sitemapTemplate(mktCoursesRoute);
   const howToSitemap = sitemapTemplateWithHreflang(howTosRoute);
   const lessonsSitemap = sitemapTemplateWithHreflang(lessonsRoute);
   const projectsSitemap = sitemapTemplateWithHreflang(projectsCodingRoute);
@@ -200,6 +203,7 @@ async function generateSitemap() {
     await Bun.write('public/exercises-sitemap.xml', exercisesSitemap);
     await Bun.write('public/technologies-sitemap.xml', technologiesSitemap);
     await Bun.write('public/events-sitemap.xml', eventsSitemap);
+    await Bun.write('public/course-sitemap.xml', mktCoursesSitemap);
   } catch (err) {
     console.error("Couldn't write sitemaps files", err);
   }
