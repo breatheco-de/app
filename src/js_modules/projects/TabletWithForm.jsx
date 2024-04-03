@@ -29,7 +29,6 @@ const TabletWithForm = forwardRef(({
   technologies,
   showSimpleTable,
   href,
-  hideCloneButton,
 }, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
