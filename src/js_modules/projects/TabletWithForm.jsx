@@ -409,14 +409,12 @@ TabletWithForm.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
   showSimpleTable: PropTypes.bool,
-  hideCloneButton: PropTypes.bool,
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
   showSimpleTable: true,
-  hideCloneButton: false,
 };
 
 export default TabletWithForm;
