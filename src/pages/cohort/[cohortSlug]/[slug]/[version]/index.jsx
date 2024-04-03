@@ -630,10 +630,10 @@ function Dashboard() {
                     const index = i;
                     return (
                       <ModuleMap
-                        key={index}
+                        key={`${index}-${cohortSlug}-${slug}`}
                         userId={user?.id}
                         existsActivities={existsActivities}
-                        cohortSession={cohortSession}
+                        cohortSession={user?.active_cohort}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}
                         setContextState={setContextState}
