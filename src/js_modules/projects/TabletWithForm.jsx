@@ -74,13 +74,9 @@ $ git clone ${urlToClone}
 \`\`\`
 Note: This will create a new folder <strong>"${repoName}"</strong> in your computer with the project code inside.
 
-If the \`config.editor.agent == 'vscode'\`:
+<strong>If you want to use VSCode:</strong> Make sure you have the <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension</a> installed, open the folder in VSCode and type \`learnpack start\` on your vscode terminal.
 
-Open this folder in VSCode and type \`learnpack start\` on your vscode terminal.
-
-If the \`config.editor.agent == 'os'\`:
-
-Using the terminal get inside your recently created folder and start learnpack:
+<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:
 
 \`\`\`bash
 $ cd ${repoName}
