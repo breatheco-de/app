@@ -630,7 +630,7 @@ function Dashboard() {
                     const index = i;
                     return (
                       <ModuleMap
-                        key={`${index}-${cohortSlug}-${slug}`}
+                        key={index}
                         userId={user?.id}
                         existsActivities={existsActivities}
                         cohortSession={user?.active_cohort}
