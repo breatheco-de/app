@@ -115,19 +115,19 @@
     "list": [
       {
         "id": 1,
-        "icon": "tv-live",
-        "title": "Feedback de IA",
+        "icon": "rigobot-avatar",
+        "title": "Aprende con IA",
         "description": "¡Nuestra inteligencia artificial puede revisar tu código para darte feedback instantáneo, ayudarte con tus ejercicios y más!"
       },
       {
         "id": 2,
-        "icon": "code-bracket",
+        "icon": "talking",
         "title": "Mentorías uno a uno",
         "description": "Pide una sesión de mentoría con un experto cuando quieras y en el momento que mejor te convenga."
       },
       {
         "id": 3,
-        "icon": "window-tab",
+        "icon": "community",
         "title": "Aprende en comunidad",
         "description": "Aprender con otros es más divertido, más fácil y puedes llegar más lejos. ¡Nuestra comunidad nunca te dejará atrás!"
       }

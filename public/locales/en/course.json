@@ -114,19 +114,19 @@
     "list": [
       {
         "id": 1,
-        "icon": "tv-live",
-        "title": "AI feedback",
+        "icon": "rigobot-avatar",
+        "title": "Learn with AI",
         "description": "Our AI can review your code to give you instant feedback, help you with an exercise, and more!"
       },
       {
         "id": 2,
-        "icon": "code-bracket",
-        "title": "One-on-one mentorships",
+        "icon": "talking",
+        "title": "One - on - one mentoring session",
         "description": "Ask for a mentoring session with an expert whenever you want and at the time that best fits you."
       },
       {
         "id": 3,
-        "icon": "window-tab",
+        "icon": "community",
         "title": "Learn with the community",
         "description": "Learning with others is more fun, is easier, and you can get farther. Our community won't leave you behind!"
       }

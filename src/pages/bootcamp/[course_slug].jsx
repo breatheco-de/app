@@ -184,7 +184,7 @@ export async function getStaticProps({ locale, locales, params }) {
 
 function Page({ data, cohortData }) {
   const { isAuthenticated, user, logout, choose } = useAuth();
-  const { hexColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
@@ -693,15 +693,15 @@ function Page({ data, cohortData }) {
                     <Box as="span" color="blue.default">4Geeks</Box>
                     ?
                   </Heading>
-                  <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
+                  <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
                     {t('why-learn-4geeks-connector.benefits-connector')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
                   {features?.list?.length > 0 && features?.list?.map((item) => (
-                    <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
+                    <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={backgroundColor}>
                       <Flex gridGap="8px" alignItems="center">
-                        <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
+                        <Icon icon={item.icon} color={hexColor.blueDefault} />
                         <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
                           {item?.title}
                         </Heading>
