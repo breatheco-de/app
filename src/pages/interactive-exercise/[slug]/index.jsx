@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import React from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import Script from 'next/script';
 import Head from 'next/head';
 import getT from 'next-translate/getT';
@@ -15,8 +15,11 @@ import Heading from '../../../common/components/Heading';
 import Link from '../../../common/components/NextChakraLink';
 import Text from '../../../common/components/Text';
 import TabletWithForm from '../../../js_modules/projects/TabletWithForm';
+import SimpleTable from '../../../js_modules/projects/SimpleTable';
+import FixedBottomCta from '../../../js_modules/projects/FixedBottomCta';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MarkDownParser from '../../../common/components/MarkDownParser';
+import useAuth from '../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
@@ -26,7 +29,7 @@ import PodcastCallToAction from '../../../common/components/PodcastCallToAction'
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import useStyle from '../../../common/hooks/useStyle';
-import { cleanObject } from '../../../utils';
+import { cleanObject, isWindow } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
@@ -177,8 +180,39 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 function Exercise({ exercise, markdown }) {
   const { t } = useTranslation(['exercises']);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
+  const { isAuthenticated } = useAuth();
+  const [isCtaVisible, setIsCtaVisible] = useState(true);
   const { colorMode } = useColorMode();
   const { lightColor } = useStyle();
+  const tabletWithFormRef = useRef(null);
+
+  const getElementTopOffset = (elem) => {
+    if (elem && isWindow) {
+      const rect = elem.getBoundingClientRect();
+
+      const { scrollY } = window;
+
+      return rect.top + scrollY;
+    }
+    return 0;
+  };
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (isWindow) {
+      window.addEventListener('scroll', () => {
+        if (tabletWithFormRef.current) {
+          const { scrollY } = window;
+          const top = getElementTopOffset(tabletWithFormRef.current);
+
+          if (top - scrollY > 700) setIsCtaVisible(true);
+          else setIsCtaVisible(false);
+        }
+      });
+
+      return () => window.removeEventListener('scroll', () => {});
+    }
+  }, []);
 
   return (
     <>
@@ -193,6 +227,13 @@ function Exercise({ exercise, markdown }) {
       {exercise?.title && (
         <Script async defer src="https://buttons.github.io/buttons.js" />
       )}
+      <FixedBottomCta
+        isCtaVisible={isCtaVisible && !isAuthenticated}
+        asset={exercise}
+        onClick={() => tabletWithFormRef.current?.scrollIntoView()}
+        width="calc(100vw - 15px)"
+        left="7.5px"
+      />
       <Box
         background={useColorModeValue('featuredLight', 'featuredDark')}
       >
@@ -284,8 +325,15 @@ function Exercise({ exercise, markdown }) {
           >
             {exercise?.slug ? (
               <>
-                <TabletWithForm asset={exercise} href="/interactive-exercises" />
-                <SupplementaryMaterial assets={exercise?.assets_related} />
+                <SimpleTable
+                  href="/interactive-exercises"
+                  difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
+                  repository={exercise.url}
+                  duration={exercise.duration}
+                  videoAvailable={exercise.gitpod ? exercise.solution_video_url : null}
+                  solution={exercise.gitpod ? exercise.solution_url : null}
+                  liveDemoAvailable={exercise.intro_video_url}
+                />
                 <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
@@ -320,6 +368,9 @@ function Exercise({ exercise, markdown }) {
             ) : (
               <MDSkeleton />
             )}
+            <Box display={{ base: 'block', md: 'none' }}>
+              <TabletWithForm showSimpleTable={false} asset={exercise} href="/interactive-exercises" ref={tabletWithFormRef} />
+            </Box>
             <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
               technologies={exercise?.technologies}

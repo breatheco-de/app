@@ -1,4 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
+import React, { useState, forwardRef } from 'react';
 import {
   Box,
   useColorModeValue,
@@ -8,7 +9,6 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import React, { useState } from 'react';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -23,10 +23,11 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-function TabletWithForm({
+const TabletWithForm = forwardRef(({
   asset,
   commonTextColor,
   technologies,
+  showSimpleTable,
   href,
 }) {
   const { t, lang } = useTranslation('exercises');
@@ -109,19 +110,22 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
 
   return (
     <>
-      <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
-        <SimpleTable
-          href={href}
-          difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-          repository={asset.url}
-          duration={asset.duration}
-          videoAvailable={asset.gitpod ? asset.solution_video_url : null}
-          solution={asset.gitpod ? asset.solution_url : null}
-          liveDemoAvailable={asset.intro_video_url}
-          technologies={technologies}
-        />
-      </Box>
+      {showSimpleTable && (
+        <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
+          <SimpleTable
+            href={href}
+            difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
+            repository={asset.url}
+            duration={asset.duration}
+            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
+            solution={asset.gitpod ? asset.solution_url : null}
+            liveDemoAvailable={asset.intro_video_url}
+            technologies={technologies}
+          />
+        </Box>
+      )}
       <Box
+        ref={ref}
         backgroundColor={useColorModeValue('white', 'featuredDark')}
         transition="background 0.2s ease-in-out"
         borderRadius="17px"
@@ -406,7 +410,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
       </Box>
     </>
   );
-}
+});
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,

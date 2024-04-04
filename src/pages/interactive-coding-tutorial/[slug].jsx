@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react';
 import {
   Box, useColorModeValue, Flex, useColorMode, Skeleton,
 } from '@chakra-ui/react';
@@ -8,6 +9,8 @@ import Head from 'next/head';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
+import useAuth from '../../common/hooks/useAuth';
+import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TabletWithForm from '../../js_modules/projects/TabletWithForm';
 import MarkDownParser from '../../common/components/MarkDownParser';
@@ -18,7 +21,7 @@ import MktRecommendedCourses from '../../common/components/MktRecommendedCourses
 import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import { cleanObject } from '../../utils/index';
+import { cleanObject, isWindow } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
@@ -206,8 +209,39 @@ function TableInfo({ t, project, commonTextColor }) {
 
 function ProjectSlug({ project, markdown }) {
   const { t } = useTranslation('projects');
+  const { isAuthenticated } = useAuth();
+  const [isCtaVisible, setIsCtaVisible] = useState(true);
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { colorMode } = useColorMode();
+  const tabletWithFormRef = useRef(null);
+
+  const getElementTopOffset = (elem) => {
+    if (elem && isWindow) {
+      const rect = elem.getBoundingClientRect();
+
+      const { scrollY } = window;
+
+      return rect.top + scrollY;
+    }
+    return 0;
+  };
+
+  // eslint-disable-next-line consistent-return
+  useEffect(() => {
+    if (isWindow) {
+      window.addEventListener('scroll', () => {
+        if (tabletWithFormRef.current) {
+          const { scrollY } = window;
+          const top = getElementTopOffset(tabletWithFormRef.current);
+
+          if (top - scrollY > 700) setIsCtaVisible(true);
+          else setIsCtaVisible(false);
+        }
+      });
+
+      return () => window.removeEventListener('scroll', () => {});
+    }
+  }, []);
 
   return (
     <>
@@ -219,6 +253,13 @@ function ProjectSlug({ project, markdown }) {
           />
         </Head>
       )}
+      <FixedBottomCta
+        isCtaVisible={isCtaVisible && !isAuthenticated}
+        asset={project}
+        onClick={() => tabletWithFormRef.current?.scrollIntoView()}
+        width="calc(100vw - 15px)"
+        left="7.5px"
+      />
       <GridContainer
         height="100%"
         flexDirection="column"
@@ -227,7 +268,7 @@ function ProjectSlug({ project, markdown }) {
         padding="0 15px"
         gridGap="36px"
         gridTemplateColumns={{ base: 'repeat(12, 1fr)', lg: 'repeat(12, 1fr)' }}
-        display={{ base: 'block', sm: 'grid' }}
+        // display={{ base: 'block', sm: 'grid' }}
       >
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
           <Box flex="1" width="-webkit-fill-available">
@@ -271,8 +312,16 @@ function ProjectSlug({ project, markdown }) {
             >
               {project ? (
                 <>
-                  <TabletWithForm hideCloneButton asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
-                  <SupplementaryMaterial assets={project?.assets_related} />
+                  <SimpleTable
+                    href="/interactive-exercises"
+                    difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
+                    repository={project.url}
+                    duration={project.duration}
+                    videoAvailable={project.gitpod ? project.solution_video_url : null}
+                    solution={project.gitpod ? project.solution_url : null}
+                    liveDemoAvailable={project.intro_video_url}
+                    technologies={project?.technologies}
+                  />
                   <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
@@ -304,6 +353,9 @@ function ProjectSlug({ project, markdown }) {
               ) : (
                 <MDSkeleton />
               )}
+              <Box display={{ base: 'block', lg: 'none' }} mt="20px">
+                <TabletWithForm hideCloneButton showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
+              </Box>
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
                 marginTop="15px"
