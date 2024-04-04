@@ -117,10 +117,10 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
                     </p>
                     <small>{`${percentage}${t('delivered-percentage')}`}</small>
                     {/* <small>{lastDeliver ? t('last-deliver', { date: formatTimeString(new Date(lastDeliver)) }) : t('no-deliver')}</small> */}
-                    {lastProjectDelivery?.updated_at && (
+                    {lastProjectDelivery?.delivered_at && (
                       <small>
                         {' - '}
-                        {t('last-deliver', { date: formatTimeString(new Date(lastProjectDelivery.updated_at)) })}
+                        {t('last-deliver', { date: formatTimeString(new Date(lastProjectDelivery.delivered_at)) })}
                       </small>
                     )}
                   </Box>
