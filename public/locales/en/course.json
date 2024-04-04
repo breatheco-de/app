@@ -96,13 +96,11 @@
       {
         "type": "ai-feedback",
         "title": "Real Time AI Feedback",
-        "qty": 2,
         "icon": "brain"
       },
       {
         "type": "workshop",
         "title": "Workshops every week",
-        "qty": 3,
         "icon": "tv-live"
       },
       {
