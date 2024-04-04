@@ -26,13 +26,13 @@ function ModuleMap({
       associated_slug: l?.slug?.slug || l.slug,
       description: '',
       task_type: l.task_type,
-      cohort: cohortSession?.id,
+      cohort: cohortSession.id,
     }));
     reportDatalayer({
       dataLayer: {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
-        cohort_id: cohortSession?.id,
+        cohort_id: cohortSession.id,
       },
     });
     startDay({
