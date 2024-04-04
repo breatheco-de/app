@@ -62,7 +62,7 @@ function ShowOnSignUp({
       setNoConsumablesFound(true);
       onLastAttempt();
     }
-    if (alreadyLogged && !existsConsumables && attempts < attemptsToRefetch) {
+    if (isLogged && !existsConsumables && attempts < attemptsToRefetch) {
       intervalId = setInterval(() => {
         setAttempts((prevTime) => prevTime + 1);
         refetchAfterSuccess();
