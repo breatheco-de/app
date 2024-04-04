@@ -366,7 +366,7 @@ function Page({ data, cohortData }) {
   }, [readyToRefetch]);
 
   const assetCountByType = {
-    readings: assetCount?.lesson,
+    lessons: assetCount?.lesson,
     exercises: assetCount?.exercise,
     projects: assetCount?.project,
   };
