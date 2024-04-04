@@ -97,13 +97,11 @@
       {
         "type": "ai-feedback",
         "title": "Feedback en tiempo real de IA",
-        "qty": 2,
         "icon": "brain"
       },
       {
         "type": "workshop",
         "title": "Talleres todas las semanas",
-        "qty": 3,
         "icon": "tv-live"
       },
       {
