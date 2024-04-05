@@ -5,7 +5,7 @@ import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-const RIGOBOT_HOST = modifyEnv({ queryString: 'host', env: process.env.RIGOBOT_HOST });
+const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo-host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
