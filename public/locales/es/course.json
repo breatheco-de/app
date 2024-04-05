@@ -9,8 +9,8 @@
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
   "live-bootcamp": "Bootcamp en vivo",
   "build-connector": {
-    "what-you-will": "Aprende contruyendo",
-    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, contruirás proyectos reales como estos:",
+    "what-you-will": "Aprende construyendo",
+    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, construirás proyectos reales como estos:",
     "build": "proyectos de la vida real",
     "link": "#pricing"
   },
