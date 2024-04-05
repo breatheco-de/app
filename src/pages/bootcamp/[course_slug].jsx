@@ -71,7 +71,13 @@ export async function getStaticProps({ locale, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const members = await bc.public().syllabusMembers(data?.syllabus?.[0]?.slug)
+  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
+    .then((respMembers) => respMembers.data)
+    .catch((err) => {
+      error('Error fetching cohort users:', err);
+      return [];
+    });
+  const instructors = await bc.public({ roles: 'TEACHER,ASSISTANT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
     .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
@@ -129,7 +135,10 @@ export async function getStaticProps({ locale, params }) {
 
   const cohortData = {
     cohortSyllabus,
-    members,
+    members: {
+      students,
+      instructors,
+    },
     modulesInfo,
   };
   if (resp?.status >= 400) {
@@ -165,14 +174,17 @@ function Page({ data, cohortData }) {
   const features = t('features', {}, { returnObjects: true }) || {};
   const limitViewStudents = 3;
 
-  const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
-  const uniqueStudents = students?.filter((student, index, self) => self.findIndex((l) => (
-    l.user.id === student.user.id
-  )) === index);
-  const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
-  const uniqueInstructors = instructors?.filter((instructor, index, self) => self.findIndex((l) => (
-    l.user.id === instructor.user.id
-  )) === index);
+  const students = cohortData?.members?.students?.length > 0
+    ? cohortData?.members?.students?.filter((student, index, self) => self.findIndex((l) => (
+      l.user.id === student.user.id
+    )) === index)
+    : [];
+  const instructors = cohortData?.members?.instructors?.length > 0
+    ? cohortData?.members?.instructors?.filter((instructor, index, self) => self.findIndex((l) => (
+      l.user.id === instructor.user.id
+    )) === index)
+    : [];
+
   const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
   const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
@@ -369,7 +381,7 @@ function Page({ data, cohortData }) {
           {/* Students count */}
           <Flex alignItems="center" gridGap="16px">
             <Flex>
-              {uniqueStudents.slice(0, limitViewStudents).map((student, index) => {
+              {students.slice(0, limitViewStudents).map((student, index) => {
                 const existsAvatar = student.user.profile?.avatar_url;
                 const avatarNumber = adjustNumberBeetwenMinMax({
                   number: student.user?.id,
@@ -431,7 +443,7 @@ function Page({ data, cohortData }) {
             </Flex>
 
             {/* Instructors component here */}
-            <Instructors list={uniqueInstructors} />
+            <Instructors list={instructors} />
 
             {/* Course description */}
             <Flex flexDirection="column" gridGap="16px">

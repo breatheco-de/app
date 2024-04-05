@@ -62,6 +62,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo-host', env: process.env.RIGOBOT_HOST });
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const handleTouchStart = (event) => {
@@ -87,7 +88,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
     if (!rigobotToken || rigobotToken.expires_at < new Date().toISOString()) {
       const bcToken = getStorageItem('accessToken');
 
-      const resp = await fetch(`https://rigobot.herokuapp.com/v1/auth/me/token?breathecode_token=${bcToken}`);
+      const resp = await fetch(`${RIGOBOT_HOST}/v1/auth/me/token?breathecode_token=${bcToken}`);
       const data = await resp.json();
       setStorageItem('rigobotToken', JSON.stringify(data));
 
