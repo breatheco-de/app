@@ -44,13 +44,13 @@
   },
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
-    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students graduated from our bootcamp got hired!"
+    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students who graduated from our BootCamp got hired!"
   },
   "faq": [
     {
       "id": 1,
-      "title": "Do I need prior knowledge?",
-      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
+      "title": "Will I learn on my own?",
+      "description": "No, the solo BootCamp is designed to learn at your own pace and time, but we have a lot of live features at different schedules that are optional for you, and you can join whenever you want. We have many live workshops about the technologies you are learning, happening almost every day of the week. You can schedule private mentoring sessions with an expert that will help you exactly with the problems you have or concepts you don't understand, and the best part is that you choose the time and day!"
     },
     {
       "id": 2,
@@ -66,6 +66,11 @@
       "id": 4,
       "title": "What other kind of support do I get when learning?",
       "description": "You'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience. Plus, you'll have access to our slack community where we have a channel specialized for coding-related help, with fast response rates!"
+    },
+    {
+      "id": 5,
+      "title": "Do I need prior knowledge?",
+      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
     }
   ],
   "features": {
@@ -79,6 +84,7 @@
       {
         "type": "lesson",
         "title": "Readings and videos",
+        "qty": 45,
         "icon": "book"
       },
       {
