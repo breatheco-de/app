@@ -50,8 +50,8 @@
   "faq": [
     {
       "id": 1,
-      "title": "¿Necesito conocimientos previos?",
-      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
+      "title": "¿Aprenderé totalmente por mi cuenta?",
+      "description": "No, nuestro BootCamp solo está diseñado para aprender a tu propio ritmo y horario, pero sin dejar a un lado nuestra característica en vivo, ofreciendo diferentes actividades opcionales a las que puedes unirte cuando quieras. Tenemos muchos workshops en vivo sobre las tecnologías que estarás aprendiendo, que se hacen casi todos los días de la semana en diferentes horarios. Puedes agender mentorías privadas con un experto para que te ayude con los problemas que puedas tener en tu código o conceptos que no entiendas, y lo mejor de todo es que tu escoges el día y hora!"
     },
     {
       "id": 2,
@@ -67,6 +67,11 @@
       "id": 4,
       "title": "¿Qué tipo de ayuda recibo mientras estoy aprendiendo?",
       "description": "Al entrar en cualquiera de nuestros programas de 4Geeks, obtienes acceso a nuestra comunidad en slack, en la que tenemos un canal especializado para ayudarte con problemas de código, con un tiempo de respuesta rápido. Además cuentas con la ayuda de Rigobot, nuestro modelo de inteligencia artificial entrenado para darte feedback de los ejercicios y proyectos que realizas, también puedes hablar en un chat con el, quien te dará una ayuda personalizada en base a lo que estas aprendiendo en el momento! Por otro lado, tienes acceso a las mentorías, que de agotarse, puedes solicitar más por un precio adicional para seguir utilizandolas"
+    },
+    {
+      "id": 5,
+      "title": "¿Necesito conocimientos previos?",
+      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
     }
   ],
   "features": {
