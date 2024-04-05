@@ -37,6 +37,7 @@ function ShowOnSignUp({
   const [alreadyLogged, setAlreadyLogged] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const { t } = useTranslation('signup');
+  const [isReadyToRefetch, setIsReadyToRefetch] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const [formProps, setFormProps] = useState({
@@ -58,11 +59,14 @@ function ShowOnSignUp({
   useEffect(() => {
     const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
+    if (isLogged && !existsConsumables && !isReadyToRefetch) {
+      setNoConsumablesFound(true);
+    }
     if (isLogged && !existsConsumables && attempts === maxAttemptsToRefetch) {
       setNoConsumablesFound(true);
       onLastAttempt();
     }
-    if (isLogged && !existsConsumables && attempts < maxAttemptsToRefetch) {
+    if (isLogged && !existsConsumables && attempts < maxAttemptsToRefetch && isReadyToRefetch) {
       intervalId = setInterval(() => {
         setAttempts((prevTime) => prevTime + 1);
         refetchAfterSuccess();
@@ -141,6 +145,11 @@ function ShowOnSignUp({
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
+                  .then((respData) => {
+                    if (respData.status === 'FULFILLED') {
+                      setIsReadyToRefetch(true);
+                    }
+                  })
                   .finally(() => {
                     setAlreadyLogged(true);
                     refetchAfterSuccess();
