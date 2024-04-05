@@ -20,7 +20,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, attemptsToRefetch, ...rest
+  onLastAttempt, maxAttemptsToRefetch, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -58,11 +58,11 @@ function ShowOnSignUp({
   useEffect(() => {
     const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
-    if (isLogged && !existsConsumables && attempts === attemptsToRefetch) {
+    if (isLogged && !existsConsumables && attempts === maxAttemptsToRefetch) {
       setNoConsumablesFound(true);
       onLastAttempt();
     }
-    if (isLogged && !existsConsumables && attempts < attemptsToRefetch) {
+    if (isLogged && !existsConsumables && attempts < maxAttemptsToRefetch) {
       intervalId = setInterval(() => {
         setAttempts((prevTime) => prevTime + 1);
         refetchAfterSuccess();
@@ -260,7 +260,7 @@ ShowOnSignUp.propTypes = {
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  attemptsToRefetch: PropTypes.number,
+  maxAttemptsToRefetch: PropTypes.number,
   onLastAttempt: PropTypes.func,
 };
 
@@ -286,7 +286,7 @@ ShowOnSignUp.defaultProps = {
   invertHandlerPosition: false,
   formContainerStyle: {},
   buttonStyles: {},
-  attemptsToRefetch: 10,
+  maxAttemptsToRefetch: 10,
   onLastAttempt: () => {},
 };
 
