@@ -72,7 +72,7 @@
   "features": {
     "what-is-learnpack": {
       "title": "¡Aprende a tu ritmo de manera efectiva con LearnPack!",
-      "description": "LearnPack es un software diseñado para quienes buscan aprender solos y a su propio ritmo. Tiene integrado a Rigobot quien actúa como un tutor para responder las dudas referentes a tu código, además de tener tests atuomatizados para recibir feedback instantáneo y no quedarte atrás en tu aprendizaje!",
+      "description": "LearnPack es un software diseñado para quienes buscan aprender solos y a su propio ritmo. Tiene integrado a Rigobot quien actúa como un tutor para responder las dudas referentes a tu código, además de tener tests automatizados para recibir feedback instantáneo y no quedarte atrás en tu aprendizaje!",
       "button": "¡Empieza a aprender ahora!",
       "link": "#pricing"
     },
