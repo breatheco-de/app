@@ -28,7 +28,8 @@ function TabletWithForm({
   commonTextColor,
   technologies,
   href,
-}) {
+  showSimpleTable,
+}, ref) {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -109,19 +110,22 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
 
   return (
     <>
-      <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
-        <SimpleTable
-          href={href}
-          difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-          repository={asset.url}
-          duration={asset.duration}
-          videoAvailable={asset.gitpod ? asset.solution_video_url : null}
-          solution={asset.gitpod ? asset.solution_url : null}
-          liveDemoAvailable={asset.intro_video_url}
-          technologies={technologies}
-        />
-      </Box>
+      {showSimpleTable && (
+        <Box px="10px" pb="20px" display={{ base: 'block', md: 'none' }}>
+          <SimpleTable
+            href={href}
+            difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
+            repository={asset.url}
+            duration={asset.duration}
+            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
+            solution={asset.gitpod ? asset.solution_url : null}
+            liveDemoAvailable={asset.intro_video_url}
+            technologies={technologies}
+          />
+        </Box>
+      )}
       <Box
+        ref={ref}
         backgroundColor={useColorModeValue('white', 'featuredDark')}
         transition="background 0.2s ease-in-out"
         borderRadius="17px"
@@ -413,11 +417,13 @@ TabletWithForm.propTypes = {
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
+  showSimpleTable: PropTypes.bool,
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
+  showSimpleTable: true,
 };
 
 export default TabletWithForm;
