@@ -80,6 +80,7 @@
       {
         "type": "lesson",
         "title": "Lecturas",
+        "qty": 45,
         "icon": "book"
       },
       {
