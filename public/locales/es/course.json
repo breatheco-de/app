@@ -22,27 +22,26 @@
     "title": "¡Aprender a programar a tu propio ritmo es posible sin una gran inversión!",
     "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
   },
-  "technology-connector": {
-    "get-the-skills": "Obtén las habilidades y una nueva carrera en",
-    "by-your-own-pace": "aprendiendo a tu propio ritmo"
-  },
   "rigobot": {
     "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
     "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
     "button": "Prueba Rigobot gratis",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
-  "live-workshops-connector": {
-    "join-one-or-more-workshops": "Únete a workshops semanales con expertos mientras desarrollan proyectos de la vida real."
-  },
-  "career-connector": {
-    "receive-guidance": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y otras actividades relevantes de carrera."
-  },
-  "mentoring-connector": {
-    "get-help-with": "Obtén ayuda con",
-    "one-one-mentoring": "sesiones de mentoría en vivo uno a uno",
-    "every-month": "cada mes."
-  },
+  "featured-bullets": [
+    {
+      "title": "Obtén ayuda de nuestra IA interna entrenada mientras codificas"
+    },
+    {
+      "title": "Únete a workshops semanales con expertos mientras desarrollan proyectos de la vida real."
+    },
+    {
+      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y otras actividades relevantes de carrera."
+    },
+    {
+      "title": "Obtén ayuda con <strong>sesiones de mentoría en vivo uno a uno</strong> cada mes."
+    }
+  ],
   "why-learn-with-4geeks": {
     "title": "¿Por qué debería aprender con 4Geeks?",
     "description": "¡Llevamos más de 9 años ayudando a la gente a aprender a programar, más de 4000 estudiantes graduados, y el 84% de nuestros estudiantes graduados de nuestro bootcamp consiguieron trabajo!"

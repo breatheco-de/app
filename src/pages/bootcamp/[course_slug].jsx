@@ -214,13 +214,12 @@ function Page({ data, cohortData }) {
 
   const students = cohortData?.students || [];
   const instructors = cohortData?.instructors || [];
-  const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
-  const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const cohortId = data?.cohort?.id;
   const plans = data?.planData?.plans || [];
   const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
   const firstPaymentPlan = payableList?.[0];
+  const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: firstPaymentPlan?.plan_slug,
     plan_id: firstPaymentPlan?.plan_id,
@@ -406,11 +405,13 @@ function Page({ data, cohortData }) {
                   {t('live-bootcamp')}
                 </Text>
               </Flex>
-              <Flex gridGap="16px" flexDirection={{ base: 'column', md: 'row' }} alignItems="center">
+              <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="h1" width="100%" size={{ base: '42px', md: '64px' }} fontFamily="Space Grotesk Variable" fontWeight={700}>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">Start a career in</Heading>
+                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                   {data?.course_translation?.title}
                 </Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">by learning at your own pace</Heading>
               </Flex>
             </Flex>
 
@@ -444,38 +445,19 @@ function Page({ data, cohortData }) {
             </Flex>
 
             <Flex flexDirection="column" gridGap="24px">
-              <Text size="24px" fontWeight={700}>
-                {t('technology-connector.get-the-skills')}
-                {' '}
-                <Text as="span" size="24px" color="blue.default" fontWeight={700}>
-                  {technologiesString || data?.course_translation?.title}
-                </Text>
-                {' '}
-                {t('technology-connector.by-your-own-pace')}
-              </Text>
               <Flex flexDirection="column" gridGap="16px">
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('live-workshops-connector.join-one-or-more-workshops')}
-                  </Text>
-                </Flex>
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('career-connector.receive-guidance')}
-                  </Text>
-                </Flex>
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('mentoring-connector.get-help-with')}
-                    {' '}
-                    <strong>{t('mentoring-connector.one-one-mentoring')}</strong>
-                    {' '}
-                    {t('mentoring-connector.every-month')}
-                  </Text>
-                </Flex>
+                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.map((item) => (
+                  <Flex gridGap="9px" alignItems="center">
+                    <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
+                    <Text
+                      size="16px"
+                      fontWeight={400}
+                      color="currentColor"
+                      lineHeight="normal"
+                      dangerouslySetInnerHTML={{ __html: item.title }}
+                    />
+                  </Flex>
+                ))}
               </Flex>
 
               {/* Instructors component here */}

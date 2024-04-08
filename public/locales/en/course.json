@@ -21,27 +21,26 @@
     "title": "Learning to code at your own pace is possible without a big investment!",
     "description": "We don't want money to stop you from getting into tech.<br/><br/>Pay up-front or choose any of our financing options start learning immediately"
   },
-  "technology-connector": {
-    "get-the-skills": "Get the skills and a potential new career in",
-    "by-your-own-pace": "by learning at your own pace"
-  },
   "rigobot": {
     "title": "Meet Rigobot, our internal AI designed for solo learners",
     "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
     "button": "Try Rigobot for free",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
-  "live-workshops-connector": {
-    "join-one-or-more-workshops": "Join weekly live workshops with experts coding real-life projects."
-  },
-  "career-connector": {
-    "receive-guidance": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and other relevant career activities."
-  },
-  "mentoring-connector": {
-    "get-help-with": "Get help with",
-    "one-one-mentoring": "live one-on-one mentoring sessions",
-    "every-month": "every month."
-  },
+  "featured-bullets": [
+    {
+      "title": "Get help from our internally trained AI while you code"
+    },
+    {
+      "title": "Join weekly live workshops with experts coding real-life projects."
+    },
+    {
+      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and other relevant career activities."
+    },
+    {
+      "title": "Get help with <strong>live one-on-one mentoring sessions</strong> every month"
+    }
+  ],
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
     "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students who graduated from our BootCamp got hired!"
