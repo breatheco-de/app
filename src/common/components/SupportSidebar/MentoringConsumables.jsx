@@ -129,47 +129,54 @@ function MentoringConsumables({
     }
   }, [allMentorsAvailable]);
 
-  const handleService = (service) => {
-    bc.mentorship({
-      services: service.slug,
-      status: 'ACTIVE',
-      syllabus: slug,
-      academy: service?.academy?.id,
-    }).getMentor()
-      .then((res) => {
-        reportDatalayer({
-          dataLayer: {
-            event: 'select_mentorship_service',
-            path: router.pathname,
-            consumables_amount: currentBalance,
-            mentorship_service: service?.slug,
-          },
-        });
+  const manageMentorsData = (service, data) => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'select_mentorship_service',
+        path: router.pathname,
+        consumables_amount: currentBalance,
+        mentorship_service: service?.slug,
+      },
+    });
+    const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
+    setProgramMentors(data);
+    setConsumableOfService({
+      ...relatedConsumables,
+      balance: {
+        unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+      },
+      available_as_saas: service?.academy?.available_as_saas,
+    });
+    setTimeout(() => {
+      setMentoryProps({ ...mentoryProps, service });
+      setSavedChanges({ ...savedChanges, service });
+    }, 50);
+  };
 
-        const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
-        setProgramMentors(res.data);
-        setConsumableOfService({
-          ...relatedConsumables,
-          balance: {
-            unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
-          },
-          available_as_saas: service?.academy?.available_as_saas,
-        });
-        setTimeout(() => {
-          setMentoryProps({ ...mentoryProps, service });
-          setSavedChanges({ ...savedChanges, service });
-        }, 50);
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: 'Error',
-          description: t('alert-message:error-finding-mentors'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+  const handleService = async (service) => {
+    try {
+      if (allMentorsAvailable.length > 0) {
+        const mentorsByService = allMentorsAvailable.filter((mentor) => mentor.services.some((s) => s.slug === service.slug));
+        manageMentorsData(service, mentorsByService);
+      } else {
+        const res = await bc.mentorship({
+          services: service.slug,
+          status: 'ACTIVE',
+          syllabus: slug,
+          academy: service?.academy?.id,
+        }).getMentor();
+        manageMentorsData(service, res.data);
+      }
+    } catch (e) {
+      toast({
+        position: 'top',
+        title: 'Error',
+        description: t('alert-message:error-finding-mentors'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
       });
+    }
   };
 
   const servicesWithMentorsAvailable = servicesFiltered.filter((service) => allMentorsAvailable.some((mentor) => mentor.services.some((mentServ) => mentServ.slug === service.slug)));
