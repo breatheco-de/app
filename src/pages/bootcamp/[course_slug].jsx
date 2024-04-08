@@ -72,8 +72,8 @@ export async function getStaticProps({ locale, locales, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const students = await bc.public().syllabusMembers(data?.syllabus?.[0]?.slug)
-    .then((respMembers) => respMembers.data.filter((member) => member?.role === 'STUDENT'))
+  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(data?.syllabus?.[0]?.slug)
+    .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
       return [];

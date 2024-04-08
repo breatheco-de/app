@@ -303,10 +303,10 @@ const breathecode = {
     };
   },
 
-  public: (query = {}) => {
+  public: (query = {}, isQueryConnector = false) => {
     const url = `${host}/admissions/public`;
 
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, isQueryConnector);
     return {
       mentors: () => axios.get(`${url}/cohort/user${qs}`),
       events: () => axios.get(`${host}/events/all${qs}`),
