@@ -1,5 +1,6 @@
 {
   "course-content-text": "Contenido del curso",
+  "course-content-description": "Hemos probado a fondo este plan de estudios con cientos de puestos de trabajo para brindarte las habilidades necesarias para encontrar un trabajo en tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
@@ -8,34 +9,34 @@
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
   "live-bootcamp": "Bootcamp en vivo",
   "build-connector": {
-    "what-you-will": "Aprende contruyendo",
-    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, contruirás proyectos reales como estos:",
+    "what-you-will": "Aprende construyendo",
+    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, construirás proyectos reales como estos:",
     "build": "proyectos de la vida real",
     "link": "#pricing"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "¿Por qué aprender con",
-    "benefits-connector": "Aprender por tu cuenta es difícil, y nosotros hemos diseñado las herramientas para evitar que tengas problemas, pierdas tu motivación y aceleres tu aprendizaje."
+    "benefits-connector": "Aprender por a tu propio ritmo es difícil, y nosotros hemos diseñado las herramientas para evitar que tengas problemas, pierdas tu motivación y aceleres tu aprendizaje."
   },
   "show-prices": {
-    "title": "¡Aprender a programar por tu cuenta es posible sin una gran inversión!",
+    "title": "¡Aprender a programar a tu propio ritmo es posible sin una gran inversión!",
     "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
   },
-  "get-the-skills": {
+  "technology-connector": {
     "get-the-skills": "Obtén las habilidades y una nueva carrera en",
     "by-your-own-pace": "aprendiendo a tu propio ritmo"
   },
   "rigobot": {
-    "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje",
-    "description": "Rigobot es nuestro modelo de IA que ha estado siendo entrenado en los últimos años para ayudarte en tu viaje de aprendizaje. Rigobot está listo para ayudarte mientras programas, ya sea en uno de nuestros tutoriales interactivos o codificando un proyecto, revisará tu código y te dará retroalimentación instantánea para aprender más rápido y mejor!",
+    "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
+    "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
     "button": "Prueba Rigobot gratis",
-    "link": "https://github.com/breatheco-de/exercise-postcard"
+    "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "live-workshops-connector": {
-    "join-one-or-more-workshops": "Únete a uno o más workshops con mentores mientras desarrollan proyectos que te ayudan a practicar."
+    "join-one-or-more-workshops": "Únete a workshops semanales con expertos mientras desarrollan proyectos de la vida real."
   },
   "career-connector": {
-    "receive-guidance": "Recibe guía sobre cómo crear tu curriculum, perfil de LinkedIn y otras actividades relevantes de carrera."
+    "receive-guidance": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y otras actividades relevantes de carrera."
   },
   "mentoring-connector": {
     "get-help-with": "Obtén ayuda con",
@@ -49,8 +50,8 @@
   "faq": [
     {
       "id": 1,
-      "title": "¿Necesito conocimientos previos?",
-      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
+      "title": "¿Aprenderé totalmente por mi cuenta?",
+      "description": "No, nuestro BootCamp solo está diseñado para aprender a tu propio ritmo y horario, pero sin dejar a un lado nuestra característica en vivo, ofreciendo diferentes actividades opcionales a las que puedes unirte cuando quieras. Tenemos muchos workshops en vivo sobre las tecnologías que estarás aprendiendo, que se hacen casi todos los días de la semana en diferentes horarios. Puedes agender mentorías privadas con un experto para que te ayude con los problemas que puedas tener en tu código o conceptos que no entiendas, y lo mejor de todo es que tu escoges el día y hora!"
     },
     {
       "id": 2,
@@ -66,19 +67,25 @@
       "id": 4,
       "title": "¿Qué tipo de ayuda recibo mientras estoy aprendiendo?",
       "description": "Al entrar en cualquiera de nuestros programas de 4Geeks, obtienes acceso a nuestra comunidad en slack, en la que tenemos un canal especializado para ayudarte con problemas de código, con un tiempo de respuesta rápido. Además cuentas con la ayuda de Rigobot, nuestro modelo de inteligencia artificial entrenado para darte feedback de los ejercicios y proyectos que realizas, también puedes hablar en un chat con el, quien te dará una ayuda personalizada en base a lo que estas aprendiendo en el momento! Por otro lado, tienes acceso a las mentorías, que de agotarse, puedes solicitar más por un precio adicional para seguir utilizandolas"
+    },
+    {
+      "id": 5,
+      "title": "¿Necesito conocimientos previos?",
+      "description": "No, nuestros bootcamps están diseñados para enseñarte a utilizar todas las herramientas y empezar con lo más básico de cada tecnología antes de empezar con lo más avanzado."
     }
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "¿Qué es LearnPack?",
-      "description": "LearnPack es un software que te permite aprender a través de tutoriales interactivos dentro de tu entorno de desarrollo como VSCode. ¡Incluye a Rigobot (Nuestro modelo de IA), por lo que puedes obtener retroalimentación instantánea mientras programas!",
-      "button": "Prueba LearnPack",
+      "title": "¡Aprende a tu ritmo de manera efectiva con LearnPack!",
+      "description": "LearnPack es un software diseñado para quienes buscan aprender solos y a su propio ritmo. Tiene integrado a Rigobot quien actúa como un tutor para responder las dudas referentes a tu código, además de tener tests automatizados para recibir feedback instantáneo y no quedarte atrás en tu aprendizaje!",
+      "button": "¡Empieza a aprender ahora!",
       "link": "#pricing"
     },
     "showOnSignup": [
       {
         "type": "lesson",
         "title": "Lecturas",
+        "qty": 45,
         "icon": "book"
       },
       {
@@ -96,13 +103,11 @@
       {
         "type": "ai-feedback",
         "title": "Feedback en tiempo real de IA",
-        "qty": 2,
         "icon": "brain"
       },
       {
         "type": "workshop",
         "title": "Talleres todas las semanas",
-        "qty": 3,
         "icon": "tv-live"
       },
       {
@@ -114,21 +119,21 @@
     "list": [
       {
         "id": 1,
-        "icon": "tv-live",
-        "title": "Aprende en vivo",
-        "description": "Aprende en vivo con nuestros workshops técnicos y de carrera liderados por expertos de la indutria tecnológica."
+        "icon": "rigobot-avatar",
+        "title": "Aprende con IA",
+        "description": "¡Nuestra inteligencia artificial puede revisar tu código para darte feedback instantáneo, ayudarte con tus ejercicios y más!"
       },
       {
         "id": 2,
-        "icon": "code-bracket",
-        "title": "Aprende haciendo",
-        "description": "Aprende mientras haces más de 25 proyectos de casos reales y más de 500 ejercicios interactivos."
+        "icon": "talking",
+        "title": "Mentorías uno a uno",
+        "description": "Pide una sesión de mentoría con un experto cuando quieras y en el momento que mejor te convenga."
       },
       {
         "id": 3,
-        "icon": "window-tab",
+        "icon": "community",
         "title": "Aprende en comunidad",
-        "description": "¡Únete a nuestra comunidad y aprende junto miles de desarrolladores que están aprendiendo lo mismo que tu!"
+        "description": "Aprender con otros es más divertido, más fácil y puedes llegar más lejos. ¡Nuestra comunidad nunca te dejará atrás!"
       }
     ]
   },
