@@ -75,7 +75,7 @@ Note: This will create a new folder <strong>"${repoName}"</strong> in your compu
 
 If the \`config.editor.agent == 'vscode'\`:
 
-Open this folder in VSCode and type \`learnpack start\` on your vscode terminal.
+Open this folder in VSCode and type \`$ learnpack start\` on your vscode terminal.
 
 If the \`config.editor.agent == 'os'\`:
 
@@ -95,7 +95,7 @@ Nota: Esto creará una nueva carpeta <strong>"${repoName}"</strong> en tu comput
 
 Si \`config.editor.agent == 'vscode'\`:
 
-Abre esta carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
+Abre esta carpeta en VSCode y escribe \`$ learnpack start\` en tu terminal de vscode.
 
 Si \`config.editor.agent == 'os'\`:
 
