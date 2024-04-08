@@ -72,12 +72,25 @@ export async function getStaticProps({ locale, locales, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const members = await bc.public().syllabusMembers(data?.syllabus?.[0]?.slug)
+  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(data?.syllabus?.[0]?.slug)
     .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
       return [];
     });
+  const uniqueStudents = students?.length > 0 ? students?.filter((student, index, self) => self.findIndex((l) => (
+    l.user.id === student.user.id
+  )) === index) : [];
+
+  const instructors = await bc.cohort({
+    roles: 'TEACHER,ASSISTANT',
+    cohort_id: cohortId,
+  }).getPublicMembers()
+    .then((respMembers) => respMembers.data);
+  const uniqueInstructors = instructors?.length > 0 ? instructors?.filter((instructor, index, self) => self.findIndex((l) => (
+    l.user.id === instructor.user.id
+  )) === index) : [];
+
   const getModulesInfo = async () => {
     try {
       const assetTypeCount = {
@@ -130,7 +143,8 @@ export async function getStaticProps({ locale, locales, params }) {
 
   const cohortData = {
     cohortSyllabus,
-    members,
+    students: uniqueStudents,
+    instructors: uniqueInstructors,
     modulesInfo,
   };
   if (resp?.status >= 400) {
@@ -184,7 +198,7 @@ export async function getStaticProps({ locale, locales, params }) {
 
 function Page({ data, cohortData }) {
   const { isAuthenticated, user, logout, choose } = useAuth();
-  const { hexColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
@@ -198,14 +212,8 @@ function Page({ data, cohortData }) {
   const features = t('features', {}, { returnObjects: true }) || {};
   const limitViewStudents = 3;
 
-  const students = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'STUDENT') : [];
-  const uniqueStudents = students?.filter((student, index, self) => self.findIndex((l) => (
-    l.user.id === student.user.id
-  )) === index);
-  const instructors = cohortData?.members?.length > 0 ? cohortData?.members?.filter((member) => member.role === 'TEACHER' || member.role === 'ASSISTANT') : [];
-  const uniqueInstructors = instructors?.filter((instructor, index, self) => self.findIndex((l) => (
-    l.user.id === instructor.user.id
-  )) === index);
+  const students = cohortData?.students || [];
+  const instructors = cohortData?.instructors || [];
   const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
   const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
@@ -409,7 +417,7 @@ function Page({ data, cohortData }) {
             {/* Students count */}
             <Flex alignItems="center" gridGap="16px">
               <Flex>
-                {uniqueStudents.slice(0, limitViewStudents).map((student, index) => {
+                {students.slice(0, limitViewStudents).map((student, index) => {
                   const existsAvatar = student.user.profile?.avatar_url;
                   const avatarNumber = adjustNumberBeetwenMinMax({
                     number: student.user?.id,
@@ -471,7 +479,7 @@ function Page({ data, cohortData }) {
               </Flex>
 
               {/* Instructors component here */}
-              <Instructors list={uniqueInstructors} />
+              <Instructors list={instructors} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -691,15 +699,15 @@ function Page({ data, cohortData }) {
                     <Box as="span" color="blue.default">4Geeks</Box>
                     ?
                   </Heading>
-                  <Text size="18px" textAlign="center" style={{ textWrap: 'balance' }}>
+                  <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
                     {t('why-learn-4geeks-connector.benefits-connector')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
                   {features?.list?.length > 0 && features?.list?.map((item) => (
-                    <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={hexColor.featuredColor}>
+                    <Flex key={item.title} flex={{ base: 1, md: 0.33 }} flexDirection="column" gridGap="16px" padding="16px" borderRadius="8px" color={fontColor} background={backgroundColor}>
                       <Flex gridGap="8px" alignItems="center">
-                        <Icon icon={item.icon} width="40px" height="35px" color={hexColor.green} />
+                        <Icon icon={item.icon} color={hexColor.blueDefault} />
                         <Heading size="16px" fontWeight={700} color="currentColor" lineHeight="normal">
                           {item?.title}
                         </Heading>
