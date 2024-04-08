@@ -130,7 +130,7 @@ function chooseProgram() {
             return data.map((service) => ({
               ...service,
               academy: {
-                id: userRoles?.[0]?.academy.id,
+                id: role?.academy.id,
                 available_as_saas: role?.academy?.available_as_saas,
               },
             }));
