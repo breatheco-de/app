@@ -402,8 +402,6 @@ function Page({ data, cohortData }) {
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
                 <Heading as="h1" width="100%" size={{ base: '42px', md: '64px' }} fontFamily="Space Grotesk Variable" fontWeight={700}>
                   {data?.course_translation?.title}
-                  {' '}
-                  solo
                 </Heading>
               </Flex>
             </Flex>
