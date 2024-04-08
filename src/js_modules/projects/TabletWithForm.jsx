@@ -29,7 +29,6 @@ const TabletWithForm = forwardRef(({
   technologies,
   showSimpleTable,
   href,
-  hideCloneButton,
 }, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
@@ -74,13 +73,9 @@ $ git clone ${urlToClone}
 \`\`\`
 Note: This will create a new folder <strong>"${repoName}"</strong> in your computer with the project code inside.
 
-If the \`config.editor.agent == 'vscode'\`:
+<strong>If you want to use VSCode:</strong> Make sure you have the <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension</a> installed, open the folder in VSCode and type \`learnpack start\` on your vscode terminal.
 
-Open this folder in VSCode and type \`learnpack start\` on your vscode terminal.
-
-If the \`config.editor.agent == 'os'\`:
-
-Using the terminal get inside your recently created folder and start learnpack:
+<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:
 
 \`\`\`bash
 $ cd ${repoName}
@@ -94,13 +89,9 @@ $ git clone ${urlToClone}
 \`\`\`
 Nota: Esto creará una nueva carpeta <strong>"${repoName}"</strong> en tu computadora con el código del proyecto dentro.
 
-Si \`config.editor.agent == 'vscode'\`:
+<strong>Si quieres usar VSCode:<strong> asegurate de tener el <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension instalado</a> y abre la carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
 
-Abre esta carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
-
-Si \`config.editor.agent == 'os'\`:
-
-Usando la terminal, entra en la carpeta recién creada y comienza learnpack:
+<strong>Para realizar los ejercios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:
 
 \`\`\`bash
 $ cd ${repoName}
@@ -394,57 +385,6 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
             content={cloneInstructions[lang]}
             showLineNumbers={false}
           />
-          {!hideCloneButton && (
-            <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
-              <GridItem w="100%">
-                <Button
-                  borderRadius="3px"
-                  width="100%"
-                  fontSize="14px"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="otuline"
-                  border="1px solid"
-                  borderColor="blue.default"
-                  fontWeight="700"
-                  color="blue.default"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
-                    }
-                  }}
-                >
-                  {'  '}
-                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="gitpod" color={hexColor.blueDefault} />
-                  Gitpod
-                </Button>
-              </GridItem>
-              <GridItem w="100%">
-                <Button
-                  borderRadius="3px"
-                  width="100%"
-                  fontSize="14px"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="otuline"
-                  border="1px solid"
-                  borderColor="blue.default"
-                  fontWeight="700"
-                  color="blue.default"
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
-                    }
-                  }}
-                >
-                  {'  '}
-                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="github" color={hexColor.blueDefault} />
-                  Github Codespaces
-                </Button>
-              </GridItem>
-            </Grid>
-          )}
-
         </SimpleModal>
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
@@ -469,14 +409,12 @@ TabletWithForm.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   href: PropTypes.string.isRequired,
   showSimpleTable: PropTypes.bool,
-  hideCloneButton: PropTypes.bool,
 };
 
 TabletWithForm.defaultProps = {
   technologies: [],
   commonTextColor: null,
   showSimpleTable: true,
-  hideCloneButton: false,
 };
 
 export default TabletWithForm;
