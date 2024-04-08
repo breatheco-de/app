@@ -1,7 +1,8 @@
 {
-  "course-content-text": "Course content",
+  "course-content-text": "Syllabus optimized to get a job!",
+  "course-content-description": "We have battle-tested this syllabus with hundreds of job positions to give you the necessary skills to find a job in tech.",
   "students-enrolled-count": "+{{count}} students enrolled",
-  "instructors-more": "+{{count}} instructors more",
+  "instructors-more": "+{{count}} more instructors",
   "enroll-now-for-price": "Enroll now for {{price}} monthly",
   "join-cohort": "Join cohort",
   "join-cohort-description": "Join a cohort and start your bootcamp journey",
@@ -9,32 +10,32 @@
   "live-bootcamp": "Live bootcamp",
   "build-connector": {
     "what-you-will": "Learn by building",
-    "description": "To learn to code at your own pace effectively, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
+    "description": "When learning to code at your own pace, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
     "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Learning on your own is hard, and we have designed the tools to avoid having problems, losing motivation, and accelerate your learning."
+    "benefits-connector": "Learning on at your own pace is hard, and we have designed the tools to avoid getting problems, lose motivation, and accelerate your learning."
   },
   "show-prices": {
-    "title": "Learning to code alone is possible without a big investment!",
-    "description": "We know that money is one of the main obstacles to start learning, but at 4Geeks money is not a problem anymore, we don't want money to stop you from learning.<br/><br/>That's why our bootcamps have an affordable price and different financing options so you don't have to worry again because of money."
+    "title": "Learning to code at your own pace is possible without a big investment!",
+    "description": "We don't want money to stop you from getting into tech.<br/><br/>Pay up-front or choose any of our financing options start learning immediately"
   },
   "technology-connector": {
-    "get-the-skills": "Get the skills and a new career in",
+    "get-the-skills": "Get the skills and a potential new career in",
     "by-your-own-pace": "by learning at your own pace"
   },
   "rigobot": {
-    "title": "Meet Rigobot, the guide of your learning journey",
-    "description": "Rigobot is our AI model that has been trained in the last years to help you on your learning journey. Rigobot is ready to help you while you code whether you are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
+    "title": "Meet Rigobot, our internal AI designed for solo learners",
+    "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
     "button": "Try Rigobot for free",
-    "link": "https://github.com/breatheco-de/exercise-postcard"
+    "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "live-workshops-connector": {
-    "join-one-or-more-workshops": "Join one or more live workshops with mentors coding the projects you need to practice."
+    "join-one-or-more-workshops": "Join weekly live workshops with experts coding real-life projects."
   },
   "career-connector": {
-    "receive-guidance": "Receive guidance on how to build your resume, LinkedIn, and other relevant career activities."
+    "receive-guidance": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and other relevant career activities."
   },
   "mentoring-connector": {
     "get-help-with": "Get help with",
@@ -43,13 +44,13 @@
   },
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
-    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students graduated from our bootcamp got hired!"
+    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students who graduated from our BootCamp got hired!"
   },
   "faq": [
     {
       "id": 1,
-      "title": "Do I need prior knowledge?",
-      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
+      "title": "Will I learn on my own?",
+      "description": "No, the solo BootCamp is designed to learn at your own pace and time, but we have a lot of live features at different schedules that are optional for you, and you can join whenever you want. We have many live workshops about the technologies you are learning, happening almost every day of the week. You can schedule private mentoring sessions with an expert that will help you exactly with the problems you have or concepts you don't understand, and the best part is that you choose the time and day!"
     },
     {
       "id": 2,
@@ -65,19 +66,25 @@
       "id": 4,
       "title": "What other kind of support do I get when learning?",
       "description": "You'll have access to one-on-one mentoring sessions conducted by experts in the field. Additionally, our platform offers AI feedback on projects you submit, assistance with exercises, and answers to any questions you might have during your learning journey. This combination of personalized mentoring and AI-driven support ensures that you receive guidance and help whenever needed, enhancing your overall learning experience. Plus, you'll have access to our slack community where we have a channel specialized for coding-related help, with fast response rates!"
+    },
+    {
+      "id": 5,
+      "title": "Do I need prior knowledge?",
+      "description": "No, our bootcamps are designed to teach you how to use all the tools first, and then we start with the basics of each technology before getting into advanced content."
     }
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "What is LearnPack?",
-      "description": "LearnPack is a software that allows you to learn through interactive tutorials inside your development environment like VSCode. It has Rigobot (Our AI model) included, so you can get instant feedback while you code!",
-      "button": "Try LearnPack",
+      "title": "Learn at your own pace effectively with LearnPack!",
+      "description": "LearnPack is a software crafted for self-learners. It features Rigobot integration, serving as a tutor, primed to address any code-related inquiries and equipped with automated tests to provide immediate feedback, enabling continuous learning at any time!",
+      "button": "Start learning now!",
       "link": "#pricing"
     },
     "showOnSignup": [
       {
         "type": "lesson",
         "title": "Readings and videos",
+        "qty": 45,
         "icon": "book"
       },
       {
@@ -95,13 +102,11 @@
       {
         "type": "ai-feedback",
         "title": "Real Time AI Feedback",
-        "qty": 2,
         "icon": "brain"
       },
       {
         "type": "workshop",
         "title": "Workshops every week",
-        "qty": 3,
         "icon": "tv-live"
       },
       {
@@ -113,21 +118,21 @@
     "list": [
       {
         "id": 1,
-        "icon": "tv-live",
-        "title": "Learn Live",
-        "description": "Learn live with our workshops about technical or career subjects, hosted by tech industry experts."
+        "icon": "rigobot-avatar",
+        "title": "Learn with AI",
+        "description": "Our AI can review your code to give you instant feedback, help you with an exercise, and more!"
       },
       {
         "id": 2,
-        "icon": "code-bracket",
-        "title": "Live by doing",
-        "description": "Learn by doing with more than 25 real-life projects and 500+ interactive exercises."
+        "icon": "talking",
+        "title": "One - on - one mentoring session",
+        "description": "Ask for a mentoring session with an expert whenever you want and at the time that best fits you."
       },
       {
         "id": 3,
-        "icon": "window-tab",
-        "title": "Learn with community",
-        "description": "Join our community and connect with thousands of developers who are learning the same as you are!"
+        "icon": "community",
+        "title": "Learn with the community",
+        "description": "Learning with others is more fun, is easier, and you can get farther. Our community won't leave you behind!"
       }
     ]
   },

@@ -59,7 +59,7 @@ const assetTypeDict = {
 export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.public().events();
 
-  const paths = data.filter((ev) => ev?.slug)
+  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(data.status))
     .flatMap((res) => locales.map((locale) => ({
       params: {
         event_slug: res?.slug,
@@ -80,7 +80,7 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug) {
+  if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
     return {
       notFound: true,
     };

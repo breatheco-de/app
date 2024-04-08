@@ -65,6 +65,23 @@ const getPublicSyllabus = () => {
     });
   return resp;
 };
+const getMktCourses = () => {
+  const languages = ['en', 'es'];
+  const fetchWithLanguages = languages.map((lang) => axios.get(`${BREATHECODE_HOST}/v1/marketing/course?lang=${lang}`)
+    .then((res) => {
+      const list = res?.data || [];
+      const data = list?.filter((course) => course?.course_translation && course?.visibility !== 'UNLISTED')
+        .map((course) => ({
+          ...course,
+          lang,
+        }));
+      return data;
+    })
+    .catch(() => {
+      console.error(`SITEMAP: Error fetching Marketing Courses for language ${lang}`);
+    }));
+  return Promise.all(fetchWithLanguages).then((data) => data.flat());
+};
 
 const getEvents = async (extraQuerys = {}) => {
   if (!isWhiteLabelAcademy) {
@@ -287,4 +304,5 @@ export {
   getLandingTechnologies,
   getTechnologyAssets,
   getEvents,
+  getMktCourses,
 };

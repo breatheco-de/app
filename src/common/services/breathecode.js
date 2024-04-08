@@ -303,7 +303,7 @@ const breathecode = {
     };
   },
 
-  public: (query = {}, isQueryConnector) => {
+  public: (query = {}, isQueryConnector = false) => {
     const url = `${host}/admissions/public`;
 
     const qs = parseQuerys(query, isQueryConnector);

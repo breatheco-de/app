@@ -52,7 +52,8 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       const res = await fetch(`${chosenEndpoint}${qsConnector}`, { headers });
       const data = await res.json();
       if (res?.status < 400 && data.length > 0) {
-        const sortedCourses = data.slice(0, coursesLimit).sort((a, b) => {
+        const filterActiveCourses = data.filter((course) => course.visibility !== 'UNLISTED');
+        const sortedCourses = filterActiveCourses.slice(0, coursesLimit).sort((a, b) => {
           if (technologiesArray.some((tech) => b.technologies.includes(tech))) return 1;
           return -1;
         });
@@ -70,7 +71,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
   return courses.length > 0 && (
     <Box
       maxWidth="1280px"
-      margin="0 auto"
+      margin="2rem auto"
       flexWrap={{ base: 'wrap', xl: 'nowrap' }}
       id={id}
       borderRadius="11px"
