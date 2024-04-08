@@ -46,7 +46,7 @@ function ShowOnSignUp({
     email: '',
     // phone: '',
   });
-
+  const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
@@ -57,7 +57,6 @@ function ShowOnSignUp({
   }, [gmapStatus]);
 
   useEffect(() => {
-    const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
     if (isLogged && !existsConsumables && !isReadyToRefetch) {
       setNoConsumablesFound(true);
@@ -74,7 +73,7 @@ function ShowOnSignUp({
     }
 
     return () => clearInterval(intervalId);
-  }, [isAuthenticated, attempts, alreadyLogged, existsConsumables]);
+  }, [isLogged, attempts, isReadyToRefetch, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
@@ -148,15 +147,13 @@ function ShowOnSignUp({
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {
                       setIsReadyToRefetch(true);
+                      setAlreadyLogged(true);
+                      refetchAfterSuccess();
+                      setVerifyEmailProps({
+                        data,
+                        state: true,
+                      });
                     }
-                  })
-                  .finally(() => {
-                    setAlreadyLogged(true);
-                    refetchAfterSuccess();
-                    setVerifyEmailProps({
-                      data,
-                      state: true,
-                    });
                   });
               }}
               formContainerStyle={formContainerStyle}
