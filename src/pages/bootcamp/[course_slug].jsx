@@ -569,7 +569,7 @@ function Page({ data, cohortData }) {
                             </Button>
                           </Text>
                         ) : (
-                          <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
+                          <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="100%" margin="0 auto" gridGap="6px">
                             {t('signup:already-have-account')}
                             {' '}
                             <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('signup:login-here')}</NextChakraLink>
