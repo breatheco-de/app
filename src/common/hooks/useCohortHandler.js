@@ -58,7 +58,7 @@ function useHandler() {
       if (currentAcademy) {
         // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
         Promise.all([
-          bc.todo({ cohort: cohortSession.id }).getTaskByStudent(), // Tasks with cohort id
+          bc.todo({ cohort: cohortSession.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
           bc.syllabus().get(academyId, cohortSlug, version), // cohortProgram
           bc.auth().getRoles(currentAcademy?.role), // Roles
         ]).then((
@@ -76,7 +76,7 @@ function useHandler() {
             user_capabilities: userRoles.data.capabilities,
           });
           setContextState({
-            taskTodo: taskTodoData.data,
+            taskTodo: taskTodoData.data.results,
             cohortProgram: programData.data,
           });
         }).catch((err) => {

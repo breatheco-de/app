@@ -8,6 +8,10 @@
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
   "live-bootcamp": "Bootcamp en vivo",
+  "title-connectors": {
+    "start": "Comienza una carrera en",
+    "end": "aprendiendo a tu propio ritmo"
+  },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
     "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, construirás proyectos reales como estos:",

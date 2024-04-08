@@ -8,6 +8,10 @@
   "join-cohort-description": "Join a cohort and start your bootcamp journey",
   "create-account-text": "Create an account and start your bootcamp journey",
   "live-bootcamp": "Live bootcamp",
+  "title-connectors": {
+    "start": "Start a career in",
+    "end": "by learning at your own pace"
+  },
   "build-connector": {
     "what-you-will": "Learn by building",
     "description": "When learning to code at your own pace, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
