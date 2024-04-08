@@ -373,9 +373,9 @@ function Page({ data, cohortData }) {
   }, [readyToRefetch]);
 
   const assetCountByType = {
-    lessons: assetCount?.lesson,
-    exercises: assetCount?.exercise,
-    projects: assetCount?.project,
+    lessons: assetCount?.lesson || 0,
+    exercises: assetCount?.exercise || 0,
+    projects: assetCount?.project || 0,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -590,9 +590,9 @@ function Page({ data, cohortData }) {
                             </Text>
                           </Flex>
                           {(assetCountByType?.[item?.type] || item?.qty) && (
-                          <Text size="14px">
-                            {assetCountByType[item?.type] || item?.qty}
-                          </Text>
+                            <Text size="14px">
+                              {assetCountByType[item?.type] || item?.qty}
+                            </Text>
                           )}
                         </Flex>
                       );
