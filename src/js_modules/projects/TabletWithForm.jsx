@@ -107,7 +107,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
@@ -390,7 +390,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
