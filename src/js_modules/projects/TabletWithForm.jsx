@@ -23,7 +23,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-function TabletWithForm({
+const TabletWithForm = forwardRef(({
   asset,
   commonTextColor,
   technologies,
