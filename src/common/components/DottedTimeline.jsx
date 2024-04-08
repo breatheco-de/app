@@ -8,7 +8,7 @@ import { AnimatedContainer } from './Animated';
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated
 function DottedTimeline({ label, dots, emptyDotsMessage, helpText, width, onClickDots }) {
-  const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
+  const { borderColor, fontColor3, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
   const highLightColor = 'yellow.default';
@@ -46,7 +46,7 @@ function DottedTimeline({ label, dots, emptyDotsMessage, helpText, width, onClic
             </Box>
           ))}
           {emptyDotsMessage && dots?.length === 0 && (
-            <Text size="md" color="red.light2" background="red.light">
+            <Text size="md" color={fontColor3}>
               {emptyDotsMessage}
             </Text>
           )}
