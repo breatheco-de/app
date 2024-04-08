@@ -25,7 +25,7 @@ function DottedTimeline({ label, dots, emptyDotsMessage, helpText, width, onClic
           </Text>
         )}
       </Flex>
-      <AnimatedContainer isScrollable={isScrollable} position="relative" overflow="hidden">
+      <AnimatedContainer isScrollable={dots?.length > 0 && isScrollable} position="relative" overflow="hidden">
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
           {dots?.length > 0 && !emptyDotsMessage && dots.map((dot, i) => (
             <Box padding="5px 0" borderBottom="2px solid" borderColor={dot.highlight ? highLightColor : 'transparent'}>
