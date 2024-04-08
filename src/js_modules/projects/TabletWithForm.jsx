@@ -23,12 +23,13 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-const TabletWithForm = forwardRef(({
+function TabletWithForm({
   asset,
   commonTextColor,
   technologies,
   href,
-}, ref) => {
+  showSimpleTable,
+}, ref) {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);

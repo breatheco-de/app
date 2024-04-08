@@ -309,6 +309,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
+                mt="3rem"
                 display={{ base: 'none', md: 'flex' }}
                 technologies={lesson?.technologies}
               />

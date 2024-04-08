@@ -373,6 +373,7 @@ function Exercise({ exercise, markdown }) {
             </Box>
             <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
+              mt="3rem"
               technologies={exercise?.technologies}
             />
           </Box>

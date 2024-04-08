@@ -27,7 +27,7 @@ import { getStorageItem } from '../../utils';
 const StyledBox = styled(Box)`
 .custom-popover {
   display: none;
-  top:50px;
+  top: 70px;
 }
 `;
 
@@ -99,6 +99,7 @@ function DesktopItem({ item, readSyllabus }) {
             style={{
               textWrap: 'balance',
             }}
+            height="65px"
             textTransform="uppercase"
             fontWeight={700}
             color={linkColor}

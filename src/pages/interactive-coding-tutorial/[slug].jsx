@@ -358,6 +358,7 @@ function ProjectSlug({ project, markdown }) {
               </Box>
               <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
               <MktRecommendedCourses
+                mt="3rem"
                 marginTop="15px"
                 technologies={project?.technologies}
               />
