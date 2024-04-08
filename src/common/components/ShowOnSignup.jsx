@@ -20,7 +20,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, attemptsToRefetch, ...rest
+  onLastAttempt, maxAttemptsToRefetch, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -37,6 +37,7 @@ function ShowOnSignUp({
   const [alreadyLogged, setAlreadyLogged] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const { t } = useTranslation('signup');
+  const [isReadyToRefetch, setIsReadyToRefetch] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const [formProps, setFormProps] = useState({
@@ -45,7 +46,7 @@ function ShowOnSignUp({
     email: '',
     // phone: '',
   });
-
+  const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
@@ -56,13 +57,15 @@ function ShowOnSignUp({
   }, [gmapStatus]);
 
   useEffect(() => {
-    const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
-    if (isLogged && !existsConsumables && attempts === attemptsToRefetch) {
+    if (isLogged && !existsConsumables && !isReadyToRefetch) {
+      setNoConsumablesFound(true);
+    }
+    if (isLogged && !existsConsumables && attempts === maxAttemptsToRefetch) {
       setNoConsumablesFound(true);
       onLastAttempt();
     }
-    if (alreadyLogged && !existsConsumables && attempts < attemptsToRefetch) {
+    if (isLogged && !existsConsumables && attempts < maxAttemptsToRefetch && isReadyToRefetch) {
       intervalId = setInterval(() => {
         setAttempts((prevTime) => prevTime + 1);
         refetchAfterSuccess();
@@ -70,7 +73,7 @@ function ShowOnSignUp({
     }
 
     return () => clearInterval(intervalId);
-  }, [isAuthenticated, attempts, alreadyLogged, existsConsumables]);
+  }, [isLogged, attempts, isReadyToRefetch, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
@@ -141,13 +144,16 @@ function ShowOnSignUp({
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
-                  .finally(() => {
-                    setAlreadyLogged(true);
-                    refetchAfterSuccess();
-                    setVerifyEmailProps({
-                      data,
-                      state: true,
-                    });
+                  .then((respData) => {
+                    if (respData.status === 'FULFILLED') {
+                      setIsReadyToRefetch(true);
+                      setAlreadyLogged(true);
+                      refetchAfterSuccess();
+                      setVerifyEmailProps({
+                        data,
+                        state: true,
+                      });
+                    }
                   });
               }}
               formContainerStyle={formContainerStyle}
@@ -260,7 +266,7 @@ ShowOnSignUp.propTypes = {
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  attemptsToRefetch: PropTypes.number,
+  maxAttemptsToRefetch: PropTypes.number,
   onLastAttempt: PropTypes.func,
 };
 
@@ -286,7 +292,7 @@ ShowOnSignUp.defaultProps = {
   invertHandlerPosition: false,
   formContainerStyle: {},
   buttonStyles: {},
-  attemptsToRefetch: 10,
+  maxAttemptsToRefetch: 10,
   onLastAttempt: () => {},
 };
 

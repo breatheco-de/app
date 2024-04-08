@@ -83,7 +83,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
         const list = coursesSorted?.length > 0 ? coursesSorted : data;
         setIsLoading(false);
 
-        setCourses(list?.filter((course) => course?.course_translation).slice(0, coursesLimit));
+        setCourses(list?.filter((course) => course?.course_translation && course?.visibility !== 'UNLISTED').slice(0, coursesLimit));
       }
     } catch (e) {
       error(e);

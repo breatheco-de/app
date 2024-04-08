@@ -42,7 +42,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
               installments: respData?.how_many_months,
             }, disableRedirects)
               .then((respPayment) => {
-                resolve(respPayment.data);
+                resolve(respPayment);
                 if (respPayment.status < 400) {
                   setIsCheckingSuccess(true);
                 }

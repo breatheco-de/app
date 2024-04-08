@@ -28,8 +28,7 @@ function TabletWithForm({
   commonTextColor,
   technologies,
   href,
-  showSimpleTable,
-}, ref) {
+}, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -73,13 +72,9 @@ $ git clone ${urlToClone}
 \`\`\`
 Note: This will create a new folder <strong>"${repoName}"</strong> in your computer with the project code inside.
 
-If the \`config.editor.agent == 'vscode'\`:
+<strong>If you want to use VSCode:</strong> Make sure you have the <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension</a> installed, open the folder in VSCode and type \`learnpack start\` on your vscode terminal.
 
-Open this folder in VSCode and type \`$ learnpack start\` on your vscode terminal.
-
-If the \`config.editor.agent == 'os'\`:
-
-Using the terminal get inside your recently created folder and start learnpack:
+<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:
 
 \`\`\`bash
 $ cd ${repoName}
@@ -93,13 +88,9 @@ $ git clone ${urlToClone}
 \`\`\`
 Nota: Esto creará una nueva carpeta <strong>"${repoName}"</strong> en tu computadora con el código del proyecto dentro.
 
-Si \`config.editor.agent == 'vscode'\`:
+<strong>Si quieres usar VSCode:<strong> asegurate de tener el <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension instalado</a> y abre la carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
 
-Abre esta carpeta en VSCode y escribe \`$ learnpack start\` en tu terminal de vscode.
-
-Si \`config.editor.agent == 'os'\`:
-
-Usando la terminal, entra en la carpeta recién creada y comienza learnpack:
+<strong>Para realizar los ejercios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:
 
 \`\`\`bash
 $ cd ${repoName}
@@ -393,7 +384,6 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
             content={cloneInstructions[lang]}
             showLineNumbers={false}
           />
-
         </SimpleModal>
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
