@@ -66,30 +66,38 @@ function MentoringFree({
     }
   }, [allMentorsAvailable]);
 
-  const handleService = (service) => {
-    bc.mentorship({
-      services: service.slug,
-      status: 'ACTIVE',
-      syllabus: slug,
-      academy: service?.academy?.id,
-    }).getMentor()
-      .then((res) => {
-        setProgramMentors(res.data);
-        setTimeout(() => {
-          setMentoryProps({ ...mentoryProps, service });
-          setSavedChanges({ ...savedChanges, service });
-        }, 50);
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: 'Error',
-          description: t('alert-message:error-finding-mentors'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
+  const manageMentorsData = (service, data) => {
+    setProgramMentors(data);
+    setTimeout(() => {
+      setMentoryProps({ ...mentoryProps, service });
+      setSavedChanges({ ...savedChanges, service });
+    }, 50);
+  };
+
+  const handleService = async (service) => {
+    try {
+      if (allMentorsAvailable.length > 0) {
+        const mentorsByService = allMentorsAvailable.filter((mentor) => mentor.services.some((s) => s.slug === service.slug));
+        manageMentorsData(service, mentorsByService);
+      } else {
+        const res = await bc.mentorship({
+          services: service.slug,
+          status: 'ACTIVE',
+          syllabus: slug,
+          academy: service?.academy?.id,
+        }).getMentor();
+        manageMentorsData(service, res.data);
+      }
+    } catch (e) {
+      toast({
+        position: 'top',
+        title: 'Error',
+        description: t('alert-message:error-finding-mentors'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
       });
+    }
   };
 
   const servicesWithMentorsAvailable = servicesFiltered.filter((service) => allMentorsAvailable.some((mentor) => mentor.services.some((mentServ) => mentServ.slug === service.slug)));

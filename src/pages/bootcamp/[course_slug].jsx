@@ -72,7 +72,7 @@ export async function getStaticProps({ locale, locales, params }) {
   const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
   const translationsObj = getTranslations(t);
 
-  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(data?.syllabus?.[0]?.slug)
+  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
     .then((respMembers) => respMembers.data)
     .catch((err) => {
       error('Error fetching cohort users:', err);
@@ -214,13 +214,12 @@ function Page({ data, cohortData }) {
 
   const students = cohortData?.students || [];
   const instructors = cohortData?.instructors || [];
-  const technologies = cohortData?.cohortSyllabus?.syllabus?.main_technologies?.split(',') || [];
-  const technologiesString = cohortData.isLoading === false && technologies.join(', ');
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const cohortId = data?.cohort?.id;
   const plans = data?.planData?.plans || [];
   const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
   const firstPaymentPlan = payableList?.[0];
+  const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: firstPaymentPlan?.plan_slug,
     plan_id: firstPaymentPlan?.plan_id,
@@ -374,9 +373,9 @@ function Page({ data, cohortData }) {
   }, [readyToRefetch]);
 
   const assetCountByType = {
-    lessons: assetCount?.lesson,
-    exercises: assetCount?.exercise,
-    projects: assetCount?.project,
+    lessons: assetCount?.lesson || 0,
+    exercises: assetCount?.exercise || 0,
+    projects: assetCount?.project || 0,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -388,12 +387,12 @@ function Page({ data, cohortData }) {
   return (
     <>
       {data?.structuredData?.name && (
-        <Head>
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(data.structuredData) }}
-          />
-        </Head>
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data.structuredData) }}
+        />
+      </Head>
       )}
       <Flex flexDirection="column" mt="2rem">
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
@@ -406,11 +405,13 @@ function Page({ data, cohortData }) {
                   {t('live-bootcamp')}
                 </Text>
               </Flex>
-              <Flex gridGap="16px" flexDirection={{ base: 'column', md: 'row' }} alignItems="center">
+              <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="h1" width="100%" size={{ base: '42px', md: '64px' }} fontFamily="Space Grotesk Variable" fontWeight={700}>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.start')}</Heading>
+                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                   {data?.course_translation?.title}
                 </Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.end')}</Heading>
               </Flex>
             </Flex>
 
@@ -444,38 +445,19 @@ function Page({ data, cohortData }) {
             </Flex>
 
             <Flex flexDirection="column" gridGap="24px">
-              <Text size="24px" fontWeight={700}>
-                {t('technology-connector.get-the-skills')}
-                {' '}
-                <Text as="span" size="24px" color="blue.default" fontWeight={700}>
-                  {technologiesString || data?.course_translation?.title}
-                </Text>
-                {' '}
-                {t('technology-connector.by-your-own-pace')}
-              </Text>
               <Flex flexDirection="column" gridGap="16px">
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('live-workshops-connector.join-one-or-more-workshops')}
-                  </Text>
-                </Flex>
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('career-connector.receive-guidance')}
-                  </Text>
-                </Flex>
-                <Flex gridGap="9px" alignItems="center">
-                  <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                  <Text size="16px" fontWeight={400} color="currentColor" lineHeight="normal">
-                    {t('mentoring-connector.get-help-with')}
-                    {' '}
-                    <strong>{t('mentoring-connector.one-one-mentoring')}</strong>
-                    {' '}
-                    {t('mentoring-connector.every-month')}
-                  </Text>
-                </Flex>
+                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.map((item) => (
+                  <Flex gridGap="9px" alignItems="center">
+                    <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
+                    <Text
+                      size="16px"
+                      fontWeight={400}
+                      color="currentColor"
+                      lineHeight="normal"
+                      dangerouslySetInnerHTML={{ __html: item.title }}
+                    />
+                  </Flex>
+                ))}
               </Flex>
 
               {/* Instructors component here */}
@@ -484,9 +466,9 @@ function Page({ data, cohortData }) {
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
                 {data?.course_translation?.short_description && (
-                  <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
-                    {data?.course_translation?.short_description}
-                  </Text>
+                <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
+                  {data?.course_translation?.short_description}
+                </Text>
                 )}
                 <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
                   {data?.course_translation?.description}
@@ -516,18 +498,18 @@ function Page({ data, cohortData }) {
               hideSwitchUser
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
-                <Flex flexDirection="column" position="relative">
-                  <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" />
-                  <ReactPlayerV2
-                    url={data?.course_translation?.video_url}
-                    withThumbnail
-                    withModal
-                    thumbnailStyle={{
-                      borderRadius: '17px 17px 0 0',
-                    }}
-                    margin="0 0 12px 0"
-                  />
-                </Flex>
+              <Flex flexDirection="column" position="relative">
+                <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" />
+                <ReactPlayerV2
+                  url={data?.course_translation?.video_url}
+                  withThumbnail
+                  withModal
+                  thumbnailStyle={{
+                    borderRadius: '17px 17px 0 0',
+                  }}
+                  margin="0 0 12px 0"
+                />
+              </Flex>
               )}
               footerContent={(
                 <Flex flexDirection="column">
@@ -587,7 +569,7 @@ function Page({ data, cohortData }) {
                             </Button>
                           </Text>
                         ) : (
-                          <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="fit-content" margin="0 auto" gridGap="6px">
+                          <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" padding="4px 8px" width="100%" margin="0 auto" gridGap="6px">
                             {t('signup:already-have-account')}
                             {' '}
                             <NextChakraLink href="/login" redirectAfterLogin fontSize="13px" variant="default">{t('signup:login-here')}</NextChakraLink>
@@ -608,16 +590,16 @@ function Page({ data, cohortData }) {
                             </Text>
                           </Flex>
                           {(assetCountByType?.[item?.type] || item?.qty) && (
-                          <Text size="14px">
-                            {assetCountByType[item?.type] || item?.qty}
-                          </Text>
+                            <Text size="14px">
+                              {assetCountByType[item?.type] || item?.qty}
+                            </Text>
                           )}
                         </Flex>
                       );
                     })}
                   </Flex>
                 </Flex>
-              )}
+            )}
             />
           </Flex>
         </GridContainer>
@@ -637,12 +619,12 @@ function Page({ data, cohortData }) {
             </OneColumnWithIcon>
           </Flex>
           {courseContentList?.length > 0 && (
-            <Flex flexDirection="column" gridColumn="2 / span 12">
-              {/* CourseContent comopnent */}
-              {cohortData?.cohortSyllabus?.syllabus && (
-                <CourseContent data={courseContentList} assetCount={assetCount} />
-              )}
-            </Flex>
+          <Flex flexDirection="column" gridColumn="2 / span 12">
+            {/* CourseContent comopnent */}
+            {cohortData?.cohortSyllabus?.syllabus && (
+              <CourseContent data={courseContentList} assetCount={assetCount} />
+            )}
+          </Flex>
           )}
           <Flex flexDirection="column" gridGap="16px">
             <Heading size="24px" lineHeight="normal" textAlign="center">
@@ -668,13 +650,13 @@ function Page({ data, cohortData }) {
                   <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                     <Flex alignItems="center" justifyContent="space-between">
                       {item?.technologies?.length > 0 && (
-                        <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
+                      <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
                       )}
                     </Flex>
                     <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
                       {(lang === 'en' && item?.translations?.us?.title)
-                      || item?.translations?.[lang]?.title
-                      || item?.title}
+                    || item?.translations?.[lang]?.title
+                    || item?.title}
                       <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
                     </Link>
                   </Flex>
@@ -785,19 +767,19 @@ function Page({ data, cohortData }) {
         />
         {/* Pricing */}
         {data?.plan_slug && (
-          <MktShowPrices
-            id="pricing"
-            mt="6.25rem"
-            externalSelection={financeSelected}
-            gridTemplateColumns="repeat(12, 1fr)"
-            gridColumn1="1 / span 7"
-            gridColumn2="8 / span 5"
-            gridGap="3rem"
-            title={t('show-prices.title')}
-            description={t('show-prices.description')}
-            plan={data?.plan_slug}
-            cohortId={cohortId}
-          />
+        <MktShowPrices
+          id="pricing"
+          mt="6.25rem"
+          externalSelection={financeSelected}
+          gridTemplateColumns="repeat(12, 1fr)"
+          gridColumn1="1 / span 7"
+          gridColumn2="8 / span 5"
+          gridGap="3rem"
+          title={t('show-prices.title')}
+          description={t('show-prices.description')}
+          plan={data?.plan_slug}
+          cohortId={cohortId}
+        />
         )}
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
@@ -810,32 +792,31 @@ function Page({ data, cohortData }) {
         <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
-              <Faq
-                gridColumn="1 / span 12"
-                background="transparent"
-                headingStyle={{
-                  margin: '0px',
-                  fontSize: '38px',
-                  padding: '0 0 24px',
-                }}
-                padding="1.5rem 0"
-                highlightColor={complementaryBlue}
-                acordionContainerStyle={{
-                  background: hexColor.white2,
-                  borderRadius: '15px',
-                }}
-                hideLastBorder
-                items={faqList.map((l) => ({
-                  label: l?.title,
-                  answer: l?.description,
-                }))}
-              />
+            <Faq
+              gridColumn="1 / span 12"
+              background="transparent"
+              headingStyle={{
+                margin: '0px',
+                fontSize: '38px',
+                padding: '0 0 24px',
+              }}
+              padding="1.5rem 0"
+              highlightColor={complementaryBlue}
+              acordionContainerStyle={{
+                background: hexColor.white2,
+                borderRadius: '15px',
+              }}
+              hideLastBorder
+              items={faqList.map((l) => ({
+                label: l?.title,
+                answer: l?.description,
+              }))}
+            />
             )}
           </GridContainer>
         </Box>
       </Flex>
     </>
-
   );
 }
 
