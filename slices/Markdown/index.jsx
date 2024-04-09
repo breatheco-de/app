@@ -17,17 +17,14 @@ function Markdown({ slice }) {
       display="grid"
       flexDirection="column"
       alignItems="center"
-      gridTemplateColumns={{
-        base: '.5fr repeat(12, 1fr) .5fr',
-        md: '1.5fr repeat(12, 1fr) 1.5fr',
-      }}
+      gridTemplateColumns="repeat(12, 1fr)"
       flex="1"
       maxWidth="1280px"
       margin={slice?.primary?.margin || '2rem auto 0 auto'}
     >
       <Box
         display="grid"
-        gridColumn="2 / span 12"
+        gridColumn="1 / span 12"
         padding={padding || { base: '28px 10px', md: '28px 0px' }}
         borderRadius="3px"
         // background={useColorModeValue('#F2F6FA', 'featuredDark')}
