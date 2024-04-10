@@ -29,6 +29,7 @@ import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
 import axios from '../../axios';
 import Feedback from '../../common/components/Feedback';
+import LanguageSelector from '../../common/components/LanguageSelector';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -385,6 +386,10 @@ function chooseProgram() {
             {t('dashboard:welcome-modal.description')}
           </Text>
         </Box>
+        <Flex alignItems="center" justifyContent="center" width="auto" mb="1rem">
+          {t('common:change-language')}
+          <LanguageSelector />
+        </Flex>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
             url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}
