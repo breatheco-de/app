@@ -161,5 +161,6 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     WHITE_LABEL_ACADEMY: process.env.WHITE_LABEL_ACADEMY,
     DOMAIN_NAME: process.env.DOMAIN_NAME,
     BASE_PLAN: process.env.BASE_PLAN,
+    RIGOBOT_HOST: process.env.RIGOBOT_HOST,
   },
 })));
