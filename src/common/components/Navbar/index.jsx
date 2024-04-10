@@ -30,7 +30,7 @@ import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
-import UpgradeExperience from '../UpgradeExperience';
+// import UpgradeExperience from '../UpgradeExperience';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import bc from '../../services/breathecode';
 // import UpgradeExperience from '../UpgradeExperience';
@@ -301,9 +301,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           <Box display={{ base: 'none', lg: 'inherit' }} height="35px" style={{ margin: 0 }}>
             <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
           </Box>
-          {isAuthenticated && !hasPaidSubscription && (
+          {/* {isAuthenticated && !hasPaidSubscription && (
             <UpgradeExperience display={{ base: 'none', sm: 'flex' }} />
-          )}
+          )} */}
           {hasPaidSubscription && (
             <Box display="flex" alignItems="center" height="100%" zIndex={10}>
               <Icon icon="crown" width="20px" height="26px" color="" />
