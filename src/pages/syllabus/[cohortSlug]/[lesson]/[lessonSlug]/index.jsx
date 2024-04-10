@@ -563,7 +563,7 @@ function Content() {
     },
   ];
 
-  const url = currentData?.url || currentData?.readme_url;
+  const url = currentData?.readme_url || currentData?.url;
   const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
@@ -717,7 +717,7 @@ function Content() {
           )}
 
           <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
-            {currentData?.url && !isQuiz && (
+            {repoUrl && !isQuiz && (
               <Link
                 display="flex"
                 target="_blank"
@@ -735,7 +735,7 @@ function Content() {
               </Link>
             )}
 
-            {ipynbHtmlUrl && currentData?.url && (
+            {ipynbHtmlUrl && currentData?.readme_url && (
               <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
             )}
 
