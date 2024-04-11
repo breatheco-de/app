@@ -104,7 +104,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
           return (
             <>
               <Box display="flex" alignItems="center" gap="10px">
-                <Image src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background="green.400" />
+                <Image src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background={course?.color || 'green.400'} />
                 <Heading size="18px">
                   {course?.course_translation?.title}
                 </Heading>
@@ -165,7 +165,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                   <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
 
-                    <Image display={{ base: 'none', md: 'inherit' }} src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background="green.400" />
+                    <Image display={{ base: 'none', md: 'inherit' }} src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background={course?.color || 'green.400'} />
                     <Heading size="18px">
                       {course?.course_translation?.title}
                     </Heading>
