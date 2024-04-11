@@ -4,7 +4,7 @@ import { getAsset, getEvents, getLandingTechnologies } from '../src/utils/reques
 import { categoriesFor, excludeCagetoriesFor } from '../src/utils/variables';
 
 async function prepareAssetData() {
-  console.log('fetching recyclable data for sitemap and redirects...');
+  console.log('fetching data for sitemap and redirects...');
 
   console.time('Time fetching data');
 
