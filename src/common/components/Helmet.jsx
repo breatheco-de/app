@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 function Helmet({
   title, description, translations, url, image, card, type, twitterUser,
   unlisted, pathConnector, locales, publishedTime, modifiedTime,
-  locale, slug, disableStaticCanonical, eventStartAt, disableHreflangs,
+  locale, slug, disableStaticCanonical, eventStartAt, disableHreflangs, disableDynamicGeneration,
 }) {
   const ogTitle = (typeof title === 'string' && title?.length > 0) ? title : '4Geeks';
   const translationsArray = translations;
@@ -55,7 +55,7 @@ function Helmet({
   };
   const canonicalLink = getCanonicalLink();
 
-  return (
+  return !disableDynamicGeneration && (
     <Head>
       <title>{ogTitle}</title>
       <meta name="description" content={descriptionCleaned} />
@@ -166,6 +166,7 @@ Helmet.propTypes = {
   disableStaticCanonical: PropTypes.bool,
   eventStartAt: PropTypes.string,
   disableHreflangs: PropTypes.bool,
+  disableDynamicGeneration: PropTypes.bool,
 };
 
 Helmet.defaultProps = {
@@ -187,6 +188,7 @@ Helmet.defaultProps = {
   disableStaticCanonical: false,
   eventStartAt: '',
   disableHreflangs: false,
+  disableDynamicGeneration: false,
 };
 
 export default Helmet;
