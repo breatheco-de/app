@@ -1,5 +1,4 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React, { useState, forwardRef } from 'react';
 import {
   Box,
   useColorModeValue,
@@ -9,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import React, { useState } from 'react';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -23,13 +23,13 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-const TabletWithForm = forwardRef(({
+function TabletWithForm({
   asset,
   commonTextColor,
   technologies,
-  showSimpleTable,
   href,
-}, ref) => {
+  showSimpleTable,
+}, ref) {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -401,7 +401,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
       </Box>
     </>
   );
-});
+}
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,
