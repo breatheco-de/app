@@ -60,14 +60,6 @@ const breathecode = {
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
-        // getInvite: (token) => axios.get(`${url}/member/invite/${token}`),
-        getInvite: (token) => axios({
-          method: 'get',
-          url: `${url}/member/invite/${token}`,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
       getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
