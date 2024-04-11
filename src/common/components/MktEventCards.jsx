@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
@@ -12,10 +13,13 @@ import modifyEnv from '../../../modifyEnv';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
+  const router = useRouter();
+  const lang = router.locale;
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const hoursLimited = hoursToLimit * 60;
   const endpointDefault = endpoint || '/v1/events/all';
+  const maxEvents = 10;
 
   useEffect(() => {
     if (externalEvents) {
@@ -25,9 +29,15 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
         .then((res) => {
           const data = res?.data;
           if (data && data.length > 0) {
+            const englishLang = lang === 'en' && 'us';
             const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
             const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
-            setEvents(existentLiveClasses);
+            const isMoreThanAnyEvents = existentLiveClasses?.length > maxEvents;
+            const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
+
+            // Filter by lang if there are more than ${maxEvents} events
+            const eventsFiltered = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
+            setEvents(eventsFiltered);
           }
         });
     }
