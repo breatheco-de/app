@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Text,
+  Box,
   Image,
   Flex,
   Button,
@@ -9,47 +9,48 @@ import {
   Input,
   Checkbox,
   useToast,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import validationSchema from '../common/components/Forms/validationSchemas';
 import NextChakraLink from '../common/components/NextChakraLink';
-import bc from '../common/services/breathecode';
+import LoaderScreen from '../common/components/LoaderScreen';
+import Text from '../common/components/Text';
+import Heading from '../common/components/Heading';
+import modifyEnv from '../../modifyEnv';
 
 function AcceptInvite() {
-  const { t } = useTranslation('login');
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { t, lang } = useTranslation('accept-invite');
   const [isChecked, setIsChecked] = useState(false);
+  const [invite, setInvite] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(false);
   const toast = useToast();
   const router = useRouter();
   const { query } = router;
-  const { token } = query;
+  const { inviteToken } = query;
 
   const getInvite = async () => {
     try {
-      const resp = await bc.auth().invites().getInvite(token);
-      const invitesData = resp?.data;
+      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      console.log(invitesData);
+      const data = await resp.json();
+      setInvite(data);
 
-      // const inviteMTW = invitesData.find(
-      //   (invite) => invite.academy.slug === 'miami-tech-works',
-      // );
-
-      // const result = await bc.auth().invites().accept(inviteMTW.academy.id, values);
-      // console.log(result);
-
-      // console.log(resp);
-      // toast({
-      //   title: 'Successfully accepted!',
-      //   status: 'success',
-      //   duration: 9000,
-      //   isClosable: true,
-      // });
-      // router.push('/login');
+      setIsLoading(false);
     } catch (e) {
-      console.log(e);
+      console.log(e.message);
+      setIsLoading(false);
+      setError(true);
       toast({
-        title: e,
+        title: e?.message || t('error'),
         status: 'error',
         duration: 9000,
         isClosable: true,
@@ -61,13 +62,80 @@ function AcceptInvite() {
     getInvite();
   }, []);
 
-  const putInvite = (values) => {
+  const putInvite = async (values, actions) => {
     try {
-      console.log(values);
+      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          ...values,
+          repeat_password: values.passwordConfirmation,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept-Language': lang,
+        },
+      });
+
+      const result = await resp.json();
+
+      if (resp.status >= 400) {
+        toast({
+          title: result.detail,
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else if (resp.status >= 200 && resp.status <= 299) {
+        toast({
+          title: 'Successfully accepted!',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        router.push('/login');
+      }
+      actions.setSubmitting(false);
     } catch (e) {
       console.log(e);
+      toast({
+        title: e?.message || t('error'),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
+      actions.setSubmitting(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        mt="2rem"
+        mb="5rem"
+        position="relative"
+      >
+        <LoaderScreen width="80px" height="80px" />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        mt="2rem"
+        mb="5rem"
+        position="relative"
+      >
+        <Heading>
+          {t('error')}
+        </Heading>
+      </Box>
+    );
+  }
 
   return (
     <Flex
@@ -80,14 +148,11 @@ function AcceptInvite() {
       <Image
         width={180}
         objectFit="cover"
-        src="/static/images/miamitech-logo.png"
-        alt="Miami Tech"
+        src={invite?.academy.logo_url}
+        alt={invite?.academy.name}
       />
-      <Text margin="30px" textAlign="center">
-        {t(
-          // `You have been invited to ${invite.academy.name}506Tek Academy, please fill out the following form to accept the invite`
-          'You have been invited to 506Tek Academy, please fill out the following form to accept the invite',
-        )}
+      <Text size="l" margin="30px" textAlign="center">
+        {t('heading', { name: invite?.academy.name })}
       </Text>
 
       <Formik
@@ -100,6 +165,7 @@ function AcceptInvite() {
           passwordConfirmation: '',
         }}
         onSubmit={putInvite}
+        validationSchema={validationSchema.invite}
       >
         {({ isSubmitting }) => (
           <Form>
@@ -108,7 +174,7 @@ function AcceptInvite() {
                 {({ field, form }) => (
                   <FormControl
                     m="0 20px 0 0"
-                    //isRequired
+                    // isRequired
                     isInvalid={
                       form.errors.first_name && form.touched.first_name
                     }
@@ -122,13 +188,14 @@ function AcceptInvite() {
                       {...field}
                       placeholder={t('common:first-name')}
                     />
+                    <FormErrorMessage>{form.errors.first_name}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
               <Field name="last_name">
                 {({ field, form }) => (
                   <FormControl
-                    //isRequired
+                    // isRequired
                     isInvalid={form.errors.last_name && form.touched.last_name}
                   >
                     <FormLabel color="gray.500" fontSize="14px">
@@ -140,6 +207,7 @@ function AcceptInvite() {
                       {...field}
                       placeholder={t('common:last-name')}
                     />
+                    <FormErrorMessage>{form.errors.last_name}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -160,6 +228,7 @@ function AcceptInvite() {
                       {...field}
                       placeholder="+123 4567 8900"
                     />
+                    <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
                     <Text fontSize="12px" color="blue.default">
                       {t('signup:phone-info')}
                     </Text>
@@ -171,7 +240,7 @@ function AcceptInvite() {
               <Field name="email">
                 {({ field, form }) => (
                   <FormControl
-                    //isRequired
+                    // isRequired
                     isInvalid={form.errors.email && form.touched.email}
                   >
                     <FormLabel color="gray.500" fontSize="14px" htmlFor="email">
@@ -183,6 +252,7 @@ function AcceptInvite() {
                       {...field}
                       placeholder="jhon.doe@gmail.com"
                     />
+                    <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -191,7 +261,7 @@ function AcceptInvite() {
               <Field name="password">
                 {({ field, form }) => (
                   <FormControl
-                    //isRequired
+                    // isRequired
                     isInvalid={form.errors.password && form.touched.password}
                   >
                     <FormLabel
@@ -207,6 +277,7 @@ function AcceptInvite() {
                       {...field}
                       placeholder="***********"
                     />
+                    <FormErrorMessage>{form.errors.password}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -215,7 +286,7 @@ function AcceptInvite() {
               <Field name="passwordConfirmation">
                 {({ field, form }) => (
                   <FormControl
-                    //isRequired
+                    // isRequired
                     isInvalid={
                       form.errors.passwordConfirmation
                       && form.touched.passwordConfirmation
@@ -234,6 +305,7 @@ function AcceptInvite() {
                       {...field}
                       placeholder="***********"
                     />
+                    <FormErrorMessage>{form.errors.passwordConfirmation}</FormErrorMessage>
                   </FormControl>
                 )}
               </Field>
@@ -244,8 +316,6 @@ function AcceptInvite() {
                 me="5px"
                 size="md"
                 spacing="8px"
-                //{...field}
-                // colorScheme="green"
                 isChecked={isChecked}
                 onChange={() => setIsChecked(!isChecked)}
               />
@@ -268,7 +338,7 @@ function AcceptInvite() {
               width="100%"
               isLoading={isSubmitting}
               type="submit"
-              // isDisabled={isChecked === false}
+              isDisabled={!isChecked}
             >
               {t('Accept & Start Learning')}
             </Button>
