@@ -59,7 +59,7 @@ const assetTypeDict = {
 export const getStaticPaths = async ({ locales }) => {
   const { data } = await bc.public().events();
 
-  const paths = data.filter((ev) => ev?.slug)
+  const paths = data.filter((ev) => ev?.slug && ['ACTIVE', 'FINISHED'].includes(data.status))
     .flatMap((res) => locales.map((locale) => ({
       params: {
         event_slug: res?.slug,
@@ -80,7 +80,7 @@ export const getStaticProps = async ({ params, locale }) => {
   }));
   const data = resp?.data;
 
-  if (resp.statusText === 'not-found' || !data?.slug) {
+  if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
     return {
       notFound: true,
     };
@@ -338,6 +338,7 @@ function Page({ eventData, asset }) {
     ),
   ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
+  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
@@ -817,16 +818,18 @@ function Page({ eventData, asset }) {
                       </Box>
                     ) : (
                       <Box display="flex" flexDirection="column" alignItems="center">
-                        <Text marginBottom="10px" size="14px" fontWeight={700} lineHeight="18px">
-                          {t('no-consumables.description')}
-                        </Text>
+                        {hasFetchedAndNoConsumablesToUse && (
+                          <Text marginBottom="10px" size="14px" fontWeight={700} lineHeight="18px">
+                            {t('no-consumables.description')}
+                          </Text>
+                        )}
                         <Button
                           display="flex"
                           variant="default"
                           fontSize="14px"
                           fontWeight={700}
                           onClick={handleGetMoreEventConsumables}
-                          isLoading={isFetchingDataForModal}
+                          isLoading={!hasFetchedAndNoConsumablesToUse || isFetchingDataForModal}
                           alignItems="center"
                           gridGap="10px"
                           width="100%"
@@ -836,6 +839,14 @@ function Page({ eventData, asset }) {
                           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
                         </Button>
                       </Box>
+                      // <>
+                      //   {hasFetchedAndNoConsumablesToUse ? (
+                      //   ) : (
+                      //     <Box position="relative" width="180px" height="130px" margin="0 auto">
+                      //       <LoaderScreen width="100%" height="100%" objectFit="cover" />
+                      //     </Box>
+                      //   )}
+                      // </>
                     )}
                   </>
                 ) : (
@@ -943,7 +954,7 @@ function Page({ eventData, asset }) {
                     </Button>
                   ) : (
                     <>
-                      {(noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0) ? (
+                      {hasFetchedAndNoConsumablesToUse ? (
                         <Box display="flex" flexDirection="column" alignItems="center">
                           <Avatar
                             width="85px"

@@ -298,6 +298,7 @@ export default function HowToSlug({ data, markdown }) {
             )}
             <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
             <MktRecommendedCourses
+              mt="3rem"
               display={{ base: 'none', md: 'flex' }}
               marginBottom="15px"
               technologies={data?.technologies}

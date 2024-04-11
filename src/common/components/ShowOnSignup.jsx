@@ -19,7 +19,8 @@ import { error } from '../../utils/logging';
 function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
-  conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles, ...rest
+  conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
+  onLastAttempt, maxAttemptsToRefetch, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -34,8 +35,9 @@ function ShowOnSignUp({
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
-  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [attempts, setAttempts] = useState(0);
   const { t } = useTranslation('signup');
+  const [isReadyToRefetch, setIsReadyToRefetch] = useState(false);
   const router = useRouter();
   const toast = useToast();
   const [formProps, setFormProps] = useState({
@@ -44,7 +46,7 @@ function ShowOnSignUp({
     email: '',
     // phone: '',
   });
-
+  const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
@@ -55,20 +57,23 @@ function ShowOnSignUp({
   }, [gmapStatus]);
 
   useEffect(() => {
-    const isLogged = alreadyLogged || isAuthenticated;
     let intervalId;
-    if (alreadyLogged && !existsConsumables && timeElapsed < 10) {
-      intervalId = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
-        refetchAfterSuccess();
-      }, 1000);
-    }
-    if (isLogged && ((!existsConsumables && typeof intervalId === 'undefined') || timeElapsed >= 10)) {
+    if (isLogged && !existsConsumables && !isReadyToRefetch) {
       setNoConsumablesFound(true);
+    }
+    if (isLogged && !existsConsumables && attempts === maxAttemptsToRefetch) {
+      setNoConsumablesFound(true);
+      onLastAttempt();
+    }
+    if (isLogged && !existsConsumables && attempts < maxAttemptsToRefetch && isReadyToRefetch) {
+      intervalId = setInterval(() => {
+        setAttempts((prevTime) => prevTime + 1);
+        refetchAfterSuccess();
+      }, 2000);
     }
 
     return () => clearInterval(intervalId);
-  }, [isAuthenticated, timeElapsed, alreadyLogged, existsConsumables]);
+  }, [isLogged, attempts, isReadyToRefetch, existsConsumables]);
 
   const isAuth = isAuthenticated && user?.id;
 
@@ -139,13 +144,16 @@ function ShowOnSignUp({
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
-                  .finally(() => {
-                    setAlreadyLogged(true);
-                    refetchAfterSuccess();
-                    setVerifyEmailProps({
-                      data,
-                      state: true,
-                    });
+                  .then((respData) => {
+                    if (respData.status === 'FULFILLED') {
+                      setIsReadyToRefetch(true);
+                      setAlreadyLogged(true);
+                      refetchAfterSuccess();
+                      setVerifyEmailProps({
+                        data,
+                        state: true,
+                      });
+                    }
                   });
               }}
               formContainerStyle={formContainerStyle}
@@ -258,6 +266,8 @@ ShowOnSignUp.propTypes = {
   invertHandlerPosition: PropTypes.bool,
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  maxAttemptsToRefetch: PropTypes.number,
+  onLastAttempt: PropTypes.func,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -282,6 +292,8 @@ ShowOnSignUp.defaultProps = {
   invertHandlerPosition: false,
   formContainerStyle: {},
   buttonStyles: {},
+  maxAttemptsToRefetch: 10,
+  onLastAttempt: () => {},
 };
 
 export default ShowOnSignUp;

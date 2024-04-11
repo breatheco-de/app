@@ -5,10 +5,11 @@ import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo-host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
-const rigoHostV1 = 'https://rigobot.herokuapp.com/v1';
+const rigoHostV1 = `${RIGOBOT_HOST}/v1`;
 
 const breathecode = {
   get: (url, config) => fetch(url, {
@@ -310,15 +311,16 @@ const breathecode = {
     };
   },
 
-  public: (query = {}) => {
+  public: (query = {}, isQueryConnector = false) => {
     const url = `${host}/admissions/public`;
 
-    const qs = parseQuerys(query);
+    const qs = parseQuerys(query, isQueryConnector);
     return {
       mentors: () => axios.get(`${url}/cohort/user${qs}`),
       events: () => axios.get(`${host}/events/all${qs}`),
       singleEvent: (slug) => axios.get(`${host}/events/event/${slug}${qs}`),
       cohorts: () => axios.get(`${host}/admissions/cohort/all${qs}`),
+      syllabusMembers: (courseSyllabus) => axios.get(`${url}/cohort/user?syllabus=${courseSyllabus}${qs}`),
     };
   },
   payment: (query = {}) => {

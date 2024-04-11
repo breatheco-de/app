@@ -6,18 +6,17 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import AcordionList from './AcordionList';
 
-function CourseContent({ data, assetCount }) {
+function CourseContent({ data }) {
   const { hexColor } = useStyle();
   const { t } = useTranslation('course');
-  const contentCountString = `${assetCount.lesson} ${t('readings')}, ${assetCount.exercise} ${t('exercises')}, ${assetCount.project} ${t('projects')}`;
 
   return (
     <Flex gridGap="12px" flexDirection="column">
       <Heading as="h2" size="20px">
         {t('course-content-text')}
       </Heading>
-      <Text size="14px" color={hexColor.fontColor2}>
-        {contentCountString}
+      <Text size="16px" color={hexColor.fontColor2}>
+        {t('course-content-description')}
       </Text>
 
       <AcordionList defaultIndex={0} list={data} />
@@ -26,7 +25,6 @@ function CourseContent({ data, assetCount }) {
 }
 CourseContent.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.object])),
-  assetCount: PropTypes.objectOf(PropTypes.number).isRequired,
 };
 CourseContent.defaultProps = {
   data: {},
