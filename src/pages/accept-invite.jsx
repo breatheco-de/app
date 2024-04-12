@@ -157,9 +157,9 @@ function AcceptInvite() {
 
       <Formik
         initialValues={{
-          first_name: '',
-          last_name: '',
-          email: '',
+          first_name: invite?.first_name,
+          last_name: invite?.last_name,
+          email: invite?.email,
           phone: '',
           password: '',
           passwordConfirmation: '',
@@ -247,6 +247,7 @@ function AcceptInvite() {
                       {t('common:email')}
                     </FormLabel>
                     <Input
+                      readOnly
                       borderRadius="2px"
                       type="email"
                       {...field}
@@ -335,6 +336,7 @@ function AcceptInvite() {
 
             <Button
               mt="20px"
+              variant="default"
               width="100%"
               isLoading={isSubmitting}
               type="submit"
