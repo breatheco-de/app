@@ -146,7 +146,7 @@ function StudentReport() {
 
   const { hexColor } = useStyle();
   const linkColor = useColorModeValue('blue.default', 'blue.300');
-  const borderColor = useColorModeValue('#E2E8F0', '#718096');
+  const borderColor = useColorModeValue('gray.200', 'gray.500');
   const activityLabelPrexif = 'activities-section.activities.';
   const lang = {
     es: '/es/',
