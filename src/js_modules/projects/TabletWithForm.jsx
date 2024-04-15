@@ -38,6 +38,7 @@ const TabletWithForm = React.forwardRef(({
   const { hexColor, lightColor } = useStyle();
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
+  const assetUrl = asset?.readme_url || asset?.url;
 
   const getTitleMessage = () => {
     if (user) return '';
@@ -284,6 +285,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 width="100%"
                 fontSize="14px"
                 padding="0"
+                isDisabled={!assetUrl}
                 whiteSpace="normal"
                 variant="otuline"
                 border="1px solid"
@@ -293,7 +295,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 onClick={() => {
                   if (typeof window !== 'undefined') {
                     ReportOpenInProvisioningVendor('gitpod');
-                    window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
+                    window.open(`https://gitpod.io#${assetUrl}`, '_blank').focus();
                   }
                 }}
               >
@@ -308,6 +310,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 width="100%"
                 fontSize="14px"
                 padding="0"
+                isDisabled={!assetUrl}
                 whiteSpace="normal"
                 variant="otuline"
                 border="1px solid"
@@ -315,9 +318,10 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 fontWeight="700"
                 color="blue.default"
                 onClick={() => {
+                  const url = assetUrl ? assetUrl.replace('https://github.com/', '') : '';
                   if (typeof window !== 'undefined') {
                     ReportOpenInProvisioningVendor('codespaces');
-                    window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
+                    window.open(`https://github.com/codespaces/new/?repo=${url}`, '_blank').focus();
                   }
                 }}
               >
