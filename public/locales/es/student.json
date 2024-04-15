@@ -4,6 +4,7 @@
   "attendance": "Asistencia",
   "workshops": "Workshops",
   "deliverables": "Entregables",
+  "no-workshops-attendance": "El estudiante no ha asistido a ningún taller todavía.",
   "deliverables-section": {
     "lessons": "Lecciones completadas",
     "projects": "Proyectos completados",

@@ -23,13 +23,13 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-function TabletWithForm({
+const TabletWithForm = React.forwardRef(({
   asset,
   commonTextColor,
   technologies,
   href,
   showSimpleTable,
-}, ref) {
+}, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -107,11 +107,11 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
-            liveDemoAvailable={asset.intro_video_url}
+            liveDemoAvailable={asset?.intro_video_url}
             technologies={technologies}
           />
         </Box>
@@ -390,7 +390,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
@@ -401,7 +401,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
       </Box>
     </>
   );
-}
+});
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,

@@ -7,8 +7,8 @@ import useGrabToScroll from '../hooks/useGrabToScroll';
 import { AnimatedContainer } from './Animated';
 
 // we need to fix a bug that causes the tooltip re-render multiple times when the mouse is over it and ref not being updated
-function DottedTimeline({ label, dots, helpText, width, onClickDots }) {
-  const { borderColor, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
+function DottedTimeline({ label, dots, emptyDotsMessage, helpText, width, onClickDots }) {
+  const { borderColor, fontColor3, fontColor2, tooltipBackground, backgroundColor2 } = useStyle();
   const scrollContainerRef = useRef(null);
   const { grabToScroll, isScrollable } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
   const highLightColor = 'yellow.default';
@@ -25,9 +25,9 @@ function DottedTimeline({ label, dots, helpText, width, onClickDots }) {
           </Text>
         )}
       </Flex>
-      <AnimatedContainer isScrollable={isScrollable} position="relative" overflow="hidden">
+      <AnimatedContainer isScrollable={dots?.length > 0 && isScrollable} position="relative" overflow="hidden">
         <Flex ref={scrollContainerRef} alignItems="center" className="hideOverflowX__" height="25px" onMouseDown={grabToScroll} position="relative" gridGap="9px" overflowX="auto">
-          {dots?.length > 0 && dots.map((dot, i) => (
+          {dots?.length > 0 && !emptyDotsMessage && dots.map((dot, i) => (
             <Box padding="5px 0" borderBottom="2px solid" borderColor={dot.highlight ? highLightColor : 'transparent'}>
               <Tooltip key={dot.label} hasArrow label={dot.label} placement="top" color="gray.250" fontWeight={700} fontSize="13px" padding="0 6px" bg={tooltipBackground}>
                 <Box
@@ -45,6 +45,11 @@ function DottedTimeline({ label, dots, helpText, width, onClickDots }) {
               </Tooltip>
             </Box>
           ))}
+          {emptyDotsMessage && dots?.length === 0 && (
+            <Text size="md" color={fontColor3}>
+              {emptyDotsMessage}
+            </Text>
+          )}
         </Flex>
       </AnimatedContainer>
     </Flex>
@@ -58,6 +63,7 @@ DottedTimeline.propTypes = {
   helpText: PropTypes.string,
   width: PropTypes.string,
   onClickDots: PropTypes.func,
+  emptyDotsMessage: PropTypes.string,
 };
 
 DottedTimeline.defaultProps = {
@@ -67,6 +73,7 @@ DottedTimeline.defaultProps = {
   helpText: '',
   width: '100%',
   onClickDots: null,
+  emptyDotsMessage: '',
 };
 
 export default DottedTimeline;
