@@ -4,9 +4,9 @@
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
-  "join-cohort": "Unirse a la cohorte",
-  "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
-  "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
+  "join-cohort": "Unirse ahora",
+  "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp hoy",
+  "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "title-connectors": {
     "start": "Comienza una carrera en",
