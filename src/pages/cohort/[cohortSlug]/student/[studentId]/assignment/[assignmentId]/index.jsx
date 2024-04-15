@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import {
   Container,
   Box,
+  Flex,
   Divider,
   useColorModeValue,
 } from '@chakra-ui/react';
@@ -14,6 +15,7 @@ import useStyle from '../../../../../../../common/hooks/useStyle';
 import bc from '../../../../../../../common/services/breathecode';
 import ReactSelect from '../../../../../../../common/components/ReactSelect';
 import KPI from '../../../../../../../common/components/KPI';
+import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../../../common/components/Skeleton';
 import Link from '../../../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../../../common/components/Heading';
 import Text from '../../../../../../../common/components/Text';
@@ -28,6 +30,7 @@ function AssignmentReport() {
   const [cohortSession] = usePersistent('cohortSession', {});
   const [cohortUser, setCohortUser] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [isFetching, setIsFetching] = useState(true);
   const [tasks, setTasks] = useState([]);
   const { hexColor } = useStyle();
   const linkColor = useColorModeValue('blue.default', 'blue.300');
@@ -60,7 +63,9 @@ function AssignmentReport() {
       const task = sortedTasks.find((elem) => elem.id === Number(assignmentId));
 
       setSelectedTask(task);
+      setIsFetching(false);
     } catch (e) {
+      setIsFetching(false);
       console.log(e);
     }
   };
@@ -143,8 +148,40 @@ function AssignmentReport() {
             />
           </Box>
         )}
+        <Flex marginTop="20px" justify="space-between" gap="20px" wrap={{ base: 'wrap', md: 'nowrap' }}>
+          {isFetching ? [...Array(3).keys()].map((e, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <SimpleSkeleton key={`skeleton-${i}`} borderRadius="10px" height="108px" width="100%" />
+          )) : (
+            <>
+              {selectedTask?.assignment_telemetry ? (
+                <>
+                  {/* <KPI
+                    label={elem.label}
+                    icon={elem.icon}
+                    variationColor={elem.variationColor}
+                    value={elem.value}
+                    style={{ width: '100%', border: `2px solid ${borderColor}` }}
+                    {...elem}
+                  /> */}
+                </>
+              ) : (
+                <Heading>
+                  {t('no-telemetry')}
+                </Heading>
+              )}
+            </>
+          )}
+        </Flex>
       </Box>
-      <Divider borderBottom="1px solid" color={borderColor} />
+      <Divider borderBottom="1px solid" color={borderColor} mb="20px" />
+      <Box
+        maxWidth={{ base: '90%', md: '90%', lg: '1112px' }}
+        margin="auto"
+        padding="0 10px"
+      >
+        <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+      </Box>
     </Container>
   );
 }

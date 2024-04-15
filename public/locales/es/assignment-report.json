@@ -1,5 +1,10 @@
 {
   "back-to": "Volver al Dashboard",
   "select-task": "Selecciona una asignación",
-  "relevant-activities": "Actividades relevantes"
+  "relevant-activities": "Actividades relevantes",
+  "completion-percentage": "Porcentage de completación",
+  "total-steps-completed": "Total de pasos completados",
+  "total-time": "Tiempo total trabajado en esta tarea",
+  "steps-status": "Estatus de los pasos",
+  "no-telemetry": "Este ejercicio no tiene telemetría"
 }

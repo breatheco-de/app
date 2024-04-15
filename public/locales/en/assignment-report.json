@@ -1,5 +1,10 @@
 {
   "back-to": "Back to Dashboard",
   "select-task": "Select a Task",
-  "relevant-activities": "Relevant Activities"
+  "relevant-activities": "Relevant activities",
+  "completion-percentage": "Completion percentage",
+  "total-steps-completed": "Total steps completed",
+  "total-time": "Total time worked on this package",
+  "steps-status": "Steps status",
+  "no-telemetry": "This task does not have telemetry"
 }
