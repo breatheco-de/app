@@ -180,7 +180,13 @@ function AssignmentReport() {
         margin="auto"
         padding="0 10px"
       >
-        <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+        {isFetching ? (
+          <DottedTimelineSkeleton />
+        ) : (
+          <>
+            <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+          </>
+        )}
       </Box>
     </Container>
   );
