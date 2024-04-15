@@ -4,7 +4,6 @@ import { Box, Button, Flex, Image, Link, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
-import getT from 'next-translate/getT';
 import Head from 'next/head';
 import { parseQuerys } from '../../utils/url';
 import { BREATHECODE_HOST, ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
@@ -63,114 +62,17 @@ export async function getStaticPaths({ locales }) {
 }
 export async function getStaticProps({ locale, locales, params }) {
   const { course_slug: courseSlug } = params;
-  const t = await getT(locale, 'course');
 
   const endpoint = `/v1/marketing/course/${courseSlug}?lang=${locale}`;
   const resp = await axios.get(`${BREATHECODE_HOST}${endpoint}`);
   const data = resp?.data;
-  const cohortId = data?.cohort?.id;
-  const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
-  const translationsObj = getTranslations(t);
 
-  const students = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
-    .then((respMembers) => respMembers.data)
-    .catch((err) => {
-      error('Error fetching cohort users:', err);
-      return [];
-    });
-  const uniqueStudents = students?.length > 0 ? students?.filter((student, index, self) => self.findIndex((l) => (
-    l.user.id === student.user.id
-  )) === index) : [];
-
-  const instructors = await bc.cohort({
-    roles: 'TEACHER,ASSISTANT',
-    cohort_id: cohortId,
-  }).getPublicMembers()
-    .then((respMembers) => respMembers.data);
-  const uniqueInstructors = instructors?.length > 0 ? instructors?.filter((instructor, index, self) => self.findIndex((l) => (
-    l.user.id === instructor.user.id
-  )) === index) : [];
-
-  const getModulesInfo = async () => {
-    try {
-      const assetTypeCount = {
-        lesson: 0,
-        project: 0,
-        quiz: 0,
-        exercise: 0,
-      };
-      const projects = [];
-      const exercises = [];
-      if (cohortSyllabus?.syllabus?.modules?.length > 0) {
-        cohortSyllabus.syllabus?.modules?.forEach((module) => {
-          module?.content.forEach((task) => {
-            if (task?.task_type) {
-              const taskType = task?.task_type?.toLowerCase();
-              assetTypeCount[taskType] += 1;
-            }
-            if (task?.task_type === 'PROJECT') {
-              projects.push(task);
-            }
-            if (task?.task_type === 'EXERCISE') {
-              exercises.push(task);
-            }
-          });
-        });
-      }
-      const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
-      const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
-      const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
-      const lang = locale === 'en' ? 'us' : locale;
-      const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[lang]?.slug || item?.slug}`)
-        .then((assignmentResp) => assignmentResp.json())
-        .then((respData) => respData)
-        .catch(() => []))) : [];
-
-      return {
-        count: assetTypeCount || {},
-        assignmentList: assignmentsFetch || [],
-      };
-    } catch (errorMsg) {
-      error('Error fetching module info:', errorMsg);
-      return {
-        count: {},
-        assignmentList: [],
-      };
-    }
-  };
-  const modulesInfo = await getModulesInfo();
-  const planData = await generatePlan(data.plan_slug, translationsObj).then((finalData) => finalData);
-
-  const cohortData = {
-    cohortSyllabus,
-    students: uniqueStudents,
-    instructors: uniqueInstructors,
-    modulesInfo,
-  };
   if (resp?.status >= 400) {
     console.error(`ERROR with /bootcamp/course/${courseSlug}: something went wrong fetching "${endpoint}"`);
     return {
       notFound: true,
     };
   }
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Course',
-    name: data.course_translation.title,
-    description: data.course_translation.description,
-    url: `${ORIGIN_HOST}${locale === 'en' ? '' : locale}/bootcamp/${courseSlug}`,
-    image: `${ORIGIN_HOST}/static/images/4geeks.png`,
-    provider: {
-      '@type': 'Organization',
-      name: '4Geeks Academy',
-      sameAs: 'https://www.4geeksacademy.com/',
-    },
-    mainEntityOfPage: {
-      '@type': 'WebPage',
-      '@id': `${ORIGIN_HOST}${locale === 'en' ? '' : locale}/bootcamp/${courseSlug}`,
-    },
-  };
-  const cleanedStructuredData = cleanObject(structuredData);
 
   return {
     props: {
@@ -186,17 +88,12 @@ export async function getStaticProps({ locale, locales, params }) {
         pathConnector: '/bootcamp',
         card: 'default',
       },
-      data: {
-        ...data,
-        planData,
-        structuredData: cleanedStructuredData,
-      },
-      cohortData,
+      data,
     },
   };
 }
 
-function Page({ data, cohortData }) {
+function Page({ data }) {
   const { isAuthenticated, user, logout, choose } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const [, setCohortSession] = usePersistent('cohortSession', {});
@@ -206,24 +103,45 @@ function Page({ data, cohortData }) {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [financeSelected, setFinanceSelected] = useState({});
   const [relatedSubscription, setRelatedSubscription] = useState(null);
+  const [cohortData, setCohortData] = useState({});
+  const [planData, setPlanData] = useState({});
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const faqList = t('faq', {}, { returnObjects: true }) || [];
   const features = t('features', {}, { returnObjects: true }) || {};
+  const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
-
-  const students = cohortData?.students || [];
-  const instructors = cohortData?.instructors || [];
-  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const cohortId = data?.cohort?.id;
-  const plans = data?.planData?.plans || [];
+
+  const structuredData = data?.course_translation ? {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: data.course_translation.title,
+    description: data.course_translation.description,
+    url: `${ORIGIN_HOST}${lang === 'en' ? '' : lang}/bootcamp/${router.query.courseSlug}`,
+    image: `${ORIGIN_HOST}/static/images/4geeks.png`,
+    provider: {
+      '@type': 'Organization',
+      name: '4Geeks Academy',
+      sameAs: 'https://www.4geeksacademy.com/',
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${ORIGIN_HOST}${lang === 'en' ? '' : lang}/bootcamp/${router.query.courseSlug}`,
+    },
+  } : {};
+  const cleanedStructuredData = cleanObject(structuredData);
+  const students = cohortData.students || [];
+  const instructors = cohortData.instructors || [];
+  const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
+  const plans = planData?.plans || [];
   const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
   const firstPaymentPlan = payableList?.[0];
   const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: firstPaymentPlan?.plan_slug,
     plan_id: firstPaymentPlan?.plan_id,
-    has_available_cohorts: data?.planData?.has_available_cohorts,
+    has_available_cohorts: planData?.has_available_cohorts,
     price: firstPaymentPlan?.price,
     period: firstPaymentPlan?.period,
     cohort: cohortId,
@@ -340,6 +258,89 @@ function Page({ data, cohortData }) {
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
 
+  const getInitialData = async () => {
+    const cohortSyllabus = await generateCohortSyllabusModules(cohortId);
+    const getModulesInfo = async () => {
+      try {
+        const assetTypeCount = {
+          lesson: 0,
+          project: 0,
+          quiz: 0,
+          exercise: 0,
+        };
+        const projects = [];
+        const exercises = [];
+        if (cohortSyllabus?.syllabus?.modules?.length > 0) {
+          cohortSyllabus.syllabus?.modules?.forEach((module) => {
+            module?.content.forEach((task) => {
+              if (task?.task_type) {
+                const taskType = task?.task_type?.toLowerCase();
+                assetTypeCount[taskType] += 1;
+              }
+              if (task?.task_type === 'PROJECT') {
+                projects.push(task);
+              }
+              if (task?.task_type === 'EXERCISE') {
+                exercises.push(task);
+              }
+            });
+          });
+        }
+        const lastProjects = projects?.length > 0 ? projects.slice(-3) : [];
+        const lastExercises = exercises?.length > 0 ? exercises.slice(-3) : [];
+        const relatedAssetsToShow = [...lastProjects, ...lastExercises].slice(0, 3);
+        const language = lang === 'en' ? 'us' : lang;
+        const assignmentsFetch = relatedAssetsToShow?.length > 0 ? await Promise.all(relatedAssetsToShow.map((item) => bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${item?.translations?.[language]?.slug || item?.slug}`)
+          .then((assignmentResp) => assignmentResp.json())
+          .then((respData) => respData)
+          .catch(() => []))) : [];
+
+        return {
+          count: assetTypeCount || {},
+          assignmentList: assignmentsFetch || [],
+        };
+      } catch (errorMsg) {
+        error('Error fetching module info:', errorMsg);
+        return {
+          count: {},
+          assignmentList: [],
+        };
+      }
+    };
+    const formatedPlanData = await generatePlan(data.plan_slug, translationsObj).then((finalData) => finalData);
+
+    const modulesInfo = await getModulesInfo();
+
+    const studentList = await bc.public({ roles: 'STUDENT' }, true).syllabusMembers(cohortSyllabus.syllabus?.slug)
+      .then((respMembers) => respMembers.data)
+      .catch((err) => {
+        error('Error fetching cohort users:', err);
+        return [];
+      });
+    const uniqueStudents = studentList?.length > 0 ? studentList?.filter((student, index, self) => self.findIndex((l) => (
+      l.user.id === student.user.id
+    )) === index) : [];
+
+    const instructorsList = await bc.cohort({
+      roles: 'TEACHER,ASSISTANT',
+      cohort_id: cohortId,
+    }).getPublicMembers()
+      .then((respMembers) => respMembers.data);
+    const uniqueInstructors = instructorsList?.length > 0 ? instructorsList?.filter((instructor, index, self) => self.findIndex((l) => (
+      l.user.id === instructor.user.id
+    )) === index) : [];
+
+    setCohortData({
+      cohortSyllabus,
+      students: uniqueStudents,
+      instructors: uniqueInstructors,
+      modulesInfo,
+    });
+    setPlanData(formatedPlanData);
+  };
+  useEffect(() => {
+    getInitialData();
+  }, [router]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
@@ -386,11 +387,11 @@ function Page({ data, cohortData }) {
 
   return (
     <>
-      {data?.structuredData?.name && (
+      {cleanedStructuredData?.name && (
       <Head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(data.structuredData) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
         />
       </Head>
       )}
@@ -447,7 +448,7 @@ function Page({ data, cohortData }) {
             <Flex flexDirection="column" gridGap="24px">
               <Flex flexDirection="column" gridGap="16px">
                 {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.map((item) => (
-                  <Flex gridGap="9px" alignItems="center">
+                  <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
                       size="16px"
@@ -822,12 +823,10 @@ function Page({ data, cohortData }) {
 
 Page.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
-  cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
 };
 
 Page.defaultProps = {
   data: {},
-  cohortData: {},
 };
 
 export default Page;
