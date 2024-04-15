@@ -1,12 +1,12 @@
 {
-  "course-content-text": "Contenido del curso",
-  "course-content-description": "Hemos probado a fondo este plan de estudios con cientos de puestos de trabajo para brindarte las habilidades necesarias para encontrar un trabajo en tecnología.",
+  "course-content-text": "Prepárate para obtener un trabajo con nuestro syllabus",
+  "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
-  "join-cohort": "Unirse a la cohorte",
-  "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp",
-  "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp",
+  "join-cohort": "Unirse ahora",
+  "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp hoy",
+  "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "title-connectors": {
     "start": "Comienza una carrera en",
@@ -14,17 +14,17 @@
   },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
-    "description": "Para aprender a programar por tu cuenta efectivamente, los proyectos que construyas deben tener video soluciones, ejemplos de código de las soluciones y feedback en tiempo real mientras programas. Además estos proyectos deben ser muy parecidos a los que construirás en tu primer empleo. En este bootcamp solo, construirás proyectos reales como estos:",
+    "description": "Cuando aprendes a programar a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
     "build": "proyectos de la vida real",
     "link": "#pricing"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "¿Por qué aprender con",
-    "benefits-connector": "Aprender por a tu propio ritmo es difícil, y nosotros hemos diseñado las herramientas para evitar que tengas problemas, pierdas tu motivación y aceleres tu aprendizaje."
+    "benefits-connector": "Aprender a tu propio ritmo puede ser desafiante, pero hemos desarrollado las herramientas para mantenerte motivado, evitar que te quedes atascado en problemas y acelerar tu proceso de aprendizaje."
   },
   "show-prices": {
     "title": "¡Aprender a programar a tu propio ritmo es posible sin una gran inversión!",
-    "description": "Sabemos que el dinero es uno de los principales obstáculos para comenzar a aprender, pero en 4Geeks el dinero ya no es un problema, no queremos que el dinero te detenga de aprender.<br/><br/>Por eso, nuestros bootcamps tienen un precio asequible y diferentes opciones de financiamiento para que no tengas que preocuparte nuevamente por el dinero."
+    "description": "Tus finanzas no deberían impedirte ingresar al mundo de la tecnología. Estamos aquí para apoyarte.<br/><br/>Elige entre el pago único o opciones de financiamiento flexibles. ¡Comienza a aprender hoy mismo!"
   },
   "rigobot": {
     "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
@@ -34,21 +34,21 @@
   },
   "featured-bullets": [
     {
-      "title": "Obtén ayuda de nuestra IA entrenada por internamente para ayudarte mientras programas"
+      "title": "Obtén ayuda de nuestra IA entrenada internamente mientras aprendes a programar."
     },
     {
-      "title": "Únete a workshops semanales con expertos mientras desarrollan proyectos de la vida real."
+      "title": "Únete a workshops semanales dónde desarrollarás proyectos de la vida real con expertos."
     },
     {
-      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y otras actividades relevantes de carrera."
+      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y más."
     },
     {
-      "title": "Obtén ayuda con <strong>sesiones de mentoría en vivo uno a uno</strong> cada mes."
+      "title": "Entra a <strong>sesiones de mentoría en vivo uno a uno</strong>."
     }
   ],
   "why-learn-with-4geeks": {
     "title": "¿Por qué debería aprender con 4Geeks?",
-    "description": "¡Llevamos más de 9 años ayudando a la gente a aprender a programar, más de 4000 estudiantes graduados, y el 84% de nuestros estudiantes graduados de nuestro bootcamp consiguieron trabajo!"
+    "description": "Únete a un líder comprobado en educación tecnológica: ¡Más de 9 años de excelencia reconocida, más de 4000 graduados exitosos, y una tasa de colocación laboral del 84%!"
   },
   "faq": [
     {
@@ -79,8 +79,8 @@
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "¡Aprende a tu ritmo de manera efectiva con LearnPack!",
-      "description": "LearnPack es un software diseñado para quienes buscan aprender solos y a su propio ritmo. Tiene integrado a Rigobot quien actúa como un tutor para responder las dudas referentes a tu código, además de tener tests automatizados para recibir feedback instantáneo y no quedarte atrás en tu aprendizaje!",
+      "title": "¡Maximiza tu aprendizaje con LearnPack!",
+      "description": "LearnPack es nuestro software diseñado especialmente para autodidactas. Integra nuestro tutor de inteligencia artificial exclusivo, listo para abordar cualquier problema relacionado con el código y equipado con pruebas automatizadas para obtener retroalimentación inmediata, ¡permitiendo una experiencia de aprendizaje interactiva en cualquier momento!",
       "button": "¡Empieza a aprender ahora!",
       "link": "#pricing"
     },
@@ -124,32 +124,32 @@
         "id": 1,
         "icon": "rigobot-avatar",
         "title": "Aprende con IA",
-        "description": "¡Nuestra inteligencia artificial puede revisar tu código para darte feedback instantáneo, ayudarte con tus ejercicios y más!"
+        "description": "Nuestro inteligencia artificial revisa tu código para brindarte retroalimentación instantánea, te ayuda con los ejercicios ¡y mucho más!"
       },
       {
         "id": 2,
         "icon": "talking",
         "title": "Mentorías uno a uno",
-        "description": "Pide una sesión de mentoría con un experto cuando quieras y en el momento que mejor te convenga."
+        "description": "Accede a un paquete de sesiones mensuales de mentoría con nuestros expertos y añade sesiones adicionales según sea necesario."
       },
       {
         "id": 3,
         "icon": "community",
         "title": "Aprende en comunidad",
-        "description": "Aprender con otros es más divertido, más fácil y puedes llegar más lejos. ¡Nuestra comunidad nunca te dejará atrás!"
+        "description": "Aprender junto a otros no solo es más divertido, sino que también te ayuda a progresar más rápido. Únete a nuestra comunidad activa de aprendizaje para recibir apoyo y colaboración."
       }
     ]
   },
   "certificate": {
     "image": "/static/images/certificate-preview.webp",
-    "title": "Certificado en tu tecnología favorita",
-    "description": "Tu certificado de 4Geeks sirve como puerta de entrada a perspectivas profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Respaldado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades profesionales.",
+    "title": "Certifícate en tu tecnología favorita",
+    "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
     "button": "Ver precios",
     "button-link": "#pricing"
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Prepárate para to próximo trabajo",
+    "title": "Prepárate para una carrera nueva",
     "subtitle": "Mejora tu CV, portafolio, perfil de GitHub, y el perfil de tus redes sociales.",
     "description": "Obtén acceso a ejercicios que simulan entrevistas de la vida real, obtenidas de empresas que están contratando activamente. Por ningún costo adicional para ti y sin quitarte nada del salario de la oferta de trabajo que obtengas.",
     "button": "Únete ahora",
