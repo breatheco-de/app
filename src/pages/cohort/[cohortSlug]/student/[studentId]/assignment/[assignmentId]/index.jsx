@@ -47,13 +47,17 @@ function AssignmentReport() {
         student: studentId,
       }).getAssignments({ id: foundStudent.cohort.id, academy });
 
-      setTasks(data.results.sort((a, b) => {
+      const sortedTasks = data.results.sort((a, b) => {
         if (a.title < b.title) return -1;
         if (a.title > b.title) return 1;
         return 0;
-      }));
+      });
 
-      const task = data.results.find((elem) => elem.id === Number(assignmentId));
+      console.log('sortedTasks');
+      console.log(sortedTasks);
+      setTasks(sortedTasks);
+
+      const task = sortedTasks.find((elem) => elem.id === Number(assignmentId));
 
       setSelectedTask(task);
     } catch (e) {
@@ -109,20 +113,20 @@ function AssignmentReport() {
               fontWeight="700"
               id="cohort-select"
               fontSize="25px"
-              placeholder={t('common:select-cohort')}
+              placeholder={t('select-task')}
               noOptionsMessage={() => t('common:no-options-message')}
               value={
                 selectedTask
                   ? {
                     value: selectedTask.id,
-                    slug: selectedTask.slug,
+                    slug: selectedTask.associated_slug,
                     label: selectedTask.title,
                   }
                   : ''
               }
               onChange={(selected) => {
                 setSelectedTask(
-                  tasks.find((opt) => opt.slug === selected.slug),
+                  tasks.find((opt) => opt.associated_slug === selected.slug),
                 );
                 router.push({
                   query: {
@@ -133,7 +137,7 @@ function AssignmentReport() {
               }}
               options={tasks.map((task) => ({
                 value: task.id,
-                slug: task.slug,
+                slug: task.associated_slug,
                 label: task.title,
               }))}
             />
