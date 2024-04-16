@@ -287,22 +287,24 @@ function AssignmentReport() {
           <DottedTimelineSkeleton />
         ) : (
           <>
-            <Heading mb="20px" color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
             {selectedTask?.assignment_telemetry ? (
-              <DottedTimeline
-                label={(
-                  <Flex gridGap="10px" alignItems="center">
-                    <Icon
-                      icon="list"
-                      color={hexColor.blueDefault}
-                      width="20px"
-                      height="20px"
-                    />
-                    <p>{t('steps-status')}</p>
-                  </Flex>
-                )}
-                dots={stepsDots}
-              />
+              <>
+                <Heading mb="20px" color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+                <DottedTimeline
+                  label={(
+                    <Flex gridGap="10px" alignItems="center">
+                      <Icon
+                        icon="list"
+                        color={hexColor.blueDefault}
+                        width="20px"
+                        height="20px"
+                      />
+                      <p>{t('steps-status')}</p>
+                    </Flex>
+                  )}
+                  dots={stepsDots}
+                />
+              </>
             ) : (
               <Heading>
                 {t('no-telemetry')}
