@@ -527,7 +527,7 @@ function StudentReport() {
       >
         <Box display="flex" justifyContent="space-between">
           <Link
-            href={cohortSession?.selectedProgramSlug || '/choose-program'}
+            href={`/cohort/${cohortSlug}/assignments?academy=${academy}`}
             color={linkColor}
             display="inline-block"
             letterSpacing="0.05em"
@@ -697,6 +697,20 @@ function StudentReport() {
                     </Flex>
                   )}
                   dots={exerciseDots}
+                  onClickDots={(task) => {
+                    if (isWindow) {
+                      if (task.id) window.open(`/cohort/${cohortSlug}/student/${studentId}/assignment/${task.id}?academy=${academy}`);
+                      else {
+                        toast({
+                          position: 'top',
+                          title: t('no-task'),
+                          status: 'error',
+                          duration: 6000,
+                          isClosable: true,
+                        });
+                      }
+                    }
+                  }}
                 />
               </Box>
             </Box>

@@ -9,7 +9,6 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { intervalToDuration } from 'date-fns';
-import { usePersistent } from '../../../../../../../common/hooks/usePersistent';
 import asPrivate from '../../../../../../../common/context/PrivateRouteWrapper';
 import useStyle from '../../../../../../../common/hooks/useStyle';
 import bc from '../../../../../../../common/services/breathecode';
@@ -28,7 +27,6 @@ function AssignmentReport() {
   const router = useRouter();
   const { query } = router;
   const { cohortSlug, studentId, assignmentId, academy } = query;
-  const [cohortSession] = usePersistent('cohortSession', {});
   const [cohortUser, setCohortUser] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [report, setReport] = useState([]);
@@ -194,7 +192,7 @@ function AssignmentReport() {
         margin="2% auto 0 auto"
       >
         <Link
-          href={cohortSession?.selectedProgramSlug || '/choose-program'}
+          href={`/cohort/${cohortSlug}/student/${studentId}?academy=${academy}`}
           color={linkColor}
           display="inline-block"
           letterSpacing="0.05em"
