@@ -99,9 +99,8 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
           };
         });
         return (
-          <Box ref={ref || null}>
+          <Box key={student.id} ref={ref || null}>
             <DottedTimeline
-              key={student.id}
               onClickDots={showSingleTask}
               label={(
                 <Flex gridGap="10px" alignItems="center">
@@ -191,6 +190,7 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
         updpateAssignment={updpateAssignment}
         isOpen={currentTask && (currentTask.status === 'DELIVERED' || currentTask.status === 'APPROVED')}
         onClose={() => setCurrentTask(null)}
+        externalFile={currentTask?.file}
       />
       <NoInfoModal
         isOpen={currentTask && !currentTask.status}
