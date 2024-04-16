@@ -324,7 +324,7 @@ function Checkout() {
     if (!isAuthenticated && !tokenExists) {
       setLoader('plan', false);
     }
-  }, [cohortsData.loading, accessToken, isAuthenticated]);
+  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {

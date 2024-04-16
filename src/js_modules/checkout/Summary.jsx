@@ -47,7 +47,7 @@ function Summary() {
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
-  const planId = getQueryString('plan');
+  const planId = getQueryString('plan_id');
   const cohortId = Number(getQueryString('cohort'));
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
@@ -420,7 +420,13 @@ function Summary() {
                       display="flex"
                       onClick={() => {
                         setSelectedIndex(i);
-                        // setPlanData(item);
+                        router.push({
+                          pathname: '/checkout',
+                          query: {
+                            ...router.query,
+                            plan_id: item?.plan_id,
+                          },
+                        });
                         setSelectedPlanCheckoutData(item);
                       }}
                       flexDirection="row"
