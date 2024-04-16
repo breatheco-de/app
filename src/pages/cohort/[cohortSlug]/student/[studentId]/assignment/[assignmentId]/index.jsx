@@ -259,7 +259,7 @@ function AssignmentReport() {
             <SimpleSkeleton key={`skeleton-${i}`} borderRadius="10px" height="108px" width="100%" />
           )) : (
             <>
-              {selectedTask?.assignment_telemetry ? (
+              {selectedTask?.assignment_telemetry && (
                 <>
                   {report.map((elem) => (
                     <KPI
@@ -272,10 +272,6 @@ function AssignmentReport() {
                     />
                   ))}
                 </>
-              ) : (
-                <Heading>
-                  {t('no-telemetry')}
-                </Heading>
               )}
             </>
           )}
@@ -292,20 +288,26 @@ function AssignmentReport() {
         ) : (
           <>
             <Heading mb="20px" color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
-            <DottedTimeline
-              label={(
-                <Flex gridGap="10px" alignItems="center">
-                  <Icon
-                    icon="list"
-                    color={hexColor.blueDefault}
-                    width="20px"
-                    height="20px"
-                  />
-                  <p>{t('steps-status')}</p>
-                </Flex>
-              )}
-              dots={stepsDots}
-            />
+            {selectedTask?.assignment_telemetry ? (
+              <DottedTimeline
+                label={(
+                  <Flex gridGap="10px" alignItems="center">
+                    <Icon
+                      icon="list"
+                      color={hexColor.blueDefault}
+                      width="20px"
+                      height="20px"
+                    />
+                    <p>{t('steps-status')}</p>
+                  </Flex>
+                )}
+                dots={stepsDots}
+              />
+            ) : (
+              <Heading>
+                {t('no-telemetry')}
+              </Heading>
+            )}
           </>
         )}
       </Box>
