@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import {
   Container,
@@ -9,6 +8,7 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { intervalToDuration } from 'date-fns';
 import { usePersistent } from '../../../../../../../common/hooks/usePersistent';
 import asPrivate from '../../../../../../../common/context/PrivateRouteWrapper';
 import useStyle from '../../../../../../../common/hooks/useStyle';
@@ -19,6 +19,7 @@ import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../../../../../com
 import Link from '../../../../../../../common/components/NextChakraLink';
 import Heading from '../../../../../../../common/components/Heading';
 import Text from '../../../../../../../common/components/Text';
+import Icon from '../../../../../../../common/components/Icon';
 import DottedTimeline from '../../../../../../../common/components/DottedTimeline';
 import axiosInstance from '../../../../../../../axios';
 
@@ -30,6 +31,7 @@ function AssignmentReport() {
   const [cohortSession] = usePersistent('cohortSession', {});
   const [cohortUser, setCohortUser] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [report, setReport] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [tasks, setTasks] = useState([]);
   const { hexColor } = useStyle();
@@ -56,8 +58,6 @@ function AssignmentReport() {
         return 0;
       });
 
-      console.log('sortedTasks');
-      console.log(sortedTasks);
       setTasks(sortedTasks);
 
       const task = sortedTasks.find((elem) => elem.id === Number(assignmentId));
@@ -70,16 +70,121 @@ function AssignmentReport() {
     }
   };
 
+  const intervalToHours = (duration) => {
+    const hours = duration.years * 24 * 365 // Hours from years (assuming 365 days per year)
+             + duration.months * 24 * 30 // Hours from months (assuming 30 days per month)
+             + duration.days * 24 // Hours from days
+             + duration.hours
+             + duration.minutes / 60 // Convert minutes to hours
+             + duration.seconds / 3600;
+    return hours;
+  };
+
   useEffect(() => {
     fetchStudentAndTasks();
   }, []);
 
   useEffect(() => {
-    console.log('selectedTask');
-    console.log(selectedTask);
+    if (selectedTask && selectedTask.assignment_telemetry) {
+      const { steps, workout_session: workoutSession, last_interaction_at: lastInteractionAt } = selectedTask.assignment_telemetry;
+      const completedSteps = steps.reduce((acum, elem) => {
+        if (elem.completed_at) return acum + 1;
+        return acum;
+      }, 0);
+
+      const completionPercentage = (completedSteps * 100) / steps.length;
+      const roundedPercentage = Math.round((completionPercentage + Number.EPSILON) * 100) / 100;
+
+      const totalHours = workoutSession.reduce((acum, elem) => {
+        const startedAt = elem.started_at;
+        const endedAt = elem.ended_at || lastInteractionAt;
+
+        const duration = intervalToDuration({
+          start: new Date(startedAt),
+          end: new Date(endedAt),
+        });
+
+        const hours = intervalToHours(duration);
+
+        return acum + hours;
+      }, 0);
+
+      const roundedHours = Math.round((totalHours + Number.EPSILON) * 100) / 100;
+      setReport([{
+        label: t('completion-percentage'),
+        icon: 'success',
+        variationColor: hexColor.blueDefault,
+        value: `${roundedPercentage}%`,
+      }, {
+        label: t('total-steps-completed'),
+        icon: 'list',
+        variationColor: hexColor.blueDefault,
+        value: `${completedSteps}/${steps.length}`,
+      }, {
+        label: t('total-time'),
+        icon: 'clock',
+        variationColor: hexColor.blueDefault,
+        value: `${roundedHours} hs`,
+      }]);
+    }
   }, [selectedTask]);
 
   const user = cohortUser?.user;
+
+  const stepsDots = selectedTask?.assignment_telemetry ? selectedTask.assignment_telemetry.steps.map((step) => {
+    const {
+      opened_at: openedAt,
+      completed_at: completedAt,
+      ai_interactions: aiInteractions,
+      tests,
+      compilations,
+    } = step;
+
+    const failedTests = tests?.reduce((acum, elem) => {
+      if (elem.exit_code >= 1) return acum + 1;
+      return acum;
+    }, 0);
+
+    const failedCompilations = compilations?.reduce((acum, elem) => {
+      if (elem.exit_code >= 1) return acum + 1;
+      return acum;
+    }, 0);
+
+    let hours;
+    const isOpened = openedAt !== undefined && openedAt !== null;
+    const isCompleted = isOpened && completedAt !== undefined;
+
+    if (isCompleted) {
+      const duration = intervalToDuration({
+        start: new Date(openedAt),
+        end: new Date(completedAt),
+      });
+
+      hours = Math.round((intervalToHours(duration) + Number.EPSILON) * 100) / 100;
+    }
+
+    const label = (
+      <>
+        <Text textAlign="center">{step.slug}</Text>
+        {isCompleted && <Text textAlign="center">{`${t('time-to-complete')} ${hours} hs`}</Text>}
+        <Text textAlign="center">{`${t('rigobot-uses')}: ${aiInteractions.length}`}</Text>
+        <Text textAlign="center">{`${t('tests-run')}: ${tests.length}`}</Text>
+        <Text textAlign="center">{`${t('tests-failed')}: ${failedTests}`}</Text>
+        <Text textAlign="center">{`${t('compiled-errors')}: ${failedCompilations}`}</Text>
+      </>
+    );
+
+    let color;
+    if (isCompleted) color = hexColor.green;
+    else if (isOpened) color = hexColor.yellowDefault;
+    else color = 'gray.default';
+
+    return {
+      ...step,
+      label,
+      color,
+    };
+  }) : [];
 
   return (
     <Container padding="0" maxWidth="none">
@@ -156,14 +261,16 @@ function AssignmentReport() {
             <>
               {selectedTask?.assignment_telemetry ? (
                 <>
-                  {/* <KPI
-                    label={elem.label}
-                    icon={elem.icon}
-                    variationColor={elem.variationColor}
-                    value={elem.value}
-                    style={{ width: '100%', border: `2px solid ${borderColor}` }}
-                    {...elem}
-                  /> */}
+                  {report.map((elem) => (
+                    <KPI
+                      label={elem.label}
+                      icon={elem.icon}
+                      variationColor={elem.variationColor}
+                      value={elem.value}
+                      style={{ width: '100%', border: `2px solid ${borderColor}` }}
+                      {...elem}
+                    />
+                  ))}
                 </>
               ) : (
                 <Heading>
@@ -184,7 +291,21 @@ function AssignmentReport() {
           <DottedTimelineSkeleton />
         ) : (
           <>
-            <Heading color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+            <Heading mb="20px" color={hexColor.fontColor2} size="m">{`${t('relevant-activities')}:`}</Heading>
+            <DottedTimeline
+              label={(
+                <Flex gridGap="10px" alignItems="center">
+                  <Icon
+                    icon="list"
+                    color={hexColor.blueDefault}
+                    width="20px"
+                    height="20px"
+                  />
+                  <p>{t('steps-status')}</p>
+                </Flex>
+              )}
+              dots={stepsDots}
+            />
           </>
         )}
       </Box>
