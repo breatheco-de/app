@@ -239,64 +239,75 @@ function Checkout() {
       setShowChooseClass(false);
       bc.payment().getPlan(planFormated)
         .then((resp) => {
-          const data = resp?.data;
-          const existsAmountPerHalf = data?.price_per_half > 0;
-          const existsAmountPerMonth = data?.price_per_month > 0;
-          const existsAmountPerQuarter = data?.price_per_quarter > 0;
-          const existsAmountPerYear = data?.price_per_year > 0;
-
-          const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-
-          if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
-            setShowChooseClass(true);
+          if (!resp) {
+            setLoader('plan', false);
+            router.push('/pricing');
             toast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
-              status: 'info',
+              status: 'error',
               duration: 4000,
               isClosable: true,
             });
-          }
-          if (data?.has_waiting_list === true) {
-            router.push(`/${lang}/thank-you`);
-          }
-          if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
-            if (resp.status < 400 && cohorts?.length > 0) {
-              setIsPreselectedCohort(true);
-              const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
-              const defaultCohortProps = {
-                ...cohorts[0],
-                kickoffDate,
-                weekDays,
-                availableTime,
-              };
+          } else {
+            const data = resp?.data;
+            const existsAmountPerHalf = data?.price_per_half > 0;
+            const existsAmountPerMonth = data?.price_per_month > 0;
+            const existsAmountPerQuarter = data?.price_per_quarter > 0;
+            const existsAmountPerYear = data?.price_per_year > 0;
+            const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
 
-              setCohortPlans([data]);
-              handleChecking({ ...defaultCohortProps, plan: data })
-                .then(() => {
-                  handleStep(2);
-                })
-                .catch(() => {
-                  setLoader('plan', false);
-                });
+            if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
+              setShowChooseClass(true);
+              toast({
+                position: 'top',
+                title: t('alert-message:no-plan-configuration'),
+                status: 'info',
+                duration: 4000,
+                isClosable: true,
+              });
             }
-            if (cohorts.length === 0) {
-              setCohortPlans([{
-                plan: data,
-              }]);
-              handleChecking({ plan: data })
-                .then(() => {
-                  handleStep(2);
-                })
-                .catch(() => {
-                  setLoader('plan', false);
-                });
+            if (data?.has_waiting_list === true) {
+              router.push(`/${lang}/thank-you`);
             }
-          }
+            if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
+              if (resp.status < 400 && cohorts?.length > 0) {
+                setIsPreselectedCohort(true);
+                const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
+                const defaultCohortProps = {
+                  ...cohorts[0],
+                  kickoffDate,
+                  weekDays,
+                  availableTime,
+                };
 
-          if (data?.is_renewable === false || data?.is_renewable === undefined) {
-            setShowChooseClass(false);
-            handleStep(1);
+                setCohortPlans([data]);
+                handleChecking({ ...defaultCohortProps, plan: data })
+                  .then(() => {
+                    handleStep(2);
+                  })
+                  .catch(() => {
+                    setLoader('plan', false);
+                  });
+              }
+              if (cohorts.length === 0) {
+                setCohortPlans([{
+                  plan: data,
+                }]);
+                handleChecking({ plan: data })
+                  .then(() => {
+                    handleStep(2);
+                  })
+                  .catch(() => {
+                    setLoader('plan', false);
+                  });
+              }
+            }
+
+            if (data?.is_renewable === false || data?.is_renewable === undefined) {
+              setShowChooseClass(false);
+              handleStep(1);
+            }
           }
         })
         .catch(() => {

@@ -87,7 +87,7 @@ function ShowPrices({
     1: finance || data?.pricing.finance,
   };
 
-  const defaultList = financeSelected[selectedFinanceIndex];
+  const dataList = financeSelected?.[selectedFinanceIndex] || [];
   const selectedItem = selectedIndex !== null && financeSelected[selectedFinanceIndex][selectedIndex];
 
   const handleSelect = (index, item) => {
@@ -96,8 +96,8 @@ function ShowPrices({
   };
 
   useEffect(() => {
-    if (defaultList.length === 1) {
-      handleSelect(0, defaultList[0]);
+    if (dataList.length === 1) {
+      handleSelect(0, dataList[0]);
     }
   }, []);
 
@@ -128,8 +128,9 @@ function ShowPrices({
 
   const paymentTabStyle = getTabColor(0, list?.length > 0);
   const financeTabStyle = getTabColor(1, finance?.length > 0);
-  const existMoreThanOne = financeSelected[selectedFinanceIndex].length > 1;
+  const existMoreThanOne = dataList.length > 1;
   const isOnlyOneItem = [...finance, ...list].length === 1;
+
   useEffect(() => {
     if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && financeSelected[externalSelection?.selectedFinanceIndex]?.length > 0) {
       handleSelectFinance(externalSelection.selectedFinanceIndex);
@@ -172,10 +173,10 @@ function ShowPrices({
           </Box>
         )}
       </Box>
-      {financeSelected[selectedFinanceIndex].filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
+      {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
         <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
-      {existMoreThanOne && financeSelected[selectedFinanceIndex].some((item) => item.isFree) && (
+      {existMoreThanOne && dataList.some((item) => item.isFree) && (
         <Box display="flex" alignItems="center">
           <Box as="hr" color="gray.500" width="100%" />
           <Text size="md" textAlign="center" width="100%" margin="0">
@@ -184,7 +185,7 @@ function ShowPrices({
           <Box as="hr" color="gray.500" width="100%" />
         </Box>
       )}
-      {financeSelected[selectedFinanceIndex].filter((l) => l.show === true && l?.isFree).map((item, i) => (
+      {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFree).map((item, i) => (
         <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       <Box mt="38px">

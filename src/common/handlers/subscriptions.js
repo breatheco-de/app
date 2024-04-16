@@ -23,15 +23,15 @@ export const SUBS_STATUS = {
  * @param {object} translations - Translations for plan content (optional)
  * @returns {Promise<object>} - The processed plans data
  */
-export const processPlans = async (data, {
+export const processPlans = (data, {
   monthly = true,
   quarterly = true,
   halfYearly = true,
   yearly = true,
   planType = '',
-} = {}, translations = {}) => {
+} = {}, translations = {}) => new Promise((resolve, reject) => {
   try {
-    const resp = await bc.payment().getPlanProps(data?.slug);
+    const resp = bc.payment().getPlanProps(data?.slug);
     if (!resp) {
       throw new Error('The plan does not exist');
     }
@@ -120,7 +120,7 @@ export const processPlans = async (data, {
       isFree: true,
     } : {};
 
-    const monthPlan = monthly && !financingOptionsOnePaymentExists && existsAmountPerMonth ? {
+    const monthPlan = monthly && existsAmountPerMonth ? {
       ...relevantInfo,
       title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
       price: data?.price_per_month,
@@ -130,7 +130,7 @@ export const processPlans = async (data, {
       period: 'MONTH',
       period_label: textInfo.label.monthly,
       type: 'PAYMENT',
-    } : onePaymentFinancing[0];
+    } : {};
 
     const quarterPlan = quarterly && existsAmountPerQuarter ? {
       ...relevantInfo,
@@ -171,8 +171,8 @@ export const processPlans = async (data, {
     } : {};
 
     const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
-      const financingTitle = item?.how_many_months === 1 ? textInfo.one_payment : translations.many_months_payment(item?.how_many_months);
-      const financingOptionsDescription = item?.how_many_months === 1 ? translations.one_payment_description : translations?.financing_description(item?.monthly_price, item?.how_many_months);
+      const financingTitle = translations.many_months_payment(item?.how_many_months);
+      const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months);
       return ({
         ...relevantInfo,
         financingId: index + 1,
@@ -188,11 +188,11 @@ export const processPlans = async (data, {
       });
     }) : [{}];
 
-    const planList = [trialPlan, monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-    const paymentList = [monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+    const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
+    const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
     const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
-    return ({
+    resolve({
       ...data,
       title: data?.title || slugToTitle(data?.slug),
       isTotallyFree,
@@ -204,21 +204,25 @@ export const processPlans = async (data, {
     });
   } catch (error) {
     console.error('Error processing plans:', error);
-    return {};
+    reject(error);
   }
-};
+});
 
 /**
  * @param {String} planSlug // Base plan slug to generate list of prices
  * @param {Object} translationsObj // Object with translations
  * @returns {Promise<object>} // Formated object of data with list of prices
  */
-export const generatePlan = (planSlug, translationsObj) => bc.payment().getPlan(planSlug)
-  .then(async (resp) => {
+export const generatePlan = async (planSlug, translationsObj) => {
+  try {
+    const resp = await bc.payment().getPlan(planSlug);
     const data = await processPlans(resp?.data, {}, translationsObj);
     return data;
-  })
-  .catch(() => ({}));
+  } catch (error) {
+    console.error('Error generating plan:', error);
+    return {};
+  }
+};
 
 /**
  * Get translations for plan content.
@@ -258,7 +262,7 @@ export const getTranslations = (t = () => {}) => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
-    financing_description: (price, months) => t('subscription.upgrade-modal.many_months_description', { monthly_price: price, many_months: months }),
+    financing_description: (price, months) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),
     half_yearly: t('signup:info.half-yearly'),
