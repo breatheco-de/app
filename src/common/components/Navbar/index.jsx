@@ -147,7 +147,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [locale]);
 
   const coursesList = mktCourses?.length > 0 ? mktCourses : [];
 

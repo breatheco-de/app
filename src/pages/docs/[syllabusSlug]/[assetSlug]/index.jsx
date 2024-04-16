@@ -15,6 +15,7 @@ import {
 import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import Head from 'next/head';
 import { nestAssignments } from '../../../../common/hooks/useModuleHandler';
 import useStyle from '../../../../common/hooks/useStyle';
 import bc from '../../../../common/services/breathecode';
@@ -22,8 +23,8 @@ import Heading from '../../../../common/components/Heading';
 import Text from '../../../../common/components/Text';
 import Link from '../../../../common/components/NextChakraLink';
 import Icon from '../../../../common/components/Icon';
-import { getExtensionName } from '../../../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
+import { cleanObject, getExtensionName } from '../../../../utils';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
 import MarkDownParser from '../../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../../../common/components/GridContainer';
@@ -171,6 +172,27 @@ function Docs({ syllabusData, moduleMap }) {
 
   const markdownData = asset?.markdown ? getMarkDownContent(asset.markdown) : '';
   const isIpynb = asset?.ipynbHtml?.statusText === 'OK' || asset?.ipynbHtml?.iframe;
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: asset?.title,
+    description: asset?.description,
+    url: `${ORIGIN_HOST}${langPrefix}/docs/${syllabusSlug}/${assetSlug}`,
+    image: asset?.preview || `${ORIGIN_HOST}/static/images/4geeks.png`,
+    datePublished: asset?.published_at,
+    dateModified: asset?.updated_at,
+    author: asset?.author ? {
+      '@type': 'Person',
+      name: `${asset?.author?.first_name} ${asset?.author?.last_name}`,
+    } : null,
+    keywords: asset?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${ORIGIN_HOST}${langPrefix}/docs/${syllabusSlug}/${assetSlug}`,
+    },
+  };
+  const cleanedStructuredData = cleanObject(structuredData);
 
   const getAssetData = async () => {
     try {
@@ -285,6 +307,14 @@ function Docs({ syllabusData, moduleMap }) {
 
   return (
     <>
+      {cleanedStructuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
+          />
+        </Head>
+      )}
       <Helmet
         title={asset?.title || ''}
         description={asset?.description || ''}
