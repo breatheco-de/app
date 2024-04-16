@@ -64,7 +64,7 @@ function chooseProgram() {
   const [cohortTasks, setCohortTasks] = useState({});
   const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
-  const [welcomeModal, setWelcomeModal] = useState(false);
+  const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
     isOpen: false,
     data: [],
@@ -311,7 +311,7 @@ function chooseProgram() {
     if (dataQuery?.date_joined) {
       const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
       if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
-        setWelcomeModal(true);
+        setIsWelcomeModalOpen(true);
       }
     }
   }, [dataQuery]);
@@ -371,8 +371,8 @@ function chooseProgram() {
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
       <SimpleModal
-        isOpen={welcomeModal}
-        onClose={() => setWelcomeModal(false)}
+        isOpen={isWelcomeModalOpen}
+        onClose={() => setIsWelcomeModalOpen(false)}
         style={{ marginTop: '10vh' }}
         maxWidth="45rem"
         borderRadius="13px"
@@ -380,16 +380,26 @@ function chooseProgram() {
         title={t('dashboard:welcome-modal.title')}
         bodyStyles={{ padding: 0 }}
         closeOnOverlayClick={false}
+        leftButton={(
+          <Flex
+            position="absolute"
+            variant="unstyled"
+            top={5}
+            left={5}
+            alignItems="center"
+            justifyContent="center"
+            width="auto"
+            mb="1rem"
+          >
+            <LanguageSelector />
+          </Flex>
+        )}
       >
         <Box display="flex" flexDirection="column" gridGap="17px" padding="1.5rem 4%">
           <Text size="13px" textAlign="center" style={{ textWrap: 'balance' }}>
             {t('dashboard:welcome-modal.description')}
           </Text>
         </Box>
-        <Flex alignItems="center" justifyContent="center" width="auto" mb="1rem">
-          {t('common:change-language')}
-          <LanguageSelector />
-        </Flex>
         <Box padding="0 15px 15px">
           <ReactPlayerV2
             url={welcomeVideoLinks?.[lang] || welcomeVideoLinks?.en}

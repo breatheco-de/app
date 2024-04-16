@@ -177,10 +177,10 @@ function PaymentInfo() {
         getAllMySubscriptions()
           .then((subscriptions) => {
             const currentSubscription = subscriptions?.find(
-              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
-              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
             const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
@@ -209,13 +209,10 @@ function PaymentInfo() {
               }
             }
           });
-      }, 1500);
+      }, 2000);
     }
-    if (readyToRefetch === false) {
-      setTimeElapsed(0);
-      clearInterval(interval);
-    }
-  }, [readyToRefetch]);
+    return () => clearInterval(interval);
+  }, [readyToRefetch, timeElapsed]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
     const silentCode = data?.silent_code;
@@ -258,7 +255,7 @@ function PaymentInfo() {
           value: state?.selectedPlanCheckoutData?.price,
           currency,
           payment_type: 'Credit card',
-          plan: state?.selectedPlanCheckoutData?.slug,
+          plan: state?.selectedPlanCheckoutData?.plan_slug,
           period_label: state?.selectedPlanCheckoutData?.period_label,
         },
       });
@@ -313,7 +310,7 @@ function PaymentInfo() {
           w="100%"
           height="fit-content"
           p="11px 14px"
-          gridGap="12px"
+          gridGap="8px"
           borderRadius="14px"
         >
           <Heading size="15px" color="blue.default" textTransform="uppercase">
@@ -331,35 +328,30 @@ function PaymentInfo() {
               </Box>
             </Box>
             <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
-                <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
-                  <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
-                  {selectedPlanCheckoutData?.description && (
-                  <Heading
-                    size="15px"
-                    textTransform="uppercase"
-                    color={useColorModeValue('gray.500', 'gray.400')}
-                  >
-                    {selectedPlanCheckoutData?.description}
+              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
+                <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
+                  <Heading size="18px">
+                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
                   </Heading>
-                  )}
                 </Box>
                 <Heading
-                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-                  margin="0 16px 0 10px"
+                  size="xl"
                   color="blue.default"
-                  width={{ base: '100%', md: 'fit-content' }}
-                  textAlign={{ base: 'start', md: 'end' }}
+                  width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0
-                    ? t('free-trial')
+                    ? selectedPlanCheckoutData?.priceText
                     : `$${selectedPlanCheckoutData?.price}`}
                 </Heading>
               </Box>
-
-              <Text fontSize="14px" color={useColorModeValue('gray.700', 'gray.400')}>
-                {getPaymentText()}
-              </Text>
+              {getPaymentText()?.length > 0 && (
+                <Text
+                  size="14px"
+                  color={useColorModeValue('gray.700', 'gray.400')}
+                >
+                  {getPaymentText()}
+                </Text>
+              )}
             </Box>
           </Box>
           {planProps?.length > 0 && (
@@ -384,7 +376,7 @@ function PaymentInfo() {
             flexDirection="column"
             gridGap="12px"
           >
-            {planProps?.map((bullet) => (
+            {planProps?.map((bullet) => bullet?.features[0]?.description && (
               <Box
                 as="li"
                 key={bullet?.features[0]?.description}
