@@ -8,6 +8,7 @@ module.exports = {
     '/cohort/[cohortSlug]/[slug]/[version]': ['dashboard', 'choose-program', 'projects', 'profile', 'assignments'],
     '/cohort/[cohortSlug]/assignments': ['assignments', 'dashboard'],
     '/cohort/[cohortSlug]/student/[studentId]': ['student', 'assignments'],
+    '/cohort/[cohortSlug]/student/[studentId]/assignment/[assignmentId]': ['assignment-report'],
     '/cohort/[cohortSlug]/attendance': ['attendance'],
     '/docs/[syllabusSlug]/[assetSlug]': ['docs'],
     '/interactive-exercises': ['exercises'],
