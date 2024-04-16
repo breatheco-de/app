@@ -310,7 +310,7 @@ function PaymentInfo() {
           w="100%"
           height="fit-content"
           p="11px 14px"
-          gridGap="12px"
+          gridGap="8px"
           borderRadius="14px"
         >
           <Heading size="15px" color="blue.default" textTransform="uppercase">
@@ -327,27 +327,31 @@ function PaymentInfo() {
                 <Icon icon="coding" width="48px" height="48px" color="#fff" />
               </Box>
             </Box>
-            <Box display="flex" flexDirection="column" gridGap="7px" width="100%">
-              <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="0px" alignItems="center">
-                <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
-                  <Heading size="18px">{dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}</Heading>
+            <Box display="flex" flexDirection="column" gridGap="7px">
+              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
+                <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
+                  <Heading size="18px">
+                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
+                  </Heading>
                 </Box>
                 <Heading
-                  size={selectedPlanCheckoutData?.price > 0 ? 'm' : 'xsm'}
-                  margin="0 16px 0 10px"
+                  size="xl"
                   color="blue.default"
-                  width={{ base: '100%', md: 'fit-content' }}
-                  textAlign={{ base: 'start', md: 'end' }}
+                  width="100%"
                 >
                   {selectedPlanCheckoutData?.price <= 0
-                    ? t('free-trial')
+                    ? selectedPlanCheckoutData?.priceText
                     : `$${selectedPlanCheckoutData?.price}`}
                 </Heading>
               </Box>
-
-              <Text fontSize="14px" color={useColorModeValue('gray.700', 'gray.400')}>
-                {getPaymentText()}
-              </Text>
+              {getPaymentText()?.length > 0 && (
+                <Text
+                  size="14px"
+                  color={useColorModeValue('gray.700', 'gray.400')}
+                >
+                  {getPaymentText()}
+                </Text>
+              )}
             </Box>
           </Box>
           {planProps?.length > 0 && (
@@ -372,7 +376,7 @@ function PaymentInfo() {
             flexDirection="column"
             gridGap="12px"
           >
-            {planProps?.map((bullet) => (
+            {planProps?.map((bullet) => bullet?.features[0]?.description && (
               <Box
                 as="li"
                 key={bullet?.features[0]?.description}

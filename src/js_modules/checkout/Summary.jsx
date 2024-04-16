@@ -386,11 +386,12 @@ function Summary() {
                     style={{ margin: '8px 0 0 0' }}
                   />
                   <Box
-                    fontSize={{ base: '12px', md: '13px' }}
+                    fontSize="14px"
                     fontWeight="600"
                     letterSpacing="0.05em"
-                    dangerouslySetInnerHTML={{ __html: bullet?.features[0]?.description }}
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
                   />
+                  {bullet?.features[0]?.description}
                 </Box>
               ))}
             </Box>

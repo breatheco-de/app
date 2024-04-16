@@ -30,182 +30,186 @@ export const processPlans = (data, {
   yearly = true,
   planType = '',
 } = {}, translations = {}) => new Promise((resolve, reject) => {
-  try {
-    const resp = bc.payment().getPlanProps(data?.slug);
-    if (!resp) {
-      throw new Error('The plan does not exist');
-    }
-    const planPropsData = resp?.data;
-    const existsAmountPerHalf = data?.price_per_half > 0;
-    const existsAmountPerMonth = data?.price_per_month > 0;
-    const existsAmountPerQuarter = data?.price_per_quarter > 0;
-    const existsAmountPerYear = data?.price_per_year > 0;
-    const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
-    const financingOptionsExists = data?.financing_options?.length > 0;
-    const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
-    const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
-    const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
-    const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0 && !financingOptionsExists;
+  const process = async () => {
+    try {
+      const slug = encodeURIComponent(data?.slug);
+      const resp = await bc.payment().getPlanProps(slug);
+      if (!resp) {
+        throw new Error('The plan does not exist');
+      }
+      const planPropsData = resp?.data;
+      const existsAmountPerHalf = data?.price_per_half > 0;
+      const existsAmountPerMonth = data?.price_per_month > 0;
+      const existsAmountPerQuarter = data?.price_per_quarter > 0;
+      const existsAmountPerYear = data?.price_per_year > 0;
+      const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+      const financingOptionsExists = data?.financing_options?.length > 0;
+      const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
+      const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
+      const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
+      const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0 && !financingOptionsExists;
 
-    const financingOptions = financingOptionsManyMonthsExists
-      ? data?.financing_options
-        .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
-        .sort((a, b) => a.monthly_price - b.monthly_price)
-      : [];
-    const financingOptionsOnePayment = financingOptionsOnePaymentExists
-      ? data?.financing_options
-        .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
-      : [];
+      const financingOptions = financingOptionsManyMonthsExists
+        ? data?.financing_options
+          .filter((l) => l?.monthly_price > 0 && l?.how_many_months > 1)
+          .sort((a, b) => a.monthly_price - b.monthly_price)
+        : [];
+      const financingOptionsOnePayment = financingOptionsOnePaymentExists
+        ? data?.financing_options
+          .filter((l) => l?.monthly_price > 0 && l?.how_many_months === 1)
+        : [];
 
-    const relevantInfo = {
-      plan_slug: singlePlan?.slug,
-      currency: singlePlan?.currency,
-      featured_info: planPropsData || [],
-      trial_duration: singlePlan?.trial_duration || 0,
-      trial_duration_unit: singlePlan?.trial_duration_unit || '',
-      planType,
-      show: true,
-    };
+      const relevantInfo = {
+        plan_slug: singlePlan?.slug,
+        currency: singlePlan?.currency,
+        featured_info: planPropsData || [],
+        trial_duration: singlePlan?.trial_duration || 0,
+        trial_duration_unit: singlePlan?.trial_duration_unit || '',
+        planType,
+        show: true,
+      };
 
-    const textInfo = {
-      free: translations?.free || 'Free',
-      totally_free: translations?.totally_free || 'Totally free',
-      free_trial: translations?.free_trial || 'Free trial',
-      one_payment: translations?.one_payment || 'One payment',
-      monthly_payment: translations?.monthly_payment || 'Monthly payment',
-      quarterly_payment: translations?.quarterly_payment || 'Quarterly payment',
-      half_yearly_payment: translations?.half_yearly_payment || 'Half yearly payment',
-      yearly_payment: translations?.yearly_payment || 'Yearly payment',
-      many_months_payment: (qty) => translations?.many_months_payment(qty) || `Payment for ${qty} months`,
-      label: {
-        free_trial_period: (qty, period) => {
-          const periodToLowerCase = period?.toLowerCase();
-          return translations?.free_trial_period(qty, periodToLowerCase) || `Free trial for ${qty} ${periodToLowerCase}`;
-        },
+      const textInfo = {
         free: translations?.free || 'Free',
-        monthly: translations?.monthly || 'Monthly',
-        quarterly: translations?.quarterly || 'Quarterly',
-        half_yearly: translations?.half_yearly || 'Half yearly',
-        yearly: translations?.yearly || 'Yearly',
-        financing: translations?.financing || 'Financing',
-      },
-    };
-    const trialPlanDescription = isTotallyFree
-      ? textInfo.totally_free
-      : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit);
+        totally_free: translations?.totally_free || 'Totally free',
+        free_trial: translations?.free_trial || 'Free trial',
+        one_payment: translations?.one_payment || 'One payment',
+        monthly_payment: translations?.monthly_payment || 'Monthly payment',
+        quarterly_payment: translations?.quarterly_payment || 'Quarterly payment',
+        half_yearly_payment: translations?.half_yearly_payment || 'Half yearly payment',
+        yearly_payment: translations?.yearly_payment || 'Yearly payment',
+        many_months_payment: (qty) => translations?.many_months_payment(qty) || `Payment for ${qty} months`,
+        label: {
+          free_trial_period: (qty, period) => {
+            const periodToLowerCase = period?.toLowerCase();
+            return translations?.free_trial_period(qty, periodToLowerCase) || `Free trial for ${qty} ${periodToLowerCase}`;
+          },
+          free: translations?.free || 'Free',
+          monthly: translations?.monthly || 'Monthly',
+          quarterly: translations?.quarterly || 'Quarterly',
+          half_yearly: translations?.half_yearly || 'Half yearly',
+          yearly: translations?.yearly || 'Yearly',
+          financing: translations?.financing || 'Financing',
+        },
+      };
+      const trialPlanDescription = isTotallyFree
+        ? textInfo.totally_free
+        : textInfo.label.free_trial_period(singlePlan?.trial_duration, singlePlan?.trial_duration_unit);
 
-    const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
-      ...relevantInfo,
-      title: textInfo.one_payment,
-      price: item?.monthly_price,
-      priceText: `$${item?.monthly_price}`,
-      period: 'ONE_TIME',
-      period_label: textInfo.label.financing,
-      plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
-      description: translations?.one_payment_description || '',
-      how_many_months: item?.how_many_months,
-      type: 'PAYMENT',
-    })) : [{}];
-
-    const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
-      ...relevantInfo,
-      title: singlePlan?.title ? singlePlan?.title : unSlugifyCapitalize(String(singlePlan?.slug)),
-      price: 0,
-      priceText: isTotallyFree ? textInfo.free : textInfo.free_trial,
-      plan_id: `p-${singlePlan?.trial_duration}-trial`,
-      description: trialPlanDescription,
-      period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
-      period_label: trialPlanDescription,
-      type: isTotallyFree ? 'FREE' : 'TRIAL',
-      isFree: true,
-    } : {};
-
-    const monthPlan = monthly && existsAmountPerMonth ? {
-      ...relevantInfo,
-      title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
-      price: data?.price_per_month,
-      priceText: `$${data?.price_per_month}`,
-      plan_id: `p-${data?.price_per_month}`,
-      description: translations?.yearly_payment_description || '',
-      period: 'MONTH',
-      period_label: textInfo.label.monthly,
-      type: 'PAYMENT',
-    } : {};
-
-    const quarterPlan = quarterly && existsAmountPerQuarter ? {
-      ...relevantInfo,
-      title: singlePlan?.title ? singlePlan?.title : textInfo.quarterly_payment,
-      price: data?.price_per_quarter,
-      priceText: `$${data?.price_per_quarter}`,
-      plan_id: `p-${data?.price_per_quarter}`,
-      description: translations?.quarterly_payment_description || '',
-      period: 'QUARTER',
-      period_label: textInfo.label.quarterly,
-      type: 'PAYMENT',
-      show: false,
-    } : {};
-
-    const halfPlan = halfYearly && existsAmountPerHalf ? {
-      ...relevantInfo,
-      title: singlePlan?.title ? singlePlan?.title : textInfo.half_yearly_payment,
-      price: data?.price_per_half,
-      priceText: `$${data?.price_per_half}`,
-      plan_id: `p-${data?.price_per_half}`,
-      description: translations?.half_yearly_payment_description || '',
-      period: 'HALF',
-      period_label: textInfo.label.half_yearly,
-      type: 'PAYMENT',
-      show: false,
-    } : {};
-
-    const yearPlan = yearly && existsAmountPerYear ? {
-      ...relevantInfo,
-      title: singlePlan?.title ? singlePlan?.title : textInfo.yearly_payment,
-      price: data?.price_per_year,
-      priceText: `$${data?.price_per_year}`,
-      plan_id: `p-${data?.price_per_year}`,
-      description: translations?.yearly_payment_description || '',
-      period: 'YEAR',
-      period_label: textInfo.label.yearly,
-      type: 'PAYMENT',
-    } : {};
-
-    const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
-      const financingTitle = translations.many_months_payment(item?.how_many_months);
-      const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months);
-      return ({
+      const onePaymentFinancing = financingOptionsOnePaymentExists ? financingOptionsOnePayment.map((item) => ({
         ...relevantInfo,
-        financingId: index + 1,
-        title: singlePlan?.title ? singlePlan?.title : financingTitle,
+        title: textInfo.one_payment,
         price: item?.monthly_price,
-        priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
-        plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
-        description: financingOptionsDescription || '',
-        period: 'FINANCING',
+        priceText: `$${item?.monthly_price}`,
+        period: 'ONE_TIME',
         period_label: textInfo.label.financing,
+        plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+        description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
+      })) : [{}];
+
+      const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
+        ...relevantInfo,
+        title: singlePlan?.title ? singlePlan?.title : unSlugifyCapitalize(String(singlePlan?.slug)),
+        price: 0,
+        priceText: isTotallyFree ? textInfo.free : textInfo.free_trial,
+        plan_id: `p-${singlePlan?.trial_duration}-trial`,
+        description: trialPlanDescription,
+        period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
+        period_label: trialPlanDescription,
+        type: isTotallyFree ? 'FREE' : 'TRIAL',
+        isFree: true,
+      } : {};
+
+      const monthPlan = monthly && existsAmountPerMonth ? {
+        ...relevantInfo,
+        title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
+        price: data?.price_per_month,
+        priceText: `$${data?.price_per_month}`,
+        plan_id: `p-${data?.price_per_month}`,
+        description: translations?.yearly_payment_description || '',
+        period: 'MONTH',
+        period_label: textInfo.label.monthly,
+        type: 'PAYMENT',
+      } : {};
+
+      const quarterPlan = quarterly && existsAmountPerQuarter ? {
+        ...relevantInfo,
+        title: singlePlan?.title ? singlePlan?.title : textInfo.quarterly_payment,
+        price: data?.price_per_quarter,
+        priceText: `$${data?.price_per_quarter}`,
+        plan_id: `p-${data?.price_per_quarter}`,
+        description: translations?.quarterly_payment_description || '',
+        period: 'QUARTER',
+        period_label: textInfo.label.quarterly,
+        type: 'PAYMENT',
+        show: false,
+      } : {};
+
+      const halfPlan = halfYearly && existsAmountPerHalf ? {
+        ...relevantInfo,
+        title: singlePlan?.title ? singlePlan?.title : textInfo.half_yearly_payment,
+        price: data?.price_per_half,
+        priceText: `$${data?.price_per_half}`,
+        plan_id: `p-${data?.price_per_half}`,
+        description: translations?.half_yearly_payment_description || '',
+        period: 'HALF',
+        period_label: textInfo.label.half_yearly,
+        type: 'PAYMENT',
+        show: false,
+      } : {};
+
+      const yearPlan = yearly && existsAmountPerYear ? {
+        ...relevantInfo,
+        title: singlePlan?.title ? singlePlan?.title : textInfo.yearly_payment,
+        price: data?.price_per_year,
+        priceText: `$${data?.price_per_year}`,
+        plan_id: `p-${data?.price_per_year}`,
+        description: translations?.yearly_payment_description || '',
+        period: 'YEAR',
+        period_label: textInfo.label.yearly,
+        type: 'PAYMENT',
+      } : {};
+
+      const financingOption = financingOptionsExists ? financingOptions.map((item, index) => {
+        const financingTitle = translations.many_months_payment(item?.how_many_months);
+        const financingOptionsDescription = translations?.financing_description(item?.monthly_price, item?.how_many_months);
+        return ({
+          ...relevantInfo,
+          financingId: index + 1,
+          title: singlePlan?.title ? singlePlan?.title : financingTitle,
+          price: item?.monthly_price,
+          priceText: `$${item?.monthly_price} x ${item?.how_many_months}`,
+          plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
+          description: financingOptionsDescription || '',
+          period: 'FINANCING',
+          period_label: textInfo.label.financing,
+          how_many_months: item?.how_many_months,
+          type: 'PAYMENT',
+        });
+      }) : [{}];
+
+      const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
+      const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+      const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
+
+      resolve({
+        ...data,
+        title: data?.title || slugToTitle(data?.slug),
+        isTotallyFree,
+        isTrial: !isNotTrial && !financingOptionsExists,
+        plans: planList,
+        featured_info: planPropsData || [],
+        paymentOptions: paymentList,
+        financingOptions: financingList,
       });
-    }) : [{}];
-
-    const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-    const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
-    const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
-
-    resolve({
-      ...data,
-      title: data?.title || slugToTitle(data?.slug),
-      isTotallyFree,
-      isTrial: !isNotTrial && !financingOptionsExists,
-      plans: planList,
-      featured_info: planPropsData || [],
-      paymentOptions: paymentList,
-      financingOptions: financingList,
-    });
-  } catch (error) {
-    console.error('Error processing plans:', error);
-    reject(error);
-  }
+    } catch (error) {
+      console.error('Error processing plans:', error);
+      reject(error);
+    }
+  };
+  process();
 });
 
 /**
