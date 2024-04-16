@@ -17,7 +17,7 @@
   "quarterly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "half_yearly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "yearly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
-  "financing_many_months_description": "Pagaras ${{monthly_price}} durante {{many_months}} meses y obtendras Acceso completo a todas las funciones durante la duración del curso.",
+  "financing_many_months_description": "Pagarás ${{monthly_price}} durante {{many_months}} meses y obtendrás acceso completo a todas las funciones durante la duración del curso.",
   "what-includes": "¿Qué incluye?",
   "continue-learning": "Continuar aprendiendo",
   "switch-user-connector": "¿No eres {{name}}?",
