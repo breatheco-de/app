@@ -19,6 +19,7 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
 
   const hoursLimited = hoursToLimit * 60;
   const endpointDefault = endpoint || '/v1/events/all';
+  const maxEvents = 10;
 
   useEffect(() => {
     if (externalEvents) {
@@ -31,8 +32,12 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
             const englishLang = lang === 'en' && 'us';
             const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
             const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
+            const isMoreThanAnyEvents = existentLiveClasses?.length > maxEvents;
             const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
-            setEvents(filteredByLang);
+
+            // Filter by lang if there are more than ${maxEvents} events
+            const eventsFiltered = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
+            setEvents(eventsFiltered);
           }
         });
     }

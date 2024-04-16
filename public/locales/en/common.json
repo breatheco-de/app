@@ -1,7 +1,8 @@
 {
+  "change-language": "Change language",
   "connect-with-github": "Connect with Github",
   "see-financing-options": "See financing options",
-  "your-tutors-in-this-cohort": "Your tutors in this cohort:",
+  "your-tutors-in-this-cohort": "Your tutors:",
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
   "rigo": "Rigo",
@@ -56,7 +57,7 @@
   "enroll-for-connector": "Enroll for",
   "learn-more": "Learn more",
   "more-technologies":"More technologies",
-  "continue-learning":"Continue learning for free about:",
+  "continue-learning":"Continue learning about:",
   "technologies-and-more": "{{technologies}} and more.",
   "user-id": "User ID",
   "day": "Day",

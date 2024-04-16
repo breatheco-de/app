@@ -393,7 +393,7 @@ function StudentReport() {
     return { label, color: attendanceStyles[status] };
   });
 
-  const eventsDots = events.map((event) => {
+  const eventsDots = events?.length > 0 ? events.map((event) => {
     const label = (
       <>
         <Text textAlign="center">{eventsLabels[event.kind]}</Text>
@@ -401,7 +401,7 @@ function StudentReport() {
       </>
     );
     return { label, color: eventsStyles[event.kind], event_slug: event.meta.event_slug };
-  });
+  }) : [];
 
   const lessonsDots = cohortAssignments.lessons.map((lesson) => {
     const studentLesson = studentAssignments.lessons.find((elem) => elem.associated_slug === lesson.slug);
@@ -638,6 +638,7 @@ function StudentReport() {
                       <p>{t('workshops')}</p>
                     </Flex>
                   )}
+                  emptyDotsMessage={t('no-workshops-attendance')}
                   onClickDots={(dot) => isWindow && window.open(`/workshops/${dot.event_slug}`)}
                   dots={eventsDots}
                 />

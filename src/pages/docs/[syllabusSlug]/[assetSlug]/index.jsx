@@ -15,6 +15,7 @@ import {
 import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import Head from 'next/head';
 import { nestAssignments } from '../../../../common/hooks/useModuleHandler';
 import useStyle from '../../../../common/hooks/useStyle';
 import bc from '../../../../common/services/breathecode';
@@ -22,14 +23,15 @@ import Heading from '../../../../common/components/Heading';
 import Text from '../../../../common/components/Text';
 import Link from '../../../../common/components/NextChakraLink';
 import Icon from '../../../../common/components/Icon';
-import { getExtensionName } from '../../../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
+import { cleanObject, getExtensionName } from '../../../../utils';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
 import MarkDownParser from '../../../../common/components/MarkDownParser';
 import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
 import modifyEnv from '../../../../../modifyEnv';
+import Helmet from '../../../../common/components/Helmet';
 
 const redirectLang = {
   es: '/es/',
@@ -136,6 +138,9 @@ export const getStaticProps = async ({ params, locale }) => {
     });
     return {
       props: {
+        seo: {
+          disableDynamicGeneration: true,
+        },
         translations: translationArray,
         syllabusData: syllabus,
         moduleMap: moduleData,
@@ -167,6 +172,27 @@ function Docs({ syllabusData, moduleMap }) {
 
   const markdownData = asset?.markdown ? getMarkDownContent(asset.markdown) : '';
   const isIpynb = asset?.ipynbHtml?.statusText === 'OK' || asset?.ipynbHtml?.iframe;
+  const langPrefix = lang === 'en' ? '' : `/${lang}`;
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    name: asset?.title,
+    description: asset?.description,
+    url: `${ORIGIN_HOST}${langPrefix}/docs/${syllabusSlug}/${assetSlug}`,
+    image: asset?.preview || `${ORIGIN_HOST}/static/images/4geeks.png`,
+    datePublished: asset?.published_at,
+    dateModified: asset?.updated_at,
+    author: asset?.author ? {
+      '@type': 'Person',
+      name: `${asset?.author?.first_name} ${asset?.author?.last_name}`,
+    } : null,
+    keywords: asset?.seo_keywords,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${ORIGIN_HOST}${langPrefix}/docs/${syllabusSlug}/${assetSlug}`,
+    },
+  };
+  const cleanedStructuredData = cleanObject(structuredData);
 
   const getAssetData = async () => {
     try {
@@ -178,6 +204,7 @@ function Docs({ syllabusData, moduleMap }) {
       if (!isInSyllabus) throw new Error('this asset is not part of this syllabus');
       const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const assetData = await response.json();
+      const { translations = {} } = assetData;
 
       const urlPathname = assetData?.readme_url ? assetData?.readme_url.split('https://github.com')[1] : null;
       const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
@@ -188,6 +215,21 @@ function Docs({ syllabusData, moduleMap }) {
       const exensionName = getExtensionName(assetData.readme_url);
       let markdown = '';
       let ipynbHtml = '';
+      const translationInEnglish = translations?.en || translations?.us;
+      const translationArray = [
+        {
+          value: 'en',
+          lang: 'en',
+          slug: (assetData?.lang === 'en' || assetData?.lang === 'us') ? assetData?.slug : translationInEnglish,
+          link: `/docs/${syllabusSlug}/${(assetData?.lang === 'en' || assetData?.lang === 'us') ? assetData?.slug : translationInEnglish}`,
+        },
+        {
+          value: 'es',
+          lang: 'es',
+          slug: assetData?.lang === 'es' ? assetData.slug : translations?.es,
+          link: `/es/docs/${syllabusSlug}/${assetData?.lang === 'es' ? assetData.slug : translations?.es}`,
+        },
+      ].filter((item) => item?.slug !== undefined);
 
       if (exensionName !== 'ipynb') {
         const resp = await fetch(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
@@ -213,6 +255,7 @@ function Docs({ syllabusData, moduleMap }) {
         markdown,
         ipynbHtml,
         collab_url: finalPathname,
+        translationArray,
       });
       setLoadStatus({
         loading: false,
@@ -264,6 +307,28 @@ function Docs({ syllabusData, moduleMap }) {
 
   return (
     <>
+      {cleanedStructuredData?.name && (
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
+          />
+        </Head>
+      )}
+      <Helmet
+        title={asset?.title || ''}
+        description={asset?.description || ''}
+        image={asset?.preview || ''}
+        pathConnector={`/docs/${syllabusSlug}`}
+        url={`/docs/${syllabusSlug}/${assetSlug}`}
+        slug={assetSlug || ''}
+        type="article"
+        locales={router.locales}
+        locale={lang}
+        publishedTime={asset?.published_at || ''}
+        modifiedTime={asset?.last_synch_at || ''}
+        translations={asset?.translationArray}
+      />
       {!loadStatus.loading && loadStatus.status === 'not-found' && (
         <Box height="50vh">
           <Heading textAlign="center" size="l" as="h1" fontWeight="700" margin="2rem">

@@ -26,10 +26,9 @@ function Summary() {
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [disableHandler, setDisableHandler] = useState(false);
 
   const {
-    state, nextStep, setSelectedPlanCheckoutData, setPlanProps, handlePayment, getPaymentText,
+    state, nextStep, setSelectedPlanCheckoutData, handlePayment, getPaymentText,
     setLoader,
   } = useSignup();
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
@@ -48,12 +47,13 @@ function Summary() {
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
-  const planId = getQueryString('plan');
+  const planId = getQueryString('plan_id');
   const cohortId = Number(getQueryString('cohort'));
 
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
   const periodText = {
+    ONE_TIME: '',
     FREE: t('totally_free'),
     WEEK: t('info.trial-week'),
     MONTH: t('info.monthly'),
@@ -63,20 +63,6 @@ function Summary() {
     FINANCING: t('info.financing'),
   };
 
-  const getPlanProps = (selectedPlan) => {
-    bc.payment().getPlanProps(encodeURIComponent(selectedPlan?.slug))
-      .then((resp) => {
-        if (!resp) {
-          setDisableHandler(true);
-        } else {
-          setDisableHandler(false);
-          setPlanProps(resp.data);
-        }
-      })
-      .catch(() => {
-        setDisableHandler(true);
-      });
-  };
   const getPrice = () => {
     if (isNotTrial) {
       if (selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0) return selectedPlanCheckoutData?.financing_options[0]?.monthly_price;
@@ -94,7 +80,7 @@ function Summary() {
     reportDatalayer({
       dataLayer: {
         event: 'checkout_summary',
-        plan: checkoutData?.plans[0].slug,
+        plan: checkoutData?.plans[0].plan_slug,
       },
     });
   }, []);
@@ -157,10 +143,10 @@ function Summary() {
         getAllMySubscriptions()
           .then((subscriptions) => {
             const currentSubscription = subscriptions?.find(
-              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+              (subscription) => checkoutData?.plans[0].plan_slug === subscription.plans[0]?.slug,
             );
             const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
-              (subscription) => checkoutData?.plans[0].slug === subscription.plans[0]?.slug,
+              (subscription) => checkoutData?.plans[0].plan_slug === subscription.plans[0]?.slug,
             );
             const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
@@ -191,25 +177,19 @@ function Summary() {
           });
       }, 1500);
     }
-    if (readyToRefetch === false) {
-      setTimeElapsed(0);
-      clearInterval(interval);
-    }
-  }, [readyToRefetch]);
+    return () => clearInterval(interval);
+  }, [readyToRefetch, timeElapsed]);
 
   useEffect(() => {
     const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
     if (findedPlan) {
       setLoader('plan', false);
-
       setSelectedPlanCheckoutData(findedPlan);
-      getPlanProps(findedPlan);
     }
 
     if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
       setLoader('plan', false);
       setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-      getPlanProps(checkoutData?.plans[selectedIndex]);
     }
   }, [checkoutData?.plans]);
 
@@ -406,11 +386,12 @@ function Summary() {
                     style={{ margin: '8px 0 0 0' }}
                   />
                   <Box
-                    fontSize={{ base: '12px', md: '13px' }}
+                    fontSize="14px"
                     fontWeight="600"
                     letterSpacing="0.05em"
-                    dangerouslySetInnerHTML={{ __html: bullet?.features[0]?.description }}
+                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
                   />
+                  {bullet?.features[0]?.description}
                 </Box>
               ))}
             </Box>
@@ -428,7 +409,6 @@ function Summary() {
           <Box display="flex" flexDirection="column" gridGap="10px">
             {/* {cohortPlans */}
             {checkoutData?.plans
-              .filter((l) => l.status === 'ACTIVE')
               .map((item, i) => {
                 const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
                 const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
@@ -440,7 +420,13 @@ function Summary() {
                       display="flex"
                       onClick={() => {
                         setSelectedIndex(i);
-                        // setPlanData(item);
+                        router.push({
+                          pathname: '/checkout',
+                          query: {
+                            ...router.query,
+                            plan_id: item?.plan_id,
+                          },
+                        });
                         setSelectedPlanCheckoutData(item);
                       }}
                       flexDirection="row"
@@ -465,8 +451,8 @@ function Summary() {
                         <Box fontSize={{ base: '12px', md: '18px' }} fontWeight="700">
                           {title}
                         </Box>
-                        <Text fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
-                          {periodText[item?.period] || t('info.trial')}
+                        <Text display={periodText[item?.period] ? 'block' : 'none'} fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
+                          {periodText[item?.period]}
                         </Text>
                       </Box>
                       <Box display="flex" minWidth="90px" alignItems="center" gridGap="10px">
@@ -492,7 +478,7 @@ function Summary() {
               width="100%"
               onClick={handleSubmit}
               isLoading={isSubmitting}
-              isDisabled={disableHandler}
+              isDisabled={!selectedPlanCheckoutData?.featured_info}
               height="45px"
               mt="12px"
             >
@@ -505,7 +491,7 @@ function Summary() {
               borderColor="blue.200"
               onClick={handleSubmit}
               isLoading={isSubmitting}
-              isDisabled={disableHandler}
+              isDisabled={!selectedPlanCheckoutData?.featured_info}
               background={featuredBackground}
               _hover={{ background: featuredBackground, opacity: 0.8 }}
               _active={{ background: featuredBackground, opacity: 1 }}

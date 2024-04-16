@@ -15,8 +15,8 @@ import useStyle from '../hooks/useStyle';
 function EventCard({ id, language, slug, title, ignoreDynamicHandler, description, host, startingAt, endingAt, technologies, stTranslation, isSmall, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const [date, setDate] = useState('');
-  const { lightColor, disabledColor2, featuredColor } = useStyle();
-  const startedButRemain = date?.started && date?.ended === false;
+  const { lightColor, featuredColor } = useStyle();
+  const startedButNotEnded = date?.started && date?.ended === false;
   // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const accessToken = getStorageItem('accessToken');
 
@@ -109,10 +109,10 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
   }, []);
 
   return (
-    <Flex flexDirection="column" gridGap="16px" width={isSmall ? '310px' : 'auto'} maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButRemain ? '2px solid' : '1px solid'} borderColor={startedButRemain ? 'blue.default' : 'gray.350'} background={startedButRemain ? featuredColor : 'inherit'} {...rest}>
+    <Flex flexDirection="column" gridGap="16px" width={isSmall ? '310px' : 'auto'} maxWidth={{ base: '260px', sm: '310px' }} borderRadius="12px" padding="16px" border={startedButNotEnded ? '2px solid' : '1px solid'} borderColor={startedButNotEnded ? 'blue.default' : 'gray.350'} background={startedButNotEnded ? featuredColor : 'inherit'} {...rest}>
       {/* -------------------------------- head event info -------------------------------- */}
       <Flex justifyContent="space-between" alignItems="center">
-        <Box color={startedButRemain ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
+        <Box color={startedButNotEnded ? 'blue.default' : lightColor} display="flex" alignItems="center" gridGap="8px">
           <Icon icon="chronometer" color="currentColor" width="20px" height="20px" />
           <Text size="12px" fontWeight={700}>
             {intervalDurationDate?.hours > 0 && (stTranslation?.[lang]?.['live-event']?.['time-duration']?.replace('{{time}}', `${intervalDurationDate?.hours}${intervalDurationDate?.hours > 1 ? 'hrs' : 'hr'}`) || t('time-duration', { time: `${intervalDurationDate?.hours}${intervalDurationDate?.hours > 1 ? 'hrs' : 'hr'}` }))}
@@ -120,7 +120,7 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
             {intervalDurationDate?.hours === 0 && intervalDurationDate?.minutes > 0 && (stTranslation?.[lang]?.['live-event']?.['time-duration']?.replace('{{time}}', `${intervalDurationDate?.minutes}${intervalDurationDate?.minutes > 1 ? 'mins' : 'min'}`) || t('time-duration', { time: `${intervalDurationDate?.minutes}${intervalDurationDate?.minutes > 1 ? 'mins' : 'min'}` }))}
           </Text>
         </Box>
-        {startedButRemain ? (
+        {startedButNotEnded ? (
           <Box display="flex" alignItems="center" height={isSmall ? '24px' : 'auto'} gridGap="8px" padding="4px 10px" color="danger" background="red.light" borderRadius="18px">
             <Icon icon="dot" color="currentColor" width="9px" height="9px" />
             <Text size="12px" fontWeight={700} lineHeight="14.4px">
@@ -169,7 +169,7 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
           </Box>
         </Flex>
       ))}
-      {(ignoreDynamicHandler || startedButRemain) ? (
+      {ignoreDynamicHandler && (
         <Link
           margin="auto 0 0 0"
           href={`${languageConnector}/workshops/${slug}`}
@@ -181,13 +181,11 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
           justifyContent="center"
           gridGap="10px"
         >
-          {stTranslation ? stTranslation[lang]['live-event']['join-event'] : t('join-event')}
+          {(ignoreDynamicHandler || startedButNotEnded)
+            ? <>{stTranslation ? stTranslation[lang]['live-event']['join-event'] : t('join-event')}</>
+            : <>{stTranslation ? stTranslation[lang]['live-event']['book-place'] : t('book-place')}</>}
           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
         </Link>
-      ) : (
-        <Text margin="auto 0 0 0" size="18px" color={disabledColor2} textAlign="center" fontWeight={700}>
-          {stTranslation ? stTranslation[lang]['live-event']['will-start-soon'] : t('will-start-soon')}
-        </Text>
       )}
     </Flex>
   );

@@ -13,7 +13,7 @@ import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
 import syllabusList from '../../../public/syllabus.json';
 import NextChakraLink from '../../common/components/NextChakraLink';
-import UpgradeExperience from '../../common/components/UpgradeExperience';
+// import UpgradeExperience from '../../common/components/UpgradeExperience';
 import useStyle from '../../common/hooks/useStyle';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 
@@ -113,7 +113,7 @@ function MobileNav({
         </NextChakraLink>
       </Box>
 
-      {isAuthenticated && !hasPaidSubscription && (
+      {/* {isAuthenticated && !hasPaidSubscription && (
         <Box
           margin="0 0 1rem 0"
           borderTop={1}
@@ -123,7 +123,7 @@ function MobileNav({
         >
           <UpgradeExperience width="100%" display={{ base: 'flex', sm: 'none' }} />
         </Box>
-      )}
+      )} */}
       <Box
         borderTop={1}
         borderStyle="solid"

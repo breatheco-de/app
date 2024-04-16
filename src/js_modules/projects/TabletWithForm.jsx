@@ -23,13 +23,13 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
-function TabletWithForm({
+const TabletWithForm = React.forwardRef(({
   asset,
   commonTextColor,
   technologies,
   href,
   showSimpleTable,
-}, ref) {
+}, ref) => {
   const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
@@ -38,6 +38,7 @@ function TabletWithForm({
   const { hexColor, lightColor } = useStyle();
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
+  const assetUrl = asset?.readme_url || asset?.url;
 
   const getTitleMessage = () => {
     if (user) return '';
@@ -107,11 +108,11 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
-            liveDemoAvailable={asset.intro_video_url}
+            liveDemoAvailable={asset?.intro_video_url}
             technologies={technologies}
           />
         </Box>
@@ -284,6 +285,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 width="100%"
                 fontSize="14px"
                 padding="0"
+                isDisabled={!assetUrl}
                 whiteSpace="normal"
                 variant="otuline"
                 border="1px solid"
@@ -293,7 +295,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 onClick={() => {
                   if (typeof window !== 'undefined') {
                     ReportOpenInProvisioningVendor('gitpod');
-                    window.open(`https://gitpod.io#${asset.url}`, '_blank').focus();
+                    window.open(`https://gitpod.io#${assetUrl}`, '_blank').focus();
                   }
                 }}
               >
@@ -308,6 +310,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 width="100%"
                 fontSize="14px"
                 padding="0"
+                isDisabled={!assetUrl}
                 whiteSpace="normal"
                 variant="otuline"
                 border="1px solid"
@@ -315,9 +318,10 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                 fontWeight="700"
                 color="blue.default"
                 onClick={() => {
+                  const url = assetUrl ? assetUrl.replace('https://github.com/', '') : '';
                   if (typeof window !== 'undefined') {
                     ReportOpenInProvisioningVendor('codespaces');
-                    window.open(`https://github.com/codespaces/new/?repo=${asset.url.replace('https://github.com/', '')}`, '_blank').focus();
+                    window.open(`https://github.com/codespaces/new/?repo=${url}`, '_blank').focus();
                   }
                 }}
               >
@@ -390,7 +394,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           <SimpleTable
             href={href}
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
-            repository={asset.url}
+            repository={asset.readme_url}
             duration={asset.duration}
             videoAvailable={asset.gitpod ? asset.solution_video_url : null}
             solution={asset.gitpod ? asset.solution_url : null}
@@ -401,7 +405,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
       </Box>
     </>
   );
-}
+});
 
 TabletWithForm.propTypes = {
   commonTextColor: PropTypes.string,

@@ -1,7 +1,8 @@
 {
+  "change-language": "Cambiar idioma",
   "connect-with-github": "Conéctate con Github",
   "see-financing-options": "Ver opciones de financiamiento",
-  "your-tutors-in-this-cohort": "Tus tutores en esta cohorte:",
+  "your-tutors-in-this-cohort": "Tus tutores:",
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
   "rigo": "Rigo",
@@ -56,7 +57,7 @@
   "enroll-for-connector": "Unete por",
   "learn-more": "Aprender más",
   "more-technologies":"Más tecnologías",
-  "continue-learning":"Continúa aprendiendo gratis sobre:",
+  "continue-learning":"Continúa aprendiendo sobre:",
   "technologies-and-more": "{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
