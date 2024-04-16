@@ -1,0 +1,15 @@
+{
+  "back-to": "Volver al reporte del estudiante",
+  "select-task": "Selecciona una asignación",
+  "relevant-activities": "Actividades relevantes",
+  "completion-percentage": "Porcentage de completación",
+  "total-steps-completed": "Total de pasos completados",
+  "total-time": "Tiempo total trabajado en esta tarea",
+  "steps-status": "Estatus de los pasos",
+  "no-telemetry": "Este ejercicio no tiene telemetría",
+  "time-to-complete": "Tiempo en completar",
+  "rigobot-uses": "Uso de Rigobot",
+  "tests-run": "Pruebas ejecutadas",
+  "tests-failed": "Pruebas falldias",
+  "compiled-errors": "Errores de compilación"
+}

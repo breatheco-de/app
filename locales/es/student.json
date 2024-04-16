@@ -1,10 +1,11 @@
 {
-  "back-to": "Volver al Dashboard",
+  "back-to": "Volver a las asignaciones",
   "relevant-activities": "Actividades relevantes",
   "attendance": "Asistencia",
   "workshops": "Workshops",
   "deliverables": "Entregables",
   "no-workshops-attendance": "El estudiante no ha asistido a ningún taller todavía.",
+  "no-task": "Este ejercicio todavía no se ha iniciado",
   "deliverables-section": {
     "lessons": "Lecciones completadas",
     "projects": "Proyectos completados",
