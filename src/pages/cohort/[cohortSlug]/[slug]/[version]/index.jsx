@@ -346,11 +346,12 @@ function Dashboard() {
         <AlertMessage
           full
           type="warning"
-          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          // message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         >
           <Text
             size="l"
+            color="black"
             dangerouslySetInnerHTML={{
               __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
             }}
