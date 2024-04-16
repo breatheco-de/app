@@ -46,7 +46,7 @@ function AssignmentReport() {
       const { data } = await bc.todo({
         academy,
         limit: 1000,
-        task_type: 'PROJECT,LESSON,EXERCISE',
+        task_type: 'EXERCISE',
         student: studentId,
       }).getAssignments({ id: foundStudent.cohort.id, academy });
 
