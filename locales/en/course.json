@@ -1,29 +1,29 @@
 {
-  "course-content-text": "Syllabus optimized to get a job!",
-  "course-content-description": "We have battle-tested this syllabus with hundreds of job positions to give you the necessary skills to find a job in tech.",
+  "course-content-text": "Get Job-Ready with Our Syllabus!",
+  "course-content-description": "We've fine-tuned our course content with hundreds of job positions to prepare you for a successful entry into tech.",
   "students-enrolled-count": "+{{count}} students enrolled",
   "instructors-more": "+{{count}} more instructors",
   "enroll-now-for-price": "Enroll now for {{price}} monthly",
-  "join-cohort": "Join cohort",
-  "join-cohort-description": "Join a cohort and start your bootcamp journey",
-  "create-account-text": "Create an account and start your bootcamp journey",
-  "live-bootcamp": "Live bootcamp",
+  "join-cohort": "Join now",
+  "join-cohort-description": "Join now and start your coding journey today",
+  "create-account-text": "Create an account and start your coding journey today",
+  "live-bootcamp": "Self-paced bootcamp",
   "title-connectors": {
     "start": "Start a career in",
-    "end": "by learning at your own pace"
+    "end": "learning at your own pace"
   },
   "build-connector": {
     "what-you-will": "Learn by building",
-    "description": "When learning to code at your own pace, the projects you build must have video solutions, code examples of the solution, and feedback in real-time. The projects must be similar to those you will build on your first job. On this solo bootcamp, you will build real-projects like these:",
+    "description": "When learning to code at your own pace, having access to video tutorials, code examples, and continuous, real-time feedback is crucial to succeed. The tasks you'll tackle will closely resemble those encountered in a real-world tech position. Here's a glimpse of what you'll be working on:",
     "build": "real-life projects"
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Learning on at your own pace is hard, and we have designed the tools to avoid getting problems, lose motivation, and accelerate your learning."
+    "benefits-connector": "Learning at your own pace can be challenging, but we've developed the tools to keep you motivated, prevent you from getting stuck on problems,  and accelerate your learning process."
   },
   "show-prices": {
     "title": "Learning to code at your own pace is possible without a big investment!",
-    "description": "We don't want money to stop you from getting into tech.<br/><br/>Pay up-front or choose any of our financing options start learning immediately"
+    "description": "Your finances should not stop you from getting into tech. We’ve got your back.<br/><br/>Choose from up-front payment or flexible financing options. Start learning today!"
   },
   "rigobot": {
     "title": "Meet Rigobot, our internal AI designed for solo learners",
@@ -33,31 +33,31 @@
   },
   "featured-bullets": [
     {
-      "title": "Get help from our internally trained AI while you code"
+      "title": "Get help from our internally trained AI as you learn to code."
     },
     {
-      "title": "Join weekly live workshops with experts coding real-life projects."
+      "title": "Join weekly live workshops, coding real-life projects with experts."
     },
     {
-      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and other relevant career activities."
+      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and more."
     },
     {
-      "title": "Get help with <strong>live one-on-one mentoring sessions</strong> every month"
+      "title": "Access <strong>live one-on-one mentoring sessions</strong>."
     }
   ],
   "why-learn-with-4geeks": {
     "title": "Why should I learn with 4Geeks?",
-    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students who graduated from our BootCamp got hired!"
+    "description": "Join a proven leader in tech education: Over 9 years of recognized excellence, 4000+ successful graduates, 84% job placement rate!"
   },
   "faq": [
     {
       "id": 1,
-      "title": "Will I learn on my own?",
+      "title": "Will I be learning on my own?",
       "description": "No, the solo BootCamp is designed to learn at your own pace and time, but we have a lot of live features at different schedules that are optional for you, and you can join whenever you want. We have many live workshops about the technologies you are learning, happening almost every day of the week. You can schedule private mentoring sessions with an expert that will help you exactly with the problems you have or concepts you don't understand, and the best part is that you choose the time and day!"
     },
     {
       "id": 2,
-      "title": "How to schedule a mentoring session?",
+      "title": "How do I schedule a mentoring session?",
       "description": "To schedule a mentoring session, you must go to the dashboard, choose the mentoring service you need on the mentorships box, choose the mentor you like the most, then select the day and time, and you are ready! You can read more about the mentoring sessions <a href='https://4geeks.com/docs/knowledge-base-4geeks/mentoring-sessions' target='_blank'>here</a>."
     },
     {
@@ -78,8 +78,8 @@
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "Learn at your own pace effectively with LearnPack!",
-      "description": "LearnPack is a software crafted for self-learners. It features Rigobot integration, serving as a tutor, primed to address any code-related inquiries and equipped with automated tests to provide immediate feedback, enabling continuous learning at any time!",
+      "title": "Maximize Your Learning Potential with LearnPack!",
+      "description": "LearnPack is our custom-designed software for self-learners. It integrates our proprietary AI tutor, ready to address any coding-related issues and equipped with automated tests for immediate feedback, allowing for an interactive learning experience anytime!",
       "button": "Start learning now!",
       "link": "#pricing"
     },
@@ -123,32 +123,32 @@
         "id": 1,
         "icon": "rigobot-avatar",
         "title": "Learn with AI",
-        "description": "Our AI can review your code to give you instant feedback, help you with an exercise, and more!"
+        "description": "Our AI reviews your code to give you instant feedback, helps with the exercises, and more!"
       },
       {
         "id": 2,
         "icon": "talking",
-        "title": "One - on - one mentoring session",
-        "description": "Ask for a mentoring session with an expert whenever you want and at the time that best fits you."
+        "title": "One-on-one mentoring sessions",
+        "description": "Access a pack of monthly mentorship sessions with our experts and add extra sessions as needed."
       },
       {
         "id": 3,
         "icon": "community",
         "title": "Learn with the community",
-        "description": "Learning with others is more fun, is easier, and you can get farther. Our community won't leave you behind!"
+        "description": "Learning alongside others is not only more fun but also helps you progress faster. Join our active learning community for support and collaboration."
       }
     ]
   },
   "certificate": {
     "image": "/static/images/certificate-preview.webp",
-    "title": "Certificate in your favorite technology",
-    "description": "Your 4Geeks certificate serves as a gateway to professional prospects, supported by a widespread network of companies throughout LATAM and across the globe. Backed by endorsements from numerous international institutions, it symbolizes a globally recognized standard of excellence, paving the way for diverse career opportunities.",
+    "title": "Get certified in your favorite technology",
+    "description": "Your 4Geeks certificate will open doors to professional opportunities with our extensive network of companies across the world. Endorsed by international institutions, it represents a globally recognized standard, unlocking diverse career paths.",
     "button": "See prices",
     "button-link": "#pricing"
   },
   "job-section": {
     "image": "/static/images/happy-male-with-laptop.png",
-    "title": "Get prepared for your next job",
+    "title": "Get prepared for a new career",
     "subtitle": "Improve your CV, portfolio, GitHub profile, and social media profiles.",
     "description": "Get access to exercises that simulate real-life interviews curated from the companies actively hiring. At no additional cost to you and without deducting anything from the salary of the job offer you get.",
     "button": "Join now!",

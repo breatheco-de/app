@@ -24,7 +24,8 @@
     "workshop": "Taller",
     "will-start-soon": "Empezará pronto",
     "time-duration": "{{time}} de duración",
-    "join-event": "Reserva tu lugar",
+    "join-event": "Únete ahora",
+    "book-place": "Reserva tu lugar",
     "filters": {
         "language": "Idioma",
         "event-type": "Tipo de evento"
