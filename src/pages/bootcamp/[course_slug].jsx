@@ -156,7 +156,7 @@ function Page({ data }) {
         return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
       }
       if (firstPaymentPlan.period === 'ONE_TIME') {
-        return `${firstPaymentPlan.priceText}, ${t('signup:info.one-time')}`;
+        return `${firstPaymentPlan.priceText}, ${t('signup:info.one-time-payment')}`;
       }
       if (firstPaymentPlan.period === 'FINANCING') {
         return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
@@ -528,6 +528,7 @@ function Page({ data }) {
                       <>
                         <Button
                           variant="default"
+                          isLoading={!firstPaymentPlan?.price}
                           background="green.400"
                           color="white"
                           onClick={() => {

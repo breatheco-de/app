@@ -105,6 +105,7 @@
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
     "monthly": "Monthly",
+    "one-time-payment": "one-time payment",
     "one-time-connector": "One-time payment of ${{value}} dollars",
     "installments": "Installments",
     "quarterly": "Quarterly",

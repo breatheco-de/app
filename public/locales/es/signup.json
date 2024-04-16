@@ -105,6 +105,7 @@
     "trial": "Prueba por 1 mes",
     "trial-week": "Prueba por 1 semana",
     "monthly": "Mensual",
+    "one-time-payment": "un solo pago",
     "one-time-connector": "Un solo pago de ${{value}} dólares",
     "installments": "Cuotas",
     "quarterly": "Trimestral",
