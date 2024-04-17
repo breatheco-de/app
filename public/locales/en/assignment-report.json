@@ -1,0 +1,15 @@
+{
+  "back-to": "Back to student report",
+  "select-task": "Select a Task",
+  "relevant-activities": "Relevant activities",
+  "completion-percentage": "Completion percentage",
+  "total-steps-completed": "Total steps completed",
+  "total-time": "Total time worked on this package",
+  "steps-status": "Steps status",
+  "no-telemetry": "This task does not have telemetry",
+  "time-to-complete": "Time to complete",
+  "rigobot-uses": "Rigobot uses",
+  "tests-run": "Tests run",
+  "tests-failed": "Tests failed",
+  "compiled-errors": "Compiled errors"
+}
