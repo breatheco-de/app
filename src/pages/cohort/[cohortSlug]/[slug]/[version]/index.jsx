@@ -356,6 +356,7 @@ function Dashboard() {
               fontWeight="700"
               fontSize="15px"
               onClick={() => setShowMandatoryModal(true)}
+              _active={{ color: 'black' }}
             >
               {t('deliverProject.see-mandatory-projects')}
             </Button>
