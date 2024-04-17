@@ -114,7 +114,7 @@ const useSignup = () => {
   });
 
   const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
-    const manyInstallmentsExists = selectedPlanCheckoutData?.financing_options?.length > 0 && selectedPlanCheckoutData?.period === 'FINANCING';
+    const manyInstallmentsExists = selectedPlanCheckoutData?.how_many_months > 0 || selectedPlanCheckoutData?.period === 'FINANCING';
     const isTtrial = ['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
 
     const getRequests = () => {
