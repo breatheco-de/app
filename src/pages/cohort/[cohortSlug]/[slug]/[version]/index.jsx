@@ -73,7 +73,7 @@ function Dashboard() {
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
-  const [showMandatoryModal, setShowMandatoryModal] = useState(true);
+  const [showMandatoryModal, setShowMandatoryModal] = useState(false);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
