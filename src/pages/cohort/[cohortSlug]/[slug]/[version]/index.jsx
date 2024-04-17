@@ -15,6 +15,7 @@ import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
+import Module from '../../../../../js_modules/moduleMap/module';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -63,7 +64,7 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
-  const { featuredColor } = useStyle();
+  const { featuredColor, hexColor } = useStyle();
 
   const { user, choose, isAuthenticated } = useAuth();
 
@@ -72,6 +73,7 @@ function Dashboard() {
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
+  const [showMandatoryModal, setShowMandatoryModal] = useState(true);
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
@@ -338,15 +340,33 @@ function Dashboard() {
         <AlertMessage
           full
           type="warning"
-          message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+          // message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
-        />
+        >
+          <Text
+            size="l"
+            color="black"
+            fontWeight="700"
+          >
+            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+            {'  '}
+            <Button
+              variant="link"
+              color="black"
+              textDecoration="underline"
+              fontWeight="700"
+              fontSize="15px"
+              onClick={() => setShowMandatoryModal(true)}
+            >
+              {t('deliverProject.see-mandatory-projects')}
+            </Button>
+          </Text>
+        </AlertMessage>
       )}
       {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
         <AlertMessage
           full
           type="warning"
-          // message={t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
           style={{ borderRadius: '0px', justifyContent: 'center' }}
         >
           <Text
@@ -813,6 +833,38 @@ function Dashboard() {
           </ModalContent>
         </Modal>
       )}
+      {/* Mandatory projects modal */}
+      <Modal
+        isOpen={showMandatoryModal}
+        size="lg"
+        margin="0 10px"
+        onClose={() => {
+          setShowMandatoryModal(false);
+        }}
+      >
+        <ModalOverlay />
+        <ModalContent style={{ margin: '3rem 0 0 0' }}>
+          <ModalHeader pb="0" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor}>
+            {t('mandatoryProjects.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody padding={{ base: '15px 22px' }}>
+            <Text color={hexColor.fontColor3} fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
+              {t('mandatoryProjects.description')}
+            </Text>
+            {getMandatoryProjects().map((module, i) => (
+              <Module
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${module.title}-${i}`}
+                currIndex={i}
+                data={module}
+                taskTodo={taskTodo}
+                variant="open-only"
+              />
+            ))}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

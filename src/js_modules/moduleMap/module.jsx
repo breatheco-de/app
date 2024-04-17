@@ -2,11 +2,13 @@ import {
   Box,
   Button,
   useToast,
+  Link,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
+import useStyle from '../../common/hooks/useStyle';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
 import ModuleComponent from '../../common/components/Module';
@@ -18,7 +20,7 @@ import { reportDatalayer } from '../../utils/requests';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, taskTodo, currIndex, isDisabled, onDisabledClick,
+  data, taskTodo, currIndex, isDisabled, onDisabledClick, variant,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -27,6 +29,7 @@ function Module({
   const [fileData, setFileData] = useState(null);
   const [, setUpdatedTask] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const { hexColor } = useStyle();
   const toast = useToast();
 
   const currentSlug = data.slug ? data.slug : '';
@@ -175,6 +178,19 @@ function Module({
   const taskTranslations = lang === 'en' ? (data?.translations?.en || data?.translations?.us) : (data?.translations?.[lang] || {});
 
   const link = isDisabled ? '#disabled' : `${langLink}/syllabus/${cohortSession.slug}/${data.type.toLowerCase()}/${taskTranslations?.slug || currentTask?.associated_slug}`;
+
+  const variants = {
+    'open-only': {
+      rightItemHandler: (
+        <Link href={link} color={hexColor.blueDefault}>
+          {t('common:open')}
+          {'  '}
+          {data.type}
+        </Link>
+      ),
+    },
+  };
+
   return (
     <>
       <ModuleComponent
@@ -214,6 +230,7 @@ function Module({
             </Box>
           </Button>
         )}
+        {...variants[variant]}
       />
       {currentTask?.task_status === 'DONE' && showModal && (
         <ShareButton
@@ -237,12 +254,14 @@ Module.propTypes = {
   taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   isDisabled: PropTypes.bool,
   onDisabledClick: PropTypes.func,
+  variant: PropTypes.string,
 };
 Module.defaultProps = {
   data: {},
   currIndex: 0,
   isDisabled: false,
   onDisabledClick: () => {},
+  variant: 'default',
 };
 
 export default memo(Module);
