@@ -381,12 +381,13 @@ export function NoInfoModal({ isOpen, onClose }) {
 }
 
 // eslint-disable-next-line no-unused-vars
-export function ReviewModal({ currentTask, projectLink, updpateAssignment, isOpen, onClose }) {
+export function ReviewModal({ currentTask, projectLink, externalFile, updpateAssignment, isOpen, onClose }) {
   return (
     <ReviewModalComponent
       isOpen={isOpen}
       onClose={onClose}
       currentTask={currentTask}
+      externalFiles={externalFile}
       projectLink={projectLink}
       updpateAssignment={updpateAssignment}
     />
@@ -528,6 +529,10 @@ ReviewModal.propTypes = {
   updpateAssignment: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  externalFile: PropTypes.oneOfType([PropTypes.any]),
+};
+ReviewModal.defaultProps = {
+  externalFile: null,
 };
 
 NoInfoModal.propTypes = {
