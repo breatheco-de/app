@@ -355,6 +355,7 @@ function Dashboard() {
               textDecoration="underline"
               fontWeight="700"
               fontSize="15px"
+              height="20px"
               onClick={() => setShowMandatoryModal(true)}
               _active={{ color: 'black' }}
             >
@@ -836,7 +837,7 @@ function Dashboard() {
       {/* Mandatory projects modal */}
       <Modal
         isOpen={showMandatoryModal}
-        size="lg"
+        size="2xl"
         margin="0 10px"
         onClose={() => {
           setShowMandatoryModal(false);
