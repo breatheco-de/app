@@ -24,7 +24,7 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { isWindow } from '../../../utils';
-import { WHITE_LABEL_ACADEMY, BASE_PLAN } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
@@ -517,7 +517,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/checkout?plan=${BASE_PLAN}`}>
+              <Link variant="buttonDefault" href="/pricing">
                 {t('get-started')}
               </Link>
             </Box>

@@ -1,8 +1,7 @@
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Divider } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Select } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { Image } from '@chakra-ui/next-js';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
@@ -123,10 +122,28 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
           {!isBootcampType ? (
             <>
               {!isOriginalPlan ? (
-                <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-                  <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                    {item.price_text}
-                  </Box>
+                <Box display="flex" height="75px" alignItems="center" justifyContent="center" gridGap="4px">
+                  {item?.optionList?.length > 0 ? (
+                    <Select
+                      maxWidth="15rem"
+                      border={0}
+                      fontSize="var(--heading-xl)"
+                      textAlign="center"
+                      color={color}
+                      fontWeight={700}
+                      height="auto"
+                      defaultValue={item?.optionList[0].priceText}
+                      onChange={() => {}}
+                    >
+                      {item?.optionList.map(
+                        (financing) => <option key={financing?.plan_id} value={financing.priceText}>{financing?.priceText}</option>,
+                      )}
+                    </Select>
+                  ) : (
+                    <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                      {item.price_text || item?.priceText}
+                    </Box>
+                  )}
                   {item.discount_text && (
                     <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}

@@ -102,7 +102,7 @@ export const processPlans = (data, {
         price: item?.monthly_price,
         priceText: `$${item?.monthly_price}`,
         period: 'ONE_TIME',
-        period_label: textInfo.label.financing,
+        period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
