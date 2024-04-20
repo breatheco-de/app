@@ -2,6 +2,7 @@
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Select } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
@@ -11,6 +12,7 @@ import { isWindow, slugToTitle } from '../../utils';
 export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard } = useStyle();
+  const [selectedFinancing, setSelectedFinancing] = useState({});
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
@@ -84,7 +86,10 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
     const qs = parseQuerys({
-      plan: item?.plan_slug,
+      plan: selectedFinancing?.plan_slug || item?.plan_slug,
+      plan_id: selectedFinancing?.plan_id || item?.plan_id,
+      price: selectedFinancing?.price || item?.price,
+      period: selectedFinancing?.period || item?.period,
     });
 
     if (isWindow) {
@@ -133,10 +138,13 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
                       fontWeight={700}
                       height="auto"
                       defaultValue={item?.optionList[0].priceText}
-                      onChange={() => {}}
+                      onChange={(e) => {
+                        const itemFinded = item?.optionList.find((financing) => financing.plan_id === e.target.value);
+                        setSelectedFinancing(itemFinded);
+                      }}
                     >
                       {item?.optionList.map(
-                        (financing) => <option key={financing?.plan_id} value={financing.priceText}>{financing?.priceText}</option>,
+                        (financing) => <option key={financing?.plan_id} value={financing.plan_id}>{financing?.priceText}</option>,
                       )}
                     </Select>
                   ) : (
