@@ -85,14 +85,18 @@ function PricingView() {
   }, []);
 
   useEffect(() => {
-    const selectedCourse = publicMktCourses.find((course) => course.slug === courseFormated);
-    const planSlug = selectedCourse?.plan_slug && encodeURIComponent(selectedCourse?.plan_slug);
-    if (planSlug) {
-      const translations = getTranslations(t);
-      fetchSuggestedPlan(planSlug, translations)
-        .then((suggestedPlanData) => {
-          setSelectedData(suggestedPlanData);
-        });
+    if (courseFormated) {
+      setIsFetching(true);
+      const selectedCourse = publicMktCourses.find((course) => course.slug === courseFormated);
+      const planSlug = selectedCourse?.plan_slug && encodeURIComponent(selectedCourse?.plan_slug);
+      if (planSlug) {
+        const translations = getTranslations(t);
+        fetchSuggestedPlan(planSlug, translations)
+          .then((suggestedPlanData) => {
+            setSelectedData(suggestedPlanData);
+          })
+          .finally(() => setIsFetching(false));
+      }
     }
   }, [publicMktCourses, courseFormated]);
 
