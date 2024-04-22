@@ -2,7 +2,7 @@ import { Box, Flex, Container, Button, Img, Select } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useQuery } from '@tanstack/react-query';
 import NextChakraLink from '../common/components/NextChakraLink';
 import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
@@ -44,15 +44,14 @@ function PricingView() {
   const [isFetching, setIsFetching] = useState(true);
   const queryCourse = getQueryString('course');
   const courseFormated = (queryCourse && encodeURIComponent(queryCourse)) || '';
-  // const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '';
   const [selectedData, setSelectedData] = useState({});
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
+  const [selectedCourseData, setSelectedCourseData] = useState({});
   const [paymentTypePlans, setPaymentTypePlans] = useState({
     monthly: [],
     yearly: [],
   });
-  const router = useRouter();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
@@ -65,6 +64,15 @@ function PricingView() {
   const paymentFeatures = t('signup:pricing.premium-plan.featured_info', {}, { returnObjects: true });
 
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
+
+  const planTranslations = getTranslations(t);
+  const planSlug = selectedCourseData.plan_slug;
+  const { isLoading, status, data: planData } = useQuery({
+    queryKey: ['suggestedPlan', { planSlug }],
+    queryFn: () => fetchSuggestedPlan(planSlug, planTranslations),
+    enabled: !!planSlug,
+    staleTime: Infinity,
+  });
 
   useEffect(() => {
     const mktQueryString = parseQuerys({
@@ -81,30 +89,26 @@ function PricingView() {
           },
           ...publicCourses,
         ]);
+        const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
+        if (selectedCourseByQueryString) {
+          setSelectedCourseData(selectedCourseByQueryString);
+        }
       });
   }, []);
 
   useEffect(() => {
-    const selectedCourse = publicMktCourses.find((course) => course.slug === courseFormated);
-    const planSlug = selectedCourse?.plan_slug && encodeURIComponent(selectedCourse?.plan_slug);
-    if (planSlug) {
-      const translations = getTranslations(t);
-      fetchSuggestedPlan(planSlug, translations)
-        .then((suggestedPlanData) => {
-          setSelectedData(suggestedPlanData);
-        });
+    setIsFetching(isLoading);
+    if (status === 'success' && planData) {
+      setSelectedData(planData);
     }
-  }, [publicMktCourses, courseFormated]);
+  }, [status, isLoading]);
 
   const onChangeCourse = (e) => {
     const selectedCourse = publicMktCourses.find((course) => course.slug === e.target.value);
     if (selectedCourse?.plan_slug) {
-      router.push({
-        pathname: '/pricing',
-        query: { course: e.target.value },
-      });
+      setSelectedCourseData(selectedCourse);
     } else {
-      router.push('/pricing');
+      setSelectedCourseData({});
       setSelectedData({});
     }
   };

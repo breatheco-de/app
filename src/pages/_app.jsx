@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import {
   QueryClient,
   QueryClientProvider,
-} from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+} from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
@@ -95,7 +95,7 @@ function App({ Component, pageProps }) {
           </SessionProvider>
         </AuthProvider>
       </ChakraProvider>
-      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+      <ReactQueryDevtools initialIsOpen={false} position="bottom" />
     </QueryClientProvider>
   );
 }
