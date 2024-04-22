@@ -14,7 +14,7 @@
     },
     {
       "id": "bootcamps",
-      "label": "Bootcamps",
+      "label": "Self-paced",
       "icon": "graduationCap",
       "description": "Explore our extensive collection of courses designed to help you master various subjects and skills. Whether you're a beginner or an advanced learner, there's something here for everyone.",
       "asPath": "/bootcamps",
@@ -23,7 +23,7 @@
     },
     {
       "id": "academy",
-      "label": "Academy",
+      "label": "Bootcamp",
       "href": "https://4geeksacademy.com",
       "hide_on_auth": true,
       "position": 2
