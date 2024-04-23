@@ -501,6 +501,7 @@ function Dashboard() {
                   featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                   mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                   otherEvents={events}
+                  cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
                 />
                 {cohortSession?.stage === 'FINAL_PROJECT' && (
                   <FinalProject
@@ -732,6 +733,7 @@ function Dashboard() {
                 featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                 mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                 otherEvents={events}
+                cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
               />
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
