@@ -237,7 +237,8 @@ const chakraComponents = {
           ...list,
           maxH: `${maxHeight}px`,
           overflowY: 'auto',
-          borderRadius: borderRadii[size],
+          borderTopRadius: borderRadii.sm,
+          borderBottomRadius: borderRadii[size] || borderRadii.md,
           padding: '0px',
           margin: '0px',
         }}
@@ -261,7 +262,7 @@ const chakraComponents = {
     children,
     isFocused,
     isDisabled,
-    selectProps: { size },
+    selectProps: { size, itemBackgroundColorHovered }, // prop from ChakraReactSelect
   }) => {
     const { item } = useStyles();
     return (
@@ -279,11 +280,11 @@ const chakraComponents = {
         ref={innerRef}
         cursor="pointer"
         _selection={{
-          background: 'gray.800',
+          background: itemBackgroundColorHovered || 'gray.800',
         }}
         _hover={{
           opacity: 1,
-          background: 'gray.800',
+          background: itemBackgroundColorHovered || 'gray.800',
           fontWeight: 'bold',
         }}
         {...innerProps}

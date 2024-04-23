@@ -268,6 +268,7 @@ function PricingView() {
                   id="select-course"
                   placeholder="Select a course"
                   color={hexColor.blueDefault}
+                  itemBackgroundColorHovered={hexColor.featuredColor}
                   fontSize="30px"
                   value={{
                     label: selectedCourseData?.course_translation?.title
