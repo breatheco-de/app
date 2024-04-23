@@ -14,7 +14,7 @@
     },
     {
       "id": "bootcamps",
-      "label": "Bootcamps",
+      "label": "A tu propio ritmo",
       "icon": "graduationCap",
       "description": "Explora nuestra extensa colección de cursos diseñados para ayudarte a dominar varios temas y habilidades. Ya seas un principiante o un aprendiz avanzado, aquí hay algo para todos.",
       "asPath": "/bootcamps",
@@ -23,7 +23,7 @@
     },
     {
       "id": "academy",
-      "label": "Academia",
+      "label": "Bootcamp",
       "href": "https://4geeksacademy.com",
       "hide_on_auth": true,
       "position": 2
