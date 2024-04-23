@@ -3,6 +3,10 @@ import {
   Avatar,
   Box,
   Button,
+  Flex,
+  Heading,
+  Image,
+  Skeleton,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
@@ -15,7 +19,7 @@ import useAuth from '../common/hooks/useAuth';
 import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle } from '../utils';
 import Summary from '../js_modules/checkout/Summary';
 import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -31,6 +35,8 @@ import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
 import { getTranslations, processPlans } from '../common/handlers/subscriptions';
+import NextChakraLink from '../common/components/NextChakraLink';
+import Icon from '../common/components/Icon';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -81,7 +87,7 @@ function Checkout() {
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
   const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps, loader } = state;
-  const { backgroundColor3 } = useStyle();
+  const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
 
@@ -431,23 +437,10 @@ function Checkout() {
           }
         }}
       />
-      {/* Stepper */}
-      {!isFirstStep && !readyToSelectService && !serviceToRequest?.id && (
-        <Stepper
-          hideIndexList={showChooseClass ? [] : [1]}
-          stepIndex={stepIndex}
-          checkoutData={checkoutData}
-          isFirstStep={isFirstStep}
-          isSecondStep={isSecondStep}
-          isThirdStep={isThirdStep}
-          isFourthStep={isFourthStep}
-          handleGoBack={handleGoBack}
-        />
-      )}
 
       <Box
         display="flex"
-        flexDirection="column"
+        flexDirection="row"
         gridGap={{ base: '20px', md: '20px' }}
         minHeight="320px"
         maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
@@ -455,63 +448,137 @@ function Checkout() {
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
-        {!readyToSelectService && isFirstStep && (
-          <ContactInformation
-            courseChoosed={courseChoosed}
-            defaultPlanData={originalPlan}
-            formProps={formProps}
-            setFormProps={setFormProps}
-            setVerifyEmailProps={setVerifyEmailProps}
+        <Flex
+          display="flex"
+          flexDirection="column"
+          gridGap={{ base: '20px', md: '20px' }}
+        >
+          {/* Stepper */}
+          {!readyToSelectService && !serviceToRequest?.id && (
+            <Stepper
+              hideIndexList={showChooseClass ? [] : [1]}
+              stepIndex={stepIndex}
+              checkoutData={checkoutData}
+              isFirstStep={isFirstStep}
+              isSecondStep={isSecondStep}
+              isThirdStep={isThirdStep}
+              isFourthStep={isFourthStep}
+              handleGoBack={handleGoBack}
+            />
+          )}
+          {!readyToSelectService && isFirstStep && (
+            <ContactInformation
+              courseChoosed={courseChoosed}
+              formProps={formProps}
+              setFormProps={setFormProps}
+              setVerifyEmailProps={setVerifyEmailProps}
+            />
+          )}
+
+          {/* Second step */}
+          {!readyToSelectService && showChooseClass && (
+            <ChooseYourClass setCohorts={setCohortsData} />
+          )}
+
+          {!readyToSelectService && isThirdStep && !serviceProps?.id && (
+            <Summary />
+          )}
+          {!readyToSelectService && isThirdStep && serviceProps?.id && (
+            <ServiceSummary service={serviceProps} />
+          )}
+          {readyToSelectService && (
+            <SelectServicePlan />
+          )}
+          {/* Fourth step */}
+          {!readyToSelectService && isFourthStep && (
+            <PaymentInfo />
+          )}
+          {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
+            <>
+              <Box as="hr" width="100%" margin="10px 0" />
+              <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" mt="auto">
+                {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
+                  <Button
+                    variant="outline"
+                    borderColor="currentColor"
+                    color="blue.default"
+                    isDisabled={handleGoBack().isNotAvailable}
+                    onClick={() => handleGoBack().func()}
+                  >
+                    {t('go-back')}
+                  </Button>
+                )}
+                {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
+                  <Button
+                    variant="default"
+                    isDisabled={dateProps === null}
+                    onClick={() => {
+                      nextStep();
+                    }}
+                  >
+                    {t('next-step')}
+                  </Button>
+                )}
+              </Box>
+            </>
+          )}
+        </Flex>
+        <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" alignItems="center" flex={0.5} position="relative">
+          <Flex flexDirection="column" width="400px" justifyContent="center" height="100%" zIndex={10}>
+            {originalPlan?.title ? (
+              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="25px" borderRadius="11px" background={backgroundColor}>
+                <Heading size="26px">
+                  {t('checkout.title')}
+                </Heading>
+                <Text size="16px">
+                  {t('checkout.description')}
+                  {' '}
+                  <NextChakraLink textDecoration="underline" href={t('checkout.read-more-link')} target="_blank">
+                    {t('checkout.read-more')}
+                  </NextChakraLink>
+                </Text>
+                {/* <Text size="16px" color="blue.default">
+                  {t('what-includes')}
+                </Text> */}
+                <Flex flexDirection="column" gridGap="4px" mt="1rem">
+                  {originalPlan?.featured_info?.length > 0
+                    && originalPlan?.featured_info.map((info) => info?.service?.slug && (
+                      <>
+                        <Flex key={info.service.slug} gridGap="8px" alignItems="center">
+                          {info?.service?.icon_url
+                            ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                            : (
+                              <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
+                            )}
+                          <Box>
+                            <Text size="16px" fontWeight={700} textAlign="left">
+                              {info?.features[0]?.title || slugToTitle(info?.service?.slug)}
+                            </Text>
+                          </Box>
+                        </Flex>
+                        <Text size="12px" marginLeft="20px" mb="12px">
+                          {info.features[0]?.description}
+                        </Text>
+                      </>
+                    ))}
+                </Flex>
+              </Flex>
+            ) : (
+              <Skeleton height="270px" width="400px" borderRadius="11px" zIndex={10} opacity={1} />
+            )}
+          </Flex>
+          <Image
+            position="absolute"
+            top={0}
+            left={0}
+            src="/static/images/happy-meeting-3.webp"
+            alt="Get Access"
+            height="631px"
+            style={{ objectFit: 'cover' }}
+            // margin={withoutSpacing && '2rem 0 0 0'}
+            borderBottomLeftRadius="6px"
           />
-        )}
-
-        {/* Second step */}
-        {!readyToSelectService && showChooseClass && (
-          <ChooseYourClass setCohorts={setCohortsData} />
-        )}
-
-        {!readyToSelectService && isThirdStep && !serviceProps?.id && (
-          <Summary />
-        )}
-        {!readyToSelectService && isThirdStep && serviceProps?.id && (
-          <ServiceSummary service={serviceProps} />
-        )}
-        {readyToSelectService && (
-          <SelectServicePlan />
-        )}
-        {/* Fourth step */}
-        {!readyToSelectService && isFourthStep && (
-          <PaymentInfo />
-        )}
-        {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
-          <>
-            <Box as="hr" width="100%" margin="10px 0" />
-            <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" mt="auto">
-              {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
-                <Button
-                  variant="outline"
-                  borderColor="currentColor"
-                  color="blue.default"
-                  isDisabled={handleGoBack().isNotAvailable}
-                  onClick={() => handleGoBack().func()}
-                >
-                  {t('go-back')}
-                </Button>
-              )}
-              {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
-                <Button
-                  variant="default"
-                  isDisabled={dateProps === null}
-                  onClick={() => {
-                    nextStep();
-                  }}
-                >
-                  {t('next-step')}
-                </Button>
-              )}
-            </Box>
-          </>
-        )}
+        </Flex>
       </Box>
     </Box>
   );
