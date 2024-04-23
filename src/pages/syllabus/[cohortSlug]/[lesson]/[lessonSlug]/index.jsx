@@ -649,6 +649,7 @@ function Content() {
                     color="#0097CD"
                     fontWeight="700"
                     id="cohort-select"
+                    cursor="pointer"
                     fontSize="25px"
                     placeholder={t('common:select-cohort')}
                     noOptionsMessage={() => t('common:no-options-message')}

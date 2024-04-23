@@ -1,4 +1,4 @@
-import { Box, Flex, Container, Button, Img, Select } from '@chakra-ui/react';
+import { Box, Flex, Container, Button, Img } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
@@ -12,6 +12,7 @@ import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
 import LoaderScreen from '../common/components/LoaderScreen';
+import ReactSelect from '../common/components/ReactSelect';
 import { getQueryString, isWindow } from '../utils';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
 import modifyEnv from '../../modifyEnv';
@@ -44,10 +45,12 @@ function PricingView() {
   const [isFetching, setIsFetching] = useState(true);
   const queryCourse = getQueryString('course');
   const courseFormated = (queryCourse && encodeURIComponent(queryCourse)) || '';
-  const [selectedData, setSelectedData] = useState({});
+  const [selectedPlanData, setSelectedPlanData] = useState({});
+  const [selectedCourseData, setSelectedCourseData] = useState({
+    dropdown_open: false,
+  });
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
-  const [selectedCourseData, setSelectedCourseData] = useState({});
   const [paymentTypePlans, setPaymentTypePlans] = useState({
     monthly: [],
     yearly: [],
@@ -66,7 +69,7 @@ function PricingView() {
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
   const planTranslations = getTranslations(t);
-  const planSlug = selectedCourseData.plan_slug;
+  const planSlug = selectedCourseData?.plan_slug;
   const { isLoading, status, data: planData } = useQuery({
     queryKey: ['suggestedPlan', { planSlug }],
     queryFn: () => fetchSuggestedPlan(planSlug, planTranslations),
@@ -91,7 +94,7 @@ function PricingView() {
         ]);
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
         if (selectedCourseByQueryString) {
-          setSelectedCourseData(selectedCourseByQueryString);
+          setSelectedCourseData((prev) => ({ ...prev, ...selectedCourseByQueryString }));
         }
       });
   }, []);
@@ -99,17 +102,22 @@ function PricingView() {
   useEffect(() => {
     setIsFetching(isLoading);
     if (status === 'success' && planData) {
-      setSelectedData(planData);
+      setSelectedPlanData(planData);
     }
   }, [status, isLoading]);
 
-  const onChangeCourse = (e) => {
-    const selectedCourse = publicMktCourses.find((course) => course.slug === e.target.value);
+  // const toggleDropdown = () => {
+  //   setSelectedCourseData((prev) => ({ ...prev, dropdown_open: !prev.dropdown_open }));
+  // };
+  // // Update to Onclick function
+
+  const onChangeCourse = (data) => {
+    const selectedCourse = publicMktCourses.find((course) => course.slug === data?.value);
     if (selectedCourse?.plan_slug) {
       setSelectedCourseData(selectedCourse);
     } else {
       setSelectedCourseData({});
-      setSelectedData({});
+      setSelectedPlanData({});
     }
   };
 
@@ -142,9 +150,9 @@ function PricingView() {
   };
 
   useEffect(() => {
-    if (selectedData?.title) {
-      const originalPlan = selectedData?.plans?.original_plan || {};
-      const suggestedPlan = selectedData?.plans?.suggested_plan;
+    if (selectedPlanData?.title) {
+      const originalPlan = selectedPlanData?.plans?.original_plan || {};
+      const suggestedPlan = selectedPlanData?.plans?.suggested_plan;
       const originalPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(originalPlan?.plans));
       const suggestedPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(suggestedPlan?.plans));
       const allPlansList = [
@@ -166,7 +174,7 @@ function PricingView() {
       });
       setIsFetching(false);
     }
-  }, [selectedData?.title]);
+  }, [selectedPlanData?.title]);
 
   const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => {
     featuredPlans.some(
@@ -207,8 +215,8 @@ function PricingView() {
   }, [isAuthenticated]);
 
   const paymentOptions = {
-    monthly: selectedData?.title ? paymentTypePlans.monthly : defaultMonthlyPlans,
-    yearly: selectedData?.title ? paymentTypePlans.yearly : defaultYearlyPlans,
+    monthly: selectedPlanData?.title ? paymentTypePlans.monthly : defaultMonthlyPlans,
+    yearly: selectedPlanData?.title ? paymentTypePlans.yearly : defaultYearlyPlans,
   };
   const switcherInfo = [
     {
@@ -251,22 +259,30 @@ function PricingView() {
           {/* Dropdown for courses */}
           <Flex gridGap="1rem" justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
             {publicMktCourses?.length > 0 && (
-              <Flex width="100%" alignItems="center">
+              <Flex width="100%" alignItems="center" gridGap="8px">
                 <Text size="30px" fontWeight={700}>
                   Showing prices for:
                 </Text>
-                <Select
-                  maxWidth={`calc(${courseFormated?.length || 5}rem + 3rem)`}
-                  border={0}
+                <ReactSelect
+                  unstyled
+                  id="select-course"
+                  placeholder="Select a course"
+                  color={hexColor.blueDefault}
                   fontSize="30px"
-                  color="blue.default"
-                  defaultValue={courseFormated || 'Basic'}
-                  onChange={onChangeCourse}
-                >
-                  {publicMktCourses.map(
-                    (course) => <option key={course?.slug} value={course.slug}>{course?.course_translation?.title || course?.title}</option>,
-                  )}
-                </Select>
+                  value={{
+                    label: selectedCourseData?.course_translation?.title
+                      || selectedCourseData?.title
+                      || 'Basic',
+                  }}
+                  onChange={(selected) => {
+                    onChangeCourse(selected);
+                  }}
+                  options={publicMktCourses.map((course) => ({
+                    value: course.slug,
+                    label: course?.course_translation?.title || course?.title,
+                  }))}
+                  size="18px"
+                />
               </Flex>
             )}
 

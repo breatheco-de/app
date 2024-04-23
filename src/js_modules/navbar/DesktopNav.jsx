@@ -2,12 +2,12 @@ import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
-import syllabusList from '../../../public/syllabus.json';
+// import syllabusList from '../../../public/syllabus.json';
 
 function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
-  const readSyllabus = JSON.parse(syllabusList);
-  const syllabusExists = readSyllabus.length > 0;
+  // const readSyllabus = JSON.parse(syllabusList);
+  // const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
     const hasNavItems = NAV_ITEMS?.length > 0;
@@ -41,7 +41,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
         };
 
         return (
-          <DesktopItem key={publicItem.label} item={data} readSyllabus={syllabusExists ? readSyllabus : []} />
+          <DesktopItem key={publicItem.label} item={data} readSyllabus={[]} />
         );
       })}
     </Stack>

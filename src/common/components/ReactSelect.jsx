@@ -129,6 +129,7 @@ const chakraComponents = {
             overflow: 'hidden',
             h: 'auto',
             minH: heights[size],
+            cursor: 'pointer',
           }}
           {...innerProps}
           data-focus={isFocused ? true : undefined}
@@ -237,6 +238,8 @@ const chakraComponents = {
           maxH: `${maxHeight}px`,
           overflowY: 'auto',
           borderRadius: borderRadii[size],
+          padding: '0px',
+          margin: '0px',
         }}
         ref={innerRef}
       >
@@ -267,12 +270,22 @@ const chakraComponents = {
         sx={{
           ...item,
           w: '100%',
+          padding: '10px',
           textAlign: 'start',
           bg: isFocused ? item._focus.bg : 'transparent',
           fontSize: size,
           ...(isDisabled && item._disabled),
         }}
         ref={innerRef}
+        cursor="pointer"
+        _selection={{
+          background: 'gray.800',
+        }}
+        _hover={{
+          opacity: 1,
+          background: 'gray.800',
+          fontWeight: 'bold',
+        }}
         {...innerProps}
         {...(isDisabled && { disabled: true })}
       >
@@ -314,12 +327,7 @@ const ChakraReactSelect = ({
     chakraTheme.colors.whiteAlpha[400],
   );
 
-  // Ensure that the size used is one of the options, either `sm`, `md`, or `lg`
-  let realSize = size;
   const sizeOptions = ['sm', 'md', 'lg'];
-  if (!sizeOptions.includes(size)) {
-    realSize = 'md';
-  }
 
   const select = cloneElement(children, {
     components: {
@@ -349,7 +357,7 @@ const ChakraReactSelect = ({
       };
     },
     colorScheme,
-    size: realSize,
+    size: sizeOptions?.[size] || size || 'md',
     multiValueRemoveFocusStyle,
     // isDisabled and isInvalid can be set on the component
     // or on a surrounding form control
