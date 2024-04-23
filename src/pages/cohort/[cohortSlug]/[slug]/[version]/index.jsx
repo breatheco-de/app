@@ -633,7 +633,7 @@ function Dashboard() {
                         key={index}
                         userId={user?.id}
                         existsActivities={existsActivities}
-                        cohortSession={user?.active_cohort}
+                        cohortData={currentCohortProps}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}
                         setContextState={setContextState}
