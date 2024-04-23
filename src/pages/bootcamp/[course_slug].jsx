@@ -528,7 +528,7 @@ function Page({ data }) {
                       <>
                         <Button
                           variant="default"
-                          isLoading={!firstPaymentPlan?.price}
+                          isLoading={plans?.length === 0 && !firstPaymentPlan?.price}
                           background="green.400"
                           color="white"
                           onClick={() => {
