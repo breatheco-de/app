@@ -336,7 +336,7 @@ function LiveEvent({
             )}
           </Text>
         )}
-        {mainEvents.length > 0 ? (
+        {mainEvents.length !== 0 ? (
           <Box
             background={bgColor2}
             border={mainEvents.some((event) => isLiveOrStarting(new Date(event.starting_at), new Date((event?.ended_at || event?.ending_at)))) && '2px solid'}

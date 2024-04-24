@@ -12,14 +12,13 @@ import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
   index, userId, contextState, setContextState, slug, modules, filteredModules,
-  title, description, taskTodo, cohortData, taskCohortNull, filteredModulesByPending,
+  title, description, taskTodo, cohortSession, taskCohortNull, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
-  const cohortId = cohortData?.id || cohortData?.cohort_id;
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
@@ -27,16 +26,15 @@ function ModuleMap({
       associated_slug: l?.slug?.slug || l.slug,
       description: '',
       task_type: l.task_type,
-      cohort: cohortId,
+      cohort: cohortSession?.id || cohortSession?.cohort_id,
     }));
     reportDatalayer({
       dataLayer: {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
-        cohort_id: cohortId,
+        cohort_id: cohortSession?.id || cohortSession?.cohort_id,
       },
     });
-
     startDay({
       t,
       id: userId,
@@ -94,7 +92,6 @@ function ModuleMap({
           <Button
             variant="outline"
             color="blue.default"
-            isDisabled={!cohortId}
             textTransform="uppercase"
             onClick={() => handleStartDay()}
             borderColor="blue.default"
@@ -108,7 +105,7 @@ function ModuleMap({
         </Box>
       )}
 
-      {!filteredModules.length >= 1
+      {filteredModules.length >= 1
         ? Array.isArray(currentModules) && currentModules.map((module, i) => {
           const cheatedIndex = i;
           return (
@@ -137,7 +134,6 @@ function ModuleMap({
               <Button
                 color="blue.default"
                 textTransform="uppercase"
-                isDisabled={!cohortId}
                 onClick={() => handleStartDay()}
                 background="white"
                 border="1px solid #0097CD"
@@ -165,7 +161,7 @@ ModuleMap.propTypes = {
   filteredModules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   description: PropTypes.string,
   taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
-  cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   taskCohortNull: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   filteredModulesByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   showPendingTasks: PropTypes.bool,
@@ -179,7 +175,7 @@ ModuleMap.defaultProps = {
   slug: 'html-css-bootstrap',
   description: '',
   taskTodo: [],
-  cohortData: {},
+  cohortSession: {},
   taskCohortNull: [],
   filteredModulesByPending: [],
   showPendingTasks: false,
