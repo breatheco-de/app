@@ -38,7 +38,7 @@ function ContactInformation({
 
   return (
     <Box display="flex" gridGap="10px" height="100%" maxWidth="1336px" width="100%" margin={{ base: 'inherit', md: '1rem auto 1rem auto', '2xl': '4rem auto 4rem auto' }}>
-      <Box background={featuredColor} p={{ base: '0', md: '26px 23px' }} flex={{ base: 1, md: 0.5 }} borderRadius="15px">
+      <Box background={featuredColor} p={{ base: '0', md: '26px 23px' }} borderRadius="15px">
         <Box
           display="flex"
           flexDirection="column"

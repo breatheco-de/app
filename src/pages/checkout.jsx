@@ -3,9 +3,9 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
   Flex,
   Heading,
-  Image,
   Skeleton,
   useToast,
 } from '@chakra-ui/react';
@@ -35,8 +35,8 @@ import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
 import { getTranslations, processPlans } from '../common/handlers/subscriptions';
-import NextChakraLink from '../common/components/NextChakraLink';
 import Icon from '../common/components/Icon';
+import AcordionList from '../common/components/AcordionList';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -132,7 +132,14 @@ function Checkout() {
         halfYearly: false,
         planType: 'original',
       }, translations);
-      setOriginalPlan(processedPlan);
+
+      const accordionList = processedPlan?.featured_info?.length > 0
+        ? processedPlan?.featured_info.map((info) => ({
+          title: info?.features[0]?.title || slugToTitle(info?.service?.slug),
+          description: info.features[0]?.description,
+        }))
+        : [];
+      setOriginalPlan({ ...processedPlan, accordionList });
     })
       .catch((err) => {
         if (err) {
@@ -526,58 +533,46 @@ function Checkout() {
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" alignItems="center" flex={0.5} position="relative">
           <Flex flexDirection="column" width="400px" justifyContent="center" height="100%" zIndex={10}>
             {originalPlan?.title ? (
-              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="25px" borderRadius="11px" background={backgroundColor}>
-                <Heading size="26px">
-                  {t('checkout.title')}
-                </Heading>
-                <Text size="16px">
-                  {t('checkout.description')}
-                  {' '}
-                  <NextChakraLink textDecoration="underline" href={t('checkout.read-more-link')} target="_blank">
-                    {t('checkout.read-more')}
-                  </NextChakraLink>
+              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={backgroundColor}>
+                <Text size="18px">
+                  You are getting
                 </Text>
-                {/* <Text size="16px" color="blue.default">
-                  {t('what-includes')}
-                </Text> */}
-                <Flex flexDirection="column" gridGap="4px" mt="1rem">
-                  {originalPlan?.featured_info?.length > 0
-                    && originalPlan?.featured_info.map((info) => info?.service?.slug && (
-                      <>
-                        <Flex key={info.service.slug} gridGap="8px" alignItems="center">
-                          {info?.service?.icon_url
-                            ? <Image src={info.service.icon_url} width={7} height={7} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                            : (
-                              <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" margin="5px 0 0 0" />
-                            )}
-                          <Box>
-                            <Text size="16px" fontWeight={700} textAlign="left">
-                              {info?.features[0]?.title || slugToTitle(info?.service?.slug)}
-                            </Text>
-                          </Box>
-                        </Flex>
-                        <Text size="12px" marginLeft="20px" mb="12px">
-                          {info.features[0]?.description}
-                        </Text>
-                      </>
-                    ))}
+                <Flex gridGap="7px">
+                  <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />
+                  <Flex flexDirection="column" gridGap="7px" justifyContent="center">
+                    <Heading fontSize="22px">
+                      {originalPlan?.title}
+                    </Heading>
+                    {originalPlan.isTotallyFree && (
+                      <Text size="16px" color="green.400">
+                        Free plan
+                      </Text>
+                    )}
+                  </Flex>
                 </Flex>
+                <Divider borderBottomWidth="2px" />
+                {originalPlan?.accordionList?.length > 0 && (
+                  <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                    <AcordionList
+                      width="100%"
+                      allowMultiple
+                      list={originalPlan.accordionList}
+                      titleStyle={{ textTransform: 'normal', fontSize: '18px' }}
+                      iconColor={hexColor.blueDefault}
+                      paddingButton="10px 17px"
+                      unstyled
+                      gridGap="0"
+                      containerStyles={{ gridGap: '8px' }}
+                      descriptionStyle={{ padding: '0 17px 0px' }}
+                      leftIcon="checked2"
+                    />
+                  </Flex>
+                )}
               </Flex>
             ) : (
               <Skeleton height="270px" width="400px" borderRadius="11px" zIndex={10} opacity={1} />
             )}
           </Flex>
-          <Image
-            position="absolute"
-            top={0}
-            left={0}
-            src="/static/images/happy-meeting-3.webp"
-            alt="Get Access"
-            height="631px"
-            style={{ objectFit: 'cover' }}
-            // margin={withoutSpacing && '2rem 0 0 0'}
-            borderBottomLeftRadius="6px"
-          />
         </Flex>
       </Box>
     </Box>
