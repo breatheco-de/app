@@ -26,6 +26,7 @@ function LiveEvent({
   stTranslation,
   featureLabel,
   featureReadMoreUrl,
+  cohorts,
   ...rest
 }) {
   const { t, lang } = useTranslation('live-event');
@@ -336,7 +337,7 @@ function LiveEvent({
             )}
           </Text>
         )}
-        {mainEvents.length !== 0 ? (
+        {mainEvents.length > 0 ? (
           <Box
             background={bgColor2}
             border={mainEvents.some((event) => isLiveOrStarting(new Date(event.starting_at), new Date((event?.ended_at || event?.ending_at)))) && '2px solid'}
@@ -365,6 +366,7 @@ function LiveEvent({
                 stTranslation={stTranslation}
                 mainClasses={liveEvent.main}
                 limitOfText={54}
+                cohorts={cohorts}
               />
             ))}
           </Box>
@@ -491,6 +493,7 @@ LiveEvent.propTypes = {
   startingSoonDelta: PropTypes.number,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
+  cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 LiveEvent.defaultProps = {
@@ -500,6 +503,7 @@ LiveEvent.defaultProps = {
   startingSoonDelta: 30,
   featureLabel: null,
   featureReadMoreUrl: null,
+  cohorts: [],
 };
 
 export default LiveEvent;

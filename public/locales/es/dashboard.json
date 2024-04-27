@@ -107,7 +107,8 @@
     "how-to-deliver": "Cómo entregar proyectos",
     "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
     "handler-text": "Entregar proyecto",
-    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte",
+    "mandatory-message": "Tienes {{count}} proyectos obligatorios para completar antes de graduarte.",
+    "see-mandatory-projects": " Ver proyectos obligatorios",
     "file-upload": "Sube uno o más archivos con un máximo de 10 MB en los siguientes formatos: ",
     "error-file-format": "El formato de archivo es incorrecto.",
     "error-file-size": "El tamaño del archivo debe ser inferior a 10mb.",
@@ -116,12 +117,16 @@
     "url-is-required": "La URL es obligatoria",
     "no-delivery-needed": "Para entregar este proyecto no necesitas subir ningún archivo o especificar nada, simplemente puedes apretar el botón \"Entregar proyecto\" que se encuentra debajo y lo consideraremos como entregado."
   },
+  "mandatoryProjects": {
+    "title": "Proyectos obligatorios pendientes",
+    "description": "Tienes asignaturas obligatorias pendientes, tienes que terminarlas para poder completar el curso."
+  },
   "modalInfo": {
     "title": "Estado de revisión",
     "still-reviewing": "Tu profesor todavía está revisando tu entrega, te dará su opinión una vez que esté lista.",
     "reviewed": "Tu profesor ha revisado tu entrega y ha proporcionado retroalimentación",
     "approved": "¡Tu profesor ha aprobado con éxito tu proyecto!",
-    "files-sended-to-teacher": "",
+    "files-sended": "Lista de archivos enviados:",
     "rejected": {
       "title": "Tu profesor ha rechazado tu proyecto",
       "teacher-feedback": "Comentario del profesor:",

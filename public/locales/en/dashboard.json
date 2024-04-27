@@ -107,7 +107,8 @@
     "how-to-deliver": "How to deliver projects",
     "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
     "handler-text": "Deliver assignment",
-    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation",
+    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation.",
+    "see-mandatory-projects": " See mandatory projects",
     "file-upload": "Upload one or more files with no more than 10MB in the following formats: ",
     "error-file-format": "File format is not correct.",
     "error-file-size": "File size must be less than 10mb.",
@@ -116,12 +117,16 @@
     "url-is-required": "URL is required",
     "no-delivery-needed": "To deliver this assignment you are not required to upload or specify anything, just click on the button below \"Deliver assignment\" and it will be considered done."
   },
+  "mandatoryProjects": {
+    "title": "Pending mandatory projects",
+    "description": "You have pending mandatory subjects, you have to finish them in order to complete the course."
+  },
   "modalInfo": {
     "title": "Review status",
     "still-reviewing": "Your teacher is still reviewing your delivery and will provide feedback once it's done",
     "reviewed": "Your teacher has reviewed your delivery and has provided feedback",
     "approved": "Your teacher has successfully approved your project!",
-    "files-sended-to-teacher": "",
+    "files-sended": "File list sent:",
     "rejected": {
       "title": "Your teacher has rejected your project",
       "teacher-feedback": "Teacher feedback:",

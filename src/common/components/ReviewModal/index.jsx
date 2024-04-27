@@ -368,6 +368,31 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     });
   };
 
+  const handleDownload = async (fileUrl, fileName) => {
+    try {
+      const response = await fetch(`/api/download/file?url=${fileUrl}&filename=${fileName}`);
+      if (response.ok) {
+        const blob = await response.blob();
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName; // Establecer el nombre deseado del archivo aquí
+        link.style.display = 'none';
+        document.body.appendChild(link);
+
+        link.click();
+
+        URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      } else {
+        throw new Error('Error al descargar el archivo');
+      }
+    } catch (errorMsg) {
+      error('Error al descargar el archivo:', errorMsg);
+    }
+  };
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -476,19 +501,21 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Text>
                   </Flex>
                 )}
-                <Flex flexDirection="column" color={lightColor}>
-                  <Text size="14px" fontWeight={700}>
-                    {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
-                  </Text>
-                  <Link variant="default" fontSize="14px" href={currentTask?.github_url}>
-                    {currentTask?.title}
-                  </Link>
-                </Flex>
+                {(!Array.isArray(fileData) || !fileData) && (
+                  <Flex flexDirection="column" color={lightColor}>
+                    <Text size="14px" fontWeight={700}>
+                      {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
+                    </Text>
+                    <Link variant="default" fontSize="14px" href={currentTask?.github_url}>
+                      {currentTask?.title}
+                    </Link>
+                  </Flex>
+                )}
 
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">
-                    <Text size="l" mb="8px">
-                      {t('modalInfo.files-sended-to-teacher')}
+                    <Text size="l" mb="8px" fontWeight={700}>
+                      {t('dashboard:modalInfo.files-sended')}
                     </Text>
                     <Box display="flex" flexDirection="column" gridGap="8px" maxHeight="135px" overflowY="auto">
                       {fileData.map((file) => {
@@ -496,18 +523,34 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                         const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
                         const isImage = imageExtensions.includes(extension);
                         const icon = iconDict.includes(extension) ? extension : 'file';
+                        const isDownloadable = file.mime === 'application/octet-stream';
+                        const defaultIcon = isDownloadable ? 'download' : icon;
                         return (
                           <Box key={`${file.id}-${file.name}`} display="flex">
-                            <Icon icon={isImage ? 'image' : icon} width="22px" height="22px" />
-                            <Link
-                              href={file.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              color="blue.500"
-                              margin="0 0 0 10px"
-                            >
-                              {file.name}
-                            </Link>
+                            <Icon icon={isImage ? 'image' : defaultIcon} color="currentColor" width="22px" height="22px" />
+                            {isDownloadable ? (
+                              <Button
+                                variant="link"
+                                onClick={() => handleDownload(file.url, file.name)}
+                                fontSize="16px"
+                                fontWeight="normal"
+                                height="auto"
+                                color="blue.500"
+                                margin="0 0 0 10px"
+                              >
+                                {file.name}
+                              </Button>
+                            ) : (
+                              <Link
+                                href={file.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                color="blue.500"
+                                margin="0 0 0 10px"
+                              >
+                                {file.name}
+                              </Link>
+                            )}
                           </Box>
                         );
                       })}

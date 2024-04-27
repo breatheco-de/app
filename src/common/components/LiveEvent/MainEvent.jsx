@@ -11,7 +11,7 @@ import { getStorageItem, lengthOfString } from '../../../utils';
 
 function MainEvent({
   index, event, mainEvents, getOtherEvents, isLiveOrStarting, getLiveIcon, host, nearestEvent,
-  isLive, stTranslation, mainClasses, currentDateText, subLabel, isWorkshop, limitOfText,
+  isLive, stTranslation, mainClasses, currentDateText, subLabel, isWorkshop, limitOfText, cohorts,
 }) {
   const { t, lang } = useTranslation('live-event');
   const limit = limitOfText || 40;
@@ -25,6 +25,14 @@ function MainEvent({
   const accessToken = getStorageItem('accessToken');
   const liveStartsAtDate = new Date(event?.starting_at);
   const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
+
+  const isTeacher = cohorts.some(({ cohort, role }) => cohort.slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(role));
+  const joinMessage = () => {
+    if (stTranslation) {
+      return isTeacher ? stTranslation[lang]['live-event']['start-class'] : stTranslation[lang]['live-event']['join-class'];
+    }
+    return isTeacher ? t('start-class') : t('join-class');
+  };
 
   return (
     <>
@@ -107,7 +115,7 @@ function MainEvent({
               </>
             ) : (
               <>
-                {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+                {joinMessage()}
               </>
             )}
           </Text>
@@ -183,12 +191,14 @@ MainEvent.propTypes = {
   subLabel: PropTypes.string,
   isWorkshop: PropTypes.bool,
   limitOfText: PropTypes.number,
+  cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 MainEvent.defaultProps = {
   subLabel: '',
   currentDateText: '',
   isWorkshop: false,
   limitOfText: 40,
+  cohorts: [],
 };
 
 export default MainEvent;
