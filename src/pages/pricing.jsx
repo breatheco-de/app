@@ -104,12 +104,7 @@ function PricingView() {
     if (status === 'success' && planData) {
       setSelectedPlanData(planData);
     }
-  }, [status, isLoading]);
-
-  // const toggleDropdown = () => {
-  //   setSelectedCourseData((prev) => ({ ...prev, dropdown_open: !prev.dropdown_open }));
-  // };
-  // // Update to Onclick function
+  }, [status, isLoading, planData?.title]);
 
   const onChangeCourse = (data) => {
     const selectedCourse = publicMktCourses.find((course) => course.slug === data?.value);
