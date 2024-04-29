@@ -70,9 +70,63 @@ function PricingView() {
 
   const planTranslations = getTranslations(t);
   const planSlug = selectedCourseData?.plan_slug;
+
+  const insertFeaturedInfo = (plans) => {
+    if (plans?.length > 0) {
+      return plans?.map((plan) => {
+        if (plan.price > 0) {
+          return {
+            ...plan,
+            featured_info: paymentFeatures,
+          };
+        }
+        return {
+          ...plan,
+          featured_info: freeFeatures,
+        };
+      });
+    }
+    return [];
+  };
+  const formatPlans = (allPlansList) => {
+    const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
+    const initialFinancingOption = financingList?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0))[0] || {};
+    const financingData = {
+      ...initialFinancingOption,
+      optionList: financingList,
+    };
+    const newPlanlist = allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
+    return newPlanlist;
+  };
+  const handleFetchPlan = async () => {
+    const data = await fetchSuggestedPlan(planSlug, planTranslations);
+    const originalPlan = data?.plans?.original_plan || {};
+    const suggestedPlan = data?.plans?.suggested_plan;
+    const originalPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(originalPlan?.plans));
+    const suggestedPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(suggestedPlan?.plans));
+    const allPlansList = [
+      ...originalPlanWithFeaturedInfo || [],
+      ...suggestedPlanWithFeaturedInfo || [],
+    ];
+
+    const monthlyAndOtherOptionPlans = allPlansList?.length > 0
+      ? allPlansList.filter((p) => p?.period !== 'YEAR')
+      : [];
+    const yearlyPlans = allPlansList?.length > 0
+      ? getYearlyPlans(originalPlanWithFeaturedInfo, suggestedPlanWithFeaturedInfo, allPlansList)
+      : [];
+
+    setAllFeaturedPlansSelected(allPlansList);
+    setPaymentTypePlans({
+      monthly: monthlyAndOtherOptionPlans,
+      yearly: yearlyPlans,
+    });
+    setIsFetching(false);
+    return data;
+  };
   const { isLoading, status, data: planData } = useQuery({
     queryKey: ['suggestedPlan', { planSlug }],
-    queryFn: () => fetchSuggestedPlan(planSlug, planTranslations),
+    queryFn: handleFetchPlan,
     enabled: !!planSlug,
     staleTime: Infinity,
   });
@@ -115,61 +169,6 @@ function PricingView() {
       setSelectedPlanData({});
     }
   };
-
-  const insertFeaturedInfo = (plans) => {
-    if (plans?.length > 0) {
-      return plans?.map((plan) => {
-        if (plan.price > 0) {
-          return {
-            ...plan,
-            featured_info: paymentFeatures,
-          };
-        }
-        return {
-          ...plan,
-          featured_info: freeFeatures,
-        };
-      });
-    }
-    return [];
-  };
-  const formatPlans = (allPlansList) => {
-    const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
-    const initialFinancingOption = financingList?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0))[0] || {};
-    const financingData = {
-      ...initialFinancingOption,
-      optionList: financingList,
-    };
-    const newPlanlist = allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
-    return newPlanlist;
-  };
-
-  useEffect(() => {
-    if (selectedPlanData?.title) {
-      const originalPlan = selectedPlanData?.plans?.original_plan || {};
-      const suggestedPlan = selectedPlanData?.plans?.suggested_plan;
-      const originalPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(originalPlan?.plans));
-      const suggestedPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(suggestedPlan?.plans));
-      const allPlansList = [
-        ...originalPlanWithFeaturedInfo || [],
-        ...suggestedPlanWithFeaturedInfo || [],
-      ];
-
-      const monthlyAndOtherOptionPlans = allPlansList?.length > 0
-        ? allPlansList.filter((p) => p?.period !== 'YEAR')
-        : [];
-      const yearlyPlans = allPlansList?.length > 0
-        ? getYearlyPlans(originalPlanWithFeaturedInfo, suggestedPlanWithFeaturedInfo, allPlansList)
-        : [];
-
-      setAllFeaturedPlansSelected(allPlansList);
-      setPaymentTypePlans({
-        monthly: monthlyAndOtherOptionPlans,
-        yearly: yearlyPlans,
-      });
-      setIsFetching(false);
-    }
-  }, [selectedPlanData?.title]);
 
   const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => {
     featuredPlans.some(
