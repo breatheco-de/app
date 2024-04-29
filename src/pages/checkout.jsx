@@ -459,6 +459,7 @@ function Checkout() {
           display="flex"
           flexDirection="column"
           gridGap={{ base: '20px', md: '20px' }}
+          flex={0.5}
         >
           {/* Stepper */}
           {!readyToSelectService && !serviceToRequest?.id && (

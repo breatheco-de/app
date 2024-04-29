@@ -24,7 +24,7 @@ function ContactInformation({
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
-  const { featuredColor, hexColor } = useStyle();
+  const { featuredColor, hexColor, backgroundColor } = useStyle();
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
 
@@ -37,39 +37,37 @@ function ContactInformation({
   }, []);
 
   return (
-    <Box display="flex" gridGap="10px" height="100%" maxWidth="1336px" width="100%" margin={{ base: 'inherit', md: '1rem auto 1rem auto', '2xl': '4rem auto 4rem auto' }}>
-      <Box background={featuredColor} p={{ base: '0', md: '26px 23px' }} borderRadius="15px">
-        <Box
-          display="flex"
-          flexDirection="column"
-          gridGap="24px"
-          padding="24px"
-          backgroundColor={hexColor.backgroundColor}
-          width="fit-content"
-          margin="3rem auto"
-        >
-          <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between">
-            <Heading size="21px">{t('about-you')}</Heading>
-            <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
-              {t('already-have-account')}
-              {' '}
-              <NextChakraLink href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
-            </Flex>
-          </Box>
-          <Signup
-            showVerifyEmail={false}
-            courseChoosed={courseChoosed}
-            extraFields={['phone']}
-            formProps={formProps}
-            setFormProps={setFormProps}
-            onHandleSubmit={(data) => {
-              setVerifyEmailProps({
-                data,
-                state: true,
-              });
-            }}
-          />
+    // {{ base: 'inherit', md: '1rem auto 1rem auto', '2xl': '4rem auto 4rem auto' }}
+    <Box display="flex" gridGap="10px" height="100%" maxWidth="1336px" background={backgroundColor} justifyContent="center" width="100%" margin="0 auto">
+      <Box
+        display="flex"
+        flexDirection="column"
+        gridGap="24px"
+        padding="24px 0"
+        backgroundColor={hexColor.backgroundColor}
+        width="fit-content"
+      >
+        <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between">
+          <Heading size="21px">{t('about-you')}</Heading>
+          <Flex fontSize="13px" ml={{ base: '0', sm: '1rem' }} mt={{ base: '10px', sm: '0' }} width="fit-content" p="2px 8px" backgroundColor={featuredColor} alignItems="center" borderRadius="4px" gridGap="6px">
+            {t('already-have-account')}
+            {' '}
+            <NextChakraLink href="/login" redirectAfterLogin={!redirectStorageAlreadyExists} fontSize="13px" variant="default">{t('login-here')}</NextChakraLink>
+          </Flex>
         </Box>
+        <Signup
+          showVerifyEmail={false}
+          courseChoosed={courseChoosed}
+          extraFields={['phone']}
+          formProps={formProps}
+          setFormProps={setFormProps}
+          onHandleSubmit={(data) => {
+            setVerifyEmailProps({
+              data,
+              state: true,
+            });
+          }}
+        />
       </Box>
       <ModalInfo
         isOpen={showAlreadyMember}
