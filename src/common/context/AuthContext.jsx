@@ -420,11 +420,12 @@ function AuthProvider({ children, pageProps }) {
 
 AuthProvider.propTypes = {
   children: PropTypes.node,
-  pageProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 AuthProvider.defaultProps = {
   children: null,
+  pageProps: {},
 };
 
 export default AuthProvider;
