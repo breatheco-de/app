@@ -126,7 +126,8 @@ function chooseProgram() {
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
       const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
-        .then(({ data }) => {
+        .then((resp) => {
+          const data = resp?.data;
           if (data !== undefined && data.length > 0) {
             return data.map((service) => ({
               ...service,
