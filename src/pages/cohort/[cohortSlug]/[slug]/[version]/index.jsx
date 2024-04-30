@@ -31,7 +31,7 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays,
+  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays, isValidDate,
 } from '../../../../../utils/index';
 import { reportDatalayer } from '../../../../../utils/requests';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
@@ -197,7 +197,11 @@ function Dashboard() {
     }
     bc.payment().events()
       .then(({ data }) => {
-        const eventsRemain = data.filter((l) => new Date(l?.ended_at || l?.ending_at) - new Date() > 0).slice(0, 3);
+        const eventsRemain = data?.length > 0 ? data.filter((l) => {
+          if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
+          if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
+          return false;
+        }).slice(0, 3) : [];
         setEvents(eventsRemain);
       });
 
@@ -206,7 +210,10 @@ function Dashboard() {
       cohort: cohortSlug,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHours);
+        const validatedEventList = res?.data?.length > 0
+          ? res?.data?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
+          : [];
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
@@ -247,7 +254,10 @@ function Dashboard() {
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHours);
+        const validatedEventList = prev?.length > 0
+          ? prev?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
+          : [];
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHours);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });

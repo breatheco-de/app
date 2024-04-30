@@ -96,6 +96,12 @@ function ProgramCard({
     return 'idle';
   };
   const hasStarted = statusTimeString(new Date(startsIn)) === 'started';
+  const getStartsInDate = () => {
+    if (isNeverEnding && isValidDate(signInDate)) return new Date(signInDate);
+    if (isValidDate(startsIn)) return new Date(startsIn);
+    return null;
+  };
+  const startsInDate = getStartsInDate();
 
   const formatTimeString = (start) => {
     const duration = intervalToDuration({
@@ -201,7 +207,7 @@ function ProgramCard({
                           fontWeight="400"
                           color={textColor}
                         >
-                          {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
+                          {formatTimeString(startsInDate)}
                         </Text>
                       </Box>
                     </Flex>
@@ -215,7 +221,13 @@ function ProgramCard({
                   {isAvailableAsSaas && isFreeTrial ? (
                     <>
                       {hasStarted ? (
-                        <FreeTagCapsule />
+                        <FreeTagCapsule
+                          isExpired={isExpired}
+                          freeTrialExpireDateValue={freeTrialExpireDateValue}
+                          now={now}
+                          stTranslation={stTranslation}
+                          lang={lang}
+                        />
                       ) : (
                         <Flex width="116px" justifyContent="flex-end">
                           <Box marginRight="10px">
@@ -244,7 +256,7 @@ function ProgramCard({
                               fontWeight="400"
                               color={textColor}
                             >
-                              {formatTimeString(new Date(isNeverEnding ? signInDate : startsIn))}
+                              {formatTimeString(startsInDate)}
                             </Text>
                           </Box>
                         </Flex>
