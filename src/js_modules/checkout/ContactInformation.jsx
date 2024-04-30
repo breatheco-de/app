@@ -59,6 +59,7 @@ function ContactInformation({
           showVerifyEmail={false}
           courseChoosed={courseChoosed}
           extraFields={['phone']}
+          maxWidth="490px"
           formProps={formProps}
           setFormProps={setFormProps}
           onHandleSubmit={(data) => {

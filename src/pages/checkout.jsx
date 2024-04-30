@@ -371,7 +371,7 @@ function Checkout() {
   };
 
   return (
-    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
+    <Box p={{ base: '2.5rem 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
         <LoaderScreen />
       )}
@@ -448,9 +448,10 @@ function Checkout() {
       <Box
         display="flex"
         flexDirection="row"
-        gridGap={{ base: '20px', md: '20px' }}
+        gridGap="20px"
         minHeight="320px"
         maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
+        // TODO: esto puede dar problemas
         margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         padding={{ base: '0px 20px', md: '0' }}
         // borderRadius={{ base: '22px', md: '0' }}
@@ -458,8 +459,10 @@ function Checkout() {
         <Flex
           display="flex"
           flexDirection="column"
-          gridGap={{ base: '20px', md: '20px' }}
+          gridGap="20px"
           flex={0.5}
+          background={backgroundColor}
+          padding="2rem 0 5rem 0"
         >
           {/* Stepper */}
           {!readyToSelectService && !serviceToRequest?.id && (
@@ -530,6 +533,16 @@ function Checkout() {
               </Box>
             </>
           )}
+          {/* TODO: Button for debugging */}
+          <Button
+            variant="default"
+            // isDisabled={dateProps === null}
+            onClick={() => {
+              nextStep();
+            }}
+          >
+            {t('next-step')}
+          </Button>
         </Flex>
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" alignItems="center" flex={0.5} position="relative">
           <Flex flexDirection="column" width="400px" justifyContent="center" height="100%" zIndex={10}>

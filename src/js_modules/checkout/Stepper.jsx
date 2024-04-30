@@ -15,7 +15,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
 
   return (
     <>
-      <Box display={{ base: 'none', md: 'flex' }} gridGap="38px" justifyContent="center" overflow="auto">
+      <Box display={{ base: 'none', md: 'flex' }} maxWidth="490px" justifyContent="space-between" margin="2rem auto 0 auto" id="container-stepper" width="100%" gridGap="38px" overflowY="hidden" overflowX="auto">
         {!hideIndexList.includes(0) && (
           <Box
             display="flex"
@@ -23,11 +23,15 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
-            {(isSecondStep || isThirdStep || isFourthStep) && (
+            {(isSecondStep || isThirdStep || isFourthStep) ? (
               <Icon icon="verified" width="30px" height="30px" />
+            ) : (
+              <Text size="14px" color={stepIndex === 0 && 'blue.default'}>
+                1
+              </Text>
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isFirstStep ? '700' : '500'}
               color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
             >
@@ -43,11 +47,15 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
             alignItems="center"
             color={stepIndex !== 1 && 'gray.350'}
           >
-            {(isThirdStep || isFourthStep) && (
+            {(isThirdStep || isFourthStep) ? (
               <Icon icon="verified" width="30px" height="30px" />
+            ) : (
+              <Text size="14px" color={(isThirdStep || isFourthStep) && 'blue.default'}>
+                2
+              </Text>
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isSecondStep ? '700' : '500'}
               color={(isThirdStep || isFourthStep) && 'success'}
             >
@@ -63,11 +71,15 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
             alignItems="center"
             color={stepIndex !== 2 && 'gray.350'}
           >
-            {isFourthStep && (
+            {isFourthStep ? (
               <Icon icon="verified" width="30px" height="30px" />
+            ) : (
+              <Text size="14px" color={isFourthStep && 'blue.default'}>
+                3
+              </Text>
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isThirdStep ? '700' : '500'}
               color={(isFourthStep) && 'success'}
             >
@@ -83,7 +95,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
             alignItems="center"
             color={stepIndex !== 3 && 'gray.350'}
           >
-            <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
+            <Heading size="14px" fontWeight={isFourthStep ? '700' : '500'}>
               {t('payment')}
             </Heading>
           </Box>
