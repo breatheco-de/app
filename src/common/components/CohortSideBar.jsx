@@ -8,7 +8,7 @@ import {
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import { format, differenceInWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -303,6 +303,19 @@ function CohortSideBar({
     }
   }, [router?.query?.cohortSlug, studentAndTeachers?.length]);
 
+  const isBeforeOneWeek = (date) => {
+    // Calculate the difference in weeks between the given date and today
+    const weeksDifference = differenceInWeeks(new Date(), date);
+
+    // Check if the difference is greater than 1
+    return weeksDifference <= 1;
+  };
+
+  const recentlyLogedStudents = activeStudents.reduce((acum, elem) => {
+    if (elem.user.last_login && isBeforeOneWeek(new Date(elem.user.last_login))) return acum + 1;
+    return acum;
+  }, 0);
+
   return (
     <Box
       transition="background 0.2s ease-in-out"
@@ -399,7 +412,7 @@ function CohortSideBar({
             >
               {cohort.ending_date
                 ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
-                : t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
+                : t('cohortSideBar.active-geeks', { studentsLength: recentlyLogedStudents })}
             </Tab>
             {alumniGeeksList?.count && (
               <Tab
