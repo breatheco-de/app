@@ -32,7 +32,14 @@ import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
-  slugify, includesToLowerCase, getStorageItem, sortToNearestTodayDate, syncInterval, getBrowserSize, calculateDifferenceDays,
+  slugify,
+  includesToLowerCase,
+  getStorageItem,
+  sortToNearestTodayDate,
+  syncInterval,
+  getBrowserSize,
+  calculateDifferenceDays,
+  adjustNumberBeetwenMinMax,
 } from '../../../../../utils/index';
 import { reportDatalayer } from '../../../../../utils/requests';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
@@ -276,7 +283,23 @@ function Dashboard() {
       if (data && data.length > 0) {
         setSudentAndTeachers(data.sort(
           (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-        ));
+        ).map((elem, index) => {
+          const avatarNumber = adjustNumberBeetwenMinMax({
+            number: index,
+            min: 1,
+            max: 20,
+          });
+          return {
+            ...elem,
+            user: {
+              ...elem.user,
+              profile: {
+                ...elem.user.profile,
+                avatar_url: elem?.user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+              },
+            },
+          };
+        }));
       }
     }).catch(() => {
       toast({
