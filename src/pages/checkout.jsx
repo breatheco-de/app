@@ -670,8 +670,6 @@ function Checkout() {
                         setDiscountCoupon({
                           isError: false,
                         });
-                        console.log('Add discount code:');
-                        console.log(discountCoupon);
                         setOpenInputDiscountCode(true);
                         bc.payment({
                           coupons: discountCode,
