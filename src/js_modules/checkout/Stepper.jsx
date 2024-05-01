@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Divider, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
@@ -19,16 +19,12 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
         {!hideIndexList.includes(0) && (
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
-            {(isSecondStep || isThirdStep || isFourthStep) ? (
-              <Icon icon="verified" width="30px" height="30px" />
-            ) : (
-              <Text size="14px" color={stepIndex === 0 && 'blue.default'}>
-                1
-              </Text>
+            {(isSecondStep || isThirdStep || isFourthStep) && (
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
               size="14px"
@@ -43,16 +39,12 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
         {!hideIndexList.includes(1) && (
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 1 && 'gray.350'}
           >
-            {(isThirdStep || isFourthStep) ? (
-              <Icon icon="verified" width="30px" height="30px" />
-            ) : (
-              <Text size="14px" color={(isThirdStep || isFourthStep) && 'blue.default'}>
-                2
-              </Text>
+            {(isThirdStep || isFourthStep) && (
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
               size="14px"
@@ -67,16 +59,12 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
         {!hideIndexList.includes(2) && (
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 2 && 'gray.350'}
           >
-            {isFourthStep ? (
-              <Icon icon="verified" width="30px" height="30px" />
-            ) : (
-              <Text size="14px" color={isFourthStep && 'blue.default'}>
-                3
-              </Text>
+            {isFourthStep && (
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
               size="14px"
@@ -91,7 +79,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
         {!hideIndexList.includes(3) && (
           <Box
             display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 3 && 'gray.350'}
           >
@@ -113,7 +101,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
           )}
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
@@ -139,6 +127,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
           </Flex>
         </Box>
       )}
+      <Divider maxWidth="490px" margin="0 auto" />
     </>
   );
 }

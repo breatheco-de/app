@@ -14,12 +14,13 @@ function AcordionList({
           {({ isExpanded }) => (
             <>
               <Heading as="h3">
-                <AccordionButton padding={paddingButton} color={color} _expanded={{ color: highlightColor || 'blue.default', padding: unstyled ? paddingButton : '17px 17px 0' }}>
+                <AccordionButton cursor={item?.description ? 'pointer' : 'default'} padding={paddingButton} color={color} _expanded={{ color: item?.description ? (highlightColor || 'blue.default') : 'currentColor', padding: unstyled ? paddingButton : '17px 17px 0' }}>
                   {leftIcon && <Icon icon={leftIcon} color={iconColor} width="16px" height="16px" marginRight="10px" />}
                   <Box as="span" flex="1" fontSize="14px" textAlign="left" textTransform="uppercase" {...titleStyle}>
                     {item?.title}
                   </Box>
                   <AccordionIcon
+                    display={item?.description ? 'block' : 'none'}
                     width="30px"
                     height="30px"
                     color={iconColor}

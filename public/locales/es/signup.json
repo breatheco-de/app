@@ -12,6 +12,7 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "discount-value-off": "{{value}} dto.",
   "one_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "monthly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "quarterly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",

@@ -26,6 +26,7 @@ function Summary() {
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
 
   const {
     state, nextStep, setSelectedPlanCheckoutData, handlePayment, getPaymentText,
@@ -154,7 +155,7 @@ function Summary() {
             ) : {};
 
             if (isPurchasedPlanFound) {
-              if (findedCohort) {
+              if (findedCohort && Number.isSafeInteger(cohortId)) {
                 getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
@@ -230,7 +231,8 @@ function Summary() {
             }
           }
           if (respPayment.status === 'FULFILLED') {
-            setReadyToRefetch(true);
+            setIsReadyToJoinCohort(true);
+            setIsSubmitting(false);
           }
         })
         .catch(() => {
@@ -248,9 +250,11 @@ function Summary() {
   return (
     <Box
       display="flex"
-      flexDirection={{ base: 'column', md: 'row' }}
+      flexDirection="column"
       gridGap="30px"
       mb="1rem"
+      width={{ base: '100%', md: '490px' }}
+      margin="0 auto"
     >
       <SimpleModal
         isOpen={openDeclinedModal}
@@ -288,220 +292,256 @@ function Summary() {
             onClick={() => {
               setIsSubmitting(true);
               handleSubmit();
+              setOpenDeclinedModal(false);
             }}
           >
             {t('common:try-again')}
           </Button>
         </Flex>
       </SimpleModal>
-      <Box display="flex" flexDirection="column" flex={0.5} gridGap="3rem" background={backgroundColor} p={{ base: '20px 22px', md: '14px 23px' }} height="100%" borderRadius="15px">
+      <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 0', md: '14px 0' }} height="100%" borderRadius="15px">
         <Box
           display="flex"
           flexDirection="column"
-          background={featuredBackground}
+          background={isReadyToJoinCohort ? hexColor.successLight : featuredBackground}
           w="100%"
           height="fit-content"
           p="11px 14px"
           gridGap="8px"
           borderRadius="14px"
         >
-          <Heading size="15px" color="blue.default" textTransform="uppercase">
-            {t('signing-for')}
-          </Heading>
-          <Box display="flex" gridGap="12px">
-            <Box display="flex" flexDirection="column">
-              <Box
-                p="16px"
-                background="blue.default"
-                borderRadius="7px"
-                width="fit-content"
-              >
-                <Icon icon="coding" width="48px" height="48px" color="#fff" />
-              </Box>
-            </Box>
-            <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
-                <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
-                  <Heading size="18px">
-                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
-                  </Heading>
-                </Box>
-                <Heading
-                  size="xl"
-                  color="blue.default"
-                  width="100%"
-                >
-                  {selectedPlanCheckoutData?.price <= 0
-                    ? selectedPlanCheckoutData?.priceText
-                    : `$${selectedPlanCheckoutData?.price}`}
-                </Heading>
-              </Box>
-              {getPaymentText()?.length > 0 && (
-                <Text
-                  size="14px"
-                  color={useColorModeValue('gray.700', 'gray.400')}
-                >
-                  {getPaymentText()}
-                </Text>
-              )}
-            </Box>
-          </Box>
-          {planProps?.length > 0 && (
+          {isReadyToJoinCohort ? (
+            <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
+              <Icon icon="feedback-like" width="60px" height="60px" />
+              <Text size="14px" fontWeight={700} textAlign="center" color="black">
+                Payment successfull
+              </Text>
+            </Flex>
+          ) : (
             <>
-              <Box
-                as="hr"
-                width="100%"
-                margin="0"
-                h="1px"
-                borderColor={borderColor}
-              />
-              <Box fontSize="14px" fontWeight="700" color="blue.default">
-                {t('what-you-will-get')}
-              </Box>
-            </>
-          )}
-
-          {planProps?.length > 0 && (
-            <Box
-              as="ul"
-              style={{ listStyle: 'none' }}
-              display="flex"
-              flexDirection="column"
-              gridGap="12px"
-            >
-              {planProps?.map((bullet) => bullet?.features[0]?.description && (
-                <Box
-                  as="li"
-                  key={bullet?.features[0]?.description}
-                  display="flex"
-                  flexDirection="row"
-                  lineHeight="24px"
-                  gridGap="8px"
-                >
-                  <Icon
-                    icon="checked2"
-                    color="#38A56A"
-                    width="13px"
-                    height="10px"
-                    style={{ margin: '8px 0 0 0' }}
-                  />
+              <Heading size="15px" color="blue.default" textTransform="uppercase">
+                {t('signing-for')}
+              </Heading>
+              <Box display="flex" gridGap="12px">
+                <Box display="flex" flexDirection="column">
                   <Box
-                    fontSize="14px"
-                    fontWeight="600"
-                    letterSpacing="0.05em"
-                    dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                  />
-                  {bullet?.features[0]?.description}
+                    p="16px"
+                    background="blue.default"
+                    borderRadius="7px"
+                    width="fit-content"
+                  >
+                    <Icon icon="coding" width="48px" height="48px" color="#fff" />
+                  </Box>
                 </Box>
-              ))}
-            </Box>
+                <Box display="flex" flexDirection="column" gridGap="7px">
+                  <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
+                    <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
+                      <Heading size="18px">
+                        {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
+                      </Heading>
+                    </Box>
+                    <Heading
+                      size="xl"
+                      color="blue.default"
+                      width="100%"
+                    >
+                      {selectedPlanCheckoutData?.price <= 0
+                        ? selectedPlanCheckoutData?.priceText
+                        : `$${selectedPlanCheckoutData?.price}`}
+                    </Heading>
+                  </Box>
+                  {getPaymentText()?.length > 0 && (
+                    <Text
+                      size="14px"
+                      color={useColorModeValue('gray.700', 'gray.400')}
+                    >
+                      {getPaymentText()}
+                    </Text>
+                  )}
+                </Box>
+              </Box>
+              {planProps?.length > 0 && (
+                <>
+                  <Box
+                    as="hr"
+                    width="100%"
+                    margin="0"
+                    h="1px"
+                    borderColor={borderColor}
+                  />
+                  <Box fontSize="14px" fontWeight="700" color="blue.default">
+                    {t('what-you-will-get')}
+                  </Box>
+                </>
+              )}
+
+              {planProps?.length > 0 && (
+                <Box
+                  as="ul"
+                  style={{ listStyle: 'none' }}
+                  display="flex"
+                  flexDirection="column"
+                  gridGap="12px"
+                >
+                  {planProps?.map((bullet) => bullet?.features[0]?.description && (
+                    <Box
+                      as="li"
+                      key={bullet?.features[0]?.description}
+                      display="flex"
+                      flexDirection="row"
+                      lineHeight="24px"
+                      gridGap="8px"
+                    >
+                      <Icon
+                        icon="checked2"
+                        color="#38A56A"
+                        width="13px"
+                        height="10px"
+                        style={{ margin: '8px 0 0 0' }}
+                      />
+                      <Box
+                        fontSize="14px"
+                        fontWeight="600"
+                        letterSpacing="0.05em"
+                        dangerouslySetInnerHTML={{ __html: bullet?.description }}
+                      />
+                      {bullet?.features[0]?.description}
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </>
           )}
         </Box>
       </Box>
-      <Box display="flex" flexDirection="column" flex={0.5}>
-        <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
-          <Heading
-            fontSize="22px"
-            p="0 0 12px 0"
-          >
-            {t('select-payment-plan')}
-          </Heading>
-          <Box display="flex" flexDirection="column" gridGap="10px">
-            {/* {cohortPlans */}
-            {checkoutData?.plans
-              .map((item, i) => {
-                const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
-                const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
-                  ? selectedPlanCheckoutData?.plan_id === item?.plan_id
-                  : selectedPlanCheckoutData?.plan_id === item?.plan_id;
-                return (
-                  <Fragment key={`${item?.slug}-${item?.title}`}>
-                    <Box
-                      display="flex"
-                      onClick={() => {
-                        setSelectedIndex(i);
-                        router.push({
-                          pathname: '/checkout',
-                          query: {
-                            ...router.query,
-                            plan_id: item?.plan_id,
-                          },
-                        });
-                        setSelectedPlanCheckoutData(item);
-                      }}
-                      flexDirection="row"
-                      width="100%"
-                      justifyContent="space-between"
-                      // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
-                      p={{ base: '25px 14px', md: '22px 18px' }}
-                      gridGap={{ base: '0', md: '12px' }}
-                      cursor="pointer"
-                      // background={selectedIndex !== i && featuredColor}
-                      border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
-                      borderRadius="13px"
-                    >
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        gridGap={{ base: '0', md: '4px' }}
-                        minWidth={{ base: 'auto', md: '228px' }}
-                        height="fit-content"
-                        fontWeight="400"
-                      >
-                        <Box fontSize={{ base: '12px', md: '18px' }} fontWeight="700">
-                          {title}
-                        </Box>
-                        <Text display={periodText[item?.period] ? 'block' : 'none'} fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
-                          {periodText[item?.period]}
-                        </Text>
-                      </Box>
-                      <Box display="flex" minWidth="90px" alignItems="center" gridGap="10px">
-                        <Heading
-                          as="span"
-                          size={(item?.period !== 'FINANCING' && !['FREE', 'TRIAL'].includes(item?.type)) ? 'm' : 'm'}
-                          lineHeight="1"
-                          color="blue.default"
+      {/* ------------------- */}
+      <Box display="flex" flexDirection="column">
+        <Box background={backgroundColor} p={{ base: '22px 0', md: '14px 0' }} borderRadius="15px">
+          {!isReadyToJoinCohort && (
+            <>
+              <Heading
+                fontSize="22px"
+                p="0 0 12px 0"
+              >
+                {t('select-payment-plan')}
+              </Heading>
+              <Box display="flex" flexDirection="column" gridGap="10px">
+                {/* {cohortPlans */}
+                {checkoutData?.plans
+                  .map((item, i) => {
+                    const title = item?.title ? item?.title : toCapitalize(unSlugify(String(item?.slug)));
+                    const isSelected = selectedPlanCheckoutData?.period !== 'FINANCING'
+                      ? selectedPlanCheckoutData?.plan_id === item?.plan_id
+                      : selectedPlanCheckoutData?.plan_id === item?.plan_id;
+                    return (
+                      <Fragment key={`${item?.slug}-${item?.title}`}>
+                        <Box
+                          display="flex"
+                          onClick={() => {
+                            setSelectedIndex(i);
+                            router.push({
+                              pathname: '/checkout',
+                              query: {
+                                ...router.query,
+                                plan_id: item?.plan_id,
+                              },
+                            });
+                            setSelectedPlanCheckoutData(item);
+                          }}
+                          flexDirection="row"
                           width="100%"
-                          textAlign="end"
+                          justifyContent="space-between"
+                          // p={selectedIndex === i ? '22px 18px' : '26px 22px'}
+                          p={{ base: '25px 14px', md: '22px 18px' }}
+                          gridGap={{ base: '0', md: '12px' }}
+                          cursor="pointer"
+                          // background={selectedIndex !== i && featuredColor}
+                          border={isSelected ? '2px solid #0097CD' : `2px solid ${hexColor.featuredColor}`}
+                          borderRadius="13px"
                         >
-                          {item?.priceText}
-                        </Heading>
-                      </Box>
-                    </Box>
-                  </Fragment>
-                );
-              })}
-          </Box>
-          {(isNotTrial || !priceIsNotNumber) ? (
+                          <Box
+                            display="flex"
+                            flexDirection="column"
+                            gridGap={{ base: '0', md: '4px' }}
+                            minWidth={{ base: 'auto', md: '228px' }}
+                            height="fit-content"
+                            fontWeight="400"
+                          >
+                            <Box fontSize={{ base: '12px', md: '18px' }} fontWeight="700">
+                              {title}
+                            </Box>
+                            <Text display={periodText[item?.period] ? 'block' : 'none'} fontSize="14px" color={isSelected ? 'blue.default' : lightColor} fontWeight={isSelected ? 700 : 400}>
+                              {periodText[item?.period]}
+                            </Text>
+                          </Box>
+                          <Box display="flex" minWidth="90px" alignItems="center" gridGap="10px">
+                            <Heading
+                              as="span"
+                              size={(item?.period !== 'FINANCING' && !['FREE', 'TRIAL'].includes(item?.type)) ? 'm' : 'm'}
+                              lineHeight="1"
+                              color="blue.default"
+                              width="100%"
+                              textAlign="end"
+                            >
+                              {item?.priceText}
+                            </Heading>
+                          </Box>
+                        </Box>
+                      </Fragment>
+                    );
+                  })}
+              </Box>
+            </>
+          )}
+          {isReadyToJoinCohort ? (
             <Button
-              variant="default"
               width="100%"
-              onClick={handleSubmit}
-              isLoading={isSubmitting}
-              isDisabled={!selectedPlanCheckoutData?.featured_info}
               height="45px"
-              mt="12px"
+              variant="default"
+              // mt="12px"
+              isLoading={isSubmitting}
+              onClick={() => {
+                setIsSubmitting(true);
+                setReadyToRefetch(true);
+              }}
             >
-              {t('common:proceed-to-payment')}
+              Start learning
             </Button>
           ) : (
-            <Button
-              variant="outline"
-              width="100%"
-              borderColor="blue.200"
-              onClick={handleSubmit}
-              isLoading={isSubmitting}
-              isDisabled={!selectedPlanCheckoutData?.featured_info}
-              background={featuredBackground}
-              _hover={{ background: featuredBackground, opacity: 0.8 }}
-              _active={{ background: featuredBackground, opacity: 1 }}
-              color="blue.default"
-              height="45px"
-              mt="12px"
-            >
-              {selectedPlanCheckoutData?.type === 'FREE' ? t('start-free-course') : t('common:start-free-trial')}
-            </Button>
+            <>
+              {(isNotTrial || !priceIsNotNumber) ? (
+                <Button
+                  variant="default"
+                  width="100%"
+                  onClick={handleSubmit}
+                  isLoading={isSubmitting}
+                  isDisabled={!selectedPlanCheckoutData?.featured_info}
+                  height="45px"
+                  mt="12px"
+                >
+                  {t('common:proceed-to-payment')}
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  width="100%"
+                  borderColor="blue.200"
+                  onClick={handleSubmit}
+                  isLoading={isSubmitting}
+                  isDisabled={!selectedPlanCheckoutData?.featured_info}
+                  background={featuredBackground}
+                  _hover={{ background: featuredBackground, opacity: 0.8 }}
+                  _active={{ background: featuredBackground, opacity: 1 }}
+                  color="blue.default"
+                  height="45px"
+                  mt="12px"
+                >
+                  {selectedPlanCheckoutData?.type === 'FREE' ? t('start-free-course') : t('common:start-free-trial')}
+                </Button>
+              )}
+            </>
           )}
+
         </Box>
       </Box>
     </Box>

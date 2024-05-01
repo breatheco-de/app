@@ -55,6 +55,7 @@ const useStyle = () => {
     greenLight: '#25BF6C',
     greenLight2: '#A4FFBD',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
+    successLight: useColorModeValue('#e9ffef', '#A4FFBD'),
   };
   const input = {
     borderColor: useColorModeValue('gray.default', '#CACACA'),

@@ -124,6 +124,7 @@ const useSignup = () => {
           token: data?.token || checkoutData.token,
           how_many_installments: data?.installments || selectedPlanCheckoutData?.how_many_months || undefined,
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
+          coupons: checkoutData?.discountCoupon?.slug ? [checkoutData.discountCoupon.slug] : undefined,
         };
       }
       return {

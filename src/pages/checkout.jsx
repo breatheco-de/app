@@ -6,6 +6,9 @@ import {
   Divider,
   Flex,
   Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
   Skeleton,
   useToast,
 } from '@chakra-ui/react';
@@ -13,6 +16,7 @@ import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import { Form, Formik } from 'formik';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
@@ -83,10 +87,16 @@ function Checkout() {
   const {
     state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
+    setSelectedPlanCheckoutData, setCheckoutData,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
-  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps, loader } = state;
+  const [openInputDiscountCode, setOpenInputDiscountCode] = useState(true);
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountCoupon, setDiscountCoupon] = useState({
+    isError: false,
+  });
+  const { stepIndex, dateProps, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader } = state;
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
@@ -97,6 +107,7 @@ function Checkout() {
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
+  const queryPlanId = getQueryString('plan_id');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = (plan && encodeURIComponent(plan)) || '';
@@ -119,6 +130,7 @@ function Checkout() {
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
   const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
+  const showPriceInformation = !readyToSelectService && isFourthStep;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
@@ -296,8 +308,16 @@ function Checkout() {
 
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
-                  .then(() => {
-                    handleStep(2);
+                  .then((checkingData) => {
+                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = checkingData.plans.find((item) => item?.plan_id > queryPlanId);
+                    if (existsPayablePlan && autoSelectedPlan) {
+                      setSelectedPlanCheckoutData(autoSelectedPlan);
+                      handleStep(3);
+                      setLoader('plan', false);
+                    } else {
+                      handleStep(2);
+                    }
                   })
                   .catch(() => {
                     setLoader('plan', false);
@@ -308,8 +328,16 @@ function Checkout() {
                   plan: data,
                 }]);
                 handleChecking({ plan: data })
-                  .then(() => {
-                    handleStep(2);
+                  .then((checkingData) => {
+                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = checkingData.plans.find((item) => item?.plan_id > queryPlanId);
+                    if (existsPayablePlan && autoSelectedPlan) {
+                      setSelectedPlanCheckoutData(autoSelectedPlan);
+                      handleStep(3);
+                      setLoader('plan', false);
+                    } else {
+                      handleStep(2);
+                    }
                   })
                   .catch(() => {
                     setLoader('plan', false);
@@ -370,8 +398,34 @@ function Checkout() {
     };
   };
 
+  const getPriceWithDiscount = () => {
+    const price = selectedPlanCheckoutData?.price;
+    const discount = discountCoupon?.discount_value;
+    const discountType = discountCoupon?.discount_type;
+    if (discount) {
+      if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        return {
+          originalPrice: price,
+          price: price - (price * discount),
+          discount: `${discount * 100}%`,
+        };
+      }
+      if (discountType === 'FIXED_PRICE') {
+        return {
+          originalPrice: price,
+          price: price - discount,
+          discount: `$${discount}`,
+        };
+      }
+    }
+    return {
+      price,
+      discount: '0%',
+    };
+  };
+
   return (
-    <Box p={{ base: '2.5rem 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
+    <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
         <LoaderScreen />
       )}
@@ -448,21 +502,23 @@ function Checkout() {
       <Box
         display="flex"
         flexDirection="row"
-        gridGap="20px"
+        // gridGap="20px"
         minHeight="320px"
-        maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
+        // maxWidth={{ base: '100%', md: '100%' }}
         // TODO: esto puede dar problemas
-        margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
-        padding={{ base: '0px 20px', md: '0' }}
+        // margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
         // borderRadius={{ base: '22px', md: '0' }}
       >
         <Flex
           display="flex"
           flexDirection="column"
           gridGap="20px"
-          flex={0.5}
           background={backgroundColor}
-          padding="2rem 0 5rem 0"
+          padding={{ base: '2rem 20px', md: '2rem 0 5rem 0' }}
+          flex={{ base: '1', md: '0.5' }}
+          style={{ flexShrink: 0, flexGrow: 1 }}
+          maxWidth={{ base: '100%', md: '50%' }}
+          overflow="auto"
         >
           {/* Stepper */}
           {!readyToSelectService && !serviceToRequest?.id && (
@@ -544,17 +600,28 @@ function Checkout() {
             {t('next-step')}
           </Button>
         </Flex>
-        <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" alignItems="center" flex={0.5} position="relative">
-          <Flex flexDirection="column" width="400px" justifyContent="center" height="100%" zIndex={10}>
+        <Flex
+          display={{ base: 'none', md: 'flex' }}
+          flexDirection="column"
+          alignItems="center"
+          // flex={0.5}
+          padding={{ base: '0 auto', md: '0 3rem' }}
+          position="relative"
+          flex={{ base: '1', md: '0.5' }}
+          style={{ flexShrink: 0, flexGrow: 1 }}
+          overflow="auto"
+          maxWidth="50%"
+        >
+          <Flex flexDirection="column" width={showPriceInformation ? '100%' : '400px'} margin={showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 0 0'} height="100%" zIndex={10}>
             {originalPlan?.title ? (
-              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={backgroundColor}>
+              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
                   You are getting
                 </Text>
                 <Flex gridGap="7px">
-                  <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />
+                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />}
                   <Flex flexDirection="column" gridGap="7px" justifyContent="center">
-                    <Heading fontSize="22px">
+                    <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
                     </Heading>
                     {originalPlan.isTotallyFree && (
@@ -581,6 +648,134 @@ function Checkout() {
                       leftIcon="checked2"
                     />
                   </Flex>
+                )}
+                {showPriceInformation && (
+                  <>
+                    <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        Subtotal:
+                      </Text>
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        {selectedPlanCheckoutData?.price <= 0
+                          ? selectedPlanCheckoutData?.priceText
+                          : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                      </Text>
+                    </Flex>
+                    <Divider margin="6px 0" />
+                    <Formik
+                      initialValues={{
+                        coupons: '',
+                      }}
+                      onSubmit={(_, actions) => {
+                        setDiscountCoupon({
+                          isError: false,
+                        });
+                        console.log('Add discount code:');
+                        console.log(discountCoupon);
+                        setOpenInputDiscountCode(true);
+                        bc.payment({
+                          coupons: discountCode,
+                          plan: planFormated,
+                        }).coupon()
+                          .then((resp) => {
+                            if (resp?.data?.length > 0) {
+                              setDiscountCoupon(resp.data[0]);
+                              setCheckoutData({
+                                ...checkoutData,
+                                discountCoupon: resp.data[0],
+                              });
+                            } else {
+                              setDiscountCoupon({
+                                isError: true,
+                              });
+                            }
+                          })
+                          .finally(() => actions.setSubmitting(false));
+                      }}
+                    >
+                      {({ isSubmitting }) => (
+                        <Form style={{ width: '100%' }}>
+                          <Flex gridGap="15px" width="100%">
+                            <InputGroup size="md">
+                              <Input
+                                value={discountCode}
+                                borderColor={discountCoupon?.isError ? 'red.light' : 'inherit'}
+                                disabled={discountCoupon?.slug}
+                                width="100%"
+                                _disabled={{
+                                  borderColor: 'success',
+                                  opacity: 1,
+                                }}
+                                letterSpacing="0.05em"
+                                display={openInputDiscountCode ? 'block' : 'none'}
+                                placeholder="Discount code"
+                                onChange={(e) => setDiscountCode(e.target.value)}
+                              />
+                              {discountCoupon?.slug && (
+                                <InputRightElement width="35px">
+                                  <Button
+                                    variant="unstyled"
+                                    aria-label="Remove coupon"
+                                    minWidth="auto"
+                                    padding="10px"
+                                    height="auto"
+                                    onClick={() => {
+                                      setDiscountCode('');
+                                      setDiscountCoupon({
+                                        isError: false,
+                                      });
+                                    }}
+                                  >
+                                    <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                  </Button>
+                                </InputRightElement>
+                              )}
+                            </InputGroup>
+                            <Button
+                              width="auto"
+                              type="submit"
+                              isLoading={isSubmitting}
+                              height="auto"
+                              variant="outline"
+                              fontSize="17px"
+                            >
+                              + Add
+                            </Button>
+                          </Flex>
+                        </Form>
+                      )}
+                    </Formik>
+                    {discountCoupon?.slug && (
+                      <Flex justifyContent="space-between" margin="10px 0 0 0" width="100%">
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          Discount Applied
+                        </Text>
+                        <Text size="16px" color="green.400" padding="0 5px" borderRadius="4px" backgroundColor="green.light" lineHeight="normal">
+                          {t('discount-value-off', { value: getPriceWithDiscount()?.discount })}
+                        </Text>
+                      </Flex>
+                    )}
+                    <Divider margin="6px 0" />
+                    <Flex justifyContent="space-between" width="100%">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        Total
+                      </Text>
+                      <Flex gridGap="1rem">
+                        {getPriceWithDiscount().originalPrice && (
+                          <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
+                            {`$${getPriceWithDiscount().originalPrice} ${selectedPlanCheckoutData?.currency?.code}`}
+                          </Text>
+                        )}
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {selectedPlanCheckoutData?.price <= 0
+                            ? selectedPlanCheckoutData?.priceText
+                            : `$${discountCoupon?.slug
+                              ? getPriceWithDiscount().price
+                              : selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </>
                 )}
               </Flex>
             ) : (
