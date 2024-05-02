@@ -49,7 +49,7 @@ function PaymentInfo() {
   const { t, lang } = useTranslation('signup');
 
   const {
-    state, setPaymentInfo, handlePayment,
+    state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
   } = useSignup();
   const { choose } = useAuth();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans } = state;
@@ -63,7 +63,7 @@ function PaymentInfo() {
   });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
+  // const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const [stateCard, setStateCard] = useState({
     card_number: 0,
@@ -77,6 +77,7 @@ function PaymentInfo() {
   const router = useRouter();
 
   const isPaymentSuccess = paymentStatus === 'success';
+  const isPaymentIdle = paymentStatus === 'idle';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
   const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
@@ -267,7 +268,10 @@ function PaymentInfo() {
         .then((respPayment) => {
           if (respPayment.status === 'FULFILLED') {
             setPaymentStatus('success');
-            setIsReadyToJoinCohort(true);
+            setSelectedPlanCheckoutData({
+              ...selectedPlanCheckoutData,
+              payment_success: true,
+            });
             setIsSubmitting(false);
           } else {
             setPaymentStatus('error');
@@ -277,6 +281,7 @@ function PaymentInfo() {
           actions.setSubmitting(false);
         });
     } else {
+      setPaymentStatus('error');
       handlePaymentErrors(data, actions);
     }
   };
@@ -310,8 +315,8 @@ function PaymentInfo() {
             });
         }}
       />
-      <Box display="flex" width={{ base: '100%', md: '490px' }} flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={isReadyToJoinCohort ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} height="100%" borderRadius="15px">
-        {isReadyToJoinCohort ? (
+      <Box display="flex" width={{ base: '100%', md: '490px' }} flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} height="100%" borderRadius="15px">
+        {!isPaymentIdle ? (
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
             <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
             <Text size="14px" fontWeight={700} textAlign="center" color="black">
@@ -466,7 +471,7 @@ function PaymentInfo() {
           </>
         )}
       </Box>
-      {isReadyToJoinCohort && (
+      {!isPaymentIdle && (
         <Button
           width="100%"
           height="45px"
@@ -478,7 +483,7 @@ function PaymentInfo() {
               setIsSubmitting(true);
               setReadyToRefetch(true);
             } else {
-              setIsReadyToJoinCohort(false);
+              setPaymentStatus('idle');
             }
           }}
         >

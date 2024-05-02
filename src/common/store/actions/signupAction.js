@@ -295,11 +295,11 @@ const useSignup = () => {
     getChecking(cohortData)
       .then((data) => {
         resolve(data);
-        // handleStep(1);
       })
       .catch((err) => {
         reject(err);
         if (err?.status === 400) {
+          handleStep(1);
           toggleIfEnrolled(true);
         } else {
           toast({

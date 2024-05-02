@@ -3,7 +3,6 @@ import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import Image from 'next/image';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
@@ -14,7 +13,6 @@ import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../utils';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
-import SimpleModal from '../../common/components/SimpleModal';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useAuth from '../../common/hooks/useAuth';
@@ -26,19 +24,18 @@ function Summary() {
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
-
+  const [paymentStatus, setPaymentStatus] = useState('idle');
   const {
     state, nextStep, setSelectedPlanCheckoutData, handlePayment, getPaymentText,
     setLoader,
   } = useSignup();
+  const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
-  const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
-  const [declinedModalProps, setDeclinedModalProps] = useState({
+  const [declinedPaymentProps, setDeclinedPaymentProps] = useState({
     title: '',
     description: '',
   });
@@ -50,8 +47,11 @@ function Summary() {
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
   const cohortId = Number(getQueryString('cohort'));
-
+  const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
+  const isPaymentIdle = paymentStatus === 'idle';
+  const isPaymentSuccess = paymentStatus === 'success';
+  const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
 
   const periodText = {
     ONE_TIME: '',
@@ -155,6 +155,7 @@ function Summary() {
             ) : {};
 
             if (isPurchasedPlanFound) {
+              clearInterval(interval);
               if (findedCohort && Number.isSafeInteger(cohortId)) {
                 getCohort(findedCohort?.id)
                   .then((cohort) => {
@@ -176,25 +177,13 @@ function Summary() {
               }
             }
           });
-      }, 1500);
+      }, 2000);
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
 
-  useEffect(() => {
-    const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
-    if (findedPlan) {
-      setLoader('plan', false);
-      setSelectedPlanCheckoutData(findedPlan);
-    }
-
-    if (!findedPlan && checkoutData?.plans?.[selectedIndex]) {
-      setLoader('plan', false);
-      setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
-    }
-  }, [checkoutData?.plans]);
-
   const handleSubmit = () => {
+    if (!isPaymentIdle || isSubmitting) return;
     setIsSubmitting(true);
     if (isNotTrial || !priceIsNotNumber) {
       nextStep();
@@ -204,35 +193,46 @@ function Summary() {
         installments: selectedPlanCheckoutData?.how_many_months,
       }, true)
         .then((respPayment) => {
+          setIsSubmitting(false);
+          if (respPayment?.status_code >= 400) {
+            setPaymentStatus('error');
+            setDeclinedPaymentProps({
+              title: t('transaction-denied'),
+              description: t('payment-not-processed'),
+            });
+          }
           const silentCode = respPayment?.silent_code;
           if (silentCode) {
             setReadyToRefetch(false);
 
             if (silentCode === SILENT_CODE.CARD_ERROR) {
-              setOpenDeclinedModal(true);
-              setDeclinedModalProps({
+              setPaymentStatus('error');
+              setDeclinedPaymentProps({
                 title: t('transaction-denied'),
                 description: t('card-declined'),
               });
             }
             if (SILENT_CODE.LIST_PROCESSING_ERRORS.includes(silentCode)) {
-              setOpenDeclinedModal(true);
-              setDeclinedModalProps({
+              setPaymentStatus('error');
+              setDeclinedPaymentProps({
                 title: t('transaction-denied'),
                 description: t('payment-not-processed'),
               });
             }
             if (silentCode === SILENT_CODE.UNEXPECTED_EXCEPTION) {
-              setOpenDeclinedModal(true);
-              setDeclinedModalProps({
+              setPaymentStatus('error');
+              setDeclinedPaymentProps({
                 title: t('transaction-denied'),
                 description: t('payment-error'),
               });
             }
           }
           if (respPayment.status === 'FULFILLED') {
-            setIsReadyToJoinCohort(true);
-            setIsSubmitting(false);
+            setSelectedPlanCheckoutData({
+              ...selectedPlanCheckoutData,
+              payment_success: true,
+            });
+            setPaymentStatus('success');
           }
         })
         .catch(() => {
@@ -246,76 +246,55 @@ function Summary() {
         });
     }
   };
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+  useEffect(() => {
+    if (hasMounted) {
+      if (findedPlan?.plan_slug) {
+        handleSubmit();
+        setLoader('plan', false);
+      }
+      if (!findedPlan?.plan_slug && checkoutData?.plans?.[selectedIndex]) {
+        setLoader('plan', false);
+        setSelectedPlanCheckoutData(checkoutData?.plans[selectedIndex]);
+      }
+    }
+  }, [findedPlan?.plan_slug, hasMounted]);
 
   return (
     <Box
       display="flex"
       flexDirection="column"
-      gridGap="30px"
+      gridGap={isPaymentIdle && '30px'}
       mb="1rem"
       width={{ base: '100%', md: '490px' }}
       margin="0 auto"
     >
-      <SimpleModal
-        isOpen={openDeclinedModal}
-        headerStyles={{
-          padding: '0 0 16px 0',
-          textAlign: 'center',
-        }}
-        maxWidth="510px"
-        onClose={() => setOpenDeclinedModal(false)}
-        title={declinedModalProps.title}
-        padding="16px 0"
-        gridGap="24px"
-        bodyStyles={{
-          display: 'flex',
-          gridGap: '24px',
-          padding: '0',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <Image src="/static/images/avatar-for-transaction-failed.png" width={80} height={80} />
-
-        <Text fontSize="18px" fontWeight="700" textAlign="center">
-          {declinedModalProps.description}
-        </Text>
-
-        <Flex gridGap="24px">
-          <Button variant="outline" onClick={() => setOpenDeclinedModal(false)} borderColor="blue.default" color="blue.default">
-            {t('common:close')}
-          </Button>
-          <Button
-            isLoading={isSubmitting}
-            variant="default"
-            onClick={() => {
-              setIsSubmitting(true);
-              handleSubmit();
-              setOpenDeclinedModal(false);
-            }}
-          >
-            {t('common:try-again')}
-          </Button>
-        </Flex>
-      </SimpleModal>
       <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 0', md: '14px 0' }} height="100%" borderRadius="15px">
         <Box
           display="flex"
           flexDirection="column"
-          background={isReadyToJoinCohort ? hexColor.successLight : featuredBackground}
+          background={!isPaymentIdle ? paymentStatusBgColor : featuredBackground}
           w="100%"
           height="fit-content"
           p="11px 14px"
           gridGap="8px"
           borderRadius="14px"
         >
-          {isReadyToJoinCohort ? (
+          {!isPaymentIdle ? (
             <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
-              <Icon icon="feedback-like" width="60px" height="60px" />
-              <Text size="14px" fontWeight={700} textAlign="center" color="black">
-                Payment successfull
-              </Text>
+              <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
+              <Flex flexDirection="column" gridGap="8px">
+                <Text size="16px" fontWeight={700} textAlign="center" color="black">
+                  {isPaymentSuccess ? 'Payment successfull' : (declinedPaymentProps.title || 'Payment failed')}
+                </Text>
+                {declinedPaymentProps.description && (
+                  <Text size="14px" fontWeight={400} textAlign="center" color="black">
+                    {declinedPaymentProps.description}
+                  </Text>
+                )}
+              </Flex>
             </Flex>
           ) : (
             <>
@@ -417,7 +396,7 @@ function Summary() {
       {/* ------------------- */}
       <Box display="flex" flexDirection="column">
         <Box background={backgroundColor} p={{ base: '22px 0', md: '14px 0' }} borderRadius="15px">
-          {!isReadyToJoinCohort && (
+          {isPaymentIdle && (
             <>
               <Heading
                 fontSize="22px"
@@ -493,7 +472,7 @@ function Summary() {
               </Box>
             </>
           )}
-          {isReadyToJoinCohort ? (
+          {!isPaymentIdle ? (
             <Button
               width="100%"
               height="45px"
@@ -501,11 +480,15 @@ function Summary() {
               // mt="12px"
               isLoading={isSubmitting}
               onClick={() => {
-                setIsSubmitting(true);
-                setReadyToRefetch(true);
+                if (isPaymentSuccess) {
+                  setIsSubmitting(true);
+                  setReadyToRefetch(true);
+                } else {
+                  setPaymentStatus('idle');
+                }
               }}
             >
-              Start learning
+              {isPaymentSuccess ? 'Start learning' : 'Try again'}
             </Button>
           ) : (
             <>

@@ -6,7 +6,7 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 
-function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
+function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');
   const { fontColor, disabledColor2 } = useStyle();
   const maxItemsCount = typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial ? 4 : 3;
@@ -63,27 +63,34 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
             alignItems="center"
             color={stepIndex !== 2 && 'gray.350'}
           >
-            {isFourthStep && (
+            {(isFourthStep || selectedPlanCheckoutData?.payment_success) && (
               <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
               size="14px"
               fontWeight={isThirdStep ? '700' : '500'}
-              color={(isFourthStep) && 'success'}
+              color={(isFourthStep || selectedPlanCheckoutData?.payment_success) && 'success'}
             >
               {t('summary')}
             </Heading>
           </Box>
         )}
 
-        {!hideIndexList.includes(3) && (
+        {(!hideIndexList.includes(3)) && (
           <Box
             display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
             gridGap="10px"
             alignItems="center"
             color={stepIndex !== 3 && 'gray.350'}
           >
-            <Heading size="14px" fontWeight={isFourthStep ? '700' : '500'}>
+            {selectedPlanCheckoutData?.payment_success && (
+              <Icon icon="verified" width="18px" height="30px" />
+            )}
+            <Heading
+              size="14px"
+              fontWeight={isFourthStep ? '700' : '500'}
+              color={selectedPlanCheckoutData?.payment_success && 'success'}
+            >
               {t('payment')}
             </Heading>
           </Box>
@@ -143,12 +150,14 @@ Stepper.propTypes = {
   isFourthStep: PropTypes.bool.isRequired,
   handleGoBack: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   hideIndexList: PropTypes.arrayOf(PropTypes.number),
+  selectedPlanCheckoutData: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 };
 
 Stepper.defaultProps = {
   checkoutData: {},
   handleGoBack: null,
   hideIndexList: [],
+  selectedPlanCheckoutData: {},
 };
 
 export default Stepper;

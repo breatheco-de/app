@@ -80,12 +80,11 @@ function Checkout() {
   const [cohortsData, setCohortsData] = useState({
     loading: true,
   });
-  const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
-    state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
+    state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
     setSelectedPlanCheckoutData, setCheckoutData,
   } = useSignup();
@@ -96,7 +95,7 @@ function Checkout() {
   const [discountCoupon, setDiscountCoupon] = useState({
     isError: false,
   });
-  const { stepIndex, dateProps, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader } = state;
+  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader } = state;
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
@@ -129,7 +128,6 @@ function Checkout() {
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
-  const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
   const showPriceInformation = !readyToSelectService && isFourthStep;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
@@ -297,7 +295,6 @@ function Checkout() {
             }
             if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
               if (resp.status < 400 && cohorts?.length > 0) {
-                setIsPreselectedCohort(true);
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultCohortProps = {
                   ...cohorts[0],
@@ -310,13 +307,17 @@ function Checkout() {
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
                     const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData.plans.find((item) => item?.plan_id > queryPlanId);
+                    const autoSelectedPlan = checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
                       setLoader('plan', false);
                     } else {
+                      if (autoSelectedPlan) {
+                        setSelectedPlanCheckoutData(autoSelectedPlan);
+                      }
                       handleStep(2);
+                      setLoader('plan', false);
                     }
                   })
                   .catch(() => {
@@ -330,13 +331,17 @@ function Checkout() {
                 handleChecking({ plan: data })
                   .then((checkingData) => {
                     const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData.plans.find((item) => item?.plan_id > queryPlanId);
+                    const autoSelectedPlan = checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
                       setLoader('plan', false);
                     } else {
+                      if (autoSelectedPlan) {
+                        setSelectedPlanCheckoutData(autoSelectedPlan);
+                      }
                       handleStep(2);
+                      setLoader('plan', false);
                     }
                   })
                   .catch(() => {
@@ -384,19 +389,6 @@ function Checkout() {
       });
     }
   }, [user?.id]);
-
-  const handleGoBack = () => {
-    const handler = () => {
-      if (stepIndex > 0) {
-        prevStep();
-      }
-    };
-    return {
-      isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && filteredCohorts?.length === 1),
-      must_hidde: isPreselectedCohort && isThirdStep,
-      func: handler,
-    };
-  };
 
   const getPriceWithDiscount = () => {
     const price = selectedPlanCheckoutData?.price;
@@ -502,12 +494,9 @@ function Checkout() {
       <Box
         display="flex"
         flexDirection="row"
-        // gridGap="20px"
         minHeight="320px"
-        // maxWidth={{ base: '100%', md: '100%' }}
-        // TODO: esto puede dar problemas
-        // margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
-        // borderRadius={{ base: '22px', md: '0' }}
+        maxWidth="1640px"
+        margin="0 auto"
       >
         <Flex
           display="flex"
@@ -526,11 +515,12 @@ function Checkout() {
               hideIndexList={showChooseClass ? [] : [1]}
               stepIndex={stepIndex}
               checkoutData={checkoutData}
+              selectedPlanCheckoutData={selectedPlanCheckoutData}
               isFirstStep={isFirstStep}
               isSecondStep={isSecondStep}
               isThirdStep={isThirdStep}
               isFourthStep={isFourthStep}
-              handleGoBack={handleGoBack}
+              // handleGoBack={handleGoBack}
             />
           )}
           {!readyToSelectService && isFirstStep && (
@@ -543,7 +533,7 @@ function Checkout() {
           )}
 
           {/* Second step */}
-          {!readyToSelectService && showChooseClass && (
+          {((!readyToSelectService && showChooseClass) || isSecondStep) && (
             <ChooseYourClass setCohorts={setCohortsData} />
           )}
 
@@ -560,45 +550,6 @@ function Checkout() {
           {!readyToSelectService && isFourthStep && (
             <PaymentInfo />
           )}
-          {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
-            <>
-              <Box as="hr" width="100%" margin="10px 0" />
-              <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" mt="auto">
-                {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
-                  <Button
-                    variant="outline"
-                    borderColor="currentColor"
-                    color="blue.default"
-                    isDisabled={handleGoBack().isNotAvailable}
-                    onClick={() => handleGoBack().func()}
-                  >
-                    {t('go-back')}
-                  </Button>
-                )}
-                {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
-                  <Button
-                    variant="default"
-                    isDisabled={dateProps === null}
-                    onClick={() => {
-                      nextStep();
-                    }}
-                  >
-                    {t('next-step')}
-                  </Button>
-                )}
-              </Box>
-            </>
-          )}
-          {/* TODO: Button for debugging */}
-          <Button
-            variant="default"
-            // isDisabled={dateProps === null}
-            onClick={() => {
-              nextStep();
-            }}
-          >
-            {t('next-step')}
-          </Button>
         </Flex>
         <Flex
           display={{ base: 'none', md: 'flex' }}
@@ -612,7 +563,7 @@ function Checkout() {
           overflow="auto"
           maxWidth="50%"
         >
-          <Flex flexDirection="column" width={showPriceInformation ? '100%' : '400px'} margin={showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 0 0'} height="100%" zIndex={10}>
+          <Flex flexDirection="column" width={showPriceInformation ? '100%' : '400px'} margin={showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 3rem 0'} height="100%" zIndex={10}>
             {originalPlan?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
@@ -698,7 +649,7 @@ function Checkout() {
                               <Input
                                 value={discountCode}
                                 borderColor={discountCoupon?.isError ? 'red.light' : 'inherit'}
-                                disabled={discountCoupon?.slug}
+                                disabled={discountCoupon?.slug || selectedPlanCheckoutData?.payment_success}
                                 width="100%"
                                 _disabled={{
                                   borderColor: 'success',
