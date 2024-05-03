@@ -36,7 +36,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexL
           </Box>
         )}
 
-        {!hideIndexList.includes(1) && (
+        {/* {!hideIndexList.includes(1) && (
           <Box
             display="flex"
             gridGap="10px"
@@ -54,7 +54,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexL
               {t('choose-your-class')}
             </Heading>
           </Box>
-        )}
+        )} */}
 
         {!hideIndexList.includes(2) && (
           <Box

@@ -153,11 +153,13 @@ function Summary() {
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
               (cohort) => cohort?.id === cohortId,
             ) : {};
+            const firstCohortByDefault = cohortsForSubscription[0];
+            const cohortToJoin = findedCohort || firstCohortByDefault;
 
             if (isPurchasedPlanFound) {
               clearInterval(interval);
-              if (findedCohort && Number.isSafeInteger(cohortId)) {
-                getCohort(findedCohort?.id)
+              if (cohortToJoin?.id) {
+                getCohort(cohortToJoin?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })
@@ -194,6 +196,9 @@ function Summary() {
       }, true)
         .then((respPayment) => {
           setIsSubmitting(false);
+          setTimeout(() => {
+            setLoader('plan', false);
+          }, 1000);
           if (respPayment?.status_code >= 400) {
             setPaymentStatus('error');
             setDeclinedPaymentProps({
@@ -236,6 +241,7 @@ function Summary() {
           }
         })
         .catch(() => {
+          setLoader('plan', false);
           toast({
             position: 'top',
             title: t('alert-message:payment-error'),
@@ -253,7 +259,6 @@ function Summary() {
     if (hasMounted) {
       if (findedPlan?.plan_slug) {
         handleSubmit();
-        setLoader('plan', false);
       }
       if (!findedPlan?.plan_slug && checkoutData?.plans?.[selectedIndex]) {
         setLoader('plan', false);

@@ -172,6 +172,22 @@ function Checkout() {
     });
   }, []);
 
+  // Alert before leave the page if the user is in the payment process
+  useEffect(() => {
+    if (isWindow && stepIndex >= 2) {
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+    return () => {};
+  }, [stepIndex]);
+
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
     if (!isAuthenticated && !tokenExists) {
@@ -317,7 +333,6 @@ function Checkout() {
                         setSelectedPlanCheckoutData(autoSelectedPlan);
                       }
                       handleStep(2);
-                      setLoader('plan', false);
                     }
                   })
                   .catch(() => {
@@ -341,7 +356,6 @@ function Checkout() {
                         setSelectedPlanCheckoutData(autoSelectedPlan);
                       }
                       handleStep(2);
-                      setLoader('plan', false);
                     }
                   })
                   .catch(() => {
@@ -658,7 +672,7 @@ function Checkout() {
                                 letterSpacing="0.05em"
                                 display={openInputDiscountCode ? 'block' : 'none'}
                                 placeholder="Discount code"
-                                onChange={(e) => setDiscountCode(e.target.value)}
+                                onChange={(e) => setDiscountCode(e.target.value.replace(/\s/g, '-'))}
                               />
                               {discountCoupon?.slug && (
                                 <InputRightElement width="35px">
@@ -680,16 +694,18 @@ function Checkout() {
                                 </InputRightElement>
                               )}
                             </InputGroup>
-                            <Button
-                              width="auto"
-                              type="submit"
-                              isLoading={isSubmitting}
-                              height="auto"
-                              variant="outline"
-                              fontSize="17px"
-                            >
-                              + Add
-                            </Button>
+                            {!discountCoupon?.slug && (
+                              <Button
+                                width="auto"
+                                type="submit"
+                                isLoading={isSubmitting}
+                                height="auto"
+                                variant="outline"
+                                fontSize="17px"
+                              >
+                                {`+ ${t('add')}`}
+                              </Button>
+                            )}
                           </Flex>
                         </Form>
                       )}

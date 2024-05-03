@@ -34,7 +34,7 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
       setError('Error fetching data for: ', queryKey);
       setIsLoading(false);
     }
-  }, []);
+  }, [isSuccess, isError]);
   return {
     data: data || dataFetched,
     isLoading: isLoading || queryResult.isLoading,
