@@ -763,7 +763,7 @@ function Content() {
             <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
               <iframe
                 id="iframe"
-                src={`https://assessment.4geeks.com/quiz/${quizSlug}?embedded=true`}
+                src={`https://assessment.4geeks.com/quiz/${quizSlug}?embedded=true&token=${accessToken}&isAnon=${!accessToken ? "true" : false}`}
                 style={{
                   width: '100%',
                   height: '100%',
