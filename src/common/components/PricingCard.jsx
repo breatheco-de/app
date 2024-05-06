@@ -1,5 +1,6 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Select } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Select, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { isWindow, slugToTitle } from '../../utils';
 
-export default function PricingCard({ item, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
@@ -128,40 +129,52 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             <>
               {!isOriginalPlan ? (
                 <Box display="flex" height="75px" alignItems="center" justifyContent="center" gridGap="4px">
-                  {item?.optionList?.length > 0 ? (
-                    <Select
-                      maxWidth="15rem"
-                      border={0}
-                      fontSize="var(--heading-xl)"
-                      textAlign="center"
-                      color={color}
-                      fontWeight={700}
-                      height="auto"
-                      defaultValue={item?.optionList[0].priceText}
-                      onChange={(e) => {
-                        const itemFinded = item?.optionList.find((financing) => financing.plan_id === e.target.value);
-                        setSelectedFinancing(itemFinded);
-                      }}
-                    >
-                      {item?.optionList.map(
-                        (financing) => <option key={financing?.plan_id} value={financing.plan_id}>{financing?.priceText}</option>,
-                      )}
-                    </Select>
+                  {isFetching ? (
+                    <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                      {item.price_text || item?.priceText}
-                    </Box>
+                    <>
+                      {item?.optionList?.length > 0 ? (
+                        <Select
+                          maxWidth="15rem"
+                          border={0}
+                          fontSize="var(--heading-xl)"
+                          textAlign="center"
+                          color={color}
+                          fontWeight={700}
+                          height="auto"
+                          defaultValue={item?.optionList[0].priceText}
+                          onChange={(e) => {
+                            const itemFinded = item?.optionList.find((financing) => financing.plan_id === e.target.value);
+                            setSelectedFinancing(itemFinded);
+                          }}
+                        >
+                          {item?.optionList.map(
+                            (financing) => <option key={financing?.plan_id} value={financing.plan_id}>{financing?.priceText}</option>,
+                          )}
+                        </Select>
+                      ) : (
+                        <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                          {item.price_text || item?.priceText}
+                        </Box>
+                      )}
+                    </>
                   )}
-                  {item.discount_text && (
+                  {!isFetching && item.discount_text && (
                     <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}
                     </Box>
                   )}
                 </Box>
               ) : (
-                <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                  {`$${item?.price}`}
-                </Box>
+                <>
+                  {isFetching ? (
+                    <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
+                  ) : (
+                    <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                      {`$${item?.price}`}
+                    </Box>
+                  )}
+                </>
               )}
             </>
           ) : (
@@ -173,10 +186,16 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
               </Box>
             </>
           )}
-          {item.period_label && (
-            <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
-              {item.period_label}
-            </Text>
+          {isFetching ? (
+            <SkeletonText margin="8px auto 0 auto" width="6rem" noOfLines={1} spacing="4" />
+          ) : (
+            <>
+              {item.period_label && (
+                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
+                  {item.period_label}
+                </Text>
+              )}
+            </>
           )}
 
           {(!isBootcampType && relatedSubscription?.invoices?.[0]?.amount === item?.price) ? (
@@ -185,7 +204,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
             </Text>
           ) : (
             <>
-              <Button maxWidth={{ base: '250px', lg: '320px' }} position="absolute" transform="translate(-50%, 0)" left="50%" bottom="8px" variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
+              <Button isLoading={isFetching} maxWidth={{ base: '250px', lg: '320px' }} position="absolute" transform="translate(-50%, 0)" left="50%" bottom="8px" variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
                 {!isOriginalPlan && !isBootcampType && (
                   <Icon icon="rocket" color={viewProps.button.color} width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
                 )}
@@ -209,27 +228,40 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         </Flex>
         <Divider margin="15px 0" border={`2px solid ${hexColor.lightColor}`} />
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
-          {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
-            <Box key={info.service.slug} display="flex" gridGap="8px">
-              {info?.service?.icon_url
-                ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                : (
-                  <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
-                )}
-              <Box>
-                <Text size="16px" fontWeight={700} textAlign="left">
-                  {info?.service?.title || slugToTitle(info?.service?.slug)}
-                </Text>
-                {info.features?.length > 0 && (
-                  <Text
-                    size="14px"
-                    textAlign="left"
-                    dangerouslySetInnerHTML={{ __html: info.features?.[0]?.description }}
-                  />
-                )}
-              </Box>
-            </Box>
-          ))}
+          {isFetching ? Array.from({ length: 3 }).map((_, index) => {
+            const randomWidth = Math.floor(Math.random() * 100) + 100;
+            const randomTextLines = Math.floor(Math.random() * 4) + 1;
+            return (
+              <Flex flexDirection="column" gridGap="8px" mb={index !== 2 && '10px'}>
+                <Skeleton key={index} height="10px" width={randomWidth} borderRadius="4px" />
+                <SkeletonText key={index} margin="0 0 0 2rem" noOfLines={randomTextLines} />
+              </Flex>
+            );
+          }) : (
+            <>
+              {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
+                <Box key={info.service.slug} display="flex" gridGap="8px">
+                  {info?.service?.icon_url
+                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                    : (
+                      <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                    )}
+                  <Box>
+                    <Text size="16px" fontWeight={700} textAlign="left">
+                      {info?.service?.title || slugToTitle(info?.service?.slug)}
+                    </Text>
+                    {info.features?.length > 0 && (
+                      <Text
+                        size="14px"
+                        textAlign="left"
+                        dangerouslySetInnerHTML={{ __html: info.features?.[0]?.description }}
+                      />
+                    )}
+                  </Box>
+                </Box>
+              ))}
+            </>
+          )}
         </Flex>
 
         <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
@@ -270,7 +302,9 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
 PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
+  isFetching: PropTypes.bool,
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
+  isFetching: false,
 };
