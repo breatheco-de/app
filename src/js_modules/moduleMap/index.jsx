@@ -36,7 +36,6 @@ function ModuleMap({
         cohort_id: cohortId,
       },
     });
-
     startDay({
       t,
       id: userId,
@@ -108,7 +107,7 @@ function ModuleMap({
         </Box>
       )}
 
-      {!filteredModules.length >= 1
+      {filteredModules.length >= 1
         ? Array.isArray(currentModules) && currentModules.map((module, i) => {
           const cheatedIndex = i;
           return (
