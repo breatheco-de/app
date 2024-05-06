@@ -189,6 +189,15 @@ function Summary() {
     setIsSubmitting(true);
     if (isNotTrial || !priceIsNotNumber) {
       nextStep();
+      router.push({
+        pathname: '/checkout',
+        query: {
+          ...router.query,
+          plan_id: selectedPlanCheckoutData?.plan_id,
+          price: selectedPlanCheckoutData?.price,
+          period: selectedPlanCheckoutData?.period,
+        },
+      });
     } else {
       handlePayment({
         ...checkoutData,
@@ -423,13 +432,6 @@ function Summary() {
                           display="flex"
                           onClick={() => {
                             setSelectedIndex(i);
-                            router.push({
-                              pathname: '/checkout',
-                              query: {
-                                ...router.query,
-                                plan_id: item?.plan_id,
-                              },
-                            });
                             setSelectedPlanCheckoutData(item);
                           }}
                           flexDirection="row"

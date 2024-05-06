@@ -90,7 +90,6 @@ function Checkout() {
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
-  const [openInputDiscountCode, setOpenInputDiscountCode] = useState(true);
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState({
     isError: false,
@@ -112,6 +111,7 @@ function Checkout() {
   const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
+  const couponsQuery = getQueryString('coupons');
 
   const { course } = router.query;
   const courseChoosed = course;
@@ -131,6 +131,31 @@ function Checkout() {
   const showPriceInformation = !readyToSelectService && isFourthStep;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
+
+  const handleCoupon = (coupons, actions) => {
+    bc.payment({
+      coupons: coupons || discountCode,
+      plan: planFormated,
+    }).coupon()
+      .then((resp) => {
+        if (resp?.data?.length > 0) {
+          setDiscountCoupon(resp.data[0]);
+          setCheckoutData({
+            ...checkoutData,
+            discountCoupon: resp.data[0],
+          });
+        } else {
+          setDiscountCoupon({
+            isError: true,
+          });
+        }
+      })
+      .finally(() => {
+        if (actions) {
+          actions.setSubmitting(false);
+        }
+      });
+  };
 
   useEffect(() => {
     removeStorageItem('redirect');
@@ -172,9 +197,17 @@ function Checkout() {
     });
   }, []);
 
-  // Alert before leave the page if the user is in the payment process
   useEffect(() => {
-    if (isWindow && stepIndex >= 2) {
+    // verify if coupon exists
+    if (couponsQuery) {
+      handleCoupon(couponsQuery);
+      setDiscountCode(couponsQuery);
+    }
+  }, [couponsQuery]);
+
+  useEffect(() => {
+    // Alert before leave the page if the user is in the payment process
+    if (isWindow && stepIndex >= 2 && isAuthenticated) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };
@@ -186,7 +219,7 @@ function Checkout() {
       };
     }
     return () => {};
-  }, [stepIndex]);
+  }, [stepIndex, isAuthenticated]);
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
@@ -629,31 +662,14 @@ function Checkout() {
                     <Divider margin="6px 0" />
                     <Formik
                       initialValues={{
-                        coupons: '',
+                        coupons: couponsQuery || '',
                       }}
                       onSubmit={(_, actions) => {
                         setDiscountCoupon({
                           isError: false,
                         });
-                        setOpenInputDiscountCode(true);
-                        bc.payment({
-                          coupons: discountCode,
-                          plan: planFormated,
-                        }).coupon()
-                          .then((resp) => {
-                            if (resp?.data?.length > 0) {
-                              setDiscountCoupon(resp.data[0]);
-                              setCheckoutData({
-                                ...checkoutData,
-                                discountCoupon: resp.data[0],
-                              });
-                            } else {
-                              setDiscountCoupon({
-                                isError: true,
-                              });
-                            }
-                          })
-                          .finally(() => actions.setSubmitting(false));
+
+                        handleCoupon(discountCode, actions);
                       }}
                     >
                       {({ isSubmitting }) => (
@@ -670,7 +686,6 @@ function Checkout() {
                                   opacity: 1,
                                 }}
                                 letterSpacing="0.05em"
-                                display={openInputDiscountCode ? 'block' : 'none'}
                                 placeholder="Discount code"
                                 onChange={(e) => setDiscountCode(e.target.value.replace(/\s/g, '-'))}
                               />
