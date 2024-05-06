@@ -485,7 +485,7 @@ function Page({ data }) {
               title={t('join-cohort')}
               maxWidth="396px"
               description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
-              borderColor="green.400"
+              borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
