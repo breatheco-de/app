@@ -52,7 +52,7 @@ function Summary() {
   const isPaymentIdle = paymentStatus === 'idle';
   const isPaymentSuccess = paymentStatus === 'success';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
-
+  const successText = selectedPlanCheckoutData?.isFreeTier ? 'The plan is ready' : 'Payment successful';
   const periodText = {
     ONE_TIME: '',
     FREE: t('totally_free'),
@@ -185,7 +185,7 @@ function Summary() {
   }, [readyToRefetch, timeElapsed]);
 
   const handleSubmit = () => {
-    if (!isPaymentIdle || isSubmitting) return;
+    if (!isPaymentIdle || isSubmitting || !selectedPlanCheckoutData?.plan_id) return;
     setIsSubmitting(true);
     if (isNotTrial || !priceIsNotNumber) {
       nextStep();
@@ -301,7 +301,7 @@ function Summary() {
               <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
               <Flex flexDirection="column" gridGap="8px">
                 <Text size="16px" fontWeight={700} textAlign="center" color="black">
-                  {isPaymentSuccess ? 'Payment successfull' : (declinedPaymentProps.title || 'Payment failed')}
+                  {isPaymentSuccess ? successText : (declinedPaymentProps.title || 'Payment failed')}
                 </Text>
                 {declinedPaymentProps.description && (
                   <Text size="14px" fontWeight={400} textAlign="center" color="black">

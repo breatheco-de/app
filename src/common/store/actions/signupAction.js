@@ -8,7 +8,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
 } from '../types';
-import { formatPrice, getDiscountedPrice, getNextDateInMonths, getStorageItem, getTimeProps } from '../../../utils';
+import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -27,6 +27,7 @@ const useSignup = () => {
   const accessToken = getStorageItem('accessToken');
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
+  const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
@@ -207,6 +208,7 @@ const useSignup = () => {
       academy: cohortData?.academy?.id || dateProps?.academy?.id || (Number(academy) || undefined),
       syllabus,
       plans: [selectedPlan?.slug || (cohortPlans?.length > 0 ? cohortPlan?.slug : undefined)],
+      coupons: couponsQuery ? [couponsQuery] : undefined,
     };
 
     fetch(`${BREATHECODE_HOST}/v1/payments/checking`, {

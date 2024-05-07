@@ -132,18 +132,36 @@ function Checkout() {
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
-  const handleCoupon = (coupons, actions) => {
+  const saveCouponToBag = (coupons, bagId = '') => {
     bc.payment({
-      coupons: coupons || discountCode,
+      coupons,
       plan: planFormated,
-    }).coupon()
+    }).applyCoupon(bagId)
       .then((resp) => {
-        if (resp?.data?.length > 0) {
-          setDiscountCoupon(resp.data[0]);
+        const couponsList = resp?.data?.coupons;
+        if (couponsList?.length > 0) {
+          setDiscountCoupon(couponsList[0]);
           setCheckoutData({
             ...checkoutData,
-            discountCoupon: resp.data[0],
+            discountCoupon: couponsList[0],
           });
+        } else {
+          setDiscountCoupon({
+            isError: true,
+          });
+        }
+      });
+  };
+
+  const handleCoupon = (coupons, actions) => {
+    bc.payment({
+      coupons: [coupons || discountCode],
+      plan: planFormated,
+    }).verifyCoupon()
+      .then((resp) => {
+        if (resp?.data?.length > 0) {
+          const couponsToString = resp?.data.map((item) => item?.slug);
+          saveCouponToBag(couponsToString, checkoutData?.id);
         } else {
           setDiscountCoupon({
             isError: true,
@@ -199,11 +217,11 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (couponsQuery) {
+    if (couponsQuery && checkoutData?.id) {
       handleCoupon(couponsQuery);
       setDiscountCode(couponsQuery);
     }
-  }, [couponsQuery]);
+  }, [couponsQuery, checkoutData?.id]);
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
