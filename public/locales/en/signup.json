@@ -205,7 +205,7 @@
       "price_text": "Free",
       "period": "FREE",
       "period_label": "",
-      "isFree": true,
+      "isFreeTier": true,
       "planType": "original",
       "type": "FREE"
     },{
@@ -220,7 +220,7 @@
       "discount_text": "$150",
       "period": "MONTH",
       "period_label": "Per month",
-      "isFree": false,
+      "isFreeTier": false,
       "planType": "suggested",
       "type": "PAYMENT"
     }],
@@ -235,7 +235,7 @@
       "price_text": "Free",
       "period": "FREE",
       "period_label": "",
-      "isFree": true,
+      "isFreeTier": true,
       "planType": "original",
       "type": "FREE"
     },{
@@ -249,7 +249,7 @@
       "price_text": "$15.99",
       "period": "YEAR",
       "period_label": "Per month",
-      "isFree": false,
+      "isFreeTier": false,
       "planType": "suggested",
       "type": "PAYMENT"
     }],
