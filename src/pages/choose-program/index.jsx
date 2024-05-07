@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
 import Module from '../../common/components/Module';
-import { calculateDifferenceDays, getStorageItem, isPlural, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
+import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeStorageItem, setStorageItem, sortToNearestTodayDate, syncInterval } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
@@ -126,7 +126,8 @@ function chooseProgram() {
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
       const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
-        .then(({ data }) => {
+        .then((resp) => {
+          const data = resp?.data;
           if (data !== undefined && data.length > 0) {
             return data.map((service) => ({
               ...service,
@@ -286,7 +287,11 @@ function chooseProgram() {
   useEffect(() => {
     bc.payment().events()
       .then(({ data }) => {
-        const eventsRemain = data.filter((l) => new Date(l?.ended_at || l?.ending_at) - new Date() > 0).slice(0, 3);
+        const eventsRemain = data?.length > 0 ? data.filter((l) => {
+          if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
+          if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
+          return false;
+        }).slice(0, 3) : [];
         setEvents(eventsRemain);
       });
 
@@ -294,13 +299,19 @@ function chooseProgram() {
       upcoming: true,
     }).liveClass()
       .then((res) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(res?.data, TwelveHoursInMinutes);
+        const validatedEventList = res?.data?.length > 0
+          ? res?.data?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
+          : [];
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         setLiveClasses(existentLiveClasses);
       });
     syncInterval(() => {
       setLiveClasses((prev) => {
-        const sortDateToLiveClass = sortToNearestTodayDate(prev, TwelveHoursInMinutes);
+        const validatedEventList = prev?.length > 0
+          ? prev?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
+          : [];
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHoursInMinutes);
         const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
         return existentLiveClasses;
       });

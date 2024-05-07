@@ -189,7 +189,7 @@ function profileHandlers({
               plan_id: `p-${planData?.trial_duration}-trial`,
               suggested_plan: planData,
               type: isTotallyFree ? 'FREE' : 'TRIAL',
-              isFree: true,
+              isFreeTier: true,
               show: true,
             } : {};
 
@@ -371,7 +371,7 @@ function profileHandlers({
               plan_id: `p-${offerData?.trial_duration}-trial`,
               suggested_plan: offerData,
               type: isTotallyFree ? 'FREE' : 'TRIAL',
-              isFree: true,
+              isFreeTier: true,
               show: true,
             } : {};
 
