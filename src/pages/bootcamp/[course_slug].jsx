@@ -14,7 +14,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, cleanObject, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -160,6 +160,14 @@ function Page({ data }) {
       }
       if (firstPaymentPlan.period === 'FINANCING') {
         return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
+      }
+    }
+    if (payableList?.length === 0 && plans[0]?.isFreeTier) {
+      if (plans[0]?.type === 'FREE') {
+        return t('common:enroll-totally-free');
+      }
+      if (plans[0]?.type === 'TRIAL') {
+        return t('common:start-free-trial');
       }
     }
     return t('common:enroll');
@@ -537,22 +545,24 @@ function Page({ data }) {
                         >
                           {payableList?.length > 0
                             ? `${t('common:enroll-for-connector')} ${featurePrice}`
-                            : t('common:enroll')}
+                            : capitalizeFirstLetter(featurePrice)}
                         </Button>
-                        <Button
-                          variant="outline"
-                          color="green.400"
-                          borderColor="currentColor"
-                          onClick={() => {
-                            router.push('#pricing');
-                            setFinanceSelected({
-                              selectedFinanceIndex: 1,
-                              selectedIndex: 0,
-                            });
-                          }}
-                        >
-                          {t('common:see-financing-options')}
-                        </Button>
+                        {payableList?.length > 0 && (
+                          <Button
+                            variant="outline"
+                            color="green.400"
+                            borderColor="currentColor"
+                            onClick={() => {
+                              router.push('#pricing');
+                              setFinanceSelected({
+                                selectedFinanceIndex: 1,
+                                selectedIndex: 0,
+                              });
+                            }}
+                          >
+                            {t('common:see-financing-options')}
+                          </Button>
+                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}

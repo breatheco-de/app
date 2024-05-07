@@ -114,7 +114,7 @@ const list = [
   {
     "type": "trial",
     "show": true,
-    "isFree": true,
+    "isFreeTier": true,
     "title": "Free trial",
     "price": "7 Days trial",
     "lastPrice": "",
@@ -198,7 +198,7 @@ const finance = [
   {
     "type": "schoolarship-trial",
     "show": true,
-    "isFree": true,
+    "isFreeTier": true,
     "title": "Free trial",
     "price": "7 days trial",
     "months": "",

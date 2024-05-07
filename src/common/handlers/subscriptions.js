@@ -119,7 +119,7 @@ export const processPlans = (data, {
         period: isTotallyFree ? 'FREE' : singlePlan?.trial_duration_unit,
         period_label: trialPlanDescription,
         type: isTotallyFree ? 'FREE' : 'TRIAL',
-        isFree: true,
+        isFreeTier: true,
       } : {};
 
       const monthPlan = monthly && existsAmountPerMonth ? {
