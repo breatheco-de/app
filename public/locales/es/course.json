@@ -12,7 +12,8 @@
   "title-connectors": {
     "learning": "Comienza a aprender",
     "start": "Comienza una carrera en",
-    "end": "aprendiendo a tu propio ritmo"
+    "end": "aprendiendo a tu propio ritmo",
+    "own-pace": "a tu propio ritmo"
   },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
