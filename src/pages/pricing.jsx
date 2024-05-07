@@ -294,7 +294,7 @@ function PricingView() {
           )}
 
           {isAbleToShowPrices && (
-            <Flex gridGap="1rem" justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
+            <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
               <Text size="30px" width="100%" alignItems="center" fontWeight={700}>
                 You are buying
                 <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
@@ -303,7 +303,7 @@ function PricingView() {
               </Text>
 
               {existentOptions.length > 0 && (courseFormated && !isFetching.selectedPlan) && (
-              <Box width="fit-content" display="flex" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
+              <Flex width="fit-content" margin="0 auto" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
                 {existentOptions.map((info) => (
                   <Box
                     key={info.type}
@@ -318,7 +318,7 @@ function PricingView() {
                     {info.name}
                   </Box>
                 ))}
-              </Box>
+              </Flex>
               )}
             </Flex>
           )}

@@ -129,6 +129,7 @@ function Checkout() {
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
   const showPriceInformation = !readyToSelectService && isFourthStep;
+  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
@@ -556,9 +557,12 @@ function Checkout() {
         }}
       />
 
-      <Box
+      <Flex
         display="flex"
-        flexDirection="row"
+        flexDirection={{
+          base: 'column-reverse',
+          md: 'row',
+        }}
         minHeight="320px"
         maxWidth="1640px"
         margin="0 auto"
@@ -617,7 +621,6 @@ function Checkout() {
           )}
         </Flex>
         <Flex
-          display={{ base: 'none', md: 'flex' }}
           flexDirection="column"
           alignItems="center"
           // flex={0.5}
@@ -626,9 +629,9 @@ function Checkout() {
           flex={{ base: '1', md: '0.5' }}
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
-          maxWidth="50%"
+          maxWidth={{ base: '100%', md: '50%' }}
         >
-          <Flex flexDirection="column" width={showPriceInformation ? '100%' : '400px'} margin={showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 3rem 0'} height="100%" zIndex={10}>
+          <Flex display={isPaymentSuccess ? 'none' : 'flex'} flexDirection="column" width={{ base: 'auto', md: '490px' }} margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 3rem 0' }} height="100%" zIndex={10}>
             {originalPlan?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
@@ -697,17 +700,17 @@ function Checkout() {
                               <Input
                                 value={discountCode}
                                 borderColor={discountCoupon?.isError ? 'red.light' : 'inherit'}
-                                disabled={discountCoupon?.slug || selectedPlanCheckoutData?.payment_success}
+                                disabled={discountCoupon?.slug || isPaymentSuccess}
                                 width="100%"
                                 _disabled={{
-                                  borderColor: 'success',
+                                  borderColor: (discountCoupon?.slug || isPaymentSuccess) ? 'success' : 'inherit',
                                   opacity: 1,
                                 }}
                                 letterSpacing="0.05em"
                                 placeholder="Discount code"
                                 onChange={(e) => setDiscountCode(e.target.value.replace(/\s/g, '-'))}
                               />
-                              {discountCoupon?.slug && (
+                              {(isPaymentSuccess || discountCoupon?.slug) && (
                                 <InputRightElement width="35px">
                                   <Button
                                     variant="unstyled"
@@ -777,11 +780,11 @@ function Checkout() {
                 )}
               </Flex>
             ) : (
-              <Skeleton height="270px" width="400px" borderRadius="11px" zIndex={10} opacity={1} />
+              <Skeleton height="350px" width="490px" borderRadius="11px" zIndex={10} opacity={1} />
             )}
           </Flex>
         </Flex>
-      </Box>
+      </Flex>
     </Box>
   );
 }

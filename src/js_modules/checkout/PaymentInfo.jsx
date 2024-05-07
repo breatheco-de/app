@@ -289,7 +289,7 @@ function PaymentInfo() {
   };
 
   return (
-    <Box display="flex" flexDirection="column" gridGap="30px" margin="0 auto" position="relative">
+    <Box display="flex" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 auto', md: '0 auto' }} position="relative">
       <ModalCardError
         openDeclinedModal={openDeclinedModal}
         isSubmitting={isSubmitting}
