@@ -100,8 +100,8 @@
     {
       "title": "Data Science and ML",
       "icon": "machine-learning",
-      "text": "Learn Python to collect and manage data. Create models and solve problems using Machine Learning, Deep Learning and AI.",
-      "href": "https://4geeksacademy.com/us/coding-bootcamps/datascience-machine-learning?lang=en"
+      "text": "Learn Python to collect and manage data. Create models and solve problems using Machine Learning, Deep Learning, and AI.",
+      "href": "/bootcamp/data-science-and-ml"
     }
   ]
 }

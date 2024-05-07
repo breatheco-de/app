@@ -19,7 +19,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
       display="flex"
       onClick={() => handleSelect(i, item)}
       width="100%"
-      alignItems={item?.isFree && 'center'}
+      alignItems={item?.isFreeTier && 'center'}
       justifyContent="space-between"
       p="22px 18px"
       gridGap="24px"
@@ -30,7 +30,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
       borderRadius="8px"
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
-        {!item?.isFree && (
+        {!item?.isFreeTier && (
         <Box fontSize="18px" fontWeight="700">
           {item?.title}
         </Box>
@@ -173,10 +173,10 @@ function ShowPrices({
           </Box>
         )}
       </Box>
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFree) && (
+      {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFreeTier) && (
         <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
-      {existMoreThanOne && dataList.some((item) => item.isFree) && (
+      {existMoreThanOne && dataList.some((item) => item.isFreeTier) && (
         <Box display="flex" alignItems="center">
           <Box as="hr" color="gray.500" width="100%" />
           <Text size="md" textAlign="center" width="100%" margin="0">
@@ -185,7 +185,7 @@ function ShowPrices({
           <Box as="hr" color="gray.500" width="100%" />
         </Box>
       )}
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFree).map((item, i) => (
+      {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
         <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
       ))}
       <Box mt="38px">

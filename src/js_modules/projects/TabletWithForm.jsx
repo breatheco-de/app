@@ -223,7 +223,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
               </>
             ) : (
               <>
-                {asset.solution_video_url && (
+                {asset?.solution_video_url && (
                   <Link
                     borderRadius="3px"
                     target="_blank"
@@ -240,7 +240,7 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                     {t('common:watch-video-solution')}
                   </Link>
                 )}
-                {asset.solution_url && (
+                {asset?.solution_url && (
                   <Link
                     borderRadius="3px"
                     target="_blank"
