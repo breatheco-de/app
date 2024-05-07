@@ -230,7 +230,7 @@ function CohortSideBar({
     (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
   );
   const studentsJoined = alumniGeeksList.results?.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status !== 'ACTIVE',
+    (st) => st.role === 'STUDENT',
   );
 
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
