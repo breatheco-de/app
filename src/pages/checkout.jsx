@@ -719,6 +719,7 @@ function Checkout() {
                                     padding="10px"
                                     height="auto"
                                     onClick={() => {
+                                      saveCouponToBag([''], checkoutData?.id);
                                       setDiscountCode('');
                                       setDiscountCoupon({
                                         isError: false,
