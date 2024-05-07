@@ -322,7 +322,7 @@ function PaymentInfo() {
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
             <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
             <Text size="14px" fontWeight={700} textAlign="center" color="black">
-              {isPaymentSuccess ? 'Payment successfull' : 'Payment failed'}
+              {isPaymentSuccess ? 'Payment successful' : 'Payment failed'}
             </Text>
           </Flex>
         ) : (
