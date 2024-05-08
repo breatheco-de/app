@@ -51,11 +51,13 @@ function BulletComponent({ bullet, isString }) {
   );
 }
 
-function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, externalSelection, ...rest }) {
+function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, externalSelection, ...rest }) {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
+  const [selectedBulletForPlan, setSelectedBulletForPlan] = useState(null);
   const translationsObj = getTranslations(t);
+  const featuredInfoList = selectedBulletForPlan !== null ? selectedBulletForPlan : planProps?.featured_info;
 
   const handleGetPlan = async () => {
     const data = await generatePlan(plan, translationsObj).then((finalData) => finalData);
@@ -63,8 +65,12 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
   };
 
   useEffect(() => {
-    handleGetPlan();
-  }, [router]);
+    if (externalPlanProps) {
+      setPlanProps(externalPlanProps);
+    } else {
+      handleGetPlan();
+    }
+  }, [router, externalPlanProps]);
 
   const isTotallyFree = planProps?.isTotallyFree === true;
 
@@ -104,7 +110,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
           />
         )}
 
-        {(bullets?.length > 0 || planProps?.featured_info?.length > 0) && (
+        {(bullets?.length > 0 || featuredInfoList?.length > 0) && (
           <Box display="flex" flexDirection="column" gridGap="15px">
             <Text fontSize="18px" textTransform="uppercase" color="blue.default" fontWeight="700" lineHeight="31px">
               {t('subscription.what-you-will-get')}
@@ -128,7 +134,7 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
                     }}
                   />
                 )
-                : planProps?.featured_info.map((bullet) => (
+                : featuredInfoList.map((bullet) => (
                   <BulletComponent key={bullet?.features[0]?.description} bullet={bullet} />
                 ))}
             </Box>
@@ -141,21 +147,21 @@ function MktShowPrices({ id, cohortId, title, gridColumn1, gridColumn2, descript
           title={planProps?.outOfConsumables
             ? t('subscription.upgrade-modal.choose_how_much')
             : t('subscription.upgrade-modal.choose_your_plan')}
-          planSlug={planProps?.slug}
           notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
           defaultFinanceIndex={getDefaultFinanceIndex()}
           externalSelection={externalSelection}
+          onSelect={(item) => {
+            setSelectedBulletForPlan(item?.featured_info);
+          }}
           list={planProps?.paymentOptions?.length > 0 ? planProps?.paymentOptions : planProps?.consumableOptions}
           onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
           financeTextLabel={t('subscription.upgrade-modal.finance')}
           handleUpgrade={(item) => {
-            const hasAvailableCohorts = planProps?.suggested_plan?.has_available_cohorts;
             const period = item?.period;
 
             const querys = parseQuerys({
               plan: item?.plan_slug,
               plan_id: item?.plan_id,
-              has_available_cohorts: hasAvailableCohorts,
               price: item?.price,
               period,
               cohort: cohortId,
@@ -184,6 +190,7 @@ MktShowPrices.propTypes = {
   gridColumn2: PropTypes.string,
   cohortId: PropTypes.number,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  externalPlanProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 MktShowPrices.defaultProps = {
   title: '',
@@ -193,6 +200,7 @@ MktShowPrices.defaultProps = {
   gridColumn2: '6 / span 4',
   cohortId: null,
   externalSelection: {},
+  externalPlanProps: {},
 };
 
 BulletComponent.propTypes = {

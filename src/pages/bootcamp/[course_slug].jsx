@@ -27,7 +27,7 @@ import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
-import { SUBS_STATUS, generatePlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
+import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import { reportDatalayer } from '../../utils/requests';
@@ -101,7 +101,10 @@ function Page({ data }) {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [financeSelected, setFinanceSelected] = useState({});
+  const [financeSelected, setFinanceSelected] = useState({
+    selectedFinanceIndex: 0,
+    selectedIndex: 0,
+  });
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
@@ -315,7 +318,7 @@ function Page({ data }) {
         };
       }
     };
-    const formatedPlanData = await generatePlan(data.plan_slug, translationsObj).then((finalData) => finalData);
+    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
 
     const modulesInfo = await getModulesInfo();
 
@@ -782,6 +785,7 @@ function Page({ data }) {
         <MktShowPrices
           id="pricing"
           mt="6.25rem"
+          externalPlanProps={planData}
           externalSelection={financeSelected}
           gridTemplateColumns="repeat(12, 1fr)"
           gridColumn1="1 / span 7"
