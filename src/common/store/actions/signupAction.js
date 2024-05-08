@@ -328,10 +328,11 @@ const useSignup = () => {
         && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
         && selectedPlanCheckoutData?.financing_options[0]?.how_many_months === 1
       ) {
+        const totalAmount = selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
         return t('info.will-pay-month', {
           price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
           qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-          total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          total_amount: Math.round(totalAmount * 100) / 100,
         });
       }
       if (
@@ -339,10 +340,11 @@ const useSignup = () => {
         && selectedPlanCheckoutData?.financing_options[0]?.monthly_price > 0
         && selectedPlanCheckoutData?.financing_options[0]?.how_many_months > 0
       ) {
+        const totalAmount = selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months;
         return t('info.will-pay-monthly', {
           price: selectedPlanCheckoutData?.financing_options[0]?.monthly_price,
           qty_months: selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
-          total_amount: selectedPlanCheckoutData?.financing_options[0]?.monthly_price * selectedPlanCheckoutData?.financing_options[0]?.how_many_months,
+          total_amount: Math.round(totalAmount * 100) / 100,
           next_month: nextMonthText,
         });
       }
