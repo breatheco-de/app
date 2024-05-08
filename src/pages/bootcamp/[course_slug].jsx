@@ -137,8 +137,8 @@ function Page({ data }) {
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
-  const plans = planData?.plans || [];
-  const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
+  const planList = planData?.planList || [];
+  const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const firstPaymentPlan = payableList?.[0];
   const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
@@ -165,11 +165,11 @@ function Page({ data }) {
         return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
       }
     }
-    if (payableList?.length === 0 && plans[0]?.isFreeTier) {
-      if (plans[0]?.type === 'FREE') {
+    if (payableList?.length === 0 && planList[0]?.isFreeTier) {
+      if (planList[0]?.type === 'FREE') {
         return t('common:enroll-totally-free');
       }
-      if (plans[0]?.type === 'TRIAL') {
+      if (planList[0]?.type === 'TRIAL') {
         return t('common:start-free-trial');
       }
     }
@@ -539,7 +539,7 @@ function Page({ data }) {
                       <>
                         <Button
                           variant="default"
-                          isLoading={plans?.length === 0 && !firstPaymentPlan?.price}
+                          isLoading={planList?.length === 0 && !firstPaymentPlan?.price}
                           background="green.400"
                           color="white"
                           onClick={() => {

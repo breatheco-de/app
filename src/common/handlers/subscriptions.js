@@ -341,7 +341,7 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
     if (version === 'default') {
-      if (suggestedPlanData?.status_code === 404) {
+      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
         const originalPlanData = await generatePlan(planSlug, translationsObj);
         return {
           plans: {
@@ -355,12 +355,29 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
       return suggestedPlanData;
     }
     if (version === 'mkt_plans') {
-      const originalPlanProps = suggestedPlanData.plans.original_plan;
-      const suggestedPlanProps = suggestedPlanData.plans.suggested_plan;
+      const originalPlanProps = suggestedPlanData.plans?.original_plan || {};
+      const suggestedPlanProps = suggestedPlanData.plans?.suggested_plan || {};
       const originalPlan = originalPlanProps?.plans || [];
       const suggestedPlan = suggestedPlanProps?.plans || [];
+      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
+        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        return {
+          ...originalPlanData,
+          planList: originalPlanData?.plans || [],
+          plans: {
+            original_plan: originalPlanData,
+            suggested_plan: {},
+          },
+          details: {},
+          title: originalPlanData?.title || '',
+        };
+      }
       const formatedPlanData = {
-        plans: [...originalPlan, ...suggestedPlan],
+        planList: [...originalPlan, ...suggestedPlan],
+        plans: {
+          original_plan: originalPlanProps,
+          suggested_plan: suggestedPlanProps,
+        },
         slug: suggestedPlanProps?.slug || originalPlanProps.slug || '',
         financingOptions: [
           ...originalPlanProps?.financingOptions || [],
