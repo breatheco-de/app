@@ -6,10 +6,10 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 
-function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
+function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');
   const { fontColor, disabledColor2 } = useStyle();
-  const maxItemsCount = typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial ? 4 : 3;
+  const maxItemsCount = typeof isFreeTier === 'boolean' && !isFreeTier ? 4 : 3;
   const totalCountListBasedInHidenList = maxItemsCount - hideIndexList.length;
   const position = stepIndex > totalCountListBasedInHidenList ? totalCountListBasedInHidenList : stepIndex;
 
@@ -58,7 +58,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexL
 
         {!hideIndexList.includes(2) && (
           <Box
-            display="flex"
+            display={typeof isFreeTier === 'boolean' && isFreeTier ? 'flex' : 'none'}
             gridGap="10px"
             alignItems="center"
             color={stepIndex !== 2 && 'gray.350'}
@@ -78,7 +78,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexL
 
         {(!hideIndexList.includes(3)) && (
           <Box
-            display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
+            display={typeof isFreeTier === 'boolean' && isFreeTier === false ? 'flex' : 'none'}
             gridGap="10px"
             alignItems="center"
             color={stepIndex !== 3 && 'gray.350'}
@@ -141,9 +141,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, checkoutData, hideIndexL
 
 Stepper.propTypes = {
   stepIndex: PropTypes.number.isRequired,
-  checkoutData: PropTypes.shape({
-    isTrial: PropTypes.bool,
-  }),
+  isFreeTier: PropTypes.bool.isRequired,
   isFirstStep: PropTypes.bool.isRequired,
   isSecondStep: PropTypes.bool.isRequired,
   isThirdStep: PropTypes.bool.isRequired,
@@ -154,7 +152,6 @@ Stepper.propTypes = {
 };
 
 Stepper.defaultProps = {
-  checkoutData: {},
   handleGoBack: null,
   hideIndexList: [],
   selectedPlanCheckoutData: {},

@@ -67,6 +67,7 @@ export const processPlans = (data, {
         trial_duration_unit: singlePlan?.trial_duration_unit || '',
         planType,
         show: true,
+        isFreeTier: false,
       };
 
       const textInfo = {

@@ -193,7 +193,12 @@ function Checkout() {
           description: info.features[0]?.description,
         }))
         : [];
-      setOriginalPlan({ ...processedPlan, accordionList });
+
+      const selectedPlan = processedPlan?.plans?.length > 1
+        ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
+        : (processedPlan?.plans?.[0] || {});
+      setSelectedPlanCheckoutData(selectedPlan);
+      setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
       .catch((err) => {
         if (err) {
@@ -214,7 +219,7 @@ function Checkout() {
         conversion_info: userSession,
       },
     });
-  }, []);
+  }, [router.locale]);
 
   useEffect(() => {
     // verify if coupon exists
@@ -226,7 +231,7 @@ function Checkout() {
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
-    if (isWindow && stepIndex >= 2 && isAuthenticated) {
+    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
       const handleBeforeUnload = (e) => {
         e.preventDefault();
       };
@@ -375,7 +380,9 @@ function Checkout() {
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
                     const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    const autoSelectedPlan = checkingData?.plans?.length === 1
+                      ? checkingData?.plans[0]
+                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
@@ -398,7 +405,9 @@ function Checkout() {
                 handleChecking({ plan: data })
                   .then((checkingData) => {
                     const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    const autoSelectedPlan = checkingData?.plans?.length === 1
+                      ? checkingData?.plans[0]
+                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
@@ -584,6 +593,7 @@ function Checkout() {
               hideIndexList={showChooseClass ? [] : [1]}
               stepIndex={stepIndex}
               checkoutData={checkoutData}
+              isFreeTier={Boolean(checkoutData?.isTrial || checkoutData?.isTotallyFree || selectedPlanCheckoutData?.isFreeTier)}
               selectedPlanCheckoutData={selectedPlanCheckoutData}
               isFirstStep={isFirstStep}
               isSecondStep={isSecondStep}
@@ -631,11 +641,11 @@ function Checkout() {
           overflow="auto"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          <Flex display={isPaymentSuccess ? 'none' : 'flex'} flexDirection="column" width={{ base: 'auto', md: '490px' }} margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0 3rem 0' : '9.2rem 0 3rem 0' }} height="100%" zIndex={10}>
+          <Flex display={isPaymentSuccess ? 'none' : 'flex'} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
             {originalPlan?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
-                  You are getting
+                  {t('you-are-getting')}
                 </Text>
                 <Flex gridGap="7px">
                   {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />}
@@ -643,9 +653,13 @@ function Checkout() {
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
                     </Heading>
-                    {originalPlan.isTotallyFree && (
+                    {originalPlan?.selectedPlan?.isFreeTier ? (
                       <Text size="16px" color="green.400">
-                        Free plan
+                        {originalPlan?.selectedPlan?.description || 'Free plan'}
+                      </Text>
+                    ) : originalPlan?.selectedPlan?.price > 0 && (
+                      <Text size="16px" color="green.400">
+                        {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
                       </Text>
                     )}
                   </Flex>
@@ -750,7 +764,7 @@ function Checkout() {
                     {discountCoupon?.slug && (
                       <Flex justifyContent="space-between" margin="10px 0 0 0" width="100%">
                         <Text size="18px" color="currentColor" lineHeight="normal">
-                          Discount Applied
+                          {t('discount-applied')}
                         </Text>
                         <Text size="16px" color="green.400" padding="0 5px" borderRadius="4px" backgroundColor="green.light" lineHeight="normal">
                           {t('discount-value-off', { value: getPriceWithDiscount()?.discount })}

@@ -47,12 +47,14 @@ function Summary() {
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
   const cohortId = Number(getQueryString('cohort'));
-  const findedPlan = checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
+  const findedPlan = checkoutData?.plans?.length === 1
+    ? checkoutData?.plans[0]
+    : checkoutData?.plans?.find((plan) => plan?.plan_id === planId);
   const isNotTrial = !['FREE', 'TRIAL'].includes(selectedPlanCheckoutData?.type);
   const isPaymentIdle = paymentStatus === 'idle';
   const isPaymentSuccess = paymentStatus === 'success';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
-  const successText = selectedPlanCheckoutData?.isFreeTier ? 'The plan is ready' : 'Payment successful';
+  const successText = selectedPlanCheckoutData?.isFreeTier ? t('plan-is-ready') : t('payment-success');
   const periodText = {
     ONE_TIME: '',
     FREE: t('totally_free'),
@@ -153,13 +155,11 @@ function Summary() {
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
               (cohort) => cohort?.id === cohortId,
             ) : {};
-            const firstCohortByDefault = cohortsForSubscription[0];
-            const cohortToJoin = findedCohort || firstCohortByDefault;
 
             if (isPurchasedPlanFound) {
               clearInterval(interval);
-              if (cohortToJoin?.id) {
-                getCohort(cohortToJoin?.id)
+              if (findedCohort?.id) {
+                getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })
@@ -301,7 +301,7 @@ function Summary() {
               <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
               <Flex flexDirection="column" gridGap="8px">
                 <Text size="16px" fontWeight={700} textAlign="center" color="black">
-                  {isPaymentSuccess ? successText : (declinedPaymentProps.title || 'Payment failed')}
+                  {isPaymentSuccess ? successText : (declinedPaymentProps.title || t('payment-failed'))}
                 </Text>
                 {declinedPaymentProps.description && (
                   <Text size="14px" fontWeight={400} textAlign="center" color="black">

@@ -191,12 +191,10 @@ function PaymentInfo() {
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
               (cohort) => cohort?.id === cohortId,
             ) : {};
-            const firstCohortByDefault = cohortsForSubscription[0];
-            const cohortToJoin = findedCohort || firstCohortByDefault;
 
             if (isPurchasedPlanFound) {
-              if (cohortToJoin?.id) {
-                getCohort(cohortToJoin?.id)
+              if (findedCohort?.id) {
+                getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
                   })
