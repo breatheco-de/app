@@ -315,8 +315,14 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
 
       return ({
         plans: {
-          original_plan: dataForOriginPlan,
-          suggested_plan: dataForSuggestedPlan,
+          original_plan: {
+            ...dataForOriginPlan,
+            originData: originalPlan,
+          },
+          suggested_plan: {
+            ...dataForSuggestedPlan,
+            originData: suggestedPlan,
+          },
         },
         details: planComparison?.details,
         title: planComparison?.details?.title,
@@ -331,19 +337,40 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
+export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default') => {
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
-    if (suggestedPlanData?.status_code === 404) {
-      const plan = await generatePlan(planSlug, translationsObj);
-      return {
-        plans: {
-          original_plan: plan,
-          suggested_plan: {},
-        },
-        details: {},
-        title: plan?.title || '',
+    if (version === 'default') {
+      if (suggestedPlanData?.status_code === 404) {
+        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        return {
+          plans: {
+            original_plan: originalPlanData,
+            suggested_plan: {},
+          },
+          details: {},
+          title: originalPlanData?.title || '',
+        };
+      }
+      return suggestedPlanData;
+    }
+    if (version === 'mkt_plans') {
+      const originalPlanProps = suggestedPlanData.plans.original_plan;
+      const suggestedPlanProps = suggestedPlanData.plans.suggested_plan;
+      const originalPlan = originalPlanProps?.plans || [];
+      const suggestedPlan = suggestedPlanProps?.plans || [];
+      const formatedPlanData = {
+        plans: [...originalPlan, ...suggestedPlan],
+        slug: suggestedPlanProps?.slug || originalPlanProps.slug || '',
+        financingOptions: [
+          ...originalPlanProps?.financingOptions || [],
+          ...suggestedPlanProps?.financingOptions || []],
+        paymentOptions: [
+          ...originalPlanProps?.paymentOptions || [],
+          ...suggestedPlanProps?.paymentOptions || []],
       };
+
+      return formatedPlanData;
     }
     return suggestedPlanData;
   } catch (error) {
