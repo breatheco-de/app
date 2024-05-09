@@ -573,7 +573,7 @@ function Content() {
   return (
     <>
       <Head>
-        <title>{currentTask?.title || '4Geeks'}</title>
+        <title>{currentData?.title || '4Geeks'}</title>
       </Head>
       <Flex position="relative">
         <ModalInfo
