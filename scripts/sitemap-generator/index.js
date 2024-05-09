@@ -143,6 +143,7 @@ async function generateSitemap() {
     'src/pages/*{.js,.jsx}',
     '!src/pages/**/[slug]/*{.js,.jsx}',
     '!src/pages/**/[event_slug]{.js,.jsx}',
+    '!src/pages/**/[course_slug]{.js,.jsx}',
     '!src/pages/**/[slug]{.js,.jsx}',
     '!src/pages/**/[uid]{.js,.jsx}',
     '!src/pages/**/**/[technology]{.js,.jsx}',
