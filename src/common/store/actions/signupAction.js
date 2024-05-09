@@ -317,10 +317,11 @@ const useSignup = () => {
     const period = selectedPlanCheckoutData?.period;
     if (planIsNotTrial) {
       if (period === 'FINANCING') {
+        const totalAmount = selectedPlanCheckoutData?.price * selectedPlanCheckoutData?.how_many_months;
         return t('info.will-pay-month', {
           price: selectedPlanCheckoutData?.price,
           qty_months: selectedPlanCheckoutData?.how_many_months,
-          total_amount: selectedPlanCheckoutData?.price * selectedPlanCheckoutData?.how_many_months,
+          total_amount: Math.round(totalAmount * 100) / 100,
         });
       }
       if (
