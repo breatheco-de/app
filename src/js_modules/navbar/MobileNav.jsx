@@ -44,7 +44,7 @@ function MobileNav({
 
   // manage submenus in level 1
   const prepareSubMenuData = (item) => {
-    if (item.id === 'courses') {
+    if (item.id === 'bootcamps') {
       return mktCourses;
     }
     return item?.subMenu;
