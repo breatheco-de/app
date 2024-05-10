@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Select, Skeleton, SkeletonText } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
@@ -12,7 +12,7 @@ import { isWindow, slugToTitle } from '../../utils';
 
 export default function PricingCard({ item, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
-  const { fontColor, hexColor, featuredCard } = useStyle();
+  const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
   const utilProps = {
@@ -36,7 +36,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
     },
 
     // basic
-    original: {
+    basic: {
       type: t('pricing.basic-plan.type'),
       hookMessage: t('pricing.basic-plan.hook-message'),
       title: t('pricing.basic-plan.title'),
@@ -57,7 +57,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
     },
 
     // premium
-    suggested: {
+    premium: {
       type: t('pricing.premium-plan.type'),
       hookMessage: t('pricing.premium-plan.hook-message'),
       title: t('pricing.premium-plan.title'),
@@ -77,12 +77,14 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       },
     },
   };
-  const viewProps = item.price > 0 ? utilProps.suggested : (utilProps?.[item?.planType] || utilProps.original);
+  const viewProps = item.price > 0 ? utilProps.premium : (utilProps?.[item?.planType] || utilProps.basic);
   const featuredInfo = item?.featured_info ? item?.featured_info : viewProps.featured_info;
   const isOriginalPlan = item?.planType === 'original';
   const color = viewProps?.color;
   const border = viewProps?.border;
   const featured = viewProps?.featured;
+  const existsOptionList = item?.optionList?.length > 0;
+  const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
@@ -116,15 +118,11 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       color={fontColor}
       {...rest}
     >
-      <Flex height="255px" position="relative" padding="8px" flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
-        <Box as="span" color={color} width="fit-content" fontSize="14px" fontWeight={700} borderRadius="22px">
-          {viewProps.type}
-        </Box>
-        <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center" style={{ textWrap: 'balance' }}>
+      <Flex height="auto" position="relative" padding="8px" flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
+        <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center">
           {viewProps.hookMessage}
         </Text>
         <Box>
-
           {!isBootcampType ? (
             <>
               {!isOriginalPlan ? (
@@ -132,32 +130,18 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                   {isFetching ? (
                     <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
-                    <>
-                      {item?.optionList?.length > 0 ? (
-                        <Select
-                          maxWidth="15rem"
-                          border={0}
-                          fontSize="var(--heading-xl)"
-                          textAlign="center"
-                          color={color}
-                          fontWeight={700}
-                          height="auto"
-                          defaultValue={item?.optionList[0].priceText}
-                          onChange={(e) => {
-                            const itemFinded = item?.optionList.find((financing) => financing.plan_id === e.target.value);
-                            setSelectedFinancing(itemFinded);
-                          }}
-                        >
-                          {item?.optionList.map(
-                            (financing) => <option key={financing?.plan_id} value={financing.plan_id}>{financing?.priceText}</option>,
-                          )}
-                        </Select>
-                      ) : (
-                        <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                          {item.price_text || item?.priceText}
-                        </Box>
+                    <Flex gridGap="8px" alignItems="center">
+                      <Box color={color} fontSize={existsOptionList ? '60px' : 'var(--heading-xl)'} fontWeight={700} textAlign="center">
+                        {existsOptionList
+                          ? `$${selectedFinancing?.price || item?.optionList?.[0]?.price}`
+                          : (item?.price_text || item?.priceText)}
+                      </Box>
+                      {existsOptionList && manyMonths > 0 && (
+                        <Text size="35px" color={color} letterSpacing="normal" fontWeight="700">
+                          {`x ${manyMonths}`}
+                        </Text>
                       )}
-                    </>
+                    </Flex>
                   )}
                   {!isFetching && item.discount_text && (
                     <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
@@ -179,20 +163,20 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
             </>
           ) : (
             <>
-              <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-                <Box lineHeight="48px" color={color} fontSize="var(--heading-m)" fontWeight={700} textAlign="center">
+              <Box display="flex" alignItems="center" justifyContent="center" margin="2rem 0 3rem 0" gridGap="4px">
+                <Box lineHeight="48px" color={color} fontSize="38px" fontWeight={700} textAlign="center">
                   {`${item.ask}`}
                 </Box>
               </Box>
             </>
           )}
           {isFetching ? (
-            <SkeletonText margin="8px auto 0 auto" width="6rem" noOfLines={1} spacing="4" />
+            <SkeletonText margin="8px auto 0 auto" width="6rem" pb="16px" noOfLines={1} spacing="4" />
           ) : (
             <>
-              {item.period_label && (
-                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
-                  {item.period_label}
+              {!isBootcampType && item?.title && (
+                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
+                  {selectedFinancing?.title || item?.title}
                 </Text>
               )}
             </>
@@ -204,13 +188,65 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
             </Text>
           ) : (
             <>
-              <Button isLoading={isFetching} maxWidth={{ base: '250px', lg: '320px' }} position="absolute" transform="translate(-50%, 0)" left="50%" bottom="8px" variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
+              <Button isLoading={isFetching} margin={isBootcampType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="0 24px">
                 {!isOriginalPlan && !isBootcampType && (
-                  <Icon icon="rocket" color={viewProps.button.color} width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
+                  <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />
                 )}
                 {viewProps.button.title}
               </Button>
             </>
+          )}
+          {!isFetching && existsOptionList && (
+            <Accordion allowMultiple>
+              <AccordionItem variant="unstyled" border={0}>
+                <h3>
+                  <AccordionButton
+                    width="100%"
+                    border="1px solid"
+                    mt="16px"
+                    fontSize="17px"
+                    padding="8px 0 8px 16px"
+                    textAlign="center"
+                    color={color}
+                    fontWeight={700}
+                    height="40px"
+                    borderRadius="3px"
+                  >
+                    <Box as="span" flex="1" textAlign="center">
+                      {t('see-financing-options')}
+                    </Box>
+                    <Box borderLeft="1px solid" height="40px" padding="0 10px">
+                      <AccordionIcon height="100%" />
+                    </Box>
+
+                  </AccordionButton>
+                </h3>
+                <AccordionPanel p={0} border={0}>
+                  {item?.optionList.map(
+                    (financing, i) => (
+                      <Button
+                        key={financing?.plan_id}
+                        width="100%"
+                        borderBottom={i === item.optionList.length - 1 ? '0' : '1px solid'}
+                        borderColor={hexColor.borderColor}
+                        background={featuredColor}
+                        _hover={{ opacity: 0.9 }}
+                        _active={{ opacity: 1 }}
+                        fontSize="15px"
+                        letterSpacing="0.05em"
+                        textAlign="center"
+                        fontWeight={500}
+                        height="40px"
+                        borderRadius={i === item.optionList.length - 1 ? '0 0 3px 3px' : '0'}
+                        onClick={() => setSelectedFinancing(financing)}
+                      >
+                        {`$${financing?.price} / ${financing?.title}`}
+                      </Button>
+                    ),
+                  )}
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
           )}
         </Box>
       </Flex>

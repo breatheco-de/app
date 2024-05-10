@@ -262,7 +262,7 @@
     }],
     "basic-plan": {
       "type": "Fly Solo",
-      "hook-message": "Start learning or improving your skills for free",
+      "hook-message": "Try the full bootcamp experience for free and decide later",
       "title": "No credit card required",
       "description": "Start learning and discover our amazing content and benefits",
       "button-title": "Start for free",
@@ -302,7 +302,7 @@
       "hook-message": "Learn at your own pace with feedback and live events",
       "title": "Premium member",
       "description": "All the content you need to become a hireable developer",
-      "button-title": "Get Premium",
+      "button-title": "Get Plan",
       "service_items": {
         "title": "Everything on Fly Solo plus...",
         "items": [{

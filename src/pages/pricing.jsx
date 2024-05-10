@@ -49,7 +49,9 @@ function PricingView() {
     selectedPlan: true,
   });
   const queryCourse = getQueryString('course');
+  const queryPlan = getQueryString('plan');
   const courseFormated = (queryCourse && encodeURIComponent(queryCourse)) || '';
+  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '';
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
@@ -73,7 +75,7 @@ function PricingView() {
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
 
   const planTranslations = getTranslations(t);
-  const planSlug = selectedCourseData?.plan_slug;
+  const planSlug = selectedCourseData?.plan_slug || planFormated;
 
   const insertFeaturedInfo = (plans) => {
     if (plans?.length > 0) {
@@ -146,7 +148,7 @@ function PricingView() {
         setPublicMktCourses(publicCourses);
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
-        if (selectedCourseByQueryString) {
+        if (selectedCourseByQueryString || planFormated) {
           setSelectedCourseData((prev) => ({ ...prev, ...selectedCourseByQueryString }));
         } else {
           router.push({
@@ -213,7 +215,7 @@ function PricingView() {
     monthly: selectedPlanData?.title ? paymentTypePlans.monthly : defaultMonthlyPlans,
     yearly: selectedPlanData?.title ? paymentTypePlans.yearly : defaultYearlyPlans,
   };
-  const isAbleToShowPrices = (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && courseFormated;
+  const isAbleToShowPrices = (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && (courseFormated || planFormated);
   const switcherInfo = [
     {
       type: 'monthly',
@@ -234,7 +236,7 @@ function PricingView() {
         <LoaderScreen position="fixed" />
       )}
       <Container
-        maxWidth="1180px"
+        maxWidth="1280px"
         position="relative"
         margin="0 auto"
         my="4rem"
@@ -250,11 +252,11 @@ function PricingView() {
 
           {!isAbleToShowPrices && (
             <Flex>
-              <Text size="38px" flexShrink={0} fontWeight="700" width="305px">Choose your career path</Text>
+              <Text size="38px" flexShrink={0} fontWeight="700" width="305px">{t('choose-your-career-path')}</Text>
               <DraggableContainer isDraggable={publicMktCourses?.length > 3}>
                 <Flex gridGap="24px">
                   {publicMktCourses?.length > 0 && publicMktCourses.map((course) => (
-                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width="22rem" minWidth="22rem" flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
+                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width="27rem" minWidth="27rem" flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
                       <Box position="absolute" borderRadius="full" top="-30px">
                         <Img src={course.icon_url} width="44px" height="44px" />
                       </Box>
@@ -321,7 +323,7 @@ function PricingView() {
               <Text size="30px" width="100%" alignItems="center" fontWeight={700}>
                 {t('you-are-buying')}
                 <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
-                  {slugToTitle(courseFormated)}
+                  {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
                 </Text>
               </Text>
 

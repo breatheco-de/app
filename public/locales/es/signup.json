@@ -262,7 +262,7 @@
     }],
     "basic-plan": {
       "type": "Vuela solo",
-      "hook-message": "Prepárate para conocer nuestra academia",
+      "hook-message": "Prueba la experiencia completa del bootcamp de forma gratuita y decide más tarde",
       "title": "Miembro Gratuito",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
       "button-title": "Comenzar gratis",
@@ -299,10 +299,10 @@
     },
     "premium-plan": {
       "type": "Premium",
-      "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
+      "hook-message": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
       "title": "Miembro Premium",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Premium",
+      "button-title": "Obtener Plan",
       "service_items": {
         "title": "Todo en Vuela Solo más...",
         "items": [{
