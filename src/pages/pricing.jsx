@@ -1,4 +1,4 @@
-import { Box, Flex, Container, Button, Img, Link } from '@chakra-ui/react';
+import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
@@ -19,6 +19,7 @@ import { parseQuerys } from '../utils/url';
 import { WHITE_LABEL_ACADEMY } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
+import Icon from '../common/components/Icon';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -42,7 +43,7 @@ function PricingView() {
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
-  const { hexColor } = useStyle();
+  const { hexColor, featuredColor } = useStyle();
   const [isFetching, setIsFetching] = useState({
     courses: true,
     selectedPlan: true,
@@ -253,7 +254,7 @@ function PricingView() {
               <DraggableContainer isDraggable={publicMktCourses?.length > 3}>
                 <Flex gridGap="24px">
                   {publicMktCourses?.length > 0 && publicMktCourses.map((course) => (
-                    <Flex key={course.slug} padding="24px 8px 12px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width="22rem" minWidth="22rem" flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
+                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width="22rem" minWidth="22rem" flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
                       <Box position="absolute" borderRadius="full" top="-30px">
                         <Img src={course.icon_url} width="44px" height="44px" />
                       </Box>
@@ -273,18 +274,40 @@ function PricingView() {
                           {course?.course_translation?.description}
                         </Text>
                       </Flex>
+                      {course?.course_translation?.landing_variables?.length > 0 && (
+                        <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px" backgroundColor={featuredColor}>
+                          {course?.course_translation?.landing_variables.map((content) => {
+                            const isUrlImage = content?.icon?.includes('http');
+                            return (
+                              <Flex key={content.title} gridGap="10px">
+                                {isUrlImage ? (
+                                  <Image src={course?.icon} width="18px" height="18px" borderRadius="8px" background={course?.color || 'green.400'} />
+                                ) : (
+                                  <Icon icon={content?.icon} width="18px" height="18px" color={hexColor.blueDefault} />
+                                )}
+                                <Text size="14px" fontWeight="500" letterSpacing="normal">
+                                  {content.title}
+                                  {' '}
+                                  <Text as="span" size="14px" fontWeight="700">
+                                    {content.value}
+                                  </Text>
+                                </Text>
+                              </Flex>
+                            );
+                          })}
+                        </Flex>
+                      )}
                       <Link
                         variant="buttonDefault"
                         borderRadius="3px"
                         href={`/pricing?course=${course?.slug}`}
                         textAlign="center"
-                        marginTop="10px"
                         width="100%"
                         opacity="0.9"
                         _hover={{ opacity: 1 }}
                         _active={{ opacity: 1 }}
                       >
-                        See plans & prices
+                        {t('see-plans-and-prices')}
                       </Link>
                     </Flex>
                   ))}
@@ -296,7 +319,7 @@ function PricingView() {
           {isAbleToShowPrices && (
             <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
               <Text size="30px" width="100%" alignItems="center" fontWeight={700}>
-                You are buying
+                {t('you-are-buying')}
                 <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
                   {slugToTitle(courseFormated)}
                 </Text>
