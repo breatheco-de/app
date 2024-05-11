@@ -57,6 +57,7 @@ function PricingView() {
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
   const [paymentTypePlans, setPaymentTypePlans] = useState({
+    hasSubscriptionMethod: false,
     monthly: [],
     yearly: [],
   });
@@ -151,6 +152,7 @@ function PricingView() {
 
     setAllFeaturedPlansSelected(filteredPlanList);
     setPaymentTypePlans({
+      hasSubscriptionMethod: Boolean(originalPlan?.hasSubscriptionMethod || suggestedPlan?.hasSubscriptionMethod),
       monthly: monthlyAndOtherOptionPlans,
       yearly: yearlyPlans,
     });
@@ -256,7 +258,7 @@ function PricingView() {
     },
   ];
   const existentOptions = switcherInfo.filter((l) => l.exists);
-  const existsFinancingOptions = paymentOptions?.monthly?.some((item) => item?.period === 'FINANCING');
+  const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
 
   return (
     <>
@@ -348,14 +350,14 @@ function PricingView() {
 
           {isAbleToShowPrices && (
             <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
-              <Text size="30px" width="100%" alignItems="center" textAlign={existsFinancingOptions ? 'center' : 'start'} fontWeight={700}>
+              <Text size="30px" width="100%" alignItems="center" textAlign={!existsSubscriptionMehtod ? 'center' : 'start'} fontWeight={700}>
                 {t('you-are-buying')}
                 <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
                   {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
                 </Text>
               </Text>
 
-              {!existsFinancingOptions && existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
+              {existsSubscriptionMehtod && existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
                 <Flex width="fit-content" margin="0 auto" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
                   {existentOptions.map((info) => (
                     <Box
