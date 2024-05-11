@@ -131,20 +131,20 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                     <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
                     <Flex gridGap="8px" alignItems="center">
-                      <Box color={color} fontSize={existsOptionList ? '60px' : 'var(--heading-xl)'} fontWeight={700} textAlign="center">
+                      <Box color={color} fontFamily="Space Grotesk Variable" fontSize={existsOptionList ? '64px' : 'var(--heading-xl)'} fontWeight={700} textAlign="center">
                         {existsOptionList
                           ? `$${selectedFinancing?.price || item?.optionList?.[0]?.price}`
                           : (item?.price_text || item?.priceText)}
                       </Box>
                       {existsOptionList && manyMonths > 0 && (
-                        <Text size="35px" color={color} letterSpacing="normal" fontWeight="700">
+                        <Text size="36px" fontFamily="Space Grotesk Variable" color={color} letterSpacing="normal" fontWeight="700">
                           {`x ${manyMonths}`}
                         </Text>
                       )}
                     </Flex>
                   )}
                   {!isFetching && item.discount_text && (
-                    <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
+                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}
                     </Box>
                   )}
@@ -154,7 +154,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
+                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
                       {`$${item?.price}`}
                     </Box>
                   )}
@@ -164,7 +164,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
           ) : (
             <>
               <Box display="flex" alignItems="center" justifyContent="center" margin="2rem 0 3rem 0" gridGap="4px">
-                <Box lineHeight="48px" color={color} fontSize="38px" fontWeight={700} textAlign="center">
+                <Box lineHeight="48px" fontFamily="Space Grotesk Variable" color={color} fontSize="38px" fontWeight={700} textAlign="center">
                   {`${item.ask}`}
                 </Box>
               </Box>
