@@ -14,6 +14,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
+  const [accordionState, setAccordionState] = useState(false);
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
@@ -103,7 +104,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       }
     }
   };
-
+  const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
   return (
@@ -131,12 +132,12 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                     <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
                     <Flex gridGap="8px" alignItems="center">
-                      <Box color={color} fontFamily="Space Grotesk Variable" fontSize={existsOptionList ? '64px' : 'var(--heading-xl)'} fontWeight={700} textAlign="center">
+                      <Box color={color} fontFamily="Space Grotesk Variable" fontSize="64px" fontWeight={700} textAlign="center">
                         {existsOptionList
                           ? `$${selectedFinancing?.price || item?.optionList?.[0]?.price}`
                           : (item?.price_text || item?.priceText)}
                       </Box>
-                      {existsOptionList && manyMonths > 0 && (
+                      {existsOptionList && manyMonths > 1 && (
                         <Text size="36px" fontFamily="Space Grotesk Variable" color={color} letterSpacing="normal" fontWeight="700">
                           {`x ${manyMonths}`}
                         </Text>
@@ -154,8 +155,8 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                      {`$${item?.price}`}
+                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize={item?.price > 0 ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                      {item?.price > 0 ? `$${item?.price}` : item?.period_label}
                     </Box>
                   )}
                 </>
@@ -197,7 +198,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
             </>
           )}
           {!isFetching && existsOptionList && (
-            <Accordion allowMultiple>
+            <Accordion index={accordionState ? 0 : -1} allowMultiple>
               <AccordionItem variant="unstyled" border={0}>
                 <h3>
                   <AccordionButton
@@ -208,12 +209,13 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                     padding="8px 0 8px 16px"
                     textAlign="center"
                     color={color}
+                    onClick={toggleAccordion}
                     fontWeight={700}
                     height="40px"
                     borderRadius="3px"
                   >
                     <Box as="span" flex="1" textAlign="center">
-                      {t('see-financing-options')}
+                      {t('common:see-financing-options')}
                     </Box>
                     <Box borderLeft="1px solid" height="40px" padding="0 10px">
                       <AccordionIcon height="100%" />
@@ -238,7 +240,10 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                         fontWeight={500}
                         height="40px"
                         borderRadius={i === item.optionList.length - 1 ? '0 0 3px 3px' : '0'}
-                        onClick={() => setSelectedFinancing(financing)}
+                        onClick={() => {
+                          setSelectedFinancing(financing);
+                          toggleAccordion();
+                        }}
                       >
                         {`$${financing?.price} / ${financing?.title}`}
                       </Button>

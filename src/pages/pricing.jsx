@@ -80,7 +80,7 @@ function PricingView() {
   const insertFeaturedInfo = (plans) => {
     if (plans?.length > 0) {
       return plans?.map((plan) => {
-        if (plan.price > 0) {
+        if (plan?.price > 0) {
           return {
             ...plan,
             featured_info: paymentFeatures,
@@ -94,35 +94,62 @@ function PricingView() {
     }
     return [];
   };
-  const formatPlans = (allPlansList) => {
+  const formatPlans = (allPlansList, hideYearlyOption = false) => {
+    const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
-    const initialFinancingOption = financingList?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0))[0] || {};
+    const payablePlanList = freeTierList?.length > 0
+      ? allPlansList?.filter((p) => p?.price > 0 && (hideYearlyOption && p?.period !== 'YEAR'))
+      : allPlansList?.filter((p) => p?.period === 'FINANCING')
+        ?.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
+
+    const initialFinancingOption = payablePlanList[0] || {};
     const financingData = {
       ...initialFinancingOption,
-      optionList: financingList,
+      optionList: payablePlanList,
     };
-    const newPlanlist = allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
-    return newPlanlist;
+    if (freeTierList?.length > 0) {
+      return freeTierList.concat(financingData);
+    }
+    if (financingList?.length > 0 && freeTierList?.length === 0) {
+      const newPlanlist = allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
+      return newPlanlist;
+    }
+    return allPlansList;
   };
   const handleFetchPlan = async () => {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
-    const suggestedPlan = data?.plans?.suggested_plan;
-    const originalPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(originalPlan?.plans));
-    const suggestedPlanWithFeaturedInfo = insertFeaturedInfo(formatPlans(suggestedPlan?.plans));
-    const allPlansList = [
-      ...originalPlanWithFeaturedInfo || [],
-      ...suggestedPlanWithFeaturedInfo || [],
-    ];
+    const suggestedPlan = data?.plans?.suggested_plan || {};
+    const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
+    const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    const monthlyAndOtherOptionPlans = allPlansList?.length > 0
-      ? allPlansList.filter((p) => p?.period !== 'YEAR')
-      : [];
-    const yearlyPlans = allPlansList?.length > 0
-      ? getYearlyPlans(originalPlanWithFeaturedInfo, suggestedPlanWithFeaturedInfo, allPlansList)
+    const formatedPlanList = allPlanList?.length > 0
+      ? insertFeaturedInfo(formatPlans(allPlanList, true))
       : [];
 
-    setAllFeaturedPlansSelected(allPlansList);
+    const originalPlanWithFeaturedInfo = originalPlan?.plans?.length > 0
+      ? insertFeaturedInfo(formatPlans(originalPlan?.plans))
+      : [];
+    const suggestedPlanWithFeaturedInfo = suggestedPlan?.plans?.length > 0
+      ? insertFeaturedInfo(formatPlans(suggestedPlan?.plans))
+      : [];
+
+    const filteredPlanList = existsFreeTier
+      ? formatedPlanList
+      : [
+        ...originalPlanWithFeaturedInfo || [],
+        ...suggestedPlanWithFeaturedInfo || [],
+      ];
+
+    const monthlyAndOtherOptionPlans = filteredPlanList?.length > 0
+      ? filteredPlanList.filter((p) => p?.period !== 'YEAR')
+      : [];
+
+    const yearlyPlans = filteredPlanList?.length > 0
+      ? getYearlyPlans(originalPlanWithFeaturedInfo, suggestedPlanWithFeaturedInfo, filteredPlanList)
+      : [];
+
+    setAllFeaturedPlansSelected(filteredPlanList);
     setPaymentTypePlans({
       monthly: monthlyAndOtherOptionPlans,
       yearly: yearlyPlans,
@@ -327,23 +354,23 @@ function PricingView() {
                 </Text>
               </Text>
 
-              {existentOptions.length > 0 && (courseFormated && !isFetching.selectedPlan) && (
-              <Flex width="fit-content" margin="0 auto" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
-                {existentOptions.map((info) => (
-                  <Box
-                    key={info.type}
-                    padding="8px 16px"
-                    textTransform="uppercase"
-                    fontWeight={900}
-                    background={activeType === info.type ? 'blue.default' : ''}
-                    color={activeType === info.type ? 'white' : 'blue.default'}
-                    cursor={activeType === info.type ? 'default' : 'pointer'}
-                    onClick={() => setActiveType(info.type)}
-                  >
-                    {info.name}
-                  </Box>
-                ))}
-              </Flex>
+              {existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
+                <Flex width="fit-content" margin="0 auto" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
+                  {existentOptions.map((info) => (
+                    <Box
+                      key={info.type}
+                      padding="8px 16px"
+                      textTransform="uppercase"
+                      fontWeight={900}
+                      background={activeType === info.type ? 'blue.default' : ''}
+                      color={activeType === info.type ? 'white' : 'blue.default'}
+                      cursor={activeType === info.type ? 'default' : 'pointer'}
+                      onClick={() => setActiveType(info.type)}
+                    >
+                      {info.name}
+                    </Box>
+                  ))}
+                </Flex>
               )}
             </Flex>
           )}
