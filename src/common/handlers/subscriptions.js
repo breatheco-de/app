@@ -42,12 +42,13 @@ export const processPlans = (data, {
       const existsAmountPerMonth = data?.price_per_month > 0;
       const existsAmountPerQuarter = data?.price_per_quarter > 0;
       const existsAmountPerYear = data?.price_per_year > 0;
-      const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+      const hasPayaBleSuscription = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
       const financingOptionsExists = data?.financing_options?.length > 0;
       const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
       const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
       const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
-      const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0 && !financingOptionsExists;
+      const isTotallyFree = !hasPayaBleSuscription && singlePlan?.trial_duration === 0 && !financingOptionsExists;
+      const hasSubscriptionMethod = hasPayaBleSuscription || isTotallyFree || singlePlan?.trial_duration_unit > 0;
 
       const financingOptions = financingOptionsManyMonthsExists
         ? data?.financing_options
@@ -110,7 +111,7 @@ export const processPlans = (data, {
         type: 'PAYMENT',
       })) : [{}];
 
-      const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
+      const trialPlan = (!financingOptionsExists && !hasPayaBleSuscription) ? {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : unSlugifyCapitalize(String(singlePlan?.slug)),
         price: 0,
@@ -199,11 +200,12 @@ export const processPlans = (data, {
         ...data,
         title: data?.title || slugToTitle(data?.slug),
         isTotallyFree,
-        isTrial: !isNotTrial && !financingOptionsExists,
+        isTrial: !hasPayaBleSuscription && !financingOptionsExists,
         plans: planList,
         featured_info: planPropsData || [],
         paymentOptions: paymentList,
         financingOptions: financingList,
+        hasSubscriptionMethod,
       });
     } catch (error) {
       console.error('Error processing plans:', error);
