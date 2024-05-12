@@ -141,7 +141,10 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          setDiscountCoupon(couponsList[0]);
+          setDiscountCoupon({
+            ...couponsList[0],
+            isError: false,
+          });
           setCheckoutData({
             ...checkoutData,
             discountCoupon: couponsList[0],
@@ -641,7 +644,7 @@ function Checkout() {
           overflow="auto"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          <Flex display={isPaymentSuccess ? 'none' : 'flex'} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+          <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
             {originalPlan?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
@@ -708,7 +711,7 @@ function Checkout() {
                       }}
                     >
                       {({ isSubmitting }) => (
-                        <Form style={{ width: '100%' }}>
+                        <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
                           <Flex gridGap="15px" width="100%">
                             <InputGroup size="md">
                               <Input
@@ -717,14 +720,22 @@ function Checkout() {
                                 disabled={discountCoupon?.slug || isPaymentSuccess}
                                 width="100%"
                                 _disabled={{
-                                  borderColor: (discountCoupon?.slug || isPaymentSuccess) ? 'success' : 'inherit',
+                                  borderColor: discountCoupon?.slug ? 'success' : 'inherit',
                                   opacity: 1,
                                 }}
                                 letterSpacing="0.05em"
                                 placeholder="Discount code"
-                                onChange={(e) => setDiscountCode(e.target.value.replace(/\s/g, '-'))}
+                                onChange={(e) => {
+                                  const { value } = e.target;
+                                  setDiscountCode(value.replace(/\s/g, '-'));
+                                  if (value === '') {
+                                    setDiscountCoupon({
+                                      isError: false,
+                                    });
+                                  }
+                                }}
                               />
-                              {(isPaymentSuccess || discountCoupon?.slug) && (
+                              {discountCoupon?.slug && (
                                 <InputRightElement width="35px">
                                   <Button
                                     variant="unstyled"
@@ -745,7 +756,7 @@ function Checkout() {
                                 </InputRightElement>
                               )}
                             </InputGroup>
-                            {!discountCoupon?.slug && (
+                            {!discountCoupon?.slug && !isPaymentSuccess && (
                               <Button
                                 width="auto"
                                 type="submit"
@@ -761,13 +772,15 @@ function Checkout() {
                         </Form>
                       )}
                     </Formik>
-                    {discountCoupon?.slug && (
-                      <Flex justifyContent="space-between" margin="10px 0 0 0" width="100%">
+                    {(discountCoupon?.slug || isPaymentSuccess) && (
+                      <Flex justifyContent="space-between" margin={isPaymentSuccess ? '0' : '10px 0 0 0'} width="100%">
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {t('discount-applied')}
                         </Text>
-                        <Text size="16px" color="green.400" padding="0 5px" borderRadius="4px" backgroundColor="green.light" lineHeight="normal">
-                          {t('discount-value-off', { value: getPriceWithDiscount()?.discount })}
+                        <Text size="16px" color={discountCoupon?.slug ? 'green.400' : 'currentColor'} padding="0 5px" borderRadius="4px" backgroundColor={discountCoupon?.slug ? 'green.light' : 'transparent'} lineHeight="normal">
+                          {discountCoupon?.slug
+                            ? t('discount-value-off', { value: getPriceWithDiscount()?.discount })
+                            : '--'}
                         </Text>
                       </Flex>
                     )}

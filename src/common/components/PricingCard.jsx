@@ -86,6 +86,8 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const featured = viewProps?.featured;
   const existsOptionList = item?.optionList?.length > 0;
   const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
+  const isPayable = item?.price > 0;
+  const isTotallyFree = item?.type === 'FREE';
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
@@ -155,8 +157,10 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize={item?.price > 0 ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
-                      {item?.price > 0 ? `$${item?.price}` : item?.period_label}
+                    <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                      {isPayable && `$${item?.price}`}
+                      {isTotallyFree && item?.period_label}
+                      {!isPayable && !isTotallyFree && item?.priceText}
                     </Box>
                   )}
                 </>
@@ -175,9 +179,9 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
             <SkeletonText margin="8px auto 0 auto" width="6rem" pb="16px" noOfLines={1} spacing="4" />
           ) : (
             <>
-              {!isBootcampType && item?.title && (
+              {!isBootcampType && item?.title && !isTotallyFree && (
                 <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
-                  {selectedFinancing?.title || item?.title}
+                  {isPayable ? selectedFinancing?.title || item?.title : item?.period_label}
                 </Text>
               )}
             </>
