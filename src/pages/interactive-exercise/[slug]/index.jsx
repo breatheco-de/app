@@ -360,14 +360,15 @@ function Exercise({ exercise, markdown }) {
             // margin="0 8vw 4rem 8vw"
             // width={{ base: '34rem', md: '54rem' }}
             width={{ base: 'auto', lg: '60%' }}
-            className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
           >
-            {markdown ? (
-              <MarkDownParser assetData={exercise} content={markdownData.content} />
-              // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
-            ) : (
-              <MDSkeleton />
-            )}
+            <Box className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}>
+              {markdown ? (
+                <MarkDownParser assetData={exercise} content={markdownData.content} />
+                // <MarkDownParser content={removeTitleAndImage(MDecoded)} />
+              ) : (
+                <MDSkeleton />
+              )}
+            </Box>
             <Box display={{ base: 'block', md: 'none' }}>
               <TabletWithForm showSimpleTable={false} asset={exercise} href="/interactive-exercises" ref={tabletWithFormRef} />
             </Box>
