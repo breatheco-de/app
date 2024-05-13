@@ -8,7 +8,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
-import { isWindow, slugToTitle } from '../../utils';
+import { getQueryString, isWindow, slugToTitle } from '../../utils';
 
 export default function PricingCard({ item, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
@@ -16,6 +16,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const [accordionState, setAccordionState] = useState(false);
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
+  const queryCoupon = getQueryString('coupon');
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
@@ -88,6 +89,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
   const isPayable = item?.price > 0;
   const isTotallyFree = item?.type === 'FREE';
+  const alreadyHaveIt = relatedSubscription?.plans?.[0]?.slug === item?.plan_slug;
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
@@ -96,6 +98,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       plan_id: selectedFinancing?.plan_id || item?.plan_id,
       price: selectedFinancing?.price || item?.price,
       period: selectedFinancing?.period || item?.period,
+      coupon: queryCoupon,
     });
 
     if (isWindow) {
@@ -187,7 +190,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
             </>
           )}
 
-          {(!isBootcampType && relatedSubscription?.invoices?.[0]?.amount === item?.price) ? (
+          {(!isBootcampType && alreadyHaveIt) ? (
             <Text width="100%" textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
               {utilProps.already_have_it}
             </Text>
@@ -201,7 +204,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
               </Button>
             </>
           )}
-          {!isFetching && existsOptionList && (
+          {!isFetching && existsOptionList && !alreadyHaveIt && (
             <Accordion index={accordionState ? 0 : -1} allowMultiple>
               <AccordionItem variant="unstyled" border={0}>
                 <h3>

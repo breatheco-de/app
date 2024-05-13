@@ -353,9 +353,16 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
           },
           details: {},
           title: originalPlanData?.title || '',
+          planList: [...originalPlanData?.plans || []],
         };
       }
-      return suggestedPlanData;
+      return {
+        ...suggestedPlanData,
+        planList: [
+          ...suggestedPlanData?.plans?.original_plan?.plans || [],
+          ...suggestedPlanData?.plans?.suggested_plan?.plans || [],
+        ],
+      };
     }
     if (version === 'mkt_plans') {
       const originalPlanProps = suggestedPlanData.plans?.original_plan || {};
@@ -392,7 +399,13 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
 
       return formatedPlanData;
     }
-    return suggestedPlanData;
+    return {
+      ...suggestedPlanData,
+      planList: [
+        ...suggestedPlanData?.plans?.original_plan?.plans || [],
+        ...suggestedPlanData?.plans?.suggested_plan?.plans || [],
+      ],
+    };
   } catch (error) {
     console.error(error);
     return {};

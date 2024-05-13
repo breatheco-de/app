@@ -111,7 +111,8 @@ function Checkout() {
   const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
-  const couponsQuery = getQueryString('coupons');
+  const couponQuery = getQueryString('coupon');
+  const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z-]/g, '');
 
   const { course } = router.query;
   const courseChoosed = course;
@@ -226,11 +227,11 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (couponsQuery && checkoutData?.id) {
-      handleCoupon(couponsQuery);
-      setDiscountCode(couponsQuery);
+    if (formatedCouponQuery && checkoutData?.id) {
+      handleCoupon(formatedCouponQuery);
+      setDiscountCode(formatedCouponQuery);
     }
-  }, [couponsQuery, checkoutData?.id]);
+  }, [formatedCouponQuery, checkoutData?.id]);
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
@@ -700,7 +701,7 @@ function Checkout() {
                     <Divider margin="6px 0" />
                     <Formik
                       initialValues={{
-                        coupons: couponsQuery || '',
+                        coupons: formatedCouponQuery || '',
                       }}
                       onSubmit={(_, actions) => {
                         setDiscountCoupon({
@@ -727,7 +728,8 @@ function Checkout() {
                                 placeholder="Discount code"
                                 onChange={(e) => {
                                   const { value } = e.target;
-                                  setDiscountCode(value.replace(/\s/g, '-'));
+                                  const couponValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                  setDiscountCode(couponValue.replace(/\s/g, '-'));
                                   if (value === '') {
                                     setDiscountCoupon({
                                       isError: false,

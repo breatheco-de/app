@@ -65,6 +65,7 @@ function PricingView() {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
+  const selectedPlanListExists = selectedPlanData?.planList?.length > 0;
 
   const allDefaultPlansList = [
     ...defaultMonthlyPlans || [],
@@ -204,12 +205,10 @@ function PricingView() {
     }
   }, [status, isLoading, planData?.title]);
 
-  const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => {
-    featuredPlans.some(
-      (ftPlan) => userPlan?.plans[0]?.slug === ftPlan?.plan_slug
-          && userPlan?.invoices?.[0]?.amount === ftPlan?.price,
-    );
-  };
+  const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => featuredPlans.some(
+    (ftPlan) => userPlan?.plans[0]?.slug === ftPlan?.plan_slug,
+    // && userPlan?.invoices?.[0]?.amount === ftPlan?.price,
+  );
 
   const fetchMySubscriptions = async () => {
     try {
@@ -222,7 +221,7 @@ function PricingView() {
       const allSubscriptions = [...subscriptions, ...planFinancings];
       const findPurchasedPlan = allSubscriptions?.length > 0 && allSubscriptions.find(
         (userPlan) => {
-          if (allFeaturedPlansSelected) {
+          if (allFeaturedPlansSelected?.length > 0) {
             return verifyIfUserAlreadyHaveThisPlan(userPlan, allFeaturedPlansSelected);
           }
           return verifyIfUserAlreadyHaveThisPlan(userPlan, allDefaultPlansList);
@@ -238,11 +237,11 @@ function PricingView() {
     if (isAuthenticated) {
       fetchMySubscriptions();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, allFeaturedPlansSelected]);
 
   const paymentOptions = {
-    monthly: selectedPlanData?.title ? paymentTypePlans.monthly : defaultMonthlyPlans,
-    yearly: selectedPlanData?.title ? paymentTypePlans.yearly : defaultYearlyPlans,
+    monthly: selectedPlanListExists ? paymentTypePlans.monthly : defaultMonthlyPlans,
+    yearly: selectedPlanListExists ? paymentTypePlans.yearly : defaultYearlyPlans,
   };
   const isAbleToShowPrices = (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && (courseFormated || planFormated);
   const switcherInfo = [
