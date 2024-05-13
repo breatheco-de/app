@@ -345,14 +345,15 @@ function ProjectSlug({ project, markdown }) {
               maxWidth="1012px"
               borderRadius="3px"
               background={useColorModeValue('white', 'darkTheme')}
-              className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}
               transition="background .2s ease"
             >
-              {typeof markdown === 'string' ? (
-                <MarkDownParser assetData={project} content={markdownData.content} withToc />
-              ) : (
-                <MDSkeleton />
-              )}
+              <Box className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}>
+                {typeof markdown === 'string' ? (
+                  <MarkDownParser assetData={project} content={markdownData.content} withToc />
+                ) : (
+                  <MDSkeleton />
+                )}
+              </Box>
               <Box display={{ base: 'block', lg: 'none' }} mt="20px">
                 <TabletWithForm hideCloneButton showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               </Box>
