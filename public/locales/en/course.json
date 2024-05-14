@@ -8,9 +8,12 @@
   "join-cohort-description": "Join now and start your coding journey today",
   "create-account-text": "Create an account and start your coding journey today",
   "live-bootcamp": "Self-paced bootcamp",
+  "free-course": "Free Course",
   "title-connectors": {
+    "learning": "Start learning",
     "start": "Start a career in",
-    "end": "learning at your own pace"
+    "end": "learning at your own pace",
+    "own-pace": "at your own pace"
   },
   "build-connector": {
     "what-you-will": "Learn by building",
@@ -39,7 +42,8 @@
       "title": "Join weekly live workshops, coding real-life projects with experts."
     },
     {
-      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and more."
+      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and more.",
+      "hideOnPublic": true
     },
     {
       "title": "Access <strong>live one-on-one mentoring sessions</strong>."

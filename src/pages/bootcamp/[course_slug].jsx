@@ -115,6 +115,7 @@ function Page({ data }) {
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
+  const isVisibilityPublic = data.visibility === 'PUBLIC';
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -411,19 +412,23 @@ function Page({ data }) {
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
-              <Flex color="danger" width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background="red.light">
-                <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />
+              <Flex color={!isVisibilityPublic ? 'success' : 'danger'} width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background={!isVisibilityPublic ? 'green.light' : 'red.light'}>
+                {isVisibilityPublic && <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />}
                 <Text size="12px" fontWeight={700} color="currentColor">
-                  {t('live-bootcamp')}
+                  {!isVisibilityPublic ? t('free-course') : t('live-bootcamp')}
                 </Text>
               </Flex>
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.start')}</Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
+                </Heading>
                 <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                   {data?.course_translation?.title}
                 </Heading>
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.end')}</Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
+                </Heading>
               </Flex>
             </Flex>
 
@@ -458,7 +463,7 @@ function Page({ data }) {
 
             <Flex flexDirection="column" gridGap="24px">
               <Flex flexDirection="column" gridGap="16px">
-                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.map((item) => (
+                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.filter((bullet) => isVisibilityPublic || !bullet.hideOnPublic).map((item) => (
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
@@ -493,7 +498,7 @@ function Page({ data }) {
               title={t('join-cohort')}
               maxWidth="396px"
               description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
-              borderColor="green.400"
+              borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}

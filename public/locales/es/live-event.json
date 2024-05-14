@@ -2,6 +2,8 @@
     "title": "Clases en vivo, sesiones de programación, talleres y charlas cada pocas horas.",
     "learn-more": "Leer más",
     "live-class": "Próxima clase en vivo",
+    "start-class": "Empezar clase en vivo",
+    "join-class": "Unirse a la clase en vivo",
     "no-live-class": "No hay eventos en vivo programados hoy",
     "started": "Empezó hace {{time}}",
     "ended": "Terminó hace {{time}}",
