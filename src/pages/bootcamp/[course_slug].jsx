@@ -14,7 +14,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, cleanObject, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -112,6 +112,7 @@ function Page({ data }) {
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
+  const isVisibilityPublic = data.visibility === 'PUBLIC';
 
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
@@ -160,6 +161,14 @@ function Page({ data }) {
       }
       if (firstPaymentPlan.period === 'FINANCING') {
         return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
+      }
+    }
+    if (payableList?.length === 0 && plans[0]?.isFreeTier) {
+      if (plans[0]?.type === 'FREE') {
+        return t('common:enroll-totally-free');
+      }
+      if (plans[0]?.type === 'TRIAL') {
+        return t('common:start-free-trial');
       }
     }
     return t('common:enroll');
@@ -400,19 +409,23 @@ function Page({ data }) {
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
-              <Flex color="danger" width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background="red.light">
-                <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />
+              <Flex color={!isVisibilityPublic ? 'success' : 'danger'} width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background={!isVisibilityPublic ? 'green.light' : 'red.light'}>
+                {isVisibilityPublic && <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />}
                 <Text size="12px" fontWeight={700} color="currentColor">
-                  {t('live-bootcamp')}
+                  {!isVisibilityPublic ? t('free-course') : t('live-bootcamp')}
                 </Text>
               </Flex>
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.start')}</Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
+                </Heading>
                 <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                   {data?.course_translation?.title}
                 </Heading>
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">{t('title-connectors.end')}</Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
+                </Heading>
               </Flex>
             </Flex>
 
@@ -447,7 +460,7 @@ function Page({ data }) {
 
             <Flex flexDirection="column" gridGap="24px">
               <Flex flexDirection="column" gridGap="16px">
-                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.map((item) => (
+                {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.filter((bullet) => isVisibilityPublic || !bullet.hideOnPublic).map((item) => (
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
@@ -482,7 +495,7 @@ function Page({ data }) {
               title={t('join-cohort')}
               maxWidth="396px"
               description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
-              borderColor="green.400"
+              borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
               padding={data?.course_translation?.video_url ? '0 10px' : '24px 10px 0 10px'}
@@ -537,22 +550,24 @@ function Page({ data }) {
                         >
                           {payableList?.length > 0
                             ? `${t('common:enroll-for-connector')} ${featurePrice}`
-                            : t('common:enroll')}
+                            : capitalizeFirstLetter(featurePrice)}
                         </Button>
-                        <Button
-                          variant="outline"
-                          color="green.400"
-                          borderColor="currentColor"
-                          onClick={() => {
-                            router.push('#pricing');
-                            setFinanceSelected({
-                              selectedFinanceIndex: 1,
-                              selectedIndex: 0,
-                            });
-                          }}
-                        >
-                          {t('common:see-financing-options')}
-                        </Button>
+                        {payableList?.length > 0 && (
+                          <Button
+                            variant="outline"
+                            color="green.400"
+                            borderColor="currentColor"
+                            onClick={() => {
+                              router.push('#pricing');
+                              setFinanceSelected({
+                                selectedFinanceIndex: 1,
+                                selectedIndex: 0,
+                              });
+                            }}
+                          >
+                            {t('common:see-financing-options')}
+                          </Button>
+                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}

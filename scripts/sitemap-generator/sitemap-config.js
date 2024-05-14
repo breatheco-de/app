@@ -133,6 +133,8 @@ const privateRoutes = [
   '!src/pages/**/[cohortSlug]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[slug]/[version]/*{.js,.jsx}',
   '!src/pages/**/[cohortSlug]/[lesson]/[lessonSlug]/*{.js,.jsx}',
+  '!src/pages/**/[cohortSlug]/student/[studentId]/*{.js,.jsx}',
+  '!src/pages/**/[cohortSlug]/student/[studentId]/assignment/[assignmentId]/*{.js,.jsx}',
   '!src/pages/survey/[surveyId]/*{.js,.jsx}',
   '!src/pages/profile/*{.js,.jsx}',
   '!src/pages/choose-program/*{.js,.jsx}',

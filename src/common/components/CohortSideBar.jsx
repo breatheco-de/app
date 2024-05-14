@@ -8,7 +8,7 @@ import {
   TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import { format, differenceInWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -230,7 +230,7 @@ function CohortSideBar({
     (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
   );
   const studentsJoined = alumniGeeksList.results?.filter(
-    (st) => st.role === 'STUDENT' && st.educational_status !== 'ACTIVE',
+    (st) => st.role === 'STUDENT',
   );
 
   const teacherAssistants = studentAndTeachers.filter((st) => st.role === 'ASSISTANT');
@@ -302,6 +302,17 @@ function CohortSideBar({
       addTeacherProgramList({ teacher, assistant: teacherAssistants });
     }
   }, [router?.query?.cohortSlug, studentAndTeachers?.length]);
+
+  const isBeforeOneWeek = (date) => {
+    // Calculate the difference in weeks between the given date and today
+    const weeksDifference = differenceInWeeks(new Date(), date);
+
+    // Check if the difference is greater than 1
+    return weeksDifference <= 1;
+  };
+
+  const recentlyLogedStudents = activeStudents.filter((elem) => elem.user?.last_login && isBeforeOneWeek(new Date(elem.user.last_login)));
+  const activeAndRecent = cohort.ending_date ? activeStudents : recentlyLogedStudents;
 
   return (
     <Box
@@ -375,32 +386,34 @@ function CohortSideBar({
         )}
         <Tabs display="flex" flexDirection="column" variant="unstyled" gridGap="16px">
           <TabList display="flex" width="100%">
-            <Tab
-              p="0 14px 14px 14px"
-              display="block"
-              textAlign="center"
-              isDisabled={false}
-              textTransform="uppercase"
-              fontWeight="900"
-              fontSize="13px"
-              letterSpacing="0.05em"
-              width="100%"
-              borderBottom="4px solid #C4C4C4"
-              // height="100%"
-              _selected={{
-                color: 'blue.default',
-                borderBottom: '4px solid',
-                borderColor: 'blue.default',
-              }}
-              _disabled={{
-                opacity: 0.5,
-                cursor: 'not-allowed',
-              }}
-            >
-              {cohort.ending_date
-                ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
-                : t('cohortSideBar.active-geeks', { studentsLength: activeStudents.length })}
-            </Tab>
+            {activeAndRecent.length >= 1 && (
+              <Tab
+                p="0 14px 14px 14px"
+                display="block"
+                textAlign="center"
+                isDisabled={false}
+                textTransform="uppercase"
+                fontWeight="900"
+                fontSize="13px"
+                letterSpacing="0.05em"
+                width="100%"
+                borderBottom="4px solid #C4C4C4"
+                // height="100%"
+                _selected={{
+                  color: 'blue.default',
+                  borderBottom: '4px solid',
+                  borderColor: 'blue.default',
+                }}
+                _disabled={{
+                  opacity: 0.5,
+                  cursor: 'not-allowed',
+                }}
+              >
+                {cohort.ending_date
+                  ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
+                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent.length })}
+              </Tab>
+            )}
             {alumniGeeksList?.count && (
               <Tab
                 p="0 14px 14px 14px"
@@ -429,22 +442,24 @@ function CohortSideBar({
             )}
           </TabList>
           <TabPanels p="0">
-            <TabPanel p="0">
-              {activeStudents.length !== 0
-                ? (
-                  <ProfilesSection
-                    showButton
-                    profiles={activeStudents}
-                    withoutPopover={activeStudents?.length >= 16}
-                  />
-                ) : (
-                  <>
-                    {activeStudentsLoading ? (
-                      <AvatarSkeleton pt="0" quantity={15} />
-                    ) : t('cohortSideBar.no-active-students')}
-                  </>
-                )}
-            </TabPanel>
+            {(activeAndRecent.length >= 1 || activeStudentsLoading) && (
+              <TabPanel p="0">
+                {activeAndRecent.length !== 0
+                  ? (
+                    <ProfilesSection
+                      showButton
+                      profiles={activeAndRecent}
+                      withoutPopover={activeAndRecent?.length >= 16}
+                    />
+                  ) : (
+                    <>
+                      {activeStudentsLoading ? (
+                        <AvatarSkeleton pt="0" quantity={15} />
+                      ) : t('cohortSideBar.no-active-students')}
+                    </>
+                  )}
+              </TabPanel>
+            )}
             <TabPanel p="0">
               {studentsJoined?.length !== 0
                 ? (

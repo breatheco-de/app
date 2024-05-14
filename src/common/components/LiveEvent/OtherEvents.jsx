@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Image from 'next/image';
-import { lengthOfString } from '../../../utils';
+import { isValidDate, lengthOfString } from '../../../utils';
 import useStyle from '../../hooks/useStyle';
 import CustomTheme from '../../../../styles/theme';
 import Icon from '../Icon';
@@ -18,8 +18,8 @@ const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel, 
   return events.map((event) => {
     const titleLength = lengthOfString(event?.title);
     const formatedTimeString = dateTextObj?.[event?.id];
-    const startsAt = event?.starting_at && new Date(event.starting_at);
-    const endsAt = event?.ended_at ? new Date(event?.ended_at) : (event?.ending_at && new Date(event.ending_at));
+    const startsAt = isValidDate(event?.starting_at) ? new Date(event.starting_at) : null;
+    const endsAt = isValidDate(event?.ended_at) ? new Date(event?.ended_at) : (isValidDate(event?.ending_at) && new Date(event.ending_at));
     const truncatedText = titleLength > limit ? `${event?.title?.substring(0, limit)}...` : event?.title;
     const truncatedTime = lengthOfString(formatedTimeString) >= 16 ? `${formatedTimeString?.substring(0, 15)}...` : formatedTimeString;
 
