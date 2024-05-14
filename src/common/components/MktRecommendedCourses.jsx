@@ -73,7 +73,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       maxWidth="1280px"
       margin="2rem auto"
       flexWrap={{ base: 'wrap', xl: 'nowrap' }}
-      id={id}
+      id={id || 'courses'}
       borderRadius="11px"
       padding="16px"
       background={background || featuredLight}
