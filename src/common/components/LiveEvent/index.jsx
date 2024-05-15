@@ -26,6 +26,7 @@ function LiveEvent({
   stTranslation,
   featureLabel,
   featureReadMoreUrl,
+  cohorts,
   ...rest
 }) {
   const { t, lang } = useTranslation('live-event');
@@ -369,6 +370,7 @@ function LiveEvent({
                 stTranslation={stTranslation}
                 mainClasses={liveEvent.main}
                 limitOfText={54}
+                cohorts={cohorts}
               />
             ))}
           </Box>
@@ -495,6 +497,7 @@ LiveEvent.propTypes = {
   startingSoonDelta: PropTypes.number,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
+  cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 LiveEvent.defaultProps = {
@@ -504,6 +507,7 @@ LiveEvent.defaultProps = {
   startingSoonDelta: 30,
   featureLabel: null,
   featureReadMoreUrl: null,
+  cohorts: [],
 };
 
 export default LiveEvent;

@@ -11,7 +11,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
-import syllabusList from '../../../public/syllabus.json';
+// import syllabusList from '../../../public/syllabus.json';
 import NextChakraLink from '../../common/components/NextChakraLink';
 // import UpgradeExperience from '../../common/components/UpgradeExperience';
 import useStyle from '../../common/hooks/useStyle';
@@ -25,7 +25,7 @@ function MobileNav({
   const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation('navbar');
   const commonColors = useColorModeValue('white', 'gray.800');
-  const readSyllabus = JSON.parse(syllabusList);
+  // const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
   const prismicApi = process.env.PRISMIC_API;
   const { borderColor } = useStyle();
@@ -44,7 +44,7 @@ function MobileNav({
 
   // manage submenus in level 1
   const prepareSubMenuData = (item) => {
-    if (item.id === 'courses') {
+    if (item.id === 'bootcamps') {
       return mktCourses;
     }
     return item?.subMenu;
@@ -87,7 +87,7 @@ function MobileNav({
               : submenuData}
             href={href}
             onClickLink={onClickLink}
-            readSyllabus={readSyllabus}
+            readSyllabus={[]}
           />
         );
       })}

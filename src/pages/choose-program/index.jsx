@@ -582,6 +582,7 @@ function chooseProgram() {
               mainClasses={liveClasses?.length > 0 ? liveClasses : []}
               otherEvents={events}
               margin="0 auto"
+              cohorts={dataQuery?.cohorts || []}
             />
           </Box>
           <Box zIndex={10}>

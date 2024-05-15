@@ -33,7 +33,7 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
       <Box position="absolute" borderRadius="full" top="-30px" width="44px" height="44px" {...iconStyles}>
         <Image src={iconUrl} width={44} height={44} />
       </Box>
-      <Heading size="xsm" marginBottom="8px">
+      <Heading as="span" size="xsm" marginBottom="8px">
         {title}
       </Heading>
       <Text size="md" lineHeight="16px" wwight="400" marginBottom="16px" {...descriptionStyles}>

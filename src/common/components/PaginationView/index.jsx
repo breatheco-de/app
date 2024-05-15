@@ -28,6 +28,11 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
     en: 'en',
     es: 'es',
   };
+  const canonicalLang = {
+    us: '',
+    en: '',
+    es: '/es',
+  };
 
   const handlePaginationProps = async () => {
     const respData = await queryFunction();
@@ -88,7 +93,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
   return isNumber(pageProps?.currentPage) ? (
     <Box>
       <Head>
-        <link rel="canonical" href={`${DOMAIN_NAME}${pagePath}`} />
+        <link rel="canonical" href={`${DOMAIN_NAME}${canonicalLang[router?.locale]}${pagePath}`} />
         {prevPagePath && (
           <link rel="prev" href={prevPagePath} />
         )}
