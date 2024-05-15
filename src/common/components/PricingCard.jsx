@@ -9,6 +9,7 @@ import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
+import { usePersistentBySession } from '../hooks/usePersistent';
 
 export default function PricingCard({ item, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
@@ -17,6 +18,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const [accordionState, setAccordionState] = useState(false);
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
   const queryCoupon = getQueryString('coupon');
+  const [coupon] = usePersistentBySession('coupon', []);
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
@@ -98,7 +100,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       plan_id: selectedFinancing?.plan_id || item?.plan_id,
       price: selectedFinancing?.price || item?.price,
       period: selectedFinancing?.period || item?.period,
-      coupon: queryCoupon,
+      coupon: coupon || queryCoupon,
     });
 
     if (isWindow) {

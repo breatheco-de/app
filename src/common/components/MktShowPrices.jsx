@@ -12,6 +12,8 @@ import Icon from './Icon';
 import Heading from './Heading';
 import GridContainer from './GridContainer';
 import { generatePlan, getTranslations } from '../handlers/subscriptions';
+import { usePersistentBySession } from '../hooks/usePersistent';
+import { getQueryString } from '../../utils';
 
 function Paragraph({ children }, index) {
   return (
@@ -57,6 +59,8 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
   const [planProps, setPlanProps] = useState({});
   const [selectedBulletForPlan, setSelectedBulletForPlan] = useState(null);
   const translationsObj = getTranslations(t);
+  const queryCoupon = getQueryString('coupon');
+  const [coupon] = usePersistentBySession('coupon', []);
   const featuredInfoList = selectedBulletForPlan !== null ? selectedBulletForPlan : planProps?.featured_info;
 
   const handleGetPlan = async () => {
@@ -165,6 +169,7 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
               price: item?.price,
               period,
               cohort: cohortId,
+              coupon: queryCoupon || coupon,
             });
             router.push(`/checkout${querys}`);
           }}

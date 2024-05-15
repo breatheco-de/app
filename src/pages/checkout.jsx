@@ -41,6 +41,7 @@ import { reportDatalayer } from '../utils/requests';
 import { getTranslations, processPlans } from '../common/handlers/subscriptions';
 import Icon from '../common/components/Icon';
 import AcordionList from '../common/components/AcordionList';
+import { usePersistentBySession } from '../common/hooks/usePersistent';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -112,7 +113,9 @@ function Checkout() {
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
   const couponQuery = getQueryString('coupon');
+  const [coupon] = usePersistentBySession('coupon', '');
   const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z-]/g, '');
+  const couponValue = coupon || formatedCouponQuery;
 
   const { course } = router.query;
   const courseChoosed = course;
@@ -227,11 +230,11 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (formatedCouponQuery && checkoutData?.id) {
-      handleCoupon(formatedCouponQuery);
-      setDiscountCode(formatedCouponQuery);
+    if (couponValue && checkoutData?.id) {
+      handleCoupon(couponValue);
+      setDiscountCode(couponValue);
     }
-  }, [formatedCouponQuery, checkoutData?.id]);
+  }, [couponValue, checkoutData?.id]);
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
@@ -701,7 +704,7 @@ function Checkout() {
                     <Divider margin="6px 0" />
                     <Formik
                       initialValues={{
-                        coupons: formatedCouponQuery || '',
+                        coupons: couponValue || '',
                       }}
                       onSubmit={(_, actions) => {
                         setDiscountCoupon({
@@ -728,8 +731,8 @@ function Checkout() {
                                 placeholder="Discount code"
                                 onChange={(e) => {
                                   const { value } = e.target;
-                                  const couponValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
-                                  setDiscountCode(couponValue.replace(/\s/g, '-'));
+                                  const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                  setDiscountCode(couponInputValue.replace(/\s/g, '-'));
                                   if (value === '') {
                                     setDiscountCoupon({
                                       isError: false,
