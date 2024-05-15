@@ -233,6 +233,7 @@ function PricingView() {
     }
   };
 
+  // cuando se trate de un plan ocultar titulo y dejar al lado derecho el boton de monthly y yearly
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
@@ -349,15 +350,17 @@ function PricingView() {
 
           {isAbleToShowPrices && (
             <Flex gridGap="1rem" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" margin="3.75rem 0 2.5rem 0">
-              <Text size="30px" width="100%" alignItems="center" textAlign={!existsSubscriptionMehtod ? 'center' : 'start'} fontWeight={700}>
-                {t('you-are-buying')}
-                <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
-                  {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
+              {!planFormated && (
+                <Text size="30px" width="100%" alignItems="center" textAlign={!existsSubscriptionMehtod ? 'center' : 'start'} fontWeight={700}>
+                  {t('you-are-buying')}
+                  <Text as="span" size="30px" margin="0 0 0 8px" color="blue.default">
+                    {selectedCourseData?.course_translation?.title || slugToTitle(courseFormated) || slugToTitle(planFormated)}
+                  </Text>
                 </Text>
-              </Text>
+              )}
 
               {existsSubscriptionMehtod && existentOptions?.length > 0 && ((courseFormated || planFormated) && !isFetching.selectedPlan) && (
-                <Flex width="fit-content" margin="0 auto" border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
+                <Flex width="fit-content" margin={planFormated ? '0 0 0 auto' : '0 auto'} border={`1px solid ${hexColor.blueDefault}`} borderRadius="4px">
                   {existentOptions.map((info) => (
                     <Box
                       key={info.type}

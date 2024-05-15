@@ -406,7 +406,7 @@ function Checkout() {
                     setLoader('plan', false);
                   });
               }
-              if (cohorts.length === 0) {
+              if (cohorts?.length === 0) {
                 setCohortPlans([{
                   plan: data,
                 }]);

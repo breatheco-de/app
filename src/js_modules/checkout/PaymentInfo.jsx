@@ -315,7 +315,7 @@ function PaymentInfo() {
             });
         }}
       />
-      <Box display="flex" width={{ base: '100%', md: '490px' }} flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} height="100%" borderRadius="15px">
+      <Box display="flex" width={{ base: '100%', md: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
         {!isPaymentIdle ? (
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
             <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
@@ -470,7 +470,9 @@ function PaymentInfo() {
             </Formik>
           </>
         )}
-        <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="100%" height="auto" objectFit="contain" margin="10rem 0 0 0" />
+        {!isPaymentSuccess && (
+          <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="100%" height="auto" objectFit="contain" margin="10rem 0 0 0" />
+        )}
       </Box>
       {!isPaymentIdle && (
         <Button
