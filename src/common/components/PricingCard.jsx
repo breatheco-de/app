@@ -11,7 +11,7 @@ import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
@@ -87,7 +87,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
   const color = viewProps?.color;
   const border = viewProps?.border;
   const featured = viewProps?.featured;
-  const existsOptionList = item?.optionList?.length > 0;
+  const existsOptionList = item?.optionList?.length > 1;
   const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
   const isPayable = item?.price > 0;
   const isTotallyFree = item?.type === 'FREE';
@@ -101,6 +101,7 @@ export default function PricingCard({ item, isFetching, relatedSubscription, ...
       price: selectedFinancing?.price || item?.price,
       period: selectedFinancing?.period || item?.period,
       coupon: coupon || queryCoupon,
+      cohort: courseData?.cohort?.id,
     });
 
     if (isWindow) {
@@ -353,8 +354,10 @@ PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
+  courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
+  courseData: {},
 };

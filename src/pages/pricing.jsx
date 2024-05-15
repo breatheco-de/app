@@ -382,6 +382,7 @@ function PricingView() {
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                courseData={selectedCourseData}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
                 relatedSubscription={relatedSubscription}
@@ -393,6 +394,7 @@ function PricingView() {
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                courseData={selectedCourseData}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
                 relatedSubscription={relatedSubscription}
