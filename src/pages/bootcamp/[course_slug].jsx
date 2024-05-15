@@ -140,33 +140,41 @@ function Page({ data }) {
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
-  const firstPaymentPlan = payableList?.[0];
+  const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
+  const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
+
   const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
-    plan: firstPaymentPlan?.plan_slug,
-    plan_id: firstPaymentPlan?.plan_id,
+    plan: featuredPlanToEnroll?.plan_slug,
+    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
-    price: firstPaymentPlan?.price,
-    period: firstPaymentPlan?.period,
+    price: featuredPlanToEnroll?.price,
+    period: featuredPlanToEnroll?.period,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
   const getPlanPrice = () => {
-    if (payableList?.length > 0) {
-      if (firstPaymentPlan.period === 'MONTH') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
+    if (featuredPlanToEnroll?.plan_slug) {
+      if (featuredPlanToEnroll.period === 'MONTH') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
       }
-      if (firstPaymentPlan.period === 'YEAR') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
+      if (featuredPlanToEnroll.period === 'YEAR') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
       }
-      if (firstPaymentPlan.period === 'ONE_TIME') {
-        return `${firstPaymentPlan.priceText}, ${t('signup:info.one-time-payment')}`;
+      if (featuredPlanToEnroll.period === 'ONE_TIME') {
+        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
       }
-      if (firstPaymentPlan.period === 'FINANCING') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
+      if (featuredPlanToEnroll.period === 'FINANCING') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
+      }
+      if (featuredPlanToEnroll?.type === 'TRIAL') {
+        return t('common:start-free-trial');
+      }
+      if (featuredPlanToEnroll?.type === 'FREE') {
+        return t('common:enroll-totally-free');
       }
     }
-    if (payableList?.length === 0 && planList[0]?.isFreeTier) {
+    if (!featuredPlanToEnroll?.plan_slug && planList[0]?.isFreeTier) {
       if (planList[0]?.type === 'FREE') {
         return t('common:enroll-totally-free');
       }
@@ -544,14 +552,14 @@ function Page({ data }) {
                       <>
                         <Button
                           variant="default"
-                          isLoading={planList?.length === 0 && !firstPaymentPlan?.price}
+                          isLoading={planList?.length === 0 && !featuredPlanToEnroll?.price}
                           background="green.400"
                           color="white"
                           onClick={() => {
                             router.push(`/checkout${enrollQuerys}`);
                           }}
                         >
-                          {payableList?.length > 0
+                          {!featuredPlanToEnroll?.isFreeTier
                             ? `${t('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
