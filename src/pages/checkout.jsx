@@ -23,7 +23,7 @@ import useAuth from '../common/hooks/useAuth';
 import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../utils';
 import Summary from '../js_modules/checkout/Summary';
 import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -114,8 +114,9 @@ function Checkout() {
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
   const couponQuery = getQueryString('coupon');
   const [coupon] = usePersistentBySession('coupon', '');
-  const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z-]/g, '');
-  const couponValue = coupon || formatedCouponQuery;
+  const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
+  const couponString = coupon?.replaceAll('"', '') || '';
+  const couponValue = couponString || formatedCouponQuery;
 
   const { course } = router.query;
   const courseChoosed = course;
@@ -750,6 +751,7 @@ function Checkout() {
                                     height="auto"
                                     onClick={() => {
                                       saveCouponToBag([''], checkoutData?.id);
+                                      removeSessionStorageItem('coupon');
                                       setDiscountCode('');
                                       setDiscountCoupon({
                                         isError: false,
