@@ -4,9 +4,7 @@ import { isWindow } from '../../utils/index';
 const usePersistent = (key, initialValue) => {
   const getStoredValues = useMemo(() => {
     const item = isWindow ? window.localStorage.getItem(key) : null;
-    const isObject = typeof item === 'object';
-    const objectValue = JSON.parse(item) || initialValue;
-    return isObject ? objectValue : item || initialValue;
+    return JSON.parse(item) || initialValue;
   }, [key, initialValue]);
 
   const [storedValue, setStoredValue] = useState(getStoredValues);
