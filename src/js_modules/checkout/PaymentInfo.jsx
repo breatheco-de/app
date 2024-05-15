@@ -3,7 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Flex, Input, useColorModeValue, useToast,
+  Box, Button, Flex, Image, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -287,7 +287,7 @@ function PaymentInfo() {
   };
 
   return (
-    <Box display="flex" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 auto', md: '0 auto' }} position="relative">
+    <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 auto', md: '0 auto' }} position="relative">
       <ModalCardError
         openDeclinedModal={openDeclinedModal}
         isSubmitting={isSubmitting}
@@ -470,6 +470,7 @@ function PaymentInfo() {
             </Formik>
           </>
         )}
+        <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="100%" height="auto" objectFit="contain" margin="10rem 0 0 0" />
       </Box>
       {!isPaymentIdle && (
         <Button

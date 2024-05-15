@@ -580,7 +580,7 @@ function Checkout() {
           base: 'column-reverse',
           md: 'row',
         }}
-        minHeight="320px"
+        minHeight={{ base: '320px', md: '85vh' }}
         maxWidth="1640px"
         margin="0 auto"
       >
@@ -589,7 +589,7 @@ function Checkout() {
           flexDirection="column"
           gridGap="20px"
           background={backgroundColor}
-          padding={{ base: '2rem 20px', md: '2rem 0 5rem 0' }}
+          padding={{ base: '2rem 20px', md: '2rem 0 0 0' }}
           flex={{ base: '1', md: '0.5' }}
           style={{ flexShrink: 0, flexGrow: 1 }}
           maxWidth={{ base: '100%', md: '50%' }}
