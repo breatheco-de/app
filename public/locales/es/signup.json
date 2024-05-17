@@ -12,6 +12,13 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "discount-value-off": "{{value}} dto.",
+  "add": "Agregar",
+  "you-are-getting": "Estás obteniendo",
+  "plan-is-ready": "El plan está listo",
+  "payment-success": "Pago exitoso",
+  "payment-failed": "Pago fallido",
+  "discount-applied": "Descuento aplicado",
   "one_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "monthly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "quarterly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
@@ -255,7 +262,7 @@
     }],
     "basic-plan": {
       "type": "Vuela solo",
-      "hook-message": "Prepárate para conocer nuestra academia",
+      "hook-message": "Prueba la experiencia completa del bootcamp de forma gratuita y decide más tarde",
       "title": "Miembro Gratuito",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
       "button-title": "Comenzar gratis",
@@ -292,10 +299,10 @@
     },
     "premium-plan": {
       "type": "Premium",
-      "hook-message": "Mejora tus habilidades con desafíos adicionales y beneficios.",
+      "hook-message": "Aprende a tu propio ritmo con retroalimentación y eventos en vivo",
       "title": "Miembro Premium",
       "description": "Todo el contenido que necesitas para convertirte en un desarrollador contratado",
-      "button-title": "Obtener Premium",
+      "button-title": "Obtener Plan",
       "service_items": {
         "title": "Todo en Vuela Solo más...",
         "items": [{

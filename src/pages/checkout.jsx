@@ -3,19 +3,27 @@ import {
   Avatar,
   Box,
   Button,
+  Divider,
+  Flex,
+  Heading,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Skeleton,
   useToast,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import { Form, Formik } from 'formik';
 import { getDataContentProps } from '../utils/file';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import useSession from '../common/hooks/useSession';
 import ContactInformation from '../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem } from '../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../utils';
 import Summary from '../js_modules/checkout/Summary';
 import PaymentInfo from '../js_modules/checkout/PaymentInfo';
 import useSignup from '../common/store/actions/signupAction';
@@ -31,6 +39,9 @@ import modifyEnv from '../../modifyEnv';
 import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
 import { reportDatalayer } from '../utils/requests';
 import { getTranslations, processPlans } from '../common/handlers/subscriptions';
+import Icon from '../common/components/Icon';
+import AcordionList from '../common/components/AcordionList';
+import { usePersistentBySession } from '../common/hooks/usePersistent';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -70,18 +81,22 @@ function Checkout() {
   const [cohortsData, setCohortsData] = useState({
     loading: true,
   });
-  const [isPreselectedCohort, setIsPreselectedCohort] = useState(false);
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
-    state, toggleIfEnrolled, nextStep, prevStep, handleStep, handleChecking, setCohortPlans,
+    state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
+    setSelectedPlanCheckoutData, setCheckoutData,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
-  const { stepIndex, dateProps, checkoutData, alreadyEnrolled, serviceProps, loader } = state;
-  const { backgroundColor3 } = useStyle();
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountCoupon, setDiscountCoupon] = useState({
+    isError: false,
+  });
+  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader } = state;
+  const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
 
@@ -91,11 +106,17 @@ function Checkout() {
   const toast = useToast();
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
+  const queryPlanId = getQueryString('plan_id');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = (plan && encodeURIComponent(plan)) || '';
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
+  const couponQuery = getQueryString('coupon');
+  const [coupon] = usePersistentBySession('coupon', '');
+  const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
+  const couponString = coupon?.replaceAll('"', '') || '';
+  const couponValue = couponString || formatedCouponQuery;
 
   const { course } = router.query;
   const courseChoosed = course;
@@ -112,9 +133,56 @@ function Checkout() {
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
   const queryPlansExists = queryPlans && queryPlans?.length > 0;
-  const filteredCohorts = Array.isArray(cohorts) && cohorts.filter((item) => item?.never_ends === false);
+  const showPriceInformation = !readyToSelectService && isFourthStep;
+  const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
+
+  const saveCouponToBag = (coupons, bagId = '') => {
+    bc.payment({
+      coupons,
+      plan: planFormated,
+    }).applyCoupon(bagId)
+      .then((resp) => {
+        const couponsList = resp?.data?.coupons;
+        if (couponsList?.length > 0) {
+          setDiscountCoupon({
+            ...couponsList[0],
+            isError: false,
+          });
+          setCheckoutData({
+            ...checkoutData,
+            discountCoupon: couponsList[0],
+          });
+        } else {
+          setDiscountCoupon({
+            isError: true,
+          });
+        }
+      });
+  };
+
+  const handleCoupon = (coupons, actions) => {
+    bc.payment({
+      coupons: [coupons || discountCode],
+      plan: planFormated,
+    }).verifyCoupon()
+      .then((resp) => {
+        if (resp?.data?.length > 0) {
+          const couponsToString = resp?.data.map((item) => item?.slug);
+          saveCouponToBag(couponsToString, checkoutData?.id);
+        } else {
+          setDiscountCoupon({
+            isError: true,
+          });
+        }
+      })
+      .finally(() => {
+        if (actions) {
+          actions.setSubmitting(false);
+        }
+      });
+  };
 
   useEffect(() => {
     removeStorageItem('redirect');
@@ -126,7 +194,19 @@ function Checkout() {
         halfYearly: false,
         planType: 'original',
       }, translations);
-      setOriginalPlan(processedPlan);
+
+      const accordionList = processedPlan?.featured_info?.length > 0
+        ? processedPlan?.featured_info.map((info) => ({
+          title: info?.features[0]?.title || slugToTitle(info?.service?.slug),
+          description: info.features[0]?.description,
+        }))
+        : [];
+
+      const selectedPlan = processedPlan?.plans?.length > 1
+        ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
+        : (processedPlan?.plans?.[0] || {});
+      setSelectedPlanCheckoutData(selectedPlan);
+      setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
       .catch((err) => {
         if (err) {
@@ -147,7 +227,31 @@ function Checkout() {
         conversion_info: userSession,
       },
     });
-  }, []);
+  }, [router.locale]);
+
+  useEffect(() => {
+    // verify if coupon exists
+    if (couponValue && checkoutData?.id) {
+      handleCoupon(couponValue);
+      setDiscountCode(couponValue);
+    }
+  }, [couponValue, checkoutData?.id]);
+
+  useEffect(() => {
+    // Alert before leave the page if the user is in the payment process
+    if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
+      const handleBeforeUnload = (e) => {
+        e.preventDefault();
+      };
+
+      window.addEventListener('beforeunload', handleBeforeUnload);
+
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+    return () => {};
+  }, [stepIndex, isAuthenticated]);
 
   useEffect(() => {
     const isAvailableToSelectPlan = queryPlansExists && queryPlans?.split(',')?.length > 0;
@@ -272,7 +376,6 @@ function Checkout() {
             }
             if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
               if (resp.status < 400 && cohorts?.length > 0) {
-                setIsPreselectedCohort(true);
                 const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
                 const defaultCohortProps = {
                   ...cohorts[0],
@@ -283,20 +386,46 @@ function Checkout() {
 
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
-                  .then(() => {
-                    handleStep(2);
+                  .then((checkingData) => {
+                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = checkingData?.plans?.length === 1
+                      ? checkingData?.plans[0]
+                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    if (existsPayablePlan && autoSelectedPlan) {
+                      setSelectedPlanCheckoutData(autoSelectedPlan);
+                      handleStep(3);
+                      setLoader('plan', false);
+                    } else {
+                      if (autoSelectedPlan) {
+                        setSelectedPlanCheckoutData(autoSelectedPlan);
+                      }
+                      handleStep(2);
+                    }
                   })
                   .catch(() => {
                     setLoader('plan', false);
                   });
               }
-              if (cohorts.length === 0) {
+              if (cohorts?.length === 0) {
                 setCohortPlans([{
                   plan: data,
                 }]);
                 handleChecking({ plan: data })
-                  .then(() => {
-                    handleStep(2);
+                  .then((checkingData) => {
+                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = checkingData?.plans?.length === 1
+                      ? checkingData?.plans[0]
+                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    if (existsPayablePlan && autoSelectedPlan) {
+                      setSelectedPlanCheckoutData(autoSelectedPlan);
+                      handleStep(3);
+                      setLoader('plan', false);
+                    } else {
+                      if (autoSelectedPlan) {
+                        setSelectedPlanCheckoutData(autoSelectedPlan);
+                      }
+                      handleStep(2);
+                    }
                   })
                   .catch(() => {
                     setLoader('plan', false);
@@ -344,21 +473,34 @@ function Checkout() {
     }
   }, [user?.id]);
 
-  const handleGoBack = () => {
-    const handler = () => {
-      if (stepIndex > 0) {
-        prevStep();
+  const getPriceWithDiscount = () => {
+    const price = selectedPlanCheckoutData?.price;
+    const discount = discountCoupon?.discount_value;
+    const discountType = discountCoupon?.discount_type;
+    if (discount) {
+      if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        return {
+          originalPrice: price,
+          price: price - (price * discount),
+          discount: `${discount * 100}%`,
+        };
       }
-    };
+      if (discountType === 'FIXED_PRICE') {
+        return {
+          originalPrice: price,
+          price: price - discount,
+          discount: `$${discount}`,
+        };
+      }
+    }
     return {
-      isNotAvailable: (queryPlanExists && !isFourthStep && !dateProps?.id) || isSecondStep || (isThirdStep && filteredCohorts?.length === 1),
-      must_hidde: isPreselectedCohort && isThirdStep,
-      func: handler,
+      price,
+      discount: '0%',
     };
   };
 
   return (
-    <Box p={{ base: '2.5rem 0', md: '2.5rem 2rem' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
+    <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
         <LoaderScreen />
       )}
@@ -431,88 +573,253 @@ function Checkout() {
           }
         }}
       />
-      {/* Stepper */}
-      {!isFirstStep && !readyToSelectService && !serviceToRequest?.id && (
-        <Stepper
-          hideIndexList={showChooseClass ? [] : [1]}
-          stepIndex={stepIndex}
-          checkoutData={checkoutData}
-          isFirstStep={isFirstStep}
-          isSecondStep={isSecondStep}
-          isThirdStep={isThirdStep}
-          isFourthStep={isFourthStep}
-          handleGoBack={handleGoBack}
-        />
-      )}
 
-      <Box
+      <Flex
         display="flex"
-        flexDirection="column"
-        gridGap={{ base: '20px', md: '20px' }}
-        minHeight="320px"
-        maxWidth={{ base: '100%', md: isFirstStep ? '100%' : '900px' }}
-        margin={!isFirstStep && { base: '1.5rem auto 0 auto', md: serviceToRequest?.id ? '3.5rem auto' : '3.5rem auto 0 auto' }}
-        padding={{ base: '0px 20px', md: '0' }}
-        // borderRadius={{ base: '22px', md: '0' }}
+        flexDirection={{
+          base: 'column-reverse',
+          md: 'row',
+        }}
+        minHeight={{ base: '320px', md: '85vh' }}
+        maxWidth="1640px"
+        margin="0 auto"
       >
-        {!readyToSelectService && isFirstStep && (
-          <ContactInformation
-            courseChoosed={courseChoosed}
-            defaultPlanData={originalPlan}
-            formProps={formProps}
-            setFormProps={setFormProps}
-            setVerifyEmailProps={setVerifyEmailProps}
-          />
-        )}
+        <Flex
+          display="flex"
+          flexDirection="column"
+          gridGap="20px"
+          background={backgroundColor}
+          padding={{ base: '2rem 20px', md: '2rem 0 0 0' }}
+          flex={{ base: '1', md: '0.5' }}
+          style={{ flexShrink: 0, flexGrow: 1 }}
+          maxWidth={{ base: '100%', md: '50%' }}
+          overflow="auto"
+        >
+          {/* Stepper */}
+          {!readyToSelectService && !serviceToRequest?.id && (
+            <Stepper
+              hideIndexList={showChooseClass ? [] : [1]}
+              stepIndex={stepIndex}
+              checkoutData={checkoutData}
+              isFreeTier={Boolean(checkoutData?.isTrial || checkoutData?.isTotallyFree || selectedPlanCheckoutData?.isFreeTier)}
+              selectedPlanCheckoutData={selectedPlanCheckoutData}
+              isFirstStep={isFirstStep}
+              isSecondStep={isSecondStep}
+              isThirdStep={isThirdStep}
+              isFourthStep={isFourthStep}
+              // handleGoBack={handleGoBack}
+            />
+          )}
+          {!readyToSelectService && isFirstStep && (
+            <ContactInformation
+              courseChoosed={courseChoosed}
+              formProps={formProps}
+              setFormProps={setFormProps}
+              setVerifyEmailProps={setVerifyEmailProps}
+            />
+          )}
 
-        {/* Second step */}
-        {!readyToSelectService && showChooseClass && (
-          <ChooseYourClass setCohorts={setCohortsData} />
-        )}
+          {/* Second step */}
+          {((!readyToSelectService && showChooseClass) || isSecondStep) && (
+            <ChooseYourClass setCohorts={setCohortsData} />
+          )}
 
-        {!readyToSelectService && isThirdStep && !serviceProps?.id && (
-          <Summary />
-        )}
-        {!readyToSelectService && isThirdStep && serviceProps?.id && (
-          <ServiceSummary service={serviceProps} />
-        )}
-        {readyToSelectService && (
-          <SelectServicePlan />
-        )}
-        {/* Fourth step */}
-        {!readyToSelectService && isFourthStep && (
-          <PaymentInfo />
-        )}
-        {!queryServiceExists && ((stepIndex !== 0 && !isSecondStep) || (stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep)) && (
-          <>
-            <Box as="hr" width="100%" margin="10px 0" />
-            <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" mt="auto">
-              {!handleGoBack().must_hidde && handleGoBack().isNotAvailable === false && (
-                <Button
-                  variant="outline"
-                  borderColor="currentColor"
-                  color="blue.default"
-                  isDisabled={handleGoBack().isNotAvailable}
-                  onClick={() => handleGoBack().func()}
-                >
-                  {t('go-back')}
-                </Button>
-              )}
-              {stepIndex !== 0 && !isSecondStep && !isThirdStep && !isFourthStep && (
-                <Button
-                  variant="default"
-                  isDisabled={dateProps === null}
-                  onClick={() => {
-                    nextStep();
-                  }}
-                >
-                  {t('next-step')}
-                </Button>
-              )}
-            </Box>
-          </>
-        )}
-      </Box>
+          {!readyToSelectService && isThirdStep && !serviceProps?.id && (
+            <Summary />
+          )}
+          {!readyToSelectService && isThirdStep && serviceProps?.id && (
+            <ServiceSummary service={serviceProps} />
+          )}
+          {readyToSelectService && (
+            <SelectServicePlan />
+          )}
+          {/* Fourth step */}
+          {!readyToSelectService && isFourthStep && (
+            <PaymentInfo />
+          )}
+        </Flex>
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+          // flex={0.5}
+          padding={{ base: '0 auto', md: '0 3rem' }}
+          position="relative"
+          flex={{ base: '1', md: '0.5' }}
+          style={{ flexShrink: 0, flexGrow: 1 }}
+          overflow="auto"
+          maxWidth={{ base: '100%', md: '50%' }}
+        >
+          <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+            {originalPlan?.title ? (
+              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
+                <Text size="18px">
+                  {t('you-are-getting')}
+                </Text>
+                <Flex gridGap="7px">
+                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />}
+                  <Flex flexDirection="column" gridGap="7px" justifyContent="center">
+                    <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
+                      {originalPlan?.title}
+                    </Heading>
+                    {originalPlan?.selectedPlan?.isFreeTier ? (
+                      <Text size="16px" color="green.400">
+                        {originalPlan?.selectedPlan?.description || 'Free plan'}
+                      </Text>
+                    ) : originalPlan?.selectedPlan?.price > 0 && (
+                      <Text size="16px" color="green.400">
+                        {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
+                      </Text>
+                    )}
+                  </Flex>
+                </Flex>
+                <Divider borderBottomWidth="2px" />
+                {originalPlan?.accordionList?.length > 0 && (
+                  <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                    <AcordionList
+                      width="100%"
+                      allowMultiple
+                      list={originalPlan.accordionList}
+                      titleStyle={{ textTransform: 'normal', fontSize: '18px' }}
+                      iconColor={hexColor.blueDefault}
+                      paddingButton="10px 17px"
+                      unstyled
+                      gridGap="0"
+                      containerStyles={{ gridGap: '8px' }}
+                      descriptionStyle={{ padding: '0 17px 0px' }}
+                      leftIcon="checked2"
+                    />
+                  </Flex>
+                )}
+                {showPriceInformation && (
+                  <>
+                    <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        Subtotal:
+                      </Text>
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        {selectedPlanCheckoutData?.price <= 0
+                          ? selectedPlanCheckoutData?.priceText
+                          : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                      </Text>
+                    </Flex>
+                    <Divider margin="6px 0" />
+                    <Formik
+                      initialValues={{
+                        coupons: couponValue || '',
+                      }}
+                      onSubmit={(_, actions) => {
+                        setDiscountCoupon({
+                          isError: false,
+                        });
+
+                        handleCoupon(discountCode, actions);
+                      }}
+                    >
+                      {({ isSubmitting }) => (
+                        <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
+                          <Flex gridGap="15px" width="100%">
+                            <InputGroup size="md">
+                              <Input
+                                value={discountCode}
+                                borderColor={discountCoupon?.isError ? 'red.light' : 'inherit'}
+                                disabled={discountCoupon?.slug || isPaymentSuccess}
+                                width="100%"
+                                _disabled={{
+                                  borderColor: discountCoupon?.slug ? 'success' : 'inherit',
+                                  opacity: 1,
+                                }}
+                                letterSpacing="0.05em"
+                                placeholder="Discount code"
+                                onChange={(e) => {
+                                  const { value } = e.target;
+                                  const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                  setDiscountCode(couponInputValue.replace(/\s/g, '-'));
+                                  if (value === '') {
+                                    setDiscountCoupon({
+                                      isError: false,
+                                    });
+                                  }
+                                }}
+                              />
+                              {discountCoupon?.slug && (
+                                <InputRightElement width="35px">
+                                  <Button
+                                    variant="unstyled"
+                                    aria-label="Remove coupon"
+                                    minWidth="auto"
+                                    padding="10px"
+                                    height="auto"
+                                    onClick={() => {
+                                      saveCouponToBag([''], checkoutData?.id);
+                                      removeSessionStorageItem('coupon');
+                                      setDiscountCode('');
+                                      setDiscountCoupon({
+                                        isError: false,
+                                      });
+                                    }}
+                                  >
+                                    <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                  </Button>
+                                </InputRightElement>
+                              )}
+                            </InputGroup>
+                            {!discountCoupon?.slug && !isPaymentSuccess && (
+                              <Button
+                                width="auto"
+                                type="submit"
+                                isLoading={isSubmitting}
+                                height="auto"
+                                variant="outline"
+                                fontSize="17px"
+                              >
+                                {`+ ${t('add')}`}
+                              </Button>
+                            )}
+                          </Flex>
+                        </Form>
+                      )}
+                    </Formik>
+                    {(discountCoupon?.slug || isPaymentSuccess) && (
+                      <Flex justifyContent="space-between" margin={isPaymentSuccess ? '0' : '10px 0 0 0'} width="100%">
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {t('discount-applied')}
+                        </Text>
+                        <Text size="16px" color={discountCoupon?.slug ? 'green.400' : 'currentColor'} padding="0 5px" borderRadius="4px" backgroundColor={discountCoupon?.slug ? 'green.light' : 'transparent'} lineHeight="normal">
+                          {discountCoupon?.slug
+                            ? t('discount-value-off', { value: getPriceWithDiscount()?.discount })
+                            : '--'}
+                        </Text>
+                      </Flex>
+                    )}
+                    <Divider margin="6px 0" />
+                    <Flex justifyContent="space-between" width="100%">
+                      <Text size="18px" color="currentColor" lineHeight="normal">
+                        Total
+                      </Text>
+                      <Flex gridGap="1rem">
+                        {getPriceWithDiscount().originalPrice && (
+                          <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
+                            {`$${getPriceWithDiscount().originalPrice} ${selectedPlanCheckoutData?.currency?.code}`}
+                          </Text>
+                        )}
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {selectedPlanCheckoutData?.price <= 0
+                            ? selectedPlanCheckoutData?.priceText
+                            : `$${discountCoupon?.slug
+                              ? getPriceWithDiscount().price
+                              : selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </>
+                )}
+              </Flex>
+            ) : (
+              <Skeleton height="350px" width="490px" borderRadius="11px" zIndex={10} opacity={1} />
+            )}
+          </Flex>
+        </Flex>
+      </Flex>
     </Box>
   );
 }

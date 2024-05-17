@@ -4,7 +4,7 @@ import {
   Container,
 } from '@chakra-ui/react';
 
-function DraggableContainer({ children, ...rest }) {
+function DraggableContainer({ children, isDraggable, ...rest }) {
   const ref = useRef();
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -12,6 +12,7 @@ function DraggableContainer({ children, ...rest }) {
   const scrollSpeed = 1;
 
   const onMouseDown = (e) => {
+    if (!isDraggable) return;
     setIsDown(true);
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     setStartX(pageX - ref.current.offsetLeft);
@@ -27,7 +28,7 @@ function DraggableContainer({ children, ...rest }) {
   };
 
   const onMouseMove = (e) => {
-    if (!isDown) return;
+    if (!isDown || !isDraggable) return;
     e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     const x = pageX - ref.current.offsetLeft;
@@ -40,7 +41,7 @@ function DraggableContainer({ children, ...rest }) {
       ref={ref}
       padding="0"
       className="hideOverflowX__"
-      cursor={ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+      cursor={isDraggable && ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
       maxW="container.xl"
       width="100%"
       overflowX="auto"
@@ -60,6 +61,10 @@ function DraggableContainer({ children, ...rest }) {
 
 DraggableContainer.propTypes = {
   children: PropTypes.element.isRequired,
+  isDraggable: PropTypes.bool,
+};
+DraggableContainer.defaultProps = {
+  isDraggable: true,
 };
 
 export default DraggableContainer;

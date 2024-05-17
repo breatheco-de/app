@@ -27,7 +27,7 @@ import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
-import { SUBS_STATUS, generatePlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
+import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import { reportDatalayer } from '../../utils/requests';
@@ -101,7 +101,10 @@ function Page({ data }) {
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [financeSelected, setFinanceSelected] = useState({});
+  const [financeSelected, setFinanceSelected] = useState({
+    selectedFinanceIndex: 0,
+    selectedIndex: 0,
+  });
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
@@ -135,39 +138,47 @@ function Page({ data }) {
   const students = cohortData.students || [];
   const instructors = cohortData.instructors || [];
   const existsRelatedSubscription = relatedSubscription?.status === SUBS_STATUS.ACTIVE;
-  const plans = planData?.plans || [];
-  const payableList = plans.filter((plan) => plan?.type === 'PAYMENT');
-  const firstPaymentPlan = payableList?.[0];
+  const planList = planData?.planList || [];
+  const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
+  const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
+  const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
+
   const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
-    plan: firstPaymentPlan?.plan_slug,
-    plan_id: firstPaymentPlan?.plan_id,
+    plan: featuredPlanToEnroll?.plan_slug,
+    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
-    price: firstPaymentPlan?.price,
-    period: firstPaymentPlan?.period,
+    price: featuredPlanToEnroll?.price,
+    period: featuredPlanToEnroll?.period,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
   const getPlanPrice = () => {
-    if (payableList?.length > 0) {
-      if (firstPaymentPlan.period === 'MONTH') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
+    if (featuredPlanToEnroll?.plan_slug) {
+      if (featuredPlanToEnroll.period === 'MONTH') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
       }
-      if (firstPaymentPlan.period === 'YEAR') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.monthly')}`;
+      if (featuredPlanToEnroll.period === 'YEAR') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
       }
-      if (firstPaymentPlan.period === 'ONE_TIME') {
-        return `${firstPaymentPlan.priceText}, ${t('signup:info.one-time-payment')}`;
+      if (featuredPlanToEnroll.period === 'ONE_TIME') {
+        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
       }
-      if (firstPaymentPlan.period === 'FINANCING') {
-        return `${firstPaymentPlan.priceText} ${t('signup:info.installments')}`;
+      if (featuredPlanToEnroll.period === 'FINANCING') {
+        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
       }
-    }
-    if (payableList?.length === 0 && plans[0]?.isFreeTier) {
-      if (plans[0]?.type === 'FREE') {
+      if (featuredPlanToEnroll?.type === 'TRIAL') {
+        return t('common:start-free-trial');
+      }
+      if (featuredPlanToEnroll?.type === 'FREE') {
         return t('common:enroll-totally-free');
       }
-      if (plans[0]?.type === 'TRIAL') {
+    }
+    if (!featuredPlanToEnroll?.plan_slug && planList[0]?.isFreeTier) {
+      if (planList[0]?.type === 'FREE') {
+        return t('common:enroll-totally-free');
+      }
+      if (planList[0]?.type === 'TRIAL') {
         return t('common:start-free-trial');
       }
     }
@@ -316,7 +327,7 @@ function Page({ data }) {
         };
       }
     };
-    const formatedPlanData = await generatePlan(data.plan_slug, translationsObj).then((finalData) => finalData);
+    const formatedPlanData = await fetchSuggestedPlan(data?.plan_slug, translationsObj, 'mkt_plans').then((finalData) => finalData);
 
     const modulesInfo = await getModulesInfo();
 
@@ -541,14 +552,14 @@ function Page({ data }) {
                       <>
                         <Button
                           variant="default"
-                          isLoading={plans?.length === 0 && !firstPaymentPlan?.price}
+                          isLoading={planList?.length === 0 && !featuredPlanToEnroll?.price}
                           background="green.400"
                           color="white"
                           onClick={() => {
                             router.push(`/checkout${enrollQuerys}`);
                           }}
                         >
-                          {payableList?.length > 0
+                          {!featuredPlanToEnroll?.isFreeTier
                             ? `${t('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
@@ -787,6 +798,7 @@ function Page({ data }) {
         <MktShowPrices
           id="pricing"
           mt="6.25rem"
+          externalPlanProps={planData}
           externalSelection={financeSelected}
           gridTemplateColumns="repeat(12, 1fr)"
           gridColumn1="1 / span 7"

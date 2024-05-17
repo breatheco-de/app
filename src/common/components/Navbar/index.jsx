@@ -192,7 +192,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         borderStyle="solid"
         borderColor={isOpen ? borderColor : useColorModeValue('gray.200', 'gray.900')}
         justifyContent="space-between"
-        gridGap="2rem"
+        gridGap={{ base: '10px', md: '2rem' }}
         align="center"
       >
         <Flex
@@ -267,7 +267,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         </Flex>
 
         <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
-          <Flex gridGap="18px">
+          <Flex display={{ base: 'none', md: 'flex' }} gridGap="18px">
             {disableLangSwitcher !== true && (
               <LanguageSelector display={{ base: 'none ', lg: 'block' }} translations={translations} minWidth="unset" />
             )}
