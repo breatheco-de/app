@@ -11,7 +11,7 @@ import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import { usePersistent } from '../hooks/usePersistent';
-import { isWindow } from '../../utils';
+import { isValidDate, isWindow } from '../../utils';
 
 function ItemText({ text }) {
   return (
@@ -66,10 +66,13 @@ function TeacherSidebar({
     en: format(new Date(), "'Today is' do 'of' MMMM"),
     es: format(new Date(), "'Hoy es' dd 'de' MMMM", { locale: es }),
   };
+  const formatKickoffDate = isValidDate(cohortSession?.kickoff_date)
+    ? new Date(cohortSession.kickoff_date)
+    : new Date();
 
   const kickoffDate = {
-    en: format(new Date(cohortSession.kickoff_date), 'eeee MMMM Mo'),
-    es: format(new Date(cohortSession.kickoff_date), "eeee dd 'de' MMMM", { locale: es }),
+    en: format(formatKickoffDate, 'eeee MMMM Mo'),
+    es: format(formatKickoffDate, "eeee dd 'de' MMMM", { locale: es }),
   };
 
   const greetings = {

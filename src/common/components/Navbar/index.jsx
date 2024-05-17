@@ -24,7 +24,7 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { isWindow } from '../../../utils';
-import { WHITE_LABEL_ACADEMY, BASE_PLAN } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
@@ -192,7 +192,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         borderStyle="solid"
         borderColor={isOpen ? borderColor : useColorModeValue('gray.200', 'gray.900')}
         justifyContent="space-between"
-        gridGap="2rem"
+        gridGap={{ base: '10px', md: '2rem' }}
         align="center"
       >
         <Flex
@@ -267,7 +267,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         </Flex>
 
         <Stack justify="flex-end" alignItems="center" direction="row" gridGap={hasPaidSubscription ? '16px' : '20px'}>
-          <Flex gridGap="18px">
+          <Flex display={{ base: 'none', md: 'flex' }} gridGap="18px">
             {disableLangSwitcher !== true && (
               <LanguageSelector display={{ base: 'none ', lg: 'block' }} translations={translations} minWidth="unset" />
             )}
@@ -517,7 +517,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/checkout?plan=${BASE_PLAN}`}>
+              <Link variant="buttonDefault" href="/pricing">
                 {t('get-started')}
               </Link>
             </Box>

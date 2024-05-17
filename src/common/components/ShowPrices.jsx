@@ -132,9 +132,11 @@ function ShowPrices({
   const isOnlyOneItem = [...finance, ...list].length === 1;
 
   useEffect(() => {
-    if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && financeSelected[externalSelection?.selectedFinanceIndex]?.length > 0) {
+    const tabSelected = financeSelected?.[externalSelection?.selectedFinanceIndex];
+    const financeFound = tabSelected?.[externalSelection?.selectedIndex] || tabSelected?.[0];
+    if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && tabSelected?.length > 0) {
       handleSelectFinance(externalSelection.selectedFinanceIndex);
-      handleSelect(externalSelection.selectedIndex);
+      handleSelect(externalSelection.selectedIndex, financeFound);
     }
   }, [externalSelection]);
 

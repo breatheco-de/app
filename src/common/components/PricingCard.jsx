@@ -1,18 +1,24 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Button, Flex, Divider } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { Image } from '@chakra-ui/next-js';
+import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
-import { isWindow, slugToTitle } from '../../utils';
+import { getQueryString, isWindow, slugToTitle } from '../../utils';
+import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
-  const { fontColor, hexColor, featuredCard } = useStyle();
+  const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
+  const [selectedFinancing, setSelectedFinancing] = useState({});
+  const [accordionState, setAccordionState] = useState(false);
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
+  const queryCoupon = getQueryString('coupon');
+  const [coupon] = usePersistentBySession('coupon', []);
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
@@ -34,7 +40,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
     },
 
     // basic
-    original: {
+    basic: {
       type: t('pricing.basic-plan.type'),
       hookMessage: t('pricing.basic-plan.hook-message'),
       title: t('pricing.basic-plan.title'),
@@ -55,7 +61,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
     },
 
     // premium
-    suggested: {
+    premium: {
       type: t('pricing.premium-plan.type'),
       hookMessage: t('pricing.premium-plan.hook-message'),
       title: t('pricing.premium-plan.title'),
@@ -75,17 +81,27 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       },
     },
   };
-  const viewProps = item.price > 0 ? utilProps.suggested : (utilProps?.[item?.planType] || utilProps.original);
+  const viewProps = item.price > 0 ? utilProps.premium : (utilProps?.[item?.planType] || utilProps.basic);
   const featuredInfo = item?.featured_info ? item?.featured_info : viewProps.featured_info;
   const isOriginalPlan = item?.planType === 'original';
   const color = viewProps?.color;
   const border = viewProps?.border;
   const featured = viewProps?.featured;
+  const existsOptionList = item?.optionList?.length > 1;
+  const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
+  const isPayable = item?.price > 0;
+  const isTotallyFree = item?.type === 'FREE';
+  const alreadyHaveIt = relatedSubscription?.plans?.[0]?.slug === item?.plan_slug;
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
     const qs = parseQuerys({
-      plan: item?.plan_slug,
+      plan: selectedFinancing?.plan_slug || item?.plan_slug,
+      plan_id: selectedFinancing?.plan_id || item?.plan_id,
+      price: selectedFinancing?.price || item?.price,
+      period: selectedFinancing?.period || item?.period,
+      coupon: coupon || queryCoupon,
+      cohort: courseData?.cohort?.id,
     });
 
     if (isWindow) {
@@ -96,7 +112,7 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       }
     }
   };
-
+  const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
   return (
@@ -111,62 +127,141 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
       color={fontColor}
       {...rest}
     >
-      <Flex height="255px" position="relative" padding="8px" flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
-        <Box as="span" color={color} width="fit-content" fontSize="14px" fontWeight={700} borderRadius="22px">
-          {viewProps.type}
-        </Box>
-        <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center" style={{ textWrap: 'balance' }}>
+      <Flex height="auto" position="relative" padding="8px" flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
+        <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center">
           {viewProps.hookMessage}
         </Text>
         <Box>
-
           {!isBootcampType ? (
             <>
               {!isOriginalPlan ? (
-                <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-                  <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                    {item.price_text}
-                  </Box>
-                  {item.discount_text && (
-                    <Box color={color} fontSize="20px" textDecoration="line-through" textAlign="center">
+                <Box display="flex" height="75px" alignItems="center" justifyContent="center" gridGap="4px">
+                  {isFetching ? (
+                    <Skeleton height="48px" width="10rem" borderRadius="4px" />
+                  ) : (
+                    <Flex gridGap="8px" alignItems="center">
+                      <Box color={color} fontFamily="Space Grotesk Variable" fontSize="64px" fontWeight={700} textAlign="center">
+                        {existsOptionList
+                          ? `$${selectedFinancing?.price || item?.optionList?.[0]?.price}`
+                          : (item?.price_text || item?.priceText)}
+                      </Box>
+                      {existsOptionList && manyMonths > 1 && (
+                        <Text size="36px" fontFamily="Space Grotesk Variable" color={color} letterSpacing="normal" fontWeight="700">
+                          {`x ${manyMonths}`}
+                        </Text>
+                      )}
+                    </Flex>
+                  )}
+                  {!isFetching && item.discount_text && (
+                    <Box color={color} fontFamily="Space Grotesk Variable" fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}
                     </Box>
                   )}
                 </Box>
               ) : (
-                <Box color={color} fontSize="var(--heading-xl)" fontWeight={700} textAlign="center">
-                  {`$${item?.price}`}
-                </Box>
+                <>
+                  {isFetching ? (
+                    <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
+                  ) : (
+                    <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                      {isPayable && `$${item?.price}`}
+                      {isTotallyFree && item?.period_label}
+                      {!isPayable && !isTotallyFree && item?.priceText}
+                    </Box>
+                  )}
+                </>
               )}
             </>
           ) : (
             <>
-              <Box display="flex" alignItems="center" justifyContent="center" gridGap="4px">
-                <Box lineHeight="48px" color={color} fontSize="var(--heading-m)" fontWeight={700} textAlign="center">
+              <Box display="flex" alignItems="center" justifyContent="center" margin="2rem 0 3rem 0" gridGap="4px">
+                <Box lineHeight="48px" fontFamily="Space Grotesk Variable" color={color} fontSize="38px" fontWeight={700} textAlign="center">
                   {`${item.ask}`}
                 </Box>
               </Box>
             </>
           )}
-          {item.period_label && (
-            <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" pb="16px">
-              {item.period_label}
-            </Text>
+          {isFetching ? (
+            <SkeletonText margin="8px auto 0 auto" width="6rem" pb="16px" noOfLines={1} spacing="4" />
+          ) : (
+            <>
+              {!isBootcampType && item?.title && !isTotallyFree && (
+                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
+                  {isPayable ? selectedFinancing?.title || item?.title : item?.period_label}
+                </Text>
+              )}
+            </>
           )}
 
-          {(!isBootcampType && relatedSubscription?.invoices?.[0]?.amount === item?.price) ? (
+          {(!isBootcampType && alreadyHaveIt) ? (
             <Text width="100%" textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
               {utilProps.already_have_it}
             </Text>
           ) : (
             <>
-              <Button maxWidth={{ base: '250px', lg: '320px' }} position="absolute" transform="translate(-50%, 0)" left="50%" bottom="8px" variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="12px 24px">
+              <Button isLoading={isFetching} margin={isBootcampType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="0 24px">
                 {!isOriginalPlan && !isBootcampType && (
-                  <Icon icon="rocket" color={viewProps.button.color} width="16px" height="24px" style={{ transform: 'rotate(35deg)' }} />
+                  <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />
                 )}
                 {viewProps.button.title}
               </Button>
             </>
+          )}
+          {!isFetching && existsOptionList && !alreadyHaveIt && (
+            <Accordion index={accordionState ? 0 : -1} allowMultiple>
+              <AccordionItem variant="unstyled" border={0}>
+                <h3>
+                  <AccordionButton
+                    width="100%"
+                    border="1px solid"
+                    mt="16px"
+                    fontSize="17px"
+                    padding="8px 0 8px 16px"
+                    textAlign="center"
+                    color={color}
+                    onClick={toggleAccordion}
+                    fontWeight={700}
+                    height="40px"
+                    borderRadius="3px"
+                  >
+                    <Box as="span" flex="1" textAlign="center">
+                      {t('common:see-financing-options')}
+                    </Box>
+                    <Box borderLeft="1px solid" height="40px" padding="0 10px">
+                      <AccordionIcon height="100%" />
+                    </Box>
+
+                  </AccordionButton>
+                </h3>
+                <AccordionPanel p={0} border={0}>
+                  {item?.optionList.map(
+                    (financing, i) => (
+                      <Button
+                        key={financing?.plan_id}
+                        width="100%"
+                        borderBottom={i === item.optionList.length - 1 ? '0' : '1px solid'}
+                        borderColor={hexColor.borderColor}
+                        background={featuredColor}
+                        _hover={{ opacity: 0.9 }}
+                        _active={{ opacity: 1 }}
+                        fontSize="15px"
+                        letterSpacing="0.05em"
+                        textAlign="center"
+                        fontWeight={500}
+                        height="40px"
+                        borderRadius={i === item.optionList.length - 1 ? '0 0 3px 3px' : '0'}
+                        onClick={() => {
+                          setSelectedFinancing(financing);
+                          toggleAccordion();
+                        }}
+                      >
+                        {`$${financing?.price} / ${financing?.title}`}
+                      </Button>
+                    ),
+                  )}
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
           )}
         </Box>
       </Flex>
@@ -184,27 +279,40 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
         </Flex>
         <Divider margin="15px 0" border={`2px solid ${hexColor.lightColor}`} />
         <Flex display={{ base: 'none', md: 'flex' }} flexDirection="column" gridGap="16px" mt="16px">
-          {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
-            <Box key={info.service.slug} display="flex" gridGap="8px">
-              {info?.service?.icon_url
-                ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                : (
-                  <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
-                )}
-              <Box>
-                <Text size="16px" fontWeight={700} textAlign="left">
-                  {info?.service?.title || slugToTitle(info?.service?.slug)}
-                </Text>
-                {info.features?.length > 0 && (
-                  <Text
-                    size="14px"
-                    textAlign="left"
-                    dangerouslySetInnerHTML={{ __html: info.features?.[0]?.description }}
-                  />
-                )}
-              </Box>
-            </Box>
-          ))}
+          {isFetching ? Array.from({ length: 3 }).map((_, index) => {
+            const randomWidth = Math.floor(Math.random() * 100) + 100;
+            const randomTextLines = Math.floor(Math.random() * 4) + 1;
+            return (
+              <Flex flexDirection="column" gridGap="8px" mb={index !== 2 && '10px'}>
+                <Skeleton key={index} height="10px" width={randomWidth} borderRadius="4px" />
+                <SkeletonText key={index} margin="0 0 0 2rem" noOfLines={randomTextLines} />
+              </Flex>
+            );
+          }) : (
+            <>
+              {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
+                <Box key={info.service.slug} display="flex" gridGap="8px">
+                  {info?.service?.icon_url
+                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
+                    : (
+                      <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                    )}
+                  <Box>
+                    <Text size="16px" fontWeight={700} textAlign="left">
+                      {info?.service?.title || slugToTitle(info?.service?.slug)}
+                    </Text>
+                    {info.features?.length > 0 && (
+                      <Text
+                        size="14px"
+                        textAlign="left"
+                        dangerouslySetInnerHTML={{ __html: info.features?.[0]?.description }}
+                      />
+                    )}
+                  </Box>
+                </Box>
+              ))}
+            </>
+          )}
         </Flex>
 
         <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
@@ -245,7 +353,11 @@ export default function PricingCard({ item, relatedSubscription, ...rest }) {
 PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
+  isFetching: PropTypes.bool,
+  courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
+  isFetching: false,
+  courseData: {},
 };

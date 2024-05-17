@@ -20,13 +20,13 @@ function LoaderContent({ cohortIsLoading }) {
 
   return cohortIsLoading ? (
     <CardSkeleton
-      quantity={2}
+      quantity={1}
       display="flex"
       gridGap="40px"
       flexDirection="column"
       width="100%"
       cardWidth="100%"
-      cardHeight="140px"
+      cardHeight="120px"
     />
   ) : (
     <AlertMessage type="info" message={t('no-date-available')} />
@@ -181,10 +181,12 @@ function ChooseYourClass({
     <Box
       display="flex"
       flexDirection="column"
-      background={backgroundColor}
-      gridGap={{ base: '20px', md: '20px' }}
-      padding={{ base: '56px 18px', md: '26px 70px' }}
-      borderRadius="22px"
+      gridGap="24px"
+      padding="24px 0"
+      backgroundColor={backgroundColor}
+      maxWidth="490px"
+      justifyContent="center"
+      margin="0 auto"
     >
       <Heading size="18px">{t('your-address')}</Heading>
       <Box display="flex" gridGap="18px" alignItems="center" mt="10px">
