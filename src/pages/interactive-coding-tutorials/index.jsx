@@ -72,7 +72,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   }
 
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000`,
+    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=project&limit=1000&lang=${locale}`,
     {
       Accept: 'application/json, text/plain, */*',
     },

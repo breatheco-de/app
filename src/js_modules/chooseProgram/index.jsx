@@ -59,13 +59,13 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
     return false;
   }) : [];
 
-  const marketingCourses = marketingCursesList && marketingCursesList.filter(
+  const marketingCourses = marketingCursesList?.length > 0 ? marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.all_subscriptions?.some(
         (sb) => sb?.selected_cohort_set?.slug === item?.slug,
       ),
     ) && item?.course_translation?.title,
-  );
+  ) : [];
 
   const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
     (item) => item?.cohort?.available_as_saas === false,

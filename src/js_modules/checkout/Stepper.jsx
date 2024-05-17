@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Divider, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Heading from '../../common/components/Heading';
@@ -6,28 +6,28 @@ import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 
-function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
+function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexList, isFirstStep, isSecondStep, isThirdStep, isFourthStep, handleGoBack }) {
   const { t } = useTranslation('signup');
   const { fontColor, disabledColor2 } = useStyle();
-  const maxItemsCount = typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial ? 4 : 3;
+  const maxItemsCount = typeof isFreeTier === 'boolean' && !isFreeTier ? 4 : 3;
   const totalCountListBasedInHidenList = maxItemsCount - hideIndexList.length;
   const position = stepIndex > totalCountListBasedInHidenList ? totalCountListBasedInHidenList : stepIndex;
 
   return (
     <>
-      <Box display={{ base: 'none', md: 'flex' }} gridGap="38px" justifyContent="center" overflow="auto">
+      <Box display={{ base: 'none', md: 'flex' }} maxWidth="490px" justifyContent="space-between" margin="2rem auto 0 auto" id="container-stepper" width="100%" gridGap="38px" overflowY="hidden" overflowX="auto">
         {!hideIndexList.includes(0) && (
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
             {(isSecondStep || isThirdStep || isFourthStep) && (
-              <Icon icon="verified" width="30px" height="30px" />
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isFirstStep ? '700' : '500'}
               color={(isSecondStep || isThirdStep || isFourthStep) && 'success'}
             >
@@ -36,54 +36,61 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
           </Box>
         )}
 
-        {!hideIndexList.includes(1) && (
+        {/* {!hideIndexList.includes(1) && (
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 1 && 'gray.350'}
           >
             {(isThirdStep || isFourthStep) && (
-              <Icon icon="verified" width="30px" height="30px" />
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isSecondStep ? '700' : '500'}
               color={(isThirdStep || isFourthStep) && 'success'}
             >
               {t('choose-your-class')}
             </Heading>
           </Box>
-        )}
+        )} */}
 
         {!hideIndexList.includes(2) && (
           <Box
-            display="flex"
-            gridGap="8px"
+            display={typeof isFreeTier === 'boolean' && isFreeTier ? 'flex' : 'none'}
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 2 && 'gray.350'}
           >
-            {isFourthStep && (
-              <Icon icon="verified" width="30px" height="30px" />
+            {(isFourthStep || selectedPlanCheckoutData?.payment_success) && (
+              <Icon icon="verified" width="18px" height="30px" />
             )}
             <Heading
-              size="sm"
+              size="14px"
               fontWeight={isThirdStep ? '700' : '500'}
-              color={(isFourthStep) && 'success'}
+              color={(isFourthStep || selectedPlanCheckoutData?.payment_success) && 'success'}
             >
               {t('summary')}
             </Heading>
           </Box>
         )}
 
-        {!hideIndexList.includes(3) && (
+        {(!hideIndexList.includes(3)) && (
           <Box
-            display={(typeof checkoutData?.isTrial === 'boolean' && !checkoutData?.isTrial) ? 'flex' : 'none'}
-            gridGap="8px"
+            display={typeof isFreeTier === 'boolean' && isFreeTier === false ? 'flex' : 'none'}
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 3 && 'gray.350'}
           >
-            <Heading size="sm" fontWeight={isFourthStep ? '700' : '500'}>
+            {selectedPlanCheckoutData?.payment_success && (
+              <Icon icon="verified" width="18px" height="30px" />
+            )}
+            <Heading
+              size="14px"
+              fontWeight={isFourthStep ? '700' : '500'}
+              color={selectedPlanCheckoutData?.payment_success && 'success'}
+            >
               {t('payment')}
             </Heading>
           </Box>
@@ -101,7 +108,7 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
           )}
           <Box
             display="flex"
-            gridGap="8px"
+            gridGap="10px"
             alignItems="center"
             color={stepIndex !== 0 && 'gray.350'}
           >
@@ -127,27 +134,27 @@ function Stepper({ stepIndex, checkoutData, hideIndexList, isFirstStep, isSecond
           </Flex>
         </Box>
       )}
+      <Divider maxWidth="490px" margin="0 auto" />
     </>
   );
 }
 
 Stepper.propTypes = {
   stepIndex: PropTypes.number.isRequired,
-  checkoutData: PropTypes.shape({
-    isTrial: PropTypes.bool,
-  }),
+  isFreeTier: PropTypes.bool.isRequired,
   isFirstStep: PropTypes.bool.isRequired,
   isSecondStep: PropTypes.bool.isRequired,
   isThirdStep: PropTypes.bool.isRequired,
   isFourthStep: PropTypes.bool.isRequired,
   handleGoBack: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   hideIndexList: PropTypes.arrayOf(PropTypes.number),
+  selectedPlanCheckoutData: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]),
 };
 
 Stepper.defaultProps = {
-  checkoutData: {},
   handleGoBack: null,
   hideIndexList: [],
+  selectedPlanCheckoutData: {},
 };
 
 export default Stepper;

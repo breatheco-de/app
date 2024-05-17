@@ -30,7 +30,7 @@ import modifyEnv from '../../../../modifyEnv';
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
-  invertHandlerPosition, formContainerStyle,
+  invertHandlerPosition, formContainerStyle, ...rest
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
@@ -203,7 +203,7 @@ function SignupForm({
               ...formContainerStyle,
             }}
           >
-            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap={columnLayout ? '18px' : '24px'}>
+            <Box display="flex" flexDirection="column" maxWidth="430px" margin="0 auto" gridGap={columnLayout ? '18px' : '24px'} {...rest}>
               <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
                 <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
                   <FieldForm

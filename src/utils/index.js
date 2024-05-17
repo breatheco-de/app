@@ -92,6 +92,12 @@ const removeStorageItem = (key) => {
   }
   return null;
 };
+const removeSessionStorageItem = (key) => {
+  if (isWindow) {
+    return sessionStorage.removeItem(key);
+  }
+  return null;
+};
 
 const includesToLowerCase = (text, keyValue) => text.toLowerCase().includes(keyValue.toLowerCase());
 
@@ -412,4 +418,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
+  removeSessionStorageItem,
 };

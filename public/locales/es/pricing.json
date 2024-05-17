@@ -1,12 +1,15 @@
 {
-  "heading": "La programación te hará libre",
-  "sub-heading": "Empieza tu experiencia con 4Geeks totalmente gratis. El camino comprobado para el éxito al aprender tecnología es con mucho feedback y mentorías; en vivo y junto a otras personas",
+  "heading": "Impulsa tu carrera adquiriendo habilidades técnicas",
+  "sub-heading": "Comienza a aprender desde cero y prepárate para ingresar a la industria tecnológica!",
   "read-more" : "Conoce la ciencia detrás de 4Geeks.",
   "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge",
+  "choose-your-career-path": "Elige tu camino profesional",
   "pricing-disclaimer": {
     "title": "Información de los precios y planes",
     "description": "Ten en cuenta que todos los precios y planes listados en esta página están sujetos a cambios en cualquier momento sin previo aviso. Esta flexibilidad nos permite adaptarnos continuamente a las condiciones del mercado, variaciones de costos y otros factores relevantes, asegurando que nuestras ofertas sigan siendo competitivas y estén alineadas con nuestra estrategia comercial. Animamos a nuestros clientes a revisar esta página regularmente para cualquier actualización. El uso continuo de nuestros productos o servicios después de cualquier cambio en los precios constituye tu aceptación de dichos cambios."
   },
+  "see-plans-and-prices": "Ver planes y precios",
+  "you-are-buying": "Estás comprando",
   "learning-code": {
     "title": "¿Qué bloquea el aprendizaje de programacion?",
     "description": "Todos pueden aprender a codificar, no se requieren habilidades matemáticas, pero dependiendo de la situación, es posible que necesites diferentes opciones.",
