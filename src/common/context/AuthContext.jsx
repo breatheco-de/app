@@ -4,10 +4,10 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
-import { isWindow, removeStorageItem, removeURLParameter } from '../../utils';
+import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
-import { usePersistent } from '../hooks/usePersistent';
+import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
@@ -128,6 +128,8 @@ function AuthProvider({ children, pageProps }) {
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
+  const queryCoupon = getQueryString('coupon');
+  const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [modalState, setModalState] = useState({
     state: false,
@@ -221,8 +223,10 @@ function AuthProvider({ children, pageProps }) {
 
     return null;
   };
-
   useEffect(() => {
+    if (queryCoupon) {
+      setCoupon(queryCoupon);
+    }
     authHandler();
   }, [router]);
 
@@ -420,11 +424,12 @@ function AuthProvider({ children, pageProps }) {
 
 AuthProvider.propTypes = {
   children: PropTypes.node,
-  pageProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  pageProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 AuthProvider.defaultProps = {
   children: null,
+  pageProps: {},
 };
 
 export default AuthProvider;
