@@ -45,8 +45,9 @@ function LoginView({ existsWhiteLabel }) {
     if (user !== null && user !== undefined) {
       const redirect = isWindow && localStorage.getItem('redirect');
       if (redirect && redirect.length > 0 && isWindow) {
-        router.push(redirect);
-        localStorage.removeItem('redirect');
+        router.push(redirect).then(() => {
+          localStorage.removeItem('redirect');
+        });
       } else {
         router.push('/choose-program');
       }
