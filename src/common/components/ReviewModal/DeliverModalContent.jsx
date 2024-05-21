@@ -25,6 +25,7 @@ import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
 function DeliverModal({
+  isStudent,
   currentTask,
   projectLink,
   updpateAssignment,
@@ -126,7 +127,7 @@ function DeliverModal({
               <Text size="14px" fontWeight={700}>
                 {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
               </Text>
-              {contextData?.code_revisions?.length > 0 && (
+              {!isStudent && contextData?.code_revisions?.length > 0 && (
                 <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                   {`(${t('code-review.read-code-reviews')})`}
                 </Button>
@@ -215,6 +216,7 @@ function DeliverModal({
 }
 
 DeliverModal.propTypes = {
+  isStudent: PropTypes.bool,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
   deliveryUrl: PropTypes.string.isRequired,
@@ -228,6 +230,7 @@ DeliverModal.propTypes = {
   proceedToCommitFiles: PropTypes.func,
 };
 DeliverModal.defaultProps = {
+  isStudent: false,
   readOnly: false,
   showCodeReviews: false,
   contextData: {},
