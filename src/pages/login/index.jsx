@@ -39,14 +39,15 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function LoginView({ existsWhiteLabel }) {
   const { user } = useAuth();
-  const redirect = isWindow && localStorage.getItem('redirect');
   const router = useRouter();
 
   useEffect(() => {
     if (user !== null && user !== undefined) {
+      const redirect = isWindow && localStorage.getItem('redirect');
       if (redirect && redirect.length > 0 && isWindow) {
-        router.push(redirect);
-        localStorage.removeItem('redirect');
+        router.push(redirect).then(() => {
+          localStorage.removeItem('redirect');
+        });
       } else {
         router.push('/choose-program');
       }
