@@ -471,7 +471,7 @@ function PaymentInfo() {
           </>
         )}
         {!isPaymentSuccess && (
-          <Flex flexDirection="column" gridGap="1.5rem" margin="10rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
+          <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
             <Flex justifyContent="space-between" alignItems="center">
               <Flex gridGap="10px" alignItems="center">
                 <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
