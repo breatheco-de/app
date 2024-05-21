@@ -23,7 +23,9 @@ const usePersistent = (key, initialValue) => {
 const usePersistentBySession = (key, initialValue) => {
   const getStoredValues = useMemo(() => {
     const item = isWindow ? window.sessionStorage.getItem(key) : null;
-    return JSON.parse(item) || initialValue;
+    const isObject = typeof item === 'object';
+    const objectValue = JSON.parse(item) || initialValue;
+    return isObject ? objectValue : item || initialValue;
   }, [key, initialValue]);
 
   const [storedValue, setStoredValue] = useState(getStoredValues);

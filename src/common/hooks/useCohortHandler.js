@@ -119,7 +119,7 @@ function useHandler() {
         const currentCohort = findCohort?.cohort;
         const version = currentCohort?.syllabus_version?.version;
         const name = currentCohort?.syllabus_version?.name;
-        if (!cohortSession?.academy?.id || !currentCohort) {
+        if (assetSlug && (!cohortSession?.academy?.id || !currentCohort)) {
           handleRedirectToPublicPage();
         }
         if (currentCohort) {

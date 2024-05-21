@@ -22,15 +22,17 @@ import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useOnline from '../../common/hooks/useOnline';
+import { usePersistent } from '../../common/hooks/usePersistent';
 
 const AvatarUser = memo(({
-  data, fullName, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
+  data, fullName, isTeacherVersion, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
 }) => {
   const { user } = data;
   const { t } = useTranslation('dashboard');
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
   const router = useRouter();
   const { usersConnected } = useOnline();
+  const [cohortSession] = usePersistent('cohortSession');
 
   const isOnlineUser = usersConnected?.some((id) => id === user?.id);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
@@ -38,6 +40,7 @@ const AvatarUser = memo(({
     en: data?.created_at && format(new Date(data?.created_at), 'MMMM dd, yyyy'),
     es: data?.created_at && format(new Date(data?.created_at), "dd 'de' MMMM, yyyy", { locale: es }),
   };
+  const { cohortSlug } = router.query;
 
   const borderColor = useColorModeValue('white', 'featuredDark');
 
@@ -62,6 +65,12 @@ const AvatarUser = memo(({
             width={width}
             height={height}
             style={{ userSelect: 'none' }}
+            onClick={() => {
+              if (isTeacherVersion && user?.id && cohortSession?.academy?.id) {
+                router.push(`/cohort/${cohortSlug}/student/${user?.id}?academy=${cohortSession.academy.id}`);
+              }
+            }}
+            cursor={isTeacherVersion ? 'pointer' : 'default'}
             title={fullNameLabel}
             src={avatar}
             marginLeft={isWrapped ? '-10px' : '0px'}
@@ -128,6 +137,12 @@ const AvatarUser = memo(({
         width={width}
         height={height}
         style={{ userSelect: 'none' }}
+        onClick={() => {
+          if (isTeacherVersion && user?.id && cohortSession?.academy?.id) {
+            router.push(`/cohort/${cohortSlug}/student/${user?.id}?academy=${cohortSession.academy.id}`);
+          }
+        }}
+        cursor={isTeacherVersion ? 'pointer' : 'default'}
         title={fullNameLabel}
         src={avatar}
         marginLeft={isWrapped ? '-10px' : '0px'}
@@ -162,6 +177,7 @@ AvatarUser.propTypes = {
   index: PropTypes.number,
   withoutPopover: PropTypes.bool,
   avatarUrl: PropTypes.string,
+  isTeacherVersion: PropTypes.bool,
 };
 AvatarUser.defaultProps = {
   fullName: '',
@@ -174,6 +190,7 @@ AvatarUser.defaultProps = {
   index: 0,
   withoutPopover: false,
   avatarUrl: '',
+  isTeacherVersion: false,
 };
 
 export default AvatarUser;

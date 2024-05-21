@@ -42,12 +42,13 @@ export const processPlans = (data, {
       const existsAmountPerMonth = data?.price_per_month > 0;
       const existsAmountPerQuarter = data?.price_per_quarter > 0;
       const existsAmountPerYear = data?.price_per_year > 0;
-      const isNotTrial = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
+      const hasPayaBleSuscription = existsAmountPerHalf || existsAmountPerMonth || existsAmountPerQuarter || existsAmountPerYear;
       const financingOptionsExists = data?.financing_options?.length > 0;
       const financingOptionsManyMonthsExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months > 1);
       const financingOptionsOnePaymentExists = financingOptionsExists && data?.financing_options?.some((l) => l?.monthly_price > 0 && l?.how_many_months === 1);
       const singlePlan = data?.plans?.length > 0 ? data?.plans?.[0] : data;
-      const isTotallyFree = !isNotTrial && singlePlan?.trial_duration === 0 && !financingOptionsExists;
+      const isTotallyFree = !hasPayaBleSuscription && singlePlan?.trial_duration === 0 && !financingOptionsExists;
+      const hasSubscriptionMethod = hasPayaBleSuscription || isTotallyFree || singlePlan?.trial_duration_unit > 0;
 
       const financingOptions = financingOptionsManyMonthsExists
         ? data?.financing_options
@@ -67,6 +68,7 @@ export const processPlans = (data, {
         trial_duration_unit: singlePlan?.trial_duration_unit || '',
         planType,
         show: true,
+        isFreeTier: false,
       };
 
       const textInfo = {
@@ -102,14 +104,14 @@ export const processPlans = (data, {
         price: item?.monthly_price,
         priceText: `$${item?.monthly_price}`,
         period: 'ONE_TIME',
-        period_label: textInfo.label.financing,
+        period_label: textInfo.one_payment,
         plan_id: `f-${item?.monthly_price}-${item?.how_many_months}`,
         description: translations?.one_payment_description || '',
         how_many_months: item?.how_many_months,
         type: 'PAYMENT',
       })) : [{}];
 
-      const trialPlan = (!financingOptionsExists && !isNotTrial) ? {
+      const trialPlan = (!financingOptionsExists && !hasPayaBleSuscription) ? {
         ...relevantInfo,
         title: singlePlan?.title ? singlePlan?.title : unSlugifyCapitalize(String(singlePlan?.slug)),
         price: 0,
@@ -198,11 +200,12 @@ export const processPlans = (data, {
         ...data,
         title: data?.title || slugToTitle(data?.slug),
         isTotallyFree,
-        isTrial: !isNotTrial && !financingOptionsExists,
+        isTrial: !hasPayaBleSuscription && !financingOptionsExists,
         plans: planList,
         featured_info: planPropsData || [],
         paymentOptions: paymentList,
         financingOptions: financingList,
+        hasSubscriptionMethod,
       });
     } catch (error) {
       console.error('Error processing plans:', error);
@@ -315,8 +318,14 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
 
       return ({
         plans: {
-          original_plan: dataForOriginPlan,
-          suggested_plan: dataForSuggestedPlan,
+          original_plan: {
+            ...dataForOriginPlan,
+            originData: originalPlan,
+          },
+          suggested_plan: {
+            ...dataForSuggestedPlan,
+            originData: suggestedPlan,
+          },
         },
         details: planComparison?.details,
         title: planComparison?.details?.title,
@@ -331,21 +340,72 @@ export const getSuggestedPlan = (slug, translations = {}, ignoreProcessPlans = f
  * @param {Function} t Translation function
  * @returns {Promise<object>} Formated original and suggested plan data
  */
-export const fetchSuggestedPlan = async (planSlug, translationsObj = {}) => {
+export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version = 'default') => {
   try {
     const suggestedPlanData = await getSuggestedPlan(planSlug, translationsObj);
-    if (suggestedPlanData?.status_code === 404) {
-      const plan = await generatePlan(planSlug, translationsObj);
+    if (version === 'default') {
+      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
+        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        return {
+          plans: {
+            original_plan: originalPlanData,
+            suggested_plan: {},
+          },
+          details: {},
+          title: originalPlanData?.title || '',
+          planList: [...originalPlanData?.plans || []],
+        };
+      }
       return {
-        plans: {
-          original_plan: plan,
-          suggested_plan: {},
-        },
-        details: {},
-        title: plan?.title || '',
+        ...suggestedPlanData,
+        planList: [
+          ...suggestedPlanData?.plans?.original_plan?.plans || [],
+          ...suggestedPlanData?.plans?.suggested_plan?.plans || [],
+        ],
       };
     }
-    return suggestedPlanData;
+    if (version === 'mkt_plans') {
+      const originalPlanProps = suggestedPlanData.plans?.original_plan || {};
+      const suggestedPlanProps = suggestedPlanData.plans?.suggested_plan || {};
+      const originalPlan = originalPlanProps?.plans || [];
+      const suggestedPlan = suggestedPlanProps?.plans || [];
+      if (suggestedPlanData?.status_code === 404 || suggestedPlanData?.length === 0) {
+        const originalPlanData = await generatePlan(planSlug, translationsObj);
+        return {
+          ...originalPlanData,
+          planList: originalPlanData?.plans || [],
+          plans: {
+            original_plan: originalPlanData,
+            suggested_plan: {},
+          },
+          details: {},
+          title: originalPlanData?.title || '',
+        };
+      }
+      const formatedPlanData = {
+        planList: [...originalPlan, ...suggestedPlan],
+        plans: {
+          original_plan: originalPlanProps,
+          suggested_plan: suggestedPlanProps,
+        },
+        slug: suggestedPlanProps?.slug || originalPlanProps.slug || '',
+        financingOptions: [
+          ...originalPlanProps?.financingOptions || [],
+          ...suggestedPlanProps?.financingOptions || []],
+        paymentOptions: [
+          ...originalPlanProps?.paymentOptions || [],
+          ...suggestedPlanProps?.paymentOptions || []],
+      };
+
+      return formatedPlanData;
+    }
+    return {
+      ...suggestedPlanData,
+      planList: [
+        ...suggestedPlanData?.plans?.original_plan?.plans || [],
+        ...suggestedPlanData?.plans?.suggested_plan?.plans || [],
+      ],
+    };
   } catch (error) {
     console.error(error);
     return {};

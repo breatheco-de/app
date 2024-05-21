@@ -205,7 +205,7 @@ function Read({ data }) {
             size="m"
             textAlign="center"
           >
-            {data.name}
+            {data?.name}
           </Heading>
           <Text
             size="md"

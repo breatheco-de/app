@@ -3,7 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Input, useColorModeValue, useToast,
+  Box, Button, Flex, Image, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -12,19 +12,19 @@ import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import useSignup from '../../common/store/actions/signupAction';
-import Icon from '../../common/components/Icon';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import { usePersistent } from '../../common/hooks/usePersistent';
-import Text from '../../common/components/Text';
 import { getCohort } from '../../common/handlers/cohorts';
 import useAuth from '../../common/hooks/useAuth';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import ModalCardError from './ModalCardError';
+import Icon from '../../common/components/Icon';
+import Text from '../../common/components/Text';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -49,10 +49,10 @@ function PaymentInfo() {
   const { t, lang } = useTranslation('signup');
 
   const {
-    state, setPaymentInfo, handlePayment, getPaymentText,
+    state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
   } = useSignup();
   const { choose } = useAuth();
-  const { paymentInfo, checkoutData, planProps, dateProps, selectedPlanCheckoutData, cohortPlans } = state;
+  const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans } = state;
   const cohortId = Number(getQueryString('cohort'));
   const [, setCohortSession] = usePersistent('cohortSession', {});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,6 +63,8 @@ function PaymentInfo() {
   });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
+  // const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('idle');
   const [stateCard, setStateCard] = useState({
     card_number: 0,
     exp_month: 0,
@@ -74,6 +76,9 @@ function PaymentInfo() {
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
 
+  const isPaymentSuccess = paymentStatus === 'success';
+  const isPaymentIdle = paymentStatus === 'idle';
+  const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
   const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
 
   const getPrice = (planProp) => {
@@ -140,7 +145,7 @@ function PaymentInfo() {
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
 
-  const { backgroundColor, borderColor, fontColor } = useStyle();
+  const { backgroundColor, fontColor } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
   const infoValidation = Yup.object().shape({
@@ -188,7 +193,7 @@ function PaymentInfo() {
             ) : {};
 
             if (isPurchasedPlanFound) {
-              if (findedCohort) {
+              if (findedCohort?.id) {
                 getCohort(findedCohort?.id)
                   .then((cohort) => {
                     joinCohort(cohort);
@@ -262,19 +267,27 @@ function PaymentInfo() {
       await handlePayment({}, true)
         .then((respPayment) => {
           if (respPayment.status === 'FULFILLED') {
-            setReadyToRefetch(true);
+            setPaymentStatus('success');
+            setSelectedPlanCheckoutData({
+              ...selectedPlanCheckoutData,
+              payment_success: true,
+            });
+            setIsSubmitting(false);
+          } else {
+            setPaymentStatus('error');
           }
         })
         .finally(() => {
           actions.setSubmitting(false);
         });
     } else {
+      setPaymentStatus('error');
       handlePaymentErrors(data, actions);
     }
   };
 
   return (
-    <Box display="flex" gridGap="30px" flexDirection={{ base: 'column', md: 'row' }} position="relative">
+    <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 auto', md: '0 auto' }} position="relative">
       <ModalCardError
         openDeclinedModal={openDeclinedModal}
         isSubmitting={isSubmitting}
@@ -302,254 +315,184 @@ function PaymentInfo() {
             });
         }}
       />
-      <Box background={backgroundColor} flex={0.5} p={{ base: '20px 22px', md: '14px 23px' }} height="100%" borderRadius="15px">
-        <Box
-          display="flex"
-          flexDirection="column"
-          background={featuredBackground}
-          w="100%"
-          height="fit-content"
-          p="11px 14px"
-          gridGap="8px"
-          borderRadius="14px"
-        >
-          <Heading size="15px" color="blue.default" textTransform="uppercase">
-            {t('signing-for')}
-          </Heading>
-          <Box display="flex" gridGap="12px">
-            <Box display="flex" flexDirection="column">
-              <Box
-                p="16px"
-                background="blue.default"
-                borderRadius="7px"
-                width="fit-content"
-              >
-                <Icon icon="coding" width="48px" height="48px" color="#fff" />
-              </Box>
-            </Box>
-            <Box display="flex" flexDirection="column" gridGap="7px">
-              <Box display="flex" flexDirection="column" gridGap="0px" alignItems="center">
-                <Box display="flex" width={{ base: '100%', md: '' }} flexDirection="column" gridGap="7px">
-                  <Heading size="18px">
-                    {dateProps?.syllabus_version?.name || selectedPlanCheckoutData?.title}
-                  </Heading>
-                </Box>
-                <Heading
-                  size="xl"
-                  color="blue.default"
-                  width="100%"
-                >
-                  {selectedPlanCheckoutData?.price <= 0
-                    ? selectedPlanCheckoutData?.priceText
-                    : `$${selectedPlanCheckoutData?.price}`}
-                </Heading>
-              </Box>
-              {getPaymentText()?.length > 0 && (
-                <Text
-                  size="14px"
-                  color={useColorModeValue('gray.700', 'gray.400')}
-                >
-                  {getPaymentText()}
-                </Text>
-              )}
-            </Box>
-          </Box>
-          {planProps?.length > 0 && (
+      <Box display="flex" width={{ base: '100%', md: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
+        {!isPaymentIdle ? (
+          <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
+            <Icon icon={isPaymentSuccess ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
+            <Text size="14px" fontWeight={700} textAlign="center" color="black">
+              {isPaymentSuccess ? 'Payment successful' : 'Payment failed'}
+            </Text>
+          </Flex>
+        ) : (
           <>
+            <Heading size="18px">{t('payment-info')}</Heading>
             <Box
               as="hr"
-              width="100%"
-              margin="0"
+              width="20%"
+              margin="12px 0 18px 0"
+              border="0px"
               h="1px"
-              borderColor={borderColor}
+              background={fontColor}
             />
-            <Box fontSize="14px" fontWeight="700" color="blue.default">
-              {t('what-you-will-get')}
-            </Box>
-          </>
-          )}
-          {planProps?.length > 0 && (
-          <Box
-            as="ul"
-            style={{ listStyle: 'none' }}
-            display="flex"
-            flexDirection="column"
-            gridGap="12px"
-          >
-            {planProps?.map((bullet) => bullet?.features[0]?.description && (
-              <Box
-                as="li"
-                key={bullet?.features[0]?.description}
-                display="flex"
-                flexDirection="row"
-                lineHeight="24px"
-                gridGap="8px"
-              >
-                <Icon
-                  icon="checked2"
-                  color="#38A56A"
-                  width="13px"
-                  height="10px"
-                  style={{ margin: '8px 0 0 0' }}
-                />
-                <Box
-                  fontSize="14px"
-                  fontWeight="600"
-                  letterSpacing="0.05em"
-                  dangerouslySetInnerHTML={{ __html: bullet?.description }}
-                />
-                {bullet?.features[0]?.description}
-              </Box>
-            ))}
-          </Box>
-          )}
-        </Box>
-      </Box>
-      <Box display="flex" flexDirection="column" flex={0.5} minWidth={{ base: 'auto', md: '385px' }} background={backgroundColor} p={{ base: '20px 22px', md: '30px 40px' }} height="100%" borderRadius="15px">
-        <Heading size="18px">{t('payment-info')}</Heading>
-        <Box
-          as="hr"
-          width="20%"
-          margin="12px 0 18px 0"
-          border="0px"
-          h="1px"
-          background={fontColor}
-        />
 
-        <Formik
-          initialValues={{
-            owner_name: '',
-            card_number: '',
-            exp: '',
-            cvc: '',
-          }}
-          onSubmit={(values, actions) => {
-            setIsSubmitting(true);
-            const monthAndYear = values.exp?.split('/');
-            const expMonth = monthAndYear[0];
-            const expYear = monthAndYear[1];
-
-            const allValues = {
-              card_number: stateCard.card_number,
-              exp_month: expMonth,
-              exp_year: expYear,
-              cvc: values.cvc,
-            };
-            handleSubmit(actions, allValues);
-          }}
-          validationSchema={infoValidation}
-        >
-          {() => (
-            <Form
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gridGap: '22px',
+            <Formik
+              initialValues={{
+                owner_name: '',
+                card_number: '',
+                exp: '',
+                cvc: '',
               }}
-            >
-              <Box display="flex" gridGap="18px">
-                <FieldForm
-                  type="text"
-                  name="owner_name"
-                  externValue={paymentInfo.owner_name}
-                  handleOnChange={(e) => {
-                    setPaymentInfo('owner_name', e.target.value);
-                    setStateCard({ ...stateCard, owner_name: e.target.value });
-                  }}
-                  pattern="[A-Za-z ]*"
-                  label={t('owner-name')}
-                />
-              </Box>
-              <Box display="flex" gridGap="18px">
-                <FieldForm
-                  type="text"
-                  name="card_number"
-                  externValue={paymentInfo.card_number}
-                  handleOnChange={(e) => {
-                    const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                    const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                    e.target.value = newValue.slice(0, 19);
-                    setPaymentInfo('card_number', e.target.value);
-                    setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
-                  }}
-                  pattern="[0-9]*"
-                  label={t('card-number')}
-                />
-              </Box>
-              <Box display="flex" gridGap="18px">
-                <Box display="flex" gridGap="18px" flex={1}>
-                  <Box display="flex" flexDirection="column" flex={0.5}>
-                    <FieldForm
-                      style={{ flex: 0.5 }}
-                      type="text"
-                      name="exp"
-                      externValue={paymentInfo.exp}
-                      maxLength={3}
-                      handleOnChange={(e) => {
-                        let { value } = e.target;
-                        if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
-                          value += '/';
-                        } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
-                          value = value.slice(0, 1);
-                        }
-                        value = value.substring(0, 5);
+              onSubmit={(values, actions) => {
+                setIsSubmitting(true);
+                const monthAndYear = values.exp?.split('/');
+                const expMonth = monthAndYear[0];
+                const expYear = monthAndYear[1];
 
-                        setPaymentInfo('exp', value);
+                const allValues = {
+                  card_number: stateCard.card_number,
+                  exp_month: expMonth,
+                  exp_year: expYear,
+                  cvc: values.cvc,
+                };
+                handleSubmit(actions, allValues);
+              }}
+              validationSchema={infoValidation}
+            >
+              {() => (
+                <Form
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gridGap: '22px',
+                  }}
+                >
+                  <Box display="flex" gridGap="18px">
+                    <FieldForm
+                      type="text"
+                      name="owner_name"
+                      externValue={paymentInfo.owner_name}
+                      handleOnChange={(e) => {
+                        setPaymentInfo('owner_name', e.target.value);
+                        setStateCard({ ...stateCard, owner_name: e.target.value });
                       }}
-                      pattern="[0-9]*"
-                      label={t('expiration-date')}
+                      pattern="[A-Za-z ]*"
+                      label={t('owner-name')}
                     />
                   </Box>
-                  <FieldForm
-                    style={{ flex: 0.5 }}
-                    type="text"
-                    name="cvc"
-                    externValue={paymentInfo.cvc}
-                    maxLength={3}
-                    handleOnChange={(e) => {
-                      const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                      const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                      e.target.value = newValue.slice(0, 4);
+                  <Box display="flex" gridGap="18px">
+                    <FieldForm
+                      type="text"
+                      name="card_number"
+                      externValue={paymentInfo.card_number}
+                      handleOnChange={(e) => {
+                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                        const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                        e.target.value = newValue.slice(0, 19);
+                        setPaymentInfo('card_number', e.target.value);
+                        setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
+                      }}
+                      pattern="[0-9]*"
+                      label={t('card-number')}
+                    />
+                  </Box>
+                  <Box display="flex" gridGap="18px">
+                    <Box display="flex" gridGap="18px" flex={1}>
+                      <Box display="flex" flexDirection="column" flex={0.5}>
+                        <FieldForm
+                          style={{ flex: 0.5 }}
+                          type="text"
+                          name="exp"
+                          externValue={paymentInfo.exp}
+                          maxLength={3}
+                          handleOnChange={(e) => {
+                            let { value } = e.target;
+                            if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
+                              value += '/';
+                            } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
+                              value = value.slice(0, 1);
+                            }
+                            value = value.substring(0, 5);
 
-                      setPaymentInfo('cvc', e.target.value);
-                    }}
-                    pattern="[0-9]*"
-                    label={t('cvc')}
-                  />
-                </Box>
-              </Box>
-              {(isNotTrial || !priceIsNotNumber) ? (
-                <Button
-                  type="submit"
-                  width="100%"
-                  variant="default"
-                  isLoading={isSubmitting}
-                  height="40px"
-                  mt="0"
-                >
-                  {t('common:proceed-to-payment')}
-                </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  width="100%"
-                  variant="outline"
-                  borderColor="blue.200"
-                  isLoading={isSubmitting}
-                  background={featuredBackground}
-                  _hover={{ background: featuredBackground, opacity: 0.8 }}
-                  _active={{ background: featuredBackground, opacity: 1 }}
-                  color="blue.default"
-                  height="40px"
-                  mt="0"
-                >
-                  {t('common:start-free-trial')}
-                </Button>
+                            setPaymentInfo('exp', value);
+                          }}
+                          pattern="[0-9]*"
+                          label={t('expiration-date')}
+                        />
+                      </Box>
+                      <FieldForm
+                        style={{ flex: 0.5 }}
+                        type="text"
+                        name="cvc"
+                        externValue={paymentInfo.cvc}
+                        maxLength={3}
+                        handleOnChange={(e) => {
+                          const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                          const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                          e.target.value = newValue.slice(0, 4);
+
+                          setPaymentInfo('cvc', e.target.value);
+                        }}
+                        pattern="[0-9]*"
+                        label={t('cvc')}
+                      />
+                    </Box>
+                  </Box>
+                  {(isNotTrial || !priceIsNotNumber) ? (
+                    <Button
+                      type="submit"
+                      width="100%"
+                      variant="default"
+                      isLoading={isSubmitting}
+                      height="40px"
+                      mt="0"
+                    >
+                      {t('common:proceed-to-payment')}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      width="100%"
+                      variant="outline"
+                      borderColor="blue.200"
+                      isLoading={isSubmitting}
+                      background={featuredBackground}
+                      _hover={{ background: featuredBackground, opacity: 0.8 }}
+                      _active={{ background: featuredBackground, opacity: 1 }}
+                      color="blue.default"
+                      height="40px"
+                      mt="0"
+                    >
+                      {t('common:start-free-trial')}
+                    </Button>
+                  )}
+                </Form>
               )}
-            </Form>
-          )}
-        </Formik>
+            </Formik>
+          </>
+        )}
+        {!isPaymentSuccess && (
+          <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="100%" height="auto" objectFit="contain" margin="10rem 0 0 0" />
+        )}
       </Box>
+      {!isPaymentIdle && (
+        <Button
+          width="100%"
+          height="45px"
+          variant="default"
+          // mt="12px"
+          isLoading={isSubmitting}
+          onClick={() => {
+            if (isPaymentSuccess) {
+              setIsSubmitting(true);
+              setReadyToRefetch(true);
+            } else {
+              setPaymentStatus('idle');
+            }
+          }}
+        >
+          {isPaymentSuccess ? 'Start learning' : 'Try again'}
+        </Button>
+      )}
     </Box>
   );
 }

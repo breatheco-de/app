@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 function useLocalStorageQuery(queryKey, queryFn, options) {
   const [data, setData] = useState(null);
@@ -15,27 +15,28 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
     }
   }, []);
 
-  const queryResult = useQuery(
+  const queryResult = useQuery({
     queryKey,
     queryFn,
-    {
-      ...options,
-      onSuccess: (dataFetched) => {
-        setData(dataFetched?.data);
-        setIsLoading(false);
-        const cachedData = JSON.parse(localStorage.getItem('queryCache')) || {};
-        cachedData[queryKey] = dataFetched?.data;
-        localStorage.setItem('queryCache', JSON.stringify(cachedData));
-      },
-      onError: (errorFetched) => {
-        setError(errorFetched);
-        setIsLoading(false);
-      },
-    },
-  );
+    ...options,
+  });
+  const { data: dataFetched, isSuccess, isError } = queryResult;
 
+  useEffect(() => {
+    if (isSuccess) {
+      setData(dataFetched?.data);
+      setIsLoading(false);
+      const cachedData = JSON.parse(localStorage.getItem('queryCache')) || {};
+      cachedData[queryKey] = dataFetched?.data;
+      localStorage.setItem('queryCache', JSON.stringify(cachedData));
+    }
+    if (isError) {
+      setError('Error fetching data for: ', queryKey);
+      setIsLoading(false);
+    }
+  }, [isSuccess, isError]);
   return {
-    data: data || queryResult?.data,
+    data: data || dataFetched,
     isLoading: isLoading || queryResult.isLoading,
     error: error || queryResult.error,
     refetch: queryResult?.refetch,
