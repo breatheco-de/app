@@ -129,7 +129,7 @@ function DeliverModal({
               </Text>
               {!isStudent && contextData?.code_revisions?.length > 0 && (
                 <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                  {`(${t('code-review.read-code-reviews')})`}
+                  {t('code-review.read-code-reviews')}
                 </Button>
               )}
             </Flex>

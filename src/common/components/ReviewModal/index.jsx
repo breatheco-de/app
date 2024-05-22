@@ -569,9 +569,9 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       <Text size="14px" fontWeight={700}>
                         {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
                       </Text>
-                      {contextData?.code_revisions?.length > 0 && (
+                      {!isStudent && contextData?.code_revisions?.length > 0 && (
                         <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                          {`(${t('code-review.read-code-reviews')})`}
+                          {t('code-review.read-code-reviews')}
                         </Button>
                       )}
                     </Flex>

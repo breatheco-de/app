@@ -86,7 +86,7 @@
     "project-delivered": "Project delivered:",
     "your-teacher-said": "Your teacher said:",
     "feedback-will-be-shown-here": "The teacher's feedback will be shown here if it's approved",
-    "read-code-reviews": "Read code reviews",
+    "read-code-reviews": "(Read code reviews)",
     "count-code-reviews": "{{count}} code reviews",
     "read-and-rate-the-feedback": "Read and rate the feedback",
     "start-code-review": "Start code review",
