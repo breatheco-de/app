@@ -490,9 +490,10 @@ function Checkout() {
     const discountType = discountCoupon?.discount_type;
     if (discount) {
       if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
         return {
           originalPrice: price,
-          price: price - (price * discount),
+          price: roundedPrice,
           discount: `${discount * 100}%`,
         };
       }
