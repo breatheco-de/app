@@ -372,9 +372,9 @@ function Page({ data }) {
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
 
-      redirectToCohortIfItsReady();
+      if (cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, cohortData]);
 
   useEffect(() => {
     let interval;
