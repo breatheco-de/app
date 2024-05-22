@@ -371,9 +371,11 @@ function Page({ data }) {
 
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
-
-      if (cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
     }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
   }, [isAuthenticated, cohortData]);
 
   useEffect(() => {
