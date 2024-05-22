@@ -360,7 +360,7 @@ function Page({ data }) {
   };
   useEffect(() => {
     getInitialData();
-  }, [router]);
+  }, [lang]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
