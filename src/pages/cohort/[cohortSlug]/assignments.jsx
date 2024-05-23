@@ -34,6 +34,7 @@ import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import Projects from '../../../common/views/Projects';
+import FinalProjects from '../../../common/views/FinalProjects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
 import axiosInstance from '../../../axios';
 
@@ -506,6 +507,35 @@ function Assignments() {
           >
             {t('projects-view')}
           </Button>
+          <Button
+            background={currentView === 2 ? hexColor.blueDefault : 'none'}
+            borderColor={hexColor.blueDefault}
+            color={currentView === 2 ? '#FFF' : hexColor.blueDefault}
+            _hover={{ opacity: 0.8 }}
+            _active={{ opacity: 0.8 }}
+            textTransform="uppercase"
+            padding="5px 15px"
+            height="40px"
+            leftIcon={(
+              <Icon
+                icon="graduationCap"
+                width="20px"
+                height="20px"
+                color={currentView === 2 ? '#FFF' : hexColor.blueDefault}
+              />
+            )}
+            onClick={() => {
+              setCurrentView(2);
+              router.push({
+                query: {
+                  ...router.query,
+                  view: 1,
+                },
+              });
+            }}
+          >
+            {t('final-projects')}
+          </Button>
         </ButtonGroup>
         <Box display="flex" gridGap="10px">
           <Button
@@ -702,15 +732,7 @@ function Assignments() {
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >
-        {currentView === 1 ? (
-          <Projects
-            updpateAssignment={updpateAssignment}
-            loadStatus={loadStatus}
-            syllabusData={syllabusData}
-            getFilterAssignments={getFilterAssignments}
-            selectedCohort={selectedCohort}
-          />
-        ) : (
+        {currentView === 0 && (
           <StudentAssignments
             currentStudentList={currentStudentList}
             loadStatus={loadStatus}
@@ -719,6 +741,24 @@ function Assignments() {
             updpateAssignment={updpateAssignment}
             count={currentStudentCount}
             loadStudents={loadStudents}
+          />
+        )}
+        {currentView === 1 && (
+          <Projects
+            updpateAssignment={updpateAssignment}
+            loadStatus={loadStatus}
+            syllabusData={syllabusData}
+            getFilterAssignments={getFilterAssignments}
+            selectedCohort={selectedCohort}
+          />
+        )}
+        {currentView === 2 && (
+          <FinalProjects
+            updpateAssignment={updpateAssignment}
+            loadStatus={loadStatus}
+            syllabusData={syllabusData}
+            getFilterAssignments={getFilterAssignments}
+            selectedCohort={selectedCohort}
           />
         )}
       </Box>

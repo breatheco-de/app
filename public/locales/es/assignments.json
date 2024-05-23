@@ -1,8 +1,9 @@
 {
   "back-to": "Volver al Dashboard",
   "title": "Asignaciones",
-  "students-view": "vista de studiantes",
-  "projects-view": "vista de proyectos",
+  "students-view": "estudiantes",
+  "projects-view": "proyectos",
+  "final-projects": "proyectos finales",
   "no-information": "Es posible que el estudiante nunca haya abierto esta tarea. No se encontró información sobre la tarea de este estudiante.",
   "educational-status": "Estatus eduacional",
   "delivered-percentage": "% de entregado",

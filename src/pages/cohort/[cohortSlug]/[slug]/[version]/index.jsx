@@ -541,6 +541,7 @@ function Dashboard() {
                   <FinalProject
                     tasks={taskTodoState}
                     studentAndTeachers={onlyStudentsActive}
+                    isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
                   />
                 )}
                 {cohortSession?.kickoff_date && (
@@ -773,6 +774,7 @@ function Dashboard() {
                 <FinalProject
                   tasks={taskTodoState}
                   studentAndTeachers={onlyStudentsActive}
+                  isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
                 />
               )}
               {cohortSession?.kickoff_date && (
