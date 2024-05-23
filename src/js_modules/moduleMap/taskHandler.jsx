@@ -5,7 +5,9 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import useStyle from '../../common/hooks/useStyle';
 import ReviewModal from '../../common/components/ReviewModal';
+import Icon from '../../common/components/Icon';
 import PopoverTaskHandler, { IconByTaskStatus, TextByTaskStatus } from '../../common/components/PopoverTaskHandler';
 
 export function ButtonHandlerByTaskStatus({
@@ -13,6 +15,7 @@ export function ButtonHandlerByTaskStatus({
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen,
 }) {
   const { t } = useTranslation('dashboard');
+  const { hexColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -77,36 +80,54 @@ export function ButtonHandlerByTaskStatus({
 
   function OpenModalButton() {
     return (
-      <Button
-        isLoading={loaders.isOpeningReviewModal}
-        onClick={() => {
-          if (currentTask) {
-            setLoaders((prevState) => ({
-              ...prevState,
-              isOpeningReviewModal: true,
-            }));
-            handleOpen(() => openAssignmentFeedbackModal());
-          }
-        }}
-        isDisabled={isButtonDisabled}
-        display="flex"
-        minWidth="26px"
-        minHeight="26px"
-        height="fit-content"
-        background={allowText ? 'blue.default' : 'none'}
-        lineHeight={allowText ? '15px' : '0'}
-        padding={allowText ? '12px 24px' : '0'}
-        borderRadius={allowText ? '3px' : '30px'}
-        variant={allowText ? 'default' : 'none'}
-        textTransform={allowText ? 'uppercase' : 'none'}
-        gridGap={allowText ? '12px' : '0'}
-      >
-        {allowText ? (
-          <TextByTaskStatus currentTask={currentTask} t={t} />
-        ) : (
-          <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
+      <>
+        {currentTask?.description && (
+          <Button
+            variant="none"
+            onClick={() => {
+              if (currentTask) {
+                setLoaders((prevState) => ({
+                  ...prevState,
+                  isOpeningReviewModal: true,
+                }));
+                handleOpen(() => openAssignmentFeedbackModal());
+              }
+            }}
+          >
+            <Icon icon="comment" color={hexColor.blueDefault} />
+          </Button>
         )}
-      </Button>
+        <Button
+          isLoading={loaders.isOpeningReviewModal}
+          onClick={() => {
+            if (currentTask) {
+              setLoaders((prevState) => ({
+                ...prevState,
+                isOpeningReviewModal: true,
+              }));
+              handleOpen(() => openAssignmentFeedbackModal());
+            }
+          }}
+          isDisabled={isButtonDisabled}
+          display="flex"
+          minWidth="26px"
+          minHeight="26px"
+          height="fit-content"
+          background={allowText ? 'blue.default' : 'none'}
+          lineHeight={allowText ? '15px' : '0'}
+          padding={allowText ? '12px 24px' : '0'}
+          borderRadius={allowText ? '3px' : '30px'}
+          variant={allowText ? 'default' : 'none'}
+          textTransform={allowText ? 'uppercase' : 'none'}
+          gridGap={allowText ? '12px' : '0'}
+        >
+          {allowText ? (
+            <TextByTaskStatus currentTask={currentTask} t={t} />
+          ) : (
+            <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
+          )}
+        </Button>
+      </>
     );
   }
 
