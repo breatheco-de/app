@@ -4,16 +4,28 @@
   "students-view": "students",
   "projects-view": "projects",
   "final-projects": "Final Projects",
+  "no-final-projects": "No final proyects found",
+  "no-upload-students": "The following students are still pending to upload their final project information.",
+  "see-students": "See students",
   "no-information": "It is possible that the student never opened this assignment. No information was found about this student assignment",
   "educational-status": "Educational Status",
   "delivered-percentage": "% delivered",
   "last-deliver": "Last delivery: {{date}} ago",
   "no-deliver": "No deliveries yet",
+  "pending-upload-modal": {
+    "title": "STUDENTS WITH Pending final project",
+    "description": "The following students are still pending to upload their final project information. "
+  },
+  "project-status": {
+    "done": "Done",
+    "pending": "Pending"
+  },
   "status": {
     "delivered": "Delivered",
     "approved": "Approved",
     "rejected": "Rejected",
     "undelivered": "Undelivered",
+    "pending": "Pending",
     "ignored": "Ignored"
   },
   "educational-list": {

@@ -4,16 +4,28 @@
   "students-view": "estudiantes",
   "projects-view": "proyectos",
   "final-projects": "proyectos finales",
+  "no-final-projects": "No se encontraron proyectos finales",
+  "no-upload-students": "Los siguientes estudiantes aún están pendientes de subir la información de su proyecto final.",
+  "see-students": "Ver estudiantes",
   "no-information": "Es posible que el estudiante nunca haya abierto esta tarea. No se encontró información sobre la tarea de este estudiante.",
   "educational-status": "Estatus eduacional",
   "delivered-percentage": "% de entregado",
   "last-deliver": "Última entrega: hace {{date}}",
   "no-deliver": "Sin entregas",
+  "pending-upload-modal": {
+    "title": "Estudiantes sin subir proyectos finales",
+    "description": "Los siguientes estudiantes aun estan pendientes por subir la informacion de sus proyectos finales."
+  },
+  "project-status": {
+    "done": "Entregado",
+    "pending": "Pendiente"
+  },
   "status": {
     "delivered": "Entregado",
     "approved": "Aprobado",
     "rejected": "Rechazado",
     "undelivered": "No entregado",
+    "pending": "Pendiente",
     "ignored": "Ignorado"
   },
   "educational-list": {

@@ -1,171 +1,250 @@
-import { useState, useCallback, forwardRef } from 'react';
+/* eslint-disable no-unused-vars */
+import { useState, useEffect, forwardRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import {
   Box,
+  Avatar,
+  Button,
+  IconButton,
+  Flex,
+  Divider,
+  Img,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
-import Link from '../components/NextChakraLink';
-import { usePersistent } from '../hooks/usePersistent';
+import bc from '../services/breathecode';
+import NextChakraLink from '../components/NextChakraLink';
 import useStyle from '../hooks/useStyle';
-import Icon from '../components/Icon';
-import Text from '../components/Text';
-import TaskLabel from '../components/taskLabel';
-import { isGithubUrl } from '../../utils/regex';
-import ButtonHandler from '../../js_modules/assignmentHandler/index';
-import useAssignments from '../store/actions/assignmentsAction';
-import PopoverHandler from '../../js_modules/assignmentHandler/PopoverHandler';
+import ReactSelect from '../components/ReactSelect';
 import LoaderScreen from '../components/LoaderScreen';
-import InfiniteScroll from '../components/InfiniteScroll';
-import { ORIGIN_HOST } from '../../utils/variables';
+import Heading from '../components/Heading';
+import Text from '../components/Text';
+import Icon from '../components/Icon';
 
-const ProjectCards = forwardRef(({
-  updpateAssignment,
-  syllabusData,
-  loadStatus,
-  filteredTasks,
-}, ref) => {
+function ProjectCard({ project, updpateProject }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const { name, description, members, revision_status: revisionStatus } = project;
   const { t } = useTranslation('assignments');
-  const router = useRouter();
-  const { contextState } = useAssignments();
-  const { borderColor2 } = useStyle();
-  const [cohortSession] = usePersistent('cohortSession', {});
-  const lang = {
-    es: '/es/',
-    en: '/',
+  const { hexColor } = useStyle();
+
+  const revissionStatusList = [
+    {
+      label: t('status.pending'),
+      value: 'PENDING',
+    },
+    {
+      label: t('status.approved'),
+      value: 'APPROVED',
+    },
+    {
+      label: t('status.rejected'),
+      value: 'REJECTED',
+    },
+    {
+      label: t('status.ignored'),
+      value: 'IGNORED',
+    },
+  ];
+
+  const charLimit = 270;
+  const isDescriptionTrimmed = description.length > charLimit;
+  const trimmedDescription = isDescriptionTrimmed ? `${description.substring(0, charLimit)}...` : description;
+
+  const statusColors = {
+    DONE: hexColor.blueDefault,
+    PENDING: hexColor.yellowDefault,
   };
+
+  const revissionColors = {
+    IGNORED: hexColor.disabledColor,
+    PENDING: hexColor.disabledColor,
+    APPROVED: hexColor.green,
+    REJECTED: hexColor.danger,
+  };
+
+  const statusText = t('project-status', {}, { returnObjects: true });
+  const projectRevissionStatus = revissionStatusList.find(({ value }) => value === revisionStatus);
+
+  const dot = () => ({
+    alignItems: 'center',
+    display: 'flex',
+
+    ':before': {
+      backgroundColor: revissionColors[revisionStatus],
+      borderRadius: 10,
+      content: '" "',
+      display: 'block',
+      marginRight: 8,
+      height: 10,
+      width: 10,
+    },
+  });
+
+  const colourStyles = {
+    input: (styles) => ({ ...styles, ...dot() }),
+    placeholder: (styles) => ({ ...styles, ...dot() }),
+    singleValue: (styles) => ({ ...styles, ...dot() }),
+  };
+
   return (
-    <>
-      {filteredTasks.length > 0 ? (
-        filteredTasks.map((task, i) => {
-          const index = i;
-          const githubUrl = task?.github_url;
-          const haveGithubDomain = githubUrl && isGithubUrl.test(githubUrl);
-          const fullName = `${task.user.first_name} ${task.user.last_name}`;
-          const projectLink = `${ORIGIN_HOST}${lang[router.locale]
-          }project/${task.associated_slug}`;
-
-          const isMandatory = syllabusData.assignments.find(
-            (assignment) => assignment.slug === task.associated_slug && assignment.mandatory && task.revision_status !== 'APPROVED',
-          );
-
-          return (
-            <Box
-              ref={ref || null}
-              key={`${index}-${task.slug}-${task.title}-${fullName}`}
-              p="18px 28px"
-              display="flex"
-              width={{ base: 'max-content', md: '100%' }}
-              minWidth={{ base: '620px', md: '100%' }}
-              maxWidth={{ base: '620px', md: '100%' }}
-              gridGap="10px"
-              justifyContent="space-between"
-              flexDirection="row"
-              alignItems="center"
-              border="1px solid"
-              borderColor={borderColor2}
-              borderRadius="17px"
-            >
-              <Box
-                display="flex"
-                width="auto"
-                minWidth="calc(160px - 0.5vw)"
-              >
-                <Box width="28px" height="28px" marginRight="15px">
-                  {isMandatory && (
-                    <Icon
-                      icon="warning"
-                      color="yellow.default"
-                      width="28px"
-                      height="28px"
-                      title="Mandatory task"
+    <Box
+      border={`1px solid ${hexColor.borderColor}`}
+      padding="8px 22px"
+      borderRadius="11px"
+      overflow="visible"
+    >
+      <Flex overflow="visible" gap="10px">
+        <Box>
+          <Box>
+            <Box display="flex" justifyContent="space-between">
+              <Box display="flex" gap="15px" alignItems="center">
+                <Text fontWeight="900">
+                  {name}
+                </Text>
+                <Text
+                  color={statusColors[project.project_status]}
+                  border={`1px solid ${statusColors[project.project_status]}`}
+                  padding="4px 10px"
+                  borderRadius="18px"
+                  maxHeight="22px"
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                >
+                  {statusText[project.project_status.toLowerCase()]}
+                </Text>
+              </Box>
+              {isDescriptionTrimmed && (
+                <IconButton
+                  variant="ghost"
+                  aria-label={isExpanded ? t('common:show-less') : t('common:show-more')}
+                  size="sm"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  icon={(
+                    <ChevronDownIcon
+                      w="8"
+                      h="8"
+                      style={{ rotate: isExpanded ? '180deg' : '0deg', transition: 'rotate 0.5s' }}
                     />
                   )}
-                </Box>
-                <TaskLabel currentTask={task} t={t} />
-              </Box>
-
-              <Box width="35%">
-                <Text size="15px">{fullName}</Text>
-                <Link
-                  variant="default"
-                  href={projectLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {task.title}
-                </Link>
-              </Box>
-
-              <PopoverHandler
-                task={task}
-                haveGithubDomain={haveGithubDomain}
-                githubUrl={githubUrl}
-              />
-
-              <Box width="auto" minWidth="160px" textAlign="end">
-                <ButtonHandler
-                  currentTask={task}
-                  cohortSession={cohortSession}
-                  contextState={contextState}
-                  updpateAssignment={updpateAssignment}
                 />
-              </Box>
+              )}
             </Box>
-          );
-        })
-      ) : (
-        <>
-          {loadStatus.status === 'loading' && (
-          <Box
-            display="flex"
-            justifyContent="center"
-            mt="2rem"
-            mb="5rem"
-            position="relative"
-          >
-            <LoaderScreen width="80px" height="80px" />
+            <Box display="flex" gap="20px" mt="10px" flexDirection={{ base: 'column', sm: 'row' }}>
+              {project.screenshot && (
+                <Img
+                  width={{ base: '100%', sm: '178px' }}
+                  height="110px"
+                  borderRadius="11px"
+                  src={project.screenshot}
+                />
+              )}
+              <Text size="md" lineHeight="16px">
+                {!isDescriptionTrimmed || isExpanded ? description : trimmedDescription}
+              </Text>
+            </Box>
           </Box>
-          )}
-          {loadStatus.loading === false && (
-          <Text
-            size="25px"
-            pt="3rem"
-            textAlign="center"
-            display="flex"
-            width="auto"
-            margin="0 auto"
-            fontWeight="700"
-          >
-            {t('common:search-not-found')}
-          </Text>
-          )}
-        </>
-      )}
-    </>
+          <Divider background={hexColor.borderColor} margin="10px 0" />
+          <Flex flexDirection={{ base: 'column', sm: 'row' }} overflow="visible" justifyContent="space-between" flexWrap="wrap">
+            <Flex gap="10px" flexWrap="wrap">
+              {members.map((member) => (
+                <Box display="flex" gap="5px" alignItems="center" key={member.id} padding="4px" borderRadius="18px" background="gray.light3">
+                  <Avatar
+                    src={member.profile?.avatar_url}
+                    width="25px"
+                    height="25px"
+                    style={{ userSelect: 'none' }}
+                  />
+                  <Text color="gray.dark">
+                    {`${member.first_name} ${member.last_name}`}
+                  </Text>
+                </Box>
+              ))}
+            </Flex>
+            <ReactSelect
+              key="educational-select"
+              id="educational-select"
+              value={projectRevissionStatus || ''}
+              options={revissionStatusList}
+              styles={colourStyles}
+              isSearchable={false}
+              onChange={(opt) => {
+                updpateProject(project, opt.value);
+              }}
+            />
+          </Flex>
+        </Box>
+        {(project.repo_url || project.video_demo_url) && (
+          <Box minWidth="58px" display="flex" gap="10px">
+            {project.repo_url && (
+              <NextChakraLink href={project.repo_url} target="_blank">
+                <Icon icon="github" color={hexColor.blueDefault} width="24px" height="24px" />
+              </NextChakraLink>
+            )}
+            {project.video_demo_url && (
+              <NextChakraLink href={project.video_demo_url} target="_blank">
+                <Icon icon="tv-live" color={hexColor.blueDefault} width="24px" height="24px" />
+              </NextChakraLink>
+            )}
+          </Box>
+        )}
+      </Flex>
+    </Box>
   );
-});
+}
 
-function FinalProjects({ updpateAssignment, syllabusData, loadStatus, getFilterAssignments, selectedCohort }) {
+const ProjectsSection = forwardRef(({ finalProjects, updpateProject }, ref) => (
+  <>
+    {finalProjects.map((project) => {
+      const { id } = project;
+      return (
+        <Box
+          key={id}
+          ref={ref || null}
+          overflow="visible"
+        >
+          <ProjectCard project={project} updpateProject={updpateProject} />
+        </Box>
+      );
+    })}
+  </>
+));
+
+function FinalProjects({ finalProjects, loadStatus, selectedCohort, updpateProject }) {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const { query } = router;
-  const { academy } = query;
-  const { contextState } = useAssignments();
-  const [currentPage, setCurrentPage] = useState(1);
-  const count = contextState.tasksCount;
-  const itemsPerPage = 20;
-  const pageCount = Math.ceil(count / itemsPerPage);
+  const { cohortSlug } = query;
+  const { fontColor3 } = useStyle();
+  const [pendingStudents, setPendingStudents] = useState([]);
+  const [openStudentsModal, setOpenStudentsModal] = useState(false);
 
-  const hasMore = contextState.allTasks.length < count && !loadStatus.loading;
+  const getAllStudents = async () => {
+    try {
+      if (finalProjects.length > 0) {
+        const resp = await bc.cohort().getStudents2(cohortSlug);
+        if (resp.status === 200) {
+          const { data } = resp;
+          const members = finalProjects.flatMap((project) => project.members);
+          const pending = data.filter((student) => student.role === 'STUDENT' && !members.some((member) => member.id === student.user.id));
+          setPendingStudents(pending);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
-  const filteredTasks = contextState.allTasks;
-
-  const loadMore = useCallback(async () => {
-    await getFilterAssignments(selectedCohort?.value, selectedCohort?.academy || academy, itemsPerPage, contextState.allTasks.length, true);
-
-    setCurrentPage((prevPage) => prevPage + 1);
-  }, [currentPage, contextState.allTasks]);
+  useEffect(() => {
+    getAllStudents();
+  }, [finalProjects]);
 
   return (
     <Box
@@ -174,95 +253,99 @@ function FinalProjects({ updpateAssignment, syllabusData, loadStatus, getFilterA
       margin="0 auto"
       maxWidth="1012px"
       flexGrow={1}
-      overflow="auto"
+      overflow="visible"
     >
-      <Box
-        display="flex"
-        margin="20px 32px 20px 55px"
-        gridGap="10px"
-        justifyContent="space-between"
-        flexDirection="row"
-        alignItems="center"
-        width={{ base: 'max-content', md: 'auto' }}
-      >
-        <Text
-          size="15px"
+      {loadStatus.status !== 'loading' && finalProjects.length === 0 && (
+        <Heading textAlign="center">
+          {t('no-final-projects')}
+        </Heading>
+      )}
+      {pendingStudents.length > 0 && (
+        <Box display="flex" alignItems="center" gap="10px" margin="10px 0" background="yellow.light" padding="8px" borderRadius="4px">
+          <Icon icon="warning" width="14px" height="14px" />
+          <Text>
+            {t('no-upload-students')}
+            {'  '}
+            <Button color="black" variant="link" height="18px" fontWeight="400" onClick={() => setOpenStudentsModal(true)}>
+              {t('see-students')}
+            </Button>
+          </Text>
+        </Box>
+      )}
+      <Modal isOpen={openStudentsModal} onClose={setOpenStudentsModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader fontSize="15px" textTransform="uppercase">
+            {t('pending-upload-modal.title')}
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text size="l" color={fontColor3}>
+              {t('pending-upload-modal.description')}
+            </Text>
+            <Box mt="10px" display="flex" flexDirection="column" gap="12px">
+              {pendingStudents.map((student) => (
+                <Box
+                  key={student.id}
+                  padding="8px 22px"
+                  borderRadius="11px"
+                  background="gray.light3"
+                  display="flex"
+                  alignItems="center"
+                  gap="10px"
+                >
+                  <Avatar
+                    src={student.user.profile?.avatar_url}
+                    width="32px"
+                    height="32px"
+                    style={{ userSelect: 'none' }}
+                  />
+                  <Text>
+                    {`${student.user.first_name} ${student.user.last_name}`}
+                  </Text>
+                </Box>
+              ))}
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Flex overflow="visible" flexDirection="column" gridGap="18px">
+        <ProjectsSection
+          finalProjects={finalProjects}
+          selectedCohort={selectedCohort}
+          updpateProject={updpateProject}
+        />
+      </Flex>
+      {loadStatus.status === 'loading' && (
+        <Box
           display="flex"
-          width={{ base: '6.8rem', md: '50%' }}
-          fontWeight="700"
+          justifyContent="center"
+          mt="2rem"
+          mb="5rem"
+          position="relative"
         >
-          {t('label.status')}
-        </Text>
-        <Text
-          size="15px"
-          display="flex"
-          width={{ base: '13rem', md: '100%' }}
-          fontWeight="700"
-        >
-          {t('label.student-and-assignments')}
-        </Text>
-        <Text
-          size="15px"
-          display="flex"
-          width={{ base: '8.3rem', md: '40%' }}
-          fontWeight="700"
-        >
-          {t('label.link')}
-        </Text>
-        <Text
-          size="15px"
-          display="flex"
-          width={{ base: '25%', md: '25%' }}
-          minWidth="115px"
-          fontWeight="700"
-        >
-          {t('label.actions')}
-        </Text>
-      </Box>
-      <Box display="flex" flexDirection="column" gridGap="18px">
-        <InfiniteScroll
-          data={contextState.allTasks}
-          loadMore={loadMore}
-          currentPage={currentPage}
-          pageCount={pageCount}
-          hasMore={hasMore}
-        >
-          <ProjectCards
-            updpateAssignment={updpateAssignment}
-            syllabusData={syllabusData}
-            loadStatus={loadStatus}
-            filteredTasks={filteredTasks}
-          />
-        </InfiniteScroll>
-        {loadStatus.loading && (
-          <Box
-            display="flex"
-            justifyContent="center"
-            mt="2rem"
-            mb="5rem"
-            position="relative"
-          >
-            <LoaderScreen width="80px" height="80px" />
-          </Box>
-        )}
-      </Box>
+          <LoaderScreen width="80px" height="80px" />
+        </Box>
+      )}
     </Box>
   );
 }
 
 FinalProjects.propTypes = {
-  updpateAssignment: PropTypes.func.isRequired,
-  syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  updpateProject: PropTypes.func.isRequired,
   loadStatus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  getFilterAssignments: PropTypes.func.isRequired,
+  finalProjects: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
-ProjectCards.propTypes = {
-  updpateAssignment: PropTypes.func.isRequired,
-  syllabusData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  filteredTasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  loadStatus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+ProjectsSection.propTypes = {
+  finalProjects: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  updpateProject: PropTypes.func.isRequired,
+};
+
+ProjectCard.propTypes = {
+  project: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  updpateProject: PropTypes.func.isRequired,
 };
 
 export default FinalProjects;
