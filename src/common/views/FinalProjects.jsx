@@ -32,7 +32,7 @@ function ProjectCard({ project, updpateProject }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { name, description, members, revision_status: revisionStatus } = project;
   const { t } = useTranslation('assignments');
-  const { hexColor } = useStyle();
+  const { hexColor, fontColor } = useStyle();
 
   const revissionStatusList = [
     {
@@ -88,9 +88,9 @@ function ProjectCard({ project, updpateProject }) {
   });
 
   const colourStyles = {
-    input: (styles) => ({ ...styles, ...dot() }),
-    placeholder: (styles) => ({ ...styles, ...dot() }),
-    singleValue: (styles) => ({ ...styles, ...dot() }),
+    input: (styles) => ({ ...styles, ...dot(), color: fontColor }),
+    placeholder: (styles) => ({ ...styles, ...dot(), color: fontColor }),
+    singleValue: (styles) => ({ ...styles, ...dot(), color: fontColor }),
   };
 
   return (
@@ -263,7 +263,7 @@ function FinalProjects({ finalProjects, loadStatus, selectedCohort, updpateProje
       {pendingStudents.length > 0 && (
         <Box display="flex" alignItems="center" gap="10px" margin="10px 0" background="yellow.light" padding="8px" borderRadius="4px">
           <Icon icon="warning" width="14px" height="14px" />
-          <Text>
+          <Text color="black">
             {t('no-upload-students')}
             {'  '}
             <Button color="black" variant="link" height="18px" fontWeight="400" onClick={() => setOpenStudentsModal(true)}>
