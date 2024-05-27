@@ -184,6 +184,18 @@ function Checkout() {
       });
   };
 
+  const findAutoSelectedPlan = (checkingData) => {
+    const plans = checkingData?.plans || [];
+    const newPlanList = [...plans];
+    const sortedPlans = newPlanList.sort((a, b) => (a?.how_many_months || 0) - (b?.how_many_months || 0));
+    const defaultAutoSelectedPlan = sortedPlans[0];
+    const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
+      ? checkingData?.plans[0]
+      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+    const autoSelectedPlan = defaultAutoSelectedPlan?.plan_id ? defaultAutoSelectedPlan : autoSelectedPlanByQueryString;
+    return autoSelectedPlan;
+  };
+
   useEffect(() => {
     removeStorageItem('redirect');
     const translations = getTranslations(t);
@@ -387,10 +399,9 @@ function Checkout() {
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
-                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData?.plans?.length === 1
-                      ? checkingData?.plans[0]
-                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    const plans = checkingData?.plans || [];
+                    const existsPayablePlan = plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = findAutoSelectedPlan(checkingData);
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
@@ -412,10 +423,10 @@ function Checkout() {
                 }]);
                 handleChecking({ plan: data })
                   .then((checkingData) => {
-                    const existsPayablePlan = checkingData?.plans.some((item) => item?.price > 0);
-                    const autoSelectedPlan = checkingData?.plans?.length === 1
-                      ? checkingData?.plans[0]
-                      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+                    const plans = checkingData?.plans || [];
+                    const existsPayablePlan = plans.some((item) => item?.price > 0);
+                    const autoSelectedPlan = findAutoSelectedPlan(checkingData);
+
                     if (existsPayablePlan && autoSelectedPlan) {
                       setSelectedPlanCheckoutData(autoSelectedPlan);
                       handleStep(3);
@@ -479,9 +490,10 @@ function Checkout() {
     const discountType = discountCoupon?.discount_type;
     if (discount) {
       if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
         return {
           originalPrice: price,
-          price: price - (price * discount),
+          price: roundedPrice,
           discount: `${discount * 100}%`,
         };
       }
