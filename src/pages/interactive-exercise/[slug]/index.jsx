@@ -35,6 +35,7 @@ import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
 import Icon from '../../../common/components/Icon';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -185,6 +186,7 @@ function Exercise({ exercise, markdown }) {
   const { colorMode } = useColorMode();
   const tabletWithFormRef = useRef(null);
   const bullets = t('exercises:bullets', {}, { returnObjects: true });
+  const { hexColor } = useStyle();
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -292,7 +294,7 @@ function Exercise({ exercise, markdown }) {
             <Flex flexDirection="column" gridGap="1rem" mt="2rem">
               {bullets.map((bullet) => (
                 <Flex gridGap="10px">
-                  <Icon icon={bullet.icon} width="32px" height="32px" />
+                  <Icon icon={bullet.icon} width="32px" height="32px" color={hexColor.blueDefault} />
                   <Text size="18px" textAlign="left">
                     {bullet.title}
                   </Text>
