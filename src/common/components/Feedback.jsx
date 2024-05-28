@@ -18,12 +18,11 @@ const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}
 
 function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const accessToken = getStorageItem('accessToken');
   const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();
   const [selectedData, setSelectedData] = useState({});
   const [codeRevisions, setCodeRevisions] = useState([]);
-  const [isAuthenticatedWithRigobot, setIsAuthenticatedWithRigobot] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const isStorybookView = storyConfig?.externalCodeRevisions;
   const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
@@ -72,23 +71,15 @@ function Feedback({ storyConfig }) {
       error('Error fetching code revisions:', errorData);
     }
   };
-  const verifyRigobotConnection = async () => {
-    const resp = await bc.auth().verifyRigobotConnection(accessToken);
-    const data = await resp.json();
-    if (data) {
-      setIsAuthenticatedWithRigobot(true);
-    }
-  };
 
   useEffect(() => {
     if (isStorybookView) {
       setCodeRevisions(storyConfig?.externalCodeRevisions);
     }
-    if (isAuthenticated) {
+    if (isAuthenticated && isAuthenticatedWithRigobot) {
       getCodeRevisions();
-      verifyRigobotConnection();
     }
-  }, [isAuthenticated, isStorybookView]);
+  }, [isAuthenticated, isAuthenticatedWithRigobot, isStorybookView]);
 
   return (isAuthenticated || isStorybookView) && (
     <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
