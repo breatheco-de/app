@@ -104,7 +104,7 @@ function ProjectCard({ project, updpateProject }) {
       overflow="visible"
     >
       <Flex overflow="visible" gap="10px">
-        <Box>
+        <Box width="100%">
           <Box>
             <Box display="flex" justifyContent="space-between">
               <Box display="flex" gap="15px" alignItems="center">
