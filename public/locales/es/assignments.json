@@ -14,7 +14,7 @@
   "no-deliver": "Sin entregas",
   "pending-upload-modal": {
     "title": "Estudiantes sin subir proyectos finales",
-    "description": "Los siguientes estudiantes aun estan pendientes por subir la informacion de sus proyectos finales."
+    "description": "Los siguientes estudiantes aún están pendientes por subir la información de sus proyectos finales."
   },
   "project-status": {
     "done": "Entregado",
