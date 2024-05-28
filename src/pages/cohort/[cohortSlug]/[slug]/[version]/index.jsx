@@ -537,13 +537,7 @@ function Dashboard() {
                   otherEvents={events}
                   cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
                 />
-                {cohortSession?.stage === 'FINAL_PROJECT' && (
-                  <FinalProject
-                    tasks={taskTodoState}
-                    studentAndTeachers={onlyStudentsActive}
-                    isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
-                  />
-                )}
+
                 {cohortSession?.kickoff_date && (
                 <CohortSideBar
                   cohortSession={cohortSession}
@@ -740,6 +734,13 @@ function Dashboard() {
                   width="100%"
                 />
               </OnlyFor>
+              {cohortSession?.stage === 'FINAL_PROJECT' && (
+                <FinalProject
+                  tasks={taskTodoState}
+                  studentAndTeachers={onlyStudentsActive}
+                  isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
+                />
+              )}
               {cohortSession?.academy_owner?.white_labeled && (
                 <Box
                   className="white-label"
@@ -770,13 +771,6 @@ function Dashboard() {
                 otherEvents={events}
                 cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
               />
-              {cohortSession?.stage === 'FINAL_PROJECT' && (
-                <FinalProject
-                  tasks={taskTodoState}
-                  studentAndTeachers={onlyStudentsActive}
-                  isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
-                />
-              )}
               {cohortSession?.kickoff_date && (
               <CohortSideBar
                 cohortSession={cohortSession}

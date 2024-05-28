@@ -33,6 +33,9 @@ function ProjectCard({ project, updpateProject }) {
   const { name, description, members, revision_status: revisionStatus } = project;
   const { t } = useTranslation('assignments');
   const { hexColor, fontColor } = useStyle();
+  const router = useRouter();
+  const { query } = router;
+  const { cohortSlug, academy } = query;
 
   const revissionStatusList = [
     {
@@ -101,7 +104,7 @@ function ProjectCard({ project, updpateProject }) {
       overflow="visible"
     >
       <Flex overflow="visible" gap="10px">
-        <Box>
+        <Box width="100%">
           <Box>
             <Box display="flex" justifyContent="space-between">
               <Box display="flex" gap="15px" alignItems="center">
@@ -155,17 +158,19 @@ function ProjectCard({ project, updpateProject }) {
           <Flex flexDirection={{ base: 'column', sm: 'row' }} overflow="visible" justifyContent="space-between" flexWrap="wrap">
             <Flex gap="10px" flexWrap="wrap">
               {members.map((member) => (
-                <Box display="flex" gap="5px" alignItems="center" key={member.id} padding="4px" borderRadius="18px" background="gray.light3">
-                  <Avatar
-                    src={member.profile?.avatar_url}
-                    width="25px"
-                    height="25px"
-                    style={{ userSelect: 'none' }}
-                  />
-                  <Text color="gray.dark">
-                    {`${member.first_name} ${member.last_name}`}
-                  </Text>
-                </Box>
+                <NextChakraLink key={member.id} href={`/cohort/${cohortSlug}/student/${member.id}?academy=${academy}`} target="_blank">
+                  <Box display="flex" gap="5px" alignItems="center" padding="4px" borderRadius="18px" background="gray.light3">
+                    <Avatar
+                      src={member.profile?.avatar_url}
+                      width="25px"
+                      height="25px"
+                      style={{ userSelect: 'none' }}
+                    />
+                    <Text color="gray.dark">
+                      {`${member.first_name} ${member.last_name}`}
+                    </Text>
+                  </Box>
+                </NextChakraLink>
               ))}
             </Flex>
             <ReactSelect
