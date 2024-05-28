@@ -180,6 +180,11 @@ function Summary() {
             }
           });
       }, 2000);
+    } else {
+      clearInterval(interval);
+      setReadyToRefetch(false);
+      setIsSubmitting(false);
+      setTimeElapsed(0);
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
