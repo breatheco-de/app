@@ -174,8 +174,8 @@ function ProjectCard({ project, updpateProject }) {
               ))}
             </Flex>
             <ReactSelect
-              key="educational-select"
-              id="educational-select"
+              key="revision-select"
+              id="revision-select"
               value={projectRevissionStatus || ''}
               options={revissionStatusList}
               styles={colourStyles}
