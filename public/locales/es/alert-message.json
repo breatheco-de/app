@@ -1,6 +1,9 @@
 {
   "error-fetching-students-and-teachers": "Error al obtener estudiantes y profesores",
   "error-fetching-students": "Error al intentar obtener estudiantes",
+  "error-fetching-final-projects": "Error al intentar obtener proyectos finales",
+  "error-updating-final-project": "Error al intentar actualizar proyecto final",
+  "success-updating-final-projects": "Proyecto final actualizado exitosamente!",
   "content-not-found": "El endpoint no pudo acceder a ningún contenido de este {{lesson}}",
   "content-not-found2": "El endpoint no pudo acceder a ningún contenido de esta {{lesson}}",
   "default-version-not-found": "La versión predeterminada no pudo acceder a ningún contenido de este {{lesson}}",

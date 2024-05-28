@@ -34,6 +34,7 @@ import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import Projects from '../../../common/views/Projects';
+import FinalProjects from '../../../common/views/FinalProjects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
 import axiosInstance from '../../../axios';
 
@@ -129,6 +130,8 @@ function Assignments() {
 
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [currentStudentCount, setCurrentStudentCount] = useState(0);
+
+  const [finalProjects, setFinalProjects] = useState([]);
 
   const [selectedCohort, setSelectedCohort] = useState(null);
   const [loadStatus, setLoadStatus] = useState({
@@ -287,10 +290,71 @@ function Assignments() {
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
   };
 
+  const loadFinalProjects = async () => {
+    try {
+      setLoadStatus({ loading: true, status: 'loading' });
+      const resp = await bc.assignments().getFinalProjects(selectedCohort?.value);
+      setFinalProjects(resp.data);
+    } catch (e) {
+      toast({
+        position: 'top',
+        title: t('alert-message:error-fetching-final-projects'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadStatus({ loading: false, status: 'idle' });
+    }
+  };
+
+  const updateFinalProject = async (project, revisionStatus) => {
+    try {
+      const { id, members } = project;
+      const payload = {
+        cohort: selectedCohort?.value,
+        revision_status: revisionStatus,
+        members: members.map((member) => member.id),
+      };
+      const resp = await bc.assignments().putFinalProject(selectedCohort?.value, id, payload);
+      const data = await resp.json();
+      if (resp.status >= 400) {
+        toast({
+          position: 'top',
+          title: data.detail,
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
+      } else {
+        const copyFinalProjects = [...finalProjects];
+        const updatedIndex = copyFinalProjects.findIndex((elem) => elem.id === id);
+        copyFinalProjects[updatedIndex].revision_status = revisionStatus;
+        setFinalProjects(copyFinalProjects);
+        toast({
+          position: 'top',
+          title: t('alert-message:success-updating-final-projects'),
+          status: 'success',
+          duration: 7000,
+          isClosable: true,
+        });
+      }
+    } catch (e) {
+      toast({
+        position: 'top',
+        title: t('alert-message:error-updating-final-project'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    }
+  };
+
   useEffect(() => {
     if (selectedCohort) {
       loadStudents();
       getFilterAssignments(selectedCohort.value, selectedCohort.academy || academy);
+      loadFinalProjects();
     }
   }, [
     selectedCohort,
@@ -455,7 +519,7 @@ function Assignments() {
             _active={{ opacity: 0.8 }}
             color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
             textTransform="uppercase"
-            padding="5px 15px"
+            padding={{ base: '5px 10px', sm: '5px 15px' }}
             height="40px"
             leftIcon={(
               <Icon
@@ -484,7 +548,7 @@ function Assignments() {
             _hover={{ opacity: 0.8 }}
             _active={{ opacity: 0.8 }}
             textTransform="uppercase"
-            padding="5px 15px"
+            padding={{ base: '5px 10px', sm: '5px 15px' }}
             height="40px"
             leftIcon={(
               <Icon
@@ -506,8 +570,38 @@ function Assignments() {
           >
             {t('projects-view')}
           </Button>
+          <Button
+            background={currentView === 2 ? hexColor.blueDefault : 'none'}
+            borderColor={hexColor.blueDefault}
+            color={currentView === 2 ? '#FFF' : hexColor.blueDefault}
+            _hover={{ opacity: 0.8 }}
+            _active={{ opacity: 0.8 }}
+            textTransform="uppercase"
+            padding={{ base: '5px 2px', sm: '5px 15px' }}
+            whiteSpace="wrap"
+            height="40px"
+            leftIcon={(
+              <Icon
+                icon="graduationCap"
+                width="20px"
+                height="20px"
+                color={currentView === 2 ? '#FFF' : hexColor.blueDefault}
+              />
+            )}
+            onClick={() => {
+              setCurrentView(2);
+              router.push({
+                query: {
+                  ...router.query,
+                  view: 2,
+                },
+              });
+            }}
+          >
+            {t('final-projects')}
+          </Button>
         </ButtonGroup>
-        <Box display="flex" gridGap="10px">
+        <Box display={currentView === 2 ? 'none' : 'flex'} gridGap="10px">
           <Button
             variant="ghost"
             color={hexColor.blueDefault}
@@ -702,15 +796,7 @@ function Assignments() {
         padding={{ base: '0', md: '0 10px', lg: '0' }}
         p="0 0 30px 0"
       >
-        {currentView === 1 ? (
-          <Projects
-            updpateAssignment={updpateAssignment}
-            loadStatus={loadStatus}
-            syllabusData={syllabusData}
-            getFilterAssignments={getFilterAssignments}
-            selectedCohort={selectedCohort}
-          />
-        ) : (
+        {currentView === 0 && (
           <StudentAssignments
             currentStudentList={currentStudentList}
             loadStatus={loadStatus}
@@ -719,6 +805,23 @@ function Assignments() {
             updpateAssignment={updpateAssignment}
             count={currentStudentCount}
             loadStudents={loadStudents}
+          />
+        )}
+        {currentView === 1 && (
+          <Projects
+            updpateAssignment={updpateAssignment}
+            loadStatus={loadStatus}
+            syllabusData={syllabusData}
+            getFilterAssignments={getFilterAssignments}
+            selectedCohort={selectedCohort}
+          />
+        )}
+        {currentView === 2 && (
+          <FinalProjects
+            finalProjects={finalProjects}
+            loadStatus={loadStatus}
+            selectedCohort={selectedCohort}
+            updpateProject={updateFinalProject}
           />
         )}
       </Box>
