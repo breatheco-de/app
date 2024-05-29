@@ -426,10 +426,11 @@ function Exercise({ exercise, markdown }) {
         </Box>
 
         <Box
-          id="right-side-spacing"
+          id="right-side-spacing2"
           display={{ base: 'none', md: 'flex' }}
           width={{ base: '300px', lg: '350px' }}
           gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
+          minHeight="52rem"
           opacity={0}
           minWidth="250px"
         />
