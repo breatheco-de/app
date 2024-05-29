@@ -240,13 +240,14 @@ function Exercise({ exercise, markdown }) {
           className="box-heading"
           padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}
           margin="0 auto"
-          gridTemplateColumns="repeat(13, 1fr)"
+          gridTemplateColumns="repeat(12, 1fr)"
           gridGap="36px"
           childrenStyle={{
             padding: '0 30px 0 0',
           }}
+          position="relative"
         >
-          <Flex flexDirection="column" gridColumn="2 / span 7">
+          <Flex flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
             <Link
               href="/interactive-exercises"
               color={useColorModeValue('blue.default', 'blue.300')}
@@ -307,6 +308,44 @@ function Exercise({ exercise, markdown }) {
               </Text>
             )}
           </Flex>
+          <Box
+            id="right-side-spacing"
+            display={{ base: 'none', md: 'flex' }}
+            width={{ base: '300px', lg: '350px' }}
+            gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
+            opacity={0}
+            minWidth="250px"
+          />
+          <Box
+            position="absolute"
+            top="2.3rem"
+            right="6rem"
+            display={{ base: 'none', md: 'block' }}
+            width={{ base: '300px', lg: '350px' }}
+            minWidth="250px"
+            height="fit-content"
+            borderWidth="0px"
+          >
+            {exercise?.slug ? (
+              <>
+                <TabletWithForm asset={exercise} href="/interactive-exercises" />
+                <SupplementaryMaterial assets={exercise?.assets_related} />
+                <DynamicCallToAction
+                  assetId={exercise.id}
+                  assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                  assetType="exercise"
+                  placement="side"
+                  marginTop="40px"
+                />
+                <PodcastCallToAction
+                  placement="side"
+                  marginTop="40px"
+                />
+              </>
+            ) : (
+              <Skeleton height="646px" width="100%" borderRadius="17px" />
+            )}
+          </Box>
         </GridContainer>
       </Box>
       <GridContainer
@@ -394,36 +433,6 @@ function Exercise({ exercise, markdown }) {
           opacity={0}
           minWidth="250px"
         />
-        <Box
-          position="absolute"
-          top="6.4rem"
-          right="6rem"
-          display={{ base: 'none', md: 'block' }}
-          width={{ base: '300px', lg: '350px' }}
-          minWidth="250px"
-          height="fit-content"
-          borderWidth="0px"
-        >
-          {exercise?.slug ? (
-            <>
-              <TabletWithForm asset={exercise} href="/interactive-exercises" />
-              <SupplementaryMaterial assets={exercise?.assets_related} />
-              <DynamicCallToAction
-                assetId={exercise.id}
-                assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
-                assetType="exercise"
-                placement="side"
-                marginTop="40px"
-              />
-              <PodcastCallToAction
-                placement="side"
-                marginTop="40px"
-              />
-            </>
-          ) : (
-            <Skeleton height="646px" width="100%" borderRadius="17px" />
-          )}
-        </Box>
         <RelatedContent
           slug={exercise.slug}
           type="EXERCISE"
