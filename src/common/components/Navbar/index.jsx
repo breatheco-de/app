@@ -44,6 +44,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
+  const [userCohorts, setUserCohorts] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
@@ -113,6 +114,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     const existsCohortWithoutAvailableAsSaas = respCohorts.data?.cohorts?.length > 0 && respCohorts.data.cohorts.some((c) => c?.cohort?.available_as_saas === false);
     const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
     setHasPaidSubscription(existsCohortWithoutAvailableAsSaas || existsPaidSubscription);
+    setUserCohorts(respCohorts.data?.cohorts || []);
   };
 
   useEffect(() => {
@@ -157,12 +159,16 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     }
     if (!pageProps?.existsWhiteLabel) {
       if (!isLoading && user?.id) {
-        setITEMS(items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true));
+        const isBootcampStudent = userCohorts.some(({ cohort }) => !cohort.available_as_saas);
+        setITEMS(
+          items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true)
+            .filter((item) => item.id !== 'bootcamps' || !isBootcampStudent),
+        );
       } else {
         setITEMS(items.filter((item) => item.disabled !== true));
       }
     }
-  }, [user, isLoading, selectedProgramSlug, mktCourses, router.locale]);
+  }, [user, userCohorts, isLoading, selectedProgramSlug, mktCourses, router.locale]);
 
   const closeSettings = () => {
     setSettingsOpen(false);

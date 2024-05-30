@@ -1,6 +1,9 @@
 {
   "error-fetching-students-and-teachers": "Error fetching students and teachers",
   "error-fetching-students": "Error fetching students",
+  "error-fetching-final-projects": "Error fetching final projects",
+  "error-updating-final-project": "Error updating final project",
+  "success-updating-final-projects": "Final project updated succesfully!",
   "content-not-found": "The endpoint could not access any content of this {{lesson}}",
   "content-not-found2": "The endpoint could not access any content of this {{lesson}}",
   "default-version-not-found": "Default version could not access any content of this {{lesson}}",

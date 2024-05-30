@@ -241,10 +241,10 @@ function Page({ data }) {
     choose({
       version: syllabusVersion?.version,
       slug: syllabusVersion?.slug,
-      cohort_name: cohort.name,
+      cohort_name: cohort?.name,
       cohort_slug: cohort?.slug,
       syllabus_name: syllabusVersion,
-      academy_id: cohort.academy.id,
+      academy_id: cohort?.academy.id,
     });
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
@@ -360,7 +360,7 @@ function Page({ data }) {
   };
   useEffect(() => {
     getInitialData();
-  }, [router]);
+  }, [lang]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
@@ -371,10 +371,12 @@ function Page({ data }) {
 
         setRelatedSubscription(subscriptionRelatedToThisCohort);
       });
-
-      redirectToCohortIfItsReady();
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (isAuthenticated && cohortData?.cohortSyllabus?.cohort?.id) redirectToCohortIfItsReady();
+  }, [isAuthenticated, cohortData]);
 
   useEffect(() => {
     let interval;
