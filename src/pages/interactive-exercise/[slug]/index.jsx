@@ -4,11 +4,11 @@ import {
   useColorModeValue,
   useColorMode,
   Skeleton,
+  Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import React, { useRef, useState, useEffect } from 'react';
-import Script from 'next/script';
 import Head from 'next/head';
 import getT from 'next-translate/getT';
 import Heading from '../../../common/components/Heading';
@@ -28,13 +28,14 @@ import PodcastCallToAction from '../../../common/components/PodcastCallToAction'
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import useStyle from '../../../common/hooks/useStyle';
 import { cleanObject, isWindow } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
 import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
+import Icon from '../../../common/components/Icon';
+import useStyle from '../../../common/hooks/useStyle';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -183,8 +184,9 @@ function Exercise({ exercise, markdown }) {
   const { isAuthenticated } = useAuth();
   const [isCtaVisible, setIsCtaVisible] = useState(true);
   const { colorMode } = useColorMode();
-  const { lightColor } = useStyle();
   const tabletWithFormRef = useRef(null);
+  const bullets = t('exercises:bullets', {}, { returnObjects: true });
+  const { hexColor } = useStyle();
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -224,9 +226,6 @@ function Exercise({ exercise, markdown }) {
           />
         </Head>
       )}
-      {exercise?.title && (
-        <Script async defer src="https://buttons.github.io/buttons.js" />
-      )}
       <FixedBottomCta
         isCtaVisible={isCtaVisible && !isAuthenticated}
         asset={exercise}
@@ -241,66 +240,112 @@ function Exercise({ exercise, markdown }) {
           className="box-heading"
           padding={{ base: '2rem 15px 2rem 15px', md: '2rem 0 2rem 0' }}
           margin="0 auto"
-          withContainer
           gridTemplateColumns="repeat(12, 1fr)"
-          gridColumn="2 / span 12"
           gridGap="36px"
           childrenStyle={{
             padding: '0 30px 0 0',
           }}
+          position="relative"
         >
-          <Link
-            href="/interactive-exercises"
-            color={useColorModeValue('blue.default', 'blue.300')}
-            display="inline-block"
-            letterSpacing="0.05em"
-            fontWeight="700"
-            paddingBottom="10px"
-            width="fit-content"
-          >
-            {`← ${t('exercises:backToExercises')}`}
-          </Link>
-          <TagCapsule
-            isLink
-            variant="rounded"
-            tags={exercise?.technologies}
-            marginY="8px"
-            style={{
-              padding: '2px 10px',
-              margin: '0',
-            }}
-            gap="10px"
-            paddingX="0"
-          />
-          {exercise?.title ? (
-            <Heading
-              as="h1"
-              size="l"
+          <Flex flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
+            <Link
+              href="/interactive-exercises"
+              color={useColorModeValue('blue.default', 'blue.300')}
+              display="inline-block"
+              letterSpacing="0.05em"
               fontWeight="700"
-              textTransform="capitalize"
-              paddingTop="10px"
-              marginBottom="10px"
-              transition="color 0.2s ease-in-out"
-              color={useColorModeValue('black', 'white')}
+              paddingBottom="10px"
+              width="fit-content"
             >
-              {exercise.title}
-            </Heading>
-          ) : (
-            <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
-          )}
-          {exercise?.sub_title && (
-            <Text size="md" color={lightColor} textAlign="left" marginBottom="10px" px="0px">
-              {exercise.sub_title}
-            </Text>
-          )}
-          {exercise?.title && (
-            <a className="github-button" href={exercise?.url} data-icon="octicon-star" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
-          )}
-          {exercise?.author && (
-            <Text size="md" textAlign="left" my="10px" px="0px">
-              {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
-            </Text>
-          )}
+              {`← ${t('exercises:backToExercises')}`}
+            </Link>
+            <TagCapsule
+              isLink
+              variant="rounded"
+              tags={exercise?.technologies}
+              marginY="8px"
+              style={{
+                padding: '2px 10px',
+                margin: '0',
+              }}
+              gap="10px"
+              paddingX="0"
+            />
+            {exercise?.title ? (
+              <Heading
+                as="h1"
+                size="l"
+                fontWeight="700"
+                textTransform="capitalize"
+                paddingTop="10px"
+                marginBottom="10px"
+                transition="color 0.2s ease-in-out"
+                color={useColorModeValue('black', 'white')}
+              >
+                {exercise.title}
+              </Heading>
+            ) : (
+              <Skeleton height="45px" width="100%" m="22px 0 35px 0" borderRadius="10px" />
+            )}
+            {exercise?.description && (
+              <Text size="18px" color="currentColor" textAlign="left" marginBottom="10px" px="0px">
+                {exercise.description}
+              </Text>
+            )}
+            <Flex flexDirection="column" gridGap="1rem" mt="2rem">
+              {bullets.map((bullet) => (
+                <Flex gridGap="10px">
+                  <Icon icon={bullet.icon} width="32px" height="32px" color={hexColor.blueDefault} />
+                  <Text size="18px" textAlign="left">
+                    {bullet.title}
+                  </Text>
+                </Flex>
+              ))}
+            </Flex>
+            {exercise?.author && (
+              <Text size="md" textAlign="left" my="10px" px="0px">
+                {`${t('exercises:created')} ${exercise.author.first_name} ${exercise.author.last_name}`}
+              </Text>
+            )}
+          </Flex>
+          <Box
+            id="right-side-spacing"
+            display={{ base: 'none', md: 'flex' }}
+            width={{ base: '300px', lg: '350px' }}
+            gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
+            opacity={0}
+            minWidth="250px"
+          />
+          <Box
+            position="absolute"
+            top="2.3rem"
+            right="6rem"
+            display={{ base: 'none', md: 'block' }}
+            width={{ base: '300px', lg: '350px' }}
+            minWidth="250px"
+            height="fit-content"
+            borderWidth="0px"
+          >
+            {exercise?.slug ? (
+              <>
+                <TabletWithForm asset={exercise} href="/interactive-exercises" />
+                <SupplementaryMaterial assets={exercise?.assets_related} />
+                <DynamicCallToAction
+                  assetId={exercise.id}
+                  assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
+                  assetType="exercise"
+                  placement="side"
+                  marginTop="40px"
+                />
+                <PodcastCallToAction
+                  placement="side"
+                  marginTop="40px"
+                />
+              </>
+            ) : (
+              <Skeleton height="646px" width="100%" borderRadius="17px" />
+            )}
+          </Box>
         </GridContainer>
       </Box>
       <GridContainer
@@ -381,36 +426,14 @@ function Exercise({ exercise, markdown }) {
         </Box>
 
         <Box
+          id="right-side-spacing2"
           display={{ base: 'none', md: 'flex' }}
+          width={{ base: '300px', lg: '350px' }}
           gridColumn={{ base: '8 / span 4', lg: '9 / span 3' }}
-          margin="20px 0 0 auto"
-          flexDirection="column"
-          width={{ base: '300px', lg: '350px', xl: '350px' }}
+          minHeight="52rem"
+          opacity={0}
           minWidth="250px"
-          height="fit-content"
-          borderWidth="0px"
-          overflow="hidden"
-        >
-          {exercise?.slug ? (
-            <>
-              <TabletWithForm asset={exercise} href="/interactive-exercises" />
-              <SupplementaryMaterial assets={exercise?.assets_related} />
-              <DynamicCallToAction
-                assetId={exercise.id}
-                assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
-                assetType="exercise"
-                placement="side"
-                marginTop="40px"
-              />
-              <PodcastCallToAction
-                placement="side"
-                marginTop="40px"
-              />
-            </>
-          ) : (
-            <Skeleton height="646px" width="100%" borderRadius="17px" />
-          )}
-        </Box>
+        />
         <RelatedContent
           slug={exercise.slug}
           type="EXERCISE"

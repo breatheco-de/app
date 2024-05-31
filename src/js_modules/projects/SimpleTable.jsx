@@ -287,7 +287,7 @@ function SimpleTable({
             </Link>
           </Flex>
         )}
-        {solution !== null && videoAvailable && isAuthenticated && (
+        {solution !== null && isAuthenticated && (
           <Flex
             width="100%"
             py="14px"
@@ -302,7 +302,7 @@ function SimpleTable({
               {t('common:solution-code')}
             </Text>
             <Link
-              href={videoAvailable}
+              href={solution}
               color="blue.default"
               target="_blank"
               rel="noopener noreferrer"

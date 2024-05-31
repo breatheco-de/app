@@ -224,10 +224,12 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         ...prevState,
         isFetchingCodeReviews: true,
       }));
-      getRepoFiles();
-      getCodeRevisions();
+      if (isAuthenticatedWithRigobot) {
+        getRepoFiles();
+        getCodeRevisions();
+      }
     }
-  }, [isOpen, currentTask?.id, externalData]);
+  }, [isOpen, isAuthenticatedWithRigobot, currentTask?.id, externalData]);
 
   const onChangeComment = (e) => {
     setComment(e.target.value);

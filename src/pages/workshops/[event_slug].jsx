@@ -81,9 +81,12 @@ export const getStaticProps = async ({ params, locale }) => {
   const data = resp?.data;
 
   if (resp.statusText === 'not-found' || !data?.slug || !['ACTIVE', 'FINISHED'].includes(data.status)) {
-    return {
-      notFound: true,
-    };
+    return ({
+      props: {
+        translations: [],
+        disableLangSwitcher: true,
+      },
+    });
   }
   const lang = (data?.lang === 'us' || data?.lang === null) ? 'en' : data?.lang;
 
@@ -152,6 +155,7 @@ function Page({ eventData, asset }) {
     data: null,
   });
   const [myCohorts, setMyCohorts] = useState([]);
+  const [assetData, setAssetData] = useState(asset);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
@@ -162,21 +166,33 @@ function Page({ eventData, asset }) {
 
   const router = useRouter();
   const { locale } = router;
+  const eventSlug = router?.query?.event_slug;
   const toast = useToast();
   const { isAuthenticated, user } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
 
-  const getEventData = async () => {
-    const resp = await bc.public().singleEvent(eventData?.slug).catch(() => ({
+  const getDefaultData = async () => {
+    const resp = await bc.public().singleEvent(eventData?.slug || eventSlug).catch(() => ({
       statusText: 'not-found',
     }));
     const data = resp?.data;
+    if (data?.asset_slug) {
+      const assetResp = await bc.lesson().getAsset(data?.asset_slug);
+      setAssetData(assetResp?.data);
+    }
     setEvent(data);
   };
+
+  useEffect(() => {
+    if (!eventData?.slug && !asset?.slug) {
+      getDefaultData();
+    }
+  }, [locale, eventData, eventSlug]);
+
   useEffect(() => {
     if (eventData?.id) {
-      getEventData();
+      // getDefaultData();
       const eventLang = (eventData?.lang === 'us' || eventData?.lang === null) ? 'en' : eventData?.lang;
       if (eventLang !== locale) {
         window.location.href = `/${eventLang}/workshops/${eventData?.slug}`;
@@ -505,8 +521,8 @@ function Page({ eventData, asset }) {
 
   const getAssetType = (myAsset) => {
     let assetType;
-    if (categoriesFor.howTo.split(',').includes(myAsset.category.slug)) assetType = 'how-to';
-    else assetType = assetTypeDict[myAsset.asset_type];
+    if (categoriesFor.howTo.split(',').includes(myAsset?.category.slug)) assetType = 'how-to';
+    else assetType = assetTypeDict[myAsset?.asset_type];
 
     return assetType;
   };
@@ -667,7 +683,7 @@ function Page({ eventData, asset }) {
               />
             </Box>
           )}
-          {asset && (
+          {assetData && (
             <>
               <Box mb="20px">
                 <Text size="26px" fontWeight={700} mb="10px">
@@ -684,22 +700,22 @@ function Page({ eventData, asset }) {
                   justifyContent="space-between"
                 >
                   <Box display="flex" justifyContent="space-between" marginBottom="20px">
-                    <TagCapsule whiteSpace="nowrap" padding="0" margin="0" tags={asset.technologies?.slice(0, 1) || []} variant="rounded" />
+                    <TagCapsule whiteSpace="nowrap" padding="0" margin="0" tags={assetData.technologies?.slice(0, 1) || []} variant="rounded" />
                     <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
-                      {t(`common:${asset.asset_type.toLowerCase()}`)}
+                      {t(`common:${assetData.asset_type.toLowerCase()}`)}
                     </Text>
                   </Box>
-                  <Link width="100%" display="block" locale={langsDict[asset.lang || 'en']} href={`/${getAssetType(asset)}/${asset.slug}`}>
+                  <Link width="100%" display="block" locale={langsDict[assetData.lang || 'en']} href={`/${getAssetType(asset)}/${assetData.slug}`}>
                     <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
                       <Text size="md" fontWeight="700" color={hexColor.blueDefault}>
-                        {asset.title}
+                        {assetData.title}
                       </Text>
                       <Icon icon="arrowRight" color="" width="20px" height="14px" />
                     </Box>
                   </Link>
                 </Box>
               </Box>
-              {!finishedEvent && asset.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
+              {!finishedEvent && assetData.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
                 <SmallCardsCarousel
                   boxStyle={{
                     width: '210px',

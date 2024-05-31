@@ -6,8 +6,8 @@
     "image": "{{domain}}/static/images/image1.png"
   },
   "backToLessons": "Back to Lessons",
-  "title": "Lesson",
-  "search": "Search lesson",
+  "title": "Lessons",
+  "search": "Search lessons",
   "description": "The following lessons explain different programming concepts and have been published by our members. Search for a particular lesson using the filters",
   "landing-technology": {
     "title": "Readings and lessons about {{technology}}",
