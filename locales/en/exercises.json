@@ -29,6 +29,20 @@
   "clone-tooltip": "Clone repository",
   "how-to-clone": "Read more about cloning a project",
   "clone-link": "/how-to/github-clone-repository",
+  "bullets": [
+    {
+      "title": "Work on real-life coding environments with LearnPack.",
+      "icon": "learnpack"
+    },
+    {
+      "title": "Get instant help with our AI mentor: Rigobot.",
+      "icon": "rigobot-avatar-tiny"
+    },
+    {
+      "title": "No installation, you go directly to programming",
+      "icon": "prov-bridge"
+    }
+  ],
   "modal" : {
     "title": "Choose Provisional Vendor",
     "text-part-one": "LearnPack allows you to open these exercises on VSCode instantly and for free using one of the following vendors:",
