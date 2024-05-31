@@ -145,6 +145,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getRepoFiles = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().personalFiles(currentTask.id)
         : await bc.assignments().files(currentTask.id);
@@ -173,6 +174,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getCodeRevisions = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id)
         : await bc.assignments().getCodeRevisions(currentTask.id);
@@ -224,12 +226,10 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         ...prevState,
         isFetchingCodeReviews: true,
       }));
-      if (isAuthenticatedWithRigobot) {
-        getRepoFiles();
-        getCodeRevisions();
-      }
+      getRepoFiles();
+      getCodeRevisions();
     }
-  }, [isOpen, isAuthenticatedWithRigobot, currentTask?.id, externalData]);
+  }, [isOpen, currentTask?.id, externalData]);
 
   const onChangeComment = (e) => {
     setComment(e.target.value);

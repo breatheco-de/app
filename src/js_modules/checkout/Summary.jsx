@@ -118,18 +118,14 @@ function Summary() {
       .then(async (resp) => {
         const dataRequested = await resp.json();
         if (resp.status >= 400) {
-          if (resp?.status === 400) { // Already in the cohort
-            redirectTocohort(cohort);
-          } else {
-            toast({
-              position: 'top',
-              title: dataRequested?.detail,
-              status: 'error',
-              duration: 5000,
-              isClosable: true,
-            });
-            setReadyToRefetch(false);
-          }
+          toast({
+            position: 'top',
+            title: dataRequested?.detail,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+          setReadyToRefetch(false);
         }
         if (dataRequested?.id) {
           redirectTocohort(cohort);
