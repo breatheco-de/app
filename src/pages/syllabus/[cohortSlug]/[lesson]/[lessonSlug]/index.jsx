@@ -392,20 +392,6 @@ function Content() {
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
-        icon: 'message',
-        slug: 'teacher-instructions',
-        title: t('teacherSidebar.instructions'),
-        content: extendedInstructions !== null,
-        actionHandler: () => {
-          setExtendedIsEnabled(!extendedIsEnabled);
-          if (extendedIsEnabled === false) {
-            scrollTop();
-          }
-        },
-        actionState: extendedIsEnabled,
-        id: 1,
-      },
-      {
         icon: 'key',
         slug: 'key-concepts',
         title: t('teacherSidebar.key-concepts'),
@@ -618,6 +604,17 @@ function Content() {
           setShowPendingTasks={setShowPendingTasks}
           isOpen={isOpen}
           onToggle={onToggle}
+          isStudent={!profesionalRoles.includes(cohortSession.cohort_role)}
+          teacherInstructions={{
+            content: extendedInstructions !== null,
+            actionHandler: () => {
+              setExtendedIsEnabled(!extendedIsEnabled);
+              if (extendedIsEnabled === false) {
+                scrollTop();
+              }
+            },
+            actionState: extendedIsEnabled,
+          }}
         />
 
         <Box width={{ base: '100%', md: '100%', lg: 'calc(100% - 26.6vw)' }} margin="0 auto" height="auto">
