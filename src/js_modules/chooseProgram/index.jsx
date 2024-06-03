@@ -49,12 +49,12 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
 
     const currentSubscription = item?.plan_financing || item?.subscription;
     const isFreeTrial = currentSubscription?.status?.toLowerCase() === 'free_trial';
-    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer?.status) || (item?.all_subscriptions?.length > 0
+    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer) || (item?.all_subscriptions?.length > 0
       && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
 
     // Ignore free_trial subscription if plan_offer already exists in list
+    if (isFreeTrial && suggestedPlan?.slug !== undefined) return false;
     if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
-    if (isFreeTrial && suggestedPlan !== undefined) return false;
 
     return false;
   }) : [];
