@@ -109,7 +109,7 @@ function PaymentInfo() {
       ...cohort,
       selectedProgramSlug: cohortDashboardLink,
     });
-    router.push(cohortDashboardLink);
+    window.location.href = `${window.location.origin}${cohortDashboardLink}`;
   };
   const joinCohort = (cohort) => {
     reportDatalayer({
