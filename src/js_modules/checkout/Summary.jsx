@@ -117,18 +117,18 @@ function Summary() {
     bc.cohort().join(cohort?.id)
       .then(async (resp) => {
         const dataRequested = await resp.json();
-        if (dataRequested?.status === 'ACTIVE') {
-          redirectTocohort(cohort);
-        }
-        if (dataRequested?.status_code >= 400) {
+        if (resp.status >= 400) {
           toast({
             position: 'top',
             title: dataRequested?.detail,
-            status: 'info',
+            status: 'error',
             duration: 5000,
             isClosable: true,
           });
           setReadyToRefetch(false);
+        }
+        if (dataRequested?.id) {
+          redirectTocohort(cohort);
         }
       })
       .catch(() => {
@@ -180,6 +180,11 @@ function Summary() {
             }
           });
       }, 2000);
+    } else {
+      clearInterval(interval);
+      setReadyToRefetch(false);
+      setIsSubmitting(false);
+      setTimeElapsed(0);
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
