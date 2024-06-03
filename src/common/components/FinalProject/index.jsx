@@ -15,14 +15,14 @@ import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 
-function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
+function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const { t } = useTranslation('final-project');
   const [isOpen, setIsOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [finalProject, setFinalProjects] = useState([]);
   const [cohortSession] = usePersistent('cohortSession', {});
   const router = useRouter();
-  const { modal } = useStyle();
+  const { modal, hexColor } = useStyle();
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const storyConfigExists = Object.keys(storyConfig).length > 0;
   const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
@@ -123,45 +123,68 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks }) {
           <Heading
             size="18px"
           >
-            {finalProjectTranslation?.['what-do-you-need-to-graduate'] || t('what-do-you-need-to-graduate')}
+            {isStudent ? finalProjectTranslation?.['what-do-you-need-to-graduate'] || t('what-do-you-need-to-graduate') : finalProjectTranslation?.['review-final-projects'] || t('review-final-projects')}
           </Heading>
           <Text size="l" mt="10px">
-            {finalProjectTranslation?.['almost-there'] || t('almost-there')}
+            {isStudent ? finalProjectTranslation?.['almost-there'] || t('almost-there') : finalProjectTranslation?.['almost-there-teacher'] || t('almost-there-teacher')}
           </Text>
           <Box display="flex" flexDirection="column" gridGap="20px" padding="0 24px" mt="2rem">
-            <Button
-              display="flex"
-              height="45px"
-              gridGap="10px"
-              m="0 auto"
-              width="100%"
-              onClick={openModal}
-              variant="unstyled"
-              background="blue.light"
-              color="blue.default"
-              padding="0 27px"
-              whiteSpace="normal"
-            >
-              <Icon icon={repoUrl ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
-              {repoUrl
-                ? finalProjectTranslation?.['edit-final-project'] || t('edit-final-project')
-                : finalProjectTranslation?.['add-final-project'] || t('add-final-project')}
-            </Button>
-            <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
-              <Text size="l" fontWeight={700}>
-                {progressPercent === 100
-                  ? finalProjectTranslation?.completed || t('completed')
-                  : finalProjectTranslation?.['complete-required-projects'] || t('complete-required-projects')}
-              </Text>
-              <Progress
-                percents={progressPercent || 0}
-                duration={0.4}
-                widthSize={218}
-                progressColor={progressPercent === 100 ? 'green.400' : ''}
-                barHeight="5px"
-                borderRadius="20px"
-              />
-            </Box>
+            {isStudent ? (
+              <>
+                <Button
+                  display="flex"
+                  height="45px"
+                  gridGap="10px"
+                  m="0 auto"
+                  width="100%"
+                  onClick={openModal}
+                  variant="unstyled"
+                  background="blue.light"
+                  color="blue.default"
+                  padding="0 27px"
+                  whiteSpace="normal"
+                >
+                  <Icon icon={repoUrl ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
+                  {repoUrl
+                    ? finalProjectTranslation?.['edit-final-project'] || t('edit-final-project')
+                    : finalProjectTranslation?.['add-final-project'] || t('add-final-project')}
+                </Button>
+                <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
+                  <Text size="l" fontWeight={700}>
+                    {progressPercent === 100
+                      ? finalProjectTranslation?.completed || t('completed')
+                      : finalProjectTranslation?.['complete-required-projects'] || t('complete-required-projects')}
+                  </Text>
+                  <Progress
+                    percents={progressPercent || 0}
+                    duration={0.4}
+                    widthSize={218}
+                    progressColor={progressPercent === 100 ? 'green.400' : ''}
+                    barHeight="5px"
+                    borderRadius="20px"
+                  />
+                </Box>
+              </>
+            ) : (
+              <Button
+                display="flex"
+                height="45px"
+                gridGap="10px"
+                m="0 auto"
+                width="100%"
+                onClick={() => {
+                  window.open(`/cohort/${cohortSlug}/assignments?academy=${cohortSession?.academy?.id}&view=2`, '_blank');
+                }}
+                variant="unstyled"
+                background={hexColor.blueDefault}
+                color="white"
+                padding="0 27px"
+                whiteSpace="normal"
+              >
+                {finalProjectTranslation?.['list-projects'] || t('list-projects')}
+                <Icon icon="longArrowRight" color="white" width="25px" height="25px" />
+              </Button>
+            )}
           </Box>
         </Box>
       )}
@@ -196,12 +219,14 @@ FinalProject.propTypes = {
   studentAndTeachers: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   tasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  isStudent: PropTypes.bool,
 };
 
 FinalProject.defaultProps = {
   studentAndTeachers: [],
   tasks: [],
   storyConfig: {},
+  isStudent: true,
 };
 
 export default FinalProject;

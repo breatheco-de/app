@@ -1,18 +1,31 @@
 {
   "back-to": "Back to Dashboard",
   "title": "Assignments",
-  "students-view": "students view",
-  "projects-view": "projects view",
+  "students-view": "students",
+  "projects-view": "projects",
+  "final-projects": "Final Projects",
+  "no-final-projects": "No final projects found",
+  "no-upload-students": "The following students are still pending to upload their final project information.",
+  "see-students": "See students",
   "no-information": "It is possible that the student never opened this assignment. No information was found about this student assignment",
   "educational-status": "Educational Status",
   "delivered-percentage": "% delivered",
   "last-deliver": "Last delivery: {{date}} ago",
   "no-deliver": "No deliveries yet",
+  "pending-upload-modal": {
+    "title": "STUDENTS WITH Pending final project",
+    "description": "The following students are still pending to upload their final project information. "
+  },
+  "project-status": {
+    "done": "Done",
+    "pending": "Pending"
+  },
   "status": {
     "delivered": "Delivered",
     "approved": "Approved",
     "rejected": "Rejected",
     "undelivered": "Undelivered",
+    "pending": "Pending",
     "ignored": "Ignored"
   },
   "educational-list": {
@@ -57,6 +70,7 @@
     "title": "Deliver assignment",
     "label": "Unique Delivery URL",
     "hint": "Share the link with the student",
+    "feedback": "Feedback",
     "button": "Ignore task",
     "ignore-task": "Ignore task",
     "confirm-ignore": "Are you sure you want to ignore this task for {{student}}?",
@@ -85,6 +99,7 @@
     "project-delivered": "Project delivered:",
     "your-teacher-said": "Your teacher said:",
     "feedback-will-be-shown-here": "The teacher's feedback will be shown here if it's approved",
+    "read-code-reviews": "(Read code reviews)",
     "count-code-reviews": "{{count}} code reviews",
     "read-and-rate-the-feedback": "Read and rate the feedback",
     "start-code-review": "Start code review",

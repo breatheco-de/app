@@ -18,7 +18,7 @@ const defaultReviewRateData = {
   submitType: null,
   revision_rating: null,
 };
-function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
+function ReviewCodeRevision({ contextData, setContextData, stages, setStage, disableRate }) {
   const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
   const { t } = useTranslation('assignments');
@@ -168,7 +168,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage }) {
                             {commit?.file?.name}
                           </Text>
                           <Text fontSize="12px" fontWeight={400} title={commit?.file?.commit_hash}>
-                            {`${commit?.file?.commit_hash.slice(0, 10)}...`}
+                            {`${commit?.file?.commit_hash?.slice(0, 10)}...`}
                           </Text>
                         </Flex>
                         {commit?.committer?.github_username && (
@@ -267,36 +267,38 @@ ${revisionContent?.code}
                       </Flex>
                     </>
                   )}
-                  <Flex flexDirection="column" gridGap="24px">
-                    {reviewRateStatus && <Divider margin="18px 0 -8px 0" />}
-                    <Box fontSize="14px" textAlign="center">
-                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
-                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
-                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
-                    </Box>
-                    <Flex justifyContent="center" gridGap="3.5rem">
-                      <Button
-                        opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
-                        onClick={() => handleSelectReviewRate('like')}
-                        variant="unstyled"
-                        height="auto"
-                        gridGap="10px"
-                        aria-label="Mark as Useful"
-                      >
-                        <Icon icon="feedback-like" width="54px" height="54px" />
-                      </Button>
-                      <Button
-                        opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
-                        onClick={() => handleSelectReviewRate('dislike')}
-                        variant="unstyled"
-                        height="auto"
-                        gridGap="10px"
-                        aria-label="Mark as not useful"
-                      >
-                        <Icon icon="feedback-dislike" width="54px" height="54px" />
-                      </Button>
+                  {!disableRate && (
+                    <Flex flexDirection="column" gridGap="24px">
+                      {reviewRateStatus && <Divider margin="18px 0 -8px 0" />}
+                      <Box fontSize="14px" textAlign="center">
+                        {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
+                        {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
+                        {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
+                      </Box>
+                      <Flex justifyContent="center" gridGap="3.5rem">
+                        <Button
+                          opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
+                          onClick={() => handleSelectReviewRate('like')}
+                          variant="unstyled"
+                          height="auto"
+                          gridGap="10px"
+                          aria-label="Mark as Useful"
+                        >
+                          <Icon icon="feedback-like" width="54px" height="54px" />
+                        </Button>
+                        <Button
+                          opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
+                          onClick={() => handleSelectReviewRate('dislike')}
+                          variant="unstyled"
+                          height="auto"
+                          gridGap="10px"
+                          aria-label="Mark as not useful"
+                        >
+                          <Icon icon="feedback-dislike" width="54px" height="54px" />
+                        </Button>
+                      </Flex>
                     </Flex>
-                  </Flex>
+                  )}
                 </Flex>
               )}
               {hasRevision && reviewRateData.submited && (
@@ -343,6 +345,7 @@ ReviewCodeRevision.propTypes = {
   setStage: PropTypes.func,
   contextData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   setContextData: PropTypes.func,
+  disableRate: PropTypes.bool,
 };
 ReviewCodeRevision.defaultProps = {
   stages: {
@@ -353,6 +356,7 @@ ReviewCodeRevision.defaultProps = {
   },
   setStage: () => {},
   setContextData: () => {},
+  disableRate: false,
 };
 
 export default ReviewCodeRevision;

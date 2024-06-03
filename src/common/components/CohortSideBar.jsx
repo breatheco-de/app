@@ -24,7 +24,7 @@ import useProgramList from '../store/actions/programListAction';
 import { isWindow } from '../../utils';
 
 function ProfilesSection({
-  title, paginationProps, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
+  title, paginationProps, isTeacherVersion, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
 }) {
   const { t } = useTranslation('dashboard');
   const [showMoreStudents, setShowMoreStudents] = useState(false);
@@ -34,8 +34,8 @@ function ProfilesSection({
   const assistantMaxLimit = isBelowTablet ? 3 : 4;
 
   const studentsToShow = showMoreStudents ? profiles : profiles?.slice(0, 15);
-  const singleTeacher = teacher[0];
-  const teacherfullName = `${singleTeacher?.user?.first_name} ${singleTeacher?.user.last_name}`;
+  const teacherData = teacher[0];
+  const teacherfullName = `${teacherData?.user?.first_name} ${teacherData?.user.last_name}`;
 
   const alumniGeeksContainer = isWindow && document.querySelector('.alumni-geeks-container');
 
@@ -65,14 +65,14 @@ function ProfilesSection({
               />
             );
           })} */}
-          {!!singleTeacher && (
+          {!!teacherData && (
             <AvatarUser
               width="48px"
               height="48px"
-              key={`${singleTeacher.id} - ${singleTeacher.user.first_name}`}
+              key={`${teacherData.id} - ${teacherData.user.first_name}`}
               fullName={teacherfullName}
-              data={singleTeacher}
-              isOnline={usersConnected?.includes(singleTeacher.user.id)}
+              data={teacherData}
+              isOnline={usersConnected?.includes(teacherData.user.id)}
               badge
               customBadge={(
                 <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
@@ -122,6 +122,7 @@ function ProfilesSection({
                   key={`${c.id} - ${c.user.first_name}`}
                   fullName={fullName}
                   data={c}
+                  isTeacherVersion={isTeacherVersion}
                   isOnline={isOnline}
                   badge
                   withoutPopover={withoutPopover}
@@ -448,8 +449,9 @@ function CohortSideBar({
                   ? (
                     <ProfilesSection
                       showButton
+                      isTeacherVersion={teacherVersionActive}
                       profiles={activeAndRecent}
-                      withoutPopover={activeAndRecent?.length >= 16}
+                      // withoutPopover={activeAndRecent?.length >= 16}
                     />
                   ) : (
                     <>
@@ -465,9 +467,10 @@ function CohortSideBar({
                 ? (
                   <ProfilesSection
                     profiles={studentsJoined}
+                    isTeacherVersion={teacherVersionActive}
                     setAlumniGeeksList={setAlumniGeeksList}
                     paginationProps={alumniGeeksList}
-                    withoutPopover={studentsJoined?.length >= 16}
+                    // withoutPopover={studentsJoined?.length >= 16}
                   />
                 ) : (
                   <>
@@ -493,6 +496,7 @@ ProfilesSection.propTypes = {
   teacher: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   withoutPopover: PropTypes.bool,
   showButton: PropTypes.bool,
+  isTeacherVersion: PropTypes.bool,
 };
 
 ProfilesSection.defaultProps = {
@@ -504,6 +508,7 @@ ProfilesSection.defaultProps = {
   teacher: [],
   withoutPopover: false,
   showButton: false,
+  isTeacherVersion: false,
 };
 
 CohortSideBar.propTypes = {

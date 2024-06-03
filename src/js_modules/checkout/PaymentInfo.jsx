@@ -3,7 +3,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Flex, Image, Input, useColorModeValue, useToast,
+  Box, Button, Divider, Flex, Image, Input, useColorModeValue, useToast,
 } from '@chakra-ui/react';
 import { forwardRef, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
@@ -145,7 +145,7 @@ function PaymentInfo() {
 
   const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
 
-  const { backgroundColor, fontColor } = useStyle();
+  const { backgroundColor, fontColor, hexColor, backgroundColor3 } = useStyle();
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
 
   const infoValidation = Yup.object().shape({
@@ -476,7 +476,21 @@ function PaymentInfo() {
           </>
         )}
         {!isPaymentSuccess && (
-          <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="100%" height="auto" objectFit="contain" margin="10rem 0 0 0" />
+          <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
+            <Flex justifyContent="space-between" alignItems="center">
+              <Flex gridGap="10px" alignItems="center">
+                <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
+                <Text
+                  size="18px"
+                  letterSpacing="auto"
+                  dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
+                />
+              </Flex>
+              <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
+            </Flex>
+            <Divider />
+            <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
+          </Flex>
         )}
       </Box>
       {!isPaymentIdle && (
