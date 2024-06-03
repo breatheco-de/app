@@ -20,8 +20,8 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
-import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
-import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
+// import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
@@ -203,7 +203,7 @@ export default function HowToSlug({ data, markdown }) {
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses technologies={data.technologies} />
-          <DynamicCallToAction
+          {/* <DynamicCallToAction
             assetId={data.id}
             assetTechnologies={data.technologies?.map((item) => item?.slug)}
             assetType={data.asset_type.toLowerCase()}
@@ -213,7 +213,7 @@ export default function HowToSlug({ data, markdown }) {
           <PodcastCallToAction
             placement="side"
             marginTop="40px"
-          />
+          /> */}
         </Box>
         <Box
           gridColumn="2 / span 12"
