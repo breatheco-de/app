@@ -220,10 +220,11 @@ function chooseProgram() {
       .finally(() => setSubscriptionLoading(false));
   }, []);
 
-  const allSubscriptions = subscriptionData?.subscriptions
-    && subscriptionData?.plan_financings
-    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
-      .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
+  const allSubscriptions = [
+    ...subscriptionData?.subscriptions || [],
+    ...subscriptionData?.plan_financings || [],
+  ];
+  // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
     if (subscriptionLoading === false && dataQuery && Object.values(cohortTasks)?.length > 0) {
