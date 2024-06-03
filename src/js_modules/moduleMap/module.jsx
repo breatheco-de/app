@@ -45,7 +45,7 @@ function Module({
     lesson: `${lang === 'en' ? '4geeks.com/lesson' : `4geeks.com/${lang}/lesson`}`,
     exercise: `${lang === 'en' ? '4geeks.com/interactive-exercise' : `4geeks.com/${lang}/interactive-exercise`}`,
     project: `${lang === 'en' ? '4geeks.com/project' : `4geeks.com/${lang}/project`}`,
-    quiz: 'https://assessment.4geeks.com/quiz',
+    quiz: 'https://assessment.4geeks.com/asset',
   };
 
   const shareLink = () => {
