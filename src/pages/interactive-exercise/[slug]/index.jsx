@@ -23,8 +23,8 @@ import useAuth from '../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
-import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
-import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
+// import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 // import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
 // import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
@@ -330,7 +330,7 @@ function Exercise({ exercise, markdown }) {
               <>
                 <TabletWithForm asset={exercise} href="/interactive-exercises" />
                 <SupplementaryMaterial assets={exercise?.assets_related} />
-                <DynamicCallToAction
+                {/* <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
                   assetType="exercise"
@@ -340,7 +340,7 @@ function Exercise({ exercise, markdown }) {
                 <PodcastCallToAction
                   placement="side"
                   marginTop="40px"
-                />
+                /> */}
               </>
             ) : (
               <Skeleton height="646px" width="100%" borderRadius="17px" />
@@ -379,7 +379,7 @@ function Exercise({ exercise, markdown }) {
                   solution={exercise.gitpod ? exercise.solution_url : null}
                   liveDemoAvailable={exercise.intro_video_url}
                 />
-                <DynamicCallToAction
+                {/* <DynamicCallToAction
                   assetId={exercise.id}
                   assetTechnologies={exercise.technologies?.map((item) => item?.slug)}
                   assetType="exercise"
@@ -390,7 +390,7 @@ function Exercise({ exercise, markdown }) {
                 <PodcastCallToAction
                   placement="side"
                   marginTop="40px"
-                />
+                /> */}
               </>
             ) : (
               <Skeleton height="646px" width="300px" borderRadius="17px" />

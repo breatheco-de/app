@@ -17,8 +17,8 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
-import DynamicCallToAction from '../../common/components/DynamicCallToAction';
-import PodcastCallToAction from '../../common/components/PodcastCallToAction';
+// import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
@@ -235,7 +235,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
       >
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
           <MktSideRecommendedCourses technologies={lesson?.technologies} />
-          <DynamicCallToAction
+          {/* <DynamicCallToAction
             assetId={lesson?.id}
             assetTechnologies={lesson?.technologies?.map((item) => item?.slug)}
             assetType="lesson"
@@ -245,7 +245,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           <PodcastCallToAction
             placement="side"
             marginTop="40px"
-          />
+          /> */}
         </Box>
         <Box gridColumn="2 / span 12" maxWidth="854px">
           <Box display="grid" gridColumn="2 / span 12">
