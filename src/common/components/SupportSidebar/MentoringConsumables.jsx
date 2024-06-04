@@ -18,7 +18,7 @@ import { AvatarSkeletonWrapped } from '../Skeleton';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 import { validatePlanExistence } from '../../handlers/subscriptions';
-import { isDevMode } from '../../../utils';
+import { getStorageItem, isDevMode } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
@@ -101,6 +101,7 @@ function MentoringConsumables({
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
+  const accessToken = getStorageItem('accessToken');
   const [existsMentors, setExistsMentors] = useState(true);
   const { borderColor, lightColor, hexColor } = useStyle();
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -413,11 +414,11 @@ function MentoringConsumables({
                                     <Link
                                       variant="default"
                                       onClick={() => reportBookMentor()}
-                                      href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${cohortSession?.bc_id}`}
+                                      href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${cohortSession?.bc_id}&token=${accessToken}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                     >
-                                      {t('supportSideBar.create-session-text', { name: mentor.user.first_name })}
+                                      {t('supportSideBar.create-session-text')}
                                     </Link>
                                   ) : (
                                     <Box fontSize="15px">
