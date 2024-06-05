@@ -17,13 +17,12 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
-import { isAbsoluteUrl } from '../../utils/url';
+import { isAbsoluteUrl, parseQuerys } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
 import { ArrowDown, ArrowRight } from '../../common/components/Icon/components';
 import { getStorageItem } from '../../utils';
-import { parseQuerys } from '../../utils/url';
 
 const StyledBox = styled(Box)`
 .custom-popover {
