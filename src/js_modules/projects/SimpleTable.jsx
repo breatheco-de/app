@@ -8,9 +8,48 @@ import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
 
+function LinkedContent({ href, title, icon }) {
+  const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
+  const commonTextColor = useColorModeValue('gray.600', 'gray.200');
+  return (
+    <Flex
+      width="100%"
+      py="14px"
+      borderBottom={1}
+      borderStyle="solid"
+      borderColor={commonBorderColor}
+      justifyContent="space-between"
+      alignItems="center"
+      position="relative"
+    >
+      <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
+        {icon}
+        {title}
+      </Text>
+      <Link
+        href={href}
+        color={commonTextColor}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ fontSize: '15px' }}
+        _after={{
+          content: '""',
+          position: 'absolute',
+          inset: 0,
+        }}
+        _hover={{
+          color: 'blue.default',
+        }}
+      >
+        <Icon icon="external-link" color="currentColor" width="15px" height="15px" />
+      </Link>
+    </Flex>
+  );
+}
+
 function SimpleTable({
   difficulty,
-  repository,
+  // repository,
   duration,
   videoAvailable,
   solution,
@@ -93,96 +132,27 @@ function SimpleTable({
             </Box>
           </Box>
         )}
-        {videoAvailable !== null && isAuthenticated && (
-          <Box
-            display="flex"
-            alignItems="center"
-            gap="10px"
-            py="10px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            minWidth="50%"
-            maxWidth="100%"
-            flexGrow="1"
-          >
-            <Icon icon="video" color="#A9A9A9" width="32px" height="32px" />
-            <Box>
-              <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-                {t('common:video-solution')}
-              </Text>
-              <Link
-                href={videoAvailable}
-                color="blue.default"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontSize: '15px' }}
-              >
-                {t('common:watch-video')}
-              </Link>
-            </Box>
-          </Box>
+        {videoAvailable !== null && (
+          <LinkedContent
+            title={t('common:video-solution')}
+            href={videoAvailable}
+            icon={(<Icon icon="video" color="#A9A9A9" width="32px" height="32px" />)}
+          />
         )}
         {solution !== null && videoAvailable && isAuthenticated && (
-          <Flex
-            display="flex"
-            alignItems="center"
-            gap="10px"
-            py="10px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            minWidth="50%"
-            maxWidth="100%"
-            flexGrow="1"
-          >
-            <Icon icon="coding" color="#A9A9A9" width="32px" height="32px" />
-            <Box>
-              <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-                {t('common:solution-code')}
-              </Text>
-              <Link
-                href={videoAvailable}
-                color="blue.default"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ fontSize: '15px' }}
-              >
-                {t('common:click-to-open')}
-              </Link>
-            </Box>
-          </Flex>
+          <LinkedContent
+            title={t('common:solution-code')}
+            href={videoAvailable}
+            icon={(<Icon icon="coding" color="#A9A9A9" width="32px" height="32px" />)}
+          />
         )}
-        {repository && isAuthenticated && (
-          <Box
-            display="flex"
-            alignItems="center"
-            gap="10px"
-            py="10px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            minWidth="50%"
-            maxWidth="100%"
-            flexGrow="1"
-          >
-            <Icon icon="github" color="#A9A9A9" width="32px" height="32px" />
-            <Box>
-              <Text size="l" color={commonTextColor} display="flex" gap="8px" alignItems="center">
-                {t('common:repository')}
-              </Text>
-              <Link
-                href={repository || ''}
-                color="blue.default"
-                fontSize="15px"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('common:click-to-open')}
-              </Link>
-            </Box>
-          </Box>
-        )}
+        {/* {repository && isAuthenticated && (
+          <LinkedContent
+            title={t('common:repository')}
+            href={repository || ''}
+            icon={(<Icon icon="github" color="#A9A9A9" width="32px" height="32px" />)}
+          />
+        )} */}
         {technologies?.length > 0 && (
           <Flex
             flexDirection="column"
@@ -262,81 +232,27 @@ function SimpleTable({
             </Text>
           </Flex>
         )}
-        {videoAvailable !== null && isAuthenticated && (
-          <Flex
-            width="100%"
-            py="14px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-              <Icon icon="video" color="#A9A9A9" width="28px" height="28px" />
-              {t('common:video-solution')}
-            </Text>
-            <Link
-              href={videoAvailable}
-              color="blue.default"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ fontSize: '15px' }}
-            >
-              {t('common:watch-video')}
-            </Link>
-          </Flex>
+        {videoAvailable !== null && (
+          <LinkedContent
+            title={t('common:video-solution')}
+            href={videoAvailable}
+            icon={(<Icon icon="video" color="#A9A9A9" width="28px" height="28px" />)}
+          />
         )}
         {solution !== null && isAuthenticated && (
-          <Flex
-            width="100%"
-            py="14px"
-            borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text size="l" color={commonTextColor} display="flex" alignItems="center" gap="8px">
-              <Icon icon="coding" color="#A9A9A9" width="28px" height="28px" />
-              {t('common:solution-code')}
-            </Text>
-            <Link
-              href={solution}
-              color="blue.default"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ fontSize: '15px' }}
-            >
-              {t('common:click-to-open')}
-            </Link>
-          </Flex>
+          <LinkedContent
+            title={t('common:solution-code')}
+            href={solution}
+            icon={(<Icon icon="coding" color="#A9A9A9" width="28px" height="28px" />)}
+          />
         )}
-        {repository && isAuthenticated && (
-          <Flex
-            width="100%"
-            py="14px"
-            // borderBottom={1}
-            borderStyle="solid"
-            borderColor={commonBorderColor}
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text size="l" color={commonTextColor} display="flex" gap="8px" alignItems="center">
-              <Icon icon="github" color="#A9A9A9" width="26px" height="26px" />
-              {t('common:repository')}
-            </Text>
-            <Link
-              href={repository || ''}
-              color="blue.default"
-              fontSize="15px"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t('common:click-to-open')}
-            </Link>
-          </Flex>
-        )}
+        {/* {repository && isAuthenticated && (
+          <LinkedContent
+            title={t('common:repository')}
+            href={repository || ''}
+            icon={(<Icon icon="github" color="#A9A9A9" width="26px" height="26px" />)}
+          />
+        )} */}
         {technologies?.length > 0 && (
           <Flex
             flexDirection="column"
@@ -370,19 +286,23 @@ function SimpleTable({
   );
 }
 
+LinkedContent.propTypes = {
+  href: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  icon: PropTypes.element.isRequired,
+};
 SimpleTable.propTypes = {
   difficulty: PropTypes.string,
-  repository: PropTypes.string,
+  // repository: PropTypes.string,
   duration: PropTypes.number,
   videoAvailable: PropTypes.string,
   solution: PropTypes.string,
   technologies: PropTypes.arrayOf(PropTypes.string),
   href: PropTypes.string.isRequired,
 };
-
 SimpleTable.defaultProps = {
   difficulty: 'Intermediate',
-  repository: 'Not available',
+  // repository: 'Not available',
   videoAvailable: 'Not available',
   solution: null,
   duration: 0,
