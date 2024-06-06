@@ -623,6 +623,25 @@ function Content() {
               url={currentData?.intro_video_url}
             />
           )}
+          {!currentData?.superseded_by?.slug && (
+            <AlertMessage
+              type="warning"
+              zIndex={99}
+              full
+              borderRadius={0}
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
+            >
+              <Text size="15px" color="black" letterSpacing="0.05em" style={{ margin: '0' }}>
+                {t('superseded-message')}
+                <Link textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
+                  {currentData?.superseded_by?.title}
+                </Link>
+              </Text>
+            </AlertMessage>
+          )}
           <Box
             className={`markdown-body ${currentTheme}`}
             flexGrow={1}
@@ -638,7 +657,6 @@ function Content() {
             transitionDelay="0ms"
             position="relative"
           >
-
             {extendedInstructions !== null && (
               <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
