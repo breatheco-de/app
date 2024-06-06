@@ -192,7 +192,9 @@ function Checkout() {
     const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
       ? checkingData?.plans[0]
       : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
-    const autoSelectedPlan = defaultAutoSelectedPlan?.plan_id ? defaultAutoSelectedPlan : autoSelectedPlanByQueryString;
+    const autoSelectedPlan = autoSelectedPlanByQueryString?.plan_id
+      ? autoSelectedPlanByQueryString
+      : defaultAutoSelectedPlan;
     return autoSelectedPlan;
   };
 
