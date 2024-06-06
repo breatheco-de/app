@@ -17,7 +17,7 @@ import { memo } from 'react';
 import styled from 'styled-components';
 import Image from 'next/image';
 import Icon from '../../common/components/Icon';
-import { isAbsoluteUrl } from '../../utils/url';
+import { isAbsoluteUrl, parseQuerys } from '../../utils/url';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import CustomText from '../../common/components/Text';
 import useStyle from '../../common/hooks/useStyle';
@@ -184,7 +184,7 @@ function DesktopItem({ item, readSyllabus }) {
                     <NextChakraLink
                       //href={item?.with_popover.link}
                       //href={`${item.with_popover.link}?token=${token}`}
-                      href={`${item.with_popover.link}?token=${token}`}
+                      href={`${item.with_popover.link}?token=${token}${item.slug ? parseQuerys({ internal_cta_placement: `navbar-${item.slug}` }, true) : ''}`}
                       key={item?.with_popover.link}
                       display="block"
                       p="0.8rem 0"
@@ -271,7 +271,7 @@ function DesktopItem({ item, readSyllabus }) {
                             )}
                             {subMenu?.length > 0 && subMenu.map((l) => (
                               <NextChakraLink
-                                href={l.href}
+                                href={`${l.href}${child.slug ? parseQuerys({ internal_cta_placement: `navbar-${child.slug}` }, l.href.includes('?')) : ''}`}
                                 key={l.href}
                                 // role="group"
                                 display="block"
@@ -314,7 +314,7 @@ function DesktopItem({ item, readSyllabus }) {
                   {existsSubMenu && itemSubMenu.map((child) => child?.href && (
                     <Box>
                       <NextChakraLink
-                        href={child.href}
+                        href={`${child.href}${child.slug ? parseQuerys({ internal_cta_placement: `navbar-${child.slug}` }, child.href.includes('?')) : ''}`}
                         key={child.href}
                         display="block"
                         p={2}
@@ -361,7 +361,7 @@ function DesktopItem({ item, readSyllabus }) {
           textAlign="center"
           alignItems="center"
           p={2}
-          href={item.href ?? '#'}
+          href={`${item.href}${item.id ? parseQuerys({ internal_cta_placement: `navbar-${item.id}` }, item.href.includes('?')) : ''}` ?? '#'}
           // locale={router.locale}
           target={isAbsoluteUrl(item.href) ? '_blank' : undefined}
           rel={isAbsoluteUrl(item.href) ? 'noopener noreferrer' : undefined}

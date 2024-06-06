@@ -29,7 +29,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const router = useRouter();
 
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
-  const activeSubscriptionCohorts = activeCohorts.length > 0 ? activeCohorts.map((item) => {
+  const activeSubscriptionCohorts = activeCohorts?.length > 0 ? activeCohorts.map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
     return ({
@@ -49,11 +49,11 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
 
     const currentSubscription = item?.plan_financing || item?.subscription;
     const isFreeTrial = currentSubscription?.status?.toLowerCase() === 'free_trial';
-    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer?.status) || (item?.all_subscriptions?.length > 0
+    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer) || (item?.all_subscriptions?.length > 0
       && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
 
     // Ignore free_trial subscription if plan_offer already exists in list
-    if (isFreeTrial && suggestedPlan !== undefined) return false;
+    if (isFreeTrial && suggestedPlan?.slug !== undefined) return false;
     if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
 
     return false;
