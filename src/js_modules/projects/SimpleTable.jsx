@@ -7,8 +7,11 @@ import TagCapsule from '../../common/components/TagCapsule';
 import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import Icon from '../../common/components/Icon';
+import useStyle from '../../common/hooks/useStyle';
 
-function LinkedContent({ href, title, icon }) {
+function LinkedContent({ href, title, disableUntilAuth, icon }) {
+  const { isAuthenticated } = useAuth();
+  const { hexColor } = useStyle();
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
   const commonTextColor = useColorModeValue('gray.600', 'gray.200');
   return (
@@ -26,23 +29,27 @@ function LinkedContent({ href, title, icon }) {
         {icon}
         {title}
       </Text>
-      <Link
-        href={href}
-        color={commonTextColor}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{ fontSize: '15px' }}
-        _after={{
-          content: '""',
-          position: 'absolute',
-          inset: 0,
-        }}
-        _hover={{
-          color: 'blue.default',
-        }}
-      >
-        <Icon icon="external-link" color="currentColor" width="15px" height="15px" />
-      </Link>
+      {disableUntilAuth && !isAuthenticated ? (
+        <Icon icon="verified2" color={hexColor.greenLight} width="15px" height="15px" />
+      ) : (
+        <Link
+          href={href}
+          color={commonTextColor}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: '15px' }}
+          _after={{
+            content: '""',
+            position: 'absolute',
+            inset: 0,
+          }}
+          _hover={{
+            color: 'blue.default',
+          }}
+        >
+          <Icon icon="external-link" color="currentColor" width="15px" height="15px" />
+        </Link>
+      )}
     </Flex>
   );
 }
@@ -56,7 +63,6 @@ function SimpleTable({
   technologies,
   href,
 }) {
-  const { isAuthenticated } = useAuth();
   const { t, lang } = useTranslation('exercises');
   const verifyIfNotNull = (value) => value !== null && value;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.900');
@@ -136,13 +142,15 @@ function SimpleTable({
           <LinkedContent
             title={t('common:video-solution')}
             href={videoAvailable}
+            disableUntilAuth
             icon={(<Icon icon="video" color="#A9A9A9" width="32px" height="32px" />)}
           />
         )}
-        {solution !== null && videoAvailable && isAuthenticated && (
+        {solution !== null && (
           <LinkedContent
             title={t('common:solution-code')}
-            href={videoAvailable}
+            href={solution}
+            disableUntilAuth
             icon={(<Icon icon="coding" color="#A9A9A9" width="32px" height="32px" />)}
           />
         )}
@@ -236,13 +244,15 @@ function SimpleTable({
           <LinkedContent
             title={t('common:video-solution')}
             href={videoAvailable}
+            disableUntilAuth
             icon={(<Icon icon="video" color="#A9A9A9" width="28px" height="28px" />)}
           />
         )}
-        {solution !== null && isAuthenticated && (
+        {solution !== null && (
           <LinkedContent
             title={t('common:solution-code')}
             href={solution}
+            disableUntilAuth
             icon={(<Icon icon="coding" color="#A9A9A9" width="28px" height="28px" />)}
           />
         )}
@@ -290,6 +300,10 @@ LinkedContent.propTypes = {
   href: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   icon: PropTypes.element.isRequired,
+  disableUntilAuth: PropTypes.bool,
+};
+LinkedContent.defaultProps = {
+  disableUntilAuth: false,
 };
 SimpleTable.propTypes = {
   difficulty: PropTypes.string,
