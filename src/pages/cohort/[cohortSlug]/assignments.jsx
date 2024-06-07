@@ -484,12 +484,7 @@ function Assignments() {
                   },
                 });
               }}
-              options={personalCohorts.map((cohort) => ({
-                value: cohort.value,
-                slug: cohort.slug,
-                label: cohort.label,
-                academy: cohort.academy,
-              }))}
+              options={personalCohorts}
             />
           )}
         </Box>

@@ -20,7 +20,6 @@ import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import ReactSelect from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
-import { usePersistent } from '../../../common/hooks/usePersistent';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
 import Icon from '../../../common/components/Icon';
@@ -35,18 +34,16 @@ function Attendance() {
   const { t } = useTranslation('attendance');
   const router = useRouter();
   const toast = useToast();
-  const [cohortSession] = usePersistent('cohortSession', {});
   const [allCohorts, setAllCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
-  const [selectedCohortSlug, setSelectedCohortSlug] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
   const [currentStudentList, setCurrentStudentList] = useState([]);
   const [searchedStudents, setSearchedStudents] = useState([]);
   const [allStudentsWithDays, setAllStudentsWithDays] = useState({});
   const [currentDaysLog, setCurrentDaysLog] = useState({});
   const [loadStatus, setLoadStatus] = useState({
-    loading: false,
-    status: 'idle',
+    loading: true,
+    status: 'loading',
   });
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [sortSettings, setSortSettings] = useState({
@@ -115,11 +112,13 @@ function Attendance() {
           slug: l.cohort.slug,
           value: l.cohort.id,
           academy: l.cohort.academy.id,
+          syllabus: l.cohort.syllabus_version,
           durationInDays: l.cohort?.syllabus_version?.duration_in_days,
         }));
         setAllCohorts(dataStruct.sort(
           (a, b) => a.label.localeCompare(b.label),
         ));
+        setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
       })
       .catch(() => {
         toast({
@@ -134,13 +133,12 @@ function Attendance() {
 
   useEffect(() => {
     setLoadingStudents(true);
-    const findSelectedCohort = allCohorts.find((l) => l.slug === selectedCohortSlug);
-    const defaultCohort = allCohorts.find((l) => l.slug === cohortSlug);
+    const findSelectedCohort = allCohorts.find((l) => l.slug === cohortSlug);
 
-    const academyId = findSelectedCohort?.academy || academy || defaultCohort?.academy;
-    const slug = findSelectedCohort?.slug || cohortSlug || defaultCohort?.slug;
+    const academyId = findSelectedCohort?.academy || academy;
+    const slug = findSelectedCohort?.slug || cohortSlug;
 
-    setSelectedCohort(findSelectedCohort || defaultCohort);
+    // setSelectedCohort(findSelectedCohort);
     if (academyId) {
       handlers.getActivities(slug, academyId)
         .then((daysLog) => {
@@ -183,7 +181,7 @@ function Attendance() {
     } else {
       setLoadingStudents(false);
     }
-  }, [selectedCohortSlug, cohortSlug, router.query.student, allCohorts]);
+  }, [cohortSlug, router.query.student, allCohorts]);
 
   useEffect(() => {
     const durationInDays = selectedCohort?.durationInDays || 48;
@@ -312,7 +310,7 @@ function Attendance() {
     <>
       <GridContainer margin="18px auto 0 auto" withContainer>
         <Link
-          href={cohortSession?.selectedProgramSlug || '/choose-program'}
+          href={selectedCohort ? `/cohort/${selectedCohort.slug}/${selectedCohort.syllabus?.slug}/v${selectedCohort.syllabus?.version}` : '/choose-program'}
           color="blue.default"
           display="inline-block"
           letterSpacing="0.05em"
@@ -335,20 +333,26 @@ function Attendance() {
               fontSize="28px"
               placeholder={t('common:select-cohort')}
               noOptionsMessage={() => t('common:no-options-message')}
-              defaultInputValue={selectedCohort?.label}
-              onChange={({ slug }) => {
-                setSelectedCohortSlug(slug);
-                setCurrentStudentList([]);
-                setLoadStatus({
-                  loading: true,
-                  status: 'loading',
-                });
+              // defaultInputValue={selectedCohort?.label}
+              value={selectedCohort || ''}
+              onChange={(cohort) => {
+                if (cohort.slug !== cohortSlug) {
+                  setLoadStatus({
+                    loading: true,
+                    status: 'loading',
+                  });
+                  setLoadingStudents(true);
+                  setCurrentStudentList([]);
+                  setSelectedCohort(cohort);
+                  router.push({
+                    query: {
+                      ...router.query,
+                      cohortSlug: cohort.slug,
+                    },
+                  });
+                }
               }}
-              options={allCohorts.map((cohort) => ({
-                value: cohort.value,
-                slug: cohort.slug,
-                label: cohort.label,
-              }))}
+              options={allCohorts}
             />
           )}
         </Box>
