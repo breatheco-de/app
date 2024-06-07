@@ -10,7 +10,7 @@ import bc from '../services/breathecode';
 import { usePersistent } from './usePersistent';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
-function useHandler() {
+function useCohortHandler() {
   const router = useRouter();
   const { t, lang } = useTranslation('dashboard');
   const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
@@ -288,4 +288,4 @@ function useHandler() {
   };
 }
 
-export default useHandler;
+export default useCohortHandler;

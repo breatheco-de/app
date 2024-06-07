@@ -31,7 +31,7 @@ import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import bc from '../../../../../common/services/breathecode';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
-import useHandler from '../../../../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
@@ -79,7 +79,7 @@ function Content() {
   const {
     cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
     taskTodo, setTaskTodo,
-  } = useHandler();
+  } = useCohortHandler();
   const { featuredLight, fontColor, borderColor } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];

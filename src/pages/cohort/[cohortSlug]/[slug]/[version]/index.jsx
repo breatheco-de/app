@@ -47,7 +47,7 @@ import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
-import useHandler from '../../../../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
@@ -85,7 +85,7 @@ function Dashboard() {
   const {
     cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
-  } = useHandler();
+  } = useCohortHandler();
 
   const { cohortSlug, slug } = router.query;
 

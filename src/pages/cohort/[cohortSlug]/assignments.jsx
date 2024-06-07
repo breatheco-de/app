@@ -27,7 +27,6 @@ import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import ReactSelect, { AsyncSelect } from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
-import { usePersistent } from '../../../common/hooks/usePersistent';
 import bc from '../../../common/services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
@@ -108,7 +107,6 @@ function Assignments() {
   const toast = useToast();
   const { hexColor, borderColor2 } = useStyle();
   const { contextState, setContextState } = useAssignments();
-  const [cohortSession] = usePersistent('cohortSession', {});
   const [syllabusData, setSyllabusData] = useState({
     assignments: [],
   });
@@ -213,6 +211,7 @@ function Assignments() {
           slug: l.cohort.slug,
           value: l.cohort.id,
           academy: l.cohort.academy.id,
+          syllabus: l.cohort.syllabus_version,
         }));
 
         setPersonalCohorts(
@@ -434,7 +433,7 @@ function Assignments() {
           justifyContent="space-between"
         >
           <Link
-            href={cohortSession?.selectedProgramSlug || '/choose-program'}
+            href={selectedCohort ? `/cohort/${selectedCohort.slug}/${selectedCohort.syllabus?.slug}/v${selectedCohort.syllabus?.version}` : '/choose-program'}
             color={hexColor.blueDefault}
             display="inline-block"
             letterSpacing="0.05em"

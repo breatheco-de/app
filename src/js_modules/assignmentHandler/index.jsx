@@ -281,7 +281,7 @@ function ReviewHandler({ currentTask, projectLink, updpateAssignment }) {
 }
 
 function ButtonHandler({
-  currentTask, cohortSession, updpateAssignment,
+  currentTask, updpateAssignment,
 }) {
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const { t } = useTranslation('assignments');
@@ -307,7 +307,7 @@ function ButtonHandler({
 
     if (statusConditional.delivered) {
       return (
-        <ReviewHandler currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
+        <ReviewHandler currentTask={currentTask} projectLink={projectLink} updpateAssignment={updpateAssignment} />
       );
     }
     if (statusConditional.approved) {
@@ -336,26 +336,24 @@ function ButtonHandler({
     if (statusConditional.rejected) {
       return (
         <Box width="auto" height="auto">
-          <DeliverHandler currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
+          <DeliverHandler currentTask={currentTask} projectLink={projectLink} updpateAssignment={updpateAssignment} />
         </Box>
       );
     }
   }
   return (
     <Box width="auto" height="auto">
-      <DeliverHandler currentTask={currentTask} projectLink={projectLink} cohortSession={cohortSession} updpateAssignment={updpateAssignment} />
+      <DeliverHandler currentTask={currentTask} projectLink={projectLink} updpateAssignment={updpateAssignment} />
     </Box>
   );
 }
 
 ButtonHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   updpateAssignment: PropTypes.func.isRequired,
 };
 ButtonHandler.defaultProps = {
   currentTask: null,
-  cohortSession: null,
 };
 DeliverHandler.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,

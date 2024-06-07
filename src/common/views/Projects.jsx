@@ -6,7 +6,6 @@ import {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Link from '../components/NextChakraLink';
-import { usePersistent } from '../hooks/usePersistent';
 import useStyle from '../hooks/useStyle';
 import Icon from '../components/Icon';
 import Text from '../components/Text';
@@ -29,7 +28,6 @@ const ProjectsRows = forwardRef(({
   const router = useRouter();
   const { contextState } = useAssignments();
   const { borderColor2 } = useStyle();
-  const [cohortSession] = usePersistent('cohortSession', {});
   const lang = {
     es: '/es/',
     en: '/',
@@ -106,7 +104,6 @@ const ProjectsRows = forwardRef(({
               <Box width="auto" minWidth="160px" textAlign="end">
                 <ButtonHandler
                   currentTask={task}
-                  cohortSession={cohortSession}
                   contextState={contextState}
                   updpateAssignment={updpateAssignment}
                 />
