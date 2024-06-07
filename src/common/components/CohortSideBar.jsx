@@ -226,9 +226,9 @@ function CohortSideBar({
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const { addTeacherProgramList } = useProgramList();
-  const teacher = studentAndTeachers.filter((st) => st.role === 'TEACHER');
+  const teacher = studentAndTeachers.filter((st) => st?.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
-    (st) => st.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st.educational_status),
+    (st) => st?.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st?.educational_status),
   );
   const studentsJoined = alumniGeeksList.results?.filter(
     (st) => st.role === 'STUDENT',
@@ -291,7 +291,7 @@ function CohortSideBar({
         setGraduatedStudentsLoading(false);
       }, 2500);
     }
-    if (activeStudents.length === 0) {
+    if (activeStudents?.length === 0) {
       setTimeout(() => {
         setActiveStudentsLoading(false);
       }, 4000);
@@ -299,7 +299,7 @@ function CohortSideBar({
   }, [studentsJoined]);
 
   useEffect(() => {
-    if (studentAndTeachers.length > 0) {
+    if (studentAndTeachers?.length > 0) {
       addTeacherProgramList({ teacher, assistant: teacherAssistants });
     }
   }, [router?.query?.cohortSlug, studentAndTeachers?.length]);
@@ -312,8 +312,8 @@ function CohortSideBar({
     return weeksDifference <= 1;
   };
 
-  const recentlyLogedStudents = activeStudents.filter((elem) => elem.user?.last_login && isBeforeOneWeek(new Date(elem.user.last_login)));
-  const activeAndRecent = cohort.ending_date ? activeStudents : recentlyLogedStudents;
+  const recentlyLogedStudents = activeStudents.filter((elem) => elem.user?.last_login && elem?.user?.last_login && isBeforeOneWeek(new Date(elem?.user?.last_login)));
+  const activeAndRecent = cohort?.ending_date ? activeStudents : recentlyLogedStudents;
 
   return (
     <Box
@@ -411,8 +411,8 @@ function CohortSideBar({
                 }}
               >
                 {cohort.ending_date
-                  ? t('cohortSideBar.classmates', { studentsLength: activeStudents.length })
-                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent.length })}
+                  ? t('cohortSideBar.classmates', { studentsLength: activeStudents?.length || 0 })
+                  : t('cohortSideBar.active-geeks', { studentsLength: activeAndRecent?.length || 0 })}
               </Tab>
             )}
             {alumniGeeksList?.count && (
@@ -527,60 +527,7 @@ CohortSideBar.defaultProps = {
   title: '',
   teacherVersionActive: false,
   containerStyle: {},
-  studentAndTeachers: [
-    {
-      id: 688,
-      user: {
-        id: 545,
-        first_name: 'Fake',
-        last_name: 'Student',
-        email: 'fake_mail+1@gmail.com',
-      },
-      role: 'STUDENT',
-      finantial_status: null,
-      educational_status: 'GRADUATED',
-      created_at: '2020-11-09T17:02:18.273000Z',
-    },
-    {
-      id: 753,
-      user: {
-        id: 584,
-        first_name: 'Carlos',
-        last_name: 'Maldonado',
-        email: 'carlos234213ddewcdzxc@gmail.com',
-      },
-      role: 'STUDENT',
-      finantial_status: null,
-      educational_status: 'GRADUATED',
-      created_at: '2020-11-09T17:02:18.600000Z',
-    },
-    {
-      id: 2164,
-      user: {
-        id: 1563,
-        first_name: 'Felipe',
-        last_name: 'Valenzuela',
-        email: 'felipe_+43@gmail.com',
-      },
-      role: 'TEACHER',
-      finantial_status: null,
-      educational_status: null,
-      created_at: '2020-11-09T17:02:33.773000Z',
-    },
-    {
-      id: 2308,
-      user: {
-        id: 1593,
-        first_name: 'Hernan',
-        last_name: 'Garcia',
-        email: 'hernan.jkd@gmail.com',
-      },
-      role: 'ASSISTANT',
-      finantial_status: null,
-      educational_status: null,
-      created_at: '2020-11-09T17:02:34.279000Z',
-    },
-  ],
+  studentAndTeachers: [],
   cohortCity: 'Miami Downtown',
   cohort: {},
   isDisabled: false,
