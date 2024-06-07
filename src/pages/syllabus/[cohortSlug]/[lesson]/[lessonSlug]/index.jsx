@@ -623,7 +623,7 @@ function Content() {
               url={currentData?.intro_video_url}
             />
           )}
-          {!currentData?.superseded_by?.slug && (
+          {currentData?.superseded_by?.slug && (
             <AlertMessage
               type="warning"
               zIndex={99}
