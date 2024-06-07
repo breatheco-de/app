@@ -340,15 +340,18 @@ export function AvatarSkeletonWrapped({
   const arrOfCircles = new Array(quantity).fill(['circles']);
 
   return (
-    <AvatarGroup max={chakraProps?.max || 4} {...chakraProps}>
+    <AvatarGroup max={chakraProps?.max || 4}>
       {arrOfCircles?.map((c, i) => {
         const index = i;
         return (
           <SkeletonCircle
             key={index}
+            width={chakraProps?.size || 10}
+            height={chakraProps?.size || 10}
             startColor={commonStartColor}
             endColor={commonEndColor}
             size="10"
+            {...chakraProps}
           />
         );
       })}

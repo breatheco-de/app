@@ -145,6 +145,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getRepoFiles = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().personalFiles(currentTask.id)
         : await bc.assignments().files(currentTask.id);
@@ -173,6 +174,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getCodeRevisions = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id)
         : await bc.assignments().getCodeRevisions(currentTask.id);

@@ -142,7 +142,6 @@ function Summary() {
     let interval;
     if (readyToRefetch && timeElapsed < 10) {
       interval = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
             const currentSubscription = subscriptions?.find(
@@ -157,7 +156,6 @@ function Summary() {
             ) : {};
 
             if (isPurchasedPlanFound) {
-              clearInterval(interval);
               if (findedCohort?.id) {
                 getCohort(findedCohort?.id)
                   .then((cohort) => {
@@ -178,6 +176,9 @@ function Summary() {
                 }
               }
             }
+          })
+          .finally(() => {
+            setTimeElapsed((prevTime) => prevTime + 1);
           });
       }, 2000);
     } else {

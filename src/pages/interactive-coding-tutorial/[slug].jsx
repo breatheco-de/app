@@ -18,8 +18,8 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-import DynamicCallToAction from '../../common/components/DynamicCallToAction';
-import PodcastCallToAction from '../../common/components/PodcastCallToAction';
+// import DynamicCallToAction from '../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 // import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, isWindow } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
@@ -322,7 +322,7 @@ function ProjectSlug({ project, markdown }) {
                     liveDemoAvailable={project.intro_video_url}
                     technologies={project?.technologies}
                   />
-                  <DynamicCallToAction
+                  {/* <DynamicCallToAction
                     assetId={project.id}
                     assetTechnologies={project.technologies?.map((item) => item?.slug)}
                     assetType="project"
@@ -333,7 +333,7 @@ function ProjectSlug({ project, markdown }) {
                   <PodcastCallToAction
                     placement="side"
                     marginTop="40px"
-                  />
+                  /> */}
                 </>
               ) : (
                 <Skeleton height="100%" width="100%" borderRadius="17px" />
@@ -381,7 +381,7 @@ function ProjectSlug({ project, markdown }) {
             <>
               <TabletWithForm hideCloneButton asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               <SupplementaryMaterial assets={project?.assets_related} />
-              <DynamicCallToAction
+              {/* <DynamicCallToAction
                 assetId={project.id}
                 assetTechnologies={project.technologies?.map((item) => item?.slug)}
                 assetType="project"
@@ -391,7 +391,7 @@ function ProjectSlug({ project, markdown }) {
               <PodcastCallToAction
                 placement="side"
                 marginTop="40px"
-              />
+              /> */}
             </>
           ) : (
             <Skeleton height="646px" width="100%" borderRadius="17px" />
