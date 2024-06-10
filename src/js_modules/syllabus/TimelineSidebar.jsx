@@ -21,7 +21,7 @@ function TimelineSidebar({
   const {
     themeColor, commonBorderColor, currentThemeValue, colorLight,
   } = Config();
-  const { fontColor3 } = useStyle();
+  const { fontColor3, featuredCard } = useStyle();
 
   return (
     <>
@@ -103,7 +103,7 @@ function TimelineSidebar({
           >
             {!isStudent && (
               <Box onClick={teacherInstructions.actionHandler} padding={{ base: '1rem 1rem 0 1rem', md: '1.5rem 1.5rem 0 1.5rem' }}>
-                <Box cursor="pointer" background="yellow.light" padding="8px" gap="8px" borderRadius="8px" display="flex" alignItems="center">
+                <Box cursor="pointer" background={featuredCard.yellow.featured} padding="8px" gap="8px" borderRadius="8px" display="flex" alignItems="center">
                   <Box background="yellow.default" padding="10px" borderRadius="full">
                     <Icon icon="teacher" color="white" />
                   </Box>

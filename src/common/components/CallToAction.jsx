@@ -4,9 +4,10 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
+import Icon from './Icon';
 
 function CallToAction({
-  background, imageSrc, href, styleContainer, isExternalLink, title, text,
+  background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
   buttonText, width, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
   isLoading,
 }) {
@@ -24,7 +25,7 @@ function CallToAction({
       flexDirection={{ base: 'column', lg: 'row' }}
       gridGap="18px"
     >
-      {imageSrc && (
+      {(imageSrc || icon) && (
       <Box
         borderRadius="50px"
         display="flex"
@@ -35,7 +36,11 @@ function CallToAction({
         height="62px"
         background="white"
       >
-        <Image src={imageSrc} alt="call to action img" width="40px" height="40px" />
+        {icon ? (
+          <Icon icon={icon} width="40px" height="40px" />
+        ) : (
+          <Image src={imageSrc} alt="call to action img" width="40px" height="40px" />
+        )}
       </Box>
       )}
       <Box
@@ -117,6 +122,7 @@ CallToAction.propTypes = {
   buttonsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   fontSizeOfTitle: PropTypes.string,
   isLoading: PropTypes.bool,
+  icon: PropTypes.string,
 };
 
 CallToAction.defaultProps = {
@@ -135,6 +141,7 @@ CallToAction.defaultProps = {
   buttonsData: [],
   fontSizeOfTitle: 'var(--heading-xsm)',
   isLoading: false,
+  icon: '',
 };
 
 export default CallToAction;
