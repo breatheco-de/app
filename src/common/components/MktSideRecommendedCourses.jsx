@@ -171,7 +171,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                     </Heading>
                   </Box>
                   <Text display={{ base: 'none', md: 'inherit' }} fontSize="12px" lineHeight="14px" padding="0 20px">
-                    {course?.course_translation?.short_description || course?.course_translation?.description}
+                    {course?.course_translation?.description || course?.course_translation?.short_description}
                   </Text>
                   <Link
                     variant={{ base: '', md: 'buttonDefault' }}
