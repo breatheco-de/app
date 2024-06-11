@@ -43,20 +43,6 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
       all_subscriptions: currentCohortProps?.all_subscriptions,
       subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
     });
-  }).filter((item) => {
-    const cohort = item?.cohort;
-    const subscriptionExists = item?.subscription !== null || item?.plan_financing !== null;
-
-    const currentSubscription = item?.plan_financing || item?.subscription;
-    const isFreeTrial = currentSubscription?.status?.toLowerCase() === 'free_trial';
-    const suggestedPlan = (currentSubscription?.planOffer?.slug === undefined && currentSubscription?.planOffer) || (item?.all_subscriptions?.length > 0
-      && item?.all_subscriptions?.find((sub) => sub?.plans?.[0]?.slug === currentSubscription?.planOffer?.slug));
-
-    // Ignore free_trial subscription if plan_offer already exists in list
-    if (isFreeTrial && suggestedPlan?.slug !== undefined) return false;
-    if ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) return true;
-
-    return false;
   }) : [];
 
   const marketingCourses = marketingCursesList?.length > 0 ? marketingCursesList.filter(
