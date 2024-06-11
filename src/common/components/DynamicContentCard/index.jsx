@@ -34,10 +34,8 @@ function DynamicContentCard({ data, type, technologies }) {
     }
   }, []);
 
-  console.log('date:::', date);
-
   return (
-    <Flex flexDirection="column" padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={featuredColor} borderRadius="10px">
+    <Flex flexDirection="column" border={startedButNotEnded ? 'solid 2px' : ''} borderColor="blue.default" padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={featuredColor} borderRadius="10px">
       {/* Head conctent */}
       <HeadInfo
         technologies={technologies}
@@ -49,9 +47,11 @@ function DynamicContentCard({ data, type, technologies }) {
         <Heading as="h2" size="18px">
           {data?.title}
         </Heading>
-        <Text size="14px">
-          {data?.description}
-        </Text>
+        {data?.description && (
+          <Text size="14px">
+            {data.description}
+          </Text>
+        )}
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" gridGap="10px">
         <Flex>
@@ -61,14 +61,14 @@ function DynamicContentCard({ data, type, technologies }) {
             <Avatar
               width="35px"
               height="35px"
-              src="https://avatars.githubusercontent.com/u/56565994?s=80&u=1a37ab1666070d9c15fe877ff23f53539da23d05&v=4"
+              src={data?.host_user?.avatar_url || ''}
             />
             <Flex flexDirection="column" gridGap="8px">
               <Text size="14px" lineHeight="normal">
-                By Tomas Gonzales
+                {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
               </Text>
               <Text fontSize="12px" lineHeight="normal">
-                Software Developer @4Geeks Academy
+                Software Developer @4GeeksAcademy
               </Text>
             </Flex>
           </Flex>
@@ -90,18 +90,16 @@ function DynamicContentCard({ data, type, technologies }) {
         <Divider mb="8px" />
         {type === types.workshop ? (
           <Link
-            // margin="auto 0 0 0"
             href={`${languageConnector}/workshops/${data?.slug}`}
             color="blue.default"
-            target="_blank"
             fontSize="17px"
             fontWeight={700}
             letterSpacing="0.05em"
             height="40px"
-            rel="noopener noreferrer"
             display="flex"
             alignItems="center"
-            justifyContent="center"
+            width="fit-content"
+            margin="0 auto"
             gridGap="10px"
           >
             {startedButNotEnded
