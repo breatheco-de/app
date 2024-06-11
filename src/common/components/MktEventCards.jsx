@@ -10,6 +10,7 @@ import EventCard from './EventCard';
 import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
+import DynamicContentCard from './DynamicContentCard';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
@@ -62,6 +63,13 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
       </Flex>
       <DraggableContainer className="hideOverflowX__" overflow="auto" position="relative" width="100%">
         <Flex gridGap="20px" width="max-content" margin="0">
+          <Flex width="fit-content" margin="5rem auto">
+            <DynamicContentCard
+              type="workshop"
+              data={events[0]}
+            />
+          </Flex>
+
           {events.map((event) => (
             <EventCard
               isSmall={isSmall}

@@ -295,5 +295,6 @@
         "features": [{ "description": "Get access to office space world-wide." }]
       }
     ]
-  }
+  },
+  "hrs-average": "{{number}}hrs average"
 }
