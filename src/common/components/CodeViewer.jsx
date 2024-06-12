@@ -27,9 +27,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['html', 'css', 'shell'];
-
-export const allowCodeViewer = ['js', 'javascript', 'jsx', 'python', 'py', 'html', 'css', 'scss'];
+const notExecutables = ['html', 'css', 'shell', 'windows', 'mac', 'linux'];
 
 export const languagesLabels = {
   jsx: 'JS',
@@ -39,6 +37,9 @@ export const languagesLabels = {
   py: 'Python',
   html: 'Html',
   css: 'CSS',
+  windows: 'Windows',
+  mac: 'Mac',
+  linux: 'Linux',
 };
 
 export const languagesNames = {
@@ -48,6 +49,9 @@ export const languagesNames = {
   python: 'python',
   py: 'python',
   html: 'html',
+  windows: 'windows',
+  mac: 'mac',
+  linux: 'shell',
 };
 
 function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext, ...rest }) {
