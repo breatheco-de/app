@@ -142,10 +142,11 @@
       "cancel": "Cancelar"
     }
   },
-  "warningModal" : {
+  "warningModal": {
     "title": "Sincronizar con github",
     "sub-title": "Tu cuenta de Github no está conectada",
-    "text": "Si eres un alumno activo de 4Geeks Academy, conectando tu cuenta de Github podrás acceder a horas ilimitadas de Codespaces",
+    "text": "4Geeks está perfectamente integrado con Github para una experiencia de aprendizaje óptima, recomendamos encarecidamente conectar su cuenta de Github.",
+    "text2": "Github aloja el 90% del código del mundo y se ha convertido en uno de los activos más importantes para los profesionales de la tecnología. <a href='https://4geeks.com/es/docs/knowledge-base-4geeks/evita-que-se-borren-tus-proyectos' class='link' >Haga clic aquí</a> para aprender más sobre por qué y cómo usamos sus credenciales de Github.",
     "connect": "CONECTAR CON GITHUB",
     "skip": "Saltar por ahora"
   },
