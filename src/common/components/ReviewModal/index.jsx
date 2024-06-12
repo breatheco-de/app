@@ -7,6 +7,7 @@ import SimpleModal from '../SimpleModal';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import CodeReview from './CodeReview';
+import DeliverModalContent from './DeliverModalContent';
 import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import FileList from './FileList';
@@ -28,6 +29,7 @@ export const stages = {
   code_review: 'code_review',
   approve_or_reject_code_revision: 'approve_or_reject_code_revision',
   review_code_revision: 'review_code_revision',
+  deliver_assignment: 'deliver_assignment',
 };
 
 const statusList = {
@@ -39,7 +41,7 @@ const { APPROVED, PENDING, REJECTED } = statusList;
 const inputLimit = 450;
 
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
-  projectLink, changeStatusAssignment, disableRate, ...rest }) {
+  projectLink, changeStatusAssignment, disableRate, disableLiking, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticatedWithRigobot } = useAuth();
   const toast = useToast();
@@ -143,6 +145,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getRepoFiles = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().personalFiles(currentTask.id)
         : await bc.assignments().files(currentTask.id);
@@ -171,6 +174,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const getCodeRevisions = async () => {
     try {
+      if (!isAuthenticatedWithRigobot) return;
       const response = isStudent
         ? await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id)
         : await bc.assignments().getCodeRevisions(currentTask.id);
@@ -328,6 +332,9 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
     if (stage === stages.approve_or_reject_code_revision) {
       return storybookTranslation?.['code-review']?.['write-feedback'] || t('code-review.write-feedback');
+    }
+    if (stage === stages.deliver_assignment) {
+      return storybookTranslation?.['deliver-assignment']?.title || t('deliver-assignment.title');
     }
     return storybookTranslation?.['code-review']?.['code-review'] || t('code-review.rigobot-code-review');
   };
@@ -564,6 +571,11 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       <Text size="14px" fontWeight={700}>
                         {t('code-review.count-code-reviews', { count: contextData?.code_revisions?.length || 0 })}
                       </Text>
+                      {!isStudent && contextData?.code_revisions?.length > 0 && (
+                        <Button height="auto" width="fit-content" onClick={() => setStage('review_code_revision')} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                          {t('code-review.read-code-reviews')}
+                        </Button>
+                      )}
                     </Flex>
                     <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
                       {isStudent
@@ -695,7 +707,23 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       )}
 
       {stage === stages.review_code_revision && (
-        <ReviewCodeRevision contextData={contextData} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} />
+        <ReviewCodeRevision disableRate={disableLiking} contextData={contextData} setContextData={setContextData} stage={stage} stages={stages} setStage={setStage} />
+      )}
+
+      {stage === stages.deliver_assignment && (
+        <DeliverModalContent
+          onClose={onClose}
+          isStudent={isStudent}
+          contextData={contextData}
+          currentTask={currentTask}
+          projectLink={projectLink}
+          updpateAssignment={updpateAssignment}
+          setStage={setStage}
+          showCodeReviews={(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate}
+          loaders={loaders}
+          proceedToCommitFiles={proceedToCommitFiles}
+          {...rest}
+        />
       )}
     </SimpleModal>
   );
@@ -713,6 +741,7 @@ ReviewModal.propTypes = {
   changeStatusAssignment: PropTypes.func,
   fixedStage: PropTypes.bool,
   disableRate: PropTypes.bool,
+  disableLiking: PropTypes.bool,
   isExternal: PropTypes.bool,
 };
 ReviewModal.defaultProps = {
@@ -726,6 +755,7 @@ ReviewModal.defaultProps = {
   changeStatusAssignment: () => {},
   fixedStage: false,
   disableRate: false,
+  disableLiking: false,
   isExternal: false,
 };
 

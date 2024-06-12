@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Text,
@@ -15,6 +15,7 @@ import {
 import { CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
@@ -23,11 +24,14 @@ import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
+import { email as emailRegex } from '../../utils/regex';
 
 function Footer({ pageProps }) {
+  const captcha = useRef(null);
   const { t } = useTranslation('footer');
   const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [formStatus, setFormStatus] = useState('');
 
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
@@ -36,6 +40,16 @@ function Footer({ pageProps }) {
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
+
+  const captchaChange = () => {
+    const captchaValue = captcha?.current?.getValue();
+    if (captchaValue) setCaptchaToken(captchaValue);
+    else setCaptchaToken(null);
+  };
+
+  const isEmailValid = String(email)
+    .toLowerCase()
+    .match(emailRegex);
 
   return (
     <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
@@ -85,7 +99,11 @@ function Footer({ pageProps }) {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    bc.marketing().lead({ email })
+                    bc.marketing().lead({
+                      email,
+                      token: captchaToken,
+                      utm_url: window?.location?.href,
+                    })
                       .then((success) => {
                         log(success);
                         if (success === undefined) setFormStatus('error');
@@ -120,12 +138,19 @@ function Footer({ pageProps }) {
                           borderTopLeftRadius: '0px',
                         }}
                         type="submit"
+                        isDisabled={!captchaToken}
                         icon={<CheckIcon />}
                       />
                     </InputRightElement>
 
                   </InputGroup>
-
+                  <Box mt="15px" display={isEmailValid ? 'block' : 'none'}>
+                    <ReCAPTCHA
+                      ref={captcha}
+                      sitekey={process.env.CAPTCHA_KEY}
+                      onChange={captchaChange}
+                    />
+                  </Box>
                 </form>
               ) : (
                 <AlertMessage

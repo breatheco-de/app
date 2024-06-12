@@ -1,13 +1,13 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Box, Button, FormLabel, Input, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast, useColorModeValue, useDisclosure,
+  Box, Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 // import { Formik, Form, Field } from 'formik';
 import PropTypes from 'prop-types';
 import {
-  memo, useEffect, useState, useRef,
+  memo, useEffect, useState,
 } from 'react';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
@@ -124,162 +124,18 @@ export function DetailsModal({
 export function DeliverModal({
   currentTask, projectLink, updpateAssignment, deliveryUrl, isOpen, onClose, readOnly,
 }) {
-  const { t } = useTranslation('assignments');
-  const { modal, borderColor2 } = useStyle();
-  const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
-  const toast = useToast();
-  const [copied, setCopied] = useState(false);
-  const textAreaRef = useRef(null);
-  const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
-  const fontColor = useColorModeValue('gra.dark', 'gray.250');
-  const labelColor = useColorModeValue('gray.600', 'gray.200');
-  const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
-
-  useEffect(() => {
-    if (copied) {
-      setTimeout(() => {
-        setCopied(false);
-      }, 3000);
-    }
-  }, [copied]);
-
   return (
-    <Modal
+    <ReviewModalComponent
+      defaultStage="deliver_assignment"
       isOpen={isOpen}
       onClose={onClose}
-      size="lg"
-    >
-      <ModalOverlay />
-      <ModalContent background={modal.background2} borderRadius="md" marginTop="10%">
-        <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
-          {t('deliver-assignment.title')}
-        </ModalHeader>
-        <ModalCloseButton />
-        <ModalBody pb={4} px={{ base: '10px', md: '35px' }}>
-          <Box display="flex" flexDirection="column" pb={6}>
-            <Text color={fontColor}>{fullName}</Text>
-            <Link href={projectLink} fontWeight="700" letterSpacing="0.05em" width="fit-content" target="_blank" rel="noopener noreferrer" color="blue.default">
-              {currentTask?.title}
-            </Link>
-          </Box>
-          <FormLabel fontSize="12px" letterSpacing="0.05em" color={labelColor}>
-            {t('deliver-assignment.label')}
-          </FormLabel>
-          <Box display="flex" flexDirection="row">
-            <Input
-              ref={textAreaRef}
-              onClick={() => {
-                textAreaRef.current.select();
-                navigator.clipboard.writeText(deliveryUrl);
-                setCopied(true);
-              }}
-              type="text"
-              background={useColorModeValue('gray.250', 'featuredDark')}
-              value={deliveryUrl}
-              readOnly
-              borderTopRightRadius="0"
-              borderBottomRightRadius="0"
-            />
-            <Button
-              variant="default"
-              minWidth="auto"
-              background={copied ? 'success' : 'blue.default'}
-              _hover={{
-                background: copied ? 'success' : 'blue.default',
-              }}
-              onClick={() => {
-                if (copied === false) {
-                  navigator.clipboard.writeText(deliveryUrl);
-                  setCopied(true);
-                }
-              }}
-              borderTopLeftRadius="0"
-              borderBottomLeftRadius="0"
-              textTransform="uppercase"
-              fontSize="13px"
-              fontWeight="700"
-              p="12px 16px"
-            >
-              {copied ? t('deliver-assignment.copied') : t('deliver-assignment.copy')}
-            </Button>
-          </Box>
-          <Text fontSize="12px" letterSpacing="0.05em" pt="8px" color={labelColor}>
-            {t('deliver-assignment.hint')}
-          </Text>
-        </ModalBody>
-        {!readOnly && (
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
-            <Button onClick={() => setOpenIgnoreTask(true)} variant={taskIsIgnored ? 'default' : 'outline'} textTransform="uppercase">
-              {taskIsIgnored
-                ? t('deliver-assignment.mark-as-pending')
-                : t('deliver-assignment.ignore-task')}
-            </Button>
-          </ModalFooter>
-        )}
-      </ModalContent>
-
-      <Modal
-          // isCentered
-        isOpen={openIgnoreTask}
-        onClose={() => setOpenIgnoreTask(false)}
-        size="lg"
-      >
-        <ModalOverlay />
-        <ModalContent background={modal.background2} borderRadius="md" marginTop="10%">
-          <ModalHeader fontSize="15px" color={labelColor} textAlign="center" letterSpacing="0.05em" borderBottom="1px solid" borderColor={borderColor2} fontWeight="bold" textTransform="uppercase">
-            {t('deliver-assignment.title')}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pt="2rem" pb="2rem" px={{ base: '20px', md: '15%' }}>
-            <Text fontSize="22px" fontWeight="700" textAlign="center">
-              {t('deliver-assignment.confirm-ignore', { student: fullName })}
-            </Text>
-          </ModalBody>
-          <ModalFooter margin="0 1.5rem" padding="1.5rem 0" justifyContent="center" borderTop="1px solid" borderColor={borderColor2}>
-            <Button
-              onClick={() => {
-                bc.todo().update({
-                  id: currentTask.id,
-                  revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
-                })
-                  .then(() => {
-                    toast({
-                      position: 'top',
-                      title: t('alert-message:review-assignment-ignored-task'),
-                      status: 'success',
-                      duration: 5000,
-                      isClosable: true,
-                    });
-                    updpateAssignment({
-                      ...currentTask,
-                      id: currentTask.id,
-                      revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
-                    });
-                    setOpenIgnoreTask(false);
-                    onClose();
-                  })
-                  .catch((e) => {
-                    console.log(e);
-                    toast({
-                      position: 'top',
-                      title: t('alert-message:review-assignment-error'),
-                      status: 'error',
-                      duration: 5000,
-                      isClosable: true,
-                    });
-                  });
-              }}
-              variant={taskIsIgnored ? 'default' : 'outline'}
-              textTransform="uppercase"
-            >
-              {taskIsIgnored
-                ? t('deliver-assignment.mark-as-pending')
-                : t('deliver-assignment.ignore-task')}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Modal>
+      currentTask={currentTask}
+      projectLink={projectLink}
+      updpateAssignment={updpateAssignment}
+      deliveryUrl={deliveryUrl}
+      readOnly={readOnly}
+      disableLiking
+    />
   );
 }
 
@@ -390,6 +246,7 @@ export function ReviewModal({ currentTask, projectLink, externalFile, updpateAss
       externalFiles={externalFile}
       projectLink={projectLink}
       updpateAssignment={updpateAssignment}
+      disableLiking
     />
   );
 }

@@ -1,18 +1,31 @@
 {
   "back-to": "Volver al Dashboard",
   "title": "Asignaciones",
-  "students-view": "vista de studiantes",
-  "projects-view": "vista de proyectos",
+  "students-view": "estudiantes",
+  "projects-view": "proyectos",
+  "final-projects": "proyectos finales",
+  "no-final-projects": "No se encontraron proyectos finales",
+  "no-upload-students": "Los siguientes estudiantes aún están pendientes de subir la información de su proyecto final.",
+  "see-students": "Ver estudiantes",
   "no-information": "Es posible que el estudiante nunca haya abierto esta tarea. No se encontró información sobre la tarea de este estudiante.",
   "educational-status": "Estatus eduacional",
   "delivered-percentage": "% de entregado",
   "last-deliver": "Última entrega: hace {{date}}",
   "no-deliver": "Sin entregas",
+  "pending-upload-modal": {
+    "title": "Estudiantes sin subir proyectos finales",
+    "description": "Los siguientes estudiantes aún están pendientes por subir la información de sus proyectos finales."
+  },
+  "project-status": {
+    "done": "Entregado",
+    "pending": "Pendiente"
+  },
   "status": {
     "delivered": "Entregado",
     "approved": "Aprobado",
     "rejected": "Rechazado",
     "undelivered": "No entregado",
+    "pending": "Pendiente",
     "ignored": "Ignorado"
   },
   "educational-list": {
@@ -57,6 +70,7 @@
     "title": "Entregar tarea",
     "label": "URL de entrega única",
     "hint": "Comparte el enlace con el estudiante",
+    "feedback": "Feedback",
     "button": "Ignorar tarea",
     "ignore-task": "Ignorar tarea",
     "confirm-ignore": "¿Estas seguro de que quieres ignorar esta tarea para {{student}}?",
@@ -85,6 +99,7 @@
     "project-delivered": "Proyecto entregado:",
     "your-teacher-said": "Tu profesor dijo:",
     "feedback-will-be-shown-here": "El comentario del profesor se mostrará aquí si es aprobado",
+    "read-code-reviews": "(Leer revisiones de código)",
     "count-code-reviews": "{{count}} revisiones de código",
     "read-and-rate-the-feedback": "Leer y calificar el comentario",
     "start-code-review": "Comenzar revisión de código",

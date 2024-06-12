@@ -7,10 +7,13 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
 import { Config, getSlideProps } from './config';
 import Timeline from '../../common/components/Timeline';
+import Icon from '../../common/components/Icon';
+import Text from '../../common/components/Text';
+import useStyle from '../../common/hooks/useStyle';
 
 function TimelineSidebar({
   cohortSession, filterEmptyModules, onClickAssignment, showPendingTasks, setShowPendingTasks,
-  isOpen, onToggle,
+  isOpen, onToggle, isStudent, teacherInstructions,
 }) {
   const { t } = useTranslation('syllabus');
   const Open = !isOpen;
@@ -18,6 +21,7 @@ function TimelineSidebar({
   const {
     themeColor, commonBorderColor, currentThemeValue, colorLight,
   } = Config();
+  const { fontColor3, featuredCard } = useStyle();
 
   return (
     <>
@@ -97,6 +101,18 @@ function TimelineSidebar({
               overflowY: 'auto',
             }}
           >
+            {!isStudent && (
+              <Box onClick={teacherInstructions.actionHandler} padding={{ base: '1rem 1rem 0 1rem', md: '1.5rem 1.5rem 0 1.5rem' }}>
+                <Box cursor="pointer" background={featuredCard.yellow.featured} padding="8px" gap="8px" borderRadius="8px" display="flex" alignItems="center">
+                  <Box background="yellow.default" padding="10px" borderRadius="full">
+                    <Icon icon="teacher" color="white" />
+                  </Box>
+                  <Text size="l" fontWeight="700" color={fontColor3}>
+                    {t('teacherSidebar.open-instructions')}
+                  </Text>
+                </Box>
+              </Box>
+            )}
             {filterEmptyModules.length > 0 && filterEmptyModules.map((section) => {
               const currentAssignments = showPendingTasks
                 ? section.filteredModulesByPending
@@ -135,6 +151,8 @@ TimelineSidebar.propTypes = {
   isOpen: PropTypes.bool,
   setShowPendingTasks: PropTypes.func,
   onToggle: PropTypes.func,
+  isStudent: PropTypes.bool,
+  teacherInstructions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 TimelineSidebar.defaultProps = {
   cohortSession: null,
@@ -144,6 +162,8 @@ TimelineSidebar.defaultProps = {
   isOpen: false,
   setShowPendingTasks: () => {},
   onToggle: () => {},
+  isStudent: true,
+  teacherInstructions: {},
 };
 
 export default TimelineSidebar;

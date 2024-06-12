@@ -121,10 +121,7 @@ function PaymentInfo() {
     bc.cohort().join(cohort?.id)
       .then(async (resp) => {
         const dataRequested = await resp.json();
-        if (dataRequested?.status === 'ACTIVE') {
-          redirectTocohort(cohort);
-        }
-        if (dataRequested?.status_code >= 400) {
+        if (resp.status >= 400) {
           toast({
             position: 'top',
             title: dataRequested?.detail,
@@ -133,6 +130,9 @@ function PaymentInfo() {
             isClosable: true,
           });
           setReadyToRefetch(false);
+        }
+        if (dataRequested?.status === 'ACTIVE') {
+          redirectTocohort(cohort);
         }
       })
       .catch(() => {
@@ -178,7 +178,6 @@ function PaymentInfo() {
     let interval;
     if (readyToRefetch && timeElapsed < 10) {
       interval = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1);
         getAllMySubscriptions()
           .then((subscriptions) => {
             const currentSubscription = subscriptions?.find(
@@ -200,8 +199,8 @@ function PaymentInfo() {
                   })
                   .finally(() => {
                     clearInterval(interval);
-                    setReadyToRefetch(false);
                   });
+                setReadyToRefetch(false);
               } else {
                 clearInterval(interval);
                 if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
@@ -213,8 +212,16 @@ function PaymentInfo() {
                 }
               }
             }
+          })
+          .finally(() => {
+            setTimeElapsed((prevTime) => prevTime + 1);
           });
       }, 2000);
+    } else {
+      clearInterval(interval);
+      setReadyToRefetch(false);
+      setIsSubmitting(false);
+      setTimeElapsed(0);
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
@@ -470,7 +477,7 @@ function PaymentInfo() {
             </Formik>
           </>
         )}
-        {!isPaymentSuccess && (
+        {isPaymentIdle && (
           <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
             <Flex justifyContent="space-between" alignItems="center">
               <Flex gridGap="10px" alignItems="center">

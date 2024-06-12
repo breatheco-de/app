@@ -392,20 +392,6 @@ function Content() {
   const teacherActions = profesionalRoles.includes(cohortSession.cohort_role)
     ? [
       {
-        icon: 'message',
-        slug: 'teacher-instructions',
-        title: t('teacherSidebar.instructions'),
-        content: extendedInstructions !== null,
-        actionHandler: () => {
-          setExtendedIsEnabled(!extendedIsEnabled);
-          if (extendedIsEnabled === false) {
-            scrollTop();
-          }
-        },
-        actionState: extendedIsEnabled,
-        id: 1,
-      },
-      {
         icon: 'key',
         slug: 'key-concepts',
         title: t('teacherSidebar.key-concepts'),
@@ -618,6 +604,17 @@ function Content() {
           setShowPendingTasks={setShowPendingTasks}
           isOpen={isOpen}
           onToggle={onToggle}
+          isStudent={!profesionalRoles.includes(cohortSession.cohort_role)}
+          teacherInstructions={{
+            content: extendedInstructions !== null,
+            actionHandler: () => {
+              setExtendedIsEnabled(!extendedIsEnabled);
+              if (extendedIsEnabled === false) {
+                scrollTop();
+              }
+            },
+            actionState: extendedIsEnabled,
+          }}
         />
 
         <Box width={{ base: '100%', md: '100%', lg: 'calc(100% - 26.6vw)' }} margin="0 auto" height="auto">
@@ -625,6 +622,25 @@ function Content() {
             <ReactPlayerV2
               url={currentData?.intro_video_url}
             />
+          )}
+          {currentData?.superseded_by?.slug && (
+            <AlertMessage
+              type="warning"
+              zIndex={99}
+              full
+              borderRadius={0}
+              style={{
+                width: '100%',
+                height: 'auto',
+              }}
+            >
+              <Text size="15px" color="black" letterSpacing="0.05em" style={{ margin: '0' }}>
+                {t('superseded-message')}
+                <Link textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
+                  {currentData?.superseded_by?.title}
+                </Link>
+              </Text>
+            </AlertMessage>
           )}
           <Box
             className={`markdown-body ${currentTheme}`}
@@ -641,7 +657,6 @@ function Content() {
             transitionDelay="0ms"
             position="relative"
           >
-
             {extendedInstructions !== null && (
               <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
                 <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
@@ -768,7 +783,7 @@ function Content() {
               <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
                 <iframe
                   id="iframe"
-                  src={`https://assessment.4geeks.com/quiz/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                  src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
                   style={{
                     width: '100%',
                     height: '100%',
