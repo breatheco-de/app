@@ -38,7 +38,8 @@ export const languagesLabels = {
   html: 'Html',
   css: 'CSS',
   windows: 'Windows',
-  mac: 'Mac',
+  mac: 'MacOS',
+  macos: 'MacOS',
   linux: 'Linux',
 };
 
@@ -50,7 +51,8 @@ export const languagesNames = {
   py: 'python',
   html: 'html',
   windows: 'windows',
-  mac: 'mac',
+  mac: 'macos',
+  macos: 'macos',
   linux: 'shell',
 };
 
