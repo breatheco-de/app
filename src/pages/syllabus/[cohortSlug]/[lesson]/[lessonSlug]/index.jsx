@@ -80,7 +80,7 @@ function Content() {
     cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
     taskTodo, setTaskTodo,
   } = useHandler();
-  const { featuredLight, fontColor, borderColor } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -606,8 +606,9 @@ function Content() {
           onToggle={onToggle}
           isStudent={!profesionalRoles.includes(cohortSession.cohort_role)}
           teacherInstructions={{
-            content: extendedInstructions !== null,
+            existContentToShow: extendedInstructions !== null,
             actionHandler: () => {
+              console.log('click');
               setExtendedIsEnabled(!extendedIsEnabled);
               if (extendedIsEnabled === false) {
                 scrollTop();
@@ -622,25 +623,6 @@ function Content() {
             <ReactPlayerV2
               url={currentData?.intro_video_url}
             />
-          )}
-          {currentData?.superseded_by?.slug && (
-            <AlertMessage
-              type="warning"
-              zIndex={99}
-              full
-              borderRadius={0}
-              style={{
-                width: '100%',
-                height: 'auto',
-              }}
-            >
-              <Text size="15px" color="black" letterSpacing="0.05em" style={{ margin: '0' }}>
-                {t('superseded-message')}
-                <Link textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
-                  {currentData?.superseded_by?.title}
-                </Link>
-              </Text>
-            </AlertMessage>
           )}
           <Box
             className={`markdown-body ${currentTheme}`}
@@ -721,7 +703,7 @@ function Content() {
                     {teacherInstructions}
                   </Text>
                 </Box>
-                <MarkDownParser content={extendedInstructions.content} />
+                <MarkDownParser content={extendedInstructions?.content || ''} />
               </SimpleModal>
             )}
 
@@ -794,17 +776,37 @@ function Content() {
               </Box>
             ) : (
               <SyllabusMarkdownComponent
-                {...{
-                  ipynbHtmlUrl,
-                  readme,
-                  currentBlankProps,
-                  callToActionProps,
-                  currentData,
-                  lesson,
-                  quizSlug,
-                  lessonSlug,
-                  currentTask,
-                }}
+                ipynbHtmlUrl={ipynbHtmlUrl}
+                readme={readme}
+                currentBlankProps={currentBlankProps}
+                callToActionProps={callToActionProps}
+                currentData={currentData}
+                lesson={lesson}
+                quizSlug={quizSlug}
+                lessonSlug={lessonSlug}
+                currentTask={currentTask}
+                alerMessage={currentData?.superseded_by?.slug && (
+                  <AlertMessage
+                    type="warning"
+                    zIndex={99}
+                    full
+                    borderRadius="8px"
+                    backgroundColor={featuredCard.yellow.featured}
+                    margin="1rem 0"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                    }}
+                  >
+                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                      {t('superseded-message')}
+                      {' '}
+                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
+                        {currentData?.superseded_by?.title}
+                      </Link>
+                    </Text>
+                  </AlertMessage>
+                )}
               />
             )}
 
