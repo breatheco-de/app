@@ -433,6 +433,7 @@ function Exercise({ exercise, markdown }) {
           minHeight="52rem"
           opacity={0}
           minWidth="250px"
+          zIndex={-1}
         />
         <RelatedContent
           slug={exercise.slug}
