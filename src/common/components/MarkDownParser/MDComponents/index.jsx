@@ -25,9 +25,35 @@ export function Wrapper({ children, ...rest }) {
   );
 }
 export function MDLink({ children, href }) {
-  const urlNeedsProtocol = href.includes('www.');
-  const protocol = urlNeedsProtocol ? 'https://' : '';
-  const isExternalLink = urlNeedsProtocol || href.includes('http');
+  function isExternalUrl(url) {
+      try {
+          // Access the DOMAIN_NAME from environment variables
+          const baseUrl = process.env.DOMAIN_NAME || '';
+          // Create a URL object for the base URL
+          const base = new URL(baseUrl);
+  
+          // Handle relative URLs by using the base URL as a reference
+          const fullUrl = url.startsWith('http') ? url : new URL(url, baseUrl).href;
+  
+          // Create a URL object based on the full URL
+          const linkUrl = new URL(fullUrl, baseUrl);
+  
+          // Normalize the base hostname by potentially removing 'www.'
+          const baseDomain = base.hostname.replace(/^(www\.)?/, '');
+  
+          // Check if the link's hostname ends with the base domain
+          const isInternalDomain = linkUrl.hostname.endsWith(baseDomain);
+  
+          // Check port and scheme as well
+          const isSamePort = linkUrl.port === base.port || (linkUrl.port === '' && base.port === '') || (linkUrl.protocol === 'http:' && linkUrl.port === '80' && base.port === '') || (linkUrl.protocol === 'https:' && linkUrl.port === '443' && base.port === '');
+  
+          return !(isInternalDomain && isSamePort);
+      } catch (e) {
+          console.error("Invalid URL:", e.message);
+          return false; // If URL is invalid, handle as needed
+      }
+  }
+  const _external = isExternalUrl(href);
   return (
     <Link
       as="a"
@@ -36,8 +62,8 @@ export function MDLink({ children, href }) {
       color="blue.400"
       fontWeight="700"
       overflowWrap="anywhere"
-      target={isExternalLink ? '_blank' : '_self'}
-      rel={isExternalLink ? 'noopener noreferrer' : ''}
+      target={_external ? '_blank' : '_self'}
+      rel={_external ? 'noopener noreferrer' : ''}
     >
       {children}
     </Link>
