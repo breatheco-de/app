@@ -25,8 +25,9 @@ export function Wrapper({ children, ...rest }) {
   );
 }
 export function MDLink({ children, href }) {
-  const includesProtocol = href.startsWith('http');
-  const protocol = includesProtocol ? '' : 'https://';
+  const urlNeedsProtocol = href.includes('www.');
+  const protocol = urlNeedsProtocol ? 'https://' : '';
+  const isExternalLink = urlNeedsProtocol || href.includes('http');
   return (
     <Link
       as="a"
@@ -35,8 +36,8 @@ export function MDLink({ children, href }) {
       color="blue.400"
       fontWeight="700"
       overflowWrap="anywhere"
-      target="_blank"
-      rel="noopener noreferrer"
+      target={isExternalLink ? '_blank' : '_self'}
+      rel={isExternalLink ? 'noopener noreferrer' : ''}
     >
       {children}
     </Link>
