@@ -27,9 +27,7 @@ export function Wrapper({ children, ...rest }) {
 export function MDLink({ children, href }) {
   function isExternalUrl(url) {
       try {
-          // Access the DOMAIN_NAME from environment variables
           const baseUrl = process.env.DOMAIN_NAME || '';
-          // Create a URL object for the base URL
           const base = new URL(baseUrl);
   
           // Handle relative URLs by using the base URL as a reference
