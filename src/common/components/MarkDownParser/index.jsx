@@ -55,8 +55,8 @@ function OlComponent({ children }) {
 function ImgComponent(props) {
   return (<Img className="MDImg" alt={props?.alt} src={props?.src} />);
 }
-function ParagraphComponent({ node, children }) {
-  return (<MDText id={node?.children?.[0]?.properties?.alt}>{children}</MDText>);
+function ParagraphComponent({ children }) {
+  return (<MDText>{children}</MDText>);
 }
 function HrComponent() {
   return (<MDHr />);

@@ -15,6 +15,20 @@ import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
 import { log } from '../../../../utils/logging';
 
+export function generateId(children) {
+  const text = children
+    .map((child) => {
+      if (typeof child === 'string') {
+        return child;
+      } if (child?.props && typeof child?.props?.children?.[0] === 'string') {
+        return child.props.children[0];
+      }
+      return child;
+    })
+    .join('');
+
+  return slugify(text, { lower: true });
+}
 export function Wrapper({ children, ...rest }) {
   const style = rest.style || {};
 
@@ -367,8 +381,10 @@ export function MDHr() {
 }
 
 export function MDText({ children, ...rest }) {
+  const id = generateId(children);
+  const idLimited = id.length > 50 ? id.slice(0, 50) : id;
   return (
-    <Text size="l" fontWeight="400" {...rest}>
+    <Text id={idLimited} size="l" fontWeight="400" {...rest}>
       {children}
     </Text>
   );
@@ -402,9 +418,7 @@ export function MDHeading({ children, tagType }) {
     h3: '18px',
     h4: '16px',
   };
-  const id = children?.[0]?.props
-    ? slugify(String(children?.[0]?.props?.children))
-    : slugify(String(children));
+  const id = generateId(children);
 
   return (
     <Heading
