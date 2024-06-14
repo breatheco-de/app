@@ -34,6 +34,8 @@ function DynamicContentCard({ data, type, technologies }) {
     }
   }, []);
 
+  console.log('data:::', data);
+
   return (
     <Flex flexDirection="column" border={startedButNotEnded ? 'solid 2px' : ''} borderColor="blue.default" padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={featuredColor} borderRadius="10px">
       {/* Head conctent */}
@@ -47,9 +49,10 @@ function DynamicContentCard({ data, type, technologies }) {
         <Heading as="h2" size="18px">
           {data?.title}
         </Heading>
-        {data?.description && (
+        {data?.excerpt && (
           <Text size="14px">
-            {data.description}
+            {data?.excerpt}
+            {/* {data.description} */}
           </Text>
         )}
       </Flex>
@@ -67,9 +70,9 @@ function DynamicContentCard({ data, type, technologies }) {
               <Text size="14px" lineHeight="normal">
                 {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
               </Text>
-              <Text fontSize="12px" lineHeight="normal">
+              {/* <Text fontSize="12px" lineHeight="normal">
                 Software Developer @4GeeksAcademy
-              </Text>
+              </Text> */}
             </Flex>
           </Flex>
           )}
