@@ -27,8 +27,6 @@ export function generateId(children) {
     })
     .join('');
 
-  console.log('text:::', text);
-
   return slugify(text, { lower: true });
 }
 export function Wrapper({ children, ...rest }) {
