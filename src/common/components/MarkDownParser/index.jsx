@@ -275,7 +275,7 @@ function MarkDownParser({
             }}
             background="blue.default"
             margin="12px 0 20px 0px"
-            imageSrc="/static/images/learnpack.png"
+            icon="learnpack"
             text={t('learnpack.description')}
             width={{ base: '100%', md: 'fit-content' }}
             buttonsData={learnpackActions}

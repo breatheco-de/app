@@ -193,14 +193,13 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
                   whiteSpace="normal"
                   variant="default"
                   color="white"
-                  fontSize="14px"
                   alignItems="center"
+                  gridGap="8px"
                   background={hexColor.greenLight}
                   onClick={() => setShowModal(true)}
                 >
-                  {'  '}
                   <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-                  {t('open-learnpack')}
+                  <Text fontSize="14px">{t('open-learnpack')}</Text>
                 </Button>
                 <Button
                   borderRadius="3px"

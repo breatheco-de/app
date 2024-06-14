@@ -122,6 +122,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
+    CAPTCHA_KEY: process.env.CAPTCHA_KEY,
   },
   publicRuntimeConfig: {
     // Will be available on both server and client
@@ -131,6 +132,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
+    CAPTCHA_KEY: process.env.CAPTCHA_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
   },
   images: {
@@ -154,6 +156,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     SYLLABUS: process.env.SYLLABUS,
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
+    CAPTCHA_KEY: process.env.CAPTCHA_KEY,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
     PRISMIC_REF: process.env.PRISMIC_REF,
