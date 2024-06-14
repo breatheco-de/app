@@ -1,0 +1,148 @@
+import React from 'react';
+import DynamicContentCard from '../common/components/DynamicContentCard';
+import { types } from '../common/components/DynamicContentCard/card-types';
+
+export default {
+  title: 'Components/DynamicContentCard',
+  component: DynamicContentCard,
+  argTypes: {
+    placement: {
+      control: {
+        type: 'text'
+      }
+    },
+    assetType: {
+      control: {
+        type: 'text'
+      }
+    },
+    assetId: {
+      control: {
+        type: 'number'
+      }
+    },
+    assetTechnologies: {
+      control: {
+        type: 'object'
+      }
+    },
+  }
+};
+
+const Component = (args, context) => {
+  return (
+    <DynamicContentCard {...args} />
+  )
+};
+
+export const Default = Component.bind({});
+Default.args = {
+  type: types.lesson,
+  data: {
+    duration: 5,
+    title: 'Intro to Professional and Agile Development',
+    excerpt: 'All you\'ve learned needs to be put together. Lets make our first entire professional application using the Agile Development method!',
+    gitpod: true,
+    solution_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+    intro_video_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+  },
+  technologies: [{
+    title: 'Html',
+    icon_url: 'https://svgl.app/library/html5.svg'
+  }, {
+    title: 'React',
+    icon_url: 'https://svgl.app/library/react.svg'
+  }, {
+    title: 'Javascript',
+    icon_url: 'https://svgl.app/library/javascript.svg'
+  }],
+};
+
+export const Exercise = Component.bind({});
+Exercise.args = {
+  type: types.exercise,
+  data: {
+    duration: 5,
+    title: 'Intro to Professional and Agile Development',
+    excerpt: 'All you\'ve learned needs to be put together. Lets make our first entire professional application using the Agile Development method!',
+    gitpod: true,
+    solution_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+    intro_video_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+  },
+  technologies: [{
+    title: 'Html',
+    icon_url: 'https://svgl.app/library/html5.svg'
+  }, {
+    title: 'React',
+    icon_url: 'https://svgl.app/library/react.svg'
+  }, {
+    title: 'Javascript',
+    icon_url: 'https://svgl.app/library/javascript.svg'
+  }],
+};
+export const Projects = Component.bind({});
+Projects.args = {
+  type: types.project,
+  data: {
+    duration: 5,
+    title: 'Intro to Professional and Agile Development',
+    excerpt: 'All you\'ve learned needs to be put together. Lets make our first entire professional application using the Agile Development method!',
+    gitpod: true,
+    solution_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+    intro_video_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
+    difficulty: 'Advanced',
+  },
+  technologies: [{
+    title: 'Html',
+    icon_url: 'https://svgl.app/library/html5.svg'
+  }, {
+    title: 'React',
+    icon_url: 'https://svgl.app/library/react.svg'
+  }, {
+    title: 'Javascript',
+    icon_url: 'https://svgl.app/library/javascript.svg'
+  }],
+  usersWorkedHere: [{
+    id: 1,
+    first_name: 'John',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }, {
+    id: 2,
+    first_name: 'Jane',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }, {
+    id: 3,
+    first_name: 'Alice',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }, {
+    id: 4,
+    first_name: 'Bob',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }, {
+    id: 5,
+    first_name: 'Eve',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }, {
+    id: 6,
+    first_name: 'Mallory',
+    last_name: 'Doe',
+    profile: {
+      avatar_url: ''
+    }
+  }],
+};

@@ -6,10 +6,32 @@ import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
 
+const getIntervalDurationTranslation = (date) => {
+  const { t } = useTranslation('common');
+  const { days, hours, minutes } = date?.intervalDurationDate || {};
+  const hoursText = `${hours}${hours > 1 ? 'hrs' : 'hr'}`;
+  const minutesText = `${minutes}${minutes > 1 ? 'mins' : 'min'}`;
+
+  if (days > 0) {
+    return `${days} days duration`;
+  }
+
+  if (hours > 0) {
+    return t('live-event:time-duration', { time: hoursText });
+  }
+
+  if (hours === 0 && minutes > 0) {
+    return t('live-event:time-duration', { time: minutesText });
+  }
+
+  return null;
+};
+
 function HeadInfo({ technologies, duration, type, date }) {
   const { t } = useTranslation('common');
   const { backgroundColor, lightColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
+  const intervalDurationText = getIntervalDurationTranslation(date);
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%">
@@ -37,20 +59,14 @@ function HeadInfo({ technologies, duration, type, date }) {
         </Flex>
       ) : <Box />}
       <Flex gridGap="10px" alignItems="center">
-        {/* tiempo de lectura */}
+        {/* read time */}
         {(Number.isInteger(duration) || date?.text) && (
           <Flex alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 8px" borderRadius="18px">
             <Icon icon="clock" width="14px" height="14px" />
             {date?.text ? (
               <>
                 <Text size="12px" fontWeight={700}>
-                  {date?.intervalDurationDate?.days > 0 ? `${date?.intervalDurationDate?.days} days duration` : (
-                    <>
-                      {date?.intervalDurationDate?.hours > 0 && t('live-event:time-duration', { time: `${date?.intervalDurationDate?.hours}${date?.intervalDurationDate?.hours > 1 ? 'hrs' : 'hr'}` })}
-
-                      {date?.intervalDurationDate?.hours === 0 && date?.intervalDurationDate?.minutes > 0 && t('live-event:time-duration', { time: `${date?.intervalDurationDate?.minutes}${date?.intervalDurationDate?.minutes > 1 ? 'mins' : 'min'}` })}
-                    </>
-                  )}
+                  {intervalDurationText}
                 </Text>
               </>
             ) : (
@@ -61,7 +77,7 @@ function HeadInfo({ technologies, duration, type, date }) {
             )}
           </Flex>
         )}
-        {/* fecha de inicio */}
+        {/* starts at date */}
         {type === 'workshop' && (
           <>
             {startedButNotEnded ? (

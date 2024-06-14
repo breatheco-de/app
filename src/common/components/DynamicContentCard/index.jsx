@@ -8,17 +8,20 @@ import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';
 import useFormatDate from './useFormatDate';
-import { isValidDate, syncInterval } from '../../../utils';
+import { adjustNumberBeetwenMinMax, isValidDate, syncInterval } from '../../../utils';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 
-function DynamicContentCard({ data, type, technologies }) {
+function DynamicContentCard({ data, type, technologies, usersWorkedHere }) {
   const { t } = useTranslation('live-event');
   const { featuredColor } = useStyle();
   const [date, setDate] = useState({});
   const language = data?.lang;
   const { formattedTime } = useFormatDate();
+  const maxUsers = 5;
+  const usersWithPicture = usersWorkedHere?.length > maxUsers ? usersWorkedHere.slice(0, maxUsers) : usersWorkedHere;
+  const remainingUsers = usersWorkedHere?.length > maxUsers ? usersWorkedHere.length - maxUsers : '';
   const languageConnector = (language === 'us' || language === 'en' || language === null) ? '' : `/${language}`;
   const startedButNotEnded = date?.started && date?.ended === false;
-  console.log('data:::', data);
 
   useEffect(() => {
     if (type === types.workshop) {
@@ -33,8 +36,6 @@ function DynamicContentCard({ data, type, technologies }) {
       });
     }
   }, []);
-
-  console.log('data:::', data);
 
   return (
     <Flex flexDirection="column" border={startedButNotEnded ? 'solid 2px' : ''} borderColor="blue.default" padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={featuredColor} borderRadius="10px">
@@ -89,7 +90,7 @@ function DynamicContentCard({ data, type, technologies }) {
         />
       </Flex>
 
-      <Box display={type === types.workshop ? 'block' : 'none'}>
+      <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'}>
         <Divider mb="8px" />
         {type === types.workshop ? (
           <Link
@@ -111,12 +112,34 @@ function DynamicContentCard({ data, type, technologies }) {
           </Link>
         ) : (
           <>
-            {/* NOTE: uncomment until exists data to fill this */}
-            {/* <Flex gridGap="8px">
-              <Text size="12px">
-                +12 students worked in this file
-              </Text>
-            </Flex> */}
+            {type === types.project && usersWorkedHere?.length > 0 && (
+              <Flex gridGap="8px" alignItems="center">
+                {usersWithPicture?.map((user, index) => {
+                  const avatarNumber = adjustNumberBeetwenMinMax({
+                    number: user?.id,
+                    min: 1,
+                    max: 20,
+                  });
+                  const avatar = user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
+                  return (
+                    <Avatar
+                      key={user?.id}
+                      width="32px"
+                      height="32px"
+                      style={{ userSelect: 'none' }}
+                      src={avatar}
+                      marginLeft={index !== 0 && usersWorkedHere.length > index ? '-24px' : '0px'}
+                      zIndex={index}
+                    />
+                  );
+                })}
+                {remainingUsers && (
+                  <Text size="12px">
+                    {`+${remainingUsers} students worked in this file`}
+                  </Text>
+                )}
+              </Flex>
+            )}
           </>
         )}
       </Box>
@@ -131,10 +154,12 @@ DynamicContentCard.propTypes = {
     title: PropTypes.string,
     icon: PropTypes.string,
   })).isRequired,
+  usersWorkedHere: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
 };
 
 DynamicContentCard.defaultProps = {
   data: {},
+  usersWorkedHere: [],
 };
 
 export default DynamicContentCard;
