@@ -24,7 +24,7 @@ function FeatureIndicator({ data, type }) {
   return (
     <Flex margin="0 0 0 auto" gridGap="10px" alignItems="center">
       {type === 'workshop' ? (
-        <Flex alignItems="center" gridGap="8px" background={backgroundColor} padding="4px 10px" borderRadius="18px">
+        <Flex display={langData?.[lang]?.title ? 'flex' : 'none'} alignItems="center" gridGap="8px" background={backgroundColor} padding="4px 10px" borderRadius="18px">
           <Text size="12px" textTransform="uppercase">
             {langData?.[lang]?.title}
           </Text>

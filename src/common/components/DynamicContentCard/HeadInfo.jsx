@@ -9,19 +9,22 @@ import useStyle from '../../hooks/useStyle';
 const getIntervalDurationTranslation = (date) => {
   const { t } = useTranslation('common');
   const { days, hours, minutes } = date?.intervalDurationDate || {};
-  const hoursText = `${hours}${hours > 1 ? 'hrs' : 'hr'}`;
-  const minutesText = `${minutes}${minutes > 1 ? 'mins' : 'min'}`;
 
   if (days > 0) {
-    return `${days} days duration`;
+    return t('live-event:day', { count: days });
+    // return `${days} days duration`;
   }
 
   if (hours > 0) {
-    return t('live-event:time-duration', { time: hoursText });
+    // return t('live-event:time-duration', { time: hoursText });
+    if (minutes > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${hours}h`;
   }
 
   if (hours === 0 && minutes > 0) {
-    return t('live-event:time-duration', { time: minutesText });
+    return t('live-event:minute', { count: minutes });
   }
 
   return null;
@@ -32,6 +35,7 @@ function HeadInfo({ technologies, duration, type, date }) {
   const { backgroundColor, lightColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
+  const existsDuration = intervalDurationText || duration;
 
   return (
     <Flex alignItems="center" justifyContent="space-between" width="100%">
@@ -58,18 +62,16 @@ function HeadInfo({ technologies, duration, type, date }) {
           })}
         </Flex>
       ) : <Box />}
-      <Flex gridGap="10px" alignItems="center">
+      <Flex display={date?.ended ? 'none' : 'flex'} gridGap="10px" alignItems="center">
         {/* read time */}
         {(Number.isInteger(duration) || date?.text) && (
-          <Flex alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 8px" borderRadius="18px">
+          <Flex display={existsDuration ? 'flex' : 'none'} alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 8px" borderRadius="18px">
             <Icon icon="clock" width="14px" height="14px" />
-            {date?.text ? (
-              <>
-                <Text size="12px" fontWeight={700}>
-                  {intervalDurationText}
-                </Text>
-              </>
-            ) : (
+            {intervalDurationText ? (
+              <Text size="12px" fontWeight={700}>
+                {intervalDurationText}
+              </Text>
+            ) : duration && (
               <Text>
                 {t('hrs-average', { number: duration })}
                 {/* {`${duration} min read`} */}
@@ -87,7 +89,7 @@ function HeadInfo({ technologies, duration, type, date }) {
                   {t('live-now')}
                 </Text>
               </Box>
-            ) : (
+            ) : date?.text && (
               <Text size="12px" color={lightColor} fontWeight={700}>
                 {date?.text}
               </Text>

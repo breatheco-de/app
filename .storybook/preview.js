@@ -35,7 +35,7 @@ export const parameters = {
 const myDecorator = (Story, context) => {
   const [{ locale }] = useGlobals();
   return (
-    <I18nProvider lang={locale || 'en'} namespaces={namespaces['en']}>
+    <I18nProvider lang={locale || 'en'} namespaces={namespaces[locale]}>
       <Story />
     </I18nProvider>
   );
