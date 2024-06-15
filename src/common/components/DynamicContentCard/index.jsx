@@ -1,7 +1,7 @@
 import { Avatar, Box, Divider, Flex, Heading, Link } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import HeadInfo from './HeadInfo';
@@ -50,9 +50,9 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere }) {
         <Heading as="h2" size="18px">
           {data?.title}
         </Heading>
-        {data?.excerpt && (
+        {(data?.excerpt || data?.description) && (
           <Text size="14px">
-            {data?.excerpt}
+            {data?.excerpt || data?.description}
             {/* {data.description} */}
           </Text>
         )}

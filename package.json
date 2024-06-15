@@ -23,7 +23,7 @@
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
-    "storybook": "bun make:iconDict && bun generate-i18n && storybook dev -p 6006",
+    "storybook": "bun make:iconDict && bun generate-namespaces && storybook dev -p 6006",
     "build-storybook": "bun make:iconDict && storybook build",
     "make:iconDict": "bun ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
@@ -39,7 +39,7 @@
     "make:syllabus": "bun ./scripts/syllabus.js",
     "make:assets": "bun ./scripts/generate_assets.js",
     "verify:asset-file": "bun ./scripts/verify-asset-file.js",
-    "generate-i18n": "bun ./scripts/generate-i18n-for-storybook.js",
+    "generate-namespaces": "bun ./scripts/generate-namespaces.js",
     "generate-files": "bun make:redirect && bun make:sitemap && bun make:syllabus && bun make:iconDict"
   },
   "dependencies": {
@@ -161,7 +161,6 @@
     "jest": "29.5.0",
     "lint-staged": "13.2.2",
     "slice-machine-ui": "^1.0.3",
-    "storybook": "^7.0.15",
-    "storybook-react-i18next": "^2.0.1"
+    "storybook": "^7.0.15"
   }
 }
