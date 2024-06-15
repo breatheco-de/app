@@ -159,7 +159,7 @@ function Projects({ updpateAssignment, syllabusData, loadStatus, getFilterAssign
   const filteredTasks = contextState.allTasks;
 
   const loadMore = useCallback(async () => {
-    await getFilterAssignments(selectedCohort?.value, selectedCohort?.academy || academy, itemsPerPage, contextState.allTasks.length, true);
+    await getFilterAssignments(selectedCohort?.id, selectedCohort?.academy.id || academy, itemsPerPage, contextState.allTasks.length, true);
 
     setCurrentPage((prevPage) => prevPage + 1);
   }, [currentPage, contextState.allTasks]);

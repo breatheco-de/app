@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import useCohortHandler from '../hooks/useCohortHandler';
 
 function Component({ storyTranslation, withBanner, children }) {
   const { t } = useTranslation('common');
@@ -43,8 +44,10 @@ function OnlyFor({
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
+  const { state } = useCohortHandler();
+  const { userCapabilities: cohortCapabilities } = state;
 
-  const cohortCapabilities = cohortSession?.user_capabilities || [];
+  // const cohortCapabilities = cohortSession?.user_capabilities || [];
   const profileCapabilities = profile?.permissionsSlug || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();

@@ -3,17 +3,18 @@ import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
 import ProgramCard from '../../common/components/ProgramCard';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
-function Programs({ item, handleChoose, onOpenModal, setLateModalProps }) {
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+function Programs({ item, onOpenModal, setLateModalProps }) {
+  const { state, setCohortSession } = useCohortHandler();
+  const { cohortSession } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
   const { cohort } = item;
   const signInDate = item.created_at;
-  const { version, slug, name } = cohort.syllabus_version;
+  const { version, slug } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
 
   const subscription = (cohort?.available_as_saas && currentCohortProps?.subscription) || (cohort?.available_as_saas && currentCohortProps?.plan_financing);
@@ -33,14 +34,7 @@ function Programs({ item, handleChoose, onOpenModal, setLateModalProps }) {
   };
   const onClickHandler = () => {
     setIsLoadingPageContent(true);
-    handleChoose({
-      version,
-      slug,
-      cohort_name: cohort.name,
-      cohort_slug: cohort?.slug,
-      syllabus_name: name,
-      academy_id: cohort.academy.id,
-    });
+
     if (isFinantialStatusLate) {
       setLateModalProps({
         isOpen: true,
@@ -123,14 +117,12 @@ function Programs({ item, handleChoose, onOpenModal, setLateModalProps }) {
 
 Programs.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  handleChoose: PropTypes.func,
   onOpenModal: PropTypes.func,
   setLateModalProps: PropTypes.func,
 };
 
 Programs.defaultProps = {
   item: {},
-  handleChoose: () => {},
   onOpenModal: () => {},
   setLateModalProps: () => {},
 };

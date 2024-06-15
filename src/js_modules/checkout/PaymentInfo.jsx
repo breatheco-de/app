@@ -16,9 +16,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { getCohort } from '../../common/handlers/cohorts';
-import useAuth from '../../common/hooks/useAuth';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
@@ -51,10 +50,9 @@ function PaymentInfo() {
   const {
     state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
   } = useSignup();
-  const { choose } = useAuth();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans } = state;
   const cohortId = Number(getQueryString('cohort'));
-  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const { setCohortSession } = useCohortHandler();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
@@ -95,14 +93,6 @@ function PaymentInfo() {
   const redirectTocohort = (cohort) => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohort?.syllabus_version;
-    choose({
-      version: syllabusVersion?.version,
-      slug: syllabusVersion?.slug,
-      cohort_name: cohort.name,
-      cohort_slug: cohort?.slug,
-      syllabus_name: syllabusVersion,
-      academy_id: cohort.academy.id,
-    });
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
     setCohortSession({

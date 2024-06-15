@@ -1,5 +1,5 @@
 import {
-  useMemo, useEffect, useState,
+  useEffect, useState,
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
@@ -74,18 +74,25 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const { featuredColor, hexColor } = useStyle();
 
-  const { user, choose, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
-  const [currentCohortProps, setCurrentCohortProps] = useState({});
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
   const {
-    cohortSession, sortedAssignments, taskCohortNull, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort, taskTodo, taskTodoState,
+    state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
+    getMandatoryProjects, getTasksWithoutCohort,
   } = useCohortHandler();
+
+  const { cohortSession, sortedAssignments, taskCohortNull } = state;
+
+  const mainTechnologies = cohortProgram?.main_technologies
+    ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
+    : [];
+
+  const academyOwner = cohortProgram?.academy_owner;
 
   const { cohortSlug, slug } = router.query;
 
@@ -123,8 +130,6 @@ function Dashboard() {
 
   if (cohortSession?.academy?.id) {
     axios.defaults.headers.common.Academy = cohortSession.academy.id;
-  } else {
-    router.push('/choose-program');
   }
 
   const syncTaskWithCohort = async () => {
@@ -276,68 +281,67 @@ function Dashboard() {
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    getCohortData({
-      choose, cohortSlug,
-    }).then((cohort) => {
-      setCurrentCohortProps(cohort);
-      reportDatalayer({
-        dataLayer: {
-          cohort,
-        },
+    if (user) {
+      getCohortData({
+        cohortSlug,
+      }).then((cohort) => {
+        reportDatalayer({
+          dataLayer: {
+            cohort,
+          },
+        });
+        // Fetch cohort assignments (lesson, exercise, project, quiz)
+        getCohortAssignments({
+          user, setContextState, slug, cohort,
+        });
       });
-    });
-  }, [cohortSlug]);
+    }
+  }, [user]);
 
   // Students and Teachers data
   useEffect(() => {
-    bc.cohort().getStudents(cohortSlug).then(({ data }) => {
-      if (data && data.length > 0) {
-        setSudentAndTeachers(data.sort(
-          (a, b) => a.user.first_name.localeCompare(b.user.first_name),
-        ).map((elem, index) => {
-          const avatarNumber = adjustNumberBeetwenMinMax({
-            number: index,
-            min: 1,
-            max: 20,
-          });
-          return {
-            ...elem,
-            user: {
-              ...elem.user,
-              profile: {
-                ...elem.user.profile,
-                avatar_url: elem?.user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+    if (cohortSession?.id) {
+      bc.cohort().getStudents(cohortSlug).then(({ data }) => {
+        if (data && data.length > 0) {
+          setSudentAndTeachers(data.sort(
+            (a, b) => a.user.first_name.localeCompare(b.user.first_name),
+          ).map((elem, index) => {
+            const avatarNumber = adjustNumberBeetwenMinMax({
+              number: index,
+              min: 1,
+              max: 20,
+            });
+            return {
+              ...elem,
+              user: {
+                ...elem.user,
+                profile: {
+                  ...elem.user.profile,
+                  avatar_url: elem?.user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`,
+                },
               },
-            },
-          };
-        }));
-      }
-    }).catch(() => {
-      toast({
-        position: 'top',
-        title: t('alert-message:error-fetching-students-and-teachers'),
-        status: 'error',
-        duration: 7000,
-        isClosable: true,
-      });
-    });
-  }, [cohortSlug]);
-
-  // Fetch cohort assignments (lesson, exercise, project, quiz)
-  useEffect(() => {
-    if (isAuthenticated) {
-      getCohortAssignments({
-        user, setContextState, slug,
+            };
+          }));
+        }
+      }).catch((err) => {
+        console.log(err);
+        toast({
+          position: 'top',
+          title: t('alert-message:error-fetching-students-and-teachers'),
+          status: 'error',
+          duration: 7000,
+          isClosable: true,
+        });
       });
     }
-  }, [isAuthenticated, user]);
+  }, [cohortSession]);
 
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
   }, [sortedAssignments]);
 
   // Sort all data fetched in order of taskTodo
-  useMemo(() => {
+  useEffect(() => {
     prepareTasks({
       cohortProgram, contextState, nestAssignments,
     });
@@ -479,8 +483,8 @@ function Dashboard() {
               />
             )}
 
-            {cohortSession?.main_technologies ? (
-              <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={cohortSession.main_technologies} separator="/" />
+            {mainTechnologies ? (
+              <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={mainTechnologies} separator="/" />
             ) : (
               <SimpleSkeleton
                 height="34px"
@@ -502,12 +506,10 @@ function Dashboard() {
                     user={user}
                     students={onlyStudentsActive}
                     sortedAssignments={sortedAssignments}
-                    currentCohortProps={currentCohortProps}
-                    setCurrentCohortProps={setCurrentCohortProps}
                     width="100%"
                   />
                 </OnlyFor>
-                {cohortSession?.academy_owner?.white_labeled && (
+                {academyOwner?.white_labeled && (
                 <Box
                   className="white-label"
                   borderRadius="md"
@@ -517,12 +519,12 @@ function Dashboard() {
                   bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
                 >
                   <Avatar
-                    name={cohortSession.academy_owner.name}
-                    src={cohortSession.academy_owner.icon_url}
+                    name={academyOwner.name}
+                    src={academyOwner.icon_url}
                   />
                   <Box className="white-label-text" width="80%">
                     <Text size="md" fontWeight="700" marginBottom="5px">
-                      {cohortSession.academy_owner.name}
+                      {academyOwner.name}
                     </Text>
                     <Text size="sm">
                       {t('whiteLabeledText')}
@@ -539,14 +541,13 @@ function Dashboard() {
                 />
 
                 {cohortSession?.kickoff_date && (
-                <CohortSideBar
-                  cohortSession={cohortSession}
-                  teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-                  cohort={cohortSession}
-                  studentAndTeachers={studentAndTeachers}
-                  cohortCity={cohortSession?.name}
-                  width="100%"
-                />
+                  <CohortSideBar
+                    teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                    cohort={cohortSession}
+                    studentAndTeachers={studentAndTeachers}
+                    cohortCity={cohortSession?.name}
+                    width="100%"
+                  />
                 )}
                 {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
                   <SupportSidebar
@@ -589,7 +590,7 @@ function Dashboard() {
             )}
 
             {
-            cohortSession.current_module && dailyModuleData && (
+            cohortSession?.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
@@ -606,7 +607,7 @@ function Dashboard() {
               <Box marginTop="36px">
                 <ProgressBar
                   cohortProgram={cohortProgram}
-                  taskTodo={taskTodoState}
+                  taskTodo={contextState.taskTodo}
                   progressText={t('progressText')}
                   width="100%"
                 />
@@ -685,7 +686,7 @@ function Dashboard() {
                         key={index}
                         userId={user?.id}
                         existsActivities={existsActivities}
-                        cohortData={currentCohortProps}
+                        cohortData={cohortSession}
                         taskCohortNull={taskCohortNull}
                         contextState={contextState}
                         setContextState={setContextState}
@@ -694,7 +695,7 @@ function Dashboard() {
                         slug={slugify(label)}
                         searchValue={searchValue}
                         description={description}
-                        taskTodo={taskTodo}
+                        taskTodo={contextState.taskTodo}
                         modules={modules}
                         filteredModules={filteredModulesSearched}
                         showPendingTasks={showPendingTasks}
@@ -729,19 +730,17 @@ function Dashboard() {
                   user={user}
                   students={onlyStudentsActive}
                   sortedAssignments={sortedAssignments}
-                  currentCohortProps={currentCohortProps}
-                  setCurrentCohortProps={setCurrentCohortProps}
                   width="100%"
                 />
               </OnlyFor>
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
-                  tasks={taskTodoState}
+                  tasks={contextState.taskTodo}
                   studentAndTeachers={onlyStudentsActive}
                   isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
                 />
               )}
-              {cohortSession?.academy_owner?.white_labeled && (
+              {academyOwner?.white_labeled && (
                 <Box
                   className="white-label"
                   borderRadius="md"
@@ -751,12 +750,12 @@ function Dashboard() {
                   bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
                 >
                   <Avatar
-                    name={cohortSession.academy_owner.name}
-                    src={cohortSession.academy_owner.icon_url}
+                    name={academyOwner.name}
+                    src={academyOwner.icon_url}
                   />
                   <Box className="white-label-text" width="80%">
                     <Text size="md" fontWeight="700" marginBottom="5px">
-                      {cohortSession.academy_owner.name}
+                      {academyOwner.name}
                     </Text>
                     <Text size="sm">
                       {t('whiteLabeledText')}
@@ -772,14 +771,13 @@ function Dashboard() {
                 cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
               />
               {cohortSession?.kickoff_date && (
-              <CohortSideBar
-                cohortSession={cohortSession}
-                teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-                studentAndTeachers={studentAndTeachers}
-                cohort={cohortSession}
-                cohortCity={cohortSession?.name}
-                width="100%"
-              />
+                <CohortSideBar
+                  teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
+                  studentAndTeachers={studentAndTeachers}
+                  cohort={cohortSession}
+                  cohortCity={cohortSession?.name}
+                  width="100%"
+                />
               )}
               {cohortSession?.cohort_role?.toLowerCase() === 'student' && (
                 <SupportSidebar
@@ -891,7 +889,7 @@ function Dashboard() {
                 key={`${module.title}-${i}`}
                 currIndex={i}
                 data={module}
-                taskTodo={taskTodo}
+                taskTodo={contextState.taskTodo}
                 variant="open-only"
               />
             ))}

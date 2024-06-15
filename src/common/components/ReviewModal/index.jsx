@@ -15,6 +15,7 @@ import bc from '../../services/breathecode';
 import LoaderScreen from '../LoaderScreen';
 import ReviewCodeRevision from './ReviewCodeRevision';
 import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import PopoverTaskHandler from '../PopoverTaskHandler';
 import { updateAssignment } from '../../hooks/useModuleHandler';
 import useModuleMap from '../../store/actions/moduleMapAction';
@@ -53,7 +54,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   });
   const [profile] = usePersistent('profile', {});
   const [comment, setComment] = useState('');
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [openUndoApproval, setOpenUndoApproval] = useState(false);

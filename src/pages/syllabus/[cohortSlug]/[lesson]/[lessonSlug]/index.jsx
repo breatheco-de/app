@@ -43,7 +43,7 @@ import { log } from '../../../../../utils/logging';
 function Content() {
   const { t, lang } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const { isLoading, user, choose } = useAuth();
+  const { user } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const { setUserSession } = useSession();
@@ -77,9 +77,9 @@ function Content() {
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
-    taskTodo, setTaskTodo,
+    getCohortAssignments, getCohortData, prepareTasks, state,
   } = useCohortHandler();
+  const { cohortSession, sortedAssignments } = state;
   const { featuredLight, fontColor, borderColor } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
@@ -151,22 +151,33 @@ function Content() {
     }
   };
 
-  useEffect(() => {
-    getCohortData({
+  const setCohortAndAssignments = async () => {
+    const cohort = await getCohortData({
       cohortSlug,
-      choose,
     });
-  }, []);
+    getCohortAssignments({
+      user, setContextState, cohort,
+    });
+  };
+
+  useEffect(() => {
+    if (user) {
+      setCohortAndAssignments();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
       bc.todo().update({ ...currentTask, opened_at: new Date() })
         .then((result) => {
           if (result.data) {
-            const updateTasks = taskTodo;
+            const updateTasks = contextState.taskTodo.map((task) => ({ ...task }));
             const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
             updateTasks[index].opened_at = result.data.opened_at;
-            setTaskTodo([...updateTasks]);
+            setContextState({
+              ...contextState,
+              taskTodo: [...updateTasks],
+            });
           }
         }).catch((e) => log('update_task_error:', e));
     }
@@ -174,11 +185,11 @@ function Content() {
 
   useEffect(() => {
     const assetSlug = currentData?.translations?.us || currentData?.translations?.en || lessonSlug;
-    if (taskTodo.length > 0) {
-      setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
+    if (contextState.taskTodo.length > 0) {
+      setCurrentTask(contextState.taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
       && el.associated_slug === assetSlug));
     }
-  }, [taskTodo, lessonSlug, lesson]);
+  }, [contextState.taskTodo, lessonSlug, lesson]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -338,15 +349,16 @@ function Content() {
   }, [router, lessonSlug]);
 
   useEffect(() => {
-    if (sortedAssignments.length <= 0) {
-      toast({
-        position: 'top',
-        title: t('alert-message:no-cohort-modules-found'),
-        status: 'warning',
-        duration: 7000,
-        isClosable: true,
-      });
-    }
+    console.log('sortedAssignments', sortedAssignments);
+    // if (sortedAssignments.length <= 0) {
+    //   toast({
+    //     position: 'top',
+    //     title: t('alert-message:no-cohort-modules-found'),
+    //     status: 'warning',
+    //     duration: 7000,
+    //     isClosable: true,
+    //   });
+    // }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
@@ -374,13 +386,13 @@ function Content() {
     }
   }, [selectedSyllabus]);
 
-  useEffect(() => {
-    if (!isLoading && user?.active_cohort && cohortSession?.cohort_role) {
-      getCohortAssignments({
-        user, setContextState,
-      });
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (!isLoading && cohortSession?.cohort_role) {
+  //     getCohortAssignments({
+  //       user, setContextState,
+  //     });
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
