@@ -1,3 +1,4 @@
+// Created to enable i18n namespaces to be used in storybook
 const fs = require('fs');
 const path = require('path');
 
