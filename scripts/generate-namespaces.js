@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const localesDir = path.join(__dirname, '../public/locales');
-const outputDir = path.join(__dirname, '../public/generated'); // Directorio temporal
+const outputDir = path.join(__dirname, '../.storybook/generated');
 const outputFile = path.join(outputDir, 'namespaces.json');
 const namespaces = {};
 
