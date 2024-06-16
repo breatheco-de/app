@@ -6,7 +6,6 @@ import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
 import axios from '../../axios';
-import EventCard from './EventCard';
 import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
@@ -55,35 +54,23 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
       gridColumn="1 / span 10"
       {...rest}
     >
-      <Flex alignItems="center" gridGap="32px" marginBottom="32px">
+      <Flex alignItems="center" gridGap="32px" marginBottom="26px">
         <Heading as="h2" fontWeight={700} style={{ fontSize: '38px' }}>
           {title}
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
-      <DraggableContainer className="hideOverflowX__" overflow="auto" position="relative" width="100%">
-        <Flex gridGap="20px" width="max-content" margin="0">
-          <Flex width="fit-content" margin="5rem auto">
+      <DraggableContainer className="hideOverflowX__" position="relative" width="100%">
+        <Flex gridGap="20px" padding="6px 0" width="max-content" alignItems="center" margin="0">
+          {events.map((event) => (
             <DynamicContentCard
               type="workshop"
-              data={events[0]}
-            />
-          </Flex>
-
-          {events.map((event) => (
-            <EventCard
-              isSmall={isSmall}
-              key={event?.id}
-              language={event.lang}
-              id={event?.id}
-              slug={event?.slug}
-              title={event?.title}
-              host={event?.host}
-              ignoreDynamicHandler
-              description={hideDescription ? '' : event?.excerpt}
-              technologies={event?.technologies || []}
-              startingAt={event?.starting_at}
-              endingAt={event?.ended_at || event?.ending_at}
+              data={event}
+              height="fit-content"
+              transition="transform 0.15s ease-in-out"
+              _hover={{
+                transform: 'scale(1.03)',
+              }}
             />
           ))}
         </Flex>

@@ -12,7 +12,7 @@ import { adjustNumberBeetwenMinMax, isValidDate, syncInterval } from '../../../u
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 
-function DynamicContentCard({ data, type, technologies, usersWorkedHere }) {
+function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
   const { featuredColor, borderColor } = useStyle();
   const [date, setDate] = useState({});
@@ -52,7 +52,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere }) {
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px">
+    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
       {/* Head conctent */}
       <HeadInfo
         technologies={technologies}
@@ -128,6 +128,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere }) {
                 width="fit-content"
                 margin="0 auto"
                 gridGap="10px"
+                _after={{
+                  content: '""',
+                  position: 'absolute',
+                  inset: 0,
+                }}
               >
                 {date?.started
                   ? t('join-workshop')
