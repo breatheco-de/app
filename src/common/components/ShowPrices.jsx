@@ -72,13 +72,12 @@ function ShowPrices({
   defaultFinanceIndex,
   externalSelection,
   outOfConsumables,
-  stTranslation,
   handleUpgrade,
   isTotallyFree,
 }) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
-  const { t, lang } = useTranslation('');
+  const { t } = useTranslation('');
   const { fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
@@ -196,7 +195,7 @@ function ShowPrices({
             variant="default"
             isDisabled={!selectedItem && true}
           >
-            {stTranslation ? stTranslation[lang].common['upgrade-plan'].button : t('common:upgrade-plan.button')}
+            {t('common:upgrade-plan.button')}
           </Button>
         )}
         <Button
@@ -211,7 +210,7 @@ function ShowPrices({
             }
           }}
         >
-          {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
+          {t('common:enroll')}
         </Button>
       </Box>
     </Box>
@@ -230,7 +229,6 @@ ShowPrices.propTypes = {
   defaultIndex: PropTypes.number,
   defaultFinanceIndex: PropTypes.number,
   outOfConsumables: PropTypes.bool,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -248,7 +246,6 @@ ShowPrices.defaultProps = {
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,
-  stTranslation: null,
   handleUpgrade: false,
   isTotallyFree: false,
   externalSelection: {},

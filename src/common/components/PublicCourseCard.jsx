@@ -11,10 +11,10 @@ import { ORIGIN_HOST } from '../../utils/variables';
 
 function PublicCourseCard({
   programName, programDescription, programSlug, icon_url, iconBackground, startsIn,
-  stTranslation, syllabusContent, courseProgress, usersConnected, assistants,
+  syllabusContent, courseProgress, usersConnected, assistants,
   teacher, isAvailableAsSaas, subscriptionStatus, width, href, onClick, ...rest
 }) {
-  const { t, lang } = useTranslation('program-card');
+  const { t } = useTranslation('program-card');
   const { backgroundColor2, hexColor } = useStyle();
   const textColor = useColorModeValue('black', 'white');
 
@@ -51,7 +51,6 @@ function PublicCourseCard({
         {syllabusContent || assistants.length > 0 ? (
           <ProjectsSection
             startsIn={startsIn}
-            stTranslation={stTranslation}
             syllabusContent={syllabusContent}
             courseProgress={courseProgress}
             usersConnected={usersConnected}
@@ -89,7 +88,7 @@ function PublicCourseCard({
         _hover={{ opacity: 0.7 }}
         _active={{ opacity: 1 }}
       >
-        {stTranslation?.[lang]?.common['learn-more'] || t('common:learn-more')}
+        {t('common:learn-more')}
       </Link>
     </Box>
   );
@@ -104,7 +103,6 @@ PublicCourseCard.propTypes = {
   startsIn: PropTypes.instanceOf(Date),
   syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   usersConnected: PropTypes.arrayOf(PropTypes.number),
   assistants: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -119,7 +117,6 @@ PublicCourseCard.defaultProps = {
   programDescription: null,
   icon_url: '',
   iconBackground: '',
-  stTranslation: null,
   startsIn: null,
   syllabusContent: null,
   courseProgress: null,
