@@ -60,13 +60,14 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
         </Heading>
         <Icon icon="longArrowRight" width="58px" height="30px" />
       </Flex>
-      <DraggableContainer className="hideOverflowX__" position="relative" width="100%">
-        <Flex gridGap="20px" padding="6px 0" width="max-content" alignItems="center" margin="0">
+      <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
+        <Flex gridGap="20px" width="max-content" alignItems="center">
           {events.map((event) => (
             <DynamicContentCard
               type="workshop"
               data={event}
               height="fit-content"
+              userSelect="none"
               transition="transform 0.15s ease-in-out"
               _hover={{
                 transform: 'scale(1.03)',
