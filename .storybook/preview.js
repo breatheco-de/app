@@ -9,7 +9,7 @@ import CustomTheme from '../styles/theme';
 import '../styles/globals.css';
 import '../styles/markdown.css';
 import '../styles/react-tags-input.css';
-import namespaces from '../public/generated/namespaces.json';
+import namespaces from './generated/namespaces.json';
 
 import "@fontsource/lato/100.css"
 import "@fontsource/lato/300.css"
