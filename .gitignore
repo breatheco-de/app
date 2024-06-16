@@ -21,6 +21,7 @@
 
 # development
 /storybook-static
+/public/generated
 
 # misc
 .DS_Store

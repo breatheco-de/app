@@ -4,12 +4,12 @@ import {ChakraProvider} from '@chakra-ui/react';
 import { Provider } from 'react-redux';
 import I18nProvider from 'next-translate/I18nProvider'
 import { useGlobals } from '@storybook/client-api';
-import i18n from './i18next.js';
 import { initStore } from '../src/store';
 import CustomTheme from '../styles/theme';
 import '../styles/globals.css';
 import '../styles/markdown.css';
 import '../styles/react-tags-input.css';
+import namespaces from '../public/generated/namespaces.json';
 
 import "@fontsource/lato/100.css"
 import "@fontsource/lato/300.css"
@@ -25,7 +25,6 @@ export const parameters = {
       date: /Date$/,
     },
   },
-  i18n,
   locale: 'en',
   locales: {
     en: 'English',
@@ -35,14 +34,9 @@ export const parameters = {
 
 const myDecorator = (Story, context) => {
   const [{ locale }] = useGlobals();
-  const args = {
-    ...context.args,
-    translation: context.parameters.i18n.store.data,
-    locale: locale || 'en',
-  }
   return (
-    <I18nProvider lang={locale || 'en'} >
-      <Story args={args} stTranslation={context.parameters.i18n.store.data} />
+    <I18nProvider lang={locale || 'en'} namespaces={namespaces[locale]}>
+      <Story />
     </I18nProvider>
   );
 };
