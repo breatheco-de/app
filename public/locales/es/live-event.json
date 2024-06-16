@@ -27,9 +27,16 @@
     "will-start-soon": "Empezará pronto",
     "time-duration": "{{time}} de duración",
     "join-event": "Únete ahora",
+    "join-workshop": "Unirse al taller",
     "book-place": "Reserva tu lugar",
     "filters": {
         "language": "Idioma",
         "event-type": "Tipo de evento"
-    }
+    },
+    "minute_one": "{{count}} minuto",
+    "minute_other": "{{count}} minutos",
+    "day_one": "{{count}} día",
+    "day_other": "{{count}} días",
+    "students-worked-here": "+{{count}} alumnos trabajaron en este archivo",
+    "register-workshop": "Regístrate en este taller"
 }

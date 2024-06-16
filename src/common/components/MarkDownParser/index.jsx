@@ -137,7 +137,7 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 
 function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData,
+  showLineNumbers, showInlineLineNumbers, assetData, alerMessage,
 }) {
   const { t } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -286,6 +286,7 @@ function MarkDownParser({
         {withToc && (
           <Toc content={content} />
         )}
+        {alerMessage && alerMessage}
 
         {Array.isArray(subTasks) && subTasks?.length > 0 && (
           <SubTasks subTasks={subTasks} assetType={assetType} />
@@ -345,6 +346,7 @@ MarkDownParser.propTypes = {
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
+  alerMessage: PropTypes.node,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -358,6 +360,7 @@ MarkDownParser.defaultProps = {
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
+  alerMessage: null,
 };
 
 export default MarkDownParser;
