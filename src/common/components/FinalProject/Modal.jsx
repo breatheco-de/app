@@ -7,11 +7,10 @@ import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';
 
-function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) {
+function FinalProjectModal({ isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) {
   const { t } = useTranslation('final-project');
   const [openForm, setOpenForm] = useState(false);
-  const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
-  const bullets = finalProjectTranslation?.modal?.bullets || t('modal.bullets', {}, { returnObjects: true });
+  const bullets = t('modal.bullets', {}, { returnObjects: true });
   const { lightColor, modal } = useStyle();
 
   const handleClose = () => {
@@ -31,10 +30,10 @@ function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, clos
             </Box>
             <Flex flexDirection="column" flex={0.4} width="100%" gridGap="16px" padding={{ base: '0', md: '20px' }}>
               <Heading size="sm" color={lightColor} letterSpacing="0.05em">
-                {finalProjectTranslation?.modal?.subtitle || t('modal.subtitle')}
+                {t('modal.subtitle')}
               </Heading>
               <Text size="18px">
-                {finalProjectTranslation?.modal?.description || t('modal.description')}
+                {t('modal.description')}
               </Text>
               <Flex flexDirection="column" gridGap="8px">
                 {bullets.map((bullet) => (
@@ -51,7 +50,7 @@ function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, clos
                   closeModal();
                 }}
               >
-                {finalProjectTranslation?.modal?.button || t('modal.button')}
+                {t('modal.button')}
               </Button>
             </Flex>
           </Flex>
@@ -63,7 +62,6 @@ function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, clos
           <ModalContent margin="5rem 0 4rem 0" background={modal.background} borderRadius="13px">
             <ModalCloseButton />
             <FinalProjectForm
-              storyConfig={storyConfig}
               cohortData={cohortData}
               studentsData={studentsData}
               handleClose={handleClose}
@@ -76,7 +74,6 @@ function FinalProjectModal({ storyConfig, isOpen, cohortData, studentsData, clos
 }
 
 FinalProjectModal.propTypes = {
-  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isOpen: PropTypes.bool,
   cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   studentsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
@@ -84,7 +81,6 @@ FinalProjectModal.propTypes = {
   closeOnOverlayClick: PropTypes.bool,
 };
 FinalProjectModal.defaultProps = {
-  storyConfig: {},
   isOpen: false,
   cohortData: {},
   studentsData: [],

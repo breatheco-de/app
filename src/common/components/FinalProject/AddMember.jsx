@@ -25,7 +25,7 @@ import useStyle from '../../hooks/useStyle';
 import useAuth from '../../hooks/useAuth';
 import { isNumber } from '../../../utils';
 
-function AddMember({ translation, students, errors, required, hint }) {
+function AddMember({ students, errors, required, hint }) {
   const [field, meta, helpers] = useField('members');
   const { featuredColor, disabledColor, lightColor } = useStyle();
   const { t } = useTranslation('final-project');
@@ -70,7 +70,7 @@ function AddMember({ translation, students, errors, required, hint }) {
             handleChange={onChange}
             disabled={isDisabled}
             {...props}
-            placeholder={`${translation?.finalProjectTranslation?.['modal-form']?.['add-participants'] || t('modal-form.add-participants')}${required ? '*' : ''}`}
+            placeholder={`${t('modal-form.add-participants')}${required ? '*' : ''}`}
             className={`${props.className} ${errors?.members ? 'error' : ''}`}
           />
         )}
@@ -120,10 +120,10 @@ function AddMember({ translation, students, errors, required, hint }) {
               <Modal isOpen={openModal} onClose={() => setOpenModal(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader>{translation?.finalProjectTranslation?.['modal-form']?.confirmation.title || t('modal-form.confirmation.title')}</ModalHeader>
+                  <ModalHeader>{t('modal-form.confirmation.title')}</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
-                    {translation?.finalProjectTranslation?.['modal-form']?.confirmation.text || t('modal-form.confirmation.text')}
+                    {t('modal-form.confirmation.text')}
                   </ModalBody>
                   <ModalFooter>
                     <Button
@@ -135,13 +135,13 @@ function AddMember({ translation, students, errors, required, hint }) {
                         setOpenModal(false);
                       }}
                     >
-                      {translation?.finalProjectTranslation?.['modal-form']?.confirmation.confirm || t('modal-form.confirmation.confirm')}
+                      {t('modal-form.confirmation.confirm')}
                     </Button>
                     <Button
                       variant="ghost"
                       onClick={() => setOpenModal(false)}
                     >
-                      {translation?.finalProjectTranslation?.['modal-form']?.confirmation.cancel || t('modal-form.confirmation.cancel')}
+                      {t('modal-form.confirmation.cancel')}
                     </Button>
                   </ModalFooter>
                 </ModalContent>
@@ -151,10 +151,10 @@ function AddMember({ translation, students, errors, required, hint }) {
               <Modal isOpen={warningModal} onClose={() => setWarningModal(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader marginTop="15px">{translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].title || t('modal-form.warning-modal.title')}</ModalHeader>
+                  <ModalHeader marginTop="15px">{t('modal-form.warning-modal.title')}</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
-                    {/* {translation?.finalProjectTranslation?.['modal-form']?.confirmation.text || t('modal-form.confirmation.text')} */}
+                    {/* {t('modal-form.confirmation.text')} */}
                   </ModalBody>
                   <ModalFooter>
                     <Button
@@ -164,7 +164,7 @@ function AddMember({ translation, students, errors, required, hint }) {
                         setWarningModal(false);
                       }}
                     >
-                      {translation?.finalProjectTranslation?.['modal-form']?.['warning-modal'].close || t('modal-form.warning-modal.close')}
+                      {t('modal-form.warning-modal.close')}
                     </Button>
                   </ModalFooter>
                 </ModalContent>
@@ -187,14 +187,12 @@ AddMember.propTypes = {
     members: PropTypes.string,
   }),
   students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
-  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
   hint: PropTypes.string,
 };
 
 AddMember.defaultProps = {
   errors: {},
-  translation: {},
   required: false,
   hint: '',
 };

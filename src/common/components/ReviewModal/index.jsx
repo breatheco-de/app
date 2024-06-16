@@ -75,7 +75,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     previous: {},
   });
   const { lightColor, featuredColor, hexColor } = useStyle();
-  const storybookTranslation = contextData?.translation || {};
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
@@ -328,15 +327,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
 
   const getTitle = () => {
     if (stage === stages.initial) {
-      return storybookTranslation?.['code-review']?.['assignment-review'] || t('code-review.assignment-review');
+      return t('code-review.assignment-review');
     }
     if (stage === stages.approve_or_reject_code_revision) {
-      return storybookTranslation?.['code-review']?.['write-feedback'] || t('code-review.write-feedback');
+      return t('code-review.write-feedback');
     }
     if (stage === stages.deliver_assignment) {
-      return storybookTranslation?.['deliver-assignment']?.title || t('deliver-assignment.title');
+      return t('deliver-assignment.title');
     }
-    return storybookTranslation?.['code-review']?.['code-review'] || t('code-review.rigobot-code-review');
+    return t('code-review.rigobot-code-review');
   };
 
   const getAssetData = async ({ callback = () => {} } = {}) => {
