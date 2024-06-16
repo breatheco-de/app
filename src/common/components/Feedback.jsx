@@ -25,8 +25,6 @@ function Feedback({ storyConfig }) {
   const [codeRevisions, setCodeRevisions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const isStorybookView = storyConfig?.externalCodeRevisions;
-  const translationChooseProgram = storyConfig?.translation?.[storyConfig?.locale]['choose-program'];
-  const storybookTranslation = storyConfig?.translation?.[storyConfig?.locale];
   const isConnectedWithGithub = user?.github?.username;
 
   const learnWhyLink = {
@@ -84,7 +82,7 @@ function Feedback({ storyConfig }) {
   return (isAuthenticated || isStorybookView) && (
     <Box width="100%" maxWidth="400px" zIndex={10} borderRadius="17px" padding="0 2px 2px 2px" background={featuredColor}>
       <Heading size="16px" textAlign="center" p="12px 8px" width="100%" background={featuredColor} borderTopLeftRadius="13px" borderTopRightRadius="13px">
-        {translationChooseProgram?.feedback?.title || t('feedback.title')}
+        {t('feedback.title')}
       </Heading>
       <Flex flexDirection="column" background={backgroundColor} padding="0 8px" borderRadius="0 0 17px 17px">
         <Flex flexDirection="column" my="6px" gridGap="6px">
@@ -104,10 +102,10 @@ function Feedback({ storyConfig }) {
             >
               {isConnectedWithGithub ? (
                 <Text size="12px" textAlign="start">
-                  {translationChooseProgram?.feedback?.['connect-rigobot-text'] || t('feedback.connect-rigobot-text')}
+                  {t('feedback.connect-rigobot-text')}
                   {' '}
                   <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
-                    {translationChooseProgram?.feedback?.['connect-rigobot'] || t('feedback.connect-rigobot')}
+                    {t('feedback.connect-rigobot')}
                   </Link>
                   .
                 </Text>
@@ -137,10 +135,10 @@ function Feedback({ storyConfig }) {
             </AlertMessage>
           )}
           <Text size="12px" textAlign="center">
-            {translationChooseProgram?.feedback?.['why-feedback-text'] || t('feedback.why-feedback-text')}
+            {t('feedback.why-feedback-text')}
             {' '}
             <Link fontSize="12px" variant="default" href={learnWhyLink[lang]}>
-              {translationChooseProgram?.feedback?.['learn-why'] || t('feedback.learn-why')}
+              {t('feedback.learn-why')}
               .
             </Link>
           </Text>
@@ -178,16 +176,13 @@ function Feedback({ storyConfig }) {
               borderRadius="4px"
               padding="8px"
             >
-              {translationChooseProgram?.feedback?.['no-code-reviews-text'] || t('feedback.no-code-reviews-text')}
+              {t('feedback.no-code-reviews-text')}
             </AlertMessage>
           )}
         </Flex>
         <ReviewModal
           isExternal
-          externalData={{
-            ...selectedData,
-            translation: storybookTranslation,
-          }}
+          externalData={selectedData}
           isStudent
           defaultStage="code_review"
           fixedStage

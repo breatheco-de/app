@@ -56,7 +56,7 @@ export const languagesNames = {
   linux: 'shell',
 };
 
-function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext, ...rest }) {
+function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
@@ -212,7 +212,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
               ) : (
                 <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
                   <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-                  {stTranslation ? stTranslation[lang]['code-viewer'].run : t('run')}
+                  {t('run')}
                 </Button>
               )}
             </>
@@ -258,9 +258,9 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
               <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
                 <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
                   <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
-                    {stTranslation ? stTranslation[lang]['code-viewer'].terminal : t('terminal')}
+                    {t('terminal')}
                     <Tooltip
-                      label={stTranslation ? stTranslation[lang]['code-viewer']['loading-output'] : t('loading-output')}
+                      label={t('loading-output')}
                       placement="right"
                       hasArrow
                     >
@@ -282,7 +282,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         headerStyles={{ textAlign: 'center' }}
-        title={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].title : t('log-in-modal.title')}
+        title={t('log-in-modal.title')}
         childrenDescription={(
           <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
             <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
@@ -290,11 +290,11 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
               size="14px"
               textAlign="center"
             >
-              {stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].text : t('log-in-modal.text')}
+              {t('log-in-modal.text')}
             </Text>
           </Box>
         )}
-        closeText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].login : t('log-in-modal.login')}
+        closeText={t('log-in-modal.login')}
         closeButtonVariant="outline"
         closeButtonStyles={{ borderRadius: '3px', color: hexColor.blueDefault, borderColor: hexColor.blueDefault }}
         buttonHandlerStyles={{ variant: 'default' }}
@@ -306,7 +306,7 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
           setStorageItem('redirect', router?.asPath);
           router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
-        handlerText={stTranslation ? stTranslation[lang]['code-viewer']['log-in-modal'].signup : t('log-in-modal.signup')}
+        handlerText={t('log-in-modal.signup')}
       />
     </Box>
   );
@@ -314,14 +314,12 @@ function CodeViewer({ languagesData, allowNotLogged, stTranslation, fileContext,
 
 CodeViewer.propTypes = {
   languagesData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   allowNotLogged: PropTypes.bool,
   fileContext: PropTypes.string,
 };
 
 CodeViewer.defaultProps = {
   allowNotLogged: false,
-  stTranslation: null,
   fileContext: '',
 };
 

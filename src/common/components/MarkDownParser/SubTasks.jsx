@@ -7,12 +7,9 @@ import Text from '../Text';
 import { toCapitalize } from '../../../utils';
 
 function SubTasks({
-  subTasks, title, description, stTranslation, assetType,
+  subTasks, title, description, assetType,
 }) {
-  const { t, lang } = useTranslation('common');
-
-  const stTitle = stTranslation && stTranslation[lang].common.subtasks.title.replace('{{count}}', subTasks.length);
-  const stDescription = stTranslation && stTranslation[lang].common.subtasks.description;
+  const { t } = useTranslation('common');
 
   const tasksDone = subTasks.length > 0 && subTasks?.filter((subtask) => subtask.status === 'DONE');
   const taskPercent = Math.round((tasksDone.length / subTasks.length) * 100);
@@ -23,10 +20,10 @@ function SubTasks({
       <ProgressCircle size={74} duration={1} delay={0.3} percents={taskPercent} counterString={`${tasksDone.length} / ${subTasks.length}`} />
       <Box display="flex" flexDirection="column" gridGap="6px">
         <Heading as="p" size="18px" style={{ margin: 0 }}>
-          {title || stTitle || toCapitalize(t('subtasks.title', { count: subTasks.length, asset_type: assetValue }))}
+          {title || toCapitalize(t('subtasks.title', { count: subTasks.length, asset_type: assetValue }))}
         </Heading>
         <Text size="14px" color="gray.600" p={{ base: '0', md: '0 14% 0 0' }} style={{ margin: 0 }}>
-          {description || stDescription || t('subtasks.description')}
+          {description || t('subtasks.description')}
         </Text>
       </Box>
     </Box>
@@ -37,7 +34,6 @@ SubTasks.propTypes = {
   subTasks: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
   description: PropTypes.string,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   assetType: PropTypes.string,
 };
 
@@ -45,7 +41,6 @@ SubTasks.defaultProps = {
   subTasks: [],
   title: '',
   description: '',
-  stTranslation: null,
   assetType: 'lesson',
 };
 

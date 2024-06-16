@@ -16,7 +16,7 @@ export default {
 
 const Template = (args, etc) => {
   return (
-    <DirectAccessModal storySettings={{ locale: args.locale, translation: args?.translation }} {...args} />
+    <DirectAccessModal {...args} />
   )
 };
 

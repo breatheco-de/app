@@ -6,28 +6,7 @@ import { BREATHECODE_HOST } from '../utils/variables';
 export default {
   title: 'Components/DynamicContentCard',
   component: DynamicContentCard,
-  argTypes: {
-    placement: {
-      control: {
-        type: 'text'
-      }
-    },
-    assetType: {
-      control: {
-        type: 'text'
-      }
-    },
-    assetId: {
-      control: {
-        type: 'number'
-      }
-    },
-    assetTechnologies: {
-      control: {
-        type: 'object'
-      }
-    },
-  }
+  argTypes: {}
 };
 
 const usersWorkedHere = [{

@@ -10,7 +10,7 @@ import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import Text from '../Text';
 
-const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel, stTranslation }) => {
+const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel }) => {
   const { t, lang } = useTranslation('live-event');
   const { hexColor, disabledColor, fontColor } = useStyle();
   const limit = 40;
@@ -125,7 +125,7 @@ const OtherEvents = ({ events, dateTextObj, isLiveOrStarting, isLive, subLabel, 
                 fontWeight="700"
                 color={CustomTheme.colors.danger}
               >
-                {stTranslation ? `• ${stTranslation[lang]['live-event']['live-now']}` : `• ${t('live-now')}`}
+                {`• ${t('live-now')}`}
               </TagLabel>
             </Tag>
           ) : (
