@@ -44,7 +44,7 @@ export default {
 const Component = (args, context) => {
   return (
     <Box width={args?.width || '320px'}>
-      <LiveEvent stTranslation={context.parameters.i18n.store.data} {...args} />
+      <LiveEvent {...args} />
     </Box>
   )
 };

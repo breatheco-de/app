@@ -22,7 +22,7 @@ export default {
 const Component = (args, context) => {
   return (
     <Box width={args?.width || '500px'}>
-      <CodeViewer stTranslation={context.parameters.i18n.store.data} {...args} />
+      <CodeViewer {...args} />
     </Box>
   )
 };

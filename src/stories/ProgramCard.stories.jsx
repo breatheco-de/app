@@ -86,7 +86,7 @@ export default {
 };
 
 const Component = (args, context) => {
-  return <ProgramCard stTranslation={context.parameters.i18n.store.data} {...args} />
+  return <ProgramCard {...args} />
 };
 
 const teachers = [{
