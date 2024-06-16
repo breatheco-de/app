@@ -24,7 +24,7 @@
     "analyze": "ANALYZE=true next build",
     "jest": "jest",
     "storybook": "bun make:iconDict && bun generate-namespaces && storybook dev -p 6006",
-    "build-storybook": "bun make:iconDict && storybook build",
+    "build-storybook": "bun make:iconDict && bun generate-namespaces && storybook build",
     "make:iconDict": "bun ./scripts/make.iconDict.js",
     "cy:open": "cypress open",
     "cy:run": "cypress run",
