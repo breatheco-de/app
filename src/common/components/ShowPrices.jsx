@@ -62,8 +62,8 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
 function ShowPrices({
   data,
   title,
-  onePaymentLabel,
-  financeTextLabel,
+  firstSectionTitle,
+  secondSectionTitle,
   notReady,
   list,
   finance,
@@ -156,10 +156,11 @@ function ShowPrices({
               }}
               {...paymentTabStyle}
             >
-              {onePaymentLabel || data?.pricing['one-payment']}
+              {firstSectionTitle || data?.pricing['one-payment']}
             </Box>
 
             <Box
+              display={finance?.length > 0 ? 'block' : 'none'}
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
               disabled={finance?.length > 0}
               onClick={() => {
@@ -169,7 +170,7 @@ function ShowPrices({
               }}
               {...financeTabStyle}
             >
-              {financeTextLabel || data?.pricing['finance-text']}
+              {secondSectionTitle || data?.pricing['finance-text']}
             </Box>
           </Box>
         )}
@@ -220,8 +221,8 @@ function ShowPrices({
 ShowPrices.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
-  onePaymentLabel: PropTypes.string,
-  financeTextLabel: PropTypes.string,
+  firstSectionTitle: PropTypes.string,
+  secondSectionTitle: PropTypes.string,
   notReady: PropTypes.string,
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   finance: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
@@ -237,8 +238,8 @@ ShowPrices.propTypes = {
 ShowPrices.defaultProps = {
   data: null,
   title: null,
-  onePaymentLabel: null,
-  financeTextLabel: null,
+  firstSectionTitle: null,
+  secondSectionTitle: null,
   notReady: null,
   list: null,
   finance: null,
