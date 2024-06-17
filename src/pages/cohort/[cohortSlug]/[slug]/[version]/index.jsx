@@ -30,7 +30,6 @@ import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import {
   slugify,
   includesToLowerCase,
@@ -67,7 +66,6 @@ function Dashboard() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
 
-  const [, setSortedAssignments] = usePersistent('sortedAssignments', []);
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
@@ -83,7 +81,7 @@ function Dashboard() {
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort,
+    getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments,
   } = useCohortHandler();
 
   const { cohortSession, sortedAssignments, taskCohortNull } = state;

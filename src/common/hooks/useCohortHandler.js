@@ -252,6 +252,7 @@ function useCohortHandler() {
 
   return {
     setCohortSession,
+    setSortedAssignments,
     getCohortAssignments,
     getCohortData,
     prepareTasks,

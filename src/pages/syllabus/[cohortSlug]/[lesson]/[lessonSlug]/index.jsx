@@ -349,16 +349,6 @@ function Content() {
   }, [router, lessonSlug]);
 
   useEffect(() => {
-    console.log('sortedAssignments', sortedAssignments);
-    // if (sortedAssignments.length <= 0) {
-    //   toast({
-    //     position: 'top',
-    //     title: t('alert-message:no-cohort-modules-found'),
-    //     status: 'warning',
-    //     duration: 7000,
-    //     isClosable: true,
-    //   });
-    // }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
@@ -385,14 +375,6 @@ function Content() {
       setExtendedInstructions(markdown);
     }
   }, [selectedSyllabus]);
-
-  // useEffect(() => {
-  //   if (!isLoading && cohortSession?.cohort_role) {
-  //     getCohortAssignments({
-  //       user, setContextState,
-  //     });
-  //   }
-  // }, [user]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
