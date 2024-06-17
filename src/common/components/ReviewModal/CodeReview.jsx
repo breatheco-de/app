@@ -219,12 +219,14 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
       },
     };
     reportDatalayer({
-      event: 'feedback_reaction',
-      feedback_id: revisionContent?.id,
-      reaction: reviewRateData?.status,
-      reaction_comment: type === 'skip' ? '' : reviewRateData?.comment,
-      repository: revisionContent?.repository,
-      user_id: user.id,
+      dataLayer: {
+        event: 'feedback_reaction',
+        feedback_id: revisionContent?.id,
+        reaction: reviewRateData?.status,
+        reaction_comment: type === 'skip' ? '' : reviewRateData?.comment,
+        repository: revisionContent?.repository,
+        user_id: user.id,
+      },
     });
     bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
       .then(({ data: respData }) => {
