@@ -12,6 +12,8 @@ import '@uiw/react-markdown-editor/markdown-editor.css';
 import '@uiw/react-markdown-preview/markdown.css';
 import Heading from '../Heading';
 import MarkDownParser from '../MarkDownParser';
+import { reportDatalayer } from '../../../utils/requests';
+import useAuth from '../../hooks/useAuth';
 
 const MarkdownEditor = dynamic(
   () => import('@uiw/react-markdown-editor').then((mod) => mod.default),
@@ -28,6 +30,7 @@ const inputReviewRateCommentLimit = 100;
 function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFlow, contextData, setContextData, setStage, selectedText, handleSelectedText }) {
   const { t } = useTranslation('assignments');
   const [repoData, setRepoData] = useState({});
+  const { user } = useAuth();
   const [view, setView] = useState(views.initial);
   const [isLoading, setIsLoading] = useState(false);
   const [codeReview, setCodeReview] = useState({
@@ -215,6 +218,14 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
         comment: null,
       },
     };
+    reportDatalayer({
+      event: 'feedback_reaction',
+      feedback_id: revisionContent?.id,
+      reaction: reviewRateData?.status,
+      reaction_comment: type === 'skip' ? '' : reviewRateData?.comment,
+      repository: revisionContent?.repository,
+      user_id: user.id,
+    });
     bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
       .then(({ data: respData }) => {
         setReviewRateData((prev) => ({ ...prev, submited: true }));
