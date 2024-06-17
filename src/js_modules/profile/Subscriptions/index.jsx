@@ -32,7 +32,7 @@ import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 
-function Subscriptions({ storybookConfig, cohorts }) {
+function Subscriptions({ cohorts }) {
   const { t, lang } = useTranslation('profile');
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
@@ -54,9 +54,6 @@ function Subscriptions({ storybookConfig, cohorts }) {
 
   const subscriptionDataState = state?.subscriptions;
   const isLoading = state?.isLoading;
-
-  const profileTranslations = storybookConfig?.translations?.profile;
-  const subscriptionTranslations = storybookConfig?.translations?.profile?.subscription;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
 
@@ -103,14 +100,12 @@ function Subscriptions({ storybookConfig, cohorts }) {
 
   const {
     statusStyles, statusLabel, getLocaleDate, payUnitString,
-  } = profileHandlers({
-    translations: profileTranslations,
-  });
+  } = profileHandlers();
   const { borderColor2, hexColor, backgroundColor3, fontColor, featuredLight } = useStyle();
 
   const { blueDefault } = hexColor;
 
-  const subscriptionData = storybookConfig?.subscriptionData || subscriptionDataState;
+  const subscriptionData = subscriptionDataState;
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
@@ -249,7 +244,7 @@ function Subscriptions({ storybookConfig, cohorts }) {
         </ModalContent>
       </Modal>
       <Text fontSize="15px" fontWeight="700" pb="18px">
-        {profileTranslations?.['my-subscriptions'] || t('my-subscriptions')}
+        {t('my-subscriptions')}
       </Text>
 
       {subscriptionFiltered?.length > 0 ? (
@@ -306,12 +301,11 @@ function Subscriptions({ storybookConfig, cohorts }) {
                               ? (
                                 <>
                                   {isNextPaimentExpired
-                                    ? subscriptionTranslations?.['payment-up-to-date'] || t('subscription.payment-up-to-date')
-                                    : subscriptionTranslations?.['next-payment']?.replace('{{date}}', getLocaleDate(subscription?.next_payment_at))
-                                    || t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
+                                    ? t('subscription.payment-up-to-date')
+                                    : t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
                                 </>
                               )
-                              : (subscriptionTranslations?.['last-payment']?.replace('{{date}}', getLocaleDate(invoice?.paid_at)) || t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) }))}
+                              : t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) })}
                           </>
                         ) : `- ${t('subscription.upgrade-modal.price_remaining_to_pay', { price: currentFinancingOption?.monthly_price * (currentFinancingOption?.how_many_months - subscription?.invoices?.length) })}`}
                       </Text>
@@ -331,8 +325,8 @@ function Subscriptions({ storybookConfig, cohorts }) {
                         {subscription?.type === 'plan_financing' && (
                           <>
                             {(currentFinancingOption?.how_many_months - subscription?.invoices?.length) > 0
-                              ? subscriptionTranslations?.['renewal-date']?.replace('{{date}}', nextPaymentDate[lang]) || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
-                              : (subscriptionTranslations?.['renewal-date-unknown'] || t('subscription.renewal-date-unknown'))}
+                              ? t('subscription.renewal-date', { date: nextPaymentDate[lang] })
+                              : t('subscription.renewal-date-unknown')}
                           </>
                         )}
                         {subscription?.type !== 'plan_financing' && (
@@ -340,10 +334,10 @@ function Subscriptions({ storybookConfig, cohorts }) {
                             {subscription?.status !== 'FREE_TRIAL' ? (
                               <>
                                 {isNotCancelled
-                                  ? subscriptionTranslations?.['renewal-date']?.replace('{{date}}', nextPaymentDate[lang]) || t('subscription.renewal-date', { date: nextPaymentDate[lang] })
-                                  : subscriptionTranslations?.['renewal-date-cancelled'] || t('subscription.renewal-date-cancelled')}
+                                  ? t('subscription.renewal-date', { date: nextPaymentDate[lang] })
+                                  : t('subscription.renewal-date-cancelled')}
                               </>
-                            ) : subscriptionTranslations?.['renewal-date-unknown'] || t('subscription.renewal-date-unknown')}
+                            ) : t('subscription.renewal-date-unknown')}
                           </>
                         )}
 
@@ -359,8 +353,8 @@ function Subscriptions({ storybookConfig, cohorts }) {
                       />
                       <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
                         {subscription.type === 'plan_financing'
-                          ? subscriptionTranslations?.['not-renewable'] || t('subscription.not-renewable')
-                          : subscriptionTranslations?.renewable || t('subscription.renewable')}
+                          ? t('subscription.not-renewable')
+                          : t('subscription.renewable')}
                       </Text>
                     </Flex>
                     <Flex gridGap="4px">
@@ -377,8 +371,8 @@ function Subscriptions({ storybookConfig, cohorts }) {
                           ? (
                             <>
                               {(currentFinancingOption?.how_many_months - subscription?.invoices?.length) > 0
-                                ? subscriptionTranslations?.['many-payments-left']?.replace('{{qty}}', currentFinancingOption?.how_many_months - subscription?.invoices?.length) || t('subscription.many-payments-left', { qty: currentFinancingOption?.how_many_months - subscription?.invoices?.length })
-                                : subscriptionTranslations?.['no-payment-left'] || t('subscription.no-payment-left')}
+                                ? t('subscription.many-payments-left', { qty: currentFinancingOption?.how_many_months - subscription?.invoices?.length })
+                                : t('subscription.no-payment-left')}
                             </>
                           )
                           : (
@@ -387,11 +381,11 @@ function Subscriptions({ storybookConfig, cohorts }) {
                                 ? (
                                   <>
                                     {!isTotallyFree
-                                      ? subscriptionTranslations?.payment?.replace('{{payment}}', payUnitString(subscription?.pay_every_unit)) || t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })
-                                      : subscriptionTranslations?.['payment-free'] || t('subscription.payment-free')}
+                                      ? t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })
+                                      : t('subscription.payment-free')}
                                   </>
                                 )
-                                : subscriptionTranslations?.['payment-trial'] || t('subscription.payment-trial')}
+                                : t('subscription.payment-trial')}
                             </>
                           )}
                       </Text>
@@ -399,7 +393,6 @@ function Subscriptions({ storybookConfig, cohorts }) {
                   </Flex>
                   {!isTotallyFree && (
                     <ButtonHandler
-                      translations={profileTranslations}
                       subscription={subscription}
                       onOpenUpgrade={onOpenUpgrade}
                       setSubscriptionProps={setSubscriptionProps}
@@ -412,10 +405,10 @@ function Subscriptions({ storybookConfig, cohorts }) {
           })}
           <ModalInfo
             isOpen={cancelModalIsOpen}
-            title={subscriptionTranslations?.['cancel-modal']?.title || t('subscription.cancel-modal.title')}
-            description={subscriptionTranslations?.['cancel-modal']?.description.replace('{{cohort}}', slugToTitle(subscriptionProps?.slug)) || t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
-            closeText={subscriptionTranslations?.['cancel-modal']?.closeText || t('subscription.cancel-modal.closeText')}
-            handlerText={subscriptionTranslations?.['cancel-modal']?.handlerText || t('subscription.cancel-modal.handlerText')}
+            title={t('subscription.cancel-modal.title')}
+            description={t('subscription.cancel-modal.description', { cohort: slugToTitle(subscriptionProps?.slug) })}
+            closeText={t('subscription.cancel-modal.closeText')}
+            handlerText={t('subscription.cancel-modal.handlerText')}
             headerStyles={{ textAlign: 'center' }}
             descriptionStyle={{ color: fontColor, fontSize: '14px', textAlign: 'center' }}
             footerStyle={{ flexDirection: 'row-reverse' }}
@@ -453,7 +446,7 @@ function Subscriptions({ storybookConfig, cohorts }) {
             />
           ) : (
             <Text fontSize="15px" fontWeight="400" pb="18px">
-              {subscriptionTranslations?.['no-subscriptions'] || t('no-subscriptions')}
+              {t('no-subscriptions')}
             </Text>
           )}
         </>
@@ -463,11 +456,9 @@ function Subscriptions({ storybookConfig, cohorts }) {
 }
 
 Subscriptions.propTypes = {
-  storybookConfig: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 Subscriptions.defaultProps = {
-  storybookConfig: {},
   cohorts: [],
 };
 

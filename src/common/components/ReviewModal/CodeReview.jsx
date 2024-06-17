@@ -44,7 +44,6 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
     submited: false,
     submitType: null,
   });
-  const storybookTranslation = contextData?.translation?.assignments || {};
   const inputLimit = 380;
   const commitData = contextData?.commitFile;
   const revisionContent = contextData?.revision_content;
@@ -216,32 +215,28 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
         comment: null,
       },
     };
-    if (storybookTranslation) {
-      setReviewRateData((prev) => ({ ...prev, submited: true }));
-    } else {
-      bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
-        .then(({ data: respData }) => {
-          setReviewRateData((prev) => ({ ...prev, submited: true }));
-          const updatedRevisionContent = {
-            ...respData,
-            is_good: typeof respData?.is_good === 'string' ? respData?.is_good === 'True' : respData?.is_good,
-            hasBeenReviewed: true,
-          };
-          const updateCodeRevisions = contextData.code_revisions.map((revision) => {
-            if (revision.id === revisionContent.id) {
-              return updatedRevisionContent;
-            }
-            return revision;
-          });
-          setContextData((prevState) => ({
-            ...prevState,
-            code_revisions: updateCodeRevisions,
-          }));
-        })
-        .finally(() => {
-          setReviewRateData((prev) => ({ ...prev, isSubmitting: false }));
+    bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
+      .then(({ data: respData }) => {
+        setReviewRateData((prev) => ({ ...prev, submited: true }));
+        const updatedRevisionContent = {
+          ...respData,
+          is_good: typeof respData?.is_good === 'string' ? respData?.is_good === 'True' : respData?.is_good,
+          hasBeenReviewed: true,
+        };
+        const updateCodeRevisions = contextData.code_revisions.map((revision) => {
+          if (revision.id === revisionContent.id) {
+            return updatedRevisionContent;
+          }
+          return revision;
         });
-    }
+        setContextData((prevState) => ({
+          ...prevState,
+          code_revisions: updateCodeRevisions,
+        }));
+      })
+      .finally(() => {
+        setReviewRateData((prev) => ({ ...prev, isSubmitting: false }));
+      });
   };
 
   return (
@@ -300,8 +295,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
             )}
             <Heading size="sm" mb={isStudent ? '3rem' : '24px'} textAlign={isStudent && 'center'}>
               {isStudent
-                ? (storybookTranslation?.['code-review']?.['teacher-has-reviewed-your-code'].replace('{{name}}', reviewerName)
-                    || t('code-review.teacher-has-reviewed-your-code', { name: reviewerName }))
+                ? (t('code-review.teacher-has-reviewed-your-code', { name: reviewerName }))
                 : t('code-review.code-review')}
             </Heading>
             <Box padding="9px 0" borderRadius="8px" overflow="auto">
@@ -380,7 +374,7 @@ ${revisionContent?.code}
                   ) : (
                     <>
                       <Text size="14px" mb="-6px">
-                        {storybookTranslation?.['code-review']?.['write-comment'] || t('code-review.write-comment')}
+                        {t('code-review.write-comment')}
                       </Text>
 
                       <Box position="relative">
@@ -392,12 +386,12 @@ ${revisionContent?.code}
                       <Flex gridGap="9px" mt="0.7rem">
                         <Button flex={0.7} variant="default" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'send'} gridGap="10px" isDisabled={reviewRateData.comment.length < 10} onClick={() => submitReviewRate('send')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text>
-                            {storybookTranslation?.['code-review']?.send || t('code-review.send')}
+                            {t('code-review.send')}
                           </Text>
                         </Button>
                         <Button flex={0.3} variant="outline" isLoading={reviewRateData.isSubmitting && reviewRateData.submitType === 'skip'} borderColor="blue.default" gridGap="10px" onClick={() => submitReviewRate('skip')} fontSize="13px" fontWeight={700} textTransform="uppercase" width="100%" height="48px">
                           <Text color="blue.default">
-                            {storybookTranslation?.['code-review']?.skip || t('code-review.skip')}
+                            {t('code-review.skip')}
                           </Text>
                         </Button>
                       </Flex>
@@ -411,22 +405,24 @@ ${revisionContent?.code}
                           ? <Divider margin="18px 0 -8px 0" />
                           : (
                             <Box fontSize="18px" textAlign="center">
-                              {storybookTranslation?.['code-review']?.['did-feedback-useful']
-                              || t('code-review.did-feedback-useful')}
+                              {t('code-review.did-feedback-useful')}
                             </Box>
                           )}
                       </>
                       )}
                       <Box fontSize="14px" textAlign="center">
-                        {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && (storybookTranslation?.['code-review']?.['rate-comment'] || t('code-review.rate-comment'))}
-                        {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && (storybookTranslation?.['code-review']?.['you-liked-this-comment'] || t('code-review.you-liked-this-comment'))}
-                        {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && (storybookTranslation?.['code-review']?.['you-disliked-this-comment'] || t('code-review.you-disliked-this-comment'))}
+                        {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
+                        {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
+                        {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
                       </Box>
                       <Flex justifyContent="center" gridGap="3.5rem">
                         <Button
                           opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
                           onClick={() => handleSelectReviewRate('like')}
                           variant="unstyled"
+                          _hover={{
+                            opacity: 1,
+                          }}
                           height="auto"
                           gridGap="10px"
                           aria-label="Mark as Useful"
@@ -437,6 +433,9 @@ ${revisionContent?.code}
                           opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
                           onClick={() => handleSelectReviewRate('dislike')}
                           variant="unstyled"
+                          _hover={{
+                            opacity: 1,
+                          }}
                           height="auto"
                           gridGap="10px"
                           aria-label="Mark as not useful"
@@ -454,8 +453,7 @@ ${revisionContent?.code}
                   <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" background={reviewRateStatus === 'like' ? 'green.light' : 'red.light2'} padding="16px 8px">
                     <Icon icon={reviewRateStatus === 'like' ? 'feedback-like' : 'feedback-dislike'} width="60px" height="60px" />
                     <Text size="14px" fontWeight={700} textAlign="center" color="black">
-                      {storybookTranslation?.['code-review']?.['comment-was-sent-successfully']
-                      || t('code-review.comment-was-sent-successfully')}
+                      {t('code-review.comment-was-sent-successfully')}
                     </Text>
                   </Flex>
                   {reviewRateData?.comment.length > 0 && reviewRateData?.submitType === 'send' && (
