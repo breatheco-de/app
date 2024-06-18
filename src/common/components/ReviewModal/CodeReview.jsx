@@ -233,7 +233,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
     };
     reportDatalayer({
       dataLayer: {
-        event: 'feedback_reaction',
+        event: 'feedback_student_reaction',
         feedback_id: revisionContent?.id,
         reaction: reviewRateData?.status,
         reaction_comment: type === 'skip' ? '' : reviewRateData?.comment,
