@@ -29,7 +29,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
 import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
@@ -95,9 +95,9 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function Page({ data }) {
-  const { isAuthenticated, user, logout, choose } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
-  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const { setCohortSession } = useCohortHandler();
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -241,14 +241,7 @@ function Page({ data }) {
     const cohort = cohortData?.cohortSyllabus?.cohort;
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohort?.syllabus_version;
-    choose({
-      version: syllabusVersion?.version,
-      slug: syllabusVersion?.slug,
-      cohort_name: cohort?.name,
-      cohort_slug: cohort?.slug,
-      syllabus_name: syllabusVersion,
-      academy_id: cohort?.academy.id,
-    });
+
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
     setCohortSession({

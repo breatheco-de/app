@@ -24,7 +24,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { ReviewModal, NoInfoModal, DeliverModal, DetailsModal } from '../../../../../js_modules/assignmentHandler/index';
 import useStyle from '../../../../../common/hooks/useStyle';
-import { usePersistent } from '../../../../../common/hooks/usePersistent';
 import bc from '../../../../../common/services/breathecode';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
@@ -141,7 +140,7 @@ function StudentReport() {
     projects: [],
     exercises: [],
   });
-  const [cohortSession] = usePersistent('cohortSession', {});
+
   const user = cohortUsers[0]?.user;
 
   const { hexColor } = useStyle();
@@ -478,7 +477,7 @@ function StudentReport() {
         if (assetResp && assetResp.status < 400) {
           const dataAsset = assetResp.data;
           if (!dataAsset?.delivery_formats.includes('url')) {
-            const fileResp = await bc.todo().getFile({ id: task.id, academyId: cohortSession?.academy?.id });
+            const fileResp = await bc.todo().getFile({ id: task.id, academyId: academy });
             if (fileResp && fileResp.status < 400) {
               file = await fileResp.data;
             }

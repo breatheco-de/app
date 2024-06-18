@@ -14,14 +14,12 @@ import { getQueryString, getStorageItem, toCapitalize, unSlugify } from '../../u
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import axiosInstance from '../../axios';
-import { usePersistent } from '../../common/hooks/usePersistent';
-import useAuth from '../../common/hooks/useAuth';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
-  const { choose } = useAuth();
-  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const { setCohortSession } = useCohortHandler();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('idle');
@@ -91,14 +89,7 @@ function Summary() {
   const redirectTocohort = (cohort) => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohort?.syllabus_version;
-    choose({
-      version: syllabusVersion?.version,
-      slug: syllabusVersion?.slug,
-      cohort_name: cohort.name,
-      cohort_slug: cohort?.slug,
-      syllabus_name: syllabusVersion,
-      academy_id: cohort.academy.id,
-    });
+
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
     setCohortSession({

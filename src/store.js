@@ -9,6 +9,7 @@ import programListReducer from './common/store/reducers/programListReducer';
 import signupReducer from './common/store/reducers/signupReducer';
 import finalProjectReducer from './common/store/reducers/finalProjectReducer';
 import subscriptionsReducer from './common/store/reducers/subscriptionsReducer';
+import cohortReducer from './common/store/reducers/cohortReducer';
 
 const combinedReducer = combineReducers({
   counterReducer,
@@ -20,6 +21,7 @@ const combinedReducer = combineReducers({
   signupReducer,
   finalProjectReducer,
   subscriptionsReducer,
+  cohortReducer,
 });
 
 const reducer = (state, action) => {

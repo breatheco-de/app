@@ -11,16 +11,17 @@ import {
 import Icon from '../Icon';
 import Text from '../Text';
 import bc from '../../services/breathecode';
-import { usePersistent } from '../../hooks/usePersistent';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useStyle from '../../hooks/useStyle';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
 
 function AttendanceModal({
-  title, message, isOpen, onClose, sortedAssignments, students, currentCohortProps,
+  title, message, isOpen, onClose, sortedAssignments, students,
 }) {
   const { t } = useTranslation('dashboard');
-  const [cohortSession, setCohortSession] = usePersistent('cohortSession', {});
+  const { state, setCohortSession } = useCohortHandler();
+  const { cohortSession } = state;
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
@@ -45,14 +46,14 @@ function AttendanceModal({
     onChange: setChecked,
     value: checked,
   });
-  const cohortDurationInDays = cohortSession.syllabus_version.duration_in_days;
+  const cohortDurationInDays = cohortSession?.syllabus_version.duration_in_days;
 
-  const currentCohortDay = currentCohortProps.current_day;
-  const currentCohortModule = currentCohortProps.current_module;
+  const currentCohortDay = cohortSession?.current_day;
+  const currentCohortModule = cohortSession?.current_module;
 
   useEffect(() => {
     setIsLoading(true);
-    handlers.getAttendanceList({ cohortSlug: cohortSession.slug })
+    handlers.getAttendanceList({ cohortSlug: cohortSession?.slug })
       .then((data) => {
         setAttendanceList(data);
       })
@@ -105,7 +106,6 @@ function AttendanceModal({
       current_day: currentCohortDay,
       current_module: currentCohortModule,
     });
-    // setDefaultDay(currentCohortProps.current_day);
   }, [currentCohortDay, currentCohortModule]);
 
   // function that checks if the attendance has been taken for the current day
@@ -444,16 +444,12 @@ AttendanceModal.propTypes = {
   students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  currentCohortProps: PropTypes.objectOf(PropTypes.string),
-  setCurrentCohortProps: PropTypes.func,
 };
 AttendanceModal.defaultProps = {
   title: '',
   message: '',
   isOpen: true,
   onClose: () => {},
-  currentCohortProps: {},
-  setCurrentCohortProps: () => {},
 };
 
 export default AttendanceModal;

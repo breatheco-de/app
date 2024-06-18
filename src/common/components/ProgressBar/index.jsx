@@ -10,12 +10,14 @@ import Counter from '../ProgressCircle/Counter';
 import Text from '../Text';
 import Progress from './Progress';
 import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
 function ProgressBar({
   progressText, cohortProgram, taskTodo, width,
 }) {
   const { fontColor } = useStyle();
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [programsList] = usePersistent('programsList', {});
   const [taskCount, setTaskCount] = useState({});
   const currentCohortInfo = programsList[cohortSession.slug || {}];

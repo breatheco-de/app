@@ -17,6 +17,7 @@ import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
@@ -145,7 +146,8 @@ function MarkDownParser({
   const [subTasksProps, setSubTasksProps] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [fileContext, setFileContext] = useState('');
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [profile] = usePersistent('profile', {});
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
