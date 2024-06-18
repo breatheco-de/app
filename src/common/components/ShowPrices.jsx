@@ -62,8 +62,8 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
 function ShowPrices({
   data,
   title,
-  onePaymentLabel,
-  financeTextLabel,
+  firstSectionTitle,
+  secondSectionTitle,
   notReady,
   list,
   finance,
@@ -72,13 +72,12 @@ function ShowPrices({
   defaultFinanceIndex,
   externalSelection,
   outOfConsumables,
-  stTranslation,
   handleUpgrade,
   isTotallyFree,
 }) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
-  const { t, lang } = useTranslation('');
+  const { t } = useTranslation('');
   const { fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
@@ -157,10 +156,11 @@ function ShowPrices({
               }}
               {...paymentTabStyle}
             >
-              {onePaymentLabel || data?.pricing['one-payment']}
+              {firstSectionTitle || data?.pricing['one-payment']}
             </Box>
 
             <Box
+              display={finance?.length > 0 ? 'block' : 'none'}
               p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
               disabled={finance?.length > 0}
               onClick={() => {
@@ -170,7 +170,7 @@ function ShowPrices({
               }}
               {...financeTabStyle}
             >
-              {financeTextLabel || data?.pricing['finance-text']}
+              {secondSectionTitle || data?.pricing['finance-text']}
             </Box>
           </Box>
         )}
@@ -196,7 +196,7 @@ function ShowPrices({
             variant="default"
             isDisabled={!selectedItem && true}
           >
-            {stTranslation ? stTranslation[lang].common['upgrade-plan'].button : t('common:upgrade-plan.button')}
+            {t('common:upgrade-plan.button')}
           </Button>
         )}
         <Button
@@ -211,7 +211,7 @@ function ShowPrices({
             }
           }}
         >
-          {stTranslation ? stTranslation[lang].common.enroll : t('common:enroll')}
+          {t('common:enroll')}
         </Button>
       </Box>
     </Box>
@@ -221,8 +221,8 @@ function ShowPrices({
 ShowPrices.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
-  onePaymentLabel: PropTypes.string,
-  financeTextLabel: PropTypes.string,
+  firstSectionTitle: PropTypes.string,
+  secondSectionTitle: PropTypes.string,
   notReady: PropTypes.string,
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   finance: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
@@ -230,7 +230,6 @@ ShowPrices.propTypes = {
   defaultIndex: PropTypes.number,
   defaultFinanceIndex: PropTypes.number,
   outOfConsumables: PropTypes.bool,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -239,8 +238,8 @@ ShowPrices.propTypes = {
 ShowPrices.defaultProps = {
   data: null,
   title: null,
-  onePaymentLabel: null,
-  financeTextLabel: null,
+  firstSectionTitle: null,
+  secondSectionTitle: null,
   notReady: null,
   list: null,
   finance: null,
@@ -248,7 +247,6 @@ ShowPrices.defaultProps = {
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,
-  stTranslation: null,
   handleUpgrade: false,
   isTotallyFree: false,
   externalSelection: {},

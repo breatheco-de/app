@@ -169,7 +169,7 @@ function IntroductionSection({
             minWidth="200px"
             textAlign="center"
             height="52px"
-            to={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#pricing'}
+            to={slice?.primary?.button_link?.url || slice?.primary?.button_link || '#recommended-courses'}
             fontSize="18px"
             m="25px 0"
             letterSpacing="0.05em"
@@ -180,7 +180,7 @@ function IntroductionSection({
         ) : (
           <>
             {data?.callToAction?.title && (
-              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href}>
+              <Button variant="default" width="fit-content" minWidth="200px" height="52px" fontSize="18px" m="25px 0" letterSpacing="0.05em" textTransform="uppercase" to={data?.callToAction.href || '#recommended-courses'}>
                 {data?.callToAction.title}
               </Button>
             )}

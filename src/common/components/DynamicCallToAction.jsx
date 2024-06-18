@@ -5,10 +5,10 @@ import useStyle from '../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
 import { parseQuerys } from '../../utils/url';
 
-function DynamicCallToAction({ assetType, assetId, assetTechnologies, placement, stTranslation, ...rest }) {
+function DynamicCallToAction({ assetType, assetId, assetTechnologies, placement, ...rest }) {
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('call-to-action');
-  const callToActions = stTranslation ? stTranslation[lang]['call-to-action']['call-to-actions'] : t('call-to-actions', {}, { returnObjects: true });
+  const callToActions = t('call-to-actions', {}, { returnObjects: true });
 
   const variants = {
     side: {
@@ -94,14 +94,12 @@ DynamicCallToAction.propTypes = {
   assetId: PropTypes.number,
   assetTechnologies: PropTypes.arrayOf(PropTypes.string),
   placement: PropTypes.string,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 DynamicCallToAction.defaultProps = {
   assetType: null,
   assetId: null,
   assetTechnologies: [],
-  stTranslation: null,
   placement: 'side',
 };
 

@@ -11,11 +11,10 @@ export default {
 };
 
 const Component = (args) => {
-  const translations = args?.translation[args.locale];
   const cohorts = args?.cohorts;
   const subscriptionData = args?.subscriptionData;
 
-  return <Subscriptions storybookConfig={{ cohorts, subscriptionData, translations }} />
+  return <Subscriptions storybookConfig={{ cohorts, subscriptionData }} />
 };
 
 export const isFreeTrial = Component.bind({});

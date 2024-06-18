@@ -7,12 +7,9 @@ import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import { toCapitalize, unSlugify } from '../../../utils';
 
-function profileHandlers({
-  translations,
-}) {
+function profileHandlers() {
   const { t } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
-  const subscriptionTR = translations?.subscription;
   const toast = useToast();
   const router = useRouter();
 
@@ -23,13 +20,13 @@ function profileHandlers({
   };
 
   const statusLabel = {
-    free_trial: subscriptionTR?.status?.free_trial || t('subscription.status.free_trial'),
-    fully_paid: subscriptionTR?.status?.fully_paid || t('subscription.status.fully_paid'),
-    active: subscriptionTR?.status?.active || t('subscription.status.active'),
-    expired: subscriptionTR?.status?.expired || t('subscription.status.expired'),
-    payment_issue: subscriptionTR?.status?.payment_issue || t('subscription.status.payment_issue'),
-    cancelled: subscriptionTR?.status?.cancelled || t('subscription.status.cancelled'),
-    completed: subscriptionTR?.status?.completed || t('subscription.status.completed'),
+    free_trial: t('subscription.status.free_trial'),
+    fully_paid: t('subscription.status.fully_paid'),
+    active: t('subscription.status.active'),
+    expired: t('subscription.status.expired'),
+    payment_issue: t('subscription.status.payment_issue'),
+    cancelled: t('subscription.status.cancelled'),
+    completed: t('subscription.status.completed'),
   };
   const statusStyles = {
     free_trial: {
@@ -76,14 +73,14 @@ function profileHandlers({
       const duration = format?.duration;
       const days = duration?.days;
       const hours = duration?.hours;
-      const daysLabel = translations?.days || t('days');
-      const dayLabel = translations?.day || t('day');
-      const monthsLabel = translations?.months || t('months');
-      const monthLabel = translations?.month || t('month');
-      const andLabel = translations?.and || t('and');
-      const hoursLabel = translations?.hours || t('hours');
+      const daysLabel = t('days');
+      const dayLabel = t('day');
+      const monthsLabel = t('months');
+      const monthLabel = t('month');
+      const andLabel = t('and');
+      const hoursLabel = t('hours');
 
-      if (format.status === 'expired') return translations?.expired || t('expired');
+      if (format.status === 'expired') return t('expired');
       if (duration?.months > 0) return `${duration?.months} ${duration?.months <= 1 ? monthLabel : monthsLabel}`;
       if (days === 0 && hours > 0) return `${hours}h ${andLabel} ${duration?.minutes}min`;
       if (days > 7) return `${days} ${daysLabel}`;
@@ -91,10 +88,10 @@ function profileHandlers({
       return format?.formated;
     },
     payUnitString: (payUnit) => {
-      if (payUnit === 'MONTH') return translations?.monthly || t('monthly');
-      if (payUnit === 'HALF') return translations?.['half-year'] || t('half-year');
-      if (payUnit === 'QUARTER') return translations?.quaterly || t('quarterly');
-      if (payUnit === 'YEAR') return translations?.yearly || t('yearly');
+      if (payUnit === 'MONTH') return t('monthly');
+      if (payUnit === 'HALF') return t('half-year');
+      if (payUnit === 'QUARTER') return t('quarterly');
+      if (payUnit === 'YEAR') return t('yearly');
       return payUnit;
     },
     getPlan: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {

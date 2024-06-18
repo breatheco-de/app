@@ -23,13 +23,12 @@ function LiveEvent({
   mainClasses,
   otherEvents,
   startingSoonDelta,
-  stTranslation,
   featureLabel,
   featureReadMoreUrl,
   cohorts,
   ...rest
 }) {
-  const { t, lang } = useTranslation('live-event');
+  const { t } = useTranslation('live-event');
   const [isOpen, setIsOpen] = useState(false);
   // const [openFilter, setOpenFilter] = useState(false);
   const [eventTimeTexts, setEventTimeTexts] = useState({});
@@ -80,23 +79,23 @@ function LiveEvent({
       const { months, days, hours, minutes } = duration;
       if (months >= 1) {
         return months > 1
-          ? stTranslation?.[lang]?.['live-event']?.['start-months']?.replace('{{time}}', months) || t('start-months', { time: months })
-          : stTranslation?.[lang]?.['live-event']?.['start-month']?.replace('{{time}}', months) || t('start-month', { time: months });
+          ? t('start-months', { time: months })
+          : t('start-month', { time: months });
       }
       if (days >= 1 && months === 0) {
         return days > 1
-          ? stTranslation?.[lang]?.['live-event']?.['start-days']?.replace('{{time}}', days) || t('start-days', { time: days })
-          : stTranslation?.[lang]?.['live-event']?.['start-day']?.replace('{{time}}', days) || t('start-day', { time: days });
+          ? t('start-days', { time: days })
+          : t('start-day', { time: days });
       }
       if (hours >= 1 && days === 0 && months === 0) {
         return hours > 1
-          ? stTranslation?.[lang]?.['live-event']?.['start-hours']?.replace('{{time}}', hours) || t('start-hours', { time: hours || 0 })
-          : stTranslation?.[lang]?.['live-event']?.['start-hour']?.replace('{{time}}', hours) || t('start-hour', { time: hours || 0 });
+          ? t('start-hours', { time: hours || 0 })
+          : t('start-hour', { time: hours || 0 });
       }
       if (minutes >= 1 && hours === 0 && days === 0 && months === 0) {
         return minutes > 1
-          ? stTranslation?.[lang]?.['live-event']?.['start-minutes']?.replace('{{time}}', minutes) || t('start-minutes', { time: minutes || 0 })
-          : stTranslation?.[lang]?.['live-event']?.['start-minute']?.replace('{{time}}', minutes) || t('start-minute', { time: minutes || 0 });
+          ? t('start-minutes', { time: minutes || 0 })
+          : t('start-minute', { time: minutes || 0 });
       }
 
       return '';
@@ -104,7 +103,7 @@ function LiveEvent({
 
     const formated = formatDurationString();
 
-    if (formated === '') return stTranslation ? stTranslation[lang]['live-event']['few-seconds'] : t('few-seconds');
+    if (formated === '') return t('few-seconds');
     return formated;
   };
 
@@ -115,13 +114,13 @@ function LiveEvent({
 
     if (ended) {
       formatedTime = formatTimeString(end);
-      return stTranslation ? stTranslation[lang]['live-event'].ended.replace('{{time}}', formatedTime) : t('ended', { time: formatedTime });
+      return t('ended', { time: formatedTime });
     }
     formatedTime = formatTimeString(start);
     if (started) {
-      return stTranslation ? stTranslation[lang]['live-event'].started.replace('{{time}}', formatedTime) : t('started', { time: formatedTime });
+      return t('started', { time: formatedTime });
     }
-    return stTranslation ? stTranslation[lang]['live-event']['will-start'].replace('{{time}}', formatedTime) : t('will-start', { time: formatedTime });
+    return t('will-start', { time: formatedTime });
   };
 
   const isLiveOrStarting = (start, end) => {
@@ -336,7 +335,7 @@ function LiveEvent({
                 locale="en"
                 fontFamily="Lato, Sans-serif"
               >
-                {stTranslation ? stTranslation[lang]['live-event']['learn-more'] : t('learn-more')}
+                {t('learn-more')}
               </Link>
             )}
           </Text>
@@ -367,7 +366,6 @@ function LiveEvent({
                 textTime={textTime}
                 isWorkshop={!event?.hash}
                 subLabel={event?.hash ? t('master-class') : t('workshop')}
-                stTranslation={stTranslation}
                 mainClasses={liveEvent.main}
                 limitOfText={54}
                 cohorts={cohorts}
@@ -426,7 +424,7 @@ function LiveEvent({
                 marginBottom="5px"
                 marginTop="0"
               >
-                {stTranslation ? stTranslation[lang]['live-event']['live-class'] : t('live-class')}
+                {t('live-class')}
               </Text>
               <Text
                 fontSize="12px"
@@ -435,7 +433,7 @@ function LiveEvent({
                 color={textGrayColor}
                 margin="0"
               >
-                {stTranslation ? stTranslation[lang]['live-event']['no-live-class'] : t('no-live-class')}
+                {t('no-live-class')}
               </Text>
             </Box>
           </Box>
@@ -449,7 +447,6 @@ function LiveEvent({
               isLive={isLive}
               subLabel={t('workshop')}
               textTime={textTime}
-              stTranslation={stTranslation}
             />
           </Box>
         )}
@@ -475,13 +472,9 @@ function LiveEvent({
                 <Box borderRadius="full" background="none" className="pulse-red" width="16px" height="16px" display="inline-block" marginRight="5px">
                   <Icon width="16px" height="16px" icon="on-live" />
                 </Box>
-                {stTranslation ? stTranslation[lang]['live-event']?.['other-live-events-now'] : t('other-live-events-now')}
+                {t('other-live-events-now')}
               </>
-            ) : (
-              <>
-                {stTranslation ? stTranslation[lang]['live-event'].upcoming : t('upcoming')}
-              </>
-            )}
+            ) : t('upcoming')}
             {isOpen ? (<ChevronUpIcon w={6} h={7} />) : (<ChevronDownIcon w={6} h={7} />)}
           </Button>
         )}
@@ -493,7 +486,6 @@ function LiveEvent({
 LiveEvent.propTypes = {
   mainClasses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   otherEvents: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   startingSoonDelta: PropTypes.number,
   featureLabel: PropTypes.string,
   featureReadMoreUrl: PropTypes.string,
@@ -503,7 +495,6 @@ LiveEvent.propTypes = {
 LiveEvent.defaultProps = {
   mainClasses: [],
   otherEvents: [],
-  stTranslation: null,
   startingSoonDelta: 30,
   featureLabel: null,
   featureReadMoreUrl: null,

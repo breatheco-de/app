@@ -12,7 +12,7 @@ const Template = (args) => {
   console.log('args', args) 
   return (
   <Box width={`${args.width}%`}>
-    <FinalProjectModal storyConfig={{translation: args.translation, locale: args.locale}} {...args} />
+    <FinalProjectModal {...args} />
   </Box>
 )};
 

@@ -158,8 +158,8 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
             setSelectedBulletForPlan(item?.featured_info);
           }}
           list={planProps?.paymentOptions?.length > 0 ? planProps?.paymentOptions : planProps?.consumableOptions}
-          onePaymentLabel={t('subscription.upgrade-modal.one_payment')}
-          financeTextLabel={t('subscription.upgrade-modal.finance')}
+          firstSectionTitle={t('subscription.upgrade-modal.subscription')}
+          secondSectionTitle={t('subscription.upgrade-modal.finance')}
           handleUpgrade={(item) => {
             const period = item?.period;
 

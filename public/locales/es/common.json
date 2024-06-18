@@ -295,5 +295,6 @@
         "features": [{ "description": "Obtenga acceso a espacios de oficinas en todo el mundo." }]
       }
     ]
-  }
+  },
+  "hrs-average": "{{number}}hrs promedio"
 }

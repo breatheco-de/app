@@ -182,7 +182,7 @@ function MktTwoColumnSideImage({
                 textDecoration={linkButton && 'underline'}
                 fontSize="14px"
                 margin="8px 0 0 0"
-                href={buttonUrl}
+                href={buttonUrl || '#recommended-courses'}
                 textAlign="center"
                 display="inline-block"
                 width="fit-content"

@@ -21,7 +21,6 @@ export default {
 
 const Template = (args, context) => (
   <EventCard
-    stTranslation={context.parameters.i18n.store.data}
     title={args?.title}
     host={args?.host}
     description={args?.description}

@@ -27,9 +27,16 @@
     "will-start-soon": "Will start soon",
     "time-duration": "{{time}} duration",
     "join-event": "Join now",
+    "join-workshop": "Join workshop",
     "book-place": "Book your place",
     "filters": {
         "language": "Language",
         "event-type": "Event Type"
-    }
+    },
+    "minute_one": "{{count}} minute",
+    "minute_other": "{{count}} minutes",
+    "day_one": "{{count}} day",
+    "day_other": "{{count}} days",
+    "students-worked-here": "+{{count}} students worked in this file",
+    "register-workshop": "Register to this workshop"
 }

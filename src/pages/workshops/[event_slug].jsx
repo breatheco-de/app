@@ -185,7 +185,7 @@ function Page({ eventData, asset }) {
   };
 
   useEffect(() => {
-    if (!eventData?.slug && !asset?.slug) {
+    if (!eventData?.slug && !asset?.slug && eventSlug) {
       getDefaultData();
     }
   }, [locale, eventData, eventSlug]);
@@ -193,6 +193,7 @@ function Page({ eventData, asset }) {
   useEffect(() => {
     if (eventData?.id) {
       // getDefaultData();
+      setEvent(eventData);
       const eventLang = (eventData?.lang === 'us' || eventData?.lang === null) ? 'en' : eventData?.lang;
       if (eventLang !== locale) {
         window.location.href = `/${eventLang}/workshops/${eventData?.slug}`;

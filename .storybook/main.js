@@ -11,7 +11,6 @@ module.exports = {
     "@storybook/addon-interactions",
     '@storybook/addon-actions',
     "@storybook/addon-knobs",
-    'storybook-react-i18next',
   ],
   webpackFinal: async (config, { configType }) => {
     config.resolve.alias['@emotion/core'] = toPath('node_modules/@emotion/react');

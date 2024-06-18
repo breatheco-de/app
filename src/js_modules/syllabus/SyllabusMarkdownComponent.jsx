@@ -5,7 +5,7 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 
 function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, callToActionProps, currentData, lesson,
-  quizSlug, lessonSlug, currentTask,
+  quizSlug, lessonSlug, currentTask, alerMessage,
 }) {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
@@ -23,6 +23,7 @@ function SyllabusMarkdownComponent({
         }}
         currentTask={currentTask}
         currentData={currentData}
+        alerMessage={alerMessage}
       />
     );
   }
@@ -38,6 +39,7 @@ function SyllabusMarkdownComponent({
           assetType: currentBlankProps?.asset_type,
         }}
         currentData={currentBlankProps}
+        alerMessage={alerMessage}
       />
     );
   }

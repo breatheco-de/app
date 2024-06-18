@@ -283,6 +283,9 @@ ${revisionContent?.code}
                           height="auto"
                           gridGap="10px"
                           aria-label="Mark as Useful"
+                          _hover={{
+                            opacity: 1,
+                          }}
                         >
                           <Icon icon="feedback-like" width="54px" height="54px" />
                         </Button>
@@ -293,6 +296,9 @@ ${revisionContent?.code}
                           height="auto"
                           gridGap="10px"
                           aria-label="Mark as not useful"
+                          _hover={{
+                            opacity: 1,
+                          }}
                         >
                           <Icon icon="feedback-dislike" width="54px" height="54px" />
                         </Button>
