@@ -130,6 +130,19 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
   };
   const submitCodeReview = () => {
     setIsLoading(true);
+    reportDatalayer({
+      dataLayer: {
+        event: 'submit_code_review',
+        user_id: user?.id,
+        repository: commitData?.repository,
+        comment: codeReview.comment,
+        user_reviewed: {
+          id: commitData?.committer?.id,
+          username: commitData?.committer?.github_username,
+          commitfile_id: commitData?.id,
+        },
+      },
+    });
     setCodeReview((prev) => ({
       ...prev,
       isSubmitting: true,

@@ -34,19 +34,6 @@ function Feedback({ storyConfig }) {
   };
 
   const handleOpen = (data) => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'feedback_modal_open',
-        feedback_id: data?.id,
-        language: data.language,
-        reviewer: data?.reviewer,
-        comment: data?.revision_rating_comments,
-        feedback_type: 'code_review',
-        user_id: user.id,
-        updated_at: data?.updated_at,
-        created_at: data?.created_at,
-      },
-    });
     const isFileCodeBase64 = base64regex.test(data?.file?.content);
     const isReviewCodeBase64 = base64regex.test(data?.original_code);
     const fileContent = isFileCodeBase64 ? decodeBase64(data?.file?.content) : data?.file?.content;
