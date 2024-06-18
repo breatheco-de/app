@@ -563,7 +563,6 @@ function Page({ data }) {
                       </Button>
                     ) : (
                       <>
-                        {/* BUG: este button no tiene loader*/}
                         <Button
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}

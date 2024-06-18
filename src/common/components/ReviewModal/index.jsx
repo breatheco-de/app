@@ -23,6 +23,7 @@ import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
 import { error } from '../../../utils/logging';
+import { reportDatalayer } from '../../../utils/requests';
 
 export const stages = {
   initial: 'initial',
@@ -44,7 +45,7 @@ const inputLimit = 450;
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
   projectLink, changeStatusAssignment, disableRate, disableLiking, ...rest }) {
   const { t } = useTranslation('assignments');
-  const { isAuthenticatedWithRigobot } = useAuth();
+  const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const toast = useToast();
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
@@ -77,7 +78,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     previous: {},
   });
   const { lightColor, featuredColor, hexColor } = useStyle();
-  const storybookTranslation = contextData?.translation || {};
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskStatus = currentTask?.task_status;
   const revisionStatus = currentTask?.revision_status;
@@ -145,6 +145,18 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       return prevState;
     });
   };
+  const rejectOrApprove = (status) => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'feedback_action',
+        action_type: status,
+        task_id: currentTask?.id,
+        user_id: user.id,
+      },
+    });
+    setStage(stages.approve_or_reject_code_revision);
+    setReviewStatus(status);
+  };
   const getRepoFiles = async () => {
     try {
       if (!isAuthenticatedWithRigobot) return;
@@ -210,6 +222,38 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
 
   useEffect(() => {
+    if (isOpen && isAuthenticated && user?.id) {
+      const revisionData = contextData?.revision_content;
+      const dataToReport = revisionData?.id ? {
+        event: 'review_modal_open',
+        feedback_type: isStudent ? 'read_code_review' : 'write_code_review',
+        feedback_id: revisionData?.id,
+        language: revisionData?.language,
+        reviewer: revisionData?.reviewer,
+        comment: revisionData?.revision_rating_comments,
+        user_id: user.id,
+        updated_at: revisionData?.updated_at,
+        created_at: revisionData?.created_at,
+      } : {
+        event: 'review_modal_open',
+        feedback_type: 'project_task_review',
+        task_id: currentTask?.id,
+        task_slug: currentTask?.associated_slug,
+        task_mandatory: currentTask?.mandatory,
+        task_type: currentTask?.task_type,
+        task_status: currentTask?.task_status,
+        task_github_url: currentTask?.github_url,
+        user_id: user.id,
+      };
+      reportDatalayer({
+        dataLayer: {
+          ...dataToReport,
+        },
+      });
+    }
+  }, [isOpen, isAuthenticated, contextData]);
+
+  useEffect(() => {
     if (externalData) {
       setContextData(() => ({
         ...externalData,
@@ -238,6 +282,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
 
   const approveOrRejectProject = () => {
+    reportDatalayer({
+      dataLayer: {
+        event: 'feedback_action',
+        comment,
+        action_type: reviewStatus,
+        task_id: currentTask?.id,
+        user_id: user.id,
+      },
+    });
     if (revisionStatusUpperCase[reviewStatus] !== undefined) {
       setLoaders((prevState) => ({
         ...prevState,
@@ -330,15 +383,15 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
 
   const getTitle = () => {
     if (stage === stages.initial) {
-      return storybookTranslation?.['code-review']?.['assignment-review'] || t('code-review.assignment-review');
+      return t('code-review.assignment-review');
     }
     if (stage === stages.approve_or_reject_code_revision) {
-      return storybookTranslation?.['code-review']?.['write-feedback'] || t('code-review.write-feedback');
+      return t('code-review.write-feedback');
     }
     if (stage === stages.deliver_assignment) {
-      return storybookTranslation?.['deliver-assignment']?.title || t('deliver-assignment.title');
+      return t('deliver-assignment.title');
     }
-    return storybookTranslation?.['code-review']?.['code-review'] || t('code-review.rigobot-code-review');
+    return t('code-review.rigobot-code-review');
   };
 
   const getAssetData = async ({ callback = () => {} } = {}) => {
@@ -595,10 +648,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                         minWidth="128px"
                         background={buttonColor[type]}
                         _hover={{ background: buttonColor[type] }}
-                        onClick={() => {
-                          setStage(stages.approve_or_reject_code_revision);
-                          setReviewStatus(type);
-                        }}
+                        onClick={() => rejectOrApprove(type)}
                         color="white"
                         borderRadius="3px"
                         fontSize="13px"
@@ -695,7 +745,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
               {`${comment.length} / ${inputLimit}`}
             </Box>
           </Box>
-          <Button isLoading={loaders.isApprovingOrRejecting} variant="default" alignSelf="flex-end" isDisabled={comment.length < 10 || revisionStatusUpperCase[reviewStatus] === undefined} onClick={approveOrRejectProject}>
+          <Button onClick={approveOrRejectProject} isLoading={loaders.isApprovingOrRejecting} variant="default" alignSelf="flex-end" isDisabled={comment.length < 10 || revisionStatusUpperCase[reviewStatus] === undefined}>
             {t('code-review.send-feedback')}
           </Button>
         </Flex>

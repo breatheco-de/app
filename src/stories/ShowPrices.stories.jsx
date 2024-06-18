@@ -52,7 +52,7 @@ export default {
 const Component = (args, context) => {
   return (
     <Box width={args?.width || '520px'}>
-      <ShowPrices stTranslation={context.parameters.i18n.store.data} {...args} />
+      <ShowPrices {...args} />
     </Box>
   )
 };

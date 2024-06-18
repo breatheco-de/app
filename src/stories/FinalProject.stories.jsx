@@ -29,8 +29,6 @@ const Template = (args) => {
   <Box>
     <FinalProject
       storyConfig={{
-        translation: args.translation,
-        locale: args.locale,
         completedTasks: args?.completedTasks,
         totalTasks: args?.totalTasks,
         width: args?.width,

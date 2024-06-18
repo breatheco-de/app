@@ -22,7 +22,7 @@ import ProjectsSection from './ProjectsSection';
 import ButtonHandler from '../../js_modules/profile/Subscriptions/ButtonHandler';
 import UpgradeModal from '../../js_modules/profile/Subscriptions/UpgradeModal';
 
-function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslation, lang }) {
+function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, lang }) {
   const { t } = useTranslation('program-card');
   let timeString = '';
   const duration = intervalToDuration({
@@ -41,10 +41,10 @@ function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslatio
     ),
   };
 
-  if (isExpired) timeString = stTranslation ? stTranslation[lang]['program-card']['non-left'] : t('non-left');
-  else if (duration.days > 0) timeString = `${formated[lang]} ${stTranslation ? stTranslation[lang]['program-card'].left : t('left')}`;
+  if (isExpired) timeString = t('non-left');
+  else if (duration.days > 0) timeString = `${formated[lang]} ${t('left')}`;
   else if (duration.days === 0 && hours >= 0) timeString = `${hours > 0 ? `${hours}h ${t('common:and')}` : ''} ${duration?.minutes}min`;
-  else timeString = stTranslation ? stTranslation[lang]['program-card'].today : t('today');
+  else timeString = t('today');
 
   return (
     <Flex
@@ -68,7 +68,7 @@ function FreeTagCapsule({ isExpired, freeTrialExpireDateValue, now, stTranslatio
 }
 
 function ProgramCard({
-  programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground, stTranslation,
+  programName, programDescription, haveFreeTrial, startsIn, endsAt, signInDate, icon, iconBackground,
   syllabusContent, freeTrialExpireDate, courseProgress, lessonNumber, isLoading,
   width, assistants, teacher, handleChoose, isHiddenOnPrework, isAvailableAsSaas,
   subscriptionStatus, subscription, isMarketingCourse, iconLink, bullets, background, isFinantialStatusLate, isLoadingPageContent,
@@ -88,8 +88,6 @@ function ProgramCard({
   const isNeverEnding = !endsAt;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
-
-  const programCardTR = stTranslation?.[lang]?.['program-card'];
 
   const statusTimeString = (start) => {
     if (start < now) return 'started';
@@ -128,17 +126,17 @@ function ProgramCard({
       ),
     };
 
-    if (formated[lang] === '') return stTranslation ? stTranslation[lang]['program-card']['starting-today'] : t('starting-today');
-    // if (start < now) return stTranslation ? stTranslation[lang]['program-card'].started : t('started');
+    if (formated[lang] === '') return t('starting-today');
+    // if (start < now) return t('started');
     return formated[lang];
   };
 
   const statusLabel = {
-    active: programCardTR?.status?.active || t('status.active'),
-    fully_paid: programCardTR?.status?.fully_paid || t('status.fully_paid'),
-    expired: programCardTR?.expired || t('status.expired'),
-    cancelled: programCardTR?.status?.cancelled || t('status.cancelled'),
-    payment_issue: programCardTR?.status?.payment_issue || t('status.payment_issue'),
+    active: t('status.active'),
+    fully_paid: t('status.fully_paid'),
+    expired: t('status.expired'),
+    cancelled: t('status.cancelled'),
+    payment_issue: t('status.payment_issue'),
   };
 
   const onOpenUpgrade = (data) => {
@@ -197,8 +195,8 @@ function ProgramCard({
                           color={textColor}
                         >
                           {hasStarted
-                            ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
-                            : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+                            ? `${t('started-in')}`
+                            : `${t('starts-in')}`}
 
                         </Text>
                         <Text
@@ -225,7 +223,6 @@ function ProgramCard({
                           isExpired={isExpired}
                           freeTrialExpireDateValue={freeTrialExpireDateValue}
                           now={now}
-                          stTranslation={stTranslation}
                           lang={lang}
                         />
                       ) : (
@@ -246,8 +243,8 @@ function ProgramCard({
                               color={textColor}
                             >
                               {hasStarted
-                                ? `${stTranslation ? stTranslation[lang]['program-card']['started-in'] : t('started-in')}`
-                                : `${stTranslation ? stTranslation[lang]['program-card']['starts-in'] : t('starts-in')}`}
+                                ? `${t('started-in')}`
+                                : `${t('starts-in')}`}
 
                             </Text>
                             <Text
@@ -325,7 +322,6 @@ function ProgramCard({
                   </Text>
                   <ProjectsSection
                     startsIn={startsIn}
-                    stTranslation={stTranslation}
                     syllabusContent={syllabusContent}
                     courseProgress={courseProgress}
                     assistants={assistants}
@@ -351,7 +347,7 @@ function ProgramCard({
                       color="white"
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
-                      {programCardTR?.upgrade || t('upgrade')}
+                      {t('upgrade')}
                     </ButtonHandler>
                   ) : (
                     <Button
@@ -364,7 +360,7 @@ function ProgramCard({
                       onClick={handleChoose}
                       isLoading={isLoadingPageContent}
                     >
-                      {programCardTR?.['start-course'] || t('start-course')}
+                      {t('start-course')}
                     </Button>
                   )}
                   {haveFreeTrial && (
@@ -378,7 +374,7 @@ function ProgramCard({
                       borderColor="blue.default"
                       color="blue.default"
                     >
-                      {programCardTR?.['free-trial'] || t('free-trial')}
+                      {t('free-trial')}
                     </Button>
                   )}
                 </Box>
@@ -413,7 +409,6 @@ function ProgramCard({
                   </Box>
                   <ProjectsSection
                     startsIn={startsIn}
-                    stTranslation={stTranslation}
                     syllabusContent={syllabusContent}
                     courseProgress={courseProgress}
                     assistants={assistants}
@@ -440,10 +435,10 @@ function ProgramCard({
                             gridGap="6px"
                             fontWeight={700}
                           >
-                            {isFinantialStatusLate && (programCardTR?.['action-required'] || t('action-required'))}
+                            {isFinantialStatusLate && t('action-required')}
                             {!isFinantialStatusLate && (isNumber(String(lessonNumber))
-                              ? `${programCardTR?.continue || t('continue')} ${lessonNumber} →`
-                              : `${programCardTR?.['continue-course'] || t('continue-course')} →`)}
+                              ? `${t('continue')} ${lessonNumber} →`
+                              : `${t('continue-course')} →`)}
                           </Button>
 
                         ) : (
@@ -460,8 +455,8 @@ function ProgramCard({
                               isLoading={isLoadingPageContent}
                             >
                               {isFinantialStatusLate
-                                ? programCardTR?.['action-required'] || t('action-required')
-                                : programCardTR?.['start-course'] || t('start-course')}
+                                ? t('action-required')
+                                : t('start-course')}
                             </Button>
                             )}
                           </>
@@ -488,7 +483,7 @@ function ProgramCard({
                       color="white"
                     >
                       <Icon style={{ marginRight: '10px' }} width="12px" height="18px" icon="rocket" color="currentColor" />
-                      {programCardTR?.upgrade || t('upgrade')}
+                      {t('upgrade')}
                     </ButtonHandler>
                   )}
                 </Box>
@@ -538,7 +533,7 @@ function ProgramCard({
                 size="12px"
                 color={lightColor}
               >
-                {programCardTR?.['prework-message'] || t('prework-message')}
+                {t('prework-message')}
               </Text>
             </Box>
           )}
@@ -567,7 +562,6 @@ ProgramCard.propTypes = {
   icon: PropTypes.string.isRequired,
   syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   lessonNumber: PropTypes.number,
   isLoading: PropTypes.bool,
   width: PropTypes.string,
@@ -589,7 +583,6 @@ ProgramCard.propTypes = {
 };
 
 ProgramCard.defaultProps = {
-  stTranslation: null,
   programDescription: null,
   startsIn: null,
   endsAt: null,

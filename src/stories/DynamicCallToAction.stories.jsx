@@ -29,7 +29,7 @@ export default {
 };
 
 const Component = (args, context) => {
-  return <DynamicCallToAction stTranslation={context.parameters.i18n.store.data} {...args} />
+  return <DynamicCallToAction {...args} />
 };
 
 export const WeeklyCodingChallenge = Component.bind({});

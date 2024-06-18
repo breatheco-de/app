@@ -13,15 +13,14 @@ import modifyEnv from '../../../modifyEnv';
 import { setStorageItem, toCapitalize } from '../../utils';
 import { log } from '../../utils/logging';
 
-function DirectAccessModal({ storySettings, title, modalIsOpen }) {
+function DirectAccessModal({ title, modalIsOpen }) {
   const { t } = useTranslation('profile');
   const { userSession } = useSession();
   const {
     modal,
   } = useStyle();
   const router = useRouter();
-  const locale = router?.locale || storySettings?.locale;
-  const stTranslation = storySettings?.translation[locale] || {};
+  const locale = router?.locale;
   // const technology = router?.query?.technology || 'Python';
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const toast = useToast();
@@ -87,7 +86,7 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
             </Heading>
           )}
           <Text fontSize="14px" px={{ base: '10px', md: '2rem' }} mt="10px" mb="2rem" textAlign="center">
-            {stTranslation?.common?.['modal-tech-description']?.replaceAll('{{title}}', title) || t('common:modal-tech-description', { title: toCapitalize(title) })}
+            {t('common:modal-tech-description', { title: toCapitalize(title) })}
           </Text>
           <Formik
             initialValues={{
@@ -115,14 +114,14 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
                   <FieldForm
                     type="text"
                     name="first_name"
-                    label={stTranslation?.common?.['first-name'] || t('common:first-name')}
+                    label={t('common:first-name')}
                     formProps={formProps}
                     setFormProps={setFormProps}
                   />
                   <FieldForm
                     type="email"
                     name="email"
-                    label={stTranslation?.common?.email || t('common:email')}
+                    label={t('common:email')}
                     formProps={formProps}
                     setFormProps={setFormProps}
                   />
@@ -135,7 +134,7 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
                     textTransform="uppercase"
                     fontSize="13px"
                   >
-                    {stTranslation?.common?.submit || t('common:submit')}
+                    {t('common:submit')}
                   </Button>
                   {/* <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
                   </Box> */}
@@ -152,12 +151,10 @@ function DirectAccessModal({ storySettings, title, modalIsOpen }) {
 DirectAccessModal.propTypes = {
   modalIsOpen: PropTypes.bool,
   title: PropTypes.string,
-  storySettings: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 DirectAccessModal.defaultProps = {
   modalIsOpen: false,
   title: '',
-  storySettings: {},
 };
 
 export default DirectAccessModal;

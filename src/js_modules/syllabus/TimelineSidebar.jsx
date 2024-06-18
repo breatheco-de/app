@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
-  Box, Checkbox, IconButton,
+  Box, Button, Checkbox, IconButton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -21,7 +21,8 @@ function TimelineSidebar({
   const {
     themeColor, commonBorderColor, currentThemeValue, colorLight,
   } = Config();
-  const { fontColor3 } = useStyle();
+  const { fontColor3, featuredCard } = useStyle();
+  const { existContentToShow = false } = teacherInstructions;
 
   return (
     <>
@@ -102,15 +103,34 @@ function TimelineSidebar({
             }}
           >
             {!isStudent && (
-              <Box onClick={teacherInstructions.actionHandler} padding={{ base: '1rem 1rem 0 1rem', md: '1.5rem 1.5rem 0 1.5rem' }}>
-                <Box cursor="pointer" background="yellow.light" padding="8px" gap="8px" borderRadius="8px" display="flex" alignItems="center">
+              <Box padding={{ base: '1rem 1rem 0 1rem', md: '1.5rem 1.5rem 0 1.5rem' }}>
+                <Button
+                  onClick={() => {
+                    if (existContentToShow) {
+                      teacherInstructions.actionHandler();
+                    }
+                  }}
+                  opacity={existContentToShow ? '1' : '0.7'}
+                  cursor={existContentToShow ? 'pointer' : 'unset'}
+                  height="auto"
+                  width="100%"
+                  variant="unstyled"
+                  background={featuredCard.yellow.featured}
+                  padding="8px"
+                  gap="8px"
+                  borderRadius="8px"
+                  display="flex"
+                  alignItems="center"
+                  aria-label="Open Teacher Instructions"
+                >
                   <Box background="yellow.default" padding="10px" borderRadius="full">
                     <Icon icon="teacher" color="white" />
                   </Box>
                   <Text size="l" fontWeight="700" color={fontColor3}>
                     {t('teacherSidebar.open-instructions')}
                   </Text>
-                </Box>
+                </Button>
+
               </Box>
             )}
             {filterEmptyModules.length > 0 && filterEmptyModules.map((section) => {

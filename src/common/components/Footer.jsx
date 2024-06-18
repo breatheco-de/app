@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Text,
@@ -15,6 +15,7 @@ import {
 import { CheckIcon } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import ReCAPTCHA from 'react-google-recaptcha';
 import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
@@ -25,6 +26,7 @@ import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
 
 function Footer({ pageProps }) {
+  const captcha = useRef(null);
   const { t } = useTranslation('footer');
   const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
@@ -83,9 +85,14 @@ function Footer({ pageProps }) {
             >
               {formStatus === '' ? (
                 <form
-                  onSubmit={(e) => {
+                  onSubmit={async (e) => {
                     e.preventDefault();
-                    bc.marketing().lead({ email })
+                    const token = await captcha.current.executeAsync();
+                    bc.marketing().lead({
+                      email,
+                      token,
+                      utm_url: window?.location?.href,
+                    })
                       .then((success) => {
                         log(success);
                         if (success === undefined) setFormStatus('error');
@@ -125,7 +132,13 @@ function Footer({ pageProps }) {
                     </InputRightElement>
 
                   </InputGroup>
-
+                  <Box mt="15px">
+                    <ReCAPTCHA
+                      ref={captcha}
+                      sitekey={process.env.CAPTCHA_KEY}
+                      size="invisible"
+                    />
+                  </Box>
                 </form>
               ) : (
                 <AlertMessage

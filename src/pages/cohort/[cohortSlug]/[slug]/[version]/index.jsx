@@ -70,7 +70,7 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
-  const { featuredColor, hexColor } = useStyle();
+  const { featuredColor, hexColor, modal } = useStyle();
 
   const { user, isAuthenticated } = useAuth();
 
@@ -805,7 +805,7 @@ function Dashboard() {
           }}
         >
           <ModalOverlay />
-          <ModalContent style={{ margin: '3rem 0 0 0' }}>
+          <ModalContent background={modal.background3} style={{ margin: '3rem 0 0 0' }}>
             <ModalHeader color={commonModalColor} borderBottom="1px solid" fontSize="15px" textTransform="uppercase" borderColor={commonBorderColor} textAlign="center">
               {t('warningModal.title')}
             </ModalHeader>
@@ -815,9 +815,19 @@ function Dashboard() {
                 {t('warningModal.sub-title')}
               </Text>
               {isAvailableToShowWarningModal && (
-                <Text marginBottom="25px" color={commonFontColor} textAlign="center" fontSize="12px" lineHeight="24px">
-                  {t('warningModal.text')}
-                </Text>
+                <Flex flexDirection="column" gridGap="10px" marginBottom="25px">
+                  <Text color={commonFontColor} fontSize="12px" lineHeight="auto">
+                    {t('warningModal.text')}
+                  </Text>
+                  <Text
+                    color={commonFontColor}
+                    fontSize="12px"
+                    lineHeight="auto"
+                    dangerouslySetInnerHTML={{
+                      __html: t('warningModal.text2'),
+                    }}
+                  />
+                </Flex>
               )}
               <Button
                 textAlign="center"
