@@ -27,7 +27,7 @@ function ButtonHandler({
   };
 
   const getStyles = () => {
-    if (subscription.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
+    if (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
       return {
         text: t('subscription.cancel'),
         style: {
@@ -105,7 +105,7 @@ function ButtonHandler({
           onClick={() => {
             if (isPlanFinancingExpired) handlePlanOffer();
             if (['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) handlePlanOffer();
-            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription.type !== 'plan_financing') onOpenCancelSubscription();
+            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing') onOpenCancelSubscription();
             setSubscriptionProps(subscription);
           }}
           color="blue.default"

@@ -24,6 +24,7 @@ const assetTypeValues = {
 };
 
 const slugify = (str) => (typeof str === 'string' ? str
+  .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   .toLowerCase()
   .trim()
   .replace(/[^\w\s-]/g, '')
