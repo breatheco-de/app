@@ -34,9 +34,6 @@ export default {
     capabilities: {
       control: 'hide',
     },
-    storyTranslation: {
-      control: 'hide',
-    },
   }
 };
 
@@ -50,7 +47,6 @@ const Component = (args) => {
   return (
     <Box width="36rem">
       <OnlyFor
-        storyTranslation={args?.translation?.[args?.locale]?.common}
         width="400px"
         {...args}
         capabilities={allCapabilities}

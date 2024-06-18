@@ -13,6 +13,7 @@ import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import { error } from '../../utils/logging';
 import { BREATHECODE_HOST } from '../../utils/variables';
+import { reportDatalayer } from '../../utils/requests';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
@@ -70,6 +71,17 @@ function Feedback({ storyConfig }) {
     }
   };
 
+  useEffect(() => {
+    if (codeRevisions?.length > 0) {
+      reportDatalayer({
+        dataLayer: {
+          event: 'feedback_list_view',
+          feedback_count: codeRevisions.length,
+          user_id: user.id,
+        },
+      });
+    }
+  }, [codeRevisions]);
   useEffect(() => {
     if (isStorybookView) {
       setCodeRevisions(storyConfig?.externalCodeRevisions);
@@ -145,7 +157,7 @@ function Feedback({ storyConfig }) {
         </Flex>
         <Flex flexDirection="column" gridGap="10px" padding="12px 8px" maxHeight="17rem" overflow="auto">
           {codeRevisions?.length > 0 ? codeRevisions.map((revision) => (
-            <Flex gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} cursor="default" borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
+            <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
                 <Flex flexDirection="column" gridGap="5px">

@@ -7,14 +7,13 @@ import Link from '../../../common/components/NextChakraLink';
 import profileHandlers from './handlers';
 
 function ButtonHandler({
-  translations, subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
+  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
 }) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
   const [isLoading, setIsLoading] = useState(false);
   const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
-  const subscriptionTR = translations?.subscription;
   const isPlanFinancingExpired = subscription.type === 'plan_financing' && subscription.valid_until < new Date().toISOString();
 
   const {
@@ -30,7 +29,7 @@ function ButtonHandler({
   const getStyles = () => {
     if (subscription.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
       return {
-        text: subscriptionTR?.cancel || t('subscription.cancel'),
+        text: t('subscription.cancel'),
         style: {
           variant: 'link',
         },
@@ -39,7 +38,7 @@ function ButtonHandler({
 
     if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)) {
       return {
-        text: subscriptionTR?.upgrade || t('subscription.upgrade'),
+        text: t('subscription.upgrade'),
         style: {
           variant: 'outline',
           color: 'blue.default',
@@ -51,7 +50,7 @@ function ButtonHandler({
 
     if (status === 'CANCELLED') {
       return {
-        text: subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription'),
+        text: t('subscription.reactivate-subscription'),
         style: {
           variant: 'default',
           color: 'white',
@@ -60,7 +59,7 @@ function ButtonHandler({
         isComponent: true,
         component: (
           <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
-            {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
+            {t('subscription.reactivate-subscription')}
           </Link>
         ),
       };
@@ -68,7 +67,7 @@ function ButtonHandler({
 
     // if (status === 'PAYMENT_ISSUE') {
     //   return {
-    //     text: subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription'),
+    //     text: t('subscription.reactivate-subscription'),
     //     style: {
     //       variant: 'default',
     //       color: 'white',
@@ -77,7 +76,7 @@ function ButtonHandler({
     //     isComponent: true,
     //     component: (
     //       <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
-    //         {subscriptionTR?.['reactivate-subscription'] || t('subscription.reactivate-subscription')}
+    //         {t('subscription.reactivate-subscription')}
     //       </Link>
     //     ),
     //   };
@@ -122,7 +121,6 @@ function ButtonHandler({
 }
 
 ButtonHandler.propTypes = {
-  translations: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onOpenUpgrade: PropTypes.func,
   setSubscriptionProps: PropTypes.func,
@@ -132,7 +130,6 @@ ButtonHandler.propTypes = {
 };
 
 ButtonHandler.defaultProps = {
-  translations: {},
   subscription: {},
   onOpenUpgrade: () => {},
   setSubscriptionProps: () => {},

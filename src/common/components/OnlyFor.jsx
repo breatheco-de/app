@@ -6,7 +6,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
-function Component({ storyTranslation, withBanner, children }) {
+function Component({ withBanner, children }) {
   const { t } = useTranslation('common');
   const { featuredColor, backgroundColor } = useStyle();
   const router = useRouter();
@@ -19,10 +19,10 @@ function Component({ storyTranslation, withBanner, children }) {
         </Box>
         <Box my="1rem" display="flex" padding={{ base: '0 16px', sm: '0' }} flexDirection="column" gridGap="24px" width="100%">
           <Box p={{ base: '0', sm: '0 26px 0 0' }} fontSize="18px" fontWeight="700">
-            {storyTranslation?.['upgrade-plan']?.title || t('upgrade-plan.title')}
+            {t('upgrade-plan.title')}
           </Box>
           <Button variant="default" onClick={() => router.push('/login')} w="fit-content" textTransform="uppercase" fontSize="14px" letterSpacing="0.05em">
-            {storyTranslation?.['upgrade-plan']?.button || t('upgrade-plan.button')}
+            {t('upgrade-plan.button')}
           </Button>
         </Box>
       </Box>
@@ -38,7 +38,7 @@ function Component({ storyTranslation, withBanner, children }) {
 }
 
 function OnlyFor({
-  storyTranslation, cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
+  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) {
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
@@ -76,7 +76,7 @@ function OnlyFor({
   return haveRequiredCapabilities()
     ? children
     : (
-      <Component storyTranslation={storyTranslation} withBanner={withBanner}>
+      <Component withBanner={withBanner}>
         {children}
       </Component>
     );
@@ -91,7 +91,6 @@ OnlyFor.propTypes = {
   onlyTeachers: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withBanner: PropTypes.bool,
-  storyTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 OnlyFor.defaultProps = {
@@ -101,13 +100,11 @@ OnlyFor.defaultProps = {
   onlyTeachers: false,
   profile: {},
   withBanner: false,
-  storyTranslation: {},
 };
 
 Component.propTypes = {
   withBanner: PropTypes.bool,
   children: PropTypes.node.isRequired,
-  storyTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 Component.defaultProps = {
   withBanner: false,
