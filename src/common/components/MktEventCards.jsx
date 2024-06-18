@@ -48,8 +48,8 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
       id={id}
       maxWidth="1280px"
       withContainer
-      px="10px"
       padding={{ base: '0 10px', lg: '0' }}
+      px={{ base: '10px', md: '2rem' }}
       flexDirection={{ base: 'column', lg: 'row' }}
       gridColumn="1 / span 10"
       {...rest}

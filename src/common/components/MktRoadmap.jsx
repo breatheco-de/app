@@ -61,7 +61,7 @@ function MktRoadmap({ id, title, course, ...rest }) {
   };
 
   return data?.length > 0 && (
-    <GridContainer id={id} maxWidth="1280px" width="100%" height="auto" gridGap={{ base: '64px', lg: '24px' }} px={{ base: '10px', md: '0' }} {...rest}>
+    <GridContainer id={id} maxWidth="1280px" width="100%" height="auto" gridGap={{ base: '64px', lg: '24px' }} px={{ base: '10px', md: '2rem' }} {...rest}>
       <Tabs
         index={currentTabIndex}
         variant="unstyled"

@@ -98,7 +98,6 @@ function MktTestimonials({
       flexDirection="column"
       maxWidth="1280px"
       py="20px"
-      px={{ base: '20px', md: '0px' }}
       id={id}
       width="100%"
       {...rest}
@@ -115,6 +114,7 @@ function MktTestimonials({
           marginBottom="15px"
           display="flex"
           justifyContent={{ base: 'inherit', md: 'space-between' }}
+          px={{ base: '10px', md: '2rem' }}
         >
           {testimonialsArray && testimonialsArray.map((testimonial) => (
             <TestimonialBox

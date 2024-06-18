@@ -50,7 +50,7 @@ function MktPartners({ id, title, images, ...rest }) {
       id={id}
       gridTemplateColumns="repeat(10, 1fr)"
       maxWidth="1280px"
-      px={{ base: '10px', md: '0' }}
+      px={{ base: '10px', md: '2rem' }}
       {...rest}
     >
       <Box
