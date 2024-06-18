@@ -47,7 +47,6 @@ function OnlyFor({
   const { state } = useCohortHandler();
   const { userCapabilities: cohortCapabilities } = state;
 
-  // const cohortCapabilities = cohortSession?.user_capabilities || [];
   const profileCapabilities = profile?.permissionsSlug || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
