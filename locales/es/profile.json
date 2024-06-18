@@ -110,6 +110,7 @@
       "duration_days": "{{duration}} dias",
       "duration_month": "{{duration}} mes",
       "connector_duration_trial": "gratis",
+      "subscription": "Suscripción",
       "one_payment": "Pago único",
       "free-course": "Curso gratuito",
       "finance": "Financiado",
