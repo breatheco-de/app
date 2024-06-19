@@ -111,6 +111,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
     offset,
     academy: WHITE_LABEL_ACADEMY,
     expand: 'technologies',
+    big: true,
     ...extraQuerys,
   });
 
@@ -145,6 +146,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
       offset,
       academy: WHITE_LABEL_ACADEMY,
       expand: 'technologies',
+      big: true,
       ...extraQuerys,
     });
 
