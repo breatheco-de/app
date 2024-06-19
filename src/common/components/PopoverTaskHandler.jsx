@@ -10,8 +10,8 @@ import { isGithubUrl } from '../../utils/regex';
 import MarkDownParser from './MarkDownParser';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
-import { usePersistent } from '../hooks/usePersistent';
 
 export function TextByTaskStatus({ currentTask, t }) {
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
@@ -103,7 +103,8 @@ function PopoverTaskHandler({
   buttonChildren,
 }) {
   const { t } = useTranslation('dashboard');
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
@@ -182,7 +183,7 @@ function PopoverTaskHandler({
     Array.from(fileProps).forEach(({ file }) => {
       formdata.append('file', file);
     });
-    const resp = await bc.todo({ academy: cohortSession.academy.id }).uploadFile(currentTask.id, formdata);
+    const resp = await bc.todo({ academy: cohortSession?.academy.id }).uploadFile(currentTask.id, formdata);
 
     if (resp?.status < 400) {
       const respData = resp.data[0];

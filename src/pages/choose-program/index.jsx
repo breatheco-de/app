@@ -16,6 +16,7 @@ import { calculateDifferenceDays, getStorageItem, isPlural, isValidDate, removeS
 import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -51,7 +52,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 function chooseProgram() {
   const { t, lang } = useTranslation('choose-program');
   const [, setProfile] = usePersistent('profile', {});
-  const [, setCohortSession] = usePersistent('cohortSession', {});
+  const { setCohortSession } = useCohortHandler();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -73,7 +74,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { isAuthenticated, user, choose } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -331,7 +332,6 @@ function chooseProgram() {
     if (userID !== undefined) {
       setCohortSession({
         selectedProgramSlug: '/choose-program',
-        bc_id: userID,
       });
     }
   }, [userID]);
@@ -374,10 +374,6 @@ function chooseProgram() {
       return t('invite.plural-word', { invitesLength: invites?.length });
     }
     return t('invite.singular-word', { invitesLength: invites?.length });
-  };
-
-  const handleChoose = (cohort) => {
-    choose(cohort);
   };
 
   return (
@@ -525,7 +521,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={dataQuery?.cohorts} handleChoose={handleChoose} setLateModalProps={setLateModalProps} />
+              <ChooseProgram chooseList={dataQuery?.cohorts} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (

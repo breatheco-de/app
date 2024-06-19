@@ -14,7 +14,7 @@ import Text from '../../common/components/Text';
 import FieldForm from '../../common/components/Forms/FieldForm';
 import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../modifyEnv';
 import ModalCardError from './ModalCardError';
 import { SILENT_CODE } from '../../lib/types';
@@ -29,7 +29,8 @@ function ServiceSummary({ service }) {
   const { selectedService, paymentInfo } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [purchaseCompleted, setPurchaseCompleted] = useState(false);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state: cohortState } = useCohortHandler();
+  const { cohortSession } = cohortState;
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmittingCard, setIsSubmittingCard] = useState(false);

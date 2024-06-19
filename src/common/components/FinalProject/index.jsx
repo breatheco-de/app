@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Progress from '../ProgressBar/Progress';
@@ -20,7 +20,9 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [finalProject, setFinalProjects] = useState([]);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
+
   const router = useRouter();
   const { modal, hexColor } = useStyle();
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
