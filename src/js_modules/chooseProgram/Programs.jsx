@@ -23,7 +23,6 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;
   const isFreeTrial = subscription?.status === 'FREE_TRIAL' || availableAsSaasButNotBought;
   const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
-  const subscriptionExists = currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null;
 
   const router = useRouter();
 
@@ -82,7 +81,7 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
     return ({});
   }) : [];
 
-  return ((cohort?.available_as_saas && subscriptionExists) || cohort?.available_as_saas === false) && (
+  return (
     <ProgramCard
       width="100%"
       syllabusContent={syllabusContent?.length > 0 ? Object.assign({}, ...syllabusContent) : {}}
@@ -102,7 +101,7 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       endsAt={item?.cohort?.ending_date}
       signInDate={signInDate}
       icon="coding"
-      subscription={subscription}
+      subscription={subscription || {}}
       subscriptionStatus={subscription?.status}
       iconBackground="blue.default"
       assistants={currentCohortProps?.assistant}
