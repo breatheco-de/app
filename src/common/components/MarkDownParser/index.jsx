@@ -236,20 +236,22 @@ function MarkDownParser({
   }, [content]);
   useEffect(() => {
     const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
-    setLearnpackActions([
-      {
-        ...openInLearnpackAction,
-        links: provisioningLinks,
-      },
-      {
-        text: t('learnpack.open-locally'),
-        type: 'button',
-        onClick: () => {
-          setShowCloneModal(true);
+    if (cohortSession?.id) {
+      setLearnpackActions([
+        {
+          ...openInLearnpackAction,
+          links: provisioningLinks,
         },
-      },
-    ]);
-  }, [token, assetSlug, currentData?.url]);
+        {
+          text: t('learnpack.open-locally'),
+          type: 'button',
+          onClick: () => {
+            setShowCloneModal(true);
+          },
+        },
+      ]);
+    }
+  }, [token, assetSlug, cohortSession?.id, currentData?.url]);
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
