@@ -89,8 +89,8 @@ function CallToAction({
           </Button>
           )}
           {buttonsData && buttonsData.map((element) => {
-            const isDropdown = element.type === 'dropdown';
-            const isButton = element.type === 'button';
+            const isDropdown = element?.type === 'dropdown';
+            const isButton = element?.type === 'button';
 
             if (isButton) {
               return (
@@ -120,7 +120,7 @@ function CallToAction({
                   <PopoverContent width="min-content">
                     <PopoverArrow />
                     <PopoverCloseButton />
-                    <PopoverHeader>{element.title}</PopoverHeader>
+                    <PopoverHeader>{element?.title}</PopoverHeader>
                     <PopoverBody display="flex" gridGap="1rem" color="currentColor" flexDirection="column">
                       <Text
                         size="14px"
