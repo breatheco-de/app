@@ -310,7 +310,7 @@ function MarkDownParser({
       </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
-        callToAction={gitpod === true && assetType === 'EXERCISE' && (
+        callToAction={gitpod === true && (
           <CallToAction
             buttonStyle={{
               color: 'white',
