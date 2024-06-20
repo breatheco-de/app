@@ -316,7 +316,7 @@ function MarkDownParser({
             background="blue.default"
             margin="12px 0 20px 0px"
             icon="learnpack"
-            text={t('learnpack.description')}
+            text={t('learnpack.description', { projectName: currentData?.title })}
             width={{ base: '100%', md: 'fit-content' }}
             buttonsData={learnpackActions}
           />

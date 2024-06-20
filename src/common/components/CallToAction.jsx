@@ -68,9 +68,8 @@ function CallToAction({
             }}
             color="white"
             size="l"
-          >
-            {text}
-          </Text>
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
           )}
         </Box>
         <Box

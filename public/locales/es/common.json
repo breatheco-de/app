@@ -132,13 +132,13 @@
     "mark-as-not-done": "Marcar como no hecho"
   },
   "learnpack": {
-    "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrada con VSCode.",
+    "description": "<strong>\"{{projectName}}\"</strong> utiliza LearnPack para una experiencia interactiva y autoevaluada; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:",
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
     "open-in-learnpack-button": {
-      "text": "Abrir en codespaces (recomendado)",
-      "title": "Abrir en codespaces",
+      "text": "Abrir en la nube (recomendado)",
+      "title": "Abrir en la nube",
       "description": "Nosotros nos encargamos de la <a class=\"link\" href=\"https://4geeks.com/aprende-en-un-clic\">configuración e instalación</a> de todas las tecnologías requeridas para realizar este ejercicio.",
       "type": "dropdown"
     },

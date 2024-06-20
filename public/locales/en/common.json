@@ -132,13 +132,14 @@
     "mark-as-not-done": "Mark as not done"
   },
   "learnpack": {
-    "description": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
+    "description": "<strong>\"{{projectName}}\"</strong> uses LearnPack for an interactive and auto-graded experience; choose one of the following options to start working on the project:",
+    "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
     "open-in-learnpack-button": {
-      "text": "Open in codespaces (recommended)",
-      "title": "Open in codespaces",
+      "text": "Open in the cloud (recommended)",
+      "title": "Open in the cloud",
       "description": "We take care of <a class=\"link\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
       "type": "dropdown"
     },
