@@ -141,7 +141,7 @@ function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
   showLineNumbers, showInlineLineNumbers, assetData, alerMessage,
 }) {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [subTasksProps, setSubTasksProps] = useState([]);
@@ -251,7 +251,7 @@ function MarkDownParser({
         },
       ]);
     }
-  }, [token, assetSlug, cohortSession?.id, currentData?.url]);
+  }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
@@ -310,16 +310,13 @@ function MarkDownParser({
         titleRightSide={titleRightSide}
         callToAction={gitpod === true && assetType === 'EXERCISE' && (
           <CallToAction
-            styleContainer={{
-              maxWidth: '800px',
-            }}
             buttonStyle={{
               color: 'white',
             }}
             background="blue.default"
             margin="12px 0 20px 0px"
             icon="learnpack"
-            text={t('learnpack.description')}
+            text={t('learnpack.description', { projectName: currentData?.title })}
             width={{ base: '100%', md: 'fit-content' }}
             buttonsData={learnpackActions}
           />
