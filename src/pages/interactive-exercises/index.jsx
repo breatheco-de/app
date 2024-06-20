@@ -242,9 +242,8 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
           display="flex"
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
-        >
-          {t('description')}
-        </Text>
+          dangerouslySetInnerHTML={{ __html: t('description') }}
+        />
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
             articles={exercises}
