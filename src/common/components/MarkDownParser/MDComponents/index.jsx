@@ -15,6 +15,20 @@ import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
 import { log } from '../../../../utils/logging';
 
+export function generateId(children) {
+  const text = children ? children
+    .map((child) => {
+      if (typeof child === 'string') {
+        return child;
+      } if (child?.props && typeof child?.props?.children?.[0] === 'string') {
+        return child.props.children[0];
+      }
+      return child;
+    })
+    .join('') : '';
+
+  return slugify(text, { lower: true });
+}
 export function Wrapper({ children, ...rest }) {
   const style = rest.style || {};
 
@@ -25,18 +39,43 @@ export function Wrapper({ children, ...rest }) {
   );
 }
 export function MDLink({ children, href }) {
-  const includesProtocol = href.startsWith('http');
-  const protocol = includesProtocol ? '' : 'https://';
+  function isExternalUrl(url) {
+    try {
+      const baseUrl = process.env.DOMAIN_NAME || '';
+      const base = new URL(baseUrl);
+
+      // Handle relative URLs by using the base URL as a reference
+      const fullUrl = url.startsWith('http') ? url : new URL(url, baseUrl).href;
+
+      // Create a URL object based on the full URL
+      const linkUrl = new URL(fullUrl, baseUrl);
+
+      // Normalize the base hostname by potentially removing 'www.'
+      const baseDomain = base.hostname.replace(/^(www\.)?/, '');
+
+      // Check if the link's hostname ends with the base domain
+      const isInternalDomain = linkUrl.hostname.endsWith(baseDomain);
+
+      // Check port and scheme as well
+      const isSamePort = linkUrl.port === base.port || (linkUrl.port === '' && base.port === '') || (linkUrl.protocol === 'http:' && linkUrl.port === '80' && base.port === '') || (linkUrl.protocol === 'https:' && linkUrl.port === '443' && base.port === '');
+
+      return !(isInternalDomain && isSamePort);
+    } catch (e) {
+      console.error('Invalid URL:', e.message);
+      return false; // If URL is invalid, handle as needed
+    }
+  }
+  const external = isExternalUrl(href);
   return (
     <Link
       as="a"
-      href={`${protocol}${href}`}
+      href={href}
       fontSize="inherit"
       color="blue.400"
       fontWeight="700"
       overflowWrap="anywhere"
-      target="_blank"
-      rel="noopener noreferrer"
+      target={external ? '_blank' : '_self'}
+      rel={external ? 'noopener noreferrer' : ''}
     >
       {children}
     </Link>
@@ -342,8 +381,10 @@ export function MDHr() {
 }
 
 export function MDText({ children, ...rest }) {
+  const id = generateId(children);
+  const idLimited = id.length > 50 ? id.slice(0, 50) : id;
   return (
-    <Text size="l" fontWeight="400" {...rest}>
+    <Text id={idLimited} size="l" fontWeight="400" {...rest}>
       {children}
     </Text>
   );
@@ -377,9 +418,7 @@ export function MDHeading({ children, tagType }) {
     h3: '18px',
     h4: '16px',
   };
-  const id = children?.[0]?.props
-    ? slugify(String(children?.[0]?.props?.children))
-    : slugify(String(children));
+  const id = generateId(children);
 
   return (
     <Heading
