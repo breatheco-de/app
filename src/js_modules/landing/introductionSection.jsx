@@ -60,7 +60,7 @@ function IntroductionSection({
   return (
     <Flex
       flexDirection={{ base: 'column', md: 'row' }}
-      px={{ base: '10px', md: '0px' }}
+      px={{ base: '10px', md: '2rem' }}
       id={slice?.primary?.id_key || ''}
       {...rest}
     >

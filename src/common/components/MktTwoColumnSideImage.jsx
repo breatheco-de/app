@@ -126,11 +126,11 @@ function MktTwoColumnSideImage({
         maxWidth="1280px"
         margin="0 auto"
         id={id}
-        px="10px"
         border={border}
         alignItems="center"
         borderRadius="12px"
         padding={{ base: '20px 10px', md: '24px 0px' }}
+        px={{ base: '10px', md: '2rem' }}
         gridGap={gridGap}
         marginTop="20px"
         style={{

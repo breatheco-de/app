@@ -30,7 +30,7 @@ const TabletWithForm = React.forwardRef(({
   href,
   showSimpleTable,
 }, ref) => {
-  const { t, lang } = useTranslation('exercises');
+  const { t } = useTranslation('exercises');
   const { user } = useAuth();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -65,41 +65,6 @@ const TabletWithForm = React.forwardRef(({
 
   const urlToClone = asset?.url || asset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
-  const cloneInstructions = {
-    en: `This exercise can be downloaded and run locally if you have node.js installed on your <a class="link" href="https://4geeks.com/how-to/install-node-nvm-mac-osx">Mac</a> or <a class="link" href="https://4geeks.com/how-to/nvm-install-windows">PC</a>. Start by installing learnpack and clone this project into your computer by typing the following command on your terminal:
-
-\`\`\` bash
-$ npm i @learnpack/learnpack -g
-$ git clone ${urlToClone}
-\`\`\`
-Note: This will create a new folder <strong>"${repoName}"</strong> in your computer with the project code inside.
-
-<strong>If you want to use VSCode:</strong> Make sure you have the <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension</a> installed, open the folder in VSCode and type \`learnpack start\` on your vscode terminal.
-
-<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:
-
-\`\`\`bash
-$ cd ${repoName}
-$ learnpack start
-\`\`\`
-Read the <a class="link" href="${asset?.readme_url}">README.md</a> file and follow the rest of the instructions.`,
-    es: `Este ejercicio se puede descargar y ejecutar localmente si tienes node.js instalado en tu <a class="link" href="https://4geeks.com/how-to/install-node-nvm-mac-osx">Mac</a> o <a class="link" href="https://4geeks.com/es/how-to/como-instalar-nvm-en-windows">PC</a>. Comienza instalando learnpack y clona este proyecto en tu computadora escribiendo el siguiente comando en tu terminal:
-\`\`\`bash
-$ npm i @learnpack/learnpack -g
-$ git clone ${urlToClone}
-\`\`\`
-Nota: Esto creará una nueva carpeta <strong>"${repoName}"</strong> en tu computadora con el código del proyecto dentro.
-
-<strong>Si quieres usar VSCode:<strong> asegurate de tener el <a class="link" target="_blank" href="https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode">LearnPack extension instalado</a> y abre la carpeta en VSCode y escribe \`learnpack start\` en tu terminal de vscode.
-
-<strong>Para realizar los ejercios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:
-
-\`\`\`bash
-$ cd ${repoName}
-$ learnpack start
-\`\`\`
-Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue el resto de las instrucciones.`,
-  };
 
   return (
     <>
@@ -385,7 +350,11 @@ Lee el archivo <a class="link" href="${asset?.readme_url}">README.md</a> y sigue
           }}
         >
           <MarkDownParser
-            content={cloneInstructions[lang]}
+            content={t('common:learnpack.cloneInstructions', {
+              repoName,
+              urlToClone,
+              readmeUrl: asset?.readme_url,
+            }, { returnObjects: true })}
             showLineNumbers={false}
           />
         </SimpleModal>

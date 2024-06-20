@@ -144,6 +144,7 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
       status: 'PUBLISHED',
       limit,
       offset,
+      big: 'true',
       academy: WHITE_LABEL_ACADEMY,
       expand: 'technologies',
       ...extraQuerys,

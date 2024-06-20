@@ -23,8 +23,9 @@ import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
-import modifyEnv from '../../../../modifyEnv';
 import DynamicCallToAction from '../DynamicCallToAction';
+import SimpleModal from '../SimpleModal';
+import modifyEnv from '../../../../modifyEnv';
 
 function MarkdownH2Heading({ children }) {
   return (
@@ -149,6 +150,7 @@ function MarkDownParser({
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [profile] = usePersistent('profile', {});
+  const [showCloneModal, setShowCloneModal] = useState(false);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const updateSubTask = async (taskProps) => {
@@ -201,13 +203,20 @@ function MarkDownParser({
     createSubTasksIfNotExists();
   }, [subTasksProps]);
 
-  const newExerciseText = t('learnpack.new-exercise');
-  const continueExerciseText = t('learnpack.continue-exercise');
-
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
 
+  const provisioningLinks = [{
+    title: t('learnpack.new-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
+    isExternalLink: true,
+  },
+  {
+    title: t('learnpack.continue-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
+    isExternalLink: true,
+  }];
   // const newLineBeforeCloseTag = /<\//gm;
 
   // const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
@@ -226,19 +235,21 @@ function MarkDownParser({
     anchors.add('.markdown-body pre');
   }, [content]);
   useEffect(() => {
+    const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
     setLearnpackActions([
       {
-        text: newExerciseText,
-        href: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
-        isExternalLink: true,
+        ...openInLearnpackAction,
+        links: provisioningLinks,
       },
       {
-        text: continueExerciseText,
-        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
-        isExternalLink: true,
+        text: t('learnpack.open-locally'),
+        type: 'button',
+        onClick: () => {
+          setShowCloneModal(true);
+        },
       },
     ]);
-  }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
+  }, [token, assetSlug, currentData?.url]);
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
@@ -263,8 +274,36 @@ function MarkDownParser({
     return contentReplace;
   }, [content]);
 
+  const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
+  const repoName = urlToClone?.split('/')?.pop();
+
   return (
     <>
+      <SimpleModal
+        maxWidth="xl"
+        title={t('clone-modal.title')}
+        isOpen={showCloneModal}
+        onClose={() => {
+          setShowCloneModal(false);
+        }}
+        headerStyles={{
+          textAlign: 'center',
+          textTransform: 'uppercase',
+        }}
+        bodyStyles={{
+          className: 'markdown-body',
+          padding: { base: '10px 30px' },
+        }}
+      >
+        <MarkDownParser
+          content={t('learnpack.cloneInstructions', {
+            repoName,
+            urlToClone,
+            readmeUrl: currentData?.readme_url,
+          }, { returnObjects: true })}
+          showLineNumbers={false}
+        />
+      </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
         callToAction={gitpod === true && assetType === 'EXERCISE' && (
