@@ -114,7 +114,7 @@ function CallToAction({
               return (
                 <Popover>
                   <PopoverTrigger>
-                    <Button variant="default" background="blue.400">{element?.text}</Button>
+                    <Button variant="default" textTransform="uppercase" background="blue.400">{element?.text}</Button>
                   </PopoverTrigger>
                   <PopoverContent width="auto">
                     <PopoverArrow />
@@ -129,14 +129,13 @@ function CallToAction({
                           href={link.link}
                           isLoading={isLoading}
                           target={link.isExternalLink ? '_blank' : '_self'}
-                          onClick={onClick}
                           marginY="auto"
                           margin="0"
                           textTransform="uppercase"
                           width="100%"
                           flexDirection="row"
                           gridGap="10px"
-                          fontSize="14px"
+                          fontSize="12px"
                           alignItems="center"
                           justifyContent="flex-start"
                           style={{
