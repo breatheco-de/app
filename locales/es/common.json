@@ -133,8 +133,14 @@
   },
   "learnpack": {
     "description": "Esta práctica se ejecutará fuera de 4Geeks.com a través de LearnPack. Una herramienta de aprendizaje interactivo que se ejecuta integrada con VSCode.",
-    "new-exercise": "Nuevo ejercicio",
-    "continue-exercise": "Continuar ejercicio"
+    "new-exercise": "Comenzar desde el principio",
+    "continue-exercise": "Continuar desde una sesión anterior",
+    "open-locally": "Abrir localmente en tu computadora",
+    "open-in-learnpack-button": {
+      "text": "Open in LearnPack",
+      "type": "dropdown"
+    },
+    "cloneInstructions": "Este ejercicio se puede descargar y ejecutar localmente si tienes node.js instalado en tu <a class=\"link\" href=\"https://4geeks.com/how-to/install-node-nvm-mac-osx\">Mac</a> o <a class=\"link\" href=\"https://4geeks.com/es/how-to/como-instalar-nvm-en-windows\">PC</a>. Comienza instalando learnpack y clona este proyecto en tu computadora escribiendo el siguiente comando en tu terminal:\n\n```bash\n$ npm i @learnpack/learnpack -g\n$ git clone {{urlToClone}}\n```\nNota: Esto creará una nueva carpeta <strong>\"{{repoName}}\"</strong> en tu computadora con el código del proyecto dentro.\n\n<strong>Si quieres usar VSCode:</strong> asegúrate de tener el <a class=\"link\" target=\"_blank\" href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\">LearnPack extension</a> instalado, abre la carpeta en VSCode y escribe `learnpack start` en tu terminal de vscode.\n\n<strong>Para realizar los ejercicios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:\n\n```bash\n$ cd {{repoName}}\n$ learnpack start\n```\nLee el archivo <a class=\"link\" href=\"{{readmeUrl}}\">README.md</a> y sigue el resto de las instrucciones."
   },
   "upgrade-plan": {
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
