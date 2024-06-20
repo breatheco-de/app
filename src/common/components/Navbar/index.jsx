@@ -18,6 +18,7 @@ import Icon from '../Icon';
 import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
@@ -45,7 +46,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
   const [userCohorts, setUserCohorts] = useState([]);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [hasPaidSubscription, setHasPaidSubscription] = usePersistent('hasPaidSubscription', false);
 
@@ -90,18 +92,16 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   axios.defaults.headers.common['Accept-Language'] = locale;
 
   // Verify if teacher acces is with current cohort role
-  const getDateJoined = user?.active_cohort?.date_joined
-    || cohortSession?.date_joined
-    || new Date();
+  const parsedDateJoined = user?.date_joined || new Date();
 
   const dateJoined = {
     en: `Member since ${formatDistanceStrict(
-      new Date(getDateJoined),
+      new Date(parsedDateJoined),
       new Date(),
       { addSuffix: true },
     )}`,
     es: `Miembro desde ${formatDistanceStrict(
-      new Date(getDateJoined),
+      new Date(parsedDateJoined),
       new Date(),
       { addSuffix: true, locale: es },
     )}`,
@@ -439,7 +439,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                         <Heading as="p" size="20px" fontWeight="700">
                           {getName() || ''}
                         </Heading>
-                        {(cohortSession?.date_joined || user?.active_cohort?.date_joined) && (
+                        {user?.date_joined && (
                           <Heading as="p" size="16px" maxWidth="300px" textTransform="initial" fontWeight="400">
                             {dateJoined[locale]}
                           </Heading>

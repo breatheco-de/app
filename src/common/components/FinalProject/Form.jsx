@@ -9,17 +9,15 @@ import FieldForm from '../Forms/FieldForm';
 import { url } from '../../../utils/regex';
 import Heading from '../Heading';
 import AddMember from './AddMember';
-import { usePersistent } from '../../hooks/usePersistent';
 import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 import Icon from '../Icon';
 
-function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
+function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
-  const [cohortSession] = usePersistent('cohortSession', {});
   const cohortSlug = cohortData?.slug || '';
   const toast = useToast();
   const cohortAcademy = cohortData?.academy?.id || 4;
@@ -36,39 +34,36 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
     members: [],
   });
 
-  const commonTranslation = storyConfig?.translation?.[storyConfig?.locale]?.common;
-  const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
-
   const megaByte = 1000000;
   const maxFileSize = 2 * megaByte;
 
   const finalProjectValidation = Yup.object().shape({
     name: Yup.string()
-      .required(commonTranslation?.validators['project-name-error'] || t('common:validators.project-name-error')),
+      .required(t('common:validators.project-name-error')),
     one_line_desc: Yup.string()
-      .max(50, t(commonTranslation?.validators['long-input'] || 'common:validators.long-input'))
-      .required(t(commonTranslation?.validators['one-line-description-required'] || 'common:validators.one-line-description-required')),
+      .max(50, t('common:validators.long-input'))
+      .required(t('common:validators.one-line-description-required')),
     description: Yup.string()
-      .max(600, t(commonTranslation?.validators['long-input'] || 'common:validators.long-input'))
-      .required(t(commonTranslation?.validators['description-required'] || 'common:validators.description-required')),
+      .max(600, t('common:validators.long-input'))
+      .required(t('common:validators.description-required')),
     repo_url: Yup.string().matches(
       url,
-      t(commonTranslation?.validators?.['invalid-url']?.replace('{{url}}', 'https://github.com/') || 'common:validators.invalid-url', { url: 'https://github.com/' }),
+      t('common:validators.invalid-url', { url: 'https://github.com/' }),
     )
-      .required(commonTranslation?.validators['repo-url-required'] || t('common:validators.repo-url-required')),
+      .required(t('common:validators.repo-url-required')),
     // slides_url: Yup.string().matches(
     //   url,
     //   t(commonTranslation?.validators['invalid-url'] || 'common:validators.invalid-url'),
     // ),
     screenshot: Yup.mixed().nullable()
-      .test('fileFormat', t(commonTranslation?.validators['unsupported-image-file'] || 'common:validators.unsupported-image-file'), (value) => {
+      .test('fileFormat', t('common:validators.unsupported-image-file'), (value) => {
         if (prefillImage) return true;
         if (value) {
           return ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'].includes(value.type);
         }
         return true;
       })
-      .test('fileSize', commonTranslation?.validators['long-file'] || t('common:validators.long-file'), (value) => {
+      .test('fileSize', t('common:validators.long-file'), (value) => {
         if (prefillImage) return true;
         if (value) {
           return value.size <= maxFileSize;
@@ -78,9 +73,9 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
     // is not required
     members: Yup.array()
       .of(Yup.string())
-      .max(8, t(commonTranslation?.validators['geeks-members-max']?.replace('{{value}}', 8) || 'common:validators.geeks-members-max', { value: 8 }))
+      .max(8, t('common:validators.geeks-members-max', { value: 8 }))
       // .min(1, t(commonTranslation?.validators['geeks-members-min']?.replace('{{value}}', 1) || 'common:validators.geeks-members-min', { value: 1 }))
-      .required(commonTranslation?.validators['geeks-members-required'] || t('common:validators.geeks-members-required')),
+      .required(t('common:validators.geeks-members-required')),
   });
 
   const handleUpdate = async (actions, allValues) => {
@@ -236,7 +231,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
         });
         const allValues = {
           ...values,
-          cohort: cohortSession?.id,
+          cohort: cohortData?.id,
           members: userIds,
           id: projectId,
         };
@@ -256,7 +251,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
         return (
           <Flex flexDirection="column" padding="20px" gridGap="30px">
             <Heading size="xsm">
-              {finalProjectTranslation?.['modal-form']?.title || t('modal-form.title')}
+              {t('modal-form.title')}
             </Heading>
             <Form
               style={{
@@ -268,7 +263,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
               <FieldForm
                 type="text"
                 name="name"
-                label={finalProjectTranslation?.['modal-form']?.['project-name'] || t('modal-form.project-name')}
+                label={t('modal-form.project-name')}
                 required
                 formProps={formProps}
                 setFormProps={setFormProps}
@@ -277,7 +272,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
               <FieldForm
                 type="text"
                 name="one_line_desc"
-                label={finalProjectTranslation?.['modal-form']?.['one-line-description'] || t('modal-form.one-line-description')}
+                label={t('modal-form.one-line-description')}
                 required
                 formProps={formProps}
                 setFormProps={setFormProps}
@@ -287,7 +282,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
                 type="textarea"
                 maxLength={600}
                 name="description"
-                label={finalProjectTranslation?.['modal-form']?.description || t('modal-form.description')}
+                label={t('modal-form.description')}
                 required
                 formProps={formProps}
                 setFormProps={setFormProps}
@@ -296,10 +291,10 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
               <FieldForm
                 type="text"
                 name="repo_url"
-                label={finalProjectTranslation?.['modal-form']?.['repository-url'] || t('modal-form.repository-url')}
+                label={t('modal-form.repository-url')}
                 formProps={formProps}
                 setFormProps={setFormProps}
-                hint={finalProjectTranslation?.['modal-form']?.['repository-hint'] || t('modal-form.repository-hint')}
+                hint={t('modal-form.repository-hint')}
                 required
               />
 
@@ -315,10 +310,6 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
                 <FieldForm
                   type="file"
                   name="screenshot"
-                  translation={{
-                    finalProjectTranslation,
-                    commonTranslation,
-                  }}
                   formProps={formProps}
                   fileProps={fileProps}
                   setFileProps={setFileProps}
@@ -326,7 +317,7 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
                   setFieldValue={setFieldValue}
                   maxFileSize={maxFileSize}
                   acceptedFiles="image/jpg, image/jpeg, image/gif, image/png, image/gif"
-                  hint={finalProjectTranslation?.['modal-form']?.['screenshot-hint'] || t('modal-form.screenshot-hint')}
+                  hint={t('modal-form.screenshot-hint')}
                 />
               ) : (
                 <Box width="100 %" height="100%" position="relative">
@@ -337,17 +328,16 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
                 </Box>
               )}
               <AddMember
-                translation={{ finalProjectTranslation, commonTranslation }}
                 students={students}
                 errors={errorFields}
-                hint={finalProjectTranslation?.['modal-form']?.['participants-hint'] || t('modal-form.participants-hint')}
+                hint={t('modal-form.participants-hint')}
               />
               <Button
                 type="submit"
                 variant="default"
                 isLoading={isSubmitting}
               >
-                {commonTranslation?.['submit-project'] || t('common:submit-project')}
+                {t('common:submit-project')}
               </Button>
             </Form>
           </Flex>
@@ -360,7 +350,6 @@ function FinalProjectForm({ storyConfig, cohortData, studentsData, handleClose, 
 FinalProjectForm.propTypes = {
   cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   studentsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleClose: PropTypes.func,
   defaultValues: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   refreshFinalProject: PropTypes.func.isRequired,
@@ -368,7 +357,6 @@ FinalProjectForm.propTypes = {
 FinalProjectForm.defaultProps = {
   cohortData: {},
   studentsData: [],
-  storyConfig: {},
   handleClose: () => {},
   defaultValues: {},
 };

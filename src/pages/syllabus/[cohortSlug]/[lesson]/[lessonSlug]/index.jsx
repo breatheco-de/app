@@ -31,7 +31,7 @@ import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import bc from '../../../../../common/services/breathecode';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
-import useHandler from '../../../../../common/hooks/useCohortHandler';
+import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
@@ -43,7 +43,7 @@ import { log } from '../../../../../utils/logging';
 function Content() {
   const { t, lang } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const { isLoading, user, choose } = useAuth();
+  const { user } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const { setUserSession } = useSession();
@@ -77,15 +77,14 @@ function Content() {
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    cohortSession, sortedAssignments, getCohortAssignments, getCohortData, prepareTasks,
-    taskTodo, setTaskTodo,
-  } = useHandler();
-  const { featuredLight, fontColor, borderColor } = useStyle();
+    getCohortAssignments, getCohortData, prepareTasks, state,
+  } = useCohortHandler();
+  const { cohortSession, sortedAssignments } = state;
+  const { featuredLight, fontColor, borderColor, featuredCard } = useStyle();
 
   const profesionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
-  //                                          gray.200    gray.500
   const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
   const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
 
@@ -151,22 +150,33 @@ function Content() {
     }
   };
 
-  useEffect(() => {
-    getCohortData({
+  const setCohortAndAssignments = async () => {
+    const cohort = await getCohortData({
       cohortSlug,
-      choose,
     });
-  }, []);
+    getCohortAssignments({
+      user, setContextState, cohort,
+    });
+  };
+
+  useEffect(() => {
+    if (user) {
+      setCohortAndAssignments();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
       bc.todo().update({ ...currentTask, opened_at: new Date() })
         .then((result) => {
           if (result.data) {
-            const updateTasks = taskTodo;
+            const updateTasks = contextState.taskTodo.map((task) => ({ ...task }));
             const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
             updateTasks[index].opened_at = result.data.opened_at;
-            setTaskTodo([...updateTasks]);
+            setContextState({
+              ...contextState,
+              taskTodo: [...updateTasks],
+            });
           }
         }).catch((e) => log('update_task_error:', e));
     }
@@ -174,11 +184,11 @@ function Content() {
 
   useEffect(() => {
     const assetSlug = currentData?.translations?.us || currentData?.translations?.en || lessonSlug;
-    if (taskTodo.length > 0) {
-      setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
+    if (contextState.taskTodo.length > 0) {
+      setCurrentTask(contextState.taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
       && el.associated_slug === assetSlug));
     }
-  }, [taskTodo, lessonSlug, lesson]);
+  }, [contextState.taskTodo, lessonSlug, lesson]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -338,15 +348,6 @@ function Content() {
   }, [router, lessonSlug]);
 
   useEffect(() => {
-    if (sortedAssignments.length <= 0) {
-      toast({
-        position: 'top',
-        title: t('alert-message:no-cohort-modules-found'),
-        status: 'warning',
-        duration: 7000,
-        isClosable: true,
-      });
-    }
     const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
@@ -373,14 +374,6 @@ function Content() {
       setExtendedInstructions(markdown);
     }
   }, [selectedSyllabus]);
-
-  useEffect(() => {
-    if (!isLoading && user?.active_cohort && cohortSession?.cohort_role) {
-      getCohortAssignments({
-        user, setContextState,
-      });
-    }
-  }, [user]);
 
   useEffect(() => {
     const cohortProgram = contextState?.cohortProgram;
@@ -606,8 +599,9 @@ function Content() {
           onToggle={onToggle}
           isStudent={!profesionalRoles.includes(cohortSession.cohort_role)}
           teacherInstructions={{
-            content: extendedInstructions !== null,
+            existContentToShow: extendedInstructions !== null,
             actionHandler: () => {
+              console.log('click');
               setExtendedIsEnabled(!extendedIsEnabled);
               if (extendedIsEnabled === false) {
                 scrollTop();
@@ -622,25 +616,6 @@ function Content() {
             <ReactPlayerV2
               url={currentData?.intro_video_url}
             />
-          )}
-          {currentData?.superseded_by?.slug && (
-            <AlertMessage
-              type="warning"
-              zIndex={99}
-              full
-              borderRadius={0}
-              style={{
-                width: '100%',
-                height: 'auto',
-              }}
-            >
-              <Text size="15px" color="black" letterSpacing="0.05em" style={{ margin: '0' }}>
-                {t('superseded-message')}
-                <Link textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
-                  {currentData?.superseded_by?.title}
-                </Link>
-              </Text>
-            </AlertMessage>
           )}
           <Box
             className={`markdown-body ${currentTheme}`}
@@ -721,7 +696,7 @@ function Content() {
                     {teacherInstructions}
                   </Text>
                 </Box>
-                <MarkDownParser content={extendedInstructions.content} />
+                <MarkDownParser content={extendedInstructions?.content || ''} />
               </SimpleModal>
             )}
 
@@ -794,17 +769,37 @@ function Content() {
               </Box>
             ) : (
               <SyllabusMarkdownComponent
-                {...{
-                  ipynbHtmlUrl,
-                  readme,
-                  currentBlankProps,
-                  callToActionProps,
-                  currentData,
-                  lesson,
-                  quizSlug,
-                  lessonSlug,
-                  currentTask,
-                }}
+                ipynbHtmlUrl={ipynbHtmlUrl}
+                readme={readme}
+                currentBlankProps={currentBlankProps}
+                callToActionProps={callToActionProps}
+                currentData={currentData}
+                lesson={lesson}
+                quizSlug={quizSlug}
+                lessonSlug={lessonSlug}
+                currentTask={currentTask}
+                alerMessage={currentData?.superseded_by?.slug && (
+                  <AlertMessage
+                    type="warning"
+                    zIndex={99}
+                    full
+                    borderRadius="8px"
+                    backgroundColor={featuredCard.yellow.featured}
+                    margin="1rem 0"
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                    }}
+                  >
+                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                      {t('superseded-message')}
+                      {' '}
+                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
+                        {currentData?.superseded_by?.title}
+                      </Link>
+                    </Text>
+                  </AlertMessage>
+                )}
               />
             )}
 

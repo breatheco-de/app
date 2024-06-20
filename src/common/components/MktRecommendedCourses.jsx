@@ -76,6 +76,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
       id={id || 'recommended-courses'}
       borderRadius="11px"
       padding="16px"
+      mx={{ base: '10px', md: '2rem' }}
       background={background || featuredLight}
       display="flex"
       border="1px solid"

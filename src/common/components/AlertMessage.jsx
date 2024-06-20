@@ -46,13 +46,13 @@ function AlertMessage({
             {dangerouslySetInnerHTML ? (
               <Text
                 fontSize={rest.fontSize || '15px'}
-                color={full ? 'black' : (textColor || fontColor)}
+                color={full ? (textColor || 'black') : (textColor || fontColor)}
                 fontWeight="500"
                 style={{ ...textStyle, margin: '0' }}
                 dangerouslySetInnerHTML={{ __html: message }}
               />
             ) : (
-              <Text fontSize={rest.fontSize || '15px'} color={full ? 'black' : (textColor || fontColor)} fontWeight={rest.fontWeight || '700'} style={{ ...textStyle, margin: '0' }}>
+              <Text fontSize={rest.fontSize || '15px'} color={full ? (textColor || 'black') : (textColor || fontColor)} fontWeight={rest.fontWeight || '700'} style={{ ...textStyle, margin: '0' }}>
                 {message}
               </Text>
             )}

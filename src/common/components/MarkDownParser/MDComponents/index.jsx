@@ -16,7 +16,7 @@ import whiteQuoteImg from '../../../img/white-quote.png';
 import { log } from '../../../../utils/logging';
 
 export function generateId(children) {
-  const text = children
+  const text = children ? children
     .map((child) => {
       if (typeof child === 'string') {
         return child;
@@ -25,7 +25,7 @@ export function generateId(children) {
       }
       return child;
     })
-    .join('');
+    .join('') : '';
 
   return slugify(text, { lower: true });
 }

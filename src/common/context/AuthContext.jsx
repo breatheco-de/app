@@ -48,16 +48,6 @@ const reducer = (state, action) => {
         user,
       };
     }
-    case 'CHOOSE': {
-      return {
-        ...state,
-        isAuthenticated: true,
-        user: {
-          ...state.user,
-          active_cohort: action.payload,
-        },
-      };
-    }
     case 'LOGOUT': {
       return {
         ...state,
@@ -321,13 +311,6 @@ function AuthProvider({ children, pageProps }) {
     }
   };
 
-  const choose = async (payload) => {
-    dispatch({
-      type: 'CHOOSE',
-      payload,
-    });
-  };
-
   const logout = (callback = null) => {
     cancelAllCurrentRequests();
     handleSession(null);
@@ -365,7 +348,6 @@ function AuthProvider({ children, pageProps }) {
         login,
         logout,
         register,
-        choose,
         updateProfilePicture,
       }}
     >

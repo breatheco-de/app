@@ -12,13 +12,14 @@ import bc from '../../common/services/breathecode';
 import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 
 function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
   const [assetData, setAssetData] = useState(null);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [fileData, setFileData] = useState([]);
   const { t } = useTranslation('assignments');
   const { backgroundColor, hexColor } = useStyle();

@@ -46,7 +46,7 @@ function MktTechnologiesPills({ id, technologies, ...rest }) {
   };
 
   return (
-    <Container maxW="container.xl" px="10px" id={id} width="100%" overflowX="hidden" {...rest}>
+    <Container maxW="container.xl" px={{ base: '10px', md: '2rem' }} id={id} width="100%" overflowX="hidden" {...rest}>
       <Box
         ref={ref}
         width="100%"

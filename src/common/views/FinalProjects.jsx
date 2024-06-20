@@ -222,7 +222,7 @@ const ProjectsSection = forwardRef(({ finalProjects, updpateProject }, ref) => (
   </>
 ));
 
-function FinalProjects({ finalProjects, loadStatus, selectedCohort, updpateProject }) {
+function FinalProjects({ finalProjects, loadStatus, updpateProject }) {
   const { t } = useTranslation('assignments');
   const router = useRouter();
   const { query } = router;
@@ -317,7 +317,6 @@ function FinalProjects({ finalProjects, loadStatus, selectedCohort, updpateProje
       <Flex overflow="visible" flexDirection="column" gridGap="18px">
         <ProjectsSection
           finalProjects={finalProjects}
-          selectedCohort={selectedCohort}
           updpateProject={updpateProject}
         />
       </Flex>
@@ -340,7 +339,6 @@ FinalProjects.propTypes = {
   updpateProject: PropTypes.func.isRequired,
   loadStatus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   finalProjects: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
 ProjectsSection.propTypes = {

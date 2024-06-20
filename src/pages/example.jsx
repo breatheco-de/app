@@ -1,5 +1,6 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Button } from '@chakra-ui/react';
+import { useState } from 'react';
 import styles from '../../styles/Home.module.css';
 import { isDevMode } from '../utils';
 import ModalToGetAccess, { stageType } from '../common/components/ModalToGetAccess';
@@ -30,7 +31,7 @@ export default function Example() {
   const [stage, setStage] = useState('');
   const { isAuthenticated } = useAuth();
   const [isFetchingEvent, setIsFetchingEvent] = useState(false);
-  const [planData, setPlanData] = useState();
+  const [planData, setPlanData] = useState({});
 
   const onClick = (value) => {
     setStage(value);
@@ -59,7 +60,7 @@ export default function Example() {
     }
   };
 
-  const description = `The current traditional teaching methods focus on theoretical aspects, neglecting hands-on experience and student engagement, leading to high dropout rates and slow skill acquisition. Bootcamps and similar platforms offer faster, more interactive learning but lack a scientific approach. 
+  const description = `The current traditional teaching methods focus on theoretical aspects, neglecting hands-on experience and student engagement, leading to high dropout rates and slow skill acquisition. Bootcamps and similar platforms offer faster, more interactive learning but lack a scientific approach.
 
   <br><br>Learn to code collaborating with others and become a developer to get your first job in tech.
   `;

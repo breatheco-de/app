@@ -11,12 +11,12 @@ import Image from '../Image';
 import ModalToGetAccess, { stageType } from '../ModalToGetAccess';
 import Link from '../NextChakraLink';
 import bc from '../../services/breathecode';
+import useAuth from '../../hooks/useAuth';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 import modifyEnv from '../../../../modifyEnv';
-import { usePersistent } from '../../hooks/usePersistent';
 import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem, isDevMode } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
@@ -97,7 +97,7 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
 
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { user } = useAuth();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
@@ -414,7 +414,7 @@ function MentoringConsumables({
                                     <Link
                                       variant="default"
                                       onClick={() => reportBookMentor()}
-                                      href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${cohortSession?.bc_id}&token=${accessToken}`}
+                                      href={`${BREATHECODE_HOST}/mentor/${mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${user?.id}&token=${accessToken}`}
                                       target="_blank"
                                       rel="noopener noreferrer"
                                     >

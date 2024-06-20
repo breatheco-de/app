@@ -17,13 +17,15 @@ import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
-import modifyEnv from '../../../../modifyEnv';
 import DynamicCallToAction from '../DynamicCallToAction';
+import SimpleModal from '../SimpleModal';
+import modifyEnv from '../../../../modifyEnv';
 
 function MarkdownH2Heading({ children }) {
   return (
@@ -137,16 +139,18 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 
 function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData,
+  showLineNumbers, showInlineLineNumbers, assetData, alerMessage,
 }) {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [subTasksProps, setSubTasksProps] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [fileContext, setFileContext] = useState('');
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [profile] = usePersistent('profile', {});
+  const [showCloneModal, setShowCloneModal] = useState(false);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const updateSubTask = async (taskProps) => {
@@ -199,13 +203,20 @@ function MarkDownParser({
     createSubTasksIfNotExists();
   }, [subTasksProps]);
 
-  const newExerciseText = t('learnpack.new-exercise');
-  const continueExerciseText = t('learnpack.continue-exercise');
-
   const {
     token, assetSlug, assetType, gitpod,
   } = callToActionProps;
 
+  const provisioningLinks = [{
+    title: t('learnpack.new-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
+    isExternalLink: true,
+  },
+  {
+    title: t('learnpack.continue-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
+    isExternalLink: true,
+  }];
   // const newLineBeforeCloseTag = /<\//gm;
 
   // const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
@@ -224,19 +235,23 @@ function MarkDownParser({
     anchors.add('.markdown-body pre');
   }, [content]);
   useEffect(() => {
-    setLearnpackActions([
-      {
-        text: newExerciseText,
-        href: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
-        isExternalLink: true,
-      },
-      {
-        text: continueExerciseText,
-        href: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`,
-        isExternalLink: true,
-      },
-    ]);
-  }, [token, assetSlug, newExerciseText, continueExerciseText, currentData?.url]);
+    const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+    if (cohortSession?.id) {
+      setLearnpackActions([
+        {
+          ...openInLearnpackAction,
+          links: provisioningLinks,
+        },
+        {
+          text: t('learnpack.open-locally'),
+          type: 'button',
+          onClick: () => {
+            setShowCloneModal(true);
+          },
+        },
+      ]);
+    }
+  }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
   const preParsedContent = useMemo(() => {
     //This regex is to remove the runable empty codeblocks
@@ -261,22 +276,47 @@ function MarkDownParser({
     return contentReplace;
   }, [content]);
 
+  const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
+  const repoName = urlToClone?.split('/')?.pop();
+
   return (
     <>
+      <SimpleModal
+        maxWidth="xl"
+        title={t('clone-modal.title')}
+        isOpen={showCloneModal}
+        onClose={() => {
+          setShowCloneModal(false);
+        }}
+        headerStyles={{
+          textAlign: 'center',
+          textTransform: 'uppercase',
+        }}
+        bodyStyles={{
+          className: 'markdown-body',
+          padding: { base: '10px 30px' },
+        }}
+      >
+        <MarkDownParser
+          content={t('learnpack.cloneInstructions', {
+            repoName,
+            urlToClone,
+            readmeUrl: currentData?.readme_url,
+          }, { returnObjects: true })}
+          showLineNumbers={false}
+        />
+      </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
         callToAction={gitpod === true && assetType === 'EXERCISE' && (
           <CallToAction
-            styleContainer={{
-              maxWidth: '800px',
-            }}
             buttonStyle={{
               color: 'white',
             }}
             background="blue.default"
             margin="12px 0 20px 0px"
             icon="learnpack"
-            text={t('learnpack.description')}
+            text={t('learnpack.description', { projectName: currentData?.title })}
             width={{ base: '100%', md: 'fit-content' }}
             buttonsData={learnpackActions}
           />
@@ -286,6 +326,7 @@ function MarkDownParser({
         {withToc && (
           <Toc content={content} />
         )}
+        {alerMessage && alerMessage}
 
         {Array.isArray(subTasks) && subTasks?.length > 0 && (
           <SubTasks subTasks={subTasks} assetType={assetType} />
@@ -345,6 +386,7 @@ MarkDownParser.propTypes = {
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
+  alerMessage: PropTypes.node,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -358,6 +400,7 @@ MarkDownParser.defaultProps = {
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
+  alerMessage: null,
 };
 
 export default MarkDownParser;

@@ -1,6 +1,13 @@
 import React from 'react';
 import {
   Box, Heading, Button, Image,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
@@ -8,14 +15,13 @@ import Icon from './Icon';
 
 function CallToAction({
   background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
-  buttonText, width, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
+  buttonText, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
   isLoading,
 }) {
   return (
     <Box
       style={styleContainer}
-      justifyContent="space-between"
-      width={width}
+      width="auto"
       display="flex"
       bg={background}
       margin={margin}
@@ -47,8 +53,9 @@ function CallToAction({
         display="flex"
         gridGap={{ base: '14px', md: buttonsData.length > 1 ? '14px' : '4vh' }}
         flexDirection={{ base: 'column', md: buttonsData.length > 1 ? 'column' : 'row' }}
+        width="100%"
       >
-        <Box maxWidth="530px">
+        <Box>
           {title && (
           <Heading as="h5" fontSize={fontSizeOfTitle} color="white" margin={0} marginBottom="11px">
             {title}
@@ -57,49 +64,119 @@ function CallToAction({
           {text && (
           <Text
             style={{
-              padding: buttonsData.length > 1 ? '0 4vh 0 0' : '0',
               margin: 0,
             }}
             color="white"
             size="l"
-          >
-            {text}
-          </Text>
+            dangerouslySetInnerHTML={{ __html: text }}
+          />
           )}
         </Box>
         <Box
           padding={{ base: '0 0 0 0', lg: '0' }}
-          width={buttonsData.length > 1 ? '100%' : 'auto'}
+          width="100%"
           alignSelf="center"
           gridGap="14px"
           display={{ base: 'grid', md: 'flex' }}
+          // justifyContent="space-between"
+          // justifyContent="center"
           gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
         >
-          {buttonText && (
+          {buttonText && !buttonsData?.length > 0 && (
           <Button isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
             {buttonText}
           </Button>
           )}
+          {buttonsData && buttonsData.map((element) => {
+            const isDropdown = element?.type === 'dropdown';
+            const isButton = element?.type === 'button';
 
-          {buttonsData && buttonsData.map((element) => (
-            <Button
-              style={buttonStyle}
-              key={element.text}
-              as="a"
-              href={element.href}
-              isLoading={isLoading}
-              target={element.isExternalLink ? '_blank' : '_self'}
-              onClick={onClick}
-              marginY="auto"
-              textTransform="uppercase"
-              borderColor="white"
-              color="white"
-              withoutBg
-              variant="outline"
-            >
-              {element.text}
-            </Button>
-          ))}
+            if (isButton) {
+              return (
+                <Button
+                  style={buttonStyle}
+                  isLoading={isLoading}
+                  target={element.isExternalLink ? '_blank' : '_self'}
+                  onClick={element.onClick}
+                  marginY="auto"
+                  textTransform="uppercase"
+                  borderColor="white"
+                  color="white"
+                  withoutBg
+                  variant="outline"
+                >
+                  {element.text}
+                </Button>
+              );
+            }
+
+            if (isDropdown) {
+              return (
+                <Popover>
+                  <PopoverTrigger>
+                    <Button variant="default" textTransform="uppercase" background="blue.400">{element?.text}</Button>
+                  </PopoverTrigger>
+                  <PopoverContent width="min-content">
+                    <PopoverArrow />
+                    <PopoverCloseButton />
+                    <PopoverHeader>{element?.title}</PopoverHeader>
+                    <PopoverBody display="flex" gridGap="1rem" color="currentColor" flexDirection="column">
+                      <Text
+                        size="14px"
+                        dangerouslySetInnerHTML={{ __html: element?.description }}
+                        style={{ margin: 0 }}
+                      />
+                      {element?.links?.length > 0 && element.links.map((link) => (
+                        <Button
+                          key={link.text}
+                          as="a"
+                          display="flex"
+                          href={link.link}
+                          isLoading={isLoading}
+                          target={link.isExternalLink ? '_blank' : '_self'}
+                          marginY="auto"
+                          margin="0"
+                          textTransform="uppercase"
+                          width="100%"
+                          flexDirection="row"
+                          gridGap="10px"
+                          fontSize="12px"
+                          alignItems="center"
+                          justifyContent="flex-start"
+                          style={{
+                            color: 'currentColor',
+                          }}
+                        >
+                          {link.title}
+                          <Icon color="currentColor" icon="longArrowRight" />
+                        </Button>
+                      ))}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              );
+            }
+
+            return (
+              <Button
+                style={buttonStyle}
+                key={element.text}
+                as="a"
+                href={element.href}
+                isLoading={isLoading}
+                target={element.isExternalLink ? '_blank' : '_self'}
+                onClick={onClick}
+                marginY="auto"
+                textTransform="uppercase"
+                borderColor="white"
+                color="white"
+                withoutBg
+                variant="outline"
+              >
+                {element.text}
+              </Button>
+            );
+          })}
         </Box>
       </Box>
     </Box>
@@ -116,7 +193,6 @@ CallToAction.propTypes = {
   background: PropTypes.string,
   href: PropTypes.string,
   isExternalLink: PropTypes.bool,
-  width: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   margin: PropTypes.string,
   onClick: PropTypes.func,
   buttonsData: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
@@ -135,7 +211,6 @@ CallToAction.defaultProps = {
   href: '#tasks_remain',
   isExternalLink: false,
   background: 'blue',
-  width: '100%',
   margin: '0 auto',
   onClick: () => {},
   buttonsData: [],

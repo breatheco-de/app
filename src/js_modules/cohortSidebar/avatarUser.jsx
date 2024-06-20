@@ -22,7 +22,7 @@ import { format } from 'date-fns';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import useOnline from '../../common/hooks/useOnline';
-import { usePersistent } from '../../common/hooks/usePersistent';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 
 const AvatarUser = memo(({
   data, fullName, isTeacherVersion, containerStyle, width, height, badge, customBadge, isWrapped, index, withoutPopover, avatarUrl,
@@ -32,7 +32,8 @@ const AvatarUser = memo(({
   const fullNameLabel = fullName || `${user.first_name} ${user.last_name}`;
   const router = useRouter();
   const { usersConnected } = useOnline();
-  const [cohortSession] = usePersistent('cohortSession');
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
 
   const isOnlineUser = usersConnected?.some((id) => id === user?.id);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');

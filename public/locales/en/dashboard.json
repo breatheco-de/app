@@ -142,10 +142,11 @@
       "cancel": "Cancel"
     }
   },
-  "warningModal" : {
+  "warningModal": {
     "title": "synchronize with Github",
     "sub-title": "Your Github account is not connected",
-    "text": "Current 4Geeks Academy students with a connected Github account are able to get unlimited Codespace hours",
+    "text": "4Geeks is seamlessly integrated with Github for an optimal learning experience, we strongly connecting your Github account.",
+    "text2": "Github hosts 90% of the world's code and it has become one of the most important assets for tech professionals. <a href='https://4geeks.com/docs/knowledge-base-4geeks/keep-your-projects' class='link' >Click here</a> to learn more about why and how we use your Github credentials.",
     "connect": "CONNECT WITH GITHUB",
     "skip": "Skip for now"
   },

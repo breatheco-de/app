@@ -13,8 +13,7 @@ export default {
 };
 
 const Component = (args, context) => {
- const stTranslation = context.parameters.i18n.store.data
-  return <SubTasks {...args} stTranslation={stTranslation} />
+  return <SubTasks {...args} />
 };
 
 export const Default = Component.bind({});

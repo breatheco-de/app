@@ -8,7 +8,7 @@ import FileInput from './FileInput';
 
 function FieldForm({
   type, name, label, placeholder, formProps, setFormProps, style, withLabel, pattern, handleOnChange, externValue, onClick,
-  acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, translation, required, hint, maxLength,
+  acceptedFiles, maxFileSize, multipleFiles, fileProps, setFileProps, setFieldValue, required, hint, maxLength,
   spellcheck, readOnly,
 }) {
   const { input, lightColor } = useStyle();
@@ -82,7 +82,6 @@ function FieldForm({
                   setFieldValue={setFieldValue}
                   form={form}
                   field={field}
-                  translation={translation}
                   required={required}
                 />
               )}
@@ -141,7 +140,6 @@ FieldForm.propTypes = {
   fileProps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   setFileProps: PropTypes.func,
   setFieldValue: PropTypes.func,
-  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
   hint: PropTypes.string,
   spellcheck: PropTypes.bool,
@@ -168,7 +166,6 @@ FieldForm.defaultProps = {
   fileProps: [],
   setFileProps: () => {},
   setFieldValue: () => {},
-  translation: {},
   required: false,
   hint: '',
   spellcheck: false,

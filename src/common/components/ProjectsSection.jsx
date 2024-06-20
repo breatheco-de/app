@@ -16,11 +16,11 @@ import { isNumber } from '../../utils';
 import useStyle from '../hooks/useStyle';
 
 function ProjectsSection({
-  startsIn, stTranslation, syllabusContent, courseProgress,
+  startsIn, syllabusContent, courseProgress,
   usersConnected, assistants, teacher, isAvailableAsSaas,
   subscriptionStatus,
 }) {
-  const { t, lang } = useTranslation('program-card');
+  const { t } = useTranslation('program-card');
   const textColor = useColorModeValue('black', 'white');
   const bgColor = useColorModeValue('featuredLight', 'featuredDark');
   const now = new Date();
@@ -28,8 +28,6 @@ function ProjectsSection({
   const isFreeTrial = subscriptionStatus === 'FREE_TRIAL';
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
-
-  const programCardTR = stTranslation?.[lang]?.['program-card'];
 
   const statusTimeString = (start) => {
     if (start < now) return 'started';
@@ -104,7 +102,7 @@ function ProjectsSection({
                     /
                   </>
                 )}
-                {`${elem.total} ${programCardTR?.[elem.name] || t(elem.name)}`}
+                {`${elem.total} ${t(elem.name)}`}
               </Box>
             </Text>
           ))}
@@ -120,7 +118,7 @@ function ProjectsSection({
             marginBottom="5px"
             textAlign="center"
           >
-            {`${countOfMentors} ${programCardTR?.['mentors-available'] || t('mentors-available')}`}
+            {`${countOfMentors} ${t('mentors-available')}`}
           </Text>
 
           <Box display="flex" justifyContent="space-between" mt="10px" gridGap="22px">
@@ -174,7 +172,6 @@ ProjectsSection.propTypes = {
   startsIn: PropTypes.instanceOf(Date),
   syllabusContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   courseProgress: PropTypes.number,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   usersConnected: PropTypes.arrayOf(PropTypes.number),
   assistants: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   teacher: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -183,7 +180,6 @@ ProjectsSection.propTypes = {
 };
 
 ProjectsSection.defaultProps = {
-  stTranslation: null,
   startsIn: null,
   syllabusContent: null,
   courseProgress: null,

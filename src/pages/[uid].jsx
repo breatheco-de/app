@@ -34,7 +34,7 @@ function Page({ page }) {
           />
         </Head>
       )}
-      <Box className="prismic-body" pt="3rem">
+      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>
         <SliceZone slices={page?.data?.slices} components={components} />
       </Box>
     </>

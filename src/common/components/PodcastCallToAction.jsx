@@ -5,10 +5,10 @@ import useStyle from '../hooks/useStyle';
 import CallToActionCard from './CallToActionCard';
 import { parseQuerys } from '../../utils/url';
 
-function PodcastCallToAction({ placement, stTranslation, ...rest }) {
+function PodcastCallToAction({ placement, ...rest }) {
   const { hexColor } = useStyle();
   const { t, lang } = useTranslation('call-to-action');
-  const selectedCta = stTranslation ? stTranslation[lang]['call-to-action']['podcast-call-to-action'] : t('podcast-call-to-action', {}, { returnObjects: true });
+  const selectedCta = t('podcast-call-to-action', {}, { returnObjects: true });
 
   const variants = {
     side: {
@@ -43,14 +43,12 @@ PodcastCallToAction.propTypes = {
   assetId: PropTypes.number,
   assetTechnologies: PropTypes.arrayOf(PropTypes.string),
   placement: PropTypes.string,
-  stTranslation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 PodcastCallToAction.defaultProps = {
   assetType: null,
   assetId: null,
   assetTechnologies: [],
-  stTranslation: null,
   placement: 'side',
 };
 

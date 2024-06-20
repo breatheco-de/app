@@ -6,7 +6,7 @@ import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
 function FileInput({ name, formProps, setFormProps, handleOnChange, acceptedFiles, maxFileSize, multipleFiles,
-  fileProps, setFileProps, setFieldValue, form, field, translation, required }) {
+  fileProps, setFileProps, setFieldValue, form, field, required }) {
   const { hexColor, fontColor, backgroundColor } = useStyle();
   const [dragOver, setDragOver] = useState(false);
   const { t } = useTranslation('');
@@ -52,7 +52,7 @@ function FileInput({ name, formProps, setFormProps, handleOnChange, acceptedFile
             <Box className="icon-bounce" marginLeft="15px">
               <Icon icon="upload" color={hexColor.black} width="24px" height="24px" />
             </Box>
-            {`${translation?.commonTranslation?.uploadScreenshot || t('common:uploadScreenshot')}${required ? '*' : ''}`}
+            {`${t('common:uploadScreenshot')}${required ? '*' : ''}`}
           </Box>
           <Input
             {...field}
@@ -112,7 +112,6 @@ FileInput.propTypes = {
   setFieldValue: PropTypes.func,
   form: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   field: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  translation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   required: PropTypes.bool,
 };
 
@@ -128,7 +127,6 @@ FileInput.defaultProps = {
   fileProps: [],
   setFileProps: () => {},
   setFieldValue: () => {},
-  translation: {},
   required: false,
 };
 

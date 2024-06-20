@@ -126,11 +126,11 @@ function MktTwoColumnSideImage({
         maxWidth="1280px"
         margin="0 auto"
         id={id}
-        px="10px"
         border={border}
         alignItems="center"
         borderRadius="12px"
         padding={{ base: '20px 10px', md: '24px 0px' }}
+        px={{ base: '10px', md: '2rem' }}
         gridGap={gridGap}
         marginTop="20px"
         style={{
@@ -182,7 +182,7 @@ function MktTwoColumnSideImage({
                 textDecoration={linkButton && 'underline'}
                 fontSize="14px"
                 margin="8px 0 0 0"
-                href={buttonUrl}
+                href={buttonUrl || '#recommended-courses'}
                 textAlign="center"
                 display="inline-block"
                 width="fit-content"

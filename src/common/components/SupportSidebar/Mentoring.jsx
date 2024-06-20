@@ -15,14 +15,15 @@ import bc from '../../services/breathecode';
 import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
-import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
   const { t } = useTranslation('dashboard');
   const [savedChanges, setSavedChanges] = useState({});
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const router = useRouter();
   const [consumables, setConsumables] = useState({});
   const [mentoryProps, setMentoryProps] = useState({});

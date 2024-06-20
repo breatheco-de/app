@@ -91,6 +91,7 @@ function MktInfoCards({
         base: paddingMobile,
         md: padding,
       }}
+      px={{ base: '10px', md: '2rem' }}
       margin={margin}
       flexWrap={{ base: 'wrap', lg: 'nowrap' }}
       fontFamily={fontFamily}

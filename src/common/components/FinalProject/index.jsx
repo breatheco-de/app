@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { usePersistent } from '../../hooks/usePersistent';
+import useCohortHandler from '../../hooks/useCohortHandler';
 import Heading from '../Heading';
 import Icon from '../Icon';
 import Progress from '../ProgressBar/Progress';
@@ -20,12 +20,13 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const [isOpen, setIsOpen] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [finalProject, setFinalProjects] = useState([]);
-  const [cohortSession] = usePersistent('cohortSession', {});
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
+
   const router = useRouter();
   const { modal, hexColor } = useStyle();
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const storyConfigExists = Object.keys(storyConfig).length > 0;
-  const finalProjectTranslation = storyConfig?.translation?.[storyConfig?.locale]['final-project'];
   const repoUrl = finalProjectData?.repo_url || finalProject?.currentProject?.repo_url;
   const cohortSlug = router?.query?.cohortSlug;
 
@@ -99,10 +100,10 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
             <Heading
               size="24px"
             >
-              {finalProjectTranslation?.congratulations || t('congratulations')}
+              {t('congratulations')}
             </Heading>
             <Text size="l">
-              {finalProjectTranslation?.['graduated-as'] || t('graduated-as')}
+              {t('graduated-as')}
             </Text>
             <Heading
               size="22px"
@@ -114,7 +115,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
           </Box>
           <Box mt="10px" padding="12px 30px">
             <Link href="/profile/certificates" target="_blank" rel="noopener noreferrer" fontSize="15px" variant="buttonDefault" background="yellow.light" color="yellow.default" _hover={{ opacity: 0.9 }}>
-              {finalProjectTranslation?.['see-my-certificate'] || t('see-my-certificate')}
+              {t('see-my-certificate')}
             </Link>
           </Box>
         </Box>
@@ -123,10 +124,10 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
           <Heading
             size="18px"
           >
-            {isStudent ? finalProjectTranslation?.['what-do-you-need-to-graduate'] || t('what-do-you-need-to-graduate') : finalProjectTranslation?.['review-final-projects'] || t('review-final-projects')}
+            {isStudent ? t('what-do-you-need-to-graduate') : t('review-final-projects')}
           </Heading>
           <Text size="l" mt="10px">
-            {isStudent ? finalProjectTranslation?.['almost-there'] || t('almost-there') : finalProjectTranslation?.['almost-there-teacher'] || t('almost-there-teacher')}
+            {isStudent ? t('almost-there') : t('almost-there-teacher')}
           </Text>
           <Box display="flex" flexDirection="column" gridGap="20px" padding="0 24px" mt="2rem">
             {isStudent ? (
@@ -146,14 +147,14 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
                 >
                   <Icon icon={repoUrl ? 'underlinedPencil' : 'add'} width="25px" height="25px" />
                   {repoUrl
-                    ? finalProjectTranslation?.['edit-final-project'] || t('edit-final-project')
-                    : finalProjectTranslation?.['add-final-project'] || t('add-final-project')}
+                    ? t('edit-final-project')
+                    : t('add-final-project')}
                 </Button>
                 <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
                   <Text size="l" fontWeight={700}>
                     {progressPercent === 100
-                      ? finalProjectTranslation?.completed || t('completed')
-                      : finalProjectTranslation?.['complete-required-projects'] || t('complete-required-projects')}
+                      ? t('completed')
+                      : t('complete-required-projects')}
                   </Text>
                   <Progress
                     percents={progressPercent || 0}
@@ -181,7 +182,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
                 padding="0 27px"
                 whiteSpace="normal"
               >
-                {finalProjectTranslation?.['list-projects'] || t('list-projects')}
+                {t('list-projects')}
                 <Icon icon="longArrowRight" color="white" width="25px" height="25px" />
               </Button>
             )}
@@ -189,7 +190,6 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
         </Box>
       )}
       <FinalProjectModal
-        storyConfig={storyConfig}
         isOpen={isOpen}
         closeModal={closeModal}
         studentsData={students}
