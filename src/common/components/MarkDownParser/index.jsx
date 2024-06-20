@@ -204,8 +204,9 @@ function MarkDownParser({
   }, [subTasksProps]);
 
   const {
-    token, assetSlug, assetType, gitpod,
+    token, assetSlug, gitpod,
   } = callToActionProps;
+  const assetType = currentData?.asset_type;
 
   const provisioningLinks = [{
     title: t('learnpack.new-exercise'),
@@ -279,6 +280,7 @@ function MarkDownParser({
   const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
   const repoName = urlToClone?.split('/')?.pop();
 
+  console.log('current:DATA:::', currentData);
   return (
     <>
       <SimpleModal
