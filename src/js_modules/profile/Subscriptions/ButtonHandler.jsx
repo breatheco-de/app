@@ -14,7 +14,7 @@ function ButtonHandler({
   const [isLoading, setIsLoading] = useState(false);
   const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
-  const isPlanFinancingExpired = subscription.type === 'plan_financing' && subscription.valid_until < new Date().toISOString();
+  const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
 
   const {
     getPlanOffer,

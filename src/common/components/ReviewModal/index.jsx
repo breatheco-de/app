@@ -148,7 +148,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const rejectOrApprove = (status) => {
     reportDatalayer({
       dataLayer: {
-        event: 'feedback_action',
+        event: 'feedback_reject_or_approve',
         action_type: status,
         task_id: currentTask?.id,
         user_id: user.id,
