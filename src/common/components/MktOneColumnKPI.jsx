@@ -17,7 +17,7 @@ function MktKPI({ kpiTitle, kpiDescription, color }) {
       width="200px"
       background={backgroundColor}
       borderRadius="12px"
-      padding="15px"
+      px={{ base: '10px', md: '2rem' }}
       textAlign="center"
     >
       <Heading size="m" color={color || hexColor.blueDefault}>
