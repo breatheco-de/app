@@ -222,7 +222,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         />
       </Flex>
 
-      <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'}>
+      <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'} marginTop={isWorkshop ? 'auto' : 'inherit'}>
         <Divider mb={isWorkshop ? '0px' : '16px'} />
         {isWorkshop ? (
           <>
