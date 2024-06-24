@@ -239,7 +239,6 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
       <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
         <Text
           size="md"
-          display="flex"
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
           dangerouslySetInnerHTML={{ __html: t('description') }}
