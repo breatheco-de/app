@@ -62,7 +62,6 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
 function ShowPrices({
   data,
   title,
-  firstSectionTitle,
   secondSectionTitle,
   notReady,
   list,
@@ -77,7 +76,7 @@ function ShowPrices({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
-  const { t } = useTranslation('');
+  const { t } = useTranslation('profile');
   const { fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
@@ -156,7 +155,9 @@ function ShowPrices({
               }}
               {...paymentTabStyle}
             >
-              {firstSectionTitle || data?.pricing['one-payment']}
+              {finance?.length > 0
+                ? t('subscription.upgrade-modal.one_payment')
+                : t('subscription.upgrade-modal.subscription')}
             </Box>
 
             <Box
@@ -221,7 +222,6 @@ function ShowPrices({
 ShowPrices.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   title: PropTypes.string,
-  firstSectionTitle: PropTypes.string,
   secondSectionTitle: PropTypes.string,
   notReady: PropTypes.string,
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
@@ -238,7 +238,6 @@ ShowPrices.propTypes = {
 ShowPrices.defaultProps = {
   data: null,
   title: null,
-  firstSectionTitle: null,
   secondSectionTitle: null,
   notReady: null,
   list: null,
