@@ -8,7 +8,7 @@ import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';
 import useFormatDate from './useFormatDate';
-import { adjustNumberBeetwenMinMax, isValidDate, syncInterval } from '../../../utils';
+import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
@@ -20,6 +20,25 @@ const getAssetPath = (asset) => {
   if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
   if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
   return 'lesson';
+};
+
+export const getDifficultyColors = (currDifficulty) => {
+  const background = {
+    beginner: 'featuredLight',
+    easy: 'green.light',
+    intermediate: 'yellow.100',
+    hard: 'red.light',
+  };
+  const color = {
+    beginner: '#005b7b',
+    easy: '#115932',
+    intermediate: '#6f4f0a',
+    hard: '#7e0000',
+  };
+  return {
+    bg: background[currDifficulty],
+    color: color[currDifficulty],
+  };
 };
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
@@ -145,9 +164,17 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
             </Flex>
           </Flex>
           )}
+
           {type === types.project && data?.difficulty && (
-            <Text size="13px" color="red" padding="5px 7px" borderRadius="18px" background="red.light">
-              {data.difficulty}
+            <Text
+              background={getDifficultyColors(data?.difficulty).bg}
+              color={getDifficultyColors(data?.difficulty).color}
+              size="13px"
+              fontWeight={700}
+              padding="5px 7px"
+              borderRadius="18px"
+            >
+              {toCapitalize(data.difficulty)}
             </Text>
           )}
         </Flex>
