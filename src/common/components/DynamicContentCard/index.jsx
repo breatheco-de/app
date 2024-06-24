@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Flex, Heading, Link } from '@chakra-ui/react';
+import { Avatar, Box, Divider, Flex, Heading } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -11,6 +11,16 @@ import useFormatDate from './useFormatDate';
 import { adjustNumberBeetwenMinMax, isValidDate, syncInterval } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
+import Link from '../NextChakraLink';
+import { reportDatalayer } from '../../../utils/requests';
+
+const getAssetPath = (asset) => {
+  if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
+  if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
+  if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
+  if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
+  return 'lesson';
+};
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
@@ -25,6 +35,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   const startedButNotEnded = date?.started && date?.ended === false;
   const isWorkshop = type === types.workshop;
   const isWorkshopStarted = isWorkshop && startedButNotEnded;
+  const langConnector = data?.lang === 'us' ? '' : `/${data?.lang}`;
+  const isLesson = getAssetPath(data) === 'lesson';
+  const isExercise = getAssetPath(data) === 'interactive-exercise';
+  const isProject = getAssetPath(data) === 'interactive-coding-tutorial';
+  const isHowTo = getAssetPath(data) === 'how-to';
 
   const getFormatedDate = () => {
     const endDate = data?.ended_at || data?.ending_at;
@@ -32,6 +47,22 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
     const endingAtDate = isValidDate(endDate) && new Date(endDate);
     const formattedDate = formattedTime(startingAtDate, endingAtDate);
     return formattedDate;
+  };
+
+  const getLink = () => {
+    if (isLesson) {
+      return `${langConnector}/lesson/${data.slug}`;
+    }
+    if (isExercise) {
+      return `${langConnector}/interactive-exercise/${data.slug}`;
+    }
+    if (isProject) {
+      return `${langConnector}/interactive-coding-tutorial/${data.slug}`;
+    }
+    if (isHowTo) {
+      return `${langConnector}/how-to/${data.slug}`;
+    }
+    return `/${data.slug}`;
   };
 
   useEffect(() => {
@@ -55,19 +86,40 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
     <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
       {/* Head conctent */}
       <HeadInfo
-        technologies={technologies}
+        technologies={data?.technologies || technologies}
         date={date}
         duration={data?.duration}
         type={type}
       />
       <Flex flexDirection="column" gridGap="16px">
-        <Heading as="h2" size="18px" lineHeight="normal">
-          {data?.title}
+        <Heading as="h3" size="18px" lineHeight="normal">
+          {isWorkshop ? data?.title : (
+            <Link
+              href={getLink()}
+              onClick={() => {
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'select_content',
+                    asset_slug: data?.slug,
+                    asset_title: data?.title,
+                    asset_lang: data?.lang,
+                    asset_category: data?.category?.slug,
+                  },
+                });
+              }}
+              _after={{
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+              }}
+            >
+              {data?.title}
+            </Link>
+          )}
         </Heading>
         {(data?.excerpt || data?.description) && (
           <Text size="14px" lineHeight="normal">
             {data?.excerpt || data?.description}
-            {/* {data.description} */}
           </Text>
         )}
       </Flex>
@@ -128,11 +180,6 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                 width="fit-content"
                 margin="0 auto"
                 gridGap="10px"
-                _after={{
-                  content: '""',
-                  position: 'absolute',
-                  inset: 0,
-                }}
               >
                 {date?.started
                   ? t('join-workshop')

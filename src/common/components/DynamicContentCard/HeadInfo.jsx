@@ -32,7 +32,7 @@ const getIntervalDurationTranslation = (date) => {
 
 function HeadInfo({ technologies, duration, type, date }) {
   const { t } = useTranslation('common');
-  const { backgroundColor, lightColor } = useStyle();
+  const { backgroundColor, featuredColor, lightColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
@@ -42,20 +42,13 @@ function HeadInfo({ technologies, duration, type, date }) {
       {technologies?.length > 0 ? (
         <Flex alignItems="center" gridGap="8px">
           {technologies.map((tech) => {
-            if (type === 'workshop') {
-              return (
-                <Text alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 10px" borderRadius="18px">
-                  {tech.title}
-                </Text>
-              );
-            }
             if (tech?.icon_url) {
               return (
-                <Image src={tech.icon_url} width={20} height={20} />
+                <Image src={tech?.icon_url} width={20} height={20} />
               );
             }
             return (
-              <Text alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 10px" borderRadius="18px">
+              <Text alignItems="center" gridGap="4px" background={featuredColor} padding="4px 10px" borderRadius="18px">
                 {tech?.title}
               </Text>
             );

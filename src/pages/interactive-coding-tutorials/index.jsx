@@ -19,6 +19,7 @@ import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { log } from '../../utils/logging';
+import { types } from '../../common/components/DynamicContentCard/card-types';
 
 const contentPerPage = 20;
 
@@ -248,6 +249,7 @@ function Projects({ projects, technologyTags, difficulties, count }) {
 
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
+            type={types.project}
             articles={projects}
             itemsPerPage={contentPerPage}
             count={count}
@@ -262,6 +264,7 @@ function Projects({ projects, technologyTags, difficulties, count }) {
           />
         ) : (
           <PaginatedView
+            type={types.project}
             queryFunction={queryFunction}
             options={{
               pagePath: '/interactive-coding-tutorials',
