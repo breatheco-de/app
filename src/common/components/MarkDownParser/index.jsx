@@ -280,7 +280,6 @@ function MarkDownParser({
   const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
   const repoName = urlToClone?.split('/')?.pop();
 
-  console.log('current:DATA:::', currentData);
   return (
     <>
       <SimpleModal
