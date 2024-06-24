@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Flex, Heading } from '@chakra-ui/react';
+import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,6 +13,7 @@ import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import { reportDatalayer } from '../../../utils/requests';
+import Heading from '../Heading';
 
 const getAssetPath = (asset) => {
   if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
@@ -54,6 +55,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   const startedButNotEnded = date?.started && date?.ended === false;
   const isWorkshop = type === types.workshop;
   const isWorkshopStarted = isWorkshop && startedButNotEnded;
+  const description = data?.excerpt || data?.description;
   const langConnector = data?.lang === 'us' ? '' : `/${data?.lang}`;
   const isLesson = getAssetPath(data) === 'lesson';
   const isExercise = getAssetPath(data) === 'interactive-exercise';
@@ -112,7 +114,22 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
       />
       <Flex flexDirection="column" gridGap="16px">
         <Heading as="h3" size="18px" lineHeight="normal">
-          {isWorkshop ? data?.title : (
+          {isWorkshop ? (
+            <Box
+              display="-webkit-box"
+              style={{
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+              }}
+              overflow="hidden"
+              textOverflow="ellipsis"
+              maxHeight="2.4em"
+              lineHeight="1.2em"
+              title={description}
+            >
+              {data?.title}
+            </Box>
+          ) : (
             <Link
               href={getLink()}
               onClick={() => {
@@ -136,33 +153,53 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
             </Link>
           )}
         </Heading>
-        {(data?.excerpt || data?.description) && (
-          <Text size="14px" lineHeight="normal">
-            {data?.excerpt || data?.description}
-          </Text>
+        {description?.length > 0 && (
+          <>
+            {isWorkshop ? (
+              <Text
+                size="14px"
+                display="-webkit-box"
+                style={{
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 3,
+                }}
+                overflow="hidden"
+                textOverflow="ellipsis"
+                maxHeight="3.6em"
+                lineHeight="1.2em"
+                title={description}
+              >
+                {description}
+              </Text>
+            ) : (
+              <Text size="14px" lineHeight="normal">
+                {description}
+              </Text>
+            )}
+          </>
         )}
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" gridGap="10px">
         <Flex>
-          {isWorkshop && (
-          <Flex alignItems="center" gridGap="12px">
-            {/* host info */}
-            <Avatar
-              width="35px"
-              height="35px"
-              src={data?.host_user?.avatar_url || ''}
-            />
-            <Flex flexDirection="column" gridGap="8px">
-              <Text size="14px" lineHeight="normal">
-                {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
-              </Text>
-              {data?.host_user?.profesion && (
-              <Text fontSize="12px" lineHeight="normal">
-                {data.host_user.profesion}
-              </Text>
-              )}
+          {isWorkshop && data?.host_user && (
+            <Flex alignItems="center" gridGap="12px">
+              {/* host info */}
+              <Avatar
+                width="35px"
+                height="35px"
+                src={data?.host_user?.avatar_url || ''}
+              />
+              <Flex flexDirection="column" gridGap="8px">
+                <Text size="14px" lineHeight="normal">
+                  {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
+                </Text>
+                {data?.host_user?.profesion && (
+                <Text fontSize="12px" lineHeight="normal">
+                  {data.host_user.profesion}
+                </Text>
+                )}
+              </Flex>
             </Flex>
-          </Flex>
           )}
 
           {type === types.project && data?.difficulty && (
@@ -191,7 +228,6 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
           <>
             {date?.ended ? (
               <Text size="17px" padding="10px 0 0 0" lineHeight="normal" textAlign="center" fontWeight={700}>
-                {/* {t('event-ended')} */}
                 {date?.text}
               </Text>
             ) : (
