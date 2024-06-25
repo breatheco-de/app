@@ -2,6 +2,7 @@ import React from 'react';
 import DynamicContentCard from '../common/components/DynamicContentCard';
 import { types } from '../common/components/DynamicContentCard/card-types';
 import { BREATHECODE_HOST } from '../utils/variables';
+import { Box } from '@chakra-ui/react';
 
 export default {
   title: 'Components/DynamicContentCard',
@@ -78,7 +79,9 @@ const defaultData = {
 
 const Component = (args, context) => {
   return (
-    <DynamicContentCard {...args} />
+    <Box maxWidth="410px">
+      <DynamicContentCard {...args} />
+    </Box>
   )
 };
 

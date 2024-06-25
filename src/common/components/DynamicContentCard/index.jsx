@@ -104,7 +104,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding="16px" gridGap="16px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
+    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 5px' : '10px 16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
       {/* Head conctent */}
       <HeadInfo
         technologies={data?.technologies || technologies}
@@ -112,7 +112,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         duration={data?.duration}
         type={type}
       />
-      <Flex flexDirection="column" gridGap="16px">
+      <Flex flexDirection="column" gridGap="10px">
         <Heading as="h3" size="18px" lineHeight="normal">
           {isWorkshop ? (
             <Box
@@ -125,7 +125,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
               textOverflow="ellipsis"
               maxHeight="2.4em"
               lineHeight="1.2em"
-              title={description}
+              aria-label={data?.title}
             >
               {data?.title}
             </Box>
@@ -167,7 +167,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                 textOverflow="ellipsis"
                 maxHeight="3.6em"
                 lineHeight="1.2em"
-                title={description}
+                aria-label={description}
               >
                 {description}
               </Text>
@@ -223,11 +223,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
       </Flex>
 
       <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'} marginTop={isWorkshop ? 'auto' : 'inherit'}>
-        <Divider mb={isWorkshop ? '0px' : '16px'} />
+        <Divider mb={isWorkshop ? '2px' : '10px'} />
         {isWorkshop ? (
           <>
-            {date?.ended ? (
-              <Text size="17px" padding="10px 0 0 0" lineHeight="normal" textAlign="center" fontWeight={700}>
+            {!date?.ended ? (
+              <Text size="17px" padding="10px 0" lineHeight="normal" textAlign="center" fontWeight={700}>
                 {date?.text}
               </Text>
             ) : (
