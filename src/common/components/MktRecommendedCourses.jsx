@@ -69,99 +69,99 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
   }, []);
 
   return courses.length > 0 && (
-    <Box
-      maxWidth="1280px"
-      margin="2rem auto"
-      flexWrap={{ base: 'wrap', xl: 'nowrap' }}
-      id={id || 'recommended-courses'}
-      borderRadius="11px"
-      padding="16px"
-      mx={{ base: '10px', md: '2rem' }}
-      background={background || featuredLight}
-      display="flex"
-      border="1px solid"
-      borderColor={hexColor.borderColor}
-      gap="10px"
-      {...rest}
-    >
+    <Box width="100%" maxWidth="1280px" margin="2rem auto">
       <Box
-        flexShrink="2"
-        // minWidth="170px"
-        maxWidth={{ base: 'none', lg: '270px' }}
+        mx={{ base: '10px', md: '2rem' }}
+        flexWrap={{ base: 'wrap', xl: 'nowrap' }}
+        id={id || 'recommended-courses'}
+        borderRadius="11px"
+        padding="16px"
+        background={background || featuredLight}
         display="flex"
-        flexDirection="column"
-        justifyContent="center"
-      >
-        {title ? (
-          <>
-            <Heading
-              as="h2"
-              size="30px"
-              fontWeight="700"
-              color={fontColor}
-            >
-              {title}
-            </Heading>
-          </>
-        ) : (
-          <>
-            <Heading
-              as="h2"
-              size="30px"
-              fontWeight="700"
-              color={fontColor}
-            >
-              {t('continue-learning')}
-            </Heading>
-            {technologiesTitle && technologiesTitle.length > 0 && (
-              <Text size="18px" fontWeight="400" mt="0 !important">
-                {t('technologies-and-more', { technologies: technologiesTitle })}
-              </Text>
-            )}
-          </>
-        )}
-      </Box>
-      <Box
-        as="aside"
-        flexGrow="1"
-        flexShrink={{ base: '1', xl: '0' }}
-        justifyContent={{
-          base: 'center',
-          // md: courses.length > 1 ? 'space-between' : 'center',
-          xl: 'flex-end',
-        }}
-        display="flex"
-        flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+        border="1px solid"
+        borderColor={hexColor.borderColor}
         gap="10px"
+        {...rest}
       >
-        {courses.map((course) => (
-          <PublicCourseCard
-            key={course.slug}
-            mx={{ base: courses.length === 1 && 'auto', md: '0' }}
-            // width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
-            width={{ base: '100%', md: 'auto' }}
-            maxWidth={{ base: 'none', md: '240px' }}
-            icon_url={course.icon_url}
-            iconBackground="#25BF6C"
-            onClick={() => {
-              setStorageItem('redirected-from', course?.course_translation?.landing_url);
-              reportDatalayer({
-                dataLayer: {
-                  event: 'ad_interaction',
-                  course_slug: course.slug,
-                  course_title: course.title,
-                  ad_position: 'bottom-center',
-                  ad_type: 'course',
-                },
-              });
-            }}
-            href={course?.course_translation?.landing_url}
-            programName={course.course_translation.title}
-            programSlug={course.slug}
-            programDescription={course.course_translation.description}
-            // flexShrink="0"
-          />
-        ))}
+        <Box
+          flexShrink="2"
+          // minWidth="170px"
+          maxWidth={{ base: 'none', lg: '270px' }}
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+        >
+          {title ? (
+            <>
+              <Heading
+                as="h2"
+                size="30px"
+                fontWeight="700"
+                color={fontColor}
+              >
+                {title}
+              </Heading>
+            </>
+          ) : (
+            <>
+              <Heading
+                as="h2"
+                size="30px"
+                fontWeight="700"
+                color={fontColor}
+              >
+                {t('continue-learning')}
+              </Heading>
+              {technologiesTitle && technologiesTitle.length > 0 && (
+                <Text size="18px" fontWeight="400" mt="0 !important">
+                  {t('technologies-and-more', { technologies: technologiesTitle })}
+                </Text>
+              )}
+            </>
+          )}
+        </Box>
+        <Box
+          as="aside"
+          flexGrow="1"
+          flexShrink={{ base: '1', xl: '0' }}
+          justifyContent={{
+            base: 'center',
+            // md: courses.length > 1 ? 'space-between' : 'center',
+            xl: 'flex-end',
+          }}
+          display="flex"
+          flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+          gap="10px"
+        >
+          {courses.map((course) => (
+            <PublicCourseCard
+              key={course.slug}
+              mx={{ base: courses.length === 1 && 'auto', md: '0' }}
+              // width={{ base: courses.length === 1 ? '99%' : '300px', sm: '300px' }}
+              width={{ base: '100%', md: 'auto' }}
+              maxWidth={{ base: 'none', md: '240px' }}
+              icon_url={course.icon_url}
+              iconBackground="#25BF6C"
+              onClick={() => {
+                setStorageItem('redirected-from', course?.course_translation?.landing_url);
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'ad_interaction',
+                    course_slug: course.slug,
+                    course_title: course.title,
+                    ad_position: 'bottom-center',
+                    ad_type: 'course',
+                  },
+                });
+              }}
+              href={course?.course_translation?.landing_url}
+              programName={course.course_translation.title}
+              programSlug={course.slug}
+              programDescription={course.course_translation.description}
+              // flexShrink="0"
+            />
+          ))}
+        </Box>
       </Box>
     </Box>
   );
