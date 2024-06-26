@@ -12,11 +12,9 @@ const getIntervalDurationTranslation = (date) => {
 
   if (days > 0) {
     return t('live-event:day', { count: days });
-    // return `${days} days duration`;
   }
 
   if (hours > 0) {
-    // return t('live-event:time-duration', { time: hoursText });
     if (minutes > 0) {
       return `${hours}h ${minutes}m`;
     }
@@ -36,9 +34,11 @@ function HeadInfo({ technologies, duration, type, date }) {
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
+  const isWorkshop = type === 'workshop';
+  const shouldDisplay = technologies?.length > 0 || existsDuration || isWorkshop;
 
   return (
-    <Flex alignItems="center" justifyContent="space-between" width="100%">
+    <Flex display={shouldDisplay ? 'flex' : 'none'} alignItems="center" justifyContent="space-between" width="100%">
       {technologies?.length > 0 ? (
         <Flex alignItems="center" gridGap="8px">
           {technologies.map((tech) => {
@@ -55,10 +55,10 @@ function HeadInfo({ technologies, duration, type, date }) {
           })}
         </Flex>
       ) : <Box />}
-      <Flex display={date?.ended ? 'none' : 'flex'} gridGap="10px" alignItems="center">
-        {/* read time */}
+      <Flex display={date?.ended ? 'none' : 'flex'} gridGap="10px" padding={isWorkshop ? '4px 0 0 0' : 'auto'} alignItems="center">
+        {/* <--------------- Average time duration ---------------> */}
         {(Number.isInteger(duration) || date?.text) && (
-          <Flex display={existsDuration ? 'flex' : 'none'} alignItems="center" gridGap="4px" background={backgroundColor} padding="4px 8px" borderRadius="18px">
+          <Flex display={existsDuration ? 'flex' : 'none'} alignItems="center" gridGap="4px" background={backgroundColor} borderRadius="18px">
             <Icon icon="clock" width="14px" height="14px" />
             {intervalDurationText ? (
               <Text size="12px" fontWeight={700}>
@@ -72,8 +72,8 @@ function HeadInfo({ technologies, duration, type, date }) {
             )}
           </Flex>
         )}
-        {/* starts at date */}
-        {type === 'workshop' && (
+        {/* <--------------- Time to start ---------------> */}
+        {isWorkshop && (
           <>
             {startedButNotEnded ? (
               <Box display="flex" alignItems="center" height="auto" gridGap="8px" padding="4px 10px" color="danger" background="red.light" borderRadius="18px">

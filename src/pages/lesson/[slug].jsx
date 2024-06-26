@@ -295,21 +295,24 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
           {markdown && !isIpynb ? (
             <Box
-              height="100%"
-              margin="0 rem auto 0 auto"
-              // display="grid"
               gridColumn="2 / span 12"
-              transition="background 0.2s ease-in-out"
-              borderRadius="3px"
-              maxWidth="1280px"
-              background={useColorModeValue('white', 'dark')}
-              width={{ base: '100%', md: 'auto' }}
-              className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              margin="0 rem auto 0 auto"
+              height="100%"
             >
-              <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
-              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+              <Box
+                transition="background 0.2s ease-in-out"
+                background={useColorModeValue('white', 'dark')}
+                borderRadius="3px"
+                maxWidth="1280px"
+                width={{ base: '100%', md: 'auto' }}
+                className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              >
+                <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
+              </Box>
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
               <MktRecommendedCourses
                 mt="3rem"
+                mx="0"
                 display={{ base: 'none', md: 'flex' }}
                 technologies={lesson?.technologies}
               />

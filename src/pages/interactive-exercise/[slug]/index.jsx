@@ -417,7 +417,7 @@ function Exercise({ exercise, markdown }) {
             <Box display={{ base: 'block', md: 'none' }}>
               <TabletWithForm showSimpleTable={false} asset={exercise} href="/interactive-exercises" ref={tabletWithFormRef} />
             </Box>
-            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
             <MktRecommendedCourses
               mt="3rem"
               technologies={exercise?.technologies}

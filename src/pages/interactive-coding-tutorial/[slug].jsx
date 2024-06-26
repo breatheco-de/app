@@ -357,7 +357,7 @@ function ProjectSlug({ project, markdown }) {
               <Box display={{ base: 'block', lg: 'none' }} mt="20px">
                 <TabletWithForm hideCloneButton showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               </Box>
-              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
               <MktRecommendedCourses
                 mt="3rem"
                 marginTop="15px"
