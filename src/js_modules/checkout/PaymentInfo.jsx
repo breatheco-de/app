@@ -24,6 +24,7 @@ import { SILENT_CODE } from '../../lib/types';
 import ModalCardError from './ModalCardError';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
+import LoaderScreen from '../../common/components/LoaderScreen';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -50,7 +51,9 @@ function PaymentInfo() {
   const {
     state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
   } = useSignup();
-  const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans } = state;
+  const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethod, loader } = state;
+  console.log('paymentMethod');
+  console.log(paymentMethod);
   const cohortId = Number(getQueryString('cohort'));
   const { setCohortSession } = useCohortHandler();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -163,6 +166,10 @@ function PaymentInfo() {
       },
     });
   }, []);
+
+  useEffect(() => {
+    if (paymentMethod && paymentMethod.third_party_link) window.open(paymentMethod.third_party_link);
+  }, [paymentMethod]);
 
   useEffect(() => {
     let interval;
@@ -331,143 +338,161 @@ function PaymentInfo() {
               h="1px"
               background={fontColor}
             />
+            {loader.paymentMethod && (
+              <LoaderScreen />
+            )}
+            {paymentMethod && (
+              <>
+                {paymentMethod.is_credit_card ? (
+                  <Formik
+                    initialValues={{
+                      owner_name: '',
+                      card_number: '',
+                      exp: '',
+                      cvc: '',
+                    }}
+                    onSubmit={(values, actions) => {
+                      setIsSubmitting(true);
+                      const monthAndYear = values.exp?.split('/');
+                      const expMonth = monthAndYear[0];
+                      const expYear = monthAndYear[1];
 
-            <Formik
-              initialValues={{
-                owner_name: '',
-                card_number: '',
-                exp: '',
-                cvc: '',
-              }}
-              onSubmit={(values, actions) => {
-                setIsSubmitting(true);
-                const monthAndYear = values.exp?.split('/');
-                const expMonth = monthAndYear[0];
-                const expYear = monthAndYear[1];
-
-                const allValues = {
-                  card_number: stateCard.card_number,
-                  exp_month: expMonth,
-                  exp_year: expYear,
-                  cvc: values.cvc,
-                };
-                handleSubmit(actions, allValues);
-              }}
-              validationSchema={infoValidation}
-            >
-              {() => (
-                <Form
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gridGap: '22px',
-                  }}
-                >
-                  <Box display="flex" gridGap="18px">
-                    <FieldForm
-                      type="text"
-                      name="owner_name"
-                      externValue={paymentInfo.owner_name}
-                      handleOnChange={(e) => {
-                        setPaymentInfo('owner_name', e.target.value);
-                        setStateCard({ ...stateCard, owner_name: e.target.value });
-                      }}
-                      pattern="[A-Za-z ]*"
-                      label={t('owner-name')}
-                    />
-                  </Box>
-                  <Box display="flex" gridGap="18px">
-                    <FieldForm
-                      type="text"
-                      name="card_number"
-                      externValue={paymentInfo.card_number}
-                      handleOnChange={(e) => {
-                        const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                        const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                        e.target.value = newValue.slice(0, 19);
-                        setPaymentInfo('card_number', e.target.value);
-                        setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
-                      }}
-                      pattern="[0-9]*"
-                      label={t('card-number')}
-                    />
-                  </Box>
-                  <Box display="flex" gridGap="18px">
-                    <Box display="flex" gridGap="18px" flex={1}>
-                      <Box display="flex" flexDirection="column" flex={0.5}>
-                        <FieldForm
-                          style={{ flex: 0.5 }}
-                          type="text"
-                          name="exp"
-                          externValue={paymentInfo.exp}
-                          maxLength={3}
-                          handleOnChange={(e) => {
-                            let { value } = e.target;
-                            if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
-                              value += '/';
-                            } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
-                              value = value.slice(0, 1);
-                            }
-                            value = value.substring(0, 5);
-
-                            setPaymentInfo('exp', value);
-                          }}
-                          pattern="[0-9]*"
-                          label={t('expiration-date')}
-                        />
-                      </Box>
-                      <FieldForm
-                        style={{ flex: 0.5 }}
-                        type="text"
-                        name="cvc"
-                        externValue={paymentInfo.cvc}
-                        maxLength={3}
-                        handleOnChange={(e) => {
-                          const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                          const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                          e.target.value = newValue.slice(0, 4);
-
-                          setPaymentInfo('cvc', e.target.value);
+                      const allValues = {
+                        card_number: stateCard.card_number,
+                        exp_month: expMonth,
+                        exp_year: expYear,
+                        cvc: values.cvc,
+                      };
+                      handleSubmit(actions, allValues);
+                    }}
+                    validationSchema={infoValidation}
+                  >
+                    {() => (
+                      <Form
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gridGap: '22px',
                         }}
-                        pattern="[0-9]*"
-                        label={t('cvc')}
-                      />
-                    </Box>
+                      >
+                        <Box display="flex" gridGap="18px">
+                          <FieldForm
+                            type="text"
+                            name="owner_name"
+                            externValue={paymentInfo.owner_name}
+                            handleOnChange={(e) => {
+                              setPaymentInfo('owner_name', e.target.value);
+                              setStateCard({ ...stateCard, owner_name: e.target.value });
+                            }}
+                            pattern="[A-Za-z ]*"
+                            label={t('owner-name')}
+                          />
+                        </Box>
+                        <Box display="flex" gridGap="18px">
+                          <FieldForm
+                            type="text"
+                            name="card_number"
+                            externValue={paymentInfo.card_number}
+                            handleOnChange={(e) => {
+                              const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                              const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                              e.target.value = newValue.slice(0, 19);
+                              setPaymentInfo('card_number', e.target.value);
+                              setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
+                            }}
+                            pattern="[0-9]*"
+                            label={t('card-number')}
+                          />
+                        </Box>
+                        <Box display="flex" gridGap="18px">
+                          <Box display="flex" gridGap="18px" flex={1}>
+                            <Box display="flex" flexDirection="column" flex={0.5}>
+                              <FieldForm
+                                style={{ flex: 0.5 }}
+                                type="text"
+                                name="exp"
+                                externValue={paymentInfo.exp}
+                                maxLength={3}
+                                handleOnChange={(e) => {
+                                  let { value } = e.target;
+                                  if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
+                                    value += '/';
+                                  } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
+                                    value = value.slice(0, 1);
+                                  }
+                                  value = value.substring(0, 5);
+
+                                  setPaymentInfo('exp', value);
+                                }}
+                                pattern="[0-9]*"
+                                label={t('expiration-date')}
+                              />
+                            </Box>
+                            <FieldForm
+                              style={{ flex: 0.5 }}
+                              type="text"
+                              name="cvc"
+                              externValue={paymentInfo.cvc}
+                              maxLength={3}
+                              handleOnChange={(e) => {
+                                const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
+                                const newValue = value.replace(/(.{4})/g, '$1 ').trim();
+                                e.target.value = newValue.slice(0, 4);
+
+                                setPaymentInfo('cvc', e.target.value);
+                              }}
+                              pattern="[0-9]*"
+                              label={t('cvc')}
+                            />
+                          </Box>
+                        </Box>
+                        {(isNotTrial || !priceIsNotNumber) ? (
+                          <Button
+                            type="submit"
+                            width="100%"
+                            variant="default"
+                            isLoading={isSubmitting}
+                            height="40px"
+                            mt="0"
+                          >
+                            {t('common:proceed-to-payment')}
+                          </Button>
+                        ) : (
+                          <Button
+                            type="submit"
+                            width="100%"
+                            variant="outline"
+                            borderColor="blue.200"
+                            isLoading={isSubmitting}
+                            background={featuredBackground}
+                            _hover={{ background: featuredBackground, opacity: 0.8 }}
+                            _active={{ background: featuredBackground, opacity: 1 }}
+                            color="blue.default"
+                            height="40px"
+                            mt="0"
+                          >
+                            {t('common:start-free-trial')}
+                          </Button>
+                        )}
+                      </Form>
+                    )}
+                  </Formik>
+                ) : (
+                  <Box>
+                    <Heading>
+                      {paymentMethod.title}
+                    </Heading>
+                    <Text pt="10px" size="l">
+                      {paymentMethod.description}
+                    </Text>
                   </Box>
-                  {(isNotTrial || !priceIsNotNumber) ? (
-                    <Button
-                      type="submit"
-                      width="100%"
-                      variant="default"
-                      isLoading={isSubmitting}
-                      height="40px"
-                      mt="0"
-                    >
-                      {t('common:proceed-to-payment')}
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      width="100%"
-                      variant="outline"
-                      borderColor="blue.200"
-                      isLoading={isSubmitting}
-                      background={featuredBackground}
-                      _hover={{ background: featuredBackground, opacity: 0.8 }}
-                      _active={{ background: featuredBackground, opacity: 1 }}
-                      color="blue.default"
-                      height="40px"
-                      mt="0"
-                    >
-                      {t('common:start-free-trial')}
-                    </Button>
-                  )}
-                </Form>
-              )}
-            </Formik>
+                )}
+              </>
+            )}
+
           </>
         )}
-        {isPaymentIdle && (
+        {isPaymentIdle && paymentMethod?.is_credit_card && (
           <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
             <Flex justifyContent="space-between" alignItems="center">
               <Flex gridGap="10px" alignItems="center">

@@ -87,7 +87,7 @@ function Checkout() {
   const {
     state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData,
+    setSelectedPlanCheckoutData, setCheckoutData, setPaymentMethod,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
@@ -485,6 +485,29 @@ function Checkout() {
       });
     }
   }, [user?.id]);
+
+  const getPaymentMethod = async () => {
+    try {
+      if (isAuthenticated && selectedPlanCheckoutData?.owner) {
+        setLoader('paymentMethod', false);
+        const ownerId = selectedPlanCheckoutData.owner.id;
+        setLoader('paymentMethod', true);
+        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
+        if (resp.status < 400) {
+          const acdemyMethod = resp.data.find((method) => method.academy.id === ownerId);
+          setPaymentMethod(acdemyMethod);
+        }
+        setLoader('paymentMethod', false);
+      }
+    } catch (e) {
+      console.log(e);
+      setLoader('paymentMethod', false);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentMethod();
+  }, [selectedPlanCheckoutData, isAuthenticated]);
 
   const getPriceWithDiscount = () => {
     const price = selectedPlanCheckoutData?.price;
