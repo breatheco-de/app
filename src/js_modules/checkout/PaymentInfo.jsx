@@ -52,8 +52,6 @@ function PaymentInfo() {
     state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
   } = useSignup();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethod, loader } = state;
-  console.log('paymentMethod');
-  console.log(paymentMethod);
   const cohortId = Number(getQueryString('cohort'));
   const { setCohortSession } = useCohortHandler();
   const [isSubmitting, setIsSubmitting] = useState(false);
