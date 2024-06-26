@@ -74,7 +74,7 @@ const defaultData = {
   gitpod: true,
   solution_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
   intro_video_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
-  difficulty: 'Advanced',
+  difficulty: 'hard',
 };
 
 const Component = (args, context) => {

@@ -104,7 +104,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 5px' : '10px 16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
+    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 0px' : '16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
       {/* <--------------- Head content (average duration and technology icon/tag) ---------------> */}
       <HeadInfo
         technologies={data?.technologies || technologies}
@@ -179,53 +179,57 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
           </>
         )}
       </Flex>
-      {((isWorkshop && data?.host_user) || (type === types.project && data?.difficulty)) && (
-        <Flex alignItems="center" justifyContent="space-between" gridGap="10px">
-          <Flex>
-            {/* <--------------- Host info ---------------> */}
-            {isWorkshop && data?.host_user && (
-              <Flex alignItems="center" gridGap="12px">
-                <Avatar
-                  width="35px"
-                  height="35px"
-                  src={data?.host_user?.avatar_url || ''}
-                />
-                <Flex flexDirection="column" gridGap="8px">
-                  <Text size="14px" lineHeight="normal">
-                    {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
-                  </Text>
-                  {data?.host_user?.profesion && (
-                  <Text fontSize="12px" lineHeight="normal">
-                    {data.host_user.profesion}
-                  </Text>
-                  )}
-                </Flex>
+      <Flex
+        _empty={{ display: 'none' }}
+        alignItems="center"
+        justifyContent="space-between"
+        gridGap="10px"
+        id="event_info"
+      >
+        <Flex id="left_info" _empty={{ display: 'none' }}>
+          {/* <--------------- Host info ---------------> */}
+          {isWorkshop && data?.host_user && (
+            <Flex alignItems="center" gridGap="12px">
+              <Avatar
+                width="35px"
+                height="35px"
+                src={data?.host_user?.avatar_url || ''}
+              />
+              <Flex flexDirection="column" gridGap="8px">
+                <Text size="14px" lineHeight="normal">
+                  {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
+                </Text>
+                {data?.host_user?.profesion && (
+                <Text fontSize="12px" lineHeight="normal">
+                  {data.host_user.profesion}
+                </Text>
+                )}
               </Flex>
-            )}
+            </Flex>
+          )}
 
-            {type === types.project && data?.difficulty && (
-              <Text
-                background={getDifficultyColors(data?.difficulty).bg}
-                color={getDifficultyColors(data?.difficulty).color}
-                size="13px"
-                fontWeight={700}
-                padding="5px 7px"
-                borderRadius="18px"
-              >
-                {toCapitalize(data.difficulty)}
-              </Text>
-            )}
-          </Flex>
-
-          <FeatureIndicator
-            data={data}
-            type={type}
-          />
+          {type === types.project && data?.difficulty && (
+            <Text
+              background={getDifficultyColors(data?.difficulty).bg}
+              color={getDifficultyColors(data?.difficulty).color}
+              size="13px"
+              fontWeight={700}
+              padding="5px 7px"
+              borderRadius="18px"
+            >
+              {toCapitalize(data.difficulty)}
+            </Text>
+          )}
         </Flex>
-      )}
+
+        <FeatureIndicator
+          data={data}
+          type={type}
+        />
+      </Flex>
 
       <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'} marginTop={isWorkshop ? 'auto' : 'inherit'}>
-        <Divider mb={isWorkshop ? '2px' : '10px'} />
+        <Divider mb={isWorkshop ? '0px' : '16px'} />
         {/* <--------------- Event link ---------------> */}
         {isWorkshop ? (
           <>
@@ -289,6 +293,16 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
           </>
         )}
       </Box>
+      <style>
+        {`
+          #left_info:empty {
+            display: none;
+          }
+          #event_info:has(#left_info:empty + #feature_indicator:empty) {
+            display: none;
+          }
+        `}
+      </style>
     </Flex>
   );
 }
