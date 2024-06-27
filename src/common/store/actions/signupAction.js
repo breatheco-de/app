@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
-  PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHOD,
+  PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -97,8 +97,8 @@ const useSignup = () => {
     payload,
     value,
   });
-  const setPaymentMethod = (payload) => dispatch({
-    type: SET_PAYMENT_METHOD,
+  const setPaymentMethods = (payload) => dispatch({
+    type: SET_PAYMENT_METHODS,
     payload,
   });
   const setCohortPlans = (payload) => dispatch({
@@ -398,7 +398,7 @@ const useSignup = () => {
     setDateProps,
     setCheckoutData,
     setLocation,
-    setPaymentMethod,
+    setPaymentMethods,
     setPaymentInfo,
     handlePayment,
     setPlanData,

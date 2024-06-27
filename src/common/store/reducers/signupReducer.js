@@ -1,7 +1,7 @@
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
   SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
-  TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHOD,
+  TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS,
 } from '../types';
 
 const initialState = {
@@ -23,7 +23,7 @@ const initialState = {
   },
   cohortPlans: null,
   alreadyEnrolled: false,
-  paymentMethod: null,
+  paymentMethods: [],
 };
 const signupReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -134,10 +134,10 @@ const signupReducer = (state = initialState, action) => {
         },
       };
     }
-    case SET_PAYMENT_METHOD: {
+    case SET_PAYMENT_METHODS: {
       return {
         ...state,
-        paymentMethod: action.payload,
+        paymentMethods: action.payload,
       };
     }
     default:

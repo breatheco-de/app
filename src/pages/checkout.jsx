@@ -87,7 +87,7 @@ function Checkout() {
   const {
     state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData, setPaymentMethod,
+    setSelectedPlanCheckoutData, setCheckoutData, setPaymentMethods,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
@@ -486,27 +486,30 @@ function Checkout() {
     }
   }, [user?.id]);
 
-  const getPaymentMethod = async () => {
+  const getPaymentMethods = async () => {
     try {
       if (isAuthenticated && selectedPlanCheckoutData?.owner) {
-        setLoader('paymentMethod', false);
+        setLoader('paymentMethods', false);
         const ownerId = selectedPlanCheckoutData.owner.id;
-        setLoader('paymentMethod', true);
+        setLoader('paymentMethods', true);
         const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
         if (resp.status < 400) {
-          const acdemyMethod = resp.data.find((method) => method.academy.id === ownerId);
-          setPaymentMethod(acdemyMethod);
+          const sortedPaymentMethods = resp.data.sort((a) => {
+            if (a.third_party_link === null) return -1;
+            return 1;
+          });
+          setPaymentMethods(sortedPaymentMethods);
         }
-        setLoader('paymentMethod', false);
+        setLoader('paymentMethods', false);
       }
     } catch (e) {
       console.log(e);
-      setLoader('paymentMethod', false);
+      setLoader('paymentMethods', false);
     }
   };
 
   useEffect(() => {
-    getPaymentMethod();
+    getPaymentMethods();
   }, [selectedPlanCheckoutData, isAuthenticated]);
 
   const getPriceWithDiscount = () => {
