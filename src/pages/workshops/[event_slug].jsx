@@ -570,13 +570,26 @@ function Page({ eventData, asset }) {
         <GridContainer
           height="100%"
           gridTemplateColumns="2fr repeat(12, 1fr) 2fr"
-          gridGap="36px"
+          gridGap="20px"
           display={{ base: 'flex', md: 'grid' }}
           padding="37px 10px"
           minHeight="290px"
           zIndex={1}
           position="relative"
+          flexDirection="column"
         >
+          <Link
+            gridColumn="1 / span 8"
+            margin={{ base: '0', md: '0 2rem' }}
+            href="/workshops"
+            color={useColorModeValue('blue.default', 'blue.300')}
+            display="inline-block"
+            letterSpacing="0.05em"
+            fontWeight="700"
+            width="fit-content"
+          >
+            {`← ${t('back-to-workshops')}`}
+          </Link>
           <Box display="flex" flexDirection="column" justifyContent="center" gridGap="15px" gridColumn="2 / span 8">
             <Box display="flex" mt={{ base: '0', md: '1rem' }} alignItems="center" gridGap="24px">
               {event?.event_type?.name && (
