@@ -158,6 +158,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
             {isWorkshop ? (
               <Text
                 size="14px"
+                height={isWorkshop ? '3.6em' : 'auto'}
                 display="-webkit-box"
                 style={{
                   WebkitBoxOrient: 'vertical',
