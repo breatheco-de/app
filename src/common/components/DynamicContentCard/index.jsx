@@ -186,6 +186,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         justifyContent="space-between"
         gridGap="10px"
         id="event_info"
+        marginTop={isWorkshop ? 'auto' : 'inherit'}
       >
         <Flex id="left_info" _empty={{ display: 'none' }}>
           {/* <--------------- Host info ---------------> */}
@@ -229,7 +230,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         />
       </Flex>
 
-      <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'} marginTop={isWorkshop ? 'auto' : 'inherit'}>
+      <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'}>
         <Divider mb={isWorkshop ? '0px' : '16px'} />
         {/* <--------------- Event link ---------------> */}
         {isWorkshop ? (
