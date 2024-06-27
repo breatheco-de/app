@@ -16,7 +16,7 @@ import Icon from './Icon';
 function CallToAction({
   background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
   buttonText, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
-  isLoading,
+  isLoading, reverseButtons,
 }) {
   return (
     <Box
@@ -81,6 +81,8 @@ function CallToAction({
           // justifyContent="space-between"
           // justifyContent="center"
           gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
+          flexDirection={reverseButtons ? 'row-reverse' : 'row'}
+          justifyContent={reverseButtons ? 'flex-end' : 'flex-start'}
         >
           {buttonText && !buttonsData?.length > 0 && (
           <Button isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
@@ -199,6 +201,7 @@ CallToAction.propTypes = {
   fontSizeOfTitle: PropTypes.string,
   isLoading: PropTypes.bool,
   icon: PropTypes.string,
+  reverseButtons: PropTypes.bool,
 };
 
 CallToAction.defaultProps = {
@@ -217,6 +220,7 @@ CallToAction.defaultProps = {
   fontSizeOfTitle: 'var(--heading-xsm)',
   isLoading: false,
   icon: '',
+  reverseButtons: false,
 };
 
 export default CallToAction;

@@ -315,6 +315,7 @@ function MarkDownParser({
               color: 'white',
             }}
             background="blue.default"
+            reverseButtons={cohortSession?.available_as_saas}
             margin="12px 0 20px 0px"
             icon="learnpack"
             text={t('learnpack.description', { projectName: currentData?.title })}
