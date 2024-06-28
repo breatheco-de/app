@@ -482,7 +482,7 @@ function Dashboard() {
             )}
 
             {mainTechnologies ? (
-              <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={mainTechnologies} separator="/" />
+              <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
             ) : (
               <SimpleSkeleton
                 height="34px"
