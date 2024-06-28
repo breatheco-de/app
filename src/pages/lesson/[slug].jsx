@@ -309,13 +309,23 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
               >
                 <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
               </Box>
-              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
+              {lesson?.slug && (
+                <RelatedContent
+                  slug={lesson?.slug}
+                  type="LESSON,ARTICLE"
+                  extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+                  technologies={lesson?.technologies}
+                  margin="4rem 0 0 0"
+                  maxWidth="1280px"
+                />
+              )}
               <MktRecommendedCourses
                 mt="3rem"
                 mx="0"
                 display={{ base: 'none', md: 'flex' }}
                 technologies={lesson?.technologies}
               />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="3rem 0 31px 0" />
             </Box>
           ) : (
             <>
@@ -408,6 +418,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   <IpynbHtmlParser
                     html={ipynbHtml.html}
                   />
+                  {lesson?.slug && (
+                    <RelatedContent
+                      slug={lesson?.slug}
+                      type="LESSON,ARTICLE"
+                      extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+                      technologies={lesson?.technologies}
+                      maxWidth="1280px"
+                    />
+                  )}
                   <MktRecommendedCourses
                     display={{ base: 'none', md: 'flex' }}
                     technologies={lesson?.technologies}
@@ -418,16 +437,6 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </Box>
           )}
         </Box>
-        {lesson?.slug && (
-          <RelatedContent
-            slug={lesson?.slug}
-            type="LESSON,ARTICLE"
-            extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
-            technologies={lesson?.technologies}
-            gridColumn="2 / span 10"
-            maxWidth="1280px"
-          />
-        )}
       </GridContainer>
     </>
   );
