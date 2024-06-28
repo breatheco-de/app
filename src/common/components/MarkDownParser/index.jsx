@@ -241,10 +241,11 @@ function MarkDownParser({
       setLearnpackActions([
         {
           ...openInLearnpackAction,
+          text: `${openInLearnpackAction.text}${cohortSession?.available_as_saas === false ? ` (${t('learnpack.recommended')})` : ''}`,
           links: provisioningLinks,
         },
         {
-          text: t('learnpack.open-locally'),
+          text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
           type: 'button',
           onClick: () => {
             setShowCloneModal(true);
