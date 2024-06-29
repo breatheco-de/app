@@ -14,8 +14,8 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexLis
   const position = stepIndex > totalCountListBasedInHidenList ? totalCountListBasedInHidenList : stepIndex;
 
   return (
-    <>
-      <Box display={{ base: 'none', md: 'flex' }} maxWidth="490px" justifyContent="space-between" margin="2rem auto 0 auto" id="container-stepper" width="100%" gridGap="38px" overflowY="hidden" overflowX="auto">
+    <Box display="flex" flexDirection="column" gridGap="20px" margin={{ base: '0 1rem', lg: '0 auto' }} width={{ base: 'auto', lg: '100%' }} maxWidth="490px">
+      <Box display={{ base: 'none', md: 'flex' }} justifyContent="space-between" margin="2rem 0 0 0" id="container-stepper" width="auto" gridGap="38px">
         {!hideIndexList.includes(0) && (
           <Box
             display="flex"
@@ -135,7 +135,7 @@ function Stepper({ stepIndex, selectedPlanCheckoutData, isFreeTier, hideIndexLis
         </Box>
       )}
       <Divider maxWidth="490px" margin="0 auto" />
-    </>
+    </Box>
   );
 }
 
