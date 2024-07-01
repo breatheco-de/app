@@ -187,59 +187,6 @@ function ShowOnSignUp({
         }}
         handlerText={t('common:login')}
       />
-
-      <ModalInfo
-        headerStyles={{ textAlign: 'center' }}
-        title={t('signup:alert-message.validate-email-title')}
-        footerStyle={{ flexDirection: 'row-reverse' }}
-        closeButtonVariant="outline"
-        closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
-        childrenDescription={(
-          <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
-            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid #0097CD" width="91px" height="91px" borderRadius="50px" />
-            <Text
-              size="14px"
-              textAlign="center"
-              dangerouslySetInnerHTML={{ __html: t('signup:alert-message.validate-email-description', { email: verifyEmailProps?.data?.email }) }}
-            />
-          </Box>
-        )}
-        isOpen={verifyEmailProps.state}
-        buttonHandlerStyles={{ variant: 'default' }}
-        actionHandler={() => {
-          const inviteId = verifyEmailProps?.data?.id;
-          bc.auth().resendConfirmationEmail(inviteId)
-            .then((resp) => {
-              const data = resp?.data;
-              if (data === undefined) {
-                toast({
-                  position: 'top',
-                  status: 'info',
-                  title: t('signup:alert-message.email-already-sent'),
-                  isClosable: true,
-                  duration: 6000,
-                });
-              } else {
-                toast({
-                  position: 'top',
-                  status: 'success',
-                  title: t('signup:alert-message.email-sent-to', { email: data?.email }),
-                  isClosable: true,
-                  duration: 6000,
-                });
-              }
-            });
-        }}
-        handlerText={t('signup:resend')}
-        forceHandlerAndClose
-        onClose={() => {
-          refetchAfterSuccess();
-          setVerifyEmailProps({
-            ...verifyEmailProps,
-            state: false,
-          });
-        }}
-      />
     </Box>
   );
 }
