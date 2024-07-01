@@ -17,7 +17,7 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
   const { version, slug } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
 
-  const subscription = (cohort?.available_as_saas && currentCohortProps?.subscription) || (cohort?.available_as_saas && currentCohortProps?.plan_financing);
+  const subscription = (cohort?.available_as_saas && currentCohortProps?.plan_financing) || (cohort?.available_as_saas && currentCohortProps?.subscription);
 
   const isBought = subscription?.invoices?.[0]?.amount >= 0;
   const availableAsSaasButNotBought = cohort?.available_as_saas && !isBought;

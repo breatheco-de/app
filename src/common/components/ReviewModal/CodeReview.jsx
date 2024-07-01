@@ -385,9 +385,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
                 <Flex flexDirection="column" gridGap="16px">
                   {reviewRateStatus === null ? (
                     <>
-                      <Text size="14px">
-                        {revisionContent?.comment}
-                      </Text>
+                      <MarkDownParser content={revisionContent?.comment} />
 
                       <Box fontSize="13px" color="#fff" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
                         <MarkDownParser
