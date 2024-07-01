@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -12,7 +12,6 @@ import useStyle from '../hooks/useStyle';
 import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
-import bc from '../services/breathecode';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 import { error } from '../../utils/logging';
 
@@ -33,13 +32,11 @@ function ShowOnSignUp({
   const { handleSubscribeToPlan } = useSubscribeToPlan();
   const { backgroundColor, featuredColor, hexColor } = useStyle();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
-  const [verifyEmailProps, setVerifyEmailProps] = useState({});
   const [alreadyLogged, setAlreadyLogged] = useState(false);
   const [attempts, setAttempts] = useState(0);
   const { t } = useTranslation('signup');
   const [isReadyToRefetch, setIsReadyToRefetch] = useState(false);
   const router = useRouter();
-  const toast = useToast();
   const [formProps, setFormProps] = useState({
     first_name: '',
     last_name: '',
@@ -136,7 +133,6 @@ function ShowOnSignUp({
               columnLayout
               showLoginLink
               invertHandlerPosition={invertHandlerPosition}
-              showVerifyEmail={false}
               formProps={formProps}
               setFormProps={setFormProps}
               subscribeValues={subscribeValues}
@@ -149,10 +145,6 @@ function ShowOnSignUp({
                       setIsReadyToRefetch(true);
                       setAlreadyLogged(true);
                       refetchAfterSuccess();
-                      setVerifyEmailProps({
-                        data,
-                        state: true,
-                      });
                     }
                   });
               }}
