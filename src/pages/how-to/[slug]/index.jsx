@@ -296,27 +296,28 @@ export default function HowToSlug({ data, markdown }) {
             ) : (
               <MDSkeleton />
             )}
-            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
-            <MktRecommendedCourses
-              mt="3rem"
-              display={{ base: 'none', md: 'flex' }}
-              marginBottom="15px"
-              technologies={data?.technologies}
-              endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
-            />
           </Box>
+          <RelatedContent
+            slug={data.slug}
+            type="LESSON,ARTICLE"
+            extraQuerys={{ category: categoriesFor.howTo }}
+            technologies={data?.technologies}
+            gridColumn="2 / span 10"
+            maxWidth="1280px"
+          />
+          <MktRecommendedCourses
+            mt="3rem"
+            mx="0"
+            display={{ base: 'none', md: 'flex' }}
+            marginBottom="15px"
+            technologies={data?.technologies}
+            endpoint={`${process.env.BREATHECODE_HOST}/v1/marketing/course`}
+          />
+          <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
         </Box>
         <Box display={{ base: 'initial', md: 'none' }} width="100%" height="auto">
           <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
-        <RelatedContent
-          slug={data.slug}
-          type="LESSON,ARTICLE"
-          extraQuerys={{ category: categoriesFor.howTo }}
-          technologies={data?.technologies}
-          gridColumn="2 / span 10"
-          maxWidth="1280px"
-        />
       </GridContainer>
     </>
   );

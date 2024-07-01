@@ -279,8 +279,8 @@ function Summary() {
       flexDirection="column"
       gridGap={isPaymentIdle && '30px'}
       mb="1rem"
-      width={{ base: '100%', md: '490px' }}
-      margin="0 auto"
+      width={{ base: 'auto', lg: '490px' }}
+      margin={{ base: '0 1rem', lg: '0 auto' }}
     >
       <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 0', md: '14px 0' }} height="100%" borderRadius="15px">
         <Box

@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Flex, Heading, Link } from '@chakra-ui/react';
+import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -8,9 +8,39 @@ import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';
 import useFormatDate from './useFormatDate';
-import { adjustNumberBeetwenMinMax, isValidDate, syncInterval } from '../../../utils';
+import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
+import Link from '../NextChakraLink';
+import { reportDatalayer } from '../../../utils/requests';
+import Heading from '../Heading';
+
+const getAssetPath = (asset) => {
+  if (asset?.category?.slug === 'how-to' || asset?.category?.slug === 'como') return 'how-to';
+  if (asset?.asset_type?.toUpperCase() === 'LESSON') return 'lesson';
+  if (asset?.asset_type?.toUpperCase() === 'EXERCISE') return 'interactive-exercise';
+  if (asset?.asset_type?.toUpperCase() === 'PROJECT') return 'interactive-coding-tutorial';
+  return 'lesson';
+};
+
+export const getDifficultyColors = (currDifficulty) => {
+  const background = {
+    beginner: 'featuredLight',
+    easy: 'green.light',
+    intermediate: 'yellow.100',
+    hard: 'red.light',
+  };
+  const color = {
+    beginner: '#005b7b',
+    easy: '#115932',
+    intermediate: '#6f4f0a',
+    hard: '#7e0000',
+  };
+  return {
+    bg: background[currDifficulty],
+    color: color[currDifficulty],
+  };
+};
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
@@ -25,6 +55,12 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   const startedButNotEnded = date?.started && date?.ended === false;
   const isWorkshop = type === types.workshop;
   const isWorkshopStarted = isWorkshop && startedButNotEnded;
+  const description = data?.excerpt || data?.description;
+  const langConnector = data?.lang === 'us' ? '' : `/${data?.lang}`;
+  const isLesson = getAssetPath(data) === 'lesson';
+  const isExercise = getAssetPath(data) === 'interactive-exercise';
+  const isProject = getAssetPath(data) === 'interactive-coding-tutorial';
+  const isHowTo = getAssetPath(data) === 'how-to';
 
   const getFormatedDate = () => {
     const endDate = data?.ended_at || data?.ending_at;
@@ -32,6 +68,22 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
     const endingAtDate = isValidDate(endDate) && new Date(endDate);
     const formattedDate = formattedTime(startingAtDate, endingAtDate);
     return formattedDate;
+  };
+
+  const getLink = () => {
+    if (isLesson) {
+      return `${langConnector}/lesson/${data.slug}`;
+    }
+    if (isExercise) {
+      return `${langConnector}/interactive-exercise/${data.slug}`;
+    }
+    if (isProject) {
+      return `${langConnector}/interactive-coding-tutorial/${data.slug}`;
+    }
+    if (isHowTo) {
+      return `${langConnector}/how-to/${data.slug}`;
+    }
+    return `/${data.slug}`;
   };
 
   useEffect(() => {
@@ -52,50 +104,122 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding="16px" gridGap="16px" minWidth="310px" maxWidth="410px" background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
-      {/* Head conctent */}
+    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 0px' : '16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
+      {/* <--------------- Head content (average duration and technology icon/tag) ---------------> */}
       <HeadInfo
-        technologies={technologies}
+        technologies={data?.technologies || technologies}
         date={date}
         duration={data?.duration}
         type={type}
       />
-      <Flex flexDirection="column" gridGap="16px">
-        <Heading as="h2" size="18px" lineHeight="normal">
-          {data?.title}
+      <Flex flexDirection="column" gridGap="10px">
+        <Heading as="h3" size="18px" lineHeight="normal">
+          {isWorkshop ? (
+            <Box
+              display="-webkit-box"
+              style={{
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: 2,
+              }}
+              overflow="hidden"
+              textOverflow="ellipsis"
+              maxHeight="2.4em"
+              lineHeight="1.2em"
+              aria-label={data?.title}
+            >
+              {data?.title}
+            </Box>
+          ) : (
+            <Link
+              href={getLink()}
+              onClick={() => {
+                reportDatalayer({
+                  dataLayer: {
+                    event: 'select_content',
+                    asset_slug: data?.slug,
+                    asset_title: data?.title,
+                    asset_lang: data?.lang,
+                    asset_category: data?.category?.slug,
+                  },
+                });
+              }}
+              _after={{
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+              }}
+            >
+              {data?.title}
+            </Link>
+          )}
         </Heading>
-        {(data?.excerpt || data?.description) && (
-          <Text size="14px" lineHeight="normal">
-            {data?.excerpt || data?.description}
-            {/* {data.description} */}
-          </Text>
+        {description?.length > 0 && (
+          <>
+            {isWorkshop ? (
+              <Text
+                size="14px"
+                height={isWorkshop ? '3.6em' : 'auto'}
+                display="-webkit-box"
+                style={{
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 3,
+                }}
+                overflow="hidden"
+                textOverflow="ellipsis"
+                maxHeight="3.6em"
+                lineHeight="1.2em"
+                aria-label={description}
+              >
+                {description}
+              </Text>
+            ) : (
+              <Text size="14px" lineHeight="normal">
+                {description}
+              </Text>
+            )}
+          </>
         )}
       </Flex>
-      <Flex alignItems="center" justifyContent="space-between" gridGap="10px">
-        <Flex>
-          {isWorkshop && (
-          <Flex alignItems="center" gridGap="12px">
-            {/* host info */}
-            <Avatar
-              width="35px"
-              height="35px"
-              src={data?.host_user?.avatar_url || ''}
-            />
-            <Flex flexDirection="column" gridGap="8px">
-              <Text size="14px" lineHeight="normal">
-                {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
-              </Text>
-              {data?.host_user?.profesion && (
-              <Text fontSize="12px" lineHeight="normal">
-                {data.host_user.profesion}
-              </Text>
-              )}
+      <Flex
+        _empty={{ display: 'none' }}
+        alignItems="center"
+        justifyContent="space-between"
+        gridGap="10px"
+        id="event_info"
+        marginTop={isWorkshop ? 'auto' : 'inherit'}
+      >
+        <Flex id="left_info" _empty={{ display: 'none' }}>
+          {/* <--------------- Host info ---------------> */}
+          {isWorkshop && data?.host_user && (
+            <Flex alignItems="center" gridGap="12px">
+              <Avatar
+                width="35px"
+                height="35px"
+                src={data?.host_user?.avatar_url || ''}
+              />
+              <Flex flexDirection="column" gridGap="8px">
+                <Text size="14px" lineHeight="normal">
+                  {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
+                </Text>
+                {data?.host_user?.profesion && (
+                <Text fontSize="12px" lineHeight="normal">
+                  {data.host_user.profesion}
+                </Text>
+                )}
+              </Flex>
             </Flex>
-          </Flex>
           )}
+
           {type === types.project && data?.difficulty && (
-            <Text size="13px" color="red" padding="5px 7px" borderRadius="18px" background="red.light">
-              {data.difficulty}
+            <Text
+              background={getDifficultyColors(data?.difficulty).bg}
+              color={getDifficultyColors(data?.difficulty).color}
+              size="13px"
+              fontWeight={700}
+              padding="5px 7px"
+              borderRadius="18px"
+            >
+              {toCapitalize(data.difficulty)}
             </Text>
           )}
         </Flex>
@@ -108,11 +232,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
 
       <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'}>
         <Divider mb={isWorkshop ? '0px' : '16px'} />
+        {/* <--------------- Event link ---------------> */}
         {isWorkshop ? (
           <>
             {date?.ended ? (
-              <Text size="17px" padding="10px 0 0 0" lineHeight="normal" textAlign="center" fontWeight={700}>
-                {/* {t('event-ended')} */}
+              <Text size="17px" padding="10px 0" lineHeight="normal" textAlign="center" fontWeight={700}>
                 {date?.text}
               </Text>
             ) : (
@@ -128,11 +252,6 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                 width="fit-content"
                 margin="0 auto"
                 gridGap="10px"
-                _after={{
-                  content: '""',
-                  position: 'absolute',
-                  inset: 0,
-                }}
               >
                 {date?.started
                   ? t('join-workshop')
@@ -176,6 +295,16 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
           </>
         )}
       </Box>
+      <style>
+        {`
+          #left_info:empty {
+            display: none;
+          }
+          #event_info:has(#left_info:empty + #feature_indicator:empty) {
+            display: none;
+          }
+        `}
+      </style>
     </Flex>
   );
 }

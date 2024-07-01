@@ -136,8 +136,9 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
+    "recommended": "Recomendado",
     "open-in-learnpack-button": {
-      "text": "Abrir en la nube (recomendado)",
+      "text": "Abrir en la nube",
       "title": "Abrir en la nube",
       "description": "Nosotros nos encargamos de la <a class=\"link\" href=\"https://4geeks.com/aprende-en-un-clic\">configuración e instalación</a> de todas las tecnologías requeridas para realizar este ejercicio.",
       "type": "dropdown"

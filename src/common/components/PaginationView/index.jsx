@@ -10,7 +10,7 @@ import { getQueryString, isNumber } from '../../../utils';
 import { CardSkeleton } from '../Skeleton';
 import { DOMAIN_NAME } from '../../../utils/variables';
 
-function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFunction, options }) {
+function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFunction, options, type }) {
   const [data, setData] = useState([]);
   const [pageProps, setPageProps] = useState({});
   const router = useRouter();
@@ -124,6 +124,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
         <Box key={index}>{renderComponent(item)}</Box>
       )) : (
         <ProjectList
+          type={type}
           projects={resultsFilteredByLang || []}
           withoutDifficulty
           contextFilter={options?.contextFilter}
@@ -147,6 +148,7 @@ function PaginatedView({ storyConfig, renderComponent, handlePageChange, queryFu
 }
 
 PaginatedView.propTypes = {
+  type: PropTypes.string.isRequired,
   storyConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   renderComponent: PropTypes.func,
   queryFunction: PropTypes.func.isRequired,

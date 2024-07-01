@@ -79,7 +79,7 @@ function TechnologiesSection({
           })}
         </Flex>
       </Collapse>
-      {(filteredTechnologies.length >= 17 || !isMobile) && (
+      {(filteredTechnologies.length >= 17 || (!isMobile && filteredTechnologies.length >= 10)) && (
       <Flex width="100%" justifyContent="right">
         <Box
           as="button"
