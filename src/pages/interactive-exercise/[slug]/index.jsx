@@ -417,11 +417,19 @@ function Exercise({ exercise, markdown }) {
             <Box display={{ base: 'block', md: 'none' }}>
               <TabletWithForm showSimpleTable={false} asset={exercise} href="/interactive-exercises" ref={tabletWithFormRef} />
             </Box>
-            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+            <RelatedContent
+              slug={exercise.slug}
+              type="EXERCISE"
+              extraQuerys={{}}
+              technologies={exercise?.technologies}
+              gridColumn="2 / span 10"
+              maxWidth="1280px"
+            />
             <MktRecommendedCourses
               mt="3rem"
               technologies={exercise?.technologies}
             />
+            <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
           </Box>
         </Box>
 
@@ -434,14 +442,6 @@ function Exercise({ exercise, markdown }) {
           opacity={0}
           minWidth="250px"
           zIndex={-1}
-        />
-        <RelatedContent
-          slug={exercise.slug}
-          type="EXERCISE"
-          extraQuerys={{}}
-          technologies={exercise?.technologies}
-          gridColumn="2 / span 10"
-          maxWidth="1280px"
         />
       </GridContainer>
 

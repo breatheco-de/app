@@ -137,8 +137,9 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
+    "recommended": "Recommended",
     "open-in-learnpack-button": {
-      "text": "Open in the cloud (recommended)",
+      "text": "Open in the cloud",
       "title": "Open in the cloud",
       "description": "We take care of <a class=\"link\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
       "type": "dropdown"

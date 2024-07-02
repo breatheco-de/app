@@ -14,6 +14,7 @@ const RecommendedCourses = ({ slice }) => (
     technologies={slice.primary.technologies}
     title={slice?.primary?.title}
     margin={slice?.primary?.margin || '20px auto 0 auto'}
+    mx={{ base: '10px', md: '2rem' }}
     gridColumn="2 / span 8"
   />
 );

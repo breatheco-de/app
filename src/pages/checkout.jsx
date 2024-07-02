@@ -670,7 +670,7 @@ function Checkout() {
                   {t('you-are-getting')}
                 </Text>
                 <Flex gridGap="7px">
-                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />}
+                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
                   <Flex flexDirection="column" gridGap="7px" justifyContent="center">
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
