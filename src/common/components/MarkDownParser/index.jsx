@@ -204,7 +204,7 @@ function MarkDownParser({
   }, [subTasksProps]);
 
   const {
-    token, assetSlug, gitpod, interactive
+    token, assetSlug, gitpod, interactive,
   } = callToActionProps;
   const assetType = currentData?.asset_type;
 
@@ -249,7 +249,7 @@ function MarkDownParser({
       links: provisioningLinks,
     }
     if (cohortSession?.id) {
-      setLearnpackActions(gitpod ? [ cloudActions, baseAction ] : [ baseAction ]);
+      setLearnpackActions(gitpod ? [cloudActions,baseAction] : [baseAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
