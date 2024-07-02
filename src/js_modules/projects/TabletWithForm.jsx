@@ -151,21 +151,23 @@ const TabletWithForm = React.forwardRef(({
             )}
             {asset.interactive ? (
               <>
-                {asset.gitpod && <Button
-                  borderRadius="3px"
-                  width="100%"
-                  padding="0"
-                  whiteSpace="normal"
-                  variant="default"
-                  color="white"
-                  alignItems="center"
-                  gridGap="8px"
-                  background={hexColor.greenLight}
-                  onClick={() => setShowModal(true)}
-                >
-                  <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
-                  <Text fontSize="14px">{t('open-learnpack')}</Text>
-                </Button>}
+                {asset.gitpod && (
+                  <Button
+                    borderRadius="3px"
+                    width="100%"
+                    padding="0"
+                    whiteSpace="normal"
+                    variant="default"
+                    color="white"
+                    alignItems="center"
+                    gridGap="8px"
+                    background={hexColor.greenLight}
+                    onClick={() => setShowModal(true)}
+                  >
+                    <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
+                    <Text fontSize="14px">{t('open-learnpack')}</Text>
+                  </Button>
+                )}
                 <Button
                   borderRadius="3px"
                   width="100%"
