@@ -204,7 +204,7 @@ function MarkDownParser({
   }, [subTasksProps]);
 
   const {
-    token, assetSlug, gitpod,
+    token, assetSlug, gitpod, interactive
   } = callToActionProps;
   const assetType = currentData?.asset_type;
 
@@ -237,20 +237,19 @@ function MarkDownParser({
   }, [content]);
   useEffect(() => {
     const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+    const baseAction = {
+      text: t('learnpack.open-locally'),
+      type: 'button',
+      onClick: () => {
+        setShowCloneModal(true);
+      },
+    };
+    const cloudActions = {
+      ...openInLearnpackAction,
+      links: provisioningLinks,
+    }
     if (cohortSession?.id) {
-      setLearnpackActions([
-        {
-          ...openInLearnpackAction,
-          links: provisioningLinks,
-        },
-        {
-          text: t('learnpack.open-locally'),
-          type: 'button',
-          onClick: () => {
-            setShowCloneModal(true);
-          },
-        },
-      ]);
+      setLearnpackActions(gitpod ? [ cloudActions, baseAction ] : [ baseAction ]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
@@ -309,11 +308,12 @@ function MarkDownParser({
       </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
-        callToAction={gitpod === true && (
+        callToAction={interactive === true && (
           <CallToAction
             buttonStyle={{
               color: 'white',
             }}
+            localhostOnly={!gitpod}
             background="blue.default"
             margin="12px 0 20px 0px"
             icon="learnpack"

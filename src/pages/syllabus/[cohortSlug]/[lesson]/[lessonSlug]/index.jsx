@@ -293,7 +293,8 @@ function Content() {
           setCallToActionProps({
             token: accessToken,
             assetSlug: lessonSlug,
-            gitpod: data.interactive,
+            interactive: data.interactive,
+            gitpod: data.gitpod,
             assetType: assetTypeValues[lesson],
           });
           setReadmeUrlPathname(finalPathname);
