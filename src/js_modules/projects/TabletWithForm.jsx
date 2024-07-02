@@ -42,13 +42,13 @@ const TabletWithForm = React.forwardRef(({
 
   const getTitleMessage = () => {
     if (user) return '';
-    if (asset.gitpod) return t('direct-access-interactive');
+    if (asset.interactive) return t('direct-access-interactive');
     if (asset.solution_url) return t('direct-access-solution');
     return t('direct-access-similar');
   };
 
   const getLoggedTitleMessage = () => {
-    if (asset.gitpod) return t('download');
+    if (asset.interactive) return t('download');
     if (asset.solution_url) return t('access-solution');
     return t('similar-projects');
   };
@@ -75,8 +75,8 @@ const TabletWithForm = React.forwardRef(({
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
             repository={asset.readme_url}
             duration={asset.duration}
-            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
-            solution={asset.gitpod ? asset.solution_url : null}
+            videoAvailable={asset.interactive ? asset.solution_video_url : null}
+            solution={asset.interactive ? asset.solution_url : null}
             liveDemoAvailable={asset?.intro_video_url}
             technologies={technologies}
           />
@@ -149,9 +149,9 @@ const TabletWithForm = React.forwardRef(({
                 </Text>
               </>
             )}
-            {asset.gitpod ? (
+            {asset.interactive ? (
               <>
-                <Button
+                {asset.gitpod && <Button
                   borderRadius="3px"
                   width="100%"
                   padding="0"
@@ -165,7 +165,7 @@ const TabletWithForm = React.forwardRef(({
                 >
                   <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
                   <Text fontSize="14px">{t('open-learnpack')}</Text>
-                </Button>
+                </Button>}
                 <Button
                   borderRadius="3px"
                   width="100%"
@@ -364,8 +364,8 @@ const TabletWithForm = React.forwardRef(({
             difficulty={asset.difficulty !== null && asset.difficulty.toLowerCase()}
             repository={asset.readme_url}
             duration={asset.duration}
-            videoAvailable={asset.gitpod ? asset.solution_video_url : null}
-            solution={asset.gitpod ? asset.solution_url : null}
+            videoAvailable={asset.interactive ? asset.solution_video_url : null}
+            solution={asset.interactive ? asset.solution_url : null}
             liveDemoAvailable={asset.intro_video_url}
             technologies={technologies}
           />
