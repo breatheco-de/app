@@ -247,7 +247,7 @@ function MarkDownParser({
     const cloudActions = {
       ...openInLearnpackAction,
       links: provisioningLinks,
-    }
+    };
     if (cohortSession?.id) {
       setLearnpackActions(gitpod ? [cloudActions, baseAction] : [baseAction]);
     }
