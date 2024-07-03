@@ -104,7 +104,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 0px' : '16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '410px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
+    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 0px' : '16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '360px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
       {/* <--------------- Head content (average duration and technology icon/tag) ---------------> */}
       <HeadInfo
         technologies={data?.technologies || technologies}
