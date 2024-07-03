@@ -19,6 +19,7 @@ import ProjectsLoader from '../../common/components/ProjectsLoader';
 import { parseQuerys } from '../../utils/url';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { log } from '../../utils/logging';
+import { types } from '../../common/components/DynamicContentCard/card-types';
 
 const contentPerPage = 20;
 
@@ -239,12 +240,14 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
       <GridContainer withContainer gridColumn="1 / span 10" maxWidth="1280px">
         <Text
           size="md"
+          display="inline-block"
           padding={{ base: '30px 8%', md: '30px 28%' }}
           textAlign="center"
           dangerouslySetInnerHTML={{ __html: t('description') }}
         />
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
+            type={types.exercise}
             articles={exercises}
             itemsPerPage={contentPerPage}
             lang={lang}
@@ -260,6 +263,7 @@ function Exercices({ exercises, technologyTags, difficulties, count }) {
           />
         ) : (
           <PaginatedView
+            type={types.exercise}
             queryFunction={queryFunction}
             options={{
               pagePath: '/interactive-exercises',

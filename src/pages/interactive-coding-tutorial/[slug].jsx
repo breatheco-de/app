@@ -357,12 +357,22 @@ function ProjectSlug({ project, markdown }) {
               <Box display={{ base: 'block', lg: 'none' }} mt="20px">
                 <TabletWithForm hideCloneButton showSimpleTable={false} ref={tabletWithFormRef} asset={project} technologies={project?.technologies} href="/interactive-coding-tutorials" />
               </Box>
-              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+              {project?.slug && (
+                <RelatedContent
+                  slug={project.slug}
+                  type="PROJECT"
+                  extraQuerys={{}}
+                  technologies={project?.technologies}
+                  gridColumn="2 / span 10"
+                  maxWidth="1280px"
+                />
+              )}
               <MktRecommendedCourses
                 mt="3rem"
                 marginTop="15px"
                 technologies={project?.technologies}
               />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
             </Box>
           </Box>
         </Flex>
@@ -397,16 +407,6 @@ function ProjectSlug({ project, markdown }) {
             <Skeleton height="646px" width="100%" borderRadius="17px" />
           )}
         </Box>
-        {project?.slug && (
-          <RelatedContent
-            slug={project.slug}
-            type="PROJECT"
-            extraQuerys={{}}
-            technologies={project?.technologies}
-            gridColumn="2 / span 10"
-            maxWidth="1280px"
-          />
-        )}
       </GridContainer>
     </>
   );

@@ -238,7 +238,7 @@ function MarkDownParser({
   useEffect(() => {
     const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
     const baseAction = {
-      text: t('learnpack.open-locally'),
+      text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
       type: 'button',
       onClick: () => {
         setShowCloneModal(true);
@@ -246,10 +246,11 @@ function MarkDownParser({
     };
     const cloudActions = {
       ...openInLearnpackAction,
+      text: `${openInLearnpackAction.text}${cohortSession?.available_as_saas === false ? ` (${t('learnpack.recommended')})` : ''}`,
       links: provisioningLinks,
     };
     if (cohortSession?.id) {
-      setLearnpackActions(gitpod ? [cloudActions, baseAction] : [baseAction]);
+      setLearnpackActions(gitpod ? (cohortSession?.available_as_saas ? [baseAction, cloudActions] : [cloudActions, baseAction]) : [baseAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
@@ -315,6 +316,7 @@ function MarkDownParser({
             }}
             localhostOnly={!gitpod}
             background="blue.default"
+            reverseButtons={cohortSession?.available_as_saas}
             margin="12px 0 20px 0px"
             icon="learnpack"
             text={t('learnpack.description', { projectName: currentData?.title })}

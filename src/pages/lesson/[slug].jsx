@@ -295,24 +295,37 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
           {markdown && !isIpynb ? (
             <Box
-              height="100%"
-              margin="0 rem auto 0 auto"
-              // display="grid"
               gridColumn="2 / span 12"
-              transition="background 0.2s ease-in-out"
-              borderRadius="3px"
-              maxWidth="1280px"
-              background={useColorModeValue('white', 'dark')}
-              width={{ base: '100%', md: 'auto' }}
-              className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              margin="0 rem auto 0 auto"
+              height="100%"
             >
-              <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
-              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="20px 0 31px 0" />
+              <Box
+                transition="background 0.2s ease-in-out"
+                background={useColorModeValue('white', 'dark')}
+                borderRadius="3px"
+                maxWidth="1280px"
+                width={{ base: '100%', md: 'auto' }}
+                className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+              >
+                <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
+              </Box>
+              {lesson?.slug && (
+                <RelatedContent
+                  slug={lesson?.slug}
+                  type="LESSON,ARTICLE"
+                  extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+                  technologies={lesson?.technologies}
+                  margin="4rem 0 0 0"
+                  maxWidth="1280px"
+                />
+              )}
               <MktRecommendedCourses
                 mt="3rem"
+                mx="0"
                 display={{ base: 'none', md: 'flex' }}
                 technologies={lesson?.technologies}
               />
+              <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="3rem 0 31px 0" />
             </Box>
           ) : (
             <>
@@ -405,6 +418,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   <IpynbHtmlParser
                     html={ipynbHtml.html}
                   />
+                  {lesson?.slug && (
+                    <RelatedContent
+                      slug={lesson?.slug}
+                      type="LESSON,ARTICLE"
+                      extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
+                      technologies={lesson?.technologies}
+                      maxWidth="1280px"
+                    />
+                  )}
                   <MktRecommendedCourses
                     display={{ base: 'none', md: 'flex' }}
                     technologies={lesson?.technologies}
@@ -415,16 +437,6 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </Box>
           )}
         </Box>
-        {lesson?.slug && (
-          <RelatedContent
-            slug={lesson?.slug}
-            type="LESSON,ARTICLE"
-            extraQuerys={{ exclude_category: excludeCagetoriesFor.lessons }}
-            technologies={lesson?.technologies}
-            gridColumn="2 / span 10"
-            maxWidth="1280px"
-          />
-        )}
       </GridContainer>
     </>
   );

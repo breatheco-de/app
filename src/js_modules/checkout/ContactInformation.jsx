@@ -46,6 +46,7 @@ function ContactInformation({
         padding="24px 0"
         backgroundColor={hexColor.backgroundColor}
         width="fit-content"
+        margin="0 1rem"
       >
         <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} justifyContent="space-between">
           <Heading size="21px">{t('about-you')}</Heading>
@@ -59,7 +60,8 @@ function ContactInformation({
           showVerifyEmail={false}
           courseChoosed={courseChoosed}
           extraFields={['phone']}
-          maxWidth="490px"
+          // maxWidth="490px"
+          maxWidth={{ base: 'auto', lg: '490px' }}
           formProps={formProps}
           setFormProps={setFormProps}
           onHandleSubmit={(data) => {
