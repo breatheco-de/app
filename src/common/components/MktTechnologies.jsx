@@ -58,7 +58,7 @@ function MktTechnologies({ id, endpoint, ...rest }) {
                 key={tech.slug}
                 src={tech.icon_url}
                 height="60px"
-                width="60px"
+                width="auto"
                 alt={tech?.title || tech?.slug}
               />
             ))}
