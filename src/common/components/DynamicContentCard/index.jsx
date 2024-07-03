@@ -195,7 +195,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
               <Avatar
                 width="35px"
                 height="35px"
-                src={data?.host_user?.avatar_url || ''}
+                src={data?.host_user?.profile?.avatar_url || ''}
               />
               <Flex flexDirection="column" gridGap="8px">
                 <Text size="14px" lineHeight="normal">
