@@ -44,7 +44,7 @@ function HeadInfo({ technologies, duration, type, date }) {
           {technologies.filter((tech) => tech.icon_url).map((tech) => {
             if (tech?.icon_url) {
               return (
-                <Image src={tech?.icon_url} width="auto" height={20} />
+                <Image src={tech?.icon_url} width={20} height={20} />
               );
             }
             return (
