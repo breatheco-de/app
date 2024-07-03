@@ -250,7 +250,8 @@ function MarkDownParser({
       links: provisioningLinks,
     };
     if (cohortSession?.id) {
-      setLearnpackActions(gitpod ? (cohortSession?.available_as_saas ? [baseAction, cloudActions] : [cloudActions, baseAction]) : [baseAction]);
+      const bothActions = cohortSession?.available_as_saas ? [baseAction, cloudActions] : [cloudActions, baseAction];
+      setLearnpackActions(gitpod ? bothActions : [baseAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
