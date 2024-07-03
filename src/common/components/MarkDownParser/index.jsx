@@ -237,7 +237,7 @@ function MarkDownParser({
   }, [content]);
   useEffect(() => {
     const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
-    const baseAction = {
+    const localhostAction = {
       text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
       type: 'button',
       onClick: () => {
@@ -250,7 +250,9 @@ function MarkDownParser({
       links: provisioningLinks,
     };
     if (cohortSession?.id) {
-      setLearnpackActions(gitpod ? (cohortSession?.available_as_saas ? [baseAction, cloudActions] : [cloudActions, baseAction]) : [baseAction]);
+      if (!gitpod) setLearnpackActions([localhostAction]);
+      else if (cohortSession.available_as_saas) setLearnpackActions([localhostAction, cloudActions]);
+      else setLearnpackActions([cloudActions, localhostAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
