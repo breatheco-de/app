@@ -317,8 +317,8 @@ function ProjectSlug({ project, markdown }) {
                     difficulty={project.difficulty !== null && project.difficulty.toLowerCase()}
                     repository={project.url}
                     duration={project.duration}
-                    videoAvailable={project.gitpod ? project.solution_video_url : null}
-                    solution={project.gitpod ? project.solution_url : null}
+                    videoAvailable={project.interactive ? project.solution_video_url : null}
+                    solution={project.interactive ? project.solution_url : null}
                     liveDemoAvailable={project.intro_video_url}
                     technologies={project?.technologies}
                   />
