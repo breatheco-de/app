@@ -24,7 +24,7 @@ function MktTechnologies({ id, endpoint, ...rest }) {
           }`,
         )
         .then((response) => {
-          setTechnologies(response.data?.filter((tech) => tech.icon_url));
+          setTechnologies(response.data?.filter((tech) => tech.icon_url && !tech.lang));
         });
     } catch (e) {
       log(e);
