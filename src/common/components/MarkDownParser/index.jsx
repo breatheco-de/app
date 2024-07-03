@@ -250,8 +250,8 @@ function MarkDownParser({
       links: provisioningLinks,
     };
     if (cohortSession?.id) {
-      if(!gitpod) setLearnpackActions([localhostAction]);
-      else if(cohortSession.available_as_saas) setLearnpackActions([localhostAction, cloudActions]);
+      if (!gitpod) setLearnpackActions([localhostAction]);
+      else if (cohortSession.available_as_saas) setLearnpackActions([localhostAction, cloudActions]);
       else setLearnpackActions([cloudActions, localhostAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
