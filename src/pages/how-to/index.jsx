@@ -39,7 +39,7 @@ const fetchArticles = async (lang, page, query) => {
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
-    asset_type: 'ARTICLE',
+    asset_type: 'LESSON,ARTICLE',
     status: 'PUBLISHED',
     academy: WHITE_LABEL_ACADEMY,
     language: lang,
