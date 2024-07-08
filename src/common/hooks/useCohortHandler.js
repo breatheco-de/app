@@ -236,6 +236,17 @@ function useCohortHandler() {
     return dailyModule;
   };
 
+  const getLastDoneTaskModuleData = () => {
+    let lastDoneTaskModule = null;
+    sortedAssignments.map(
+      // eslint-disable-next-line array-callback-return
+      (module) => {
+        if (module.modules.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
+      },
+    );
+    return lastDoneTaskModule;
+  };
+
   const getMandatoryProjects = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
       (assignment) => assignment.filteredModules.filter(
@@ -257,6 +268,7 @@ function useCohortHandler() {
     getCohortData,
     prepareTasks,
     getDailyModuleData,
+    getLastDoneTaskModuleData,
     getMandatoryProjects,
     getTasksWithoutCohort,
     userCapabilities,
