@@ -16,7 +16,7 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
   const router = useRouter();
   const lang = router.locale;
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY
+  const WHITE_LABEL_ACADEMY = process.env.WHITE_LABEL_ACADEMY;
 
   const hoursLimited = hoursToLimit * 60;
   const endpointDefault = endpoint || `/v1/events/all?academy=${WHITE_LABEL_ACADEMY}`;
