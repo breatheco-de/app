@@ -19,9 +19,9 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
   const lang = router.locale;
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const qsConnector = parseQuerys({
-        featured: true,
-        academy: WHITE_LABEL_ACADEMY,
-      }, (endpoint && endpoint?.includes('?')));
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  }, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
   const choosenEndpoint = endpoint || '/v1/events/all';
