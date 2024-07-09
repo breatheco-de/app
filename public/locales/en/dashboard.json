@@ -42,6 +42,10 @@
     "description": "Your lesson today is ",
     "buttonText": "Start today's module"
   },
+  "saasCohortcallToAction": {
+    "title": "Last worked module",
+    "buttonText": "Retake where you left"
+  },
   "cohortSideBar": {
     "title": "About your cohort",
     "cohort": "Your Cohort",
