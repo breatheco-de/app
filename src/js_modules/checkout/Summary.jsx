@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -40,6 +41,8 @@ function Summary() {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
+  const { query } = router;
+  const { mentorship_service_slug, event_service_slug } = query;
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
@@ -184,7 +187,7 @@ function Summary() {
   const handleSubmit = () => {
     if (!isPaymentIdle || isSubmitting || !selectedPlanCheckoutData?.plan_id) return;
     setIsSubmitting(true);
-    if (isNotTrial || !priceIsNotNumber) {
+    if ((isNotTrial || !priceIsNotNumber) && !mentorship_service_slug && event_service_slug) {
       nextStep();
       router.push({
         pathname: '/checkout',

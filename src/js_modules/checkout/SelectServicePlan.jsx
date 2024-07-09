@@ -1,6 +1,8 @@
+/* eslint-disable camelcase */
 import { Avatar, Box, Button, ListItem, UnorderedList, useColorModeValue } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
@@ -13,6 +15,9 @@ import modifyEnv from '../../../modifyEnv';
 
 function SelectServicePlan() {
   const { t, lang } = useTranslation('signup');
+  const router = useRouter();
+  const { query } = router;
+  const { mentorship_service_slug, event_service_slug } = query;
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { backgroundColor, hexColor, modal } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
@@ -20,8 +25,8 @@ function SelectServicePlan() {
   const [selectedService, setSelectedService] = useState({});
 
   // const queryPlans = getQueryString('plans');
-  const queryMentorshipServiceSet = getQueryString('mentorship_service_set');
-  const queryEventTypeSet = getQueryString('event_type_set');
+  const queryMentorshipServiceSet = mentorship_service_slug || getQueryString('mentorship_service_set');
+  const queryEventTypeSet = event_service_slug || getQueryString('event_type_set');
   const backgroundItem = useColorModeValue('#F9F9F9', 'gray.800');
 
   // const allQueryPlans = queryPlans.split(',');
