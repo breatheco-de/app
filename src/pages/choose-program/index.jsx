@@ -204,7 +204,7 @@ function chooseProgram() {
   }, [isAuthenticated, dataQuery?.cohorts, dataQuery?.roles]);
 
   useEffect(() => {
-    axios.defaults.headers.common.Academy = null;
+    delete axios.defaults.headers.common.Academy;
     setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
