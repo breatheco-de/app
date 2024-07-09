@@ -274,6 +274,7 @@ const breathecode = {
     const qs = parseQuerys(query, connector);
     return {
       getService: () => axios.get(`${url}/service?status=ACTIVE${qs}`),
+      getMentorshipServiceSets: () => axios.get(`${host}/payments/mentorshipserviceset`),
       getServiceSet: (mentorshipServiceSetId) => axios.get(`${host}/payments/mentorshipserviceset/${mentorshipServiceSetId}`),
       getMentor: () => axios.get(`${url}/mentor${qs}`),
       getMySessions: () => axios.get(`${urlNoAcademy}/user/me/session${qs}`),
@@ -341,6 +342,7 @@ const breathecode = {
         payConsumable: (data) => axios.post(`${url}/consumable/checkout${qs}`, data),
       }),
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
+      getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
       events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
     };

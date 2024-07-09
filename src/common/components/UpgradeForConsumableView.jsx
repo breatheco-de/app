@@ -75,15 +75,13 @@ function UpgradeForConsumableView({ externalData }) {
       if (isEventConsumable && findedEventTypeOfPlanCoincidences?.length > 0) {
         setStorageItem('redirected-from', router?.asPath);
         router.push({
-          pathname: '/checkout',
-          query: eventPropsToQueryString,
+          pathname: `/checkout/event/${eventPropsToQueryString.event_type_set}`,
         });
       }
       if (!isEventConsumable && coincidencesOfServiceWithOtherSubscriptions?.length > 0) {
         setStorageItem('redirected-from', router?.asPath);
         router.push({
-          pathname: '/checkout',
-          query: mentoryPropsToQueryString,
+          pathname: `/checkout/mentorship/${mentoryPropsToQueryString.mentorship_service_set}`,
         });
       }
     }
