@@ -28,7 +28,6 @@ import SimpleModal from '../../common/components/SimpleModal';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
-import axios from '../../axios';
 import Feedback from '../../common/components/Feedback';
 import LanguageSelector from '../../common/components/LanguageSelector';
 
@@ -204,7 +203,6 @@ function chooseProgram() {
   }, [isAuthenticated, dataQuery?.cohorts, dataQuery?.roles]);
 
   useEffect(() => {
-    delete axios.defaults.headers.common.Academy;
     setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
