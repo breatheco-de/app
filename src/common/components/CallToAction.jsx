@@ -54,6 +54,7 @@ function CallToAction({
         gridGap={{ base: '14px', md: buttonsData.length > 1 ? '14px' : '4vh' }}
         flexDirection={{ base: 'column', md: buttonsData.length > 1 ? 'column' : 'row' }}
         width="100%"
+        justifyContent="space-between"
       >
         <Box>
           {title && (
@@ -74,7 +75,6 @@ function CallToAction({
         </Box>
         <Box
           padding={{ base: '0 0 0 0', lg: '0' }}
-          width="100%"
           alignSelf="center"
           gridGap="14px"
           display={{ base: 'grid', md: 'flex' }}
@@ -85,9 +85,9 @@ function CallToAction({
           justifyContent={reverseButtons ? 'flex-end' : 'flex-start'}
         >
           {buttonText && !buttonsData?.length > 0 && (
-          <Button isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
-            {buttonText}
-          </Button>
+            <Button width="max-content" isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
+              {buttonText}
+            </Button>
           )}
           {buttonsData && buttonsData.map((element) => {
             const isDropdown = element?.type === 'dropdown';
@@ -106,6 +106,7 @@ function CallToAction({
                   color="white"
                   withoutBg
                   variant="outline"
+                  width="max-content"
                 >
                   {element.text}
                 </Button>
@@ -116,7 +117,7 @@ function CallToAction({
               return (
                 <Popover>
                   <PopoverTrigger>
-                    <Button variant="default" textTransform="uppercase" background="blue.400">{element?.text}</Button>
+                    <Button width="max-content" variant="default" textTransform="uppercase" background="blue.400">{element?.text}</Button>
                   </PopoverTrigger>
                   <PopoverContent width="min-content">
                     <PopoverArrow />

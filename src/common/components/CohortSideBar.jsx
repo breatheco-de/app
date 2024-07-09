@@ -134,7 +134,7 @@ function ProfilesSection({
       )}
 
       {paginationProps && (
-        <Box display={profiles.length <= 15} justifyContent="center" gridGap="10px">
+        <Box display={profiles.length <= 15 && 'none'} justifyContent="center" gridGap="10px">
           <Box
             color="blue.default"
             cursor="pointer"
