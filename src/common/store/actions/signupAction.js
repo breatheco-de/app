@@ -12,11 +12,13 @@ import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, g
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
+import useSession from '../../hooks/useSession';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 
 // eslint-disable-next-line no-unused-vars
 const useSignup = () => {
+  const { userSession } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
   const { t } = useTranslation('signup');
@@ -136,6 +138,9 @@ const useSignup = () => {
     const requests = getRequests();
     bc.payment().pay({
       ...requests,
+      conversion_info: {
+        ...userSession,
+      },
     })
       .then(async (response) => {
         const transactionData = await response.json();
