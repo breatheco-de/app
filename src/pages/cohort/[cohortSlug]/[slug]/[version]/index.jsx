@@ -604,7 +604,7 @@ function Dashboard() {
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
-                title={t('saasCohortcallToActioNn.title')}
+                title={t('saasCohortcallToAction.title')}
                 href={`#${slugify(lastTaskDoneModuleData.label)}`}
                 text={lastTaskDoneModuleData.description}
                 buttonText={t('saasCohortcallToAction.buttonText')}

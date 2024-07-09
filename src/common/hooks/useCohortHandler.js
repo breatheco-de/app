@@ -238,8 +238,7 @@ function useCohortHandler() {
 
   const getLastDoneTaskModuleData = () => {
     let lastDoneTaskModule = null;
-    sortedAssignments.map(
-      // eslint-disable-next-line array-callback-return
+    sortedAssignments.forEach(
       (module) => {
         if (module.modules.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
       },
