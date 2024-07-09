@@ -302,7 +302,7 @@ function ServiceSummary({ service }) {
               {service?.list?.length > 0 && (
                 <Box display="flex" flexDirection="column" gridGap="10px" padding="14px 23px" background={backgroundColor} borderRadius="15px">
                   <Box height="40px" display="flex" flexDirection={{ base: 'column', sm: 'row' }} margin={{ base: '0 0 30px 0', sm: '0' }} justifyContent="space-between" alignItems="center">
-                    <Heading as="span" size="21px">
+                    <Heading as="span" size="xsm">
                       {t('consumables.select-bundle')}
                     </Heading>
                     {selectedService?.id && service.list.length > 1 && (
@@ -600,7 +600,7 @@ function ServiceSummary({ service }) {
                           <Icon icon="idea" width="40px" height="40px" />
                         </Box>
                       </Box>
-                      <Box fontSize="21px" fontWeight={700}>
+                      <Box size="xsm" fontWeight={700}>
                         {t(`${service.serviceInfo.type}-bundle-title`)}
                       </Box>
                     </Box>
