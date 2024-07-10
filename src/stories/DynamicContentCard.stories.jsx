@@ -2,6 +2,7 @@ import React from 'react';
 import DynamicContentCard from '../common/components/DynamicContentCard';
 import { types } from '../common/components/DynamicContentCard/card-types';
 import { BREATHECODE_HOST } from '../utils/variables';
+import { Box } from '@chakra-ui/react';
 
 export default {
   title: 'Components/DynamicContentCard',
@@ -73,12 +74,14 @@ const defaultData = {
   gitpod: true,
   solution_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
   intro_video_url: 'https://www.youtube.com/watch?v=BpxptN4ytjA',
-  difficulty: 'Advanced',
+  difficulty: 'hard',
 };
 
 const Component = (args, context) => {
   return (
-    <DynamicContentCard {...args} />
+    <Box maxWidth="410px">
+      <DynamicContentCard {...args} />
+    </Box>
   )
 };
 

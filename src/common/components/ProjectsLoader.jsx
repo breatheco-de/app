@@ -7,7 +7,7 @@ import { isWindow } from '../../utils';
 import InfiniteScroll from './InfiniteScroll';
 import { ORIGIN_HOST } from '../../utils/variables';
 
-function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options, count, fetchData, lang }) {
+function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, options, count, fetchData, lang, type }) {
   const router = useRouter();
   const { locales } = router;
   const [currentPage, setCurrentPage] = useState(router?.query?.page ? Number(router.query.page) : 1);
@@ -68,6 +68,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
       >
         <ProjectList
           projects={articles}
+          type={type}
           {...options}
         />
       </InfiniteScroll>
@@ -77,6 +78,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
 }
 
 ProjectsLoader.propTypes = {
+  type: PropTypes.string.isRequired,
   articles: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   itemsPerPage: PropTypes.number.isRequired,
   count: PropTypes.number.isRequired,

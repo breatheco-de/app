@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
 import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -40,6 +41,8 @@ function Summary() {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
+  const { query } = router;
+  const { mentorship_service_slug, event_service_slug } = query;
 
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
@@ -184,7 +187,7 @@ function Summary() {
   const handleSubmit = () => {
     if (!isPaymentIdle || isSubmitting || !selectedPlanCheckoutData?.plan_id) return;
     setIsSubmitting(true);
-    if (isNotTrial || !priceIsNotNumber) {
+    if ((isNotTrial || !priceIsNotNumber) && !mentorship_service_slug && event_service_slug) {
       nextStep();
       router.push({
         pathname: '/checkout',
@@ -279,8 +282,8 @@ function Summary() {
       flexDirection="column"
       gridGap={isPaymentIdle && '30px'}
       mb="1rem"
-      width={{ base: '100%', md: '490px' }}
-      margin="0 auto"
+      width={{ base: 'auto', lg: '490px' }}
+      margin={{ base: '0 1rem', lg: '0 auto' }}
     >
       <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 0', md: '14px 0' }} height="100%" borderRadius="15px">
         <Box

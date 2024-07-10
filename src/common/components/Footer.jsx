@@ -132,13 +132,15 @@ function Footer({ pageProps }) {
                     </InputRightElement>
 
                   </InputGroup>
-                  <Box mt="15px">
-                    <ReCAPTCHA
-                      ref={captcha}
-                      sitekey={process.env.CAPTCHA_KEY}
-                      size="invisible"
-                    />
-                  </Box>
+                  {process.env.CAPTCHA_KEY && (
+                    <Box mt="15px">
+                      <ReCAPTCHA
+                        ref={captcha}
+                        sitekey={process.env.CAPTCHA_KEY}
+                        size="invisible"
+                      />
+                    </Box>
+                  )}
                 </form>
               ) : (
                 <AlertMessage

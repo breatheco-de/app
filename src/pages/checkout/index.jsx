@@ -17,31 +17,31 @@ import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import { Form, Formik } from 'formik';
-import { getDataContentProps } from '../utils/file';
-import bc from '../common/services/breathecode';
-import useAuth from '../common/hooks/useAuth';
-import useSession from '../common/hooks/useSession';
-import ContactInformation from '../js_modules/checkout/ContactInformation';
-import ChooseYourClass from '../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../utils';
-import Summary from '../js_modules/checkout/Summary';
-import PaymentInfo from '../js_modules/checkout/PaymentInfo';
-import useSignup from '../common/store/actions/signupAction';
-import axiosInstance from '../axios';
-import LoaderScreen from '../common/components/LoaderScreen';
-import ModalInfo from '../js_modules/moduleMap/modalInfo';
-import useStyle from '../common/hooks/useStyle';
-import Stepper from '../js_modules/checkout/Stepper';
-import ServiceSummary from '../js_modules/checkout/ServiceSummary';
-import Text from '../common/components/Text';
-import SelectServicePlan from '../js_modules/checkout/SelectServicePlan';
-import modifyEnv from '../../modifyEnv';
-import { BASE_PLAN, ORIGIN_HOST } from '../utils/variables';
-import { reportDatalayer } from '../utils/requests';
-import { getTranslations, processPlans } from '../common/handlers/subscriptions';
-import Icon from '../common/components/Icon';
-import AcordionList from '../common/components/AcordionList';
-import { usePersistentBySession } from '../common/hooks/usePersistent';
+import { getDataContentProps } from '../../utils/file';
+import bc from '../../common/services/breathecode';
+import useAuth from '../../common/hooks/useAuth';
+import useSession from '../../common/hooks/useSession';
+import ContactInformation from '../../js_modules/checkout/ContactInformation';
+import ChooseYourClass from '../../js_modules/checkout/ChooseYourClass';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../../utils';
+import Summary from '../../js_modules/checkout/Summary';
+import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
+import useSignup from '../../common/store/actions/signupAction';
+import axiosInstance from '../../axios';
+import LoaderScreen from '../../common/components/LoaderScreen';
+import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import useStyle from '../../common/hooks/useStyle';
+import Stepper from '../../js_modules/checkout/Stepper';
+import ServiceSummary from '../../js_modules/checkout/ServiceSummary';
+import Text from '../../common/components/Text';
+import SelectServicePlan from '../../js_modules/checkout/SelectServicePlan';
+import modifyEnv from '../../../modifyEnv';
+import { BASE_PLAN, ORIGIN_HOST } from '../../utils/variables';
+import { reportDatalayer } from '../../utils/requests';
+import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
+import Icon from '../../common/components/Icon';
+import AcordionList from '../../common/components/AcordionList';
+import { usePersistentBySession } from '../../common/hooks/usePersistent';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -696,7 +696,7 @@ function Checkout() {
                   {t('you-are-getting')}
                 </Text>
                 <Flex gridGap="7px">
-                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" borderRadius="50%" background="blue.default" />}
+                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
                   <Flex flexDirection="column" gridGap="7px" justifyContent="center">
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}

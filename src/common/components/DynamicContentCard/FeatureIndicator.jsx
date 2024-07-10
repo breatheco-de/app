@@ -22,7 +22,7 @@ function FeatureIndicator({ data, type }) {
     },
   };
   return (
-    <Flex margin="0 0 0 auto" gridGap="10px" alignItems="center">
+    <Flex id="feature_indicator" _empty={{ display: 'none' }} margin="0 0 0 auto" gridGap="10px" alignItems="center">
       {type === 'workshop' ? (
         <Flex display={langData?.[lang]?.title ? 'flex' : 'none'} alignItems="center" gridGap="8px" background={backgroundColor} padding="4px 10px" borderRadius="18px">
           <Text size="12px" textTransform="uppercase">

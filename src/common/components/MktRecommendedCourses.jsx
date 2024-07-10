@@ -71,7 +71,6 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
   return courses.length > 0 && (
     <Box width="100%" maxWidth="1280px" margin="2rem auto">
       <Box
-        mx={{ base: '10px', md: '2rem' }}
         flexWrap={{ base: 'wrap', xl: 'nowrap' }}
         id={id || 'recommended-courses'}
         borderRadius="11px"

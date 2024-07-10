@@ -81,7 +81,7 @@ function Dashboard() {
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments,
+    getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
   const { cohortSession, sortedAssignments, taskCohortNull } = state;
@@ -346,6 +346,7 @@ function Dashboard() {
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
+  const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
     (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
@@ -482,7 +483,7 @@ function Dashboard() {
             )}
 
             {mainTechnologies ? (
-              <TagCapsule containerStyle={{ padding: '6px 18px 6px 18px' }} tags={mainTechnologies} separator="/" />
+              <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
             ) : (
               <SimpleSkeleton
                 height="34px"
@@ -587,19 +588,29 @@ function Dashboard() {
               </Accordion>
             )}
 
-            {
-            cohortSession?.current_module && dailyModuleData && (
+            {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
                 title={t('callToAction.title')}
-                href={`#${dailyModuleData && slugify(dailyModuleData.label)}`}
+                href={`#${slugify(dailyModuleData.label)}`}
                 text={dailyModuleData.description}
                 buttonText={t('callToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
               />
-            )
-          }
+            )}
+
+            {cohortSession?.available_as_saas && lastTaskDoneModuleData && (
+              <CallToAction
+                background="blue.default"
+                margin="40px 0 auto 0"
+                title={t('saasCohortcallToAction.title')}
+                href={`#${slugify(lastTaskDoneModuleData.label)}`}
+                text={lastTaskDoneModuleData.description}
+                buttonText={t('saasCohortcallToAction.buttonText')}
+                width={{ base: '100%', md: 'fit-content' }}
+              />
+            )}
 
             {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">

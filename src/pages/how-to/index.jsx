@@ -21,6 +21,7 @@ import { getQueryString } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 import { log } from '../../utils/logging';
+import { types } from '../../common/components/DynamicContentCard/card-types';
 
 const contentPerPage = 20;
 
@@ -38,7 +39,7 @@ const fetchArticles = async (lang, page, query) => {
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
   const querys = parseQuerys({
-    asset_type: 'ARTICLE',
+    asset_type: 'LESSON,ARTICLE',
     status: 'PUBLISHED',
     academy: WHITE_LABEL_ACADEMY,
     language: lang,
@@ -250,6 +251,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
         </Text>
         {(search?.length > 0 || currentFilters > 0 || !pageIsEnabled) ? (
           <ProjectsLoader
+            type={types.howTo}
             articles={data}
             itemsPerPage={contentPerPage}
             count={count}
@@ -264,6 +266,7 @@ export default function HowTo({ data, technologyTags, difficulties, count }) {
           />
         ) : (
           <PaginatedView
+            type={types.howTo}
             queryFunction={queryFunction}
             options={{
               pagePath: '/how-to',
