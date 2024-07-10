@@ -1,17 +1,13 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { Formik, Form } from 'formik';
-import * as Yup from 'yup';
+import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Divider, Flex, Image, Input, useColorModeValue, useToast,
+  Box, Button, Flex, useToast,
   Tabs, TabList, TabPanels, Tab, TabPanel,
 } from '@chakra-ui/react';
-import { forwardRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-import FieldForm from '../../common/components/Forms/FieldForm';
 import useSignup from '../../common/store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
@@ -22,40 +18,23 @@ import { getCohort } from '../../common/handlers/cohorts';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
-import ModalCardError from './ModalCardError';
+import CardForm from './CardForm';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import LoaderScreen from '../../common/components/LoaderScreen';
-
-const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
-  const { t } = useTranslation('signup');
-  const { input } = useStyle();
-  const inputBorderColor = input.borderColor;
-
-  return (
-    <Input
-      {...rest}
-      placeholder={t('expiration-date')}
-      onClick={onClick}
-      height="50px"
-      borderRadius="3px"
-      borderColor={inputBorderColor}
-      ref={ref}
-      value={value}
-    />
-  );
-});
+import NextChakraLink from '../../common/components/NextChakraLink';
 
 function PaymentInfo() {
   const { t, lang } = useTranslation('signup');
 
   const {
-    state, setPaymentInfo, handlePayment, setSelectedPlanCheckoutData,
+    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment,
   } = useSignup();
-  const { paymentInfo, checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader } = state;
+  const {
+    checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment,
+  } = state;
   const cohortId = Number(getQueryString('cohort'));
   const { setCohortSession } = useCohortHandler();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
     title: '',
@@ -63,14 +42,7 @@ function PaymentInfo() {
   });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  // const [isReadyToJoinCohort, setIsReadyToJoinCohort] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('idle');
-  const [stateCard, setStateCard] = useState({
-    card_number: 0,
-    exp_month: 0,
-    exp_year: 0,
-    cvc: 0,
-  });
   const toast = useToast();
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
@@ -79,18 +51,6 @@ function PaymentInfo() {
   const isPaymentSuccess = paymentStatus === 'success';
   const isPaymentIdle = paymentStatus === 'idle';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
-  const isNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
-
-  const getPrice = (planProp) => {
-    if (isNotTrial) {
-      if (planProp?.financing_options?.length > 0 && planProp?.financing_options[0]?.monthly_price > 0) return planProp?.financing_options[0]?.monthly_price;
-      if (checkoutData?.amount_per_half > 0) return checkoutData?.amount_per_half;
-      if (checkoutData?.amount_per_month > 0) return checkoutData?.amount_per_month;
-      if (checkoutData?.amount_per_quarter > 0) return checkoutData?.amount_per_quarter;
-      if (checkoutData?.amount_per_year > 0) return checkoutData?.amount_per_year;
-    }
-    return t('free-trial');
-  };
 
   const redirectTocohort = (cohort) => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
@@ -128,34 +88,14 @@ function PaymentInfo() {
         }
       })
       .catch(() => {
-        setIsSubmitting(false);
+        setIsSubmittingPayment(false);
         setTimeout(() => {
           setReadyToRefetch(false);
         }, 600);
       });
   };
 
-  const priceIsNotNumber = Number.isNaN(Number(getPrice(selectedPlanCheckoutData)));
-
-  const { backgroundColor, fontColor, hexColor, backgroundColor3 } = useStyle();
-  const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
-
-  const infoValidation = Yup.object().shape({
-    owner_name: Yup.string()
-      .min(6, t('validators.owner_name-min'))
-      .required(t('validators.owner_name-required')),
-    card_number: Yup.string()
-      .min(16)
-      .max(20)
-      .required(t('validators.card_number-required')),
-    exp: Yup.string()
-      .min(5, t('validators.exp-min'))
-      .required(t('validators.exp-required')),
-    cvc: Yup.string()
-      .min(3)
-      .max(4)
-      .required(t('validators.cvc-required')),
-  });
+  const { backgroundColor, fontColor, hexColor } = useStyle();
 
   useEffect(() => {
     reportDatalayer({
@@ -212,7 +152,7 @@ function PaymentInfo() {
     } else {
       clearInterval(interval);
       setReadyToRefetch(false);
-      setIsSubmitting(false);
+      setIsSubmittingPayment(false);
       setTimeElapsed(0);
     }
     return () => clearInterval(interval);
@@ -220,7 +160,7 @@ function PaymentInfo() {
 
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
     const silentCode = data?.silent_code;
-    setIsSubmitting(false);
+    setIsSubmittingPayment(false);
     actions?.setSubmitting(false);
     callback();
     if (silentCode === SILENT_CODE.CARD_ERROR) {
@@ -249,6 +189,7 @@ function PaymentInfo() {
   const handleSubmit = async (actions, values) => {
     const resp = await bc.payment().addCard(values);
     const data = await resp.json();
+    setIsSubmittingCard(false);
 
     if (resp.ok) {
       const currency = cohortPlans[0]?.plan?.currency?.code;
@@ -271,7 +212,7 @@ function PaymentInfo() {
               ...selectedPlanCheckoutData,
               payment_success: true,
             });
-            setIsSubmitting(false);
+            setIsSubmittingPayment(false);
           } else {
             setPaymentStatus('error');
           }
@@ -287,33 +228,6 @@ function PaymentInfo() {
 
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 1rem', lg: '0 auto' }} position="relative">
-      <ModalCardError
-        openDeclinedModal={openDeclinedModal}
-        isSubmitting={isSubmitting}
-        setOpenDeclinedModal={setOpenDeclinedModal}
-        declinedModalProps={declinedModalProps}
-        handleTryAgain={() => {
-          setIsSubmitting(true);
-          handlePayment({}, true)
-            .then((data) => {
-              if (data.status === 'FULFILLED') {
-                setReadyToRefetch(true);
-              }
-              handlePaymentErrors(data, {}, () => setIsSubmitting(false));
-            })
-            .catch(() => {
-              toast({
-                position: 'top',
-                title: t('alert-message:card-error'),
-                description: t('alert-message:card-error-description'),
-                status: 'error',
-                duration: 6000,
-                isClosable: true,
-              });
-              setIsSubmitting(false);
-            });
-        }}
-      />
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
         {!isPaymentIdle ? (
           <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
@@ -324,7 +238,7 @@ function PaymentInfo() {
           </Flex>
         ) : (
           <>
-            <Heading size="18px">{t('payment-info')}</Heading>
+            <Heading size="18px">{t('payment-methods')}</Heading>
             <Box
               as="hr"
               width="20%"
@@ -339,11 +253,7 @@ function PaymentInfo() {
             <Tabs>
               <TabList>
                 {paymentMethods.map((method) => (
-                  <Tab
-                    onClick={() => {
-                      if (method.third_party_link) window.open(method.third_party_link);
-                    }}
-                  >
+                  <Tab>
                     {method.title}
                   </Tab>
                 ))}
@@ -353,26 +263,52 @@ function PaymentInfo() {
                   if (!method.is_credit_card) {
                     return (
                       <TabPanel>
-                        <Heading>
+                        <Heading mb="10px">
                           {method.title}
                         </Heading>
-                        <Text>
-                          {method.description}
-                        </Text>
+                        <Text size="md" dangerouslySetInnerHTML={{ __html: method.description }} />
+                        {method.third_party_link && (
+                          <Text mt="10px" color={hexColor.blueDefault}>
+                            <NextChakraLink target="_blank" href={method.third_party_link}>
+                              {t('click-here')}
+                            </NextChakraLink>
+                          </Text>
+                        )}
                       </TabPanel>
                     );
                   }
                   return (
                     <TabPanel>
-                      <Formik
-                        initialValues={{
-                          owner_name: '',
-                          card_number: '',
-                          exp: '',
-                          cvc: '',
+                      <CardForm
+                        modalCardErrorProps={{
+                          declinedModalProps,
+                          openDeclinedModal,
+                          setOpenDeclinedModal,
+                          handleTryAgain: () => {
+                            setIsSubmittingPayment(true);
+                            handlePayment({}, true)
+                              .then((data) => {
+                                if (data.status === 'FULFILLED') {
+                                  setReadyToRefetch(true);
+                                }
+                                handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
+                              })
+                              .catch(() => {
+                                toast({
+                                  position: 'top',
+                                  title: t('alert-message:card-error'),
+                                  description: t('alert-message:card-error-description'),
+                                  status: 'error',
+                                  duration: 6000,
+                                  isClosable: true,
+                                });
+                                setIsSubmittingPayment(false);
+                              });
+                          },
                         }}
-                        onSubmit={(values, actions) => {
-                          setIsSubmitting(true);
+                        onSubmit={(values, actions, stateCard) => {
+                          setIsSubmittingPayment(true);
+                          setIsSubmittingCard(true);
                           const monthAndYear = values.exp?.split('/');
                           const expMonth = monthAndYear[0];
                           const expYear = monthAndYear[1];
@@ -385,135 +321,7 @@ function PaymentInfo() {
                           };
                           handleSubmit(actions, allValues);
                         }}
-                        validationSchema={infoValidation}
-                      >
-                        {() => (
-                          <Form
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              gridGap: '22px',
-                            }}
-                          >
-                            <Box display="flex" gridGap="18px">
-                              <FieldForm
-                                type="text"
-                                name="owner_name"
-                                externValue={paymentInfo.owner_name}
-                                handleOnChange={(e) => {
-                                  setPaymentInfo('owner_name', e.target.value);
-                                  setStateCard({ ...stateCard, owner_name: e.target.value });
-                                }}
-                                pattern="[A-Za-z ]*"
-                                label={t('owner-name')}
-                              />
-                            </Box>
-                            <Box display="flex" gridGap="18px">
-                              <FieldForm
-                                type="text"
-                                name="card_number"
-                                externValue={paymentInfo.card_number}
-                                handleOnChange={(e) => {
-                                  const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                                  const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                                  e.target.value = newValue.slice(0, 19);
-                                  setPaymentInfo('card_number', e.target.value);
-                                  setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
-                                }}
-                                pattern="[0-9]*"
-                                label={t('card-number')}
-                              />
-                            </Box>
-                            <Box display="flex" gridGap="18px">
-                              <Box display="flex" gridGap="18px" flex={1}>
-                                <Box display="flex" flexDirection="column" flex={0.5}>
-                                  <FieldForm
-                                    style={{ flex: 0.5 }}
-                                    type="text"
-                                    name="exp"
-                                    externValue={paymentInfo.exp}
-                                    maxLength={3}
-                                    handleOnChange={(e) => {
-                                      let { value } = e.target;
-                                      if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
-                                        value += '/';
-                                      } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
-                                        value = value.slice(0, 1);
-                                      }
-                                      value = value.substring(0, 5);
-
-                                      setPaymentInfo('exp', value);
-                                    }}
-                                    pattern="[0-9]*"
-                                    label={t('expiration-date')}
-                                  />
-                                </Box>
-                                <FieldForm
-                                  style={{ flex: 0.5 }}
-                                  type="text"
-                                  name="cvc"
-                                  externValue={paymentInfo.cvc}
-                                  maxLength={3}
-                                  handleOnChange={(e) => {
-                                    const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                                    const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                                    e.target.value = newValue.slice(0, 4);
-
-                                    setPaymentInfo('cvc', e.target.value);
-                                  }}
-                                  pattern="[0-9]*"
-                                  label={t('cvc')}
-                                />
-                              </Box>
-                            </Box>
-                            {(isNotTrial || !priceIsNotNumber) ? (
-                              <Button
-                                type="submit"
-                                width="100%"
-                                variant="default"
-                                isLoading={isSubmitting}
-                                height="40px"
-                                mt="0"
-                              >
-                                {t('common:proceed-to-payment')}
-                              </Button>
-                            ) : (
-                              <Button
-                                type="submit"
-                                width="100%"
-                                variant="outline"
-                                borderColor="blue.200"
-                                isLoading={isSubmitting}
-                                background={featuredBackground}
-                                _hover={{ background: featuredBackground, opacity: 0.8 }}
-                                _active={{ background: featuredBackground, opacity: 1 }}
-                                color="blue.default"
-                                height="40px"
-                                mt="0"
-                              >
-                                {t('common:start-free-trial')}
-                              </Button>
-                            )}
-                          </Form>
-                        )}
-                      </Formik>
-                      {isPaymentIdle && (
-                        <Flex flexDirection="column" gridGap="1.5rem" margin="1.5rem 0 0 0" background={backgroundColor3} padding="1rem" borderRadius="6px">
-                          <Flex justifyContent="space-between" alignItems="center">
-                            <Flex gridGap="10px" alignItems="center">
-                              <Icon icon="padlock" width="20px" height="20px" color={hexColor.black} />
-                              <Text
-                                size="18px"
-                                letterSpacing="auto"
-                                dangerouslySetInnerHTML={{ __html: t('secure-checkout') }}
-                              />
-                            </Flex>
-                            <Image draggable={false} userSelect="none" src="/static/images/powered-by-stripe.png" width="auto" height="40px" objectFit="contain" />
-                          </Flex>
-                          <Divider />
-                          <Image draggable={false} userSelect="none" src="/static/images/payment-cards.png" width="100%" height="auto" objectFit="contain" />
-                        </Flex>
-                      )}
+                      />
                     </TabPanel>
                   );
                 })}
@@ -529,10 +337,10 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isLoading={isSubmitting}
+          isLoading={isSubmittingPayment}
           onClick={() => {
             if (isPaymentSuccess) {
-              setIsSubmitting(true);
+              setIsSubmittingPayment(true);
               setReadyToRefetch(true);
             } else {
               setPaymentStatus('idle');
@@ -545,14 +353,5 @@ function PaymentInfo() {
     </Box>
   );
 }
-
-CustomDateInput.propTypes = {
-  value: PropTypes.string,
-  onClick: PropTypes.func,
-};
-CustomDateInput.defaultProps = {
-  value: '',
-  onClick: () => {},
-};
 
 export default PaymentInfo;
