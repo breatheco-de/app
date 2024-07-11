@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-unsafe-optional-chaining */
 import { forwardRef, useState } from 'react';
 import { Formik, Form } from 'formik';
@@ -35,7 +34,7 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   );
 });
 
-function PaymentInfo({ onSubmit, modalCardErrorProps }) {
+function CardForm({ onSubmit, modalCardErrorProps }) {
   const { t } = useTranslation('signup');
 
   const {
@@ -245,13 +244,13 @@ CustomDateInput.defaultProps = {
   onClick: () => {},
 };
 
-PaymentInfo.propTypes = {
+CardForm.propTypes = {
   onSubmit: PropTypes.func,
   modalCardErrorProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-PaymentInfo.defaultProps = {
+CardForm.defaultProps = {
   onSubmit: () => {},
   modalCardErrorProps: {},
 };
 
-export default PaymentInfo;
+export default CardForm;

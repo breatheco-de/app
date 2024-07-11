@@ -494,11 +494,7 @@ function Checkout() {
         setLoader('paymentMethods', true);
         const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
         if (resp.status < 400) {
-          const sortedPaymentMethods = resp.data.sort((a) => {
-            if (a.third_party_link === null) return -1;
-            return 1;
-          });
-          setPaymentMethods(sortedPaymentMethods);
+          setPaymentMethods(resp.data);
         }
         setLoader('paymentMethods', false);
       }

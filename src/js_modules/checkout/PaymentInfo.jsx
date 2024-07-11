@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, Flex, useToast,
-  Tabs, TabList, TabPanels, Tab, TabPanel,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
@@ -21,6 +20,7 @@ import { SILENT_CODE } from '../../lib/types';
 import CardForm from './CardForm';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
+import AcordionList from '../../common/components/AcordionList';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import NextChakraLink from '../../common/components/NextChakraLink';
 
@@ -226,6 +226,44 @@ function PaymentInfo() {
     }
   };
 
+  const onSubmitCard = (values, actions, stateCard) => {
+    setIsSubmittingPayment(true);
+    setIsSubmittingCard(true);
+    const monthAndYear = values.exp?.split('/');
+    const expMonth = monthAndYear[0];
+    const expYear = monthAndYear[1];
+
+    const allValues = {
+      card_number: stateCard.card_number,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvc: values.cvc,
+    };
+    handleSubmit(actions, allValues);
+  };
+
+  const handleTryAgain = () => {
+    setIsSubmittingPayment(true);
+    handlePayment({}, true)
+      .then((data) => {
+        if (data.status === 'FULFILLED') {
+          setReadyToRefetch(true);
+        }
+        handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
+      })
+      .catch(() => {
+        toast({
+          position: 'top',
+          title: t('alert-message:card-error'),
+          description: t('alert-message:card-error-description'),
+          status: 'error',
+          duration: 6000,
+          isClosable: true,
+        });
+        setIsSubmittingPayment(false);
+      });
+  };
+
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 1rem', lg: '0 auto' }} position="relative">
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
@@ -250,84 +288,58 @@ function PaymentInfo() {
             {loader.paymentMethods && (
               <LoaderScreen />
             )}
-            <Tabs>
-              <TabList>
-                {paymentMethods.map((method) => (
-                  <Tab>
-                    {method.title}
-                  </Tab>
-                ))}
-              </TabList>
-              <TabPanels>
-                {paymentMethods.map((method) => {
+            <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+              <AcordionList
+                width="100%"
+                list={paymentMethods.map((method) => {
                   if (!method.is_credit_card) {
-                    return (
-                      <TabPanel>
-                        <Heading mb="10px">
-                          {method.title}
-                        </Heading>
-                        <Text size="md" dangerouslySetInnerHTML={{ __html: method.description }} />
-                        {method.third_party_link && (
-                          <Text mt="10px" color={hexColor.blueDefault}>
-                            <NextChakraLink target="_blank" href={method.third_party_link}>
-                              {t('click-here')}
-                            </NextChakraLink>
-                          </Text>
-                        )}
-                      </TabPanel>
-                    );
+                    return {
+                      ...method,
+                      onClick: (e) => {
+                        setTimeout(() => {
+                          console.log('clicked!');
+                          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 100);
+                      },
+                      description: (
+                        <>
+                          <Text size="md" dangerouslySetInnerHTML={{ __html: method.description }} />
+                          {method.third_party_link && (
+                            <Text mt="10px" color={hexColor.blueDefault}>
+                              <NextChakraLink target="_blank" href={method.third_party_link}>
+                                {t('click-here')}
+                              </NextChakraLink>
+                            </Text>
+                          )}
+                        </>
+                      ),
+                    };
                   }
-                  return (
-                    <TabPanel>
+                  return {
+                    ...method,
+                    description: (
                       <CardForm
                         modalCardErrorProps={{
                           declinedModalProps,
                           openDeclinedModal,
                           setOpenDeclinedModal,
-                          handleTryAgain: () => {
-                            setIsSubmittingPayment(true);
-                            handlePayment({}, true)
-                              .then((data) => {
-                                if (data.status === 'FULFILLED') {
-                                  setReadyToRefetch(true);
-                                }
-                                handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
-                              })
-                              .catch(() => {
-                                toast({
-                                  position: 'top',
-                                  title: t('alert-message:card-error'),
-                                  description: t('alert-message:card-error-description'),
-                                  status: 'error',
-                                  duration: 6000,
-                                  isClosable: true,
-                                });
-                                setIsSubmittingPayment(false);
-                              });
-                          },
+                          handleTryAgain,
                         }}
-                        onSubmit={(values, actions, stateCard) => {
-                          setIsSubmittingPayment(true);
-                          setIsSubmittingCard(true);
-                          const monthAndYear = values.exp?.split('/');
-                          const expMonth = monthAndYear[0];
-                          const expYear = monthAndYear[1];
-
-                          const allValues = {
-                            card_number: stateCard.card_number,
-                            exp_month: expMonth,
-                            exp_year: expYear,
-                            cvc: values.cvc,
-                          };
-                          handleSubmit(actions, allValues);
-                        }}
+                        onSubmit={onSubmitCard}
                       />
-                    </TabPanel>
-                  );
+                    ),
+                  };
                 })}
-              </TabPanels>
-
-            </Tabs>
+                paddingButton="10px 17px"
+                unstyled
+                gridGap="0"
+                containerStyles={{
+                  gridGap: '8px',
+                  allowToggle: true,
+                }}
+                descriptionStyle={{ padding: '10px 0 0 0' }}
+              />
+            </Flex>
           </>
         )}
       </Box>
