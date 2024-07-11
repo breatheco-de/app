@@ -29,6 +29,6 @@
   "reached-the-end-of-the-module": "Ha llegado al final del módulo actual \"{{label}}\" pero puede iniciar el siguiente módulo \"{{nextModuleLabel}}\" sin problemas.",
   "start-next-module": "Sí, comencemos el siguiente módulo.",
   "superseded-message": "Esta lección pertenece al archivo de legado, recomendamos leer una versión más actualizada:",
-  "solution-message": "Este proyecto tiene solución.",
-  "open-solution": "Puedes abrirla aquí"
+  "solution-message": "Este proyecto tiene una solución modelo que puedes revisar en caso de necesitar orientación adicional.",
+  "open-solution": "Haz clic aquí para revisar el modelo de solución"
 }
