@@ -456,8 +456,20 @@ function ServiceSummary({ service }) {
                               }, 100);
                             },
                             description: (
-                              <>
-                                <Text size="md" dangerouslySetInnerHTML={{ __html: method.description }} />
+                              <Box padding="0 17px">
+                                <Text
+                                  size="md"
+                                  className="method-description"
+                                  sx={{
+                                    a: {
+                                      color: hexColor.blueDefault,
+                                    },
+                                    'a:hover': {
+                                      opacity: 0.7,
+                                    },
+                                  }}
+                                  dangerouslySetInnerHTML={{ __html: method.description }}
+                                />
                                 {method.third_party_link && (
                                   <Text mt="10px" color={hexColor.blueDefault}>
                                     <NextChakraLink target="_blank" href={method.third_party_link}>
@@ -465,7 +477,7 @@ function ServiceSummary({ service }) {
                                     </NextChakraLink>
                                   </Text>
                                 )}
-                              </>
+                              </Box>
                             ),
                           };
                         }
