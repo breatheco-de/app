@@ -71,6 +71,12 @@ const reducer = (state, action) => {
         user: action.payload,
       };
     }
+    case 'LOADING': {
+      return {
+        ...state,
+        isLoading: action.payload,
+      };
+    }
     default: {
       return { ...state };
     }
@@ -209,6 +215,11 @@ function AuthProvider({ children, pageProps }) {
             handleSession(null);
           });
       }
+    } else {
+      dispatch({
+        type: 'LOADING',
+        payload: false,
+      });
     }
 
     return null;
