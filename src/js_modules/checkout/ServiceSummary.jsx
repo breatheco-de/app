@@ -1,32 +1,35 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Link } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../common/services/breathecode';
 import useSignup from '../../common/store/actions/signupAction';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import useAuth from '../../common/hooks/useAuth';
 import Text from '../../common/components/Text';
+import AcordionList from '../../common/components/AcordionList';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import LoaderScreen from '../../common/components/LoaderScreen';
 import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../modifyEnv';
 import CardForm from './CardForm';
-import ModalCardError from './ModalCardError';
 import { SILENT_CODE } from '../../lib/types';
 import { reportDatalayer } from '../../utils/requests';
 
 function ServiceSummary({ service }) {
+  const { isAuthenticated } = useAuth();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
-    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment,
+    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
   } = useSignup();
-  const { selectedService, isSubmittingCard } = state;
+  const { selectedService, paymentMethods, paymentStatus, loader } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [purchaseCompleted, setPurchaseCompleted] = useState(false);
   const { state: cohortState } = useCohortHandler();
   const { cohortSession } = cohortState;
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
@@ -37,6 +40,7 @@ function ServiceSummary({ service }) {
   });
 
   const redirectedFrom = getStorageItem('redirected-from');
+  const isPaymentSuccess = paymentStatus === 'success';
 
   const dataToAssign = {
     service: service?.service?.slug,
@@ -68,7 +72,7 @@ function ServiceSummary({ service }) {
                 }],
               },
             } });
-          setPurchaseCompleted(true);
+          setPaymentStatus('success');
           setConfirmationOpen(false);
         }
       })
@@ -158,6 +162,10 @@ function ServiceSummary({ service }) {
   };
 
   useEffect(() => {
+    if (service?.academy) getPaymentMethods(service.academy.id);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (service?.list?.length === 1) {
       handleSelectService(service.list[0]);
     }
@@ -181,17 +189,26 @@ function ServiceSummary({ service }) {
     }
   }, [service]);
 
+  const onSubmitCard = (values, actions, stateCard) => {
+    setIsSubmittingPayment(true);
+    setIsSubmittingCard(true);
+    const monthAndYear = values.exp?.split('/');
+    const expMonth = monthAndYear[0];
+    const expYear = monthAndYear[1];
+
+    const allValues = {
+      card_number: stateCard.card_number,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvc: values.cvc,
+    };
+    handleSubmit(actions, allValues);
+  };
+
   return (
     <Box mb="1rem">
-      <ModalCardError
-        disableTryAgain
-        isSubmitting={isSubmittingCard}
-        openDeclinedModal={openDeclinedModal}
-        setOpenDeclinedModal={setOpenDeclinedModal}
-        declinedModalProps={declinedModalProps}
-      />
 
-      {purchaseCompleted ? (
+      {isPaymentSuccess ? (
         <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
           <Box display="flex" flexDirection="column" gridGap="12px" alignItems="center" padding="14px 23px" background={backgroundColor} borderRadius="15px">
             <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-8.png`} border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
@@ -419,39 +436,66 @@ function ServiceSummary({ service }) {
               )}
             </Box>
             <Box display="flex" flexDirection="column" flex={0.5}>
-              <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
-                <Heading
-                  size="xsm"
-                  p="0 0 12px 0"
-                >
-                  {t('select-payment-plan')}
-                </Heading>
-                <Box display="flex" flexDirection="column" gridGap="10px">
-                  <CardForm
-                    modalCardErrorProps={{
-                      disableTryAgain: true,
-                      openDeclinedModal,
-                      setOpenDeclinedModal,
-                      declinedModalProps,
-                    }}
-                    onSubmit={(values, actions, stateCard) => {
-                      setIsSubmittingPayment(true);
-                      setIsSubmittingCard(true);
-                      const monthAndYear = values.exp?.split('/');
-                      const expMonth = monthAndYear[0];
-                      const expYear = monthAndYear[1];
-
-                      const allValues = {
-                        card_number: stateCard.card_number,
-                        exp_month: expMonth,
-                        exp_year: expYear,
-                        cvc: values.cvc,
-                      };
-                      handleSubmit(actions, allValues);
-                    }}
-                  />
+              {loader.paymentMethods ? (
+                <LoaderScreen />
+              ) : (
+                <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
+                  <Heading size="xsm">
+                    {t('payment-methods')}
+                  </Heading>
+                  <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                    <AcordionList
+                      width="100%"
+                      list={paymentMethods.map((method) => {
+                        if (!method.is_credit_card) {
+                          return {
+                            ...method,
+                            onClick: (e) => {
+                              setTimeout(() => {
+                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 100);
+                            },
+                            description: (
+                              <>
+                                <Text size="md" dangerouslySetInnerHTML={{ __html: method.description }} />
+                                {method.third_party_link && (
+                                  <Text mt="10px" color={hexColor.blueDefault}>
+                                    <NextChakraLink target="_blank" href={method.third_party_link}>
+                                      {t('click-here')}
+                                    </NextChakraLink>
+                                  </Text>
+                                )}
+                              </>
+                            ),
+                          };
+                        }
+                        return {
+                          ...method,
+                          description: (
+                            <CardForm
+                              modalCardErrorProps={{
+                                disableTryAgain: true,
+                                openDeclinedModal,
+                                setOpenDeclinedModal,
+                                declinedModalProps,
+                              }}
+                              onSubmit={onSubmitCard}
+                            />
+                          ),
+                        };
+                      })}
+                      paddingButton="10px 17px"
+                      unstyled
+                      gridGap="0"
+                      containerStyles={{
+                        gridGap: '8px',
+                        allowToggle: true,
+                      }}
+                      descriptionStyle={{ padding: '10px 0 0 0' }}
+                    />
+                  </Flex>
                 </Box>
-              </Box>
+              )}
             </Box>
             <ModalInfo
               isOpen={confirmationOpen}

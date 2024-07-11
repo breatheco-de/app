@@ -10,6 +10,7 @@ import bc from '../../common/services/breathecode';
 import useSignup from '../../common/store/actions/signupAction';
 import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
+import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
@@ -26,12 +27,13 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 
 function PaymentInfo() {
   const { t, lang } = useTranslation('signup');
+  const { isAuthenticated } = useAuth();
 
   const {
-    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment,
+    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
   } = useSignup();
   const {
-    checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment,
+    checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
   const cohortId = Number(getQueryString('cohort'));
   const { setCohortSession } = useCohortHandler();
@@ -42,7 +44,6 @@ function PaymentInfo() {
   });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
-  const [paymentStatus, setPaymentStatus] = useState('idle');
   const toast = useToast();
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
@@ -157,6 +158,10 @@ function PaymentInfo() {
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
+
+  useEffect(() => {
+    if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
+  }, [selectedPlanCheckoutData, isAuthenticated]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
     const silentCode = data?.silent_code;
@@ -297,7 +302,6 @@ function PaymentInfo() {
                       ...method,
                       onClick: (e) => {
                         setTimeout(() => {
-                          console.log('clicked!');
                           e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }, 100);
                       },

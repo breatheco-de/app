@@ -15,11 +15,13 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
+import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 
 // eslint-disable-next-line no-unused-vars
 const useSignup = () => {
+  const { isAuthenticated } = useAuth();
   const { userSession } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -338,6 +340,24 @@ const useSignup = () => {
       });
   });
 
+  const getPaymentMethods = async (ownerId) => {
+    try {
+      if (isAuthenticated) {
+        setLoader('paymentMethods', false);
+        // const ownerId = selectedPlanCheckoutData.owner.id;
+        setLoader('paymentMethods', true);
+        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
+        if (resp.status < 400) {
+          setPaymentMethods(resp.data);
+        }
+        setLoader('paymentMethods', false);
+      }
+    } catch (e) {
+      console.log(e);
+      setLoader('paymentMethods', false);
+    }
+  };
+
   const getPaymentText = () => {
     const planIsNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
     const period = selectedPlanCheckoutData?.period;
@@ -430,6 +450,7 @@ const useSignup = () => {
     getPaymentText,
     handleServiceToConsume,
     setSelectedService,
+    getPaymentMethods,
   };
 };
 
