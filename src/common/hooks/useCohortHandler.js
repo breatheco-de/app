@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import useAuth from './useAuth';
 import { devLog, getStorageItem } from '../../utils';
 import useAssignments from '../store/actions/cohortAction';
 import bc from '../services/breathecode';
@@ -10,6 +11,7 @@ import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
 function useCohortHandler() {
   const router = useRouter();
+  const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
   const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useAssignments();
 
@@ -48,7 +50,7 @@ function useCohortHandler() {
   };
 
   const getCohortAssignments = ({
-    user, setContextState, slug, cohort,
+    setContextState, slug, cohort,
   }) => {
     if (user) {
       const academyId = cohort.academy.id;

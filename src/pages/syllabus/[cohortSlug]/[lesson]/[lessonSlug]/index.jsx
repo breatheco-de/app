@@ -43,7 +43,7 @@ import { log } from '../../../../../utils/logging';
 function Content() {
   const { t, lang } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const { contextState, setContextState } = useModuleMap();
   const [currentTask, setCurrentTask] = useState(null);
   const { setUserSession } = useSession();
@@ -155,15 +155,15 @@ function Content() {
       cohortSlug,
     });
     getCohortAssignments({
-      user, setContextState, cohort,
+      setContextState, cohort,
     });
   };
 
   useEffect(() => {
-    if (user) {
+    if (!isLoading) {
       setCohortAndAssignments();
     }
-  }, [user]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
@@ -779,27 +779,53 @@ function Content() {
                 quizSlug={quizSlug}
                 lessonSlug={lessonSlug}
                 currentTask={currentTask}
-                alerMessage={currentData?.superseded_by?.slug && (
-                  <AlertMessage
-                    type="warning"
-                    zIndex={99}
-                    full
-                    borderRadius="8px"
-                    backgroundColor={featuredCard.yellow.featured}
-                    margin="1rem 0"
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                    }}
-                  >
-                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                      {t('superseded-message')}
-                      {' '}
-                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
-                        {currentData?.superseded_by?.title}
-                      </Link>
-                    </Text>
-                  </AlertMessage>
+                alerMessage={(
+                  <>
+                    {currentData?.solution_url && (
+                      <AlertMessage
+                        type="warning"
+                        zIndex={99}
+                        full
+                        borderRadius="8px"
+                        backgroundColor={featuredCard.yellow.featured}
+                        margin="1rem 0"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                        }}
+                      >
+                        <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                          {t('solution-message')}
+                          {' '}
+                          <Link fontSize="15px" textDecoration="underline" href={currentData?.solution_url} target="_blank">
+                            You can see it here
+                          </Link>
+                        </Text>
+                      </AlertMessage>
+                    )}
+                    {currentData?.superseded_by?.slug && (
+                      <AlertMessage
+                        type="warning"
+                        zIndex={99}
+                        full
+                        borderRadius="8px"
+                        backgroundColor={featuredCard.yellow.featured}
+                        margin="1rem 0"
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                        }}
+                      >
+                        <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                          {t('superseded-message')}
+                          {' '}
+                          <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
+                            {currentData?.superseded_by?.title}
+                          </Link>
+                        </Text>
+                      </AlertMessage>
+                    )}
+                  </>
                 )}
               />
             )}
