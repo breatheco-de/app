@@ -29,7 +29,7 @@ export const withGuard = (PassedComponent) => {
       }, 150);
     };
 
-    if (!isLoading || isAuthenticated) {
+    if (!isLoading && isAuthenticated) {
       if (isDinamicPage) {
         return (
           <PassedComponent {...props} />
