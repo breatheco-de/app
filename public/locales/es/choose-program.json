@@ -44,7 +44,8 @@
     "why-feedback-text": "El feedback juega un papel importante al aprender habilidades técnicas",
     "learn-why": "Aprende por qué",
     "code-review": "Revisión de código",
-    "no-code-reviews-text": "En este espacio, tendrás acceso al feedback proporcionado por tu profesor una vez que hayas entregado tu proyecto.",
+    "no-code-reviews-text": "Aún no has recibido ningún comentario",
+    "start-interacting": "Comienza a interactuar con tu mentor o con tus tareas para recibir comentarios aquí.",
     "connect-github-connector": "antes de poder usar Rigobot y poder obtener feedback de tu código."
   },
   "late-payment": {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import bc from '../services/breathecode';
@@ -21,7 +21,7 @@ function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const accessToken = getStorageItem('accessToken');
-  const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();
+  const { backgroundColor, featuredColor, borderColor2, hexColor, featuredLight } = useStyle();
   const [selectedData, setSelectedData] = useState({});
   const [codeRevisions, setCodeRevisions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -113,7 +113,7 @@ function Feedback({ storyConfig }) {
               secondColor="transparent"
             >
               {isConnectedWithGithub ? (
-                <Text size="12px" textAlign="start">
+                <Text size="12px" textAlign="start" fontWeight="700">
                   {t('feedback.connect-rigobot-text')}
                   {' '}
                   <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
@@ -122,7 +122,7 @@ function Feedback({ storyConfig }) {
                   .
                 </Text>
               ) : (
-                <Text size="12px" textAlign="start">
+                <Text size="12px" textAlign="start" fontWeight="700">
                   <Button
                     variant="link"
                     height="auto"
@@ -146,7 +146,7 @@ function Feedback({ storyConfig }) {
               )}
             </AlertMessage>
           )}
-          <Text size="12px" textAlign="center">
+          <Text size="12px" textAlign="center" color={hexColor.fontColor3}>
             {t('feedback.why-feedback-text')}
             {' '}
             <Link fontSize="12px" variant="default" href={learnWhyLink[lang]}>
@@ -176,20 +176,20 @@ function Feedback({ storyConfig }) {
               <Icon icon="arrowLeft" width="13px" height="10px" padding="8px" style={{ flexShrink: 0, transform: 'rotate(180deg)' }} />
             </Flex>
           )) : (
-            <AlertMessage
-              type="info"
-              withoutIcon
-              background={featuredColor}
+            <Box
+              background={featuredLight}
               border="0px"
-              iconColor={hexColor.black}
-              color="currentcolor"
-              full
-              fontSize="12px"
               borderRadius="4px"
               padding="8px"
             >
-              {t('feedback.no-code-reviews-text')}
-            </AlertMessage>
+              <Avatar display="block" margin="auto" src={`${BREATHECODE_HOST}/static/img/avatar-4.png`} border="3px solid #ff186b" width="55px" height="55px" borderRadius="50px" />
+              <Heading margin="10px 0" fontSize="12px" textAlign="center">
+                {t('feedback.no-code-reviews-text')}
+              </Heading>
+              <Text size="sm" textAlign="center">
+                {t('feedback.start-interacting')}
+              </Text>
+            </Box>
           )}
         </Flex>
         <ReviewModal

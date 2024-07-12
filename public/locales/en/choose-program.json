@@ -44,7 +44,8 @@
     "why-feedback-text": "Feedback plays an important role when learning technical skills",
     "learn-why": "Learn why",
     "code-review": "Code review",
-    "no-code-reviews-text": "In this space, you will have access to the feedback provided by your teacher once you have submitted your project.",
+    "no-code-reviews-text": "You have not received any feedback yet",
+    "start-interacting": "Start interacting with your mentor or with your assignments to receive feedback here.",
     "connect-github-connector": "before you can use Rigobot and get feedback on your code."
   },
   "late-payment": {
