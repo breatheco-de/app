@@ -123,7 +123,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       setHaveSession(true);
       verifyIfHasPaidSubscription();
     }
-  }, [isLoading]);
+  }, [isLoading, isAuthenticated]);
 
   useEffect(() => {
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}`)
