@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import ReactPlayer from 'react-player';
+import useTranslation from 'next-translate/useTranslation';
 import { Box, Flex, Heading, IconButton, Image, Skeleton } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import Icon from './Icon';
@@ -8,6 +9,7 @@ import useStyle from '../hooks/useStyle';
 function ReactPlayerV2({
   url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, ...rest
 }) {
+  const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
   const isLoomVideo = url && url.includes('loom.com');
   const [showVideo, setShowVideo] = useState(false);
@@ -39,9 +41,10 @@ function ReactPlayerV2({
     }
   };
 
+  // The lang triggers this to change the thumbnail when the page is translated
   useEffect(() => {
     getThumbnail();
-  }, []);
+  }, [lang]);
 
   return videoUrl?.length > 0 && (
     <>
