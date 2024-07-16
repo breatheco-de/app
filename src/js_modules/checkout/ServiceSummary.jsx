@@ -208,13 +208,7 @@ function ServiceSummary({ service }) {
   }, [service]);
 
   return (
-    <Box
-      display="flex"
-      flexDirection={{ base: 'column', md: 'row' }}
-      gridGap="30px"
-      justifyContent="center"
-      mb="1rem"
-    >
+    <Box mb="1rem">
       <ModalCardError
         disableTryAgain
         isSubmitting={isSubmittingCard}
@@ -223,86 +217,90 @@ function ServiceSummary({ service }) {
         declinedModalProps={declinedModalProps}
       />
 
-      {purchaseCompleted
-        ? (
-          <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
-            <Box display="flex" flexDirection="column" gridGap="12px" alignItems="center" padding="14px 23px" background={backgroundColor} borderRadius="15px">
-              <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-8.png`} border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
-              <Box fontSize="26px" fontWeight={700} width={{ base: 'auto', md: '75%' }} textAlign="center">
-                {t('consumables.purchase-completed-title')}
-              </Box>
-            </Box>
-
-            <Box display="flex" justifyContent="space-between" gridGap="10px" padding="14px 10%" background={backgroundColor} borderRadius="15px">
-              <Box display="flex" flexDirection="column" gridGap="12px">
-                <Box color="yellow.default" fontSize="16px" textTransform="uppercase" fontWeight={900}>
-                  {t('consumables.you-have-received')}
-                </Box>
-                <Box display="flex" alignItems="center" gridGap="12px">
-                  <Box>
-                    <Box background="yellow.default" minWidth="50px" borderRadius="50px" width="fit-content" padding="10px">
-                      <Icon icon="idea" width="40px" height="40px" />
-                    </Box>
-                  </Box>
-                  <Box fontSize="21px" fontWeight={700}>
-                    {t(`${service.serviceInfo.type}-bundle-title`)}
-                  </Box>
-                </Box>
-              </Box>
-              <Box display="flex" flexDirection="column" justifyContent="center" gridGap="0px" fontWeight={700} lineHeight="32px" background="blue.default" alignItems="center" padding="10px 15px" borderRadius="11px" color="white">
-                <Box fontSize="38px">{selectedService?.qty}</Box>
-                <Box fontSize="28px">
-                  {service.serviceInfo.type === 'mentorship' ? 'sessions' : 'events'}
-                </Box>
-              </Box>
-            </Box>
-            <Box display="flex" gridGap="12px" margin="2rem auto 0 auto" alignItems="center">
-              <Link variant="default" onClick={() => localStorage.removeItem('redirected-from')} href={redirectedFrom || cohortSession?.selectedProgramSlug || ''}>
-                {t('common:go-back')}
-              </Link>
-              <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+      {purchaseCompleted ? (
+        <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
+          <Box display="flex" flexDirection="column" gridGap="12px" alignItems="center" padding="14px 23px" background={backgroundColor} borderRadius="15px">
+            <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-8.png`} border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
+            <Box fontSize="26px" fontWeight={700} width={{ base: 'auto', md: '75%' }} textAlign="center">
+              {t('consumables.purchase-completed-title')}
             </Box>
           </Box>
-        )
-        : (
-          <>
-            <Box display="flex" flexDirection="column" flex={0.5} gridGap="24px">
-              <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 22px', md: '14px 23px' }} height="100%" borderRadius="15px">
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  w="100%"
-                  height="fit-content"
-                  p="11px 14px"
-                  gridGap="8px"
-                  borderRadius="14px"
-                >
-                  <Heading size="16px" fontWeight={900} color="yellow.default" textTransform="uppercase">
-                    {t('getting-for')}
-                  </Heading>
-                  <Box display="flex" gridGap="12px" alignItems="center">
-                    <Box display="flex" flexDirection="column">
-                      <Box
-                        background="yellow.default"
-                        borderRadius="50px"
-                        width="fit-content"
-                        padding="10px"
-                      >
-                        <Icon icon="idea" width="40px" height="40px" color="#fff" />
-                      </Box>
-                    </Box>
-                    <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
-                      <Heading size="21px" width="70%">
-                        {t(`${service.serviceInfo.type}-bundle-title`)}
-                      </Heading>
-                    </Box>
+
+          <Box display="flex" justifyContent="space-between" gridGap="10px" padding="14px 10%" background={backgroundColor} borderRadius="15px">
+            <Box display="flex" flexDirection="column" gridGap="12px">
+              <Box color="yellow.default" fontSize="16px" textTransform="uppercase" fontWeight={900}>
+                {t('consumables.you-have-received')}
+              </Box>
+              <Box display="flex" alignItems="center" gridGap="12px">
+                <Box>
+                  <Box background="yellow.default" minWidth="50px" borderRadius="50px" width="fit-content" padding="10px">
+                    <Icon icon="idea" width="40px" height="40px" />
                   </Box>
                 </Box>
+                <Box fontSize="21px" fontWeight={700}>
+                  {t(`${service.serviceInfo.type}-bundle-title`)}
+                </Box>
               </Box>
+            </Box>
+            <Box display="flex" flexDirection="column" justifyContent="center" gridGap="0px" fontWeight={700} lineHeight="32px" background="blue.default" alignItems="center" padding="10px 15px" borderRadius="11px" color="white">
+              <Box fontSize="38px">{selectedService?.qty}</Box>
+              <Box fontSize="28px">
+                {service.serviceInfo.type === 'mentorship' ? 'sessions' : 'events'}
+              </Box>
+            </Box>
+          </Box>
+          <Box display="flex" gridGap="12px" margin="2rem auto 0 auto" alignItems="center">
+            <Link variant="default" onClick={() => localStorage.removeItem('redirected-from')} href={redirectedFrom || cohortSession?.selectedProgramSlug || ''}>
+              {t('common:go-back')}
+            </Link>
+            <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+          </Box>
+        </Box>
+      ) : (
+        <>
+          <Box display="flex" flexDirection="column" gridGap="3rem" background={backgroundColor} p={{ base: '20px 22px', md: '14px 23px' }} borderRadius="15px">
+            <Box
+              display="flex"
+              flexDirection="column"
+              w="100%"
+              height="fit-content"
+              p="11px 14px"
+              gridGap="8px"
+              borderRadius="14px"
+            >
+              <Heading size="16px" fontWeight={900} color="yellow.default" textTransform="uppercase">
+                {t('getting-for')}
+              </Heading>
+              <Box display="flex" gridGap="12px" alignItems="center">
+                <Box display="flex" flexDirection="column">
+                  <Box
+                    background="yellow.default"
+                    borderRadius="50px"
+                    width="fit-content"
+                    padding="10px"
+                  >
+                    <Icon icon="idea" width="40px" height="40px" color="#fff" />
+                  </Box>
+                </Box>
+                <Box display="flex" width="100%" flexDirection="column" gridGap="7px">
+                  <Heading size="21px" width="70%">
+                    {t(`${service.serviceInfo.type}-bundle-title`)}
+                  </Heading>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          <Box
+            display="flex"
+            flexDirection={{ base: 'column', md: 'row' }}
+            gridGap="30px"
+            justifyContent="center"
+          >
+            <Box display="flex" flexDirection="column" flex={0.5} gridGap="24px">
               {service?.list?.length > 0 && (
                 <Box display="flex" flexDirection="column" gridGap="10px" padding="14px 23px" background={backgroundColor} borderRadius="15px">
                   <Box height="40px" display="flex" flexDirection={{ base: 'column', sm: 'row' }} margin={{ base: '0 0 30px 0', sm: '0' }} justifyContent="space-between" alignItems="center">
-                    <Heading as="span" size="21px">
+                    <Heading as="span" size="xsm">
                       {t('consumables.select-bundle')}
                     </Heading>
                     {selectedService?.id && service.list.length > 1 && (
@@ -600,7 +598,7 @@ function ServiceSummary({ service }) {
                           <Icon icon="idea" width="40px" height="40px" />
                         </Box>
                       </Box>
-                      <Box fontSize="21px" fontWeight={700}>
+                      <Box size="xsm" fontWeight={700}>
                         {t(`${service.serviceInfo.type}-bundle-title`)}
                       </Box>
                     </Box>
@@ -623,8 +621,9 @@ function ServiceSummary({ service }) {
               closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
               closeButtonVariant="outline"
             />
-          </>
-        )}
+          </Box>
+        </>
+      )}
     </Box>
   );
 }
