@@ -46,7 +46,8 @@
     "code-review": "Revisión de código",
     "no-code-reviews-text": "Aún no has recibido ningún comentario",
     "start-interacting": "Comienza a interactuar con tu mentor o con tus tareas para recibir comentarios aquí.",
-    "connect-github-connector": "antes de poder usar Rigobot y poder obtener feedback de tu código."
+    "connect-github-connector": "antes de poder usar Rigobot y poder obtener feedback de tu código.",
+    "from": "De {{name}}"
   },
   "late-payment": {
     "title": "Acción requerida: Pagos atrasados",

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
 import bc from '../services/breathecode';
 import { decodeBase64, getStorageItem, unSlugifyCapitalize } from '../../utils';
 import ReviewModal from './ReviewModal';
@@ -160,16 +161,19 @@ function Feedback({ storyConfig }) {
             <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
-                <Flex flexDirection="column" gridGap="5px">
-                  <Heading size="12px" fontWeight={900}>
-                    {revision?.repository?.name
-                      ? unSlugifyCapitalize(revision?.repository?.name)
-                      : t('feedback.code-review')}
-                  </Heading>
-                  <Text size="12px" fontWeight={400} title={revision?.comment}>
-                    {revision?.comment.length >= 40
-                      ? `${revision?.comment.slice(0, 25)}...`
-                      : revision?.comment}
+                <Flex justifyContent="space-between" width="100%">
+                  <Flex flexDirection="column" gridGap="5px">
+                    <Heading size="12px" fontWeight={900}>
+                      {revision?.repository?.name
+                        ? unSlugifyCapitalize(revision?.repository?.name)
+                        : t('feedback.code-review')}
+                    </Heading>
+                    <Text size="12px" fontWeight={400} title={revision?.comment}>
+                      {t('feedback.from', { name: revision?.reviewer?.name })}
+                    </Text>
+                  </Flex>
+                  <Text size="sm" fontWeight={400} color={hexColor.fontColor3}>
+                    {format(new Date(revision?.created_at), 'dd/MM')}
                   </Text>
                 </Flex>
               </Flex>
