@@ -375,8 +375,8 @@ function Exercise({ exercise, markdown }) {
                   difficulty={exercise.difficulty !== null && exercise.difficulty.toLowerCase()}
                   repository={exercise.url}
                   duration={exercise.duration}
-                  videoAvailable={exercise.gitpod ? exercise.solution_video_url : null}
-                  solution={exercise.gitpod ? exercise.solution_url : null}
+                  videoAvailable={exercise.interactive ? exercise.solution_video_url : null}
+                  solution={exercise.interactive ? exercise.solution_url : null}
                   liveDemoAvailable={exercise.intro_video_url}
                 />
                 {/* <DynamicCallToAction

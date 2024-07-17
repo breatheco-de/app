@@ -1,6 +1,6 @@
 # 4Geeks.com App
 
-## Getting Started.
+## Getting Started
 
 1. Install Bun:
 

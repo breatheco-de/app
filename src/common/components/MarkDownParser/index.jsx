@@ -204,7 +204,7 @@ function MarkDownParser({
   }, [subTasksProps]);
 
   const {
-    token, assetSlug, gitpod,
+    token, assetSlug, gitpod, interactive,
   } = callToActionProps;
   const assetType = currentData?.asset_type;
 
@@ -237,21 +237,22 @@ function MarkDownParser({
   }, [content]);
   useEffect(() => {
     const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+    const localhostAction = {
+      text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
+      type: 'button',
+      onClick: () => {
+        setShowCloneModal(true);
+      },
+    };
+    const cloudActions = {
+      ...openInLearnpackAction,
+      text: `${openInLearnpackAction.text}${cohortSession?.available_as_saas === false ? ` (${t('learnpack.recommended')})` : ''}`,
+      links: provisioningLinks,
+    };
     if (cohortSession?.id) {
-      setLearnpackActions([
-        {
-          ...openInLearnpackAction,
-          text: `${openInLearnpackAction.text}${cohortSession?.available_as_saas === false ? ` (${t('learnpack.recommended')})` : ''}`,
-          links: provisioningLinks,
-        },
-        {
-          text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
-          type: 'button',
-          onClick: () => {
-            setShowCloneModal(true);
-          },
-        },
-      ]);
+      if (!gitpod) setLearnpackActions([localhostAction]);
+      else if (cohortSession.available_as_saas) setLearnpackActions([localhostAction, cloudActions]);
+      else setLearnpackActions([cloudActions, localhostAction]);
     }
   }, [token, assetSlug, lang, cohortSession?.id, currentData?.url]);
 
@@ -310,11 +311,12 @@ function MarkDownParser({
       </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
-        callToAction={gitpod === true && (
+        callToAction={interactive === true && (
           <CallToAction
             buttonStyle={{
               color: 'white',
             }}
+            localhostOnly={!gitpod}
             background="blue.default"
             reverseButtons={cohortSession?.available_as_saas}
             margin="12px 0 20px 0px"
