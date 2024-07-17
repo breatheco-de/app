@@ -30,6 +30,18 @@
   "join-workshop": "Register for this Workshop",
   "join": "Join Now",
   "event-finished": "Event Finished",
+  "checkin-modal": {
+    "title": "Thank you for signing up for our workshop, now is time to get ready",
+    "sub-title": "Get the most out of this workshop",
+    "items": [
+      "The host is already answering questions on our WhatsApp community",
+      "Chat with other attendees",
+      "Get updates about this and future workshops",
+      "Practice interactively  thanks to Learnpack and our AI mentor"
+    ],
+    "join-conversation": "Join the conversation",
+    "conversation-link": "https://chat.whatsapp.com/CBppI0ulMt8Dx4Fsw9AreG"
+  },
   "no-consumables": {
     "description": "You have run out of workshops, but don't worry, you can get more in a few clicks.",
     "link-text": "Learn more.",

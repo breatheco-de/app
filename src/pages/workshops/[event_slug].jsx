@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton,
+  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { reportDatalayer } from '../../utils/requests';
 import bc from '../../common/services/breathecode';
+import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
@@ -157,6 +158,7 @@ function Page({ eventData, asset }) {
   const [myCohorts, setMyCohorts] = useState([]);
   const [assetData, setAssetData] = useState(asset);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
+  const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
   const [randomImage, setRandomImage] = useState(arrayOfImages[0]);
   const accessToken = getStorageItem('accessToken');
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
@@ -355,7 +357,7 @@ function Page({ eventData, asset }) {
     ),
   ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
-  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
+  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (noConsumablesFound && consumables.isFetching === false);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
@@ -485,6 +487,7 @@ function Page({ eventData, asset }) {
           .then((resp) => {
             if (resp !== undefined) {
               setApplied(true);
+              setIsCheckinModalOpen(true);
               toast({
                 position: 'top',
                 status: 'success',
@@ -538,6 +541,50 @@ function Page({ eventData, asset }) {
           setIsModalToGetAccessOpen(false);
         }}
       />
+      <SimpleModal
+        isOpen={isCheckinModalOpen}
+        onClose={() => setIsCheckinModalOpen(false)}
+        closeOnOverlayClick={false}
+        padding="0px 0px 16px 0px"
+        maxWidth="52rem"
+        bodyStyles={{
+          display: 'flex',
+          // gridGap: withoutSpacing ? '20px' : '16px',
+          // padding: withoutSpacing && { base: '16px', md: '0.5rem 16px 0 0' },
+        }}
+      >
+        <Box display={{ base: 'none', md: 'flex' }} flex={0.5} alignItems="center" maxWidth="392px">
+          <Image src="/static/images/happy-meeting-2.webp" alt="Get Access" style={{ objectFit: 'cover' }} margin="2rem 0 0 0" borderBottomLeftRadius="6px" />
+        </Box>
+
+        <Flex gap="16px" background={hexColor.lightColor} borderRadius="11px" flexDirection="column" marginTop="2rem" flex={{ base: 1, md: 0.5 }} padding="32px 16px" width={{ base: 'auto', md: '394px' }}>
+          <Heading size="xsm">
+            {t('checkin-modal.title')}
+          </Heading>
+          <Text size="l" fontWeight="700" color={hexColor.fontColor2}>
+            {t('checkin-modal.sub-title')}
+          </Text>
+          <Flex flexDirection="column" gap="16px">
+            {t('checkin-modal.items', {}, { returnObjects: true }).map((item) => (
+              <Flex alignItems="center" gap="9px">
+                <Icon icon="checked2" color={hexColor.green} width="15px" height="11px" />
+                <Text size="md">
+                  {item}
+                </Text>
+              </Flex>
+            ))}
+          </Flex>
+          <Link margin="auto" href={t('checkin-modal.conversation-link')} target="_blank" style={{ textDecoration: 'none' }}>
+            <Button display="flex" alignItems="center" gap="5px" variant="outline" borderWidth="2px" borderColor={hexColor.blueDefault}>
+              <Icon icon="whatsapp" width="20px" height="14px" />
+              <Text size="md" fontWeight="700" color={hexColor.blueDefault}>
+                {t('checkin-modal.join-conversation')}
+              </Text>
+            </Button>
+          </Link>
+        </Flex>
+
+      </SimpleModal>
 
       <Head>
         <script
@@ -869,14 +916,6 @@ function Page({ eventData, asset }) {
                           <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
                         </Button>
                       </Box>
-                      // <>
-                      //   {hasFetchedAndNoConsumablesToUse ? (
-                      //   ) : (
-                      //     <Box position="relative" width="180px" height="130px" margin="0 auto">
-                      //       <LoaderScreen width="100%" height="100%" objectFit="cover" />
-                      //     </Box>
-                      //   )}
-                      // </>
                     )}
                   </>
                 ) : (
