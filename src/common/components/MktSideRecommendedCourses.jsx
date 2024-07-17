@@ -72,7 +72,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
       if (res?.status < 400 && data.length > 0) {
         const coursesSorted = [];
         for (let i = 0; i < technologiesArray.length; i += 1) {
-          const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]));
+          const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]) && c?.visibility !== 'UNLISTED');
           const alreadyExists = coursesSorted.some((c) => c?.slug === course?.slug);
 
           if (course && !alreadyExists) {
