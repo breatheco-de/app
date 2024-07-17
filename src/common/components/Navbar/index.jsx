@@ -19,6 +19,7 @@ import DesktopNav from '../../../js_modules/navbar/DesktopNav';
 import MobileNav from '../../../js_modules/navbar/MobileNav';
 import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useSession from '../../hooks/useSession';
 import Heading from '../Heading';
 import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
@@ -42,6 +43,8 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
+  const { userSession } = useSession();
+  const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
@@ -158,14 +161,15 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
       setITEMS(whiteLabelitems);
     }
     if (!pageProps?.existsWhiteLabel) {
+      const preFilteredItems = items.filter((item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true));
       if (!isLoading && user?.id) {
         const isBootcampStudent = userCohorts.some(({ cohort }) => !cohort.available_as_saas);
         setITEMS(
-          items.filter((item) => item.disabled !== true && item?.hide_on_auth !== true)
+          preFilteredItems.filter((item) => item.disabled !== true && item?.hide_on_auth !== true)
             .filter((item) => item.id !== 'bootcamps' || !isBootcampStudent),
         );
       } else {
-        setITEMS(items.filter((item) => item.disabled !== true));
+        setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
       }
     }
   }, [user, userCohorts, isLoading, selectedProgramSlug, mktCourses, router.locale]);
