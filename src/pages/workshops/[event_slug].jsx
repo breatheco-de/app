@@ -149,6 +149,7 @@ function Page({ eventData, asset }) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [isRefetching, setIsRefetching] = useState(false);
   const [readyToJoinEvent, setReadyToJoinEvent] = useState(false);
   const [finishedEvent, setFinishedEvent] = useState(false);
   const [consumables, setConsumables] = useState({
@@ -356,7 +357,7 @@ function Page({ eventData, asset }) {
     ),
   ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
-  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!currentConsumable && !consumables.isFetching && noConsumablesFound) || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
+  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable && !consumables.isFetching && noConsumablesFound) || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
@@ -953,6 +954,7 @@ function Page({ eventData, asset }) {
             <>
               <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
+                  showVerifyEmail={false}
                   hideForm={finishedEvent}
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
@@ -960,8 +962,12 @@ function Page({ eventData, asset }) {
                   setNoConsumablesFound={setNoConsumablesFound}
                   subscribeValues={{ event_slug: event.slug }}
                   refetchAfterSuccess={() => {
+                    setIsRefetching(true);
                     getMySubscriptions();
                     getCurrentConsumables();
+                  }}
+                  onLastAttempt={() => {
+                    setIsRefetching(false);
                   }}
                   headContent={readyToJoinEvent ? (
                     <Box position="relative" zIndex={1} width="100%" height={177}>
