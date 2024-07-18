@@ -35,7 +35,7 @@ function FeatureIndicator({ data, type }) {
           {(['project', 'exercise'].includes(type)) && (
             <>
               <Icon icon="rigobot-avatar-tiny" width="20px" height="18px" />
-              {data?.gitpod && (
+              {data?.interactive && (
                 <>
                   <Icon icon="learnpack" width="18px" height="18px" />
                   {data?.solution_url && (

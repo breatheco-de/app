@@ -19,7 +19,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, maxAttemptsToRefetch, ...rest
+  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -130,6 +130,7 @@ function ShowOnSignUp({
         {!isAuth && !hideForm && (
           <Box>
             <Signup
+              showVerifyEmail={showVerifyEmail}
               columnLayout
               showLoginLink
               invertHandlerPosition={invertHandlerPosition}
@@ -139,6 +140,7 @@ function ShowOnSignUp({
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
+                onSubmit();
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {
@@ -207,6 +209,8 @@ ShowOnSignUp.propTypes = {
   buttonStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   maxAttemptsToRefetch: PropTypes.number,
   onLastAttempt: PropTypes.func,
+  showVerifyEmail: PropTypes.bool,
+  onSubmit: PropTypes.func,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -233,6 +237,8 @@ ShowOnSignUp.defaultProps = {
   buttonStyles: {},
   maxAttemptsToRefetch: 10,
   onLastAttempt: () => {},
+  showVerifyEmail: true,
+  onSubmit: () => {},
 };
 
 export default ShowOnSignUp;

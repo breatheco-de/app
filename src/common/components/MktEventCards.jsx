@@ -10,15 +10,22 @@ import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
 import modifyEnv from '../../../modifyEnv';
 import DynamicContentCard from './DynamicContentCard';
+import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
   const router = useRouter();
   const lang = router.locale;
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const qsConnector = parseQuerys({
+    featured: true,
+    academy: WHITE_LABEL_ACADEMY,
+  }, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
-  const endpointDefault = endpoint || '/v1/events/all';
+  const choosenEndpoint = endpoint || '/v1/events/all';
+  const endpointDefault = `${choosenEndpoint}${qsConnector}`;
   const maxEvents = 10;
 
   useEffect(() => {
