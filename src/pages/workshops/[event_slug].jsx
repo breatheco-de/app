@@ -361,7 +361,7 @@ function Page({ eventData, asset }) {
   useEffect(() => console.log('isRefetching', isRefetching), [isRefetching]);
   // useEffect(() => console.log('currentConsumable', currentConsumable), [currentConsumable]);
   useEffect(() => console.log('noConsumablesFound', noConsumablesFound), [noConsumablesFound]);
-  useEffect(() => console.log('operation', !isRefetching && !currentConsumable?.id && noConsumablesFound), [isRefetching, currentConsumable, noConsumablesFound]);
+  useEffect(() => console.log('operation', !isRefetching && !currentConsumable?.id && noConsumablesFound), [isRefetching, noConsumablesFound]);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
@@ -373,7 +373,7 @@ function Page({ eventData, asset }) {
         description: t('form.finished-description'),
       });
     }
-    if (noConsumablesFound && !finishedEvent && isAuth && !existsConsumables && !isFreeForConsumables) {
+    if (hasFetchedAndNoConsumablesToUse && !finishedEvent && isAuth && !isFreeForConsumables) {
       return ({
         title: '',
         childrenDescription: (
