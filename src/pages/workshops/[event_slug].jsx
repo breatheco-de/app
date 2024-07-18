@@ -357,7 +357,7 @@ function Page({ eventData, asset }) {
     ),
   ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
-  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable?.id && noConsumablesFound) || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
+  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable?.id && noConsumablesFound) || (noConsumablesFound && consumableEventList?.length === 0);
   useEffect(() => console.log('isRefetching', isRefetching), [isRefetching]);
   useEffect(() => console.log('currentConsumable', currentConsumable), [currentConsumable]);
   useEffect(() => console.log('noConsumablesFound', noConsumablesFound), [noConsumablesFound]);
