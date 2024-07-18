@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Avatar } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
 import bc from '../services/breathecode';
 import { decodeBase64, getStorageItem, unSlugifyCapitalize } from '../../utils';
 import ReviewModal from './ReviewModal';
@@ -21,7 +22,7 @@ function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const accessToken = getStorageItem('accessToken');
-  const { backgroundColor, featuredColor, borderColor2, hexColor } = useStyle();
+  const { backgroundColor, featuredColor, borderColor2, hexColor, featuredLight } = useStyle();
   const [selectedData, setSelectedData] = useState({});
   const [codeRevisions, setCodeRevisions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -113,7 +114,7 @@ function Feedback({ storyConfig }) {
               secondColor="transparent"
             >
               {isConnectedWithGithub ? (
-                <Text size="12px" textAlign="start">
+                <Text size="12px" textAlign="start" fontWeight="700">
                   {t('feedback.connect-rigobot-text')}
                   {' '}
                   <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
@@ -122,7 +123,7 @@ function Feedback({ storyConfig }) {
                   .
                 </Text>
               ) : (
-                <Text size="12px" textAlign="start">
+                <Text size="12px" textAlign="start" fontWeight="700">
                   <Button
                     variant="link"
                     height="auto"
@@ -146,7 +147,7 @@ function Feedback({ storyConfig }) {
               )}
             </AlertMessage>
           )}
-          <Text size="12px" textAlign="center">
+          <Text size="12px" textAlign="center" color={hexColor.fontColor3}>
             {t('feedback.why-feedback-text')}
             {' '}
             <Link fontSize="12px" variant="default" href={learnWhyLink[lang]}>
@@ -160,36 +161,39 @@ function Feedback({ storyConfig }) {
             <Flex cursor="pointer" gridGap="8px" onClick={() => handleOpen(revision)} _hover={{ background: featuredColor }} borderRadius="11px" alignItems="center" padding="8px" border="1px solid" borderColor={borderColor2}>
               <Flex gridGap="16px" width="100%" alignItems="center">
                 <Icon icon="code-comment" color={hexColor.blueDefault} width="24px" height="24px" padding="12px" />
-                <Flex flexDirection="column" gridGap="5px">
-                  <Heading size="12px" fontWeight={900}>
-                    {revision?.repository?.name
-                      ? unSlugifyCapitalize(revision?.repository?.name)
-                      : t('feedback.code-review')}
-                  </Heading>
-                  <Text size="12px" fontWeight={400} title={revision?.comment}>
-                    {revision?.comment.length >= 40
-                      ? `${revision?.comment.slice(0, 25)}...`
-                      : revision?.comment}
+                <Flex justifyContent="space-between" width="100%">
+                  <Flex flexDirection="column" gridGap="5px">
+                    <Heading size="12px" fontWeight={900}>
+                      {revision?.repository?.name
+                        ? unSlugifyCapitalize(revision?.repository?.name)
+                        : t('feedback.code-review')}
+                    </Heading>
+                    <Text size="12px" fontWeight={400} title={revision?.comment}>
+                      {t('feedback.from', { name: revision?.reviewer?.name })}
+                    </Text>
+                  </Flex>
+                  <Text size="sm" fontWeight={400} color={hexColor.fontColor3}>
+                    {format(new Date(revision?.created_at), 'dd/MM')}
                   </Text>
                 </Flex>
               </Flex>
               <Icon icon="arrowLeft" width="13px" height="10px" padding="8px" style={{ flexShrink: 0, transform: 'rotate(180deg)' }} />
             </Flex>
           )) : (
-            <AlertMessage
-              type="info"
-              withoutIcon
-              background={featuredColor}
+            <Box
+              background={featuredLight}
               border="0px"
-              iconColor={hexColor.black}
-              color="currentcolor"
-              full
-              fontSize="12px"
               borderRadius="4px"
               padding="8px"
             >
-              {t('feedback.no-code-reviews-text')}
-            </AlertMessage>
+              <Avatar display="block" margin="auto" src={`${BREATHECODE_HOST}/static/img/avatar-4.png`} border="3px solid #ff186b" width="55px" height="55px" borderRadius="50px" />
+              <Heading margin="10px 0" fontSize="12px" textAlign="center">
+                {t('feedback.no-code-reviews-text')}
+              </Heading>
+              <Text size="sm" textAlign="center">
+                {t('feedback.start-interacting')}
+              </Text>
+            </Box>
           )}
         </Flex>
         <ReviewModal

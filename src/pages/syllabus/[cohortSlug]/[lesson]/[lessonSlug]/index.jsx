@@ -293,6 +293,7 @@ function Content() {
           setCallToActionProps({
             token: accessToken,
             assetSlug: lessonSlug,
+            interactive: data.interactive,
             gitpod: data.gitpod,
             assetType: assetTypeValues[lesson],
           });

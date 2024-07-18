@@ -41,7 +41,7 @@ function HeadInfo({ technologies, duration, type, date }) {
     <Flex display={shouldDisplay ? 'flex' : 'none'} alignItems="center" justifyContent="space-between" width="100%">
       {technologies?.length > 0 ? (
         <Flex alignItems="center" gridGap="8px">
-          {technologies.map((tech) => {
+          {technologies.filter((tech) => tech.icon_url).map((tech) => {
             if (tech?.icon_url) {
               return (
                 <Image src={tech?.icon_url} width={20} height={20} />
