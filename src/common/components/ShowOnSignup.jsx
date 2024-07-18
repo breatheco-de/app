@@ -140,6 +140,7 @@ function ShowOnSignUp({
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
               onHandleSubmit={(data) => {
+                onSubmit();
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
                   .then((respData) => {
                     if (respData.status === 'FULFILLED') {
