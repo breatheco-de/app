@@ -194,7 +194,6 @@ function Page({ eventData, asset }) {
 
   useEffect(() => {
     if (eventData?.id) {
-      // getDefaultData();
       setEvent(eventData);
       const eventLang = (eventData?.lang === 'us' || eventData?.lang === null) ? 'en' : eventData?.lang;
       if (eventLang !== locale) {
