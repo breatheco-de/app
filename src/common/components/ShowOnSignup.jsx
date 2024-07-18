@@ -19,7 +19,7 @@ function ShowOnSignUp({
   headContent, title, description, childrenDescription, subContent, footerContent, submitText, padding, isLive,
   subscribeValues, readOnly, children, hideForm, hideSwitchUser, refetchAfterSuccess, existsConsumables,
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
-  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, ...rest
+  onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
@@ -209,6 +209,7 @@ ShowOnSignUp.propTypes = {
   maxAttemptsToRefetch: PropTypes.number,
   onLastAttempt: PropTypes.func,
   showVerifyEmail: PropTypes.bool,
+  onSubmit: PropTypes.func,
 };
 
 ShowOnSignUp.defaultProps = {
@@ -236,6 +237,7 @@ ShowOnSignUp.defaultProps = {
   maxAttemptsToRefetch: 10,
   onLastAttempt: () => {},
   showVerifyEmail: true,
+  onSubmit: () => {},
 };
 
 export default ShowOnSignUp;

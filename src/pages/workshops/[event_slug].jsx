@@ -965,6 +965,7 @@ function Page({ eventData, asset }) {
                   isLive={readyToJoinEvent && !finishedEvent}
                   setNoConsumablesFound={setNoConsumablesFound}
                   subscribeValues={{ event_slug: event.slug }}
+                  onSubmit={() => setIsRefetching(true)}
                   refetchAfterSuccess={() => {
                     setIsRefetching(true);
                     getMySubscriptions();
