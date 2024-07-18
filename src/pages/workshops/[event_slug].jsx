@@ -357,10 +357,11 @@ function Page({ eventData, asset }) {
     ),
   ) : {};
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
-  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable?.balance?.unit && noConsumablesFound) || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
+  const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable?.id && noConsumablesFound) || (noConsumablesFound && consumables.isFetching === false && consumableEventList?.length === 0);
   useEffect(() => console.log('isRefetching', isRefetching), [isRefetching]);
   useEffect(() => console.log('currentConsumable', currentConsumable), [currentConsumable]);
   useEffect(() => console.log('noConsumablesFound', noConsumablesFound), [noConsumablesFound]);
+  useEffect(() => console.log('operation', !isRefetching && !currentConsumable?.id && noConsumablesFound), [isRefetching, currentConsumable, noConsumablesFound]);
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
