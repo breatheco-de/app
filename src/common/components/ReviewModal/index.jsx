@@ -563,16 +563,16 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Text>
                   </Flex>
                 )}
-                {(!Array.isArray(fileData) || !fileData) && (
-                  <Flex flexDirection="column" color={lightColor}>
-                    <Text size="14px" fontWeight={700}>
-                      {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
-                    </Text>
-                    <Link variant="default" fontSize="14px" href={currentTask?.github_url}>
+                <Flex flexDirection="column" color={lightColor}>
+                  <Text size="md" fontWeight={700}>
+                    {!isStudent ? t('code-review.project-delivered') : t('dashboard:modalInfo.link-info')}
+                  </Text>
+                  {currentTask?.github_url && (
+                    <Link variant="default" fontSize="14px" href={currentTask.github_url}>
                       {currentTask?.title}
                     </Link>
-                  </Flex>
-                )}
+                  )}
+                </Flex>
 
                 {Array.isArray(fileData) && fileData.length > 0 && (
                   <Box mt="10px">
