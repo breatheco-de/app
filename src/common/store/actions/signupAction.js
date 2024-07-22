@@ -6,18 +6,22 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
-  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED, PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE,
+  SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
+  PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
+import useAuth from '../../hooks/useAuth';
 import { reportDatalayer } from '../../../utils/requests';
 import { generatePlan, getTranslations } from '../../handlers/subscriptions';
 
 // eslint-disable-next-line no-unused-vars
 const useSignup = () => {
+  const { isAuthenticated } = useAuth();
   const { userSession } = useSession();
   const state = useSelector((sl) => sl.signupReducer);
   const [, setSubscriptionProcess] = usePersistent('subscription-process', null);
@@ -97,6 +101,22 @@ const useSignup = () => {
     type: SET_LOADER,
     payload,
     value,
+  });
+  const setPaymentMethods = (payload) => dispatch({
+    type: SET_PAYMENT_METHODS,
+    payload,
+  });
+  const setPaymentStatus = (payload) => dispatch({
+    type: SET_PAYMENT_STATUS,
+    payload,
+  });
+  const setIsSubmittingCard = (payload) => dispatch({
+    type: SET_SUBMITTING_CARD,
+    payload,
+  });
+  const setIsSubmittingPayment = (payload) => dispatch({
+    type: SET_SUBMITTING_PAYMENT,
+    payload,
   });
   const setCohortPlans = (payload) => dispatch({
     type: SET_COHORT_PLANS,
@@ -320,6 +340,24 @@ const useSignup = () => {
       });
   });
 
+  const getPaymentMethods = async (ownerId) => {
+    try {
+      if (isAuthenticated) {
+        setLoader('paymentMethods', false);
+        // const ownerId = selectedPlanCheckoutData.owner.id;
+        setLoader('paymentMethods', true);
+        const resp = await bc.payment({ academy_id: ownerId, lang: router.locale }).getpaymentMethods();
+        if (resp.status < 400) {
+          setPaymentMethods(resp.data);
+        }
+        setLoader('paymentMethods', false);
+      }
+    } catch (e) {
+      console.log(e);
+      setLoader('paymentMethods', false);
+    }
+  };
+
   const getPaymentText = () => {
     const planIsNotTrial = selectedPlanCheckoutData?.type !== 'TRIAL';
     const period = selectedPlanCheckoutData?.period;
@@ -398,6 +436,10 @@ const useSignup = () => {
     setDateProps,
     setCheckoutData,
     setLocation,
+    setPaymentMethods,
+    setPaymentStatus,
+    setIsSubmittingCard,
+    setIsSubmittingPayment,
     setPaymentInfo,
     handlePayment,
     setPlanData,
@@ -408,6 +450,7 @@ const useSignup = () => {
     getPaymentText,
     handleServiceToConsume,
     setSelectedService,
+    getPaymentMethods,
   };
 };
 

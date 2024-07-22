@@ -1,68 +1,46 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Avatar, Box, Button, Link } from '@chakra-ui/react';
+import { Avatar, Box, Button, Link, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import * as Yup from 'yup';
-import { Form, Formik } from 'formik';
 import bc from '../../common/services/breathecode';
 import useSignup from '../../common/store/actions/signupAction';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
+import useAuth from '../../common/hooks/useAuth';
 import Text from '../../common/components/Text';
-import FieldForm from '../../common/components/Forms/FieldForm';
+import AcordionList from '../../common/components/AcordionList';
+import NextChakraLink from '../../common/components/NextChakraLink';
+import LoaderScreen from '../../common/components/LoaderScreen';
 import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../modifyEnv';
-import ModalCardError from './ModalCardError';
+import CardForm from './CardForm';
 import { SILENT_CODE } from '../../lib/types';
 import { reportDatalayer } from '../../utils/requests';
 
 function ServiceSummary({ service }) {
+  const { isAuthenticated } = useAuth();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
-    state, setSelectedService, setPaymentInfo,
+    state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
   } = useSignup();
-  const { selectedService, paymentInfo } = state;
+  const { selectedService, paymentMethods, paymentStatus, loader } = state;
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [purchaseCompleted, setPurchaseCompleted] = useState(false);
   const { state: cohortState } = useCohortHandler();
   const { cohortSession } = cohortState;
   const { backgroundColor, lightColor, hexColor, backgroundColor3 } = useStyle();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmittingCard, setIsSubmittingCard] = useState(false);
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
     title: '',
     description: '',
   });
-  const [stateCard, setStateCard] = useState({
-    card_number: 0,
-    exp_month: 0,
-    exp_year: 0,
-    cvc: 0,
-  });
-  const redirectedFrom = getStorageItem('redirected-from');
 
-  const infoValidation = Yup.object().shape({
-    owner_name: Yup.string()
-      .min(6, t('validators.owner_name-min'))
-      .required(t('validators.owner_name-required')),
-    card_number: Yup.string()
-      .min(16)
-      .max(20)
-      .required(t('validators.card_number-required')),
-    exp: Yup.string()
-      .min(5, t('validators.exp-min'))
-      .required(t('validators.exp-required')),
-    cvc: Yup.string()
-      .min(3)
-      .max(4)
-      .required(t('validators.cvc-required')),
-  });
+  const redirectedFrom = getStorageItem('redirected-from');
+  const isPaymentSuccess = paymentStatus === 'success';
 
   const dataToAssign = {
     service: service?.service?.slug,
@@ -94,7 +72,7 @@ function ServiceSummary({ service }) {
                 }],
               },
             } });
-          setPurchaseCompleted(true);
+          setPaymentStatus('success');
           setConfirmationOpen(false);
         }
       })
@@ -103,7 +81,7 @@ function ServiceSummary({ service }) {
 
   const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
     const silentCode = data?.silent_code;
-    setIsSubmitting(false);
+    setIsSubmittingPayment(false);
     actions?.setSubmitting(false);
     callback();
     if (silentCode === SILENT_CODE.CARD_ERROR) {
@@ -184,6 +162,10 @@ function ServiceSummary({ service }) {
   };
 
   useEffect(() => {
+    if (service?.academy) getPaymentMethods(service.academy.id);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     if (service?.list?.length === 1) {
       handleSelectService(service.list[0]);
     }
@@ -207,17 +189,26 @@ function ServiceSummary({ service }) {
     }
   }, [service]);
 
+  const onSubmitCard = (values, actions, stateCard) => {
+    setIsSubmittingPayment(true);
+    setIsSubmittingCard(true);
+    const monthAndYear = values.exp?.split('/');
+    const expMonth = monthAndYear[0];
+    const expYear = monthAndYear[1];
+
+    const allValues = {
+      card_number: stateCard.card_number,
+      exp_month: expMonth,
+      exp_year: expYear,
+      cvc: values.cvc,
+    };
+    handleSubmit(actions, allValues);
+  };
+
   return (
     <Box mb="1rem">
-      <ModalCardError
-        disableTryAgain
-        isSubmitting={isSubmittingCard}
-        openDeclinedModal={openDeclinedModal}
-        setOpenDeclinedModal={setOpenDeclinedModal}
-        declinedModalProps={declinedModalProps}
-      />
 
-      {purchaseCompleted ? (
+      {isPaymentSuccess ? (
         <Box display="flex" justifyContent="center" flexDirection="column" gridGap="24px">
           <Box display="flex" flexDirection="column" gridGap="12px" alignItems="center" padding="14px 23px" background={backgroundColor} borderRadius="15px">
             <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-8.png`} border="3px solid #25BF6C" width="91px" height="91px" borderRadius="50px" />
@@ -445,134 +436,78 @@ function ServiceSummary({ service }) {
               )}
             </Box>
             <Box display="flex" flexDirection="column" flex={0.5}>
-              <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
-                <Heading
-                  size="xsm"
-                  p="0 0 12px 0"
-                >
-                  {t('select-payment-plan')}
-                </Heading>
-                <Box display="flex" flexDirection="column" gridGap="10px">
-                  <Formik
-                    initialValues={{
-                      owner_name: '',
-                      card_number: '',
-                      exp: '',
-                      cvc: '',
-                    }}
-                    onSubmit={(values, actions) => {
-                      setIsSubmitting(true);
-                      setIsSubmittingCard(true);
-                      const monthAndYear = values.exp?.split('/');
-                      const expMonth = monthAndYear[0];
-                      const expYear = monthAndYear[1];
-
-                      const allValues = {
-                        card_number: stateCard.card_number,
-                        exp_month: expMonth,
-                        exp_year: expYear,
-                        cvc: values.cvc,
-                      };
-                      handleSubmit(actions, allValues);
-                    }}
-                    validationSchema={infoValidation}
-                  >
-                    {() => (
-                      <Form
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gridGap: '22px',
-                        }}
-                      >
-                        <Box display="flex" gridGap="18px">
-                          <FieldForm
-                            type="text"
-                            name="owner_name"
-                            externValue={paymentInfo.owner_name}
-                            handleOnChange={(e) => {
-                              setPaymentInfo('owner_name', e.target.value);
-                              setStateCard({ ...stateCard, owner_name: e.target.value });
-                            }}
-                            pattern="[A-Za-z ]*"
-                            label={t('owner-name')}
-                          />
-                        </Box>
-                        <Box display="flex" gridGap="18px">
-                          <FieldForm
-                            type="text"
-                            name="card_number"
-                            externValue={paymentInfo.card_number}
-                            handleOnChange={(e) => {
-                              const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                              const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                              e.target.value = newValue.slice(0, 19);
-                              setPaymentInfo('card_number', e.target.value);
-                              setStateCard({ ...stateCard, card_number: newValue.replaceAll(' ', '').slice(0, 16) });
-                            }}
-                            pattern="[0-9]*"
-                            label={t('card-number')}
-                          />
-                        </Box>
-                        <Box display="flex" gridGap="18px">
-                          <Box display="flex" gridGap="18px" flex={1}>
-                            <Box display="flex" flexDirection="column" flex={0.5}>
-                              <FieldForm
-                                style={{ flex: 0.5 }}
-                                type="text"
-                                name="exp"
-                                externValue={paymentInfo.exp}
-                                maxLength={3}
-                                handleOnChange={(e) => {
-                                  let { value } = e.target;
-                                  if ((value.length === 2 && paymentInfo.exp?.length === 1)) {
-                                    value += '/';
-                                  } else if (value.length === 2 && paymentInfo.exp?.length === 3) {
-                                    value = value.slice(0, 1);
-                                  }
-                                  value = value.substring(0, 5);
-
-                                  setPaymentInfo('exp', value);
-                                }}
-                                pattern="[0-9]*"
-                                label={t('exp')}
-                              />
-                            </Box>
-                            <FieldForm
-                              style={{ flex: 0.5 }}
-                              type="text"
-                              name="cvc"
-                              externValue={paymentInfo.cvc}
-                              maxLength={3}
-                              handleOnChange={(e) => {
-                                const value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/g, '');
-                                const newValue = value.replace(/(.{4})/g, '$1 ').trim();
-                                e.target.value = newValue.slice(0, 4);
-
-                                setPaymentInfo('cvc', e.target.value);
+              {loader.paymentMethods ? (
+                <LoaderScreen />
+              ) : (
+                <Box background={backgroundColor} p={{ base: '22px', md: '14px 23px' }} borderRadius="15px">
+                  <Heading size="xsm">
+                    {t('payment-methods')}
+                  </Heading>
+                  <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                    <AcordionList
+                      width="100%"
+                      list={paymentMethods.map((method) => {
+                        if (!method.is_credit_card) {
+                          return {
+                            ...method,
+                            onClick: (e) => {
+                              setTimeout(() => {
+                                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                              }, 100);
+                            },
+                            description: (
+                              <Box padding="0 17px">
+                                <Text
+                                  size="md"
+                                  className="method-description"
+                                  sx={{
+                                    a: {
+                                      color: hexColor.blueDefault,
+                                    },
+                                    'a:hover': {
+                                      opacity: 0.7,
+                                    },
+                                  }}
+                                  dangerouslySetInnerHTML={{ __html: method.description }}
+                                />
+                                {method.third_party_link && (
+                                  <Text mt="10px" color={hexColor.blueDefault}>
+                                    <NextChakraLink target="_blank" href={method.third_party_link}>
+                                      {t('click-here')}
+                                    </NextChakraLink>
+                                  </Text>
+                                )}
+                              </Box>
+                            ),
+                          };
+                        }
+                        return {
+                          ...method,
+                          description: (
+                            <CardForm
+                              modalCardErrorProps={{
+                                disableTryAgain: true,
+                                openDeclinedModal,
+                                setOpenDeclinedModal,
+                                declinedModalProps,
                               }}
-                              pattern="[0-9]*"
-                              label={t('cvc')}
+                              onSubmit={onSubmitCard}
                             />
-                          </Box>
-                        </Box>
-
-                        <Button
-                          type="submit"
-                          width="100%"
-                          variant="default"
-                          isDisabled={!selectedService?.id}
-                          isLoading={isSubmitting}
-                          height="40px"
-                          mt="0"
-                        >
-                          {t('common:proceed-to-payment')}
-                        </Button>
-                      </Form>
-                    )}
-                  </Formik>
+                          ),
+                        };
+                      })}
+                      paddingButton="10px 17px"
+                      unstyled
+                      gridGap="0"
+                      containerStyles={{
+                        gridGap: '8px',
+                        allowToggle: true,
+                      }}
+                      descriptionStyle={{ padding: '10px 0 0 0' }}
+                    />
+                  </Flex>
                 </Box>
-              </Box>
+              )}
             </Box>
             <ModalInfo
               isOpen={confirmationOpen}
@@ -615,7 +550,7 @@ function ServiceSummary({ service }) {
               handlerText={t('common:confirm')}
               actionHandler={() => handlePayConsumable()}
               onClose={() => {
-                setIsSubmitting(false);
+                setIsSubmittingPayment(false);
                 setConfirmationOpen(false);
               }}
               closeButtonStyles={{ borderRadius: '3px', color: '#0097CD', borderColor: '#0097CD' }}
