@@ -188,7 +188,7 @@ function MentoringConsumables({
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
 
-    validatePlanExistence(allSubscriptions).then((data) => {
+    validatePlanExistence(allSubscriptions, subscriptionData?.plans?.[0].slug).then((data) => {
       setDataToGetAccessModal({
         ...data,
         event: '',
