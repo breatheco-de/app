@@ -34,14 +34,17 @@ function FeatureIndicator({ data, type }) {
         <>
           {(['project', 'exercise'].includes(type)) && (
             <>
-              <Icon icon="rigobot-avatar-tiny" width="20px" height="18px" />
               {data?.interactive && (
                 <>
+                  <Icon icon="rigobot-avatar-tiny" width="20px" height="18px" />
                   <Icon icon="learnpack" width="18px" height="18px" />
                   {data?.solution_url && (
                     <Icon icon="download" color="currentColor" width="18px" height="14px" />
                   )}
                 </>
+              )}
+              {data.gitpod && (
+                <Icon icon="prov-bridge" width="20px" height="18px" />
               )}
             </>
           )}
