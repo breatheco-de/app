@@ -122,8 +122,8 @@ function MentoringConsumables({
   };
   const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
-  const currentServiceSubscription = allSubscriptions.find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
-  const currentSubscription = currentServiceSubscription || allSubscriptions[0];
+  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
+  const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
 
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
@@ -191,7 +191,7 @@ function MentoringConsumables({
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
 
-    validatePlanExistence(allSubscriptions, currentSubscription?.plans?.[0].slug).then((data) => {
+    validatePlanExistence(allSubscriptions, currentSubscription?.plans?.[0]?.slug).then((data) => {
       setDataToGetAccessModal({
         ...data,
         event: '',
