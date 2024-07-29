@@ -53,7 +53,7 @@ function BulletComponent({ bullet, isString }) {
   );
 }
 
-function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, externalSelection, ...rest }) {
+function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gridColumn2, description, plan, bullets, externalSelection, planCoupon, couponExpired, ...rest }) {
   const { t } = useTranslation('profile');
   const router = useRouter();
   const [planProps, setPlanProps] = useState({});
@@ -154,6 +154,8 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
           notReady={t('subscription.upgrade-modal.not_ready_to_commit')}
           defaultFinanceIndex={getDefaultFinanceIndex()}
           externalSelection={externalSelection}
+          coupon={planCoupon}
+          couponExpired={couponExpired}
           onSelect={(item) => {
             setSelectedBulletForPlan(item?.featured_info);
           }}
@@ -196,6 +198,8 @@ MktShowPrices.propTypes = {
   cohortId: PropTypes.number,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   externalPlanProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  planCoupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  couponExpired: PropTypes.bool,
 };
 MktShowPrices.defaultProps = {
   title: '',
@@ -206,6 +210,8 @@ MktShowPrices.defaultProps = {
   cohortId: null,
   externalSelection: {},
   externalPlanProps: {},
+  planCoupon: null,
+  couponExpired: false,
 };
 
 BulletComponent.propTypes = {

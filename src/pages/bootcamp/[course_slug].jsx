@@ -16,6 +16,7 @@ import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
+import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
@@ -94,6 +95,59 @@ export async function getStaticProps({ locale, locales, params }) {
   };
 }
 
+function CouponTopBar({ coupon, course, setExpired, expired }) {
+  const { t } = useTranslation('course');
+  const { hexColor } = useStyle();
+
+  const discountValue = coupon?.discount_value;
+  const discountType = coupon?.discount_type;
+
+  const discount = discountType === 'PERCENT_OFF' || discountType === 'HAGGLING' ? `${discountValue * 100}%` : discountValue;
+
+  if (!coupon || expired) return null;
+
+  return (
+    <Box
+      background={hexColor.green}
+      padding="8px 10px"
+    >
+      <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
+        <Box display="flex" alignItems="center" gap="10px">
+          <Text fontSize="18px" fontFamily="inter">
+            {t('coupon-bar.headline', { discount })}
+          </Text>
+          <Text fontSize="18px" fontFamily="inter" fontWeight="900">
+            {t('coupon-bar.ends-in', { time: '' })}
+          </Text>
+          <Timer
+            autoRemove
+            variant="text"
+            startingAt={new Date(coupon?.expires_at).toISOString()}
+            onFinish={() => setExpired(true)}
+            color="white"
+            background="none"
+            fontSize="18px"
+            fontFamily="inter"
+            fontWeight="900"
+          />
+        </Box>
+        <NextChakraLink
+          href={`/pricing?course=${course.slug}`}
+          variant="default"
+          background="white"
+          padding="8px"
+          color={hexColor.green}
+          borderRadius="3px"
+        >
+          {t('coupon-bar.see-prices')}
+          {' '}
+          →
+        </NextChakraLink>
+      </Box>
+    </Box>
+  );
+}
+
 function Page({ data }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
@@ -109,6 +163,8 @@ function Page({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
+  const [coupon, setCoupon] = useState(null);
+  const [couponExpired, setCouponExpired] = useState(false);
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
@@ -356,9 +412,28 @@ function Page({ data }) {
     setPlanData(formatedPlanData);
     setInitialDataIsFetching(false);
   };
+
+  const getCoupons = async () => {
+    try {
+      if (planData?.plans?.suggested_plan?.slug) {
+        const { data: resData } = await bc.payment({ plan: planData.plans.suggested_plan.slug }).verifyCoupon();
+        const firstCoupon = resData[0];
+        if (firstCoupon) {
+          setCoupon(firstCoupon);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
+
+  useEffect(() => {
+    if (planData) getCoupons();
+  }, [planData]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
@@ -415,6 +490,12 @@ function Page({ data }) {
         />
       </Head>
       )}
+      <CouponTopBar
+        coupon={coupon}
+        course={data}
+        setExpired={setCouponExpired}
+        expired={couponExpired}
+      />
       <Flex flexDirection="column" mt="2rem">
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
@@ -821,6 +902,8 @@ function Page({ data }) {
           title={t('show-prices.title')}
           description={t('show-prices.description')}
           plan={data?.plan_slug}
+          planCoupon={coupon}
+          couponExpired={couponExpired}
           cohortId={cohortId}
         />
         )}
@@ -869,6 +952,19 @@ Page.propTypes = {
 
 Page.defaultProps = {
   data: {},
+};
+
+CouponTopBar.propTypes = {
+  coupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  expired: PropTypes.bool,
+  setExpired: PropTypes.func,
+};
+
+CouponTopBar.defaultProps = {
+  coupon: null,
+  expired: false,
+  setExpired: () => {},
 };
 
 export default Page;

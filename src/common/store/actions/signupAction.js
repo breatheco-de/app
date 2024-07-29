@@ -422,6 +422,33 @@ const useSignup = () => {
     return '';
   };
 
+  const getPriceWithDiscount = (price, couponData) => {
+    // const price = selectedPlanCheckoutData?.price;
+    const discount = couponData?.discount_value;
+    const discountType = couponData?.discount_type;
+    if (discount) {
+      if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
+        return {
+          originalPrice: price,
+          price: roundedPrice,
+          discount: `${discount * 100}%`,
+        };
+      }
+      if (discountType === 'FIXED_PRICE') {
+        return {
+          originalPrice: price,
+          price: price - discount,
+          discount: `$${discount}`,
+        };
+      }
+    }
+    return {
+      price,
+      discount: '0%',
+    };
+  };
+
   return {
     state,
     isFirstStep,
@@ -451,6 +478,7 @@ const useSignup = () => {
     handleServiceToConsume,
     setSelectedService,
     getPaymentMethods,
+    getPriceWithDiscount,
   };
 };
 

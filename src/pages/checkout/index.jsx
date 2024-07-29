@@ -87,7 +87,7 @@ function Checkout() {
   const {
     state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
-    setSelectedPlanCheckoutData, setCheckoutData,
+    setSelectedPlanCheckoutData, setCheckoutData, getPriceWithDiscount,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
@@ -486,32 +486,32 @@ function Checkout() {
     }
   }, [user?.id]);
 
-  const getPriceWithDiscount = () => {
-    const price = selectedPlanCheckoutData?.price;
-    const discount = discountCoupon?.discount_value;
-    const discountType = discountCoupon?.discount_type;
-    if (discount) {
-      if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
-        const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
-        return {
-          originalPrice: price,
-          price: roundedPrice,
-          discount: `${discount * 100}%`,
-        };
-      }
-      if (discountType === 'FIXED_PRICE') {
-        return {
-          originalPrice: price,
-          price: price - discount,
-          discount: `$${discount}`,
-        };
-      }
-    }
-    return {
-      price,
-      discount: '0%',
-    };
-  };
+  // const getPriceWithDiscount = (price, couponData) => {
+  //   // const price = selectedPlanCheckoutData?.price;
+  //   const discount = couponData?.discount_value;
+  //   const discountType = couponData?.discount_type;
+  //   if (discount) {
+  //     if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+  //       const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
+  //       return {
+  //         originalPrice: price,
+  //         price: roundedPrice,
+  //         discount: `${discount * 100}%`,
+  //       };
+  //     }
+  //     if (discountType === 'FIXED_PRICE') {
+  //       return {
+  //         originalPrice: price,
+  //         price: price - discount,
+  //         discount: `$${discount}`,
+  //       };
+  //     }
+  //   }
+  //   return {
+  //     price,
+  //     discount: '0%',
+  //   };
+  // };
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -800,7 +800,7 @@ function Checkout() {
                         </Text>
                         <Text size="16px" color={discountCoupon?.slug ? 'green.400' : 'currentColor'} padding="0 5px" borderRadius="4px" backgroundColor={discountCoupon?.slug ? 'green.light' : 'transparent'} lineHeight="normal">
                           {discountCoupon?.slug
-                            ? t('discount-value-off', { value: getPriceWithDiscount()?.discount })
+                            ? t('discount-value-off', { value: getPriceWithDiscount(selectedPlanCheckoutData?.price, discountCoupon)?.discount })
                             : '--'}
                         </Text>
                       </Flex>
@@ -811,16 +811,16 @@ function Checkout() {
                         Total
                       </Text>
                       <Flex gridGap="1rem">
-                        {getPriceWithDiscount().originalPrice && (
+                        {getPriceWithDiscount(selectedPlanCheckoutData?.price, discountCoupon).originalPrice && (
                           <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                            {`$${getPriceWithDiscount().originalPrice} ${selectedPlanCheckoutData?.currency?.code}`}
+                            {`$${getPriceWithDiscount(selectedPlanCheckoutData?.price, discountCoupon).originalPrice} ${selectedPlanCheckoutData?.currency?.code}`}
                           </Text>
                         )}
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {selectedPlanCheckoutData?.price <= 0
                             ? selectedPlanCheckoutData?.priceText
                             : `$${discountCoupon?.slug
-                              ? getPriceWithDiscount().price
+                              ? getPriceWithDiscount(selectedPlanCheckoutData?.price, discountCoupon).price
                               : selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
                         </Text>
                       </Flex>

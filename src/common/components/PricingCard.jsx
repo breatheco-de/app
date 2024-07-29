@@ -5,20 +5,28 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
+import useSignup from '../store/actions/signupAction';
 import Text from './Text';
 import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, selfApliedCoupons, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
+  const { getPriceWithDiscount } = useSignup();
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const [accordionState, setAccordionState] = useState(false);
   const isBootcampType = item?.planType && item?.planType.toLowerCase() === 'bootcamp';
   const queryCoupon = getQueryString('coupon');
   const [coupon] = usePersistentBySession('coupon', []);
+
+  const courseCoupon = selfApliedCoupons.find((selfCoupon) => selfCoupon.plan === item.plan_slug);
+
+  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
+  const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
+
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
     bootcamp: {
@@ -69,8 +77,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       service_items: t('pricing.premium-plan.service_items', {}, { returnObjects: true }),
       featured_info: t('pricing.premium-plan.featured_info', {}, { returnObjects: true }),
       color: 'white',
-      featured: hexColor.blueDefault,
-      border: hexColor.blueDefault,
+      featured: courseCoupon ? hexColor.green : hexColor.blueDefault,
+      border: courseCoupon ? hexColor.green : hexColor.blueDefault,
       featuredFontColor: hexColor.yellowDefault,
       button: {
         variant: 'default',
@@ -125,9 +133,45 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       background={featuredCard.background}
       height="fit-content"
       color={fontColor}
+      position="relative"
       {...rest}
     >
-      <Flex height="auto" position="relative" padding="8px" flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
+      {discountApplied && (
+        <Box position="absolute" right="20px" top="-20px">
+          <Box
+            borderRadius="55px"
+            background={hexColor.green}
+            padding="2px 8px"
+            position="relative"
+            zIndex="10"
+          >
+            <Box
+              top="-9px"
+              left="-37px"
+              display="flex"
+              justifyContent="center"
+              flexDirection="column"
+              alignItems="center"
+              textAlign="center"
+              width="44px"
+              height="44px"
+              fontSize="24px"
+              position="absolute"
+              borderRadius="41px"
+              padding="10px"
+              border="2px solid"
+              borderColor="#03823E"
+              background={hexColor.green}
+            >
+              🔥
+            </Box>
+            <Text fontSize="15px" color="#FFF">
+              {t('discount', { discount: priceProcessed.discount })}
+            </Text>
+          </Box>
+        </Box>
+      )}
+      <Flex height="auto" position="relative" padding="8px" paddingTop={discountApplied && '14px'} flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
         <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center">
           {viewProps.hookMessage}
         </Text>
@@ -139,11 +183,26 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   {isFetching ? (
                     <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Flex gridGap="8px" alignItems="center">
-                      <Box color={color} fontFamily="Space Grotesk Variable" fontSize="64px" fontWeight={700} textAlign="center">
+                    <Flex className="aquiiii" gridGap="8px" alignItems="center">
+                      <Box color={color} textAlign="center">
                         {existsOptionList
-                          ? `$${selectedFinancing?.price || item?.optionList?.[0]?.price}`
-                          : (item?.price_text || item?.priceText)}
+                          ? (
+                            <>
+                              {priceProcessed.originalPrice && (
+                                <s style={{ fontSize: '16px' }}>
+                                  {`$${priceProcessed.originalPrice}`}
+                                </s>
+                              )}
+                              <Text fontSize="64px" fontFamily="Space Grotesk Variable" fontWeight={700} lineHeight="70px">
+                                {`$${priceProcessed.price}`}
+                              </Text>
+                            </>
+                          )
+                          : (
+                            <Text fontSize="64px" fontFamily="Space Grotesk Variable" fontWeight={700} lineHeight="70px">
+                              {item?.price_text || item?.priceText}
+                            </Text>
+                          )}
                       </Box>
                       {existsOptionList && manyMonths > 1 && (
                         <Text size="36px" fontFamily="Space Grotesk Variable" color={color} letterSpacing="normal" fontWeight="700">
@@ -163,7 +222,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                    <Box className="acaaaa" color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
                       {isPayable && `$${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
@@ -186,7 +245,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
           ) : (
             <>
               {!isBootcampType && item?.title && !isTotallyFree && (
-                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
+                <Text className="epale" color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
                   {isPayable ? selectedFinancing?.title || item?.title : item?.period_label}
                 </Text>
               )}
@@ -355,9 +414,11 @@ PricingCard.propTypes = {
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
   courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
+  selfApliedCoupons: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
   courseData: {},
+  selfApliedCoupons: [],
 };

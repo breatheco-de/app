@@ -8,10 +8,11 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
+import { currenciesSymbols } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 
-function PlanCard({ item, i, handleSelect, selectedIndex }) {
-  const { backgroundColor2 } = useStyle();
+function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
+  const { hexColor, backgroundColor2 } = useStyle();
 
   return (
     <Box
@@ -44,7 +45,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
       </Box>
 
       <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && 'auto'} justifyContent="center" flexDirection="column" gridGap="10px">
-        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color={isCouponAvailable ? hexColor.green : 'blue.default'}>
           {item?.priceText || item?.price}
         </Heading>
         {item?.lastPrice && (
@@ -73,15 +74,41 @@ function ShowPrices({
   outOfConsumables,
   handleUpgrade,
   isTotallyFree,
+  coupon,
+  couponExpired,
 }) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t } = useTranslation('profile');
-  const { fontColor, disabledColor, featuredColor } = useStyle();
+  const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
 
+  const isCouponAvailable = coupon && !couponExpired;
+
+  const applyDiscountCoupons = (pricingList) => {
+    if (isCouponAvailable) {
+      return pricingList.map((item) => {
+        const { price } = item;
+        if (price > 0) {
+          const discountValue = coupon?.discount_value;
+          const discountType = coupon?.discount_type;
+
+          const discountPrice = discountType === 'PERCENT_OFF' || discountType === 'HAGGLING' ? Math.round(((price - (price * discountValue)) + Number.EPSILON) * 100) / 100 : discountValue;
+          return {
+            ...item,
+            price: discountPrice,
+            priceText: `${currenciesSymbols[item.currency.code]}${discountPrice}`,
+            lastPrice: `${currenciesSymbols[item.currency.code]}${price}`,
+          };
+        }
+        return item;
+      });
+    }
+    return pricingList;
+  };
+
   const financeSelected = {
-    0: list || data?.pricing.list,
+    0: applyDiscountCoupons(list) || data?.pricing.list,
     1: finance || data?.pricing.finance,
   };
 
@@ -109,8 +136,8 @@ function ShowPrices({
     if (selectedFinanceIndex === index) {
       return {
         borderBottom: '4px solid',
-        borderColor: 'blue.default',
-        color: 'blue.default',
+        borderColor: isCouponAvailable ? 'white' : 'blue.default',
+        color: isCouponAvailable ? 'white' : 'blue.default',
         cursor: 'pointer',
         fontWeight: '700',
       };
@@ -138,84 +165,129 @@ function ShowPrices({
     }
   }, [externalSelection]);
 
-  return (
-    <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
-        <Heading as="h2" size="sm">
-          {title || data?.pricing['choose-plan']}
-        </Heading>
-        {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
-          <Box display="flex">
-            <Box
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => {
-                if (list?.length > 0) {
-                  handleSelectFinance(0);
-                }
-              }}
-              {...paymentTabStyle}
-            >
-              {finance?.length > 0
-                ? t('subscription.upgrade-modal.one_payment')
-                : t('subscription.upgrade-modal.subscription')}
-            </Box>
+  const getDiscountText = () => {
+    const discountValue = coupon?.discount_value;
+    const discountType = coupon?.discount_type;
 
+    return discountType === 'PERCENT_OFF' ? `${discountValue * 100}%` : discountValue;
+  };
+
+  return (
+    <>
+      <Box position="relative" borderRadius="12px" padding="16px" background={isCouponAvailable ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {isCouponAvailable && (
+          <Box position="absolute" right="20px" top="-20px">
             <Box
-              display={finance?.length > 0 ? 'block' : 'none'}
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              disabled={finance?.length > 0}
-              onClick={() => {
-                if (finance?.length > 0) {
-                  handleSelectFinance(1);
-                }
-              }}
-              {...financeTabStyle}
+              borderRadius="55px"
+              background={hexColor.greenLight2}
+              padding="2px 8px"
+              position="relative"
             >
-              {secondSectionTitle || data?.pricing['finance-text']}
+              <Box
+                top="-9px"
+                left="-37px"
+                display="flex"
+                justifyContent="center"
+                flexDirection="column"
+                alignItems="center"
+                textAlign="center"
+                width="44px"
+                height="44px"
+                fontSize="24px"
+                position="absolute"
+                borderRadius="41px"
+                padding="10px"
+                border="2px solid"
+                borderColor={hexColor.greenLight2}
+                background={hexColor.green}
+              >
+                🔥
+              </Box>
+              <Text fontSize="15px" color={hexColor.green}>
+                {t('subscription.discount', { discount: getDiscountText() })}
+              </Text>
             </Box>
           </Box>
         )}
-      </Box>
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFreeTier) && (
-        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-      ))}
-      {existMoreThanOne && dataList.some((item) => item.isFreeTier) && (
-        <Box display="flex" alignItems="center">
-          <Box as="hr" color="gray.500" width="100%" />
-          <Text size="md" textAlign="center" width="100%" margin="0">
-            {notReady || data?.pricing?.['not-ready']}
-          </Text>
-          <Box as="hr" color="gray.500" width="100%" />
+        <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
+          <Heading color={isCouponAvailable && 'white'} as="h2" size="sm">
+            {title || data?.pricing['choose-plan']}
+          </Heading>
+          {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
+            <Box display="flex">
+              <Box
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                onClick={() => {
+                  if (list?.length > 0) {
+                    handleSelectFinance(0);
+                  }
+                }}
+                {...paymentTabStyle}
+              >
+                {finance?.length > 0
+                  ? t('subscription.upgrade-modal.one_payment')
+                  : t('subscription.upgrade-modal.subscription')}
+              </Box>
+
+              <Box
+                display={finance?.length > 0 ? 'block' : 'none'}
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                disabled={finance?.length > 0}
+                onClick={() => {
+                  if (finance?.length > 0) {
+                    handleSelectFinance(1);
+                  }
+                }}
+                {...financeTabStyle}
+              >
+                {secondSectionTitle || data?.pricing['finance-text']}
+              </Box>
+            </Box>
+          )}
         </Box>
-      )}
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
-        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-      ))}
-      <Box mt="38px">
-        {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
+        {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFreeTier) && (
+          <PlanCard key={item?.plan_id} isCouponAvailable={isCouponAvailable} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+        ))}
+      </Box>
+      <Box mt="20px" display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {existMoreThanOne && dataList.some((item) => item.isFreeTier) && (
+          <Box display="flex" alignItems="center">
+            <Box as="hr" color="gray.500" width="100%" />
+            <Text size="md" textAlign="center" width="100%" margin="0">
+              {notReady || data?.pricing?.['not-ready']}
+            </Text>
+            <Box as="hr" color="gray.500" width="100%" />
+          </Box>
+        )}
+        {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
+          <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+        ))}
+        <Box mt="38px">
+          {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
+            <Button
+              variant="default"
+              isDisabled={!selectedItem && true}
+            >
+              {t('common:upgrade-plan.button')}
+            </Button>
+          )}
           <Button
+            display={outOfConsumables && 'none'}
             variant="default"
             isDisabled={!selectedItem && true}
+            onClick={() => {
+              if (handleUpgrade === false) {
+                router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              } else {
+                handleUpgrade(selectedItem);
+              }
+            }}
           >
-            {t('common:upgrade-plan.button')}
+            {t('common:enroll')}
           </Button>
-        )}
-        <Button
-          display={outOfConsumables && 'none'}
-          variant="default"
-          isDisabled={!selectedItem && true}
-          onClick={() => {
-            if (handleUpgrade === false) {
-              router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
-            } else {
-              handleUpgrade(selectedItem);
-            }
-          }}
-        >
-          {t('common:enroll')}
-        </Button>
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 }
 
@@ -233,6 +305,8 @@ ShowPrices.propTypes = {
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  coupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  couponExpired: PropTypes.bool,
 };
 
 ShowPrices.defaultProps = {
@@ -249,6 +323,8 @@ ShowPrices.defaultProps = {
   handleUpgrade: false,
   isTotallyFree: false,
   externalSelection: {},
+  coupon: null,
+  couponExpired: false,
 };
 
 export default ShowPrices;
