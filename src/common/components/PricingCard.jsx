@@ -183,7 +183,7 @@ export default function PricingCard({ item, courseData, selfApliedCoupons, isFet
                   {isFetching ? (
                     <Skeleton height="48px" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Flex className="aquiiii" gridGap="8px" alignItems="center">
+                    <Flex gridGap="8px" alignItems="center">
                       <Box color={color} textAlign="center">
                         {existsOptionList
                           ? (
@@ -222,7 +222,7 @@ export default function PricingCard({ item, courseData, selfApliedCoupons, isFet
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box className="acaaaa" color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                    <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
                       {isPayable && `$${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
@@ -245,7 +245,7 @@ export default function PricingCard({ item, courseData, selfApliedCoupons, isFet
           ) : (
             <>
               {!isBootcampType && item?.title && !isTotallyFree && (
-                <Text className="epale" color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
+                <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
                   {isPayable ? selectedFinancing?.title || item?.title : item?.period_label}
                 </Text>
               )}
