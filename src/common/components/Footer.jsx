@@ -359,6 +359,9 @@ function Footer({ pageProps }) {
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>
+          <NextChakraLink href={t('privacy.href')}>
+            <Text fontSize="sm">{t('privacy.label')}</Text>
+          </NextChakraLink>
         </Flex>
       </Flex>
     </Container>
