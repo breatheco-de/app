@@ -11,6 +11,10 @@
     "label": "Términos y condiciones",
     "href": "/es/terminos-y-condiciones"
   },
+  "privacy": {
+    "label": "Políticas de Privacidad",
+    "href": "/es/politicas-de-privacidad"
+  },
   "company":{
     "title":"EMPRESA",
     "items":[
