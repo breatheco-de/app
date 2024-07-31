@@ -23,6 +23,9 @@ export function generateId(children) {
       } if (child?.props && typeof child?.props?.children?.[0] === 'string') {
         return child.props.children[0];
       }
+      if (child?.props && typeof child.props.alt === 'string') {
+        return child.props.alt;
+      }
       return child;
     })
     .join('') : '';

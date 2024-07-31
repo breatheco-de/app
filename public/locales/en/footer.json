@@ -11,6 +11,10 @@
     "label": "Terms & Conditions",
     "href": "/terms-and-conditions"
   },
+  "privacy": {
+    "label": "Privacy Policy",
+    "href": "/privacy-policy"
+  },
   "company":{
     "title":"COMPANY",
     "items": [

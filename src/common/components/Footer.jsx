@@ -360,6 +360,16 @@ function Footer({ pageProps }) {
             <Text fontSize="sm">{t('terms.label')}</Text>
           </NextChakraLink>
         </Flex>
+        <Flex
+          wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
+          justifyContent="center"
+          width={['100%', '100%', '35%', '40%']}
+        // alignItems="center"
+        >
+          <NextChakraLink href={t('privacy.href')}>
+            <Text fontSize="sm">{t('privacy.label')}</Text>
+          </NextChakraLink>
+        </Flex>
       </Flex>
     </Container>
   );

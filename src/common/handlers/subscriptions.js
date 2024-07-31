@@ -38,6 +38,7 @@ export const processPlans = (data, {
         throw new Error('The plan does not exist');
       }
       const planPropsData = resp?.data;
+      const owner = data?.owner;
       const existsAmountPerHalf = data?.price_per_half > 0;
       const existsAmountPerMonth = data?.price_per_month > 0;
       const existsAmountPerQuarter = data?.price_per_quarter > 0;
@@ -69,6 +70,7 @@ export const processPlans = (data, {
         planType,
         show: true,
         isFreeTier: false,
+        owner,
       };
 
       const textInfo = {

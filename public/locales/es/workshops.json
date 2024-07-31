@@ -30,6 +30,18 @@
   "join-workshop": "Regístrarse al taller",
   "join": "Unirse ahora",
   "event-finished": "Evento finalizado",
+  "checkin-modal": {
+    "title": "Gracias por inscribirte en nuestro workshop, ahora es el momento de prepararte.",
+    "sub-title": "Aprovecha al máximo este workshop",
+    "items": [
+      "El anfitrión ya está respondiendo preguntas en nuestra comunidad de WhatsApp",
+      "Chatea con otros asistentes al workshop",
+      "Recibe actualizaciones sobre este y futuros workshops.",
+      "Practica de forma interactiva gracias a Learnpack y nuestro mentor de IA"
+    ],
+    "join-conversation": "Unirse a la conversación",
+    "conversation-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG"
+  },
   "no-consumables": {
     "description": "Te has quedado sin talleres, pero no te preocupes, puedes conseguir más con unos pocos clics.",
     "link-text": "Aprende más.",

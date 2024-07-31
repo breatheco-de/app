@@ -14,6 +14,7 @@ import { isWindow, removeURLParameter, getQueryString, getStorageItem } from '..
 import PaymentInfo from '../../../js_modules/checkout/PaymentInfo';
 import useSignup from '../../../common/store/actions/signupAction';
 import axiosInstance from '../../../axios';
+import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import LoaderScreen from '../../../common/components/LoaderScreen';
 import useStyle from '../../../common/hooks/useStyle';
 import ServiceSummary from '../../../js_modules/checkout/ServiceSummary';
@@ -290,4 +291,4 @@ function ServiceSlug() {
   );
 }
 
-export default ServiceSlug;
+export default asPrivate(ServiceSlug);

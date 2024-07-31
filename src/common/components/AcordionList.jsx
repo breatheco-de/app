@@ -13,7 +13,7 @@ function AcordionList({
         <AccordionItem display="flex" gridGap="10px" flexDirection="column" key={item?.title} border={unstyled ? '0px' : '1px solid'} borderColor="blue.default" borderRadius="17px" {...rest} borderBottom={rest?.borderBottom && i < list.length - 1 ? rest.borderBottom : ''}>
           {({ isExpanded }) => (
             <>
-              <Heading as="h3">
+              <Heading onClick={item.onClick && item.onClick} as="h3">
                 <AccordionButton cursor={item?.description ? 'pointer' : 'default'} padding={paddingButton} color={color} _expanded={{ color: item?.description ? (highlightColor || 'blue.default') : 'currentColor', padding: unstyled ? paddingButton : '17px 17px 0' }}>
                   {leftIcon && <Icon icon={leftIcon} color={iconColor} width="16px" height="16px" marginRight="10px" />}
                   <Box as="span" flex="1" fontSize="14px" textAlign="left" textTransform="uppercase" {...titleStyle}>
