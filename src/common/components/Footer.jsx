@@ -353,7 +353,7 @@ function Footer({ pageProps }) {
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
           justifyContent={['center', 'center', 'space-between', 'space-between']}
-          width={['100%', '100%', '35%', '40%']}
+          width={['100%', '100%', '35%', '25%']}
         // alignItems="center"
         >
           <NextChakraLink href={t('terms.href')}>
