@@ -64,9 +64,9 @@ function UpgradeForConsumableView({ externalData }) {
     setIsValidating(true);
     if (selectedIndex === 0 && !alreadySubscribedToAll) {
       router.push({
-        pathname: '/pricing',
+        pathname: '/checkout',
         query: {
-          plan: basePlan?.slug,
+          plan: suggestedPlan?.slug,
         },
       });
     }
