@@ -8,7 +8,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APLIED_COUPON, SET_IS_EXPIRED_SELF_APLIED_COUPON,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -133,6 +133,14 @@ const useSignup = () => {
   });
   const setSelectedService = (payload) => dispatch({
     type: SET_SELECTED_SERVICE,
+    payload,
+  });
+  const setSelfApliedCoupon = (payload) => dispatch({
+    type: SET_SELF_APLIED_COUPON,
+    payload,
+  });
+  const setIsExpiredSelfApliedCoupon = (payload) => dispatch({
+    type: SET_IS_EXPIRED_SELF_APLIED_COUPON,
     payload,
   });
 
@@ -449,6 +457,23 @@ const useSignup = () => {
     };
   };
 
+  const getSelfApliedCoupon = async (plan) => {
+    try {
+      if (plan) {
+        const { data } = await bc.payment({ plan }).verifyCoupon();
+        const coupon = data[0];
+        if (coupon) {
+          setSelfApliedCoupon({
+            ...coupon,
+            plan,
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return {
     state,
     isFirstStep,
@@ -468,6 +493,8 @@ const useSignup = () => {
     setIsSubmittingCard,
     setIsSubmittingPayment,
     setPaymentInfo,
+    setSelfApliedCoupon,
+    setIsExpiredSelfApliedCoupon,
     handlePayment,
     setPlanData,
     setSelectedPlanCheckoutData,
@@ -479,6 +506,7 @@ const useSignup = () => {
     setSelectedService,
     getPaymentMethods,
     getPriceWithDiscount,
+    getSelfApliedCoupon,
   };
 };
 

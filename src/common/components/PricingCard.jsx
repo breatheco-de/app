@@ -12,9 +12,10 @@ import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, courseData, selfApliedCoupon, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
-  const { getPriceWithDiscount } = useSignup();
+  const { getPriceWithDiscount, state } = useSignup();
+  const { selfApliedCoupon } = state;
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const [accordionState, setAccordionState] = useState(false);
@@ -414,11 +415,9 @@ PricingCard.propTypes = {
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
   courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
-  selfApliedCoupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
   courseData: {},
-  selfApliedCoupon: null,
 };

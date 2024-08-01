@@ -96,15 +96,16 @@ export async function getStaticProps({ locale, locales, params }) {
   };
 }
 
-function CouponTopBar({ coupon, setExpired, expired }) {
+function CouponTopBar() {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
-  const { getPriceWithDiscount } = useSignup();
+  const { getPriceWithDiscount, setIsExpiredSelfApliedCoupon, state } = useSignup();
+  const { selfApliedCoupon, isExpiredSelfApliedCoupon } = state;
 
   // Since we are not showing the price after discount, we can give the price as cero
-  const { discount } = getPriceWithDiscount(0, coupon);
+  const { discount } = getPriceWithDiscount(0, selfApliedCoupon);
 
-  if (!coupon || expired) return null;
+  if (!selfApliedCoupon || isExpiredSelfApliedCoupon) return null;
 
   return (
     <Box
@@ -122,8 +123,8 @@ function CouponTopBar({ coupon, setExpired, expired }) {
           <Timer
             autoRemove
             variant="text"
-            startingAt={new Date(coupon?.expires_at).toISOString()}
-            onFinish={() => setExpired(true)}
+            startingAt={new Date(selfApliedCoupon?.expires_at).toISOString()}
+            onFinish={() => setIsExpiredSelfApliedCoupon(true)}
             color="white"
             background="none"
             fontSize="18px"
@@ -152,6 +153,7 @@ function Page({ data }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { setCohortSession } = useCohortHandler();
+  const { getSelfApliedCoupon } = useSignup();
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -163,8 +165,6 @@ function Page({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
-  const [coupon, setCoupon] = useState(null);
-  const [couponExpired, setCouponExpired] = useState(false);
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
@@ -413,29 +413,12 @@ function Page({ data }) {
     setInitialDataIsFetching(false);
   };
 
-  const getCoupons = async () => {
-    try {
-      if (planData?.plans?.suggested_plan?.slug) {
-        const { data: resData } = await bc.payment({ plan: planData.plans.suggested_plan.slug }).verifyCoupon();
-        const firstCoupon = resData[0];
-        if (firstCoupon) {
-          setCoupon({
-            ...firstCoupon,
-            plan: planData.plans.suggested_plan.slug,
-          });
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
 
   useEffect(() => {
-    if (planData) getCoupons();
+    if (planData) getSelfApliedCoupon(planData.plans?.suggested_plan?.slug);
   }, [planData]);
   useEffect(() => {
     if (isAuthenticated) {
@@ -493,11 +476,7 @@ function Page({ data }) {
         />
       </Head>
       )}
-      <CouponTopBar
-        coupon={coupon}
-        setExpired={setCouponExpired}
-        expired={couponExpired}
-      />
+      <CouponTopBar />
       <Flex flexDirection="column" mt="2rem">
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
@@ -904,8 +883,6 @@ function Page({ data }) {
           title={t('show-prices.title')}
           description={t('show-prices.description')}
           plan={data?.plan_slug}
-          planCoupon={coupon}
-          couponExpired={couponExpired}
           cohortId={cohortId}
         />
         )}
@@ -954,18 +931,6 @@ Page.propTypes = {
 
 Page.defaultProps = {
   data: {},
-};
-
-CouponTopBar.propTypes = {
-  coupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  expired: PropTypes.bool,
-  setExpired: PropTypes.func,
-};
-
-CouponTopBar.defaultProps = {
-  coupon: null,
-  expired: false,
-  setExpired: () => {},
 };
 
 export default Page;

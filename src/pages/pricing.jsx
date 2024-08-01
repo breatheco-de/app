@@ -11,6 +11,7 @@ import useStyle from '../common/hooks/useStyle';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import PricingCard from '../common/components/PricingCard';
+import useSignup from '../common/store/actions/signupAction';
 import LoaderScreen from '../common/components/LoaderScreen';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
@@ -40,6 +41,7 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
+  const { getSelfApliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
@@ -54,7 +56,6 @@ function PricingView() {
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '';
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
-  const [selfApliedCoupon, setSelfApliedCoupon] = useState(null);
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
   const [paymentTypePlans, setPaymentTypePlans] = useState({
@@ -79,21 +80,6 @@ function PricingView() {
 
   const planTranslations = getTranslations(t);
   const planSlug = selectedCourseData?.plan_slug || planFormated;
-
-  const getCoupons = async (plan) => {
-    try {
-      if (plan) {
-        const { data } = await bc.payment({ plan }).verifyCoupon();
-        const coupon = data[0];
-        setSelfApliedCoupon({
-          ...coupon,
-          plan,
-        });
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const insertFeaturedInfo = (plans) => {
     if (plans?.length > 0) {
@@ -138,9 +124,10 @@ function PricingView() {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
-    await getCoupons(suggestedPlan.slug);
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
+
+    await getSelfApliedCoupon(suggestedPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))
@@ -403,7 +390,6 @@ function PricingView() {
               <PricingCard
                 key={plan?.plan_id}
                 courseData={selectedCourseData}
-                selfApliedCoupon={selfApliedCoupon}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
                 relatedSubscription={relatedSubscription}
@@ -416,7 +402,6 @@ function PricingView() {
               <PricingCard
                 key={plan?.plan_id}
                 courseData={selectedCourseData}
-                selfApliedCoupon={selfApliedCoupon}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
                 relatedSubscription={relatedSubscription}

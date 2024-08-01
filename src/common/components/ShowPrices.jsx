@@ -76,24 +76,23 @@ function ShowPrices({
   outOfConsumables,
   handleUpgrade,
   isTotallyFree,
-  coupon,
-  couponExpired,
 }) {
   const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
-  const { getPriceWithDiscount } = useSignup();
+  const { getPriceWithDiscount, state } = useSignup();
+  const { selfApliedCoupon, isExpiredSelfApliedCoupon } = state;
 
-  const isCouponAvailable = coupon && !couponExpired;
+  const isCouponAvailable = selfApliedCoupon && !isExpiredSelfApliedCoupon;
 
   const applyDiscountCoupons = (pricingList) => {
     if (isCouponAvailable) {
       return pricingList.map((item) => {
         const { price } = item;
         if (price > 0) {
-          const discountOperation = getPriceWithDiscount(price, coupon);
+          const discountOperation = getPriceWithDiscount(price, selfApliedCoupon);
 
           return {
             ...item,
@@ -166,7 +165,7 @@ function ShowPrices({
     }
   }, [externalSelection]);
 
-  const discountOperation = getPriceWithDiscount(0, coupon);
+  const discountOperation = getPriceWithDiscount(0, selfApliedCoupon);
 
   return (
     <>
@@ -293,8 +292,6 @@ ShowPrices.propTypes = {
   handleUpgrade: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   isTotallyFree: PropTypes.bool,
   externalSelection: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  coupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  couponExpired: PropTypes.bool,
 };
 
 ShowPrices.defaultProps = {
@@ -311,8 +308,6 @@ ShowPrices.defaultProps = {
   handleUpgrade: false,
   isTotallyFree: false,
   externalSelection: {},
-  coupon: null,
-  couponExpired: false,
 };
 
 export default ShowPrices;

@@ -138,7 +138,7 @@ function Checkout() {
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
 
-  const saveCouponToBag = (coupons, bagId = '') => {
+  const saveCouponToBag = (coupons, bagId = '', setError = false) => {
     bc.payment({
       coupons,
       plan: planFormated,
@@ -146,15 +146,17 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
+          const couponData = couponsList.find(({ slug }) => slug === couponValue) || couponsList[0];
+          setDiscountCode(couponData.slug);
           setDiscountCoupon({
-            ...couponsList[0],
+            ...couponData,
             isError: false,
           });
           setCheckoutData({
             ...checkoutData,
-            discountCoupon: couponsList[0],
+            discountCoupon: couponData,
           });
-        } else {
+        } else if (setError) {
           setDiscountCoupon({
             isError: true,
           });
@@ -162,7 +164,7 @@ function Checkout() {
       });
   };
 
-  const handleCoupon = (coupons, actions) => {
+  const handleCoupon = (coupons, actions, setError = false) => {
     bc.payment({
       coupons: [coupons || discountCode],
       plan: planFormated,
@@ -170,7 +172,7 @@ function Checkout() {
       .then((resp) => {
         if (resp?.data?.length > 0) {
           const couponsToString = resp?.data.map((item) => item?.slug);
-          saveCouponToBag(couponsToString, checkoutData?.id);
+          saveCouponToBag(couponsToString, checkoutData?.id, setError);
         } else {
           setDiscountCoupon({
             isError: true,
@@ -245,9 +247,9 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (couponValue && checkoutData?.id) {
+    if (checkoutData?.id) {
       handleCoupon(couponValue);
-      setDiscountCode(couponValue);
+      if (couponValue) setDiscountCode(couponValue);
     }
   }, [couponValue, checkoutData?.id]);
 
@@ -486,33 +488,6 @@ function Checkout() {
     }
   }, [user?.id]);
 
-  // const getPriceWithDiscount = (price, couponData) => {
-  //   // const price = selectedPlanCheckoutData?.price;
-  //   const discount = couponData?.discount_value;
-  //   const discountType = couponData?.discount_type;
-  //   if (discount) {
-  //     if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
-  //       const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
-  //       return {
-  //         originalPrice: price,
-  //         price: roundedPrice,
-  //         discount: `${discount * 100}%`,
-  //       };
-  //     }
-  //     if (discountType === 'FIXED_PRICE') {
-  //       return {
-  //         originalPrice: price,
-  //         price: price - discount,
-  //         discount: `$${discount}`,
-  //       };
-  //     }
-  //   }
-  //   return {
-  //     price,
-  //     discount: '0%',
-  //   };
-  // };
-
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -726,7 +701,7 @@ function Checkout() {
                           isError: false,
                         });
 
-                        handleCoupon(discountCode, actions);
+                        handleCoupon(discountCode, actions, true);
                       }}
                     >
                       {({ isSubmitting }) => (
