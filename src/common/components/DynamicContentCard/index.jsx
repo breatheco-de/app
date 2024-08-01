@@ -24,7 +24,7 @@ const getAssetPath = (asset) => {
 };
 
 export const getDifficultyColors = (currDifficulty) => {
-  let _currentDifficulty = currDifficulty.toLowerCase();
+  let currentDifficulty = currDifficulty.toLowerCase();
 
   const background = {
     beginner: 'featuredLight',
@@ -39,8 +39,8 @@ export const getDifficultyColors = (currDifficulty) => {
     hard: '#7e0000',
   };
   return {
-    bg: background[_currentDifficulty],
-    color: color[_currentDifficulty],
+    bg: background[currentDifficulty],
+    color: color[currentDifficulty],
   };
 };
 
