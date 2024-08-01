@@ -22,6 +22,10 @@
     "description": "Tenemos un plan gratis para ti, con él puedes acceder de forma limitada a todos los servicios, incluyendo mentorías y workshops gratis.",
     "button": "Únete gratis"
   },
+  "why-trust-us": {
+    "title": "¿Por qué debería aprender con 4Geeks?",
+    "description": "¡Tenemos más de 9 años enseñando a programar, más de 4000 estudiantes graduados y el 84% de nuestros graduados consiguieron trabajo!"
+  },
   "faq": [{
     "label": "¿Qué opciones de pago aceptamos?",
     "answer": "Actualmente aceptamos pagos con tarjetas de crédito y débito. Nos esforzamos por hacer el proceso de suscripción conveniente para nuestros usuarios."

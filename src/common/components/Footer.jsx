@@ -352,12 +352,15 @@ function Footer({ pageProps }) {
         <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
         <Flex
           wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
-          justifyContent="center"
-          width={['100%', '100%', '35%', '40%']}
+          justifyContent={['center', 'center', 'space-between', 'space-between']}
+          width={['100%', '100%', '35%', '25%']}
         // alignItems="center"
         >
           <NextChakraLink href={t('terms.href')}>
             <Text fontSize="sm">{t('terms.label')}</Text>
+          </NextChakraLink>
+          <NextChakraLink href={t('privacy.href')}>
+            <Text fontSize="sm">{t('privacy.label')}</Text>
           </NextChakraLink>
         </Flex>
       </Flex>
