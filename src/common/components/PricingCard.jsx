@@ -171,7 +171,7 @@ export default function PricingCard({ item, courseData, selfApliedCoupon, isFetc
           </Box>
         </Box>
       )}
-      <Flex height="auto" position="relative" padding="8px" paddingTop={discountApplied && '14px'} flexDirection="column" gridGap="16px" background={featured} borderRadius="8px 8px 0 0">
+      <Flex height="auto" position="relative" padding="8px" paddingTop={discountApplied && '14px'} flexDirection="column" gridGap="16px" background={isFetching ? hexColor.lightColor : featured} borderRadius="8px 8px 0 0">
         <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center">
           {viewProps.hookMessage}
         </Text>
