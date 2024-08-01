@@ -24,6 +24,8 @@ const getAssetPath = (asset) => {
 };
 
 export const getDifficultyColors = (currDifficulty) => {
+  let _currentDifficulty = currDifficulty.toLowerCase();
+
   const background = {
     beginner: 'featuredLight',
     easy: 'green.light',
@@ -37,14 +39,14 @@ export const getDifficultyColors = (currDifficulty) => {
     hard: '#7e0000',
   };
   return {
-    bg: background[currDifficulty],
-    color: color[currDifficulty],
+    bg: background[_currentDifficulty],
+    color: color[_currentDifficulty],
   };
 };
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
-  const { featuredColor, borderColor } = useStyle();
+  const { featuredColor, borderColor, backgroundColor, fontColor } = useStyle();
   const [date, setDate] = useState({});
   const language = data?.lang;
   const { formattedTime } = useFormatDate();
@@ -104,7 +106,20 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   }, [lang]);
 
   return (
-    <Flex flexDirection="column" border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'} borderColor={isWorkshopStarted ? 'blue.default' : borderColor} padding={isWorkshop ? '10px 16px 0px' : '16px'} gridGap="14px" width={isWorkshop ? { base: '310px', md: '360px' } : 'auto'} background={isWorkshopStarted ? featuredColor : 'inherit'} borderRadius="10px" position="relative" {...rest}>
+    <Flex
+      flexDirection="column"
+      border={isWorkshopStarted ? 'solid 2px' : 'solid 1px'}
+      borderColor={isWorkshopStarted ? 'blue.default' : borderColor}
+      padding={isWorkshop ? '10px 16px 0px' : '16px'}
+      gridGap="14px"
+      width={isWorkshop ? { base: '310px', md: '360px' } : 'auto'}
+      minWidth={{ base: '280px', md: '310px' }}
+      background={isWorkshopStarted ? featuredColor : backgroundColor}
+      color={fontColor}
+      borderRadius="10px"
+      position="relative"
+      {...rest}
+    >
       {/* <--------------- Head content (average duration and technology icon/tag) ---------------> */}
       <HeadInfo
         technologies={data?.technologies || technologies}
@@ -130,27 +145,30 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
               {data?.title}
             </Box>
           ) : (
-            <Link
-              href={getLink()}
-              onClick={() => {
-                reportDatalayer({
-                  dataLayer: {
-                    event: 'select_content',
-                    asset_slug: data?.slug,
-                    asset_title: data?.title,
-                    asset_lang: data?.lang,
-                    asset_category: data?.category?.slug,
-                  },
-                });
-              }}
-              _after={{
-                content: '""',
-                position: 'absolute',
-                inset: 0,
-              }}
-            >
-              {data?.title}
-            </Link>
+            <Flex flexDirection="row" justifyContent="space-between">
+              <Link
+                href={getLink()}
+                onClick={() => {
+                  reportDatalayer({
+                    dataLayer: {
+                      event: 'select_content',
+                      asset_slug: data?.slug,
+                      asset_title: data?.title,
+                      asset_lang: data?.lang,
+                      asset_category: data?.category?.slug,
+                    },
+                  });
+                }}
+                _after={{
+                  content: '""',
+                  position: 'absolute',
+                  inset: 0,
+                }}
+              >
+                {data?.title}
+              </Link>
+              <Icon icon="arrowRight" color={fontColor} width="15px" height="15px" />
+            </Flex>
           )}
         </Heading>
         {description?.length > 0 && (
@@ -202,9 +220,9 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                   {`By ${data?.host_user?.first_name} ${data?.host_user?.last_name}`}
                 </Text>
                 {data?.host_user?.profesion && (
-                <Text fontSize="12px" lineHeight="normal">
-                  {data.host_user.profesion}
-                </Text>
+                  <Text fontSize="12px" lineHeight="normal">
+                    {data.host_user.profesion}
+                  </Text>
                 )}
               </Flex>
             </Flex>
@@ -231,10 +249,10 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
       </Flex>
 
       <Box display={[types.workshop, types.project].includes(type) ? 'block' : 'none'}>
-        <Divider mb={isWorkshop ? '0px' : '16px'} />
         {/* <--------------- Event link ---------------> */}
         {isWorkshop ? (
           <>
+            <Divider mb={isWorkshop ? '0px' : '16px'} />
             {date?.ended ? (
               <Text size="17px" padding="10px 0" lineHeight="normal" textAlign="center" fontWeight={700}>
                 {date?.text}
@@ -265,32 +283,35 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         ) : (
           <>
             {type === types.project && usersWorkedHere?.length > 0 && (
-              <Flex gridGap="8px" alignItems="center">
-                {usersWithPicture?.map((user, index) => {
-                  const avatarNumber = adjustNumberBeetwenMinMax({
-                    number: user?.id,
-                    min: 1,
-                    max: 20,
-                  });
-                  const avatar = user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
-                  return (
-                    <Avatar
-                      key={user?.id}
-                      width="32px"
-                      height="32px"
-                      style={{ userSelect: 'none' }}
-                      src={avatar}
-                      marginLeft={index !== 0 && usersWorkedHere.length > index ? '-24px' : '0px'}
-                      zIndex={index}
-                    />
-                  );
-                })}
-                {remainingUsers && (
-                  <Text size="12px">
-                    {t('students-worked-here', { count: remainingUsers })}
-                  </Text>
-                )}
-              </Flex>
+              <>
+                <Divider mb={isWorkshop ? '0px' : '16px'} />
+                <Flex gridGap="8px" alignItems="center">
+                  {usersWithPicture?.map((user, index) => {
+                    const avatarNumber = adjustNumberBeetwenMinMax({
+                      number: user?.id,
+                      min: 1,
+                      max: 20,
+                    });
+                    const avatar = user?.profile?.avatar_url || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
+                    return (
+                      <Avatar
+                        key={user?.id}
+                        width="32px"
+                        height="32px"
+                        style={{ userSelect: 'none' }}
+                        src={avatar}
+                        marginLeft={index !== 0 && usersWorkedHere.length > index ? '-24px' : '0px'}
+                        zIndex={index}
+                      />
+                    );
+                  })}
+                  {remainingUsers && (
+                    <Text size="12px">
+                      {t('students-worked-here', { count: remainingUsers })}
+                    </Text>
+                  )}
+                </Flex>
+              </>
             )}
           </>
         )}
