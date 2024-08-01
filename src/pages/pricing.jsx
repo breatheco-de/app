@@ -416,7 +416,8 @@ function PricingView() {
         )}
 
         <MktTrustCards
-          title="Why trust us?"
+          title={t('why-trust-us.title')}
+          description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
         {/*
