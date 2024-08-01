@@ -417,7 +417,7 @@ function PricingView() {
 
         <MktTrustCards
           title="Why trust us?"
-          description="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,"
+          description="We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students graduated from our bootcamp got hired!"
           margin="60px 0 0 0"
         />
         {/*
