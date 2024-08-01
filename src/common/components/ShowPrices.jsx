@@ -8,11 +8,13 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
+import useSignup from '../store/actions/signupAction';
 import { currenciesSymbols } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 
 function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
+  const selectedColor = isCouponAvailable ? '#256c45' : hexColor.blueDefault;
 
   return (
     <Box
@@ -27,7 +29,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
       cursor="pointer"
       background={backgroundColor2}
       border="4px solid"
-      borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
+      borderColor={selectedIndex === i ? selectedColor : 'transparent'}
       borderRadius="8px"
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
@@ -82,6 +84,7 @@ function ShowPrices({
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
+  const { getPriceWithDiscount } = useSignup();
 
   const isCouponAvailable = coupon && !couponExpired;
 
@@ -90,15 +93,13 @@ function ShowPrices({
       return pricingList.map((item) => {
         const { price } = item;
         if (price > 0) {
-          const discountValue = coupon?.discount_value;
-          const discountType = coupon?.discount_type;
+          const discountOperation = getPriceWithDiscount(price, coupon);
 
-          const discountPrice = discountType === 'PERCENT_OFF' || discountType === 'HAGGLING' ? Math.round(((price - (price * discountValue)) + Number.EPSILON) * 100) / 100 : discountValue;
           return {
             ...item,
-            price: discountPrice,
-            priceText: `${currenciesSymbols[item.currency.code]}${discountPrice}`,
-            lastPrice: `${currenciesSymbols[item.currency.code]}${price}`,
+            price: discountOperation.price,
+            priceText: `$${discountOperation.price}`,
+            lastPrice: `${currenciesSymbols[item.currency.code]}${discountOperation.originalPrice}`,
           };
         }
         return item;
@@ -165,12 +166,7 @@ function ShowPrices({
     }
   }, [externalSelection]);
 
-  const getDiscountText = () => {
-    const discountValue = coupon?.discount_value;
-    const discountType = coupon?.discount_type;
-
-    return discountType === 'PERCENT_OFF' ? `${discountValue * 100}%` : discountValue;
-  };
+  const discountOperation = getPriceWithDiscount(0, coupon);
 
   return (
     <>
@@ -204,7 +200,7 @@ function ShowPrices({
                 🔥
               </Box>
               <Text fontSize="15px" color={hexColor.green}>
-                {t('subscription.discount', { discount: getDiscountText() })}
+                {t('subscription.discount', { discount: discountOperation?.discount })}
               </Text>
             </Box>
           </Box>

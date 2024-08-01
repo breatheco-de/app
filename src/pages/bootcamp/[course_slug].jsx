@@ -28,6 +28,7 @@ import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
+import useSignup from '../../common/store/actions/signupAction';
 import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
@@ -95,14 +96,13 @@ export async function getStaticProps({ locale, locales, params }) {
   };
 }
 
-function CouponTopBar({ coupon, course, setExpired, expired }) {
+function CouponTopBar({ coupon, setExpired, expired }) {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
+  const { getPriceWithDiscount } = useSignup();
 
-  const discountValue = coupon?.discount_value;
-  const discountType = coupon?.discount_type;
-
-  const discount = discountType === 'PERCENT_OFF' || discountType === 'HAGGLING' ? `${discountValue * 100}%` : discountValue;
+  // Since we are not showing the price after discount, we can give the price as cero
+  const { discount } = getPriceWithDiscount(0, coupon);
 
   if (!coupon || expired) return null;
 
@@ -113,10 +113,10 @@ function CouponTopBar({ coupon, course, setExpired, expired }) {
     >
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
         <Box display="flex" alignItems="center" gap="10px">
-          <Text fontSize="18px" fontFamily="inter">
+          <Text color="#FFF" fontSize="18px" fontFamily="inter">
             {t('coupon-bar.headline', { discount })}
           </Text>
-          <Text fontSize="18px" fontFamily="inter" fontWeight="900">
+          <Text color="#FFF" fontSize="18px" fontFamily="inter" fontWeight="900">
             {t('coupon-bar.ends-in', { time: '' })}
           </Text>
           <Timer
@@ -132,7 +132,7 @@ function CouponTopBar({ coupon, course, setExpired, expired }) {
           />
         </Box>
         <NextChakraLink
-          href={`/pricing?course=${course.slug}`}
+          href="#pricing"
           variant="default"
           background="white"
           padding="8px"
@@ -419,7 +419,10 @@ function Page({ data }) {
         const { data: resData } = await bc.payment({ plan: planData.plans.suggested_plan.slug }).verifyCoupon();
         const firstCoupon = resData[0];
         if (firstCoupon) {
-          setCoupon(firstCoupon);
+          setCoupon({
+            ...firstCoupon,
+            plan: planData.plans.suggested_plan.slug,
+          });
         }
       }
     } catch (e) {
@@ -492,7 +495,6 @@ function Page({ data }) {
       )}
       <CouponTopBar
         coupon={coupon}
-        course={data}
         setExpired={setCouponExpired}
         expired={couponExpired}
       />
@@ -956,7 +958,6 @@ Page.defaultProps = {
 
 CouponTopBar.propTypes = {
   coupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   expired: PropTypes.bool,
   setExpired: PropTypes.func,
 };

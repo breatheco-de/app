@@ -12,7 +12,7 @@ import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, courseData, selfApliedCoupons, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, selfApliedCoupon, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { getPriceWithDiscount } = useSignup();
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
@@ -22,7 +22,7 @@ export default function PricingCard({ item, courseData, selfApliedCoupons, isFet
   const queryCoupon = getQueryString('coupon');
   const [coupon] = usePersistentBySession('coupon', []);
 
-  const courseCoupon = selfApliedCoupons.find((selfCoupon) => selfCoupon.plan === item.plan_slug);
+  const courseCoupon = selfApliedCoupon?.plan === item.plan_slug && selfApliedCoupon;
 
   const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
@@ -414,11 +414,11 @@ PricingCard.propTypes = {
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
   courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
-  selfApliedCoupons: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  selfApliedCoupon: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
   courseData: {},
-  selfApliedCoupons: [],
+  selfApliedCoupon: null,
 };

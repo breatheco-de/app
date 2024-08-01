@@ -54,7 +54,7 @@ function PricingView() {
   const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '';
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
-  const [selfApliedCoupons, setSelfApliedCoupons] = useState([]);
+  const [selfApliedCoupon, setSelfApliedCoupon] = useState(null);
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
   const [publicMktCourses, setPublicMktCourses] = useState([]);
   const [paymentTypePlans, setPaymentTypePlans] = useState({
@@ -84,7 +84,11 @@ function PricingView() {
     try {
       if (plan) {
         const { data } = await bc.payment({ plan }).verifyCoupon();
-        setSelfApliedCoupons(data.map((item) => ({ ...item, plan })));
+        const coupon = data[0];
+        setSelfApliedCoupon({
+          ...coupon,
+          plan,
+        });
       }
     } catch (e) {
       console.log(e);
@@ -134,7 +138,7 @@ function PricingView() {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
     const suggestedPlan = data?.plans?.suggested_plan || {};
-    getCoupons(suggestedPlan.slug);
+    await getCoupons(suggestedPlan.slug);
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
@@ -399,7 +403,7 @@ function PricingView() {
               <PricingCard
                 key={plan?.plan_id}
                 courseData={selectedCourseData}
-                selfApliedCoupons={selfApliedCoupons}
+                selfApliedCoupon={selfApliedCoupon}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
                 relatedSubscription={relatedSubscription}
@@ -412,7 +416,7 @@ function PricingView() {
               <PricingCard
                 key={plan?.plan_id}
                 courseData={selectedCourseData}
-                selfApliedCoupons={selfApliedCoupons}
+                selfApliedCoupon={selfApliedCoupon}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
                 relatedSubscription={relatedSubscription}
