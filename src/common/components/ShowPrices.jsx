@@ -9,7 +9,6 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
-import { currenciesSymbols } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 
 function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
@@ -97,8 +96,8 @@ function ShowPrices({
           return {
             ...item,
             price: discountOperation.price,
-            priceText: `$${discountOperation.price}`,
-            lastPrice: `${currenciesSymbols[item.currency.code]}${discountOperation.originalPrice}`,
+            priceText: item.priceText.replace(item.price, discountOperation.price),
+            lastPrice: item.priceText,
           };
         }
         return item;
@@ -109,7 +108,7 @@ function ShowPrices({
 
   const financeSelected = {
     0: applyDiscountCoupons(list) || data?.pricing.list,
-    1: finance || data?.pricing.finance,
+    1: applyDiscountCoupons(finance) || data?.pricing.finance,
   };
 
   const dataList = financeSelected?.[selectedFinanceIndex] || [];
@@ -254,9 +253,11 @@ function ShowPrices({
             <Box as="hr" color="gray.500" width="100%" />
           </Box>
         )}
-        {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
-          <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-        ))}
+        <Box borderRadius="12px" padding="16px" background={featuredColor}>
+          {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
+            <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+          ))}
+        </Box>
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
