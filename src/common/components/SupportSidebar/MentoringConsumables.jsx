@@ -122,7 +122,18 @@ function MentoringConsumables({
   };
   const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
-  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
+  const getMostRecentPaidAt = (invoices) => invoices.reduce((latest, invoice) => {
+    const paidAtDate = new Date(invoice.paid_at);
+    return paidAtDate > latest ? paidAtDate : latest;
+  }, new Date(0)); // Initialize with a very old date
+
+  const sortByMostRecentInvoice = (a, b) => {
+    const latestA = getMostRecentPaidAt(a.invoices);
+    const latestB = getMostRecentPaidAt(b.invoices);
+    return latestB - latestA; // Descending order
+  };
+
+  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
   const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
 
   useEffect(() => {

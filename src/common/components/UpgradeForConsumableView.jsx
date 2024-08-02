@@ -100,7 +100,7 @@ function UpgradeForConsumableView({ externalData }) {
           : t('consumables.ran-out-of-mentorships-text')}
       </Text>
       <Flex flexDirection="column" gridGap="16px">
-        {!alreadySubscribedToAll && (
+        {!alreadySubscribedToAll && (basePlan || suggestedPlan) && (
           <Button variant="unstyled" isDisabled={alreadySubscribedToAll} _hover={{ background: 'yellow.light' }} display="flex" cursor="pointer" background="yellow.light" onClick={() => setSelectedIndex(0)} border="2px solid" borderColor={selectedIndex === 0 ? hexColor.yellowDefault : 'transparent'} alignItems="start" width="100%" height="auto" flexDirection="column" gridGap="6px" varian="default" padding="8px 14px" borderRadius="13px">
             <Flex gridGap="10px" alignItems="center">
               <Text size="12px" fontWeight={700} padding="4px 10px" background="yellow.default" color="white" borderRadius="18px">
