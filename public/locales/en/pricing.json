@@ -22,6 +22,10 @@
     "description": "We have a free plan for you, with it you can enjoy many of our benefits, including a free feedback session.",
     "button": "join for free"
   },
+  "why-trust-us": {
+    "title": "Why trust us?",
+    "description": "We have 9+ years helping people to learn to code, more than 4000 students graduated, and 84% of our students graduated from our bootcamp got hired!"
+  },
   "faq": [{
     "label": "What payment options do we accept?",
     "answer": "At 4Geeks.com, we currently accept payments via credit and debit cards. We strive to make the subscription process convenient for our users, and as such, we support major credit and debit card providers for seamless transactions."

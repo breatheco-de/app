@@ -23,7 +23,6 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
-import TagCapsule from '../../common/components/TagCapsule';
 import Link from '../../common/components/NextChakraLink';
 import { categoriesFor } from '../../utils/variables';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
@@ -34,6 +33,7 @@ import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import LoaderScreen from '../../common/components/LoaderScreen';
+import DynamicContentCard from '../../common/components/DynamicContentCard';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -188,7 +188,7 @@ function Page({ eventData, asset }) {
   };
 
   useEffect(() => {
-    if (!eventData?.slug && !asset?.slug && eventSlug) {
+    if ((!eventData?.slug || !assetData?.slug) && eventSlug) {
       getDefaultData();
     }
   }, [locale, eventData, eventSlug]);
@@ -228,7 +228,7 @@ function Page({ eventData, asset }) {
           setAllUsersJoined(resp.data);
           setUsers(formatedUsers);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [eventData]);
 
@@ -750,31 +750,10 @@ function Page({ eventData, asset }) {
                 <Text size="26px" fontWeight={700} mb="10px">
                   {finishedEvent ? t('workshop-asset-ended') : t('workshop-asset-upcoming')}
                 </Text>
-                <Box
-                  background={featuredColor}
-                  width="300px"
-                  borderRadius="10px"
-                  padding="16px"
-                  minHeight="135px"
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-between"
-                >
-                  <Box display="flex" justifyContent="space-between" marginBottom="20px">
-                    <TagCapsule whiteSpace="nowrap" padding="0" margin="0" tags={assetData.technologies?.slice(0, 1) || []} variant="rounded" />
-                    <Text width="100%" fontWeight="400" color={hexColor.fontColor2} lineHeight="18px" textAlign="right">
-                      {t(`common:${assetData.asset_type.toLowerCase()}`)}
-                    </Text>
-                  </Box>
-                  <Link width="100%" display="block" locale={langsDict[assetData.lang || 'en']} href={`/${getAssetType(asset)}/${assetData.slug}`}>
-                    <Box display="flex" alignItems="center" gap="5px" justifyContent="space-between">
-                      <Text size="md" fontWeight="700" color={hexColor.blueDefault}>
-                        {assetData.title}
-                      </Text>
-                      <Icon icon="arrowRight" color="" width="20px" height="14px" />
-                    </Box>
-                  </Link>
-                </Box>
+                <DynamicContentCard
+                  data={assetData}
+                  type="project"
+                />
               </Box>
               {!finishedEvent && assetData.assets_related?.filter((relatedAsset) => relatedAsset.status === 'PUBLISHED' && !['blog-us', 'blog-es'].includes(relatedAsset.category.slug)).length > 0 && (
                 <SmallCardsCarousel
@@ -787,11 +766,11 @@ function Page({ eventData, asset }) {
                     .map((relatedAsset) => {
                       const assetType = getAssetType(relatedAsset);
                       return {
-                        title: relatedAsset.title,
+                        ...relatedAsset,
                         url: `/${assetType}/${relatedAsset.slug}`,
                         lang: langsDict[relatedAsset.lang || 'en'],
-                        upperTags: relatedAsset?.technologies?.slice(0, 1) || [],
-                        rightCornerElement: '',
+                        upperTags: relatedAsset?.technologies?.slice(0, 2) || [],
+                        type: 'project',
                       };
                     })}
                   background={hexColor.lightColor}

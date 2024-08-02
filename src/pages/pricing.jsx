@@ -416,8 +416,8 @@ function PricingView() {
         )}
 
         <MktTrustCards
-          title="Why trust us?"
-          description="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,"
+          title={t('why-trust-us.title')}
+          description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
         {/*

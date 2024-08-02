@@ -35,10 +35,9 @@ function HeadInfo({ technologies, duration, type, date }) {
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
   const isWorkshop = type === 'workshop';
-  const shouldDisplay = technologies?.length > 0 || existsDuration || isWorkshop;
 
   return (
-    <Flex display={shouldDisplay ? 'flex' : 'none'} alignItems="center" justifyContent="space-between" width="100%">
+    <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
       {technologies?.length > 0 ? (
         <Flex alignItems="center" gridGap="8px">
           {technologies.filter((tech) => tech.icon_url).map((tech) => {
