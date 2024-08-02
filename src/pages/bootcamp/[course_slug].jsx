@@ -403,6 +403,8 @@ function Page({ data }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
+    await getSelfApliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+
     setCohortData({
       cohortSyllabus,
       students: uniqueStudents,
@@ -417,9 +419,9 @@ function Page({ data }) {
     getInitialData();
   }, [lang, pathname]);
 
-  useEffect(() => {
-    if (planData) getSelfApliedCoupon(planData.plans?.suggested_plan?.slug);
-  }, [planData]);
+  // useEffect(() => {
+  //   if (planData) getSelfApliedCoupon(planData.plans?.suggested_plan?.slug);
+  // }, [planData]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
