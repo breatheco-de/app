@@ -101,10 +101,12 @@ function SelectServicePlan() {
   const isMentorshipServiceSet = allQueryMentorshipServiceSet.length > 0;
 
   const handleContinue = () => {
-    const qs = parseQuerys({
+    const serviceData = {
       ...getServiceSlug(selectedService),
-    });
-    const pageToRedirect = `/${lang}/checkout${qs}`;
+    };
+
+    const route = isMentorshipServiceSet ? `mentorship/${serviceData.mentorship_service_set}` : `event/${serviceData.event_type_set}`;
+    const pageToRedirect = `/${lang}/checkout/${route}`;
     window.location.href = pageToRedirect;
   };
 

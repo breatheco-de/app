@@ -427,9 +427,9 @@ export const fetchSuggestedPlan = async (planSlug, translationsObj = {}, version
  * @returns {Promise<PlanExistenceObject>}
  */
 export const validatePlanExistence = (subscriptions, plan = '') => new Promise((resolve, reject) => {
-  const plaSlug = plan || BASE_PLAN;
+  const planSlug = plan || BASE_PLAN;
   try {
-    getSuggestedPlan(plaSlug, {}, true)
+    getSuggestedPlan(planSlug, {}, true)
       .then((planComparison) => {
         const { original_plan: basePlan, suggested_plan: suggestedPlan } = planComparison;
 

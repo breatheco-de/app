@@ -122,6 +122,20 @@ function MentoringConsumables({
   };
   const existConsumablesOnCurrentService = calculateExistenceOfConsumable();
 
+  const getMostRecentPaidAt = (invoices) => invoices.reduce((latest, invoice) => {
+    const paidAtDate = new Date(invoice.paid_at);
+    return paidAtDate > latest ? paidAtDate : latest;
+  }, new Date(0)); // Initialize with a very old date
+
+  const sortByMostRecentInvoice = (a, b) => {
+    const latestA = getMostRecentPaidAt(a.invoices);
+    const latestB = getMostRecentPaidAt(b.invoices);
+    return latestB - latestA; // Descending order
+  };
+
+  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
+  const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
+
   useEffect(() => {
     if (allMentorsAvailable?.length === 0) {
       setTimeout(() => {
@@ -188,7 +202,7 @@ function MentoringConsumables({
       ? mentoryProps?.service
       : subscriptionData?.selected_mentorship_service_set?.mentorship_services?.[0];
 
-    validatePlanExistence(allSubscriptions).then((data) => {
+    validatePlanExistence(allSubscriptions, currentSubscription?.plans?.[0]?.slug).then((data) => {
       setDataToGetAccessModal({
         ...data,
         event: '',
