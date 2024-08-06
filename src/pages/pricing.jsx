@@ -281,12 +281,22 @@ function PricingView() {
           </Text>
 
           {!isAbleToShowPrices && (
-            <Flex>
-              <Text size="38px" flexShrink={0} fontWeight="700" width="305px">{t('choose-your-career-path')}</Text>
-              <DraggableContainer isDraggable={publicMktCourses?.length > 3}>
+            <Flex
+              direction={['column', 'column', 'row', 'row']}
+            >
+              <Text
+                size="38px"
+                flexShrink={[0, 0, 1, 1]}
+                fontWeight="700"
+                textAlign={['center', 'center', 'left', 'left']}
+                width={['100%', '100%', '305px', '305px']}
+              >
+                {t('choose-your-career-path')}
+              </Text>
+              <DraggableContainer>
                 <Flex gridGap="24px">
-                  {publicMktCourses?.length > 0 && publicMktCourses.map((course) => (
-                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width="27rem" minWidth="27rem" flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
+                  {publicMktCourses?.length > 0 && publicMktCourses.slice(0, 2).map((course) => (
+                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
                       <Box position="absolute" borderRadius="full" top="-30px">
                         <Img src={course.icon_url} width="44px" height="44px" />
                       </Box>
