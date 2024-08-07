@@ -62,7 +62,6 @@ function chooseProgram() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const [cohortTasks, setCohortTasks] = useState({});
-  const [hasCohortWithAvailableAsSaas, setHasCohortWithAvailableAsSaas] = useState(false);
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
   const [lateModalProps, setLateModalProps] = useState({
@@ -174,7 +173,6 @@ function chooseProgram() {
         data: cohortWithFinantialStatusLate,
       });
 
-      setHasCohortWithAvailableAsSaas(hasAvailableAsSaas);
       reportDatalayer({
         dataLayer: {
           available_as_saas: hasAvailableAsSaas,
@@ -285,9 +283,10 @@ function chooseProgram() {
   const userID = user?.id;
 
   useEffect(() => {
-    bc.payment().events()
+    bc.payment({ upcoming: true, limit: 20 }).events()
       .then(({ data }) => {
-        const eventsRemain = data?.length > 0 ? data.filter((l) => {
+        const results = data?.results || [];
+        const eventsRemain = results?.length > 0 ? results.filter((l) => {
           if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
           if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
           return false;
@@ -592,9 +591,9 @@ function chooseProgram() {
           </Box>
           <Feedback />
 
-          {dataQuery?.cohorts?.length > 0 && (
+          {dataQuery?.cohorts?.every((elem) => elem.cohort.available_as_saas) && (
             <NextChakraLink
-              href={!hasCohortWithAvailableAsSaas ? 'https://4geeksacademy.slack.com' : 'https://4geeks.slack.com'}
+              href={t('whats-app-link')}
               aria-label="4Geeks Academy community"
               target="blank"
               rel="noopener noreferrer"
@@ -608,7 +607,7 @@ function chooseProgram() {
               borderColor={hexColor.borderColor}
             >
               <Flex gridGap="30px" alignItems="center">
-                <Icon icon="slack" width="20px" height="20px" />
+                <Icon icon="whatsapp" width="20px" height="20px" />
                 <Text size="15px" fontWeight={700}>
                   {t('sidebar.join-our-community')}
                 </Text>

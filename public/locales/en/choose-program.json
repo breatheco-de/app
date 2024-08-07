@@ -11,6 +11,7 @@
   "not-enrolled": "You are not enrolled in any cohort",
   "available-programs": "Available programs",
   "read-to-start-learning": "Ready to start learning?",
+  "whats-app-link": "https://chat.whatsapp.com/CBppI0ulMt8Dx4Fsw9AreG",
   "invite": {
     "notify": "Hey! There are {{cohortInvitationWord}} for you to accept.",
     "plural-word": "{{invitesLength}} new cohort invitations",
