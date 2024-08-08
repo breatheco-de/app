@@ -9,6 +9,11 @@
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "free-course": "Curso Gratis",
+  "coupon-bar": {
+    "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
+    "ends-in": "Termina en {{time}}",
+    "see-prices": "Ver precios"
+  },
   "title-connectors": {
     "learning": "Comienza a aprender",
     "start": "Comienza una carrera en",
