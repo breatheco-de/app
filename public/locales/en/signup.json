@@ -91,6 +91,7 @@
   "many_months_payment": "{{qty}} months payment",
   "our_plans": "Our plans",
   "discount": "{{discount}} OFF",
+  "try-again": "Try again",
   "join-cohort": {
     "cta": {
       "lesson": "Join cohort to get access to this lesson",
