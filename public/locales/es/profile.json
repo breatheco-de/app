@@ -87,6 +87,7 @@
     "payment-trial": "Pago: Prueba",
     "payment-free": "Pago: Libre",
     "renewal-date-cancelled": "Fecha de renovación: Cancelada",
+    "discount": "{{discount}} DE DESCUENTO",
     "status": {
       "free_trial": "Prueba gratuita",
       "fully_paid": "Totalmente pagado",
