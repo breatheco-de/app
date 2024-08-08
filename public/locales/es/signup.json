@@ -12,6 +12,9 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "total": "Total",
+  "total-now": "Total ahora",
+  "after-all-payments": "Después de todos los pagos",
   "secure-checkout": "Pago <strong>seguro y protegido</strong> garantizado",
   "discount-value-off": "{{value}} dto.",
   "add": "Agregar",

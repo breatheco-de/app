@@ -99,13 +99,13 @@ export async function getStaticProps({ locale, locales, params }) {
 function CouponTopBar() {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
-  const { getPriceWithDiscount, setIsExpiredSelfApliedCoupon, state } = useSignup();
-  const { selfApliedCoupon, isExpiredSelfApliedCoupon } = state;
+  const { getPriceWithDiscount, setCoupon, state } = useSignup();
+  const { coupon } = state;
 
   // Since we are not showing the price after discount, we can give the price as cero
-  const { discount } = getPriceWithDiscount(0, selfApliedCoupon);
+  const { discount } = getPriceWithDiscount(0, coupon);
 
-  if (!selfApliedCoupon || isExpiredSelfApliedCoupon) return null;
+  if (!coupon) return null;
 
   return (
     <Box
@@ -123,8 +123,8 @@ function CouponTopBar() {
           <Timer
             autoRemove
             variant="text"
-            startingAt={new Date(selfApliedCoupon?.expires_at).toISOString()}
-            onFinish={() => setIsExpiredSelfApliedCoupon(true)}
+            startingAt={new Date(coupon?.expires_at).toISOString()}
+            onFinish={() => setCoupon(null)}
             color="white"
             background="none"
             fontSize="18px"
@@ -419,9 +419,6 @@ function Page({ data }) {
     getInitialData();
   }, [lang, pathname]);
 
-  // useEffect(() => {
-  //   if (planData) getSelfApliedCoupon(planData.plans?.suggested_plan?.slug);
-  // }, [planData]);
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {

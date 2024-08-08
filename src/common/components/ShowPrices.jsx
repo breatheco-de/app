@@ -11,15 +11,16 @@ import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
 
-function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
+function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
   const selectedColor = isCouponAvailable ? '#256c45' : hexColor.blueDefault;
+  const isSelected = selectedId === item.plan_id;
 
   return (
     <Box
       key={`${item.title} ${item?.price}`}
       display="flex"
-      onClick={() => handleSelect(i, item)}
+      onClick={() => handleSelect(item)}
       width="100%"
       alignItems={item?.isFreeTier && 'center'}
       justifyContent="space-between"
@@ -28,7 +29,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex, isCouponAvailable }) {
       cursor="pointer"
       background={backgroundColor2}
       border="4px solid"
-      borderColor={selectedIndex === i ? selectedColor : 'transparent'}
+      borderColor={isSelected ? selectedColor : 'transparent'}
       borderRadius="8px"
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
@@ -76,22 +77,20 @@ function ShowPrices({
   handleUpgrade,
   isTotallyFree,
 }) {
-  const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
+  const [selectedId, setSelectedId] = useState('');
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
   const { getPriceWithDiscount, state } = useSignup();
-  const { selfApliedCoupon, isExpiredSelfApliedCoupon } = state;
-
-  const isCouponAvailable = selfApliedCoupon && !isExpiredSelfApliedCoupon;
+  const { coupon } = state;
 
   const applyDiscountCoupons = (pricingList) => {
-    if (isCouponAvailable) {
+    if (coupon) {
       return pricingList.map((item) => {
         const { price } = item;
         if (price > 0) {
-          const discountOperation = getPriceWithDiscount(price, selfApliedCoupon);
+          const discountOperation = getPriceWithDiscount(price, coupon);
 
           return {
             ...item,
@@ -106,37 +105,47 @@ function ShowPrices({
     return pricingList;
   };
 
-  const financeSelected = {
-    0: applyDiscountCoupons(list) || data?.pricing.list,
-    1: applyDiscountCoupons(finance) || data?.pricing.finance,
+  const tiersTypes = {
+    subscriptions: applyDiscountCoupons(list) || data?.pricing.list || [],
+    finance: applyDiscountCoupons(finance) || data?.pricing.finance || [],
   };
 
-  const dataList = financeSelected?.[selectedFinanceIndex] || [];
-  const selectedItem = selectedIndex !== null && financeSelected[selectedFinanceIndex][selectedIndex];
+  const allTiers = [...tiersTypes.subscriptions, ...tiersTypes.finance];
 
-  const handleSelect = (index, item) => {
-    setSelectedIndex(index);
+  const financeSelected = {
+    0: tiersTypes.subscriptions.filter((l) => l.show && !l.isFreeTier),
+    1: tiersTypes.finance.filter((l) => l.show && !l.isFreeTier),
+  };
+
+  const freeTiers = allTiers.filter((l) => l.show && l.isFreeTier);
+
+  const dataList = financeSelected?.[selectedFinanceIndex] || [];
+  const selectedItem = selectedId && allTiers.find((item) => item.plan_id === selectedId);
+
+  const handleSelect = (item) => {
+    setSelectedId(item.plan_id);
     if (onSelect) onSelect(item);
   };
 
   useEffect(() => {
     if (dataList.length === 1) {
-      handleSelect(0, dataList[0]);
+      handleSelect(dataList[0]);
     }
   }, []);
 
   const handleSelectFinance = (index) => {
     setSelectedFinanceIndex(index);
-    setSelectedIndex(0);
-    onSelect(financeSelected[defaultFinanceIndex][defaultIndex || 0]);
+    const item = financeSelected[index][0];
+    if (item) setSelectedId(item.plan_id);
+    onSelect(financeSelected[index][defaultIndex || 0]);
   };
 
   const getTabColor = (index, tabIsAvailable = true) => {
     if (selectedFinanceIndex === index) {
       return {
         borderBottom: '4px solid',
-        borderColor: isCouponAvailable ? 'white' : 'blue.default',
-        color: isCouponAvailable ? 'white' : 'blue.default',
+        borderColor: coupon ? 'white' : 'blue.default',
+        color: coupon ? 'white' : 'blue.default',
         cursor: 'pointer',
         fontWeight: '700',
       };
@@ -157,19 +166,19 @@ function ShowPrices({
 
   useEffect(() => {
     const tabSelected = financeSelected?.[externalSelection?.selectedFinanceIndex];
-    const financeFound = tabSelected?.[externalSelection?.selectedIndex] || tabSelected?.[0];
+    const elementFound = tabSelected?.[externalSelection?.selectedIndex] || tabSelected?.[0];
     if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && tabSelected?.length > 0) {
       handleSelectFinance(externalSelection.selectedFinanceIndex);
-      handleSelect(externalSelection.selectedIndex, financeFound);
+      handleSelect(elementFound);
     }
   }, [externalSelection]);
 
-  const discountOperation = getPriceWithDiscount(0, selfApliedCoupon);
+  const discountOperation = getPriceWithDiscount(0, coupon);
 
   return (
     <>
-      <Box position="relative" borderRadius="12px" padding="16px" background={isCouponAvailable ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-        {isCouponAvailable && (
+      <Box position="relative" borderRadius="12px" padding="16px" background={coupon ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {coupon && (
           <Box position="absolute" right="20px" top="-20px">
             <Box
               borderRadius="55px"
@@ -204,7 +213,7 @@ function ShowPrices({
           </Box>
         )}
         <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
-          <Heading color={isCouponAvailable && 'white'} as="h2" size="sm">
+          <Heading color={coupon && 'white'} as="h2" size="sm">
             {title || data?.pricing['choose-plan']}
           </Heading>
           {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
@@ -239,12 +248,12 @@ function ShowPrices({
             </Box>
           )}
         </Box>
-        {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFreeTier) && (
-          <PlanCard key={item?.plan_id} isCouponAvailable={isCouponAvailable} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
+        {dataList?.length > 0 && dataList.map((item) => (
+          <PlanCard key={item?.plan_id} isCouponAvailable={!!coupon} item={item} handleSelect={handleSelect} selectedId={selectedId} />
         ))}
       </Box>
       <Box mt="20px" display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-        {existMoreThanOne && dataList.some((item) => item.isFreeTier) && (
+        {existMoreThanOne && freeTiers?.length > 0 && (
           <Box display="flex" alignItems="center">
             <Box as="hr" color="gray.500" width="100%" />
             <Text size="md" textAlign="center" width="100%" margin="0">
@@ -253,16 +262,18 @@ function ShowPrices({
             <Box as="hr" color="gray.500" width="100%" />
           </Box>
         )}
-        <Box borderRadius="12px" padding="16px" background={featuredColor}>
-          {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
-            <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-          ))}
-        </Box>
+        {freeTiers?.length > 0 && (
+          <Box borderRadius="12px" padding="16px" background={featuredColor}>
+            {freeTiers.map((item) => (
+              <PlanCard key={item?.plan_id} item={item} handleSelect={handleSelect} selectedId={selectedId} />
+            ))}
+          </Box>
+        )}
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
             variant="default"
-            isDisabled={!selectedItem}
+            isDisabled={!selectedId}
             onClick={() => {
               if (handleUpgrade === false) {
                 router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);

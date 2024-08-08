@@ -15,7 +15,7 @@ import { usePersistentBySession } from '../hooks/usePersistent';
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { getPriceWithDiscount, state } = useSignup();
-  const { selfApliedCoupon } = state;
+  const { coupon: selfApliedCoupon } = state;
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const [accordionState, setAccordionState] = useState(false);
@@ -27,6 +27,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
+
+  const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
 
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
@@ -79,7 +81,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       featured_info: t('pricing.premium-plan.featured_info', {}, { returnObjects: true }),
       color: 'white',
       featured: courseCoupon ? hexColor.green : hexColor.blueDefault,
-      border: courseCoupon ? hexColor.green : hexColor.blueDefault,
+      border: isFetching ? hexColor.lightColor : premiumColor(),
       featuredFontColor: hexColor.yellowDefault,
       button: {
         variant: 'default',
