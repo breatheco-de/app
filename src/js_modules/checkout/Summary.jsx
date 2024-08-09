@@ -495,7 +495,7 @@ function Summary() {
                 }
               }}
             >
-              {isPaymentSuccess ? 'Start learning' : 'Try again'}
+              {isPaymentSuccess ? t('start-free-course') : t('try-again')}
             </Button>
           ) : (
             <>

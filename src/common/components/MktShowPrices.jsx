@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { Box, Flex, LinkBox } from '@chakra-ui/react';
+import { Box, Flex, LinkBox, Skeleton } from '@chakra-ui/react';
 import { PrismicRichText } from '@prismicio/react';
 import ShowPrices from './ShowPrices';
 import { parseQuerys } from '../../utils/url';
@@ -180,9 +180,9 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
       </Box>
     </GridContainer>
   ) : (
-    <span>
-      loading...
-    </span>
+    <Box display="flex" padding="32px">
+      <Skeleton height="300px" width="100%" />
+    </Box>
   );
 }
 

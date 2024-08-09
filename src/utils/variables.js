@@ -10,3 +10,7 @@ export const excludeCagetoriesFor = {
 export const categoriesFor = {
   howTo: 'how-to,como',
 };
+
+export const currenciesSymbols = {
+  USD: '$',
+};
