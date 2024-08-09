@@ -16,6 +16,7 @@ import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
+import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
@@ -27,6 +28,7 @@ import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useAuth from '../../common/hooks/useAuth';
+import useSignup from '../../common/store/actions/signupAction';
 import { SUBS_STATUS, fetchSuggestedPlan, getAllMySubscriptions, getTranslations } from '../../common/handlers/subscriptions';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
@@ -94,10 +96,64 @@ export async function getStaticProps({ locale, locales, params }) {
   };
 }
 
+function CouponTopBar() {
+  const { t } = useTranslation('course');
+  const { hexColor } = useStyle();
+  const { getPriceWithDiscount, setCoupon, state } = useSignup();
+  const { coupon } = state;
+
+  // Since we are not showing the price after discount, we can give the price as cero
+  const { discount } = getPriceWithDiscount(0, coupon);
+
+  if (!coupon) return null;
+
+  return (
+    <Box
+      background={hexColor.green}
+      padding="8px 10px"
+    >
+      <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
+        <Box display="flex" alignItems="center" gap="10px">
+          <Text color="#FFF" fontSize="18px" fontFamily="inter">
+            {t('coupon-bar.headline', { discount })}
+          </Text>
+          <Text color="#FFF" fontSize="18px" fontFamily="inter" fontWeight="900">
+            {t('coupon-bar.ends-in', { time: '' })}
+          </Text>
+          <Timer
+            autoRemove
+            variant="text"
+            startingAt={new Date(coupon?.expires_at).toISOString()}
+            onFinish={() => setCoupon(null)}
+            color="white"
+            background="none"
+            fontSize="18px"
+            fontFamily="inter"
+            fontWeight="900"
+          />
+        </Box>
+        <NextChakraLink
+          href="#pricing"
+          variant="default"
+          background="white"
+          padding="8px"
+          color={hexColor.green}
+          borderRadius="3px"
+        >
+          {t('coupon-bar.see-prices')}
+          {' '}
+          →
+        </NextChakraLink>
+      </Box>
+    </Box>
+  );
+}
+
 function Page({ data }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { setCohortSession } = useCohortHandler();
+  const { getSelfApliedCoupon } = useSignup();
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -347,6 +403,8 @@ function Page({ data }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
+    await getSelfApliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+
     setCohortData({
       cohortSyllabus,
       students: uniqueStudents,
@@ -356,9 +414,11 @@ function Page({ data }) {
     setPlanData(formatedPlanData);
     setInitialDataIsFetching(false);
   };
+
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
+
   useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
@@ -415,6 +475,7 @@ function Page({ data }) {
         />
       </Head>
       )}
+      <CouponTopBar />
       <Flex flexDirection="column" mt="2rem">
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">

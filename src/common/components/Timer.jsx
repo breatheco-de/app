@@ -44,6 +44,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
         if (isRemainingToExpire) {
           setLoading(false);
           setTimer({
+            months: String(intervalDurationObj.months).padStart(2, '0'),
             days: String(intervalDurationObj.days).padStart(2, '0'),
             hours: String(intervalDurationObj.hours).padStart(2, '0'),
             minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
@@ -62,6 +63,20 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
       clearInterval(interval);
     };
   }, [justFinished]);
+
+  if (variant === 'text') {
+    if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
+    return (
+      <Text {...rest}>
+        {autoRemove && timer?.months <= 0 ? null : `${timer?.months}m `}
+        {autoRemove && timer?.days <= 0 ? null : `${timer?.days}d `}
+        {autoRemove && timer?.hours <= 0 && timer?.days <= 0 ? null : `${timer?.hours}h `}
+        {autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : `${timer.minutes}m `}
+        {timer.seconds}
+        s
+      </Text>
+    );
+  }
 
   if (variant === 'small') {
     return (

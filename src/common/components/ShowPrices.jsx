@@ -8,16 +8,19 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Text from './Text';
+import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
 
-function PlanCard({ item, i, handleSelect, selectedIndex }) {
-  const { backgroundColor2 } = useStyle();
+function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
+  const { hexColor, backgroundColor2 } = useStyle();
+  const selectedColor = isCouponAvailable ? '#256c45' : hexColor.blueDefault;
+  const isSelected = selectedId === item.plan_id;
 
   return (
     <Box
       key={`${item.title} ${item?.price}`}
       display="flex"
-      onClick={() => handleSelect(i, item)}
+      onClick={() => handleSelect(item)}
       width="100%"
       alignItems={item?.isFreeTier && 'center'}
       justifyContent="space-between"
@@ -26,7 +29,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
       cursor="pointer"
       background={backgroundColor2}
       border="4px solid"
-      borderColor={selectedIndex === i ? '#0097CD' : 'transparent'}
+      borderColor={isSelected ? selectedColor : 'transparent'}
       borderRadius="8px"
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
@@ -44,7 +47,7 @@ function PlanCard({ item, i, handleSelect, selectedIndex }) {
       </Box>
 
       <Box textAlign="right" display="flex" minWidth={item.period !== 'FINANCING' && 'auto'} justifyContent="center" flexDirection="column" gridGap="10px">
-        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color="blue.default">
+        <Heading as="span" size={{ base: 'var(--heading-m)', md: 'clamp(0.875rem, 0.3rem + 1.8vw, 2rem)' }} width={item.period === 'FINANCING' && 'max-content'} lineHeight="1" textTransform="uppercase" color={isCouponAvailable ? hexColor.green : 'blue.default'}>
           {item?.priceText || item?.price}
         </Heading>
         {item?.lastPrice && (
@@ -74,43 +77,75 @@ function ShowPrices({
   handleUpgrade,
   isTotallyFree,
 }) {
-  const [selectedIndex, setSelectedIndex] = useState(defaultIndex);
+  const [selectedId, setSelectedId] = useState('');
   const [selectedFinanceIndex, setSelectedFinanceIndex] = useState(defaultFinanceIndex);
   const { t } = useTranslation('profile');
-  const { fontColor, disabledColor, featuredColor } = useStyle();
+  const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
+  const { getPriceWithDiscount, state } = useSignup();
+  const { coupon } = state;
 
-  const financeSelected = {
-    0: list || data?.pricing.list,
-    1: finance || data?.pricing.finance,
+  const applyDiscountCoupons = (pricingList) => {
+    if (coupon) {
+      return pricingList.map((item) => {
+        const { price } = item;
+        if (price > 0) {
+          const discountOperation = getPriceWithDiscount(price, coupon);
+
+          return {
+            ...item,
+            price: discountOperation.price,
+            priceText: item.priceText.replace(item.price, discountOperation.price),
+            lastPrice: item.priceText,
+          };
+        }
+        return item;
+      });
+    }
+    return pricingList;
   };
 
-  const dataList = financeSelected?.[selectedFinanceIndex] || [];
-  const selectedItem = selectedIndex !== null && financeSelected[selectedFinanceIndex][selectedIndex];
+  const tiersTypes = {
+    subscriptions: applyDiscountCoupons(list) || data?.pricing.list || [],
+    finance: applyDiscountCoupons(finance) || data?.pricing.finance || [],
+  };
 
-  const handleSelect = (index, item) => {
-    setSelectedIndex(index);
+  const allTiers = [...tiersTypes.subscriptions, ...tiersTypes.finance];
+
+  const financeSelected = {
+    0: tiersTypes.subscriptions.filter((l) => l.show && !l.isFreeTier),
+    1: tiersTypes.finance.filter((l) => l.show && !l.isFreeTier),
+  };
+
+  const freeTiers = allTiers.filter((l) => l.show && l.isFreeTier);
+
+  const dataList = financeSelected?.[selectedFinanceIndex] || [];
+  const selectedItem = selectedId && allTiers.find((item) => item.plan_id === selectedId);
+
+  const handleSelect = (item) => {
+    setSelectedId(item.plan_id);
     if (onSelect) onSelect(item);
   };
 
   useEffect(() => {
     if (dataList.length === 1) {
-      handleSelect(0, dataList[0]);
+      handleSelect(dataList[0]);
     }
   }, []);
 
   const handleSelectFinance = (index) => {
     setSelectedFinanceIndex(index);
-    setSelectedIndex(0);
-    onSelect(financeSelected[defaultFinanceIndex][defaultIndex || 0]);
+    const item = financeSelected[index][0];
+    if (item) setSelectedId(item.plan_id);
+    onSelect(financeSelected[index][defaultIndex || 0]);
   };
 
   const getTabColor = (index, tabIsAvailable = true) => {
     if (selectedFinanceIndex === index) {
       return {
         borderBottom: '4px solid',
-        borderColor: 'blue.default',
-        color: 'blue.default',
+        borderColor: coupon ? 'white' : 'blue.default',
+        color: coupon ? 'white' : 'blue.default',
         cursor: 'pointer',
         fontWeight: '700',
       };
@@ -131,91 +166,127 @@ function ShowPrices({
 
   useEffect(() => {
     const tabSelected = financeSelected?.[externalSelection?.selectedFinanceIndex];
-    const financeFound = tabSelected?.[externalSelection?.selectedIndex] || tabSelected?.[0];
+    const elementFound = tabSelected?.[externalSelection?.selectedIndex] || tabSelected?.[0];
     if (externalSelection?.selectedIndex >= 0 && externalSelection?.selectedFinanceIndex >= 0 && tabSelected?.length > 0) {
       handleSelectFinance(externalSelection.selectedFinanceIndex);
-      handleSelect(externalSelection.selectedIndex, financeFound);
+      handleSelect(elementFound);
     }
   }, [externalSelection]);
 
-  return (
-    <Box borderRadius="12px" padding="16px" background={featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-      <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
-        <Heading as="h2" size="sm">
-          {title || data?.pricing['choose-plan']}
-        </Heading>
-        {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
-          <Box display="flex">
-            <Box
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              onClick={() => {
-                if (list?.length > 0) {
-                  handleSelectFinance(0);
-                }
-              }}
-              {...paymentTabStyle}
-            >
-              {finance?.length > 0
-                ? t('subscription.upgrade-modal.one_payment')
-                : t('subscription.upgrade-modal.subscription')}
-            </Box>
+  const discountOperation = getPriceWithDiscount(0, coupon);
 
+  return (
+    <>
+      <Box position="relative" borderRadius="12px" padding="16px" background={coupon ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {coupon && (
+          <Box position="absolute" right="20px" top="-20px">
             <Box
-              display={finance?.length > 0 ? 'block' : 'none'}
-              p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
-              disabled={finance?.length > 0}
-              onClick={() => {
-                if (finance?.length > 0) {
-                  handleSelectFinance(1);
-                }
-              }}
-              {...financeTabStyle}
+              borderRadius="55px"
+              background={hexColor.greenLight2}
+              padding="2px 8px"
+              position="relative"
             >
-              {secondSectionTitle || data?.pricing['finance-text']}
+              <Box
+                top="-9px"
+                left="-37px"
+                display="flex"
+                justifyContent="center"
+                flexDirection="column"
+                alignItems="center"
+                textAlign="center"
+                width="44px"
+                height="44px"
+                fontSize="24px"
+                position="absolute"
+                borderRadius="41px"
+                padding="10px"
+                border="2px solid"
+                borderColor={hexColor.greenLight2}
+                background={hexColor.green}
+              >
+                🔥
+              </Box>
+              <Text fontSize="15px" color={hexColor.green}>
+                {t('subscription.discount', { discount: discountOperation?.discount })}
+              </Text>
             </Box>
           </Box>
         )}
-      </Box>
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true).map((item, i) => (!item.isFreeTier) && (
-        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-      ))}
-      {existMoreThanOne && dataList.some((item) => item.isFreeTier) && (
-        <Box display="flex" alignItems="center">
-          <Box as="hr" color="gray.500" width="100%" />
-          <Text size="md" textAlign="center" width="100%" margin="0">
-            {notReady || data?.pricing?.['not-ready']}
-          </Text>
-          <Box as="hr" color="gray.500" width="100%" />
+        <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
+          <Heading color={coupon && 'white'} as="h2" size="sm">
+            {title || data?.pricing['choose-plan']}
+          </Heading>
+          {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
+            <Box display="flex">
+              <Box
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                onClick={() => {
+                  if (list?.length > 0) {
+                    handleSelectFinance(0);
+                  }
+                }}
+                {...paymentTabStyle}
+              >
+                {finance?.length > 0
+                  ? t('subscription.upgrade-modal.one_payment')
+                  : t('subscription.upgrade-modal.subscription')}
+              </Box>
+
+              <Box
+                display={finance?.length > 0 ? 'block' : 'none'}
+                p={{ base: '10px 7px', md: '15px 10px', lg: '15px 10px' }}
+                disabled={finance?.length > 0}
+                onClick={() => {
+                  if (finance?.length > 0) {
+                    handleSelectFinance(1);
+                  }
+                }}
+                {...financeTabStyle}
+              >
+                {secondSectionTitle || data?.pricing['finance-text']}
+              </Box>
+            </Box>
+          )}
         </Box>
-      )}
-      {dataList?.length > 0 && dataList.filter((l) => l.show === true && l?.isFreeTier).map((item, i) => (
-        <PlanCard key={item?.plan_id} item={item} i={i} handleSelect={handleSelect} selectedIndex={selectedIndex} />
-      ))}
-      <Box mt="38px">
-        {process.env.VERCEL_ENV !== 'production' && outOfConsumables && (
-          <Button
-            variant="default"
-            isDisabled={!selectedItem && true}
-          >
-            {t('common:upgrade-plan.button')}
-          </Button>
-        )}
-        <Button
-          display={outOfConsumables && 'none'}
-          variant="default"
-          isDisabled={!selectedItem && true}
-          onClick={() => {
-            if (handleUpgrade === false) {
-              router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
-            } else {
-              handleUpgrade(selectedItem);
-            }
-          }}
-        >
-          {t('common:enroll')}
-        </Button>
+        {dataList?.length > 0 && dataList.map((item) => (
+          <PlanCard key={item?.plan_id} isCouponAvailable={!!coupon} item={item} handleSelect={handleSelect} selectedId={selectedId} />
+        ))}
       </Box>
-    </Box>
+      <Box mt="20px" display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {existMoreThanOne && freeTiers?.length > 0 && (
+          <Box display="flex" alignItems="center">
+            <Box as="hr" color="gray.500" width="100%" />
+            <Text size="md" textAlign="center" width="100%" margin="0">
+              {notReady || data?.pricing?.['not-ready']}
+            </Text>
+            <Box as="hr" color="gray.500" width="100%" />
+          </Box>
+        )}
+        {freeTiers?.length > 0 && (
+          <Box borderRadius="12px" padding="16px" background={featuredColor}>
+            {freeTiers.map((item) => (
+              <PlanCard key={item?.plan_id} item={item} handleSelect={handleSelect} selectedId={selectedId} />
+            ))}
+          </Box>
+        )}
+        <Box mt="38px">
+          <Button
+            display={outOfConsumables && 'none'}
+            variant="default"
+            isDisabled={!selectedId}
+            onClick={() => {
+              if (handleUpgrade === false) {
+                router.push(`/checkout?syllabus=coding-introduction&plan=${selectedItem?.type?.toLowerCase()?.includes('trial') ? 'coding-introduction-free-trial' : 'coding-introduction-financing-options-one-payment'}`);
+              } else {
+                handleUpgrade(selectedItem);
+              }
+            }}
+          >
+            {t('common:enroll')}
+          </Button>
+        </Box>
+      </Box>
+    </>
   );
 }
 
