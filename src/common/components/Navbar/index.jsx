@@ -520,9 +520,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 fontSize="14px"
                 padding="12px 0"
                 lineHeight="22px"
-                onClick={() => {
-                  setStorageItem('redirect', router?.asPath);
-                }}
+                onClick={() => setStorageItem('redirect', router?.asPath)}
                 _hover={{
                   textDecoration: 'none',
                 }}
