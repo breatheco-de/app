@@ -16,6 +16,7 @@
   "total-now": "Total ahora",
   "after-all-payments": "Después de todos los pagos",
   "secure-checkout": "Pago <strong>seguro y protegido</strong> garantizado",
+  "special-offer": "Oferta especial {{value}} dto",
   "discount-value-off": "{{value}} dto.",
   "add": "Agregar",
   "you-are-getting": "Estás obteniendo",
