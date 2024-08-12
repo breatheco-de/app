@@ -149,19 +149,22 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          const couponData = couponsList.find(({ slug }) => slug === couponValue);
-          setDiscountCode(couponData.slug);
-          setDiscountCoupon({
-            ...couponData,
-          });
+          const couponData = couponsList.find(({ slug }) => slug === discountCode || slug === couponValue);
+          if (couponData) {
+            setDiscountCoupon({
+              ...couponData,
+            });
+            setCheckoutData({
+              ...checkoutData,
+              coupons,
+            });
+          }
           setCouponError(false);
-          setCheckoutData({
-            ...checkoutData,
-            coupons,
-          });
         } else {
           setCouponError(true);
         }
+      }).catch((e) => {
+        console.log(e);
       });
   };
 
