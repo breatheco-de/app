@@ -124,14 +124,6 @@ function Checkout() {
   const { course } = router.query;
   const courseChoosed = course;
 
-  const [formProps, setFormProps] = useState({
-    first_name: '',
-    last_name: '',
-    phone: '',
-    email: '',
-    confirm_email: '',
-  });
-
   const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
   const queryEventTypeSetSlugExists = eventTypeSetSlug && eventTypeSetSlug?.length > 0;
@@ -486,12 +478,6 @@ function Checkout() {
       }
 
       handleStep(1);
-      setFormProps({
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        phone: '',
-      });
     }
   }, [user?.id]);
 
@@ -622,8 +608,6 @@ function Checkout() {
           {!readyToSelectService && isFirstStep && (
             <ContactInformation
               courseChoosed={courseChoosed}
-              formProps={formProps}
-              setFormProps={setFormProps}
               setVerifyEmailProps={setVerifyEmailProps}
             />
           )}
