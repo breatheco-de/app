@@ -345,7 +345,7 @@ const breathecode = {
       getEvent: (eventId) => axios.get(`${host}/events/academy/event/${eventId}${qs}`),
       getAllEventTypeSets: () => axios.get(`${host}/payments/eventtypeset`),
       getEventTypeSet: (eventTypeSetId) => axios.get(`${url}/eventtypeset/${eventTypeSetId}`),
-      events: () => axios.get(`${host}/events/me?online_event=true&${qs}`),
+      events: () => axios.get(`${host}/events/me?online_event=true${parseQuerys(query, true)}`),
     };
   },
   events: (query = {}) => {

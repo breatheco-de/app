@@ -87,6 +87,7 @@
     "payment-trial": "Payment: Trial",
     "payment-free": "Payment: Free",
     "renewal-date-cancelled": "Renewal date: Cancelled",
+    "discount": "{{discount}} OFF",
     "status": {
       "free_trial": "Free trial",
       "fully_paid": "Fully paid",

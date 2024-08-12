@@ -208,9 +208,10 @@ function Dashboard() {
     if (showGithubWarning === 'active') {
       setShowWarningModal(true);
     }
-    bc.payment().events()
+    bc.payment({ upcoming: true, limit: 20 }).events()
       .then(({ data }) => {
-        const eventsRemain = data?.length > 0 ? data.filter((l) => {
+        const results = data?.results || [];
+        const eventsRemain = results?.length > 0 ? results.filter((l) => {
           if (isValidDate(l?.ended_at)) return new Date(l?.ended_at) - new Date() > 0;
           if (isValidDate(l?.ending_at)) return new Date(l?.ending_at) - new Date() > 0;
           return false;
@@ -285,7 +286,8 @@ function Dashboard() {
       }).then((cohort) => {
         reportDatalayer({
           dataLayer: {
-            cohort,
+            current_cohort_id: cohort.id,
+            current_cohort_slug: cohort.slug,
           },
         });
         // Fetch cohort assignments (lesson, exercise, project, quiz)

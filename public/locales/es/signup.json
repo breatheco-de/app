@@ -12,11 +12,14 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "total": "Total",
+  "total-now": "Total ahora",
+  "after-all-payments": "Después de todos los pagos",
   "secure-checkout": "Pago <strong>seguro y protegido</strong> garantizado",
   "discount-value-off": "{{value}} dto.",
   "add": "Agregar",
   "you-are-getting": "Estás obteniendo",
-  "plan-is-ready": "El plan está listo",
+  "plan-is-ready": "¡Ya estas casi listo! Para finalizar, presiona el botón azul mas abajo que dice \"Empezar a aprender\"",
   "payment-success": "Pago exitoso",
   "payment-failed": "Pago fallido",
   "discount-applied": "Descuento aplicado",
@@ -87,6 +90,8 @@
   "one_payment": "Pago único",
   "many_months_payment": "{{qty}} pagos mensuales",
   "our_plans": "Nuestros planes",
+  "discount": "{{discount}} DE DESCUENTO",
+  "try-again": "Intenta de nuevo",
   "join-cohort": {
     "cta": {
       "lesson": "Únete a la cohorte para poder acceder a esta lección",

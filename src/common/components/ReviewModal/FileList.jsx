@@ -73,9 +73,9 @@ function FileList({ isStudent, currentTask, contextData, updpateAssignment, setC
               const rateIcon = lastUpdatedRevision?.is_good ? 'feedback-like' : 'feedback-dislike';
 
               return (
-                <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
+                <Flex border="1px solid" borderColor={borderColor} justifyContent="center" alignItems="center" minHeight="48px" padding="4px 8px" borderRadius="8px">
                   <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} flex={0.1} />
-                  <Flex flexDirection="column" gridGap="9px" flex={0.4} maxWidth="102px">
+                  <Flex flexDirection="column" flex={0.4} maxWidth="102px">
                     <Flex flexDirection="column" gridGap="0px">
                       <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
                         {file?.name}
