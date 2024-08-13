@@ -16,6 +16,7 @@
   "total-now": "Total now",
   "after-all-payments": "After all payments",
   "secure-checkout": "Guaranteed <strong>safe & secure</strong> checkout",
+  "special-offer": "Special offer: {{value}} off",
   "discount-value-off": "{{value}} Off",
   "add": "Add",
   "you-are-getting": "You are getting",
