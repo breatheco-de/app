@@ -139,7 +139,7 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 
 function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData, alerMessage,
+  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience,
 }) {
   const { t, lang } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
@@ -311,6 +311,7 @@ function MarkDownParser({
       </SimpleModal>
       <ContentHeading
         titleRightSide={titleRightSide}
+        isGuidedExperience={isGuidedExperience}
         callToAction={interactive === true && (
           <CallToAction
             buttonStyle={{
@@ -392,6 +393,7 @@ MarkDownParser.propTypes = {
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
   alerMessage: PropTypes.node,
+  isGuidedExperience: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -406,6 +408,7 @@ MarkDownParser.defaultProps = {
   showInlineLineNumbers: true,
   assetData: null,
   alerMessage: null,
+  isGuidedExperience: false,
 };
 
 export default MarkDownParser;

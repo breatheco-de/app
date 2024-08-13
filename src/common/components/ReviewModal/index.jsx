@@ -61,7 +61,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const [fileData, setFileData] = useState();
-  const { contextState, setContextState } = useModuleMap();
+  const { taskTodo, setTaskTodo } = useModuleMap();
   const [reviewStatus, setReviewStatus] = useState('');
   const [contextData, setContextData] = useState({
     commitFiles: {
@@ -426,7 +426,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus }) => {
     await updateAssignment({
-      t, task, closeSettings, toast, githubUrl, taskStatus: newTaskStatus, contextState, setContextState,
+      t, task, closeSettings, toast, githubUrl, taskStatus: newTaskStatus, taskTodo, setTaskTodo,
     });
   };
 

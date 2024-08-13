@@ -28,7 +28,6 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import {
   slugify,
@@ -59,9 +58,8 @@ function Dashboard() {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { contextState, setContextState } = useModuleMap();
+  const { cohortProgram, taskTodo, setTaskTodo } = useModuleMap();
   const [showWarningModal, setShowWarningModal] = useState(false);
-  const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -138,13 +136,10 @@ function Dashboard() {
     }));
     await bc.todo({}).updateBulk(tasksToUpdate)
       .then(({ data }) => {
-        setContextState({
-          ...contextState,
-          taskTodo: [
-            ...contextState.taskTodo,
-            ...data,
-          ],
-        });
+        setTaskTodo([
+          ...taskTodo,
+          ...data,
+        ]);
         setModalIsOpen(false);
       })
       .catch(() => {
@@ -291,7 +286,7 @@ function Dashboard() {
         });
         // Fetch cohort assignments (lesson, exercise, project, quiz)
         getCohortAssignments({
-          user, setContextState, slug, cohort,
+          user, slug, cohort,
         });
       });
     }
@@ -341,10 +336,8 @@ function Dashboard() {
 
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
-    prepareTasks({
-      cohortProgram, contextState, nestAssignments,
-    });
-  }, [contextState.cohortProgram, contextState.taskTodo, router]);
+    prepareTasks();
+  }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -617,7 +610,7 @@ function Dashboard() {
               <Box marginTop="36px">
                 <ProgressBar
                   cohortProgram={cohortProgram}
-                  taskTodo={contextState.taskTodo}
+                  taskTodo={taskTodo}
                   progressText={t('progressText')}
                   width="100%"
                 />
@@ -698,14 +691,11 @@ function Dashboard() {
                         existsActivities={existsActivities}
                         cohortData={cohortSession}
                         taskCohortNull={taskCohortNull}
-                        contextState={contextState}
-                        setContextState={setContextState}
                         index={index}
                         title={label}
                         slug={slugify(label)}
                         searchValue={searchValue}
                         description={description}
-                        taskTodo={contextState.taskTodo}
                         modules={modules}
                         filteredModules={filteredModulesSearched}
                         showPendingTasks={showPendingTasks}
@@ -745,7 +735,7 @@ function Dashboard() {
               </OnlyFor>
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
-                  tasks={contextState.taskTodo}
+                  tasks={taskTodo}
                   studentAndTeachers={onlyStudentsActive}
                   isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
                 />
@@ -909,7 +899,7 @@ function Dashboard() {
                 key={`${module.title}-${i}`}
                 currIndex={i}
                 data={module}
-                taskTodo={contextState.taskTodo}
+                taskTodo={taskTodo}
                 variant="open-only"
               />
             ))}

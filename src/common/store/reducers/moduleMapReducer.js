@@ -1,41 +1,19 @@
 const initialState = {
-  modules: [
-    {
-      title: 'Read',
-      text: 'Introduction to the pre-work',
-      icon: 'verified',
-      status: 'inactive',
-    },
-    {
-      title: 'Practice',
-      text: 'Practice pre-work',
-      icon: 'book',
-      status: 'active',
-    },
-    {
-      title: 'Practice',
-      text: 'Star wars',
-      icon: 'verified',
-      status: 'finished',
-    },
-  ],
-  contextState: {
-    cohortProgram: [],
-    taskTodo: [],
-  },
+  cohortProgram: {},
+  taskTodo: [],
 };
 
 const moduleMapReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'CHANGE_STATUS':
+    case 'CHANGE_TASK_TO_DO':
       return {
         ...state,
-        modules: action.payload,
+        taskTodo: action.payload,
       };
-    case 'CHANGE_CONTEXT_STATE':
+    case 'CHANGE_COHORT_PROGRAM':
       return {
         ...state,
-        contextState: action.payload,
+        cohortProgram: action.payload,
       };
     default:
       return state;

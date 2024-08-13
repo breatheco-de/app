@@ -2,42 +2,28 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const useModuleMap = () => {
   const dispatch = useDispatch();
-  const modules = useSelector((state) => state.moduleMapReducer.modules);
-  const contextState = useSelector((state) => state.moduleMapReducer.contextState);
-  const updateModuleStatus = (module) => {
-    const changedModules = modules.map((m, index) => {
-      if (index === module.index) {
-        return {
-          ...m, status: module.status,
-        };
-      }
-      return m;
-    });
-    dispatch({
-      type: 'CHANGE_STATUS',
-      payload: changedModules,
-    });
-  };
+  const taskTodo = useSelector((state) => state.moduleMapReducer.taskTodo);
+  const cohortProgram = useSelector((state) => state.moduleMapReducer.cohortProgram);
 
-  const setContextState = (newState) => {
+  const setTaskTodo = (newState) => {
     dispatch({
-      type: 'CHANGE_CONTEXT_STATE',
+      type: 'CHANGE_TASK_TO_DO',
       payload: newState,
     });
   };
 
-  // const changeSingleTask = (newState) => {
-  //   dispatch({
-  //     type: 'CHANGE_SINGLE_TASK_STATUS',
-  //     payload: newState,
-  //   });
-  // };
+  const setCohortProgram = (newState) => {
+    dispatch({
+      type: 'CHANGE_COHORT_PROGRAM',
+      payload: newState,
+    });
+  };
+
   return {
-    modules,
-    contextState,
-    setContextState,
-    updateModuleStatus,
-    // changeSingleTask,
+    cohortProgram,
+    taskTodo,
+    setTaskTodo,
+    setCohortProgram,
   };
 };
 

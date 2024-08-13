@@ -4,28 +4,25 @@ import React, {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
-  Box, Flex, useColorMode, useColorModeValue,
+  Box,
+  Flex,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import Text from './Text';
 
-const color = {
-  light: 'blue.light',
-  dark: 'featuredDark',
-};
-
 function Timeline({
   title, assignments, technologies, width, onClickAssignment, showPendingTasks,
 }) {
   const { t, lang } = useTranslation('syllabus');
-  const { colorMode } = useColorMode();
   const router = useRouter();
   const { lessonSlug } = router.query;
   const [currentAssignment, setCurrentAssignment] = useState(null);
   const [currentDefaultSlug, setCurrentDefaultSlug] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
+  const bgColor = useColorModeValue('blue.light', 'featuredDark');
 
   // scroll scrollIntoView for id when lessonSlug changes
   const scrollIntoView = (id) => {
@@ -59,6 +56,13 @@ function Timeline({
     e.preventDefault();
     e.stopPropagation();
     onClickAssignment(e, item);
+  };
+
+  const getAssignmentTitle = (item) => {
+    if (!item?.translations) return item?.title;
+
+    return lang === 'en' ? (item?.translations?.en?.title || item?.translations?.us?.title)
+      : (item?.translations?.[lang]?.title || item?.title);
   };
 
   return (
@@ -98,9 +102,7 @@ function Timeline({
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
           const muted = item?.slug !== currentDefaultSlug;
-          const assignmentTitle = lang === 'en'
-            ? (item?.translations?.en?.title || item?.translations?.us?.title)
-            : (item?.translations?.[lang]?.title || item?.title);
+          const assignmentTitle = getAssignmentTitle(item);
 
           return (
             <Box
@@ -119,7 +121,7 @@ function Timeline({
                   </Box>
                 </Box>
               </Box>
-              <Flex cursor="pointer" onClick={(e) => handleClick(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="10.5px" paddingX="12px">
+              <Flex cursor="pointer" onClick={(e) => handleClick(e, item)} width="100%" borderRadius="17px" bg={!muted ? bgColor : 'none'} paddingY="10.5px" paddingX="12px">
                 <Box padding="8px" bg={!muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="0">
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>

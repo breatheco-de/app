@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Box, PopoverArrow, Text, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
@@ -13,56 +14,72 @@ import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
 
-export function TextByTaskStatus({ currentTask, t }) {
+export function textByTaskStatus(currentTask) {
+  const { t } = useTranslation('dashboard');
+  const { hexColor } = useStyle();
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
   // task project status
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
-      return (
-        <>
-          <Icon icon="checked" color="#FFB718" width="20px" height="20px" />
-          {t('common:taskStatus.update-project-delivery')}
-        </>
-      );
+      return {
+        icon: {
+          icon: 'checked',
+          color: '#FFB718',
+          width: '20px',
+          height: '20px',
+        },
+        text: t('common:taskStatus.update-project-delivery'),
+      };
     }
     if (currentTask.revision_status === 'APPROVED') {
-      return (
-        <>
-          <Icon icon="verified" color="#606060" width="20px" />
-          {t('common:taskStatus.project-approved')}
-        </>
-      );
+      return {
+        icon: {
+          icon: 'verified',
+          color: '#606060',
+          width: '20px',
+        },
+        text: t('common:taskStatus.project-approved'),
+      };
     }
     if (currentTask.revision_status === 'REJECTED') {
-      return (
-        <>
-          <Icon icon="checked" color="#FF4433" width="20px" />
-          {t('common:taskStatus.update-project-delivery')}
-        </>
-      );
+      return {
+        icon: {
+          icon: 'checked',
+          color: '#FF4433',
+          width: '20px',
+        },
+        text: t('common:taskStatus.update-project-delivery'),
+      };
     }
-    return (
-      <>
-        <Icon icon="unchecked" color="#C4C4C4" width="20px" />
-        {t('common:taskStatus.send-project')}
-      </>
-    );
+    return {
+      icon: {
+        icon: 'unchecked',
+        color: '#C4C4C4',
+        width: '20px',
+      },
+      text: t('common:taskStatus.send-project'),
+    };
   }
   // common task status
   if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
-    return (
-      <>
-        <Icon icon="close" color="#FFFFFF" width="12px" />
-        {t('common:taskStatus.mark-as-not-done')}
-      </>
-    );
+    return {
+      icon: {
+        icon: 'close',
+        color: '#FFFFFF',
+        width: '12px',
+      },
+      text: t('common:taskStatus.mark-as-not-done'),
+    };
   }
-  return (
-    <>
-      <Icon icon="checked2" color={taskIsApproved ? '#606060' : '#FFFFFF'} width="14px" />
-      {t('common:taskStatus.mark-as-done')}
-    </>
-  );
+
+  return {
+    icon: {
+      icon: 'checked2',
+      color: taskIsApproved ? '#606060' : '#FFFFFF',
+      width: '14px',
+    },
+    text: t('common:taskStatus.mark-as-done'),
+  };
 }
 
 export function IconByTaskStatus({ currentTask, noDeliveryFormat }) {
@@ -217,6 +234,8 @@ function PopoverTaskHandler({
     closeSettings();
   };
 
+  const textAndIcon = textByTaskStatus(currentTask || {});
+
   return (
     <Popover
       id="task-status"
@@ -246,7 +265,10 @@ function PopoverTaskHandler({
           {!buttonChildren && (
             <>
               {allowText ? (
-                <TextByTaskStatus currentTask={currentTask} t={t} />
+                <>
+                  <Icon {...textAndIcon.icon} />
+                  {textAndIcon.text}
+                </>
               ) : (
                 <IconByTaskStatus currentTask={currentTask} />
               )}
@@ -500,13 +522,12 @@ PopoverTaskHandler.defaultProps = {
   buttonChildren: null,
 };
 
-TextByTaskStatus.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  t: PropTypes.func.isRequired,
-};
-TextByTaskStatus.defaultProps = {
-  currentTask: {},
-};
+// TextByTaskStatus.propTypes = {
+//   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+// };
+// TextByTaskStatus.defaultProps = {
+//   currentTask: {},
+// };
 IconByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   noDeliveryFormat: PropTypes.bool,

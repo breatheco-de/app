@@ -5,7 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { devLog, getStorageItem } from '../../utils';
-import useAssignments from '../store/actions/cohortAction';
+import useCohort from '../store/actions/cohortAction';
+import useModuleMap from '../store/actions/moduleMapAction';
+import { nestAssignments } from './useModuleHandler';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
@@ -13,7 +15,8 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useAssignments();
+  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useCohort();
+  const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleMap();
 
   const {
     cohortSession,
@@ -50,7 +53,7 @@ function useCohortHandler() {
   };
 
   const getCohortAssignments = ({
-    setContextState, slug, cohort,
+    slug, cohort,
   }) => {
     if (user) {
       const academyId = cohort.academy.id;
@@ -58,7 +61,7 @@ function useCohortHandler() {
       const syllabusSlug = cohort?.syllabus_version.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
-        // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
+        // Fetch cohortProgram and TaskTodo then apply to moduleMap store
         Promise.all([
           bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
           bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
@@ -67,10 +70,8 @@ function useCohortHandler() {
           [taskTodoData, programData, userRoles],
         ) => {
           setUserCapabilities(userRoles.data.capabilities);
-          setContextState({
-            taskTodo: taskTodoData.data.results,
-            cohortProgram: programData.data,
-          });
+          setTaskTodo(taskTodoData.data.results);
+          setCohortProgram(programData.data);
         }).catch((err) => {
           console.log(err);
           toast({
@@ -151,15 +152,13 @@ function useCohortHandler() {
   });
 
   // Sort all data fetched in order of taskTodo
-  const prepareTasks = ({
-    cohortProgram, contextState, nestAssignments,
-  }) => {
+  const prepareTasks = () => {
     const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
     const cohort = cohortProgram.json ? moduleData : [];
     const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
-    if (contextState.cohortProgram.json && contextState.taskTodo) {
+    if (cohortProgram.json && taskTodo) {
       cohort.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
@@ -171,7 +170,7 @@ function useCohortHandler() {
             practice: replits,
             project: assignments,
             answer: quizzes,
-            taskTodo: contextState.taskTodo,
+            taskTodo,
           });
           const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
 

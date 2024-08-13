@@ -3,7 +3,7 @@ import bc from '../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
 
 export const updateAssignment = async ({
-  t, task, closeSettings, toast, githubUrl, contextState, setContextState, taskStatus,
+  t, task, closeSettings, toast, githubUrl, taskTodo, setTaskTodo, taskStatus,
 }) => {
   // Task case
   const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
@@ -16,15 +16,12 @@ export const updateAssignment = async ({
 
     try {
       await bc.todo({}).update(taskToUpdate);
-      const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
-      setContextState({
-        ...contextState,
-        taskTodo: [
-          ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
-          taskToUpdate, // key item (updated)
-          ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
-        ],
-      });
+      const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
+      setTaskTodo([
+        ...taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
+        taskToUpdate, // key item (updated)
+        ...taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
+      ]);
       toast({
         position: 'top',
         title: t('alert-message:assignment-updated'),
@@ -70,15 +67,12 @@ export const updateAssignment = async ({
       const response = await bc.todo({}).update(taskToUpdate);
       // verify if form is equal to the response
       if (response.data.github_url === projectUrl) {
-        const keyIndex = contextState.taskTodo.findIndex((x) => x.id === task.id);
-        setContextState({
-          ...contextState,
-          taskTodo: [
-            ...contextState.taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
-            taskToUpdate, // key item (updated)
-            ...contextState.taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
-          ],
-        });
+        const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
+        setTaskTodo([
+          ...taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
+          taskToUpdate, // key item (updated)
+          ...taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
+        ]);
         reportDatalayer({
           dataLayer: {
             event: 'assignment_status_updated',
@@ -117,7 +111,7 @@ export const updateAssignment = async ({
 };
 
 export const startDay = async ({
-  t, newTasks, label, contextState, setContextState, toast, customHandler = () => {},
+  t, newTasks, label, taskTodo, setTaskTodo, toast, customHandler = () => {},
 }) => {
   try {
     const response = await bc.todo({}).add(newTasks);
@@ -133,13 +127,10 @@ export const startDay = async ({
         duration: 6000,
         isClosable: true,
       });
-      setContextState({
-        ...contextState,
-        taskTodo: [
-          ...contextState.taskTodo,
-          ...response.data,
-        ],
-      });
+      setTaskTodo([
+        ...taskTodo,
+        ...response.data,
+      ]);
       customHandler();
     }
   } catch (err) {

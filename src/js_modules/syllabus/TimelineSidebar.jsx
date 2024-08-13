@@ -9,13 +9,16 @@ import { Config, getSlideProps } from './config';
 import Timeline from '../../common/components/Timeline';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
 function TimelineSidebar({
-  cohortSession, filterEmptyModules, onClickAssignment, showPendingTasks, setShowPendingTasks,
+  filteredEmptyModules, onClickAssignment, showPendingTasks, setShowPendingTasks,
   isOpen, onToggle, isStudent, teacherInstructions,
 }) {
   const { t } = useTranslation('syllabus');
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const Open = !isOpen;
   const slide = getSlideProps(Open);
   const {
@@ -133,7 +136,7 @@ function TimelineSidebar({
 
               </Box>
             )}
-            {filterEmptyModules.length > 0 && filterEmptyModules.map((section) => {
+            {filteredEmptyModules.length > 0 && filteredEmptyModules.map((section) => {
               const currentAssignments = showPendingTasks
                 ? section.filteredModulesByPending
                 : section.filteredModules;
@@ -164,8 +167,7 @@ function TimelineSidebar({
 }
 
 TimelineSidebar.propTypes = {
-  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  filterEmptyModules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  filteredEmptyModules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
   isOpen: PropTypes.bool,
@@ -175,8 +177,7 @@ TimelineSidebar.propTypes = {
   teacherInstructions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 TimelineSidebar.defaultProps = {
-  cohortSession: null,
-  filterEmptyModules: [],
+  filteredEmptyModules: [],
   onClickAssignment: () => {},
   showPendingTasks: false,
   isOpen: false,

@@ -1,21 +1,22 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/self-closing-comp */
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Button,
+  Button, Box,
 } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../../common/hooks/useStyle';
 import ReviewModal from '../../common/components/ReviewModal';
 import Icon from '../../common/components/Icon';
-import PopoverTaskHandler, { IconByTaskStatus, TextByTaskStatus } from '../../common/components/PopoverTaskHandler';
+import Text from '../../common/components/Text';
+import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
 
 export function ButtonHandlerByTaskStatus({
   onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
-  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen,
+  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, variant,
 }) {
-  const { t } = useTranslation('dashboard');
-  const { hexColor } = useStyle();
+  const { hexColor, backgroundColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -29,47 +30,6 @@ export function ButtonHandlerByTaskStatus({
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const isButtonDisabled = currentTask === null || taskIsApproved;
 
-  function TaskButton() {
-    return (
-      <Button
-        display="flex"
-        isLoading={loaders.isChangingTaskStatus}
-        onClick={(event) => {
-          if (currentTask) {
-            setLoaders((prevState) => ({
-              ...prevState,
-              isChangingTaskStatus: true,
-            }));
-            changeStatusAssignment(event, currentTask)
-              .finally(() => {
-                setLoaders((prevState) => ({
-                  ...prevState,
-                  isChangingTaskStatus: false,
-                }));
-                onClickHandler();
-              });
-          }
-        }}
-        isDisabled={isButtonDisabled}
-        minWidth="26px"
-        minHeight="26px"
-        background={allowText ? 'blue.default' : 'none'}
-        lineHeight={allowText ? '15px' : '0'}
-        padding={allowText ? '12px 24px' : '0'}
-        borderRadius={allowText ? '3px' : '30px'}
-        variant={allowText ? 'default' : 'none'}
-        textTransform={allowText ? 'uppercase' : 'none'}
-        gridGap={allowText ? '12px' : '0'}
-      >
-        {allowText ? (
-          <TextByTaskStatus currentTask={currentTask} t={t} />
-        ) : (
-          <IconByTaskStatus currentTask={currentTask} />
-        )}
-      </Button>
-    );
-  }
-
   const openAssignmentFeedbackModal = () => {
     setIsReviewModalOpen(true);
     setLoaders((prevState) => ({
@@ -77,6 +37,25 @@ export function ButtonHandlerByTaskStatus({
       isOpeningReviewModal: false,
     }));
   };
+
+  const handleTaskButton = (event) => {
+    if (currentTask) {
+      setLoaders((prevState) => ({
+        ...prevState,
+        isChangingTaskStatus: true,
+      }));
+      changeStatusAssignment(event, currentTask)
+        .finally(() => {
+          setLoaders((prevState) => ({
+            ...prevState,
+            isChangingTaskStatus: false,
+          }));
+          onClickHandler();
+        });
+    }
+  };
+
+  const textAndIcon = textByTaskStatus(currentTask || {});
 
   function OpenModalButton() {
     return (
@@ -122,7 +101,10 @@ export function ButtonHandlerByTaskStatus({
           gridGap={allowText ? '12px' : '0'}
         >
           {allowText ? (
-            <TextByTaskStatus currentTask={currentTask} t={t} />
+            <>
+              <Icon {...textAndIcon.icon} />
+              {textAndIcon.text}
+            </>
           ) : (
             <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
           )}
@@ -164,8 +146,56 @@ export function ButtonHandlerByTaskStatus({
       />
     );
   }
+
+  if (variant === 'rounded') {
+    return (
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <Button
+          isLoading={loaders.isChangingTaskStatus}
+          onClick={handleTaskButton}
+          isDisabled={isButtonDisabled}
+          width="60px"
+          height="60px"
+          background={hexColor.blueDefault}
+          padding="24px"
+          borderRadius="full"
+          variant="default"
+          gridGap="12px"
+        >
+          <Icon {...textAndIcon.icon} />
+        </Button>
+        <Text mt="10px" size="md">
+          {textAndIcon.text}
+        </Text>
+      </Box>
+    );
+  }
+
   return (
-    <TaskButton />
+    <Button
+      display="flex"
+      isLoading={loaders.isChangingTaskStatus}
+      onClick={handleTaskButton}
+      isDisabled={isButtonDisabled}
+      minWidth="26px"
+      minHeight="26px"
+      background={allowText ? 'blue.default' : 'none'}
+      lineHeight={allowText ? '15px' : '0'}
+      padding={allowText ? '12px 24px' : '0'}
+      borderRadius={allowText ? '3px' : '30px'}
+      variant={allowText ? 'default' : 'none'}
+      textTransform={allowText ? 'uppercase' : 'none'}
+      gridGap={allowText ? '12px' : '0'}
+    >
+      {allowText ? (
+        <>
+          <Icon {...textAndIcon.icon} />
+          {textAndIcon.text}
+        </>
+      ) : (
+        <IconByTaskStatus currentTask={currentTask} />
+      )}
+    </Button>
   );
 }
 
@@ -182,6 +212,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   fileData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onlyPopoverDialog: PropTypes.bool,
+  variant: PropTypes.string,
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
@@ -192,4 +223,5 @@ ButtonHandlerByTaskStatus.defaultProps = {
   toggleSettings: () => {},
   handleOpen: () => {},
   onlyPopoverDialog: false,
+  variant: '',
 };

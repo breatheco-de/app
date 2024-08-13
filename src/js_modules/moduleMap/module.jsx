@@ -8,11 +8,11 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
 import { updateAssignment } from '../../common/hooks/useModuleHandler';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
 import ModuleComponent from '../../common/components/Module';
-import { isWindow } from '../../utils/index';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
@@ -20,11 +20,13 @@ import { reportDatalayer } from '../../utils/requests';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
-  data, taskTodo, currIndex, isDisabled, onDisabledClick, variant,
+  data, currIndex, isDisabled, onDisabledClick, variant,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { contextState, setContextState } = useModuleMap();
+  const { taskTodo, setTaskTodo } = useModuleMap();
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [, setUpdatedTask] = useState(null);
@@ -78,8 +80,6 @@ function Module({
       target: 'popup',
     },
   ];
-
-  const cohortSession = isWindow ? JSON.parse(localStorage.getItem('cohortSession') || '{}') : {};
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -151,7 +151,7 @@ function Module({
         ...task,
       });
       await updateAssignment({
-        t, task, taskStatus, closeSettings, toast, contextState, setContextState,
+        t, task, taskStatus, closeSettings, toast, taskTodo, setTaskTodo,
       });
     }
   };
@@ -161,7 +161,7 @@ function Module({
   }) => {
     setShowModal(true);
     await updateAssignment({
-      t, task, closeSettings, toast, githubUrl, taskStatus, contextState, setContextState,
+      t, task, closeSettings, toast, githubUrl, taskStatus, taskTodo, setTaskTodo,
     });
   };
 
@@ -251,7 +251,6 @@ function Module({
 Module.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currIndex: PropTypes.number,
-  taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   isDisabled: PropTypes.bool,
   onDisabledClick: PropTypes.func,
   variant: PropTypes.string,
