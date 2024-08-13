@@ -658,7 +658,7 @@ function Checkout() {
                       <Box display="flex" alignItems="center" gap="10px">
                         <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
                           <Text color={hexColor.green} fontWeight="700">
-                            {t('special-offer', { value: getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).discount })}
+                            {t('coupon-offer', { slug: selfAppliedCoupon.slug.toUpperCase(), value: getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).discount })}
                           </Text>
                         </Box>
                         <Text size="md" color={hexColor.disabledColor} textDecoration="line-through">
