@@ -28,7 +28,7 @@ import bc from '../../services/breathecode';
 import modifyEnv from '../../../../modifyEnv';
 
 function SignupForm({
-  planSlug, courseChoosed, showVerifyEmail, formProps, setFormProps, subscribeValues, buttonStyles,
+  planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
   invertHandlerPosition, formContainerStyle, ...rest
 }) {
@@ -40,6 +40,13 @@ function SignupForm({
   const plan = getQueryString('plan') || planSlug;
   const planFormated = plan ? encodeURIComponent(plan) : BASE_PLAN;
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [formProps, setFormProps] = useState({
+    first_name: '',
+    last_name: '',
+    phone: '',
+    email: '',
+    confirm_email: '',
+  });
   const [isChecked, setIsChecked] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const redirectStorage = getStorageItem('redirect');
@@ -395,8 +402,6 @@ SignupForm.propTypes = {
   onHandleSubmit: PropTypes.func,
   planSlug: PropTypes.string,
   courseChoosed: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  setFormProps: PropTypes.func,
   showVerifyEmail: PropTypes.bool,
   containerGap: PropTypes.string,
   extraFields: PropTypes.arrayOf(PropTypes.string),
@@ -412,7 +417,6 @@ SignupForm.defaultProps = {
   onHandleSubmit: () => {},
   planSlug: null,
   courseChoosed: '',
-  setFormProps: () => {},
   showVerifyEmail: true,
   containerGap: '24px',
   extraFields: [],

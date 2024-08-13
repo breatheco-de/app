@@ -99,13 +99,13 @@ export async function getStaticProps({ locale, locales, params }) {
 function CouponTopBar() {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
-  const { getPriceWithDiscount, setCoupon, state } = useSignup();
-  const { coupon } = state;
+  const { getPriceWithDiscount, setSelfAppliedCoupon, state } = useSignup();
+  const { selfAppliedCoupon } = state;
 
   // Since we are not showing the price after discount, we can give the price as cero
-  const { discount } = getPriceWithDiscount(0, coupon);
+  const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
 
-  if (!coupon) return null;
+  if (!selfAppliedCoupon) return null;
 
   return (
     <Box
@@ -123,8 +123,8 @@ function CouponTopBar() {
           <Timer
             autoRemove
             variant="text"
-            startingAt={new Date(coupon?.expires_at).toISOString()}
-            onFinish={() => setCoupon(null)}
+            startingAt={new Date(selfAppliedCoupon?.expires_at).toISOString()}
+            onFinish={() => setSelfAppliedCoupon(null)}
             color="white"
             background="none"
             fontSize="18px"
@@ -153,7 +153,7 @@ function Page({ data }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { setCohortSession } = useCohortHandler();
-  const { getSelfApliedCoupon } = useSignup();
+  const { getSelfAppliedCoupon } = useSignup();
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -403,7 +403,7 @@ function Page({ data }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
-    await getSelfApliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
 
     setCohortData({
       cohortSyllabus,

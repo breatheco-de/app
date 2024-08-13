@@ -15,7 +15,7 @@ import { usePersistentBySession } from '../hooks/usePersistent';
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { getPriceWithDiscount, state } = useSignup();
-  const { coupon: selfApliedCoupon } = state;
+  const { selfAppliedCoupon } = state;
   const { fontColor, hexColor, featuredCard, featuredColor } = useStyle();
   const [selectedFinancing, setSelectedFinancing] = useState({});
   const [accordionState, setAccordionState] = useState(false);
@@ -23,7 +23,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const queryCoupon = getQueryString('coupon');
   const [coupon] = usePersistentBySession('coupon', []);
 
-  const courseCoupon = selfApliedCoupon?.plan === item.plan_slug && selfApliedCoupon;
+  const courseCoupon = selfAppliedCoupon?.plan === item.plan_slug && selfAppliedCoupon;
 
   const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
