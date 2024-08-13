@@ -268,7 +268,7 @@ function AuthProvider({ children, pageProps }) {
 
           const prismicPages = await getPrismicPages();
           const prismicPagesUrls = getPrismicPagesUrls(prismicPages);
-          
+
           // disabledRedirectUrls are urls that we will ignore if included as redirect.
           const disabledRedirectUrls = [...prismicPagesUrls, '/'];
 
