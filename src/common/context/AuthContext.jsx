@@ -5,7 +5,8 @@ import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
-import { reportDatalayer } from '../../utils/requests';
+import { reportDatalayer, getPrismicPages } from '../../utils/requests';
+import { getPrismicPagesUrls } from '../../utils/url';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
 import modifyEnv from '../../../modifyEnv';
@@ -264,8 +265,15 @@ function AuthProvider({ children, pageProps }) {
             type: 'LOGIN',
             payload: responseData,
           });
+
+          const prismicPages = await getPrismicPages();
+          const prismicPagesUrls = getPrismicPagesUrls(prismicPages);
+          
+          // disabledRedirectUrls are urls that we will ignore if included as redirect.
+          const disabledRedirectUrls = [...prismicPagesUrls, '/'];
+
           if (!disableRedirect) {
-            if (redirect && redirect.length > 0) {
+            if (redirect && redirect.length > 0 && !disabledRedirectUrls.includes(redirect)) {
               router.push(redirect);
               localStorage.removeItem('redirect');
             } else {
