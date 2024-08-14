@@ -127,19 +127,20 @@ function Content() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleStartDay = () => {
-    const updatedTasks = (nextModule.modules || [])?.map((l) => ({
+  const handleStartDay = async (module = null, avoidRedirect = false) => {
+    const moduleToUpdate = module?.modules || nextModule.modules;
+    const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
       associated_slug: l.slug,
       cohort: cohortSession.id,
     }));
     const customHandler = () => {
-      if (nextModule && cohortSlug && firstTask) {
+      if (moduleToUpdate && cohortSlug && firstTask && !avoidRedirect) {
         router.push(`/syllabus/${cohortSlug}/${firstTask?.type?.toLowerCase()}/${firstTask?.slug}`);
       }
     };
     if (user?.id) {
-      startDay({
+      await startDay({
         t,
         id: user.id,
         newTasks: updatedTasks,
@@ -217,13 +218,9 @@ function Content() {
           const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
           const respData = await fileResp.data;
           setFileData(respData);
-          onOpen();
-        } else {
-          onOpen();
         }
-      } else {
-        onOpen();
       }
+      onOpen();
     }
   };
 
@@ -634,6 +631,7 @@ function Content() {
             onClickAssignment={onClickAssignment}
             isOpen={isOpen}
             onToggle={onToggle}
+            handleStartDay={handleStartDay}
           />
         ) : (
           <TimelineSidebar
@@ -647,7 +645,6 @@ function Content() {
             teacherInstructions={{
               existContentToShow: extendedInstructions !== null,
               actionHandler: () => {
-                console.log('click');
                 setExtendedIsEnabled(!extendedIsEnabled);
                 if (extendedIsEnabled === false) {
                   scrollTop();

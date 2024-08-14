@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -8,6 +9,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  Spinner,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -16,12 +18,13 @@ import { Config, getSlideProps } from './config';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Timeline from '../../common/components/Timeline';
 import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
-function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOpen, onToggle, currentModuleIndex }) {
+function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay }) {
   const { t } = useTranslation('syllabus');
+  const [moduleLoading, setModuleLoading] = useState(null);
+  const [expandedIndex, setExpandedIndex] = useState(currentModuleIndex);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const Open = !isOpen;
@@ -30,6 +33,14 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
     themeColor, commonBorderColor, currentThemeValue,
   } = Config();
   const { hexColor } = useStyle();
+
+  useEffect(() => {
+    setExpandedIndex(currentModuleIndex);
+  }, [currentModuleIndex]);
+
+  const onExpand = (index) => {
+    setExpandedIndex(index);
+  };
 
   return (
     <>
@@ -82,11 +93,11 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
             }}
           >
             {filteredEmptyModules.length > 0 && (
-              <Accordion defaultIndex={[currentModuleIndex]} allowToggle allowMultiple>
+              <Accordion index={expandedIndex} onChange={onExpand} defaultIndex={[currentModuleIndex]} allowToggle allowMultiple>
                 {filteredEmptyModules.map((section) => {
                   const currentAssignments = section.filteredModules;
                   return (
-                    <AccordionItem key={`${section.title}-${section.id}`} border="none">
+                    <AccordionItem id={`${section.title}-${section.id}`} isDisabled={moduleLoading} key={`${section.title}-${section.id}`} border="none">
                       <Box
                         padding={{ base: '1rem', md: '1.5rem' }}
                         borderBottom={1}
@@ -94,9 +105,27 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
                         borderColor={commonBorderColor}
                       >
 
-                        <AccordionButton justifyContent="space-between">
+                        <AccordionButton
+                          justifyContent="space-between"
+                          onClick={async () => {
+                            try {
+                              if (currentAssignments.length === 0) {
+                                setModuleLoading(section.id);
+                                await handleStartDay(section, true);
+                                setModuleLoading(null);
+                              }
+                            } catch (e) {
+                              console.log(e);
+                              setModuleLoading(null);
+                            }
+                          }}
+                        >
                           {section.label}
-                          <AccordionIcon color={hexColor.blueDefault} />
+                          {moduleLoading === section.id ? (
+                            <Spinner height="20px" width="20px" color={hexColor.blueDefault} />
+                          ) : (
+                            <AccordionIcon color={hexColor.blueDefault} />
+                          )}
                         </AccordionButton>
                         <AccordionPanel pb={4}>
                           <Timeline
@@ -125,6 +154,7 @@ GuidedExperienceSidebar.propTypes = {
   isOpen: PropTypes.bool,
   onToggle: PropTypes.func,
   currentModuleIndex: PropTypes.number,
+  handleStartDay: PropTypes.func.isRequired,
 };
 GuidedExperienceSidebar.defaultProps = {
   filteredEmptyModules: [],

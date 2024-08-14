@@ -19,7 +19,6 @@ function Timeline({
   const router = useRouter();
   const { lessonSlug } = router.query;
   const [currentAssignment, setCurrentAssignment] = useState(null);
-  const [currentDefaultSlug, setCurrentDefaultSlug] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
   const bgColor = useColorModeValue('blue.light', 'featuredDark');
@@ -40,18 +39,17 @@ function Timeline({
       const assignmentFound = assignments.find((item) => (
         item?.translations?.us?.slug === lessonSlug
         || item?.translations?.es?.slug === lessonSlug
+        || item?.slug === lessonSlug
       ));
-      const slug = currentAssignment?.translations?.us?.slug || currentAssignment?.translations?.en?.slug;
-      setCurrentDefaultSlug(slug);
       setCurrentAssignment(assignmentFound);
     }
   }, [lessonSlug, assignments]);
 
   useEffect(() => {
-    if (currentDefaultSlug) {
-      scrollIntoView(currentDefaultSlug);
+    if (currentAssignment?.slug) {
+      scrollIntoView(currentAssignment.slug);
     }
-  }, [currentDefaultSlug]);
+  }, [currentAssignment]);
   const handleClick = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
@@ -101,7 +99,7 @@ function Timeline({
       <Box>
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
-          const muted = item?.slug !== currentDefaultSlug;
+          const muted = item?.slug !== currentAssignment?.slug;
           const assignmentTitle = getAssignmentTitle(item);
 
           return (
