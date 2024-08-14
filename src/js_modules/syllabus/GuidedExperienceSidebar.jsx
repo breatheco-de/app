@@ -21,8 +21,6 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
 function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOpen, onToggle, currentModuleIndex }) {
-  console.log('currentModuleIndex');
-  console.log(currentModuleIndex);
   const { t } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;

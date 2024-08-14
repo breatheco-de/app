@@ -84,13 +84,12 @@ function Content() {
   const { cohortSession, sortedAssignments } = state;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
-  const commonBorderColor = useColorModeValue('#E2E8F0', '#718096');
-  const commonFeaturedColors = useColorModeValue('featuredLight', 'featuredDark');
+  const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
 
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
@@ -98,8 +97,6 @@ function Content() {
   const filteredEmptyModules = sortedAssignments.filter(
     (assignment) => assignment.modules.length > 0,
   );
-
-  const currentTheme = useColorModeValue('light', 'dark');
 
   const firstTask = nextModule?.modules[0];
   const lastPrevTask = prevModule?.modules[prevModule?.modules?.length - 1];
@@ -736,7 +733,7 @@ function Content() {
               </Box>
             )}
             <Box
-              className={`markdown-body horizontal-sroll ${currentTheme}`}
+              className={`markdown-body horizontal-sroll ${colorMode}`}
               background={backgroundColor}
               borderRadius="11px"
               flexGrow={1}
@@ -808,7 +805,7 @@ function Content() {
                     />
                   )}
 
-                  <Box display="flex" flexDirection="column" background={commonFeaturedColors} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+                  <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
                     <Heading as="h2" size="sm" style={{ margin: '0' }}>
                       {`${label} - `}
                       {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
@@ -822,7 +819,7 @@ function Content() {
               )}
 
               {!isQuiz && currentData?.solution_video_url && showSolutionVideo && (
-                <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={useColorModeValue('featuredLight', 'featuredDark')}>
+                <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
                   <Heading as="h2" size="16">
                     Video Tutorial
                   </Heading>
@@ -865,7 +862,7 @@ function Content() {
               {ipynbHtmlUrl && (
                 <iframe
                   id="iframe"
-                  src={`${ipynbHtmlUrl}&theme=${currentTheme}`}
+                  src={`${ipynbHtmlUrl}&theme=${colorMode}`}
                   style={{
                     width: '100%',
                     height: '99vh',
@@ -876,7 +873,7 @@ function Content() {
               )}
 
               {isQuiz ? (
-                <Box background={useColorModeValue('featuredLight', 'featuredDark')} width="100%" height="100vh" borderRadius="14px">
+                <Box background={featuredColor} width="100%" height="100vh" borderRadius="14px">
                   <iframe
                     id="iframe"
                     src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
