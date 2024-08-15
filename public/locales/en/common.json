@@ -7,6 +7,9 @@
   "teacher-assistant": "Teacher Assistant",
   "rigo": "Rigo",
   "ai-tutor": "AI Tutor",
+  "clone-modal": {
+    "title": "How to clone a project?",
+  },
   "word-connector": {
     "and": "and",
     "or": "or",
