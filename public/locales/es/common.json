@@ -7,6 +7,9 @@
   "teacher-assistant": "Asistente de Profesor",
   "rigo": "Rigo",
   "ai-tutor": "Tutor IA",
+  "clone-modal": {
+    "title": "¿Cómo clonar un proyecto?",
+  },
   "word-connector": {
     "and": "y",
     "or": "o",
