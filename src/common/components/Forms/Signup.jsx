@@ -236,7 +236,7 @@ function SignupForm({
                     setVal={setFormProps}
                     placeholder={t('common:phone')}
                     formData={formProps}
-                    required={false}
+                    required={true}
                   />
                   {t('phone-info')}
                 </Box>
