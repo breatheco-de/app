@@ -50,7 +50,7 @@
     "or": " o "
   },
   "clone-modal" : {
-    "title": "¿Como clonar un proyecto?",
+    "title": "¿Cómo clonar un proyecto?",
     "text-part-one": "No lo recomendamos, pero algunos ejercicios se pueden descargar y ejecutar localmente usando VSCode y el ",
     "text-part-two": ". Si quieres hacerlo, debes comenzar por clonar el proyecto en tu computadora escribiendo el siguiente comando en tu terminal:",
     "note": "Nota: Esto creará una nueva carpeta “{{folder}}” en su computadora con el código del proyecto dentro.",

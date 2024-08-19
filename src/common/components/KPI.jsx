@@ -12,7 +12,7 @@ function KPI({
   label, icon, value, unit, max,
   variation, variationColor, style,
   changeWithColor, valueUnit, unstyled, chart,
-  fontSize, iconSize, labelSize,
+  fontSize, iconSize, labelSize, textProps, ...rest
 }) {
   const verifiVariation = () => {
     if (variation.includes('+')) return 'up';
@@ -52,7 +52,7 @@ function KPI({
   const numberColors = getNumberColor();
 
   return (
-    <Stack style={style} width="fit-content" background={!unstyled && bgColor} display="flex" flexDirection={chart === null ? 'column' : 'row'} padding={!unstyled && (label ? '17px 22px' : '10px 20px')} border={!unstyled && '2px solid'} borderColor={!unstyled && 'blue.200'} borderRadius="10px">
+    <Stack style={style} width="fit-content" background={!unstyled && bgColor} display="flex" flexDirection={chart === null ? 'column' : 'row'} padding={!unstyled && (label ? '17px 22px' : '10px 20px')} border={!unstyled && '2px solid'} borderColor={!unstyled && 'blue.200'} borderRadius="10px" {...rest}>
       {chart !== null ? (
         <Flex flexDirection="column" color={fontColor2}>
           {label && (
@@ -66,7 +66,7 @@ function KPI({
           </Heading>
         </Flex>
       ) : (
-        <Heading as="label" color={fontColor2} textTransform="capitalize" fontSize="14px">
+        <Heading as="label" color={fontColor2} textTransform="capitalize" fontSize="14px" {...textProps}>
           {label}
         </Heading>
       )}
@@ -130,6 +130,7 @@ KPI.propTypes = {
   fontSize: PropTypes.string,
   iconSize: PropTypes.string,
   labelSize: PropTypes.string,
+  textProps: PropTypes.objectOf(PropTypes.string),
   // variationUnit: PropTypes.string.isRequired,
 };
 
@@ -148,6 +149,7 @@ KPI.defaultProps = {
   fontSize: 'l',
   iconSize: '26px',
   labelSize: '15px',
+  textProps: {},
   // variationUnit: '',
 };
 

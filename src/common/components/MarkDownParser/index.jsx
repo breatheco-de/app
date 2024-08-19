@@ -286,7 +286,7 @@ function MarkDownParser({
     <>
       <SimpleModal
         maxWidth="xl"
-        title={t('clone-modal.title')}
+        title={t('learnpack.clone-title')}
         isOpen={showCloneModal}
         onClose={() => {
           setShowCloneModal(false);

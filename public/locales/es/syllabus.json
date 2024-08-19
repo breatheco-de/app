@@ -35,5 +35,11 @@
   "start-next-module": "Sí, comencemos el siguiente módulo.",
   "superseded-message": "Esta lección pertenece al archivo de legado, recomendamos leer una versión más actualizada:",
   "solution-message": "Este proyecto tiene una solución modelo que puedes revisar en caso de necesitar orientación adicional.",
-  "open-solution": "Haz clic aquí para revisar el modelo de solución"
+  "open-solution": "Haz clic aquí para revisar el modelo de solución",
+  "completion-percentage": "Porcentaje de finalización",
+  "total-steps": "Pasos completados",
+  "total-time": "Tiempo total",
+  "successful-compiles": "Compilaciones exitosas",
+  "successful-tests": "Pasos exitosos",
+  "total-errors": "Total de errores"
 }
