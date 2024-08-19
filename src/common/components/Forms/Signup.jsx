@@ -66,8 +66,8 @@ function SignupForm({
     email: Yup.string()
       .matches(emailRe, t('validators.invalid-email'))
       .required(t('validators.email-required')),
-    phone: Yup.string(),
-    // .matches(phone, t('validators.invalid-phone')),
+    phone: Yup.string()
+      .matches(phone, t('validators.invalid-phone')),
     // confirm_email: Yup.string()
     //   .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
     //   .required(t('validators.confirm-email-required')),
