@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable camelcase */
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
@@ -56,8 +57,8 @@ function useCohortHandler() {
     slug, cohort,
   }) => {
     if (user) {
-      const academyId = cohort.academy.id;
-      const { version } = cohort.syllabus_version;
+      const academyId = cohort?.academy.id;
+      const { version } = cohort?.syllabus_version;
       const syllabusSlug = cohort?.syllabus_version.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
@@ -88,24 +89,25 @@ function useCohortHandler() {
     }
   };
 
-  const handleRedirectToPublicPage = () => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`)
-      .then((response) => {
-        if (response?.data?.asset_type) {
-          redirectToPublicPage(response.data);
-        }
-      })
-      .catch(() => {
-        router.push('/404');
-      });
+  const handleRedirectToPublicPage = async () => {
+    try {
+      const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
+      if (response?.data?.asset_type) {
+        redirectToPublicPage(response.data);
+      }
+    } catch (e) {
+      router.push('/404');
+    }
   };
 
-  const getCohortData = ({
+  const getCohortData = async ({
     cohortSlug,
-  }) => new Promise((resolve, reject) => {
-    // Fetch cohort data with pathName structure
-    if (cohortSlug && accessToken) {
-      bc.admissions().me().then(({ data }) => {
+  // eslint-disable-next-line consistent-return
+  }) => {
+    try {
+      // Fetch cohort data with pathName structure
+      if (cohortSlug && accessToken) {
+        const { data } = await bc.admissions().me();
         if (!data) throw new Error('No data');
         const { cohorts } = data;
         // find cohort with current slug
@@ -129,27 +131,26 @@ function useCohortHandler() {
               role: findCohort.role,
             },
           });
-          resolve(currentCohort);
+          return currentCohort;
         }
-      }).catch((error) => {
+      } else {
         handleRedirectToPublicPage();
-        toast({
-          position: 'top',
-          title: t('alert-message:invalid-cohort-slug'),
-          // title: 'Invalid cohort slug',
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        reject(error);
-        setTimeout(() => {
-          localStorage.removeItem('cohortSession');
-        }, 4000);
-      });
-    } else {
+      }
+    } catch (error) {
       handleRedirectToPublicPage();
+      toast({
+        position: 'top',
+        title: t('alert-message:invalid-cohort-slug'),
+        // title: 'Invalid cohort slug',
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      setTimeout(() => {
+        localStorage.removeItem('cohortSession');
+      }, 4000);
     }
-  });
+  };
 
   // Sort all data fetched in order of taskTodo
   const prepareTasks = () => {
