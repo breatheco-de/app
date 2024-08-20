@@ -37,12 +37,6 @@ function ShowOnSignUp({
   const { t } = useTranslation('signup');
   const [isReadyToRefetch, setIsReadyToRefetch] = useState(false);
   const router = useRouter();
-  const [formProps, setFormProps] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    // phone: '',
-  });
   const isLogged = alreadyLogged || isAuthenticated;
   const commonBorderColor = useColorModeValue('gray.250', 'gray.700');
   const defaultPlan = process.env.BASE_PLAN || 'basic';
@@ -134,8 +128,6 @@ function ShowOnSignUp({
               columnLayout
               showLoginLink
               invertHandlerPosition={invertHandlerPosition}
-              formProps={formProps}
-              setFormProps={setFormProps}
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}

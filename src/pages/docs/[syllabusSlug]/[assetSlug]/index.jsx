@@ -65,7 +65,7 @@ const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
   const myModule = {
     id,
     label,
-    modules: nestedAssignments.modules,
+    assets: nestedAssignments.modules,
   };
   return myModule;
 });
@@ -75,7 +75,7 @@ export const getStaticPaths = async ({ locales }) => {
 
   const formatedData = data.flatMap((syllabus) => {
     const formated = formatSyllabus(syllabus);
-    const assets = formated.flatMap((elem) => elem.modules.map((module) => module));
+    const assets = formated.flatMap((elem) => elem.assets.map((module) => module));
     return assets.map((asset) => ({ ...asset, syllabus }));
   });
   const paths = formatedData.flatMap((res) => locales.map((locale) => ({
@@ -102,7 +102,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
     const moduleData = formatSyllabus(syllabus);
 
-    const asset = moduleData.flatMap((syllabusModule) => syllabusModule.modules.map((moduleAsset) => moduleAsset))
+    const asset = moduleData.flatMap((syllabusModule) => syllabusModule.assets.map((moduleAsset) => moduleAsset))
       .find((moduleAsset) => moduleAsset.slug === assetSlug || moduleAsset.translations?.[locale]?.slug === assetSlug);
 
     const { translations } = asset;
@@ -130,7 +130,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
     //serialize moduleData removing undefined values
     moduleData.forEach((moduleSyllabus) => {
-      moduleSyllabus.modules.forEach((mod) => {
+      moduleSyllabus.assets.forEach((mod) => {
         Object.keys(mod).forEach((key) => {
           if (mod[key] === undefined) mod[key] = null;
         });
@@ -196,7 +196,7 @@ function Docs({ syllabusData, moduleMap }) {
 
   const getAssetData = async () => {
     try {
-      const isInSyllabus = moduleMap.some((myModule) => myModule.modules.some((moduleAsset) => {
+      const isInSyllabus = moduleMap.some((myModule) => myModule.assets.some((moduleAsset) => {
         if (moduleAsset.slug === assetSlug) return true;
         const translations = moduleAsset.translations ? Object.values(moduleAsset.translations) : [];
         return translations.some((translation) => translation.slug === assetSlug);
@@ -272,7 +272,7 @@ function Docs({ syllabusData, moduleMap }) {
 
   useEffect(() => {
     moduleMap.forEach((syllabusModule, i) => {
-      if (syllabusModule.modules.find((elem) => elem.slug === assetSlug || elem.translations?.[langsDict[lang]]?.slug === assetSlug)) setOpen(i);
+      if (syllabusModule.assets.find((elem) => elem.slug === assetSlug || elem.translations?.[currentLang]?.slug === assetSlug)) setOpen(i);
     });
   }, []);
 
@@ -282,28 +282,33 @@ function Docs({ syllabusData, moduleMap }) {
 
   const handleOpen = (index) => (index === open ? setOpen(null) : setOpen(index));
 
-  const getPrevArticle = () => {
+  const findAssetBySlug = (elem) => elem.translations?.[currentLang]?.slug === assetSlug || elem.slug === assetSlug;
+
+  const getNearbyArticle = (diff) => {
     if (Number.isNaN(open)) return null;
-    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
-    const nextAsset = moduleMap[open]?.modules[currentIndex - 1];
+    const currentIndex = moduleMap[open]?.assets.findIndex(findAssetBySlug);
+
+    const nextAsset = moduleMap[open]?.assets[currentIndex + diff];
     if (nextAsset) return nextAsset;
-    const prevModule = moduleMap[open - 1];
-    if (prevModule && prevModule.modules.length > 0) return prevModule.modules[prevModule.modules.length - 1];
+
+    const nearbyModule = moduleMap[open + diff];
+    if (nearbyModule && nearbyModule.assets.length > 0) {
+      const index = diff > 0 ? 0 : nearbyModule.assets.length - 1;
+      return nearbyModule.assets[index];
+    }
     return null;
   };
 
-  const getNextArticle = () => {
-    if (Number.isNaN(open)) return null;
-    const currentIndex = moduleMap[open]?.modules.findIndex((elem) => elem.slug === assetSlug);
-    const nextAsset = moduleMap[open]?.modules[currentIndex + 1];
-    if (nextAsset) return nextAsset;
-    const nextModule = moduleMap[open + 1];
-    if (nextModule && nextModule.modules.length > 0) return nextModule.modules[0];
-    return null;
-  };
+  const prevArticle = getNearbyArticle(-1);
+  const nextArticle = getNearbyArticle(1);
 
-  const prevArticle = getPrevArticle();
-  const nextArticle = getNextArticle();
+  const findIndexOfModule = (article, diff) => {
+    const nextSlug = article.translations?.[currentLang]?.slug || article.slug;
+    const foundAsset = moduleMap[open].assets.find((elem) => (elem.translations?.[currentLang]?.slug === nextSlug) || (elem.slug === nextSlug));
+    if (!foundAsset) {
+      setOpen(open + diff);
+    }
+  };
 
   return (
     <>
@@ -361,8 +366,8 @@ function Docs({ syllabusData, moduleMap }) {
                 </Box>
                 {open === index && (
                   <Box marginLeft="5px">
-                    {module.modules.map((assetModule, i) => {
-                      const assetData = assetModule.translations?.[langsDict[lang]] || assetModule;
+                    {module.assets.map((assetModule, i) => {
+                      const assetData = assetModule.translations?.[currentLang] || assetModule;
                       return (
                         <Box margin="5px 0" padding="15px" borderLeft="2px solid" borderColor={assetSlug === assetData.slug ? hexColor.blueDefault : borderColor} key={`${assetData.slug}-${i}`}>
                           <Link
@@ -523,18 +528,14 @@ function Docs({ syllabusData, moduleMap }) {
           <Box margin="0 auto" display="flex" justifyContent="flex-end" gap="20px">
             {prevArticle && (
               <Link
-                href={`/docs/${syllabusSlug}/${prevArticle.slug}`}
+                href={`/docs/${syllabusSlug}/${prevArticle.translations?.[currentLang]?.slug || prevArticle.slug}`}
                 fontWeight="700"
                 fontSize="15px"
                 variant="default"
                 display="flex"
                 alignItems="center"
                 gridGap="10px"
-                onClick={() => {
-                  if (!moduleMap[open].modules.find((elem) => elem.slug === prevArticle.slug)) {
-                    setOpen(open - 1);
-                  }
-                }}
+                onClick={() => findIndexOfModule(prevArticle, -1)}
               >
                 <Icon icon="arrowLeft2" width="18px" height="10px" />
                 {t('previous-article')}
@@ -543,18 +544,14 @@ function Docs({ syllabusData, moduleMap }) {
 
             {nextArticle && (
               <Link
-                href={`/docs/${syllabusSlug}/${nextArticle.slug}`}
+                href={`/docs/${syllabusSlug}/${nextArticle.translations?.[currentLang]?.slug || nextArticle.slug}`}
                 fontWeight="700"
                 fontSize="15px"
                 variant="default"
                 display="flex"
                 alignItems="center"
                 gridGap="10px"
-                onClick={() => {
-                  if (!moduleMap[open].modules.find((elem) => elem.slug === nextArticle.slug)) {
-                    setOpen(open + 1);
-                  }
-                }}
+                onClick={() => findIndexOfModule(nextArticle, 1)}
               >
                 {t('next-article')}
                 <Icon style={{ transform: 'rotate(180deg)' }} icon="arrowLeft2" width="18px" height="10px" />

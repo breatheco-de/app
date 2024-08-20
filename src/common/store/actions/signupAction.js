@@ -8,7 +8,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -135,6 +135,10 @@ const useSignup = () => {
     type: SET_SELECTED_SERVICE,
     payload,
   });
+  const setSelfAppliedCoupon = (payload) => dispatch({
+    type: SET_SELF_APPLIED_COUPON,
+    payload,
+  });
 
   const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
     const manyInstallmentsExists = selectedPlanCheckoutData?.how_many_months > 0 || selectedPlanCheckoutData?.period === 'FINANCING';
@@ -147,7 +151,7 @@ const useSignup = () => {
           token: data?.token || checkoutData.token,
           how_many_installments: data?.installments || selectedPlanCheckoutData?.how_many_months || undefined,
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
-          coupons: checkoutData?.discountCoupon?.slug ? [checkoutData.discountCoupon.slug] : undefined,
+          coupons: checkoutData?.coupons,
         };
       }
       return {
@@ -422,6 +426,50 @@ const useSignup = () => {
     return '';
   };
 
+  const getPriceWithDiscount = (price, couponData) => {
+    // const price = selectedPlanCheckoutData?.price;
+    const discount = couponData?.discount_value;
+    const discountType = couponData?.discount_type;
+    if (discount) {
+      if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
+        const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
+        return {
+          originalPrice: price,
+          price: roundedPrice,
+          discount: `${discount * 100}%`,
+        };
+      }
+      if (discountType === 'FIXED_PRICE') {
+        return {
+          originalPrice: price,
+          price: price - discount,
+          discount: `$${discount}`,
+        };
+      }
+    }
+    return {
+      price,
+      discount: '0%',
+    };
+  };
+
+  const getSelfAppliedCoupon = async (plan) => {
+    try {
+      if (plan) {
+        const { data } = await bc.payment({ plan }).verifyCoupon();
+        const coupon = data[0];
+        if (coupon) {
+          setSelfAppliedCoupon({
+            ...coupon,
+            plan,
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return {
     state,
     isFirstStep,
@@ -441,6 +489,7 @@ const useSignup = () => {
     setIsSubmittingCard,
     setIsSubmittingPayment,
     setPaymentInfo,
+    setSelfAppliedCoupon,
     handlePayment,
     setPlanData,
     setSelectedPlanCheckoutData,
@@ -451,6 +500,8 @@ const useSignup = () => {
     handleServiceToConsume,
     setSelectedService,
     getPaymentMethods,
+    getPriceWithDiscount,
+    getSelfAppliedCoupon,
   };
 };
 

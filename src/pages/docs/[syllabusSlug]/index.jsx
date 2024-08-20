@@ -43,7 +43,7 @@ const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
   const myModule = {
     id,
     label,
-    modules: nestedAssignments.modules,
+    assets: nestedAssignments.modules,
   };
   return myModule;
 });
@@ -75,7 +75,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
     //serialize moduleData removing undefined values
     moduleData.forEach((moduleSyllabus) => {
-      moduleSyllabus.modules.forEach((mod) => {
+      moduleSyllabus.assets.forEach((mod) => {
         Object.keys(mod).forEach((key) => {
           if (mod[key] === undefined) mod[key] = null;
         });
@@ -103,7 +103,7 @@ function Docs({ moduleMap }) {
 
   useEffect(() => {
     if (isWindow) {
-      const defaultAsset = moduleMap[0]?.modules[0]?.translations[langsDict[lang]].slug || moduleMap[0]?.modules[0]?.slug;
+      const defaultAsset = moduleMap[0]?.assets[0]?.translations[langsDict[lang]].slug || moduleMap[0]?.assets[0]?.slug;
       window.location.href = `${redirectLang[lang]}docs/${syllabusSlug}/${defaultAsset}`;
     }
   }, []);

@@ -18,7 +18,7 @@ import Text from '../../common/components/Text';
 import { reportDatalayer } from '../../utils/requests';
 
 function ContactInformation({
-  courseChoosed, formProps, setFormProps, setVerifyEmailProps,
+  courseChoosed, setVerifyEmailProps,
 }) {
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
@@ -62,8 +62,6 @@ function ContactInformation({
           extraFields={['phone']}
           // maxWidth="490px"
           maxWidth={{ base: 'auto', lg: '490px' }}
-          formProps={formProps}
-          setFormProps={setFormProps}
           onHandleSubmit={(data) => {
             setVerifyEmailProps({
               data,
@@ -103,14 +101,11 @@ function ContactInformation({
 
 ContactInformation.propTypes = {
   courseChoosed: PropTypes.string,
-  formProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  setFormProps: PropTypes.func,
   setVerifyEmailProps: PropTypes.func.isRequired,
 };
 
 ContactInformation.defaultProps = {
   courseChoosed: '',
-  setFormProps: () => {},
 };
 
 export default ContactInformation;
