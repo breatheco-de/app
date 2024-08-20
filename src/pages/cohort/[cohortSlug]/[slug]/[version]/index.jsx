@@ -286,7 +286,7 @@ function Dashboard() {
         });
         // Fetch cohort assignments (lesson, exercise, project, quiz)
         getCohortAssignments({
-          user, slug, cohort,
+          slug, cohort,
         });
       });
     }
