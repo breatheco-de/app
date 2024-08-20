@@ -7,7 +7,7 @@ import {
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
-const useCohort = () => {
+const useCohortAction = () => {
   const dispatch = useDispatch();
   const [, persistCohortSession] = usePersistent('cohortSession', {});
   const state = useSelector((reducerState) => reducerState.cohortReducer);
@@ -58,4 +58,4 @@ const useCohort = () => {
   };
 };
 
-export default useCohort;
+export default useCohortAction;

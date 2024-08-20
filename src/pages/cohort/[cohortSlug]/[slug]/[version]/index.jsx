@@ -27,7 +27,6 @@ import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
-import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import axios from '../../../../../axios';
 import {
   slugify,
@@ -46,6 +45,7 @@ import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
+import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
@@ -58,7 +58,7 @@ function Dashboard() {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { cohortProgram, taskTodo, setTaskTodo } = useModuleMap();
+  const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -687,10 +687,8 @@ function Dashboard() {
                     return (
                       <ModuleMap
                         key={index}
-                        userId={user?.id}
                         existsActivities={existsActivities}
                         cohortData={cohortSession}
-                        taskCohortNull={taskCohortNull}
                         index={index}
                         title={label}
                         slug={slugify(label)}

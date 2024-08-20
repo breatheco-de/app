@@ -17,8 +17,7 @@ import ReviewCodeRevision from './ReviewCodeRevision';
 import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import PopoverTaskHandler from '../PopoverTaskHandler';
-import { updateAssignment } from '../../hooks/useModuleHandler';
-import useModuleMap from '../../store/actions/moduleMapAction';
+import useModuleHandler from '../../hooks/useModuleHandler';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
@@ -55,13 +54,13 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   });
   const [profile] = usePersistent('profile', {});
   const [comment, setComment] = useState('');
+  const { updateAssignment } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [openUndoApproval, setOpenUndoApproval] = useState(false);
   const [fileData, setFileData] = useState();
-  const { taskTodo, setTaskTodo } = useModuleMap();
   const [reviewStatus, setReviewStatus] = useState('');
   const [contextData, setContextData] = useState({
     commitFiles: {
@@ -426,7 +425,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   };
   const sendProject = async ({ task, githubUrl, taskStatus: newTaskStatus }) => {
     await updateAssignment({
-      t, task, closeSettings, toast, githubUrl, taskStatus: newTaskStatus, taskTodo, setTaskTodo,
+      task, closeSettings, githubUrl, taskStatus: newTaskStatus,
     });
   };
 

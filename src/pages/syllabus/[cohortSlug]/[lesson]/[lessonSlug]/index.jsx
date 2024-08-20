@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  Box, Flex, useDisclosure, Link, useToast,
+  Box, Flex, useDisclosure, Link,
   useColorModeValue, Modal, ModalOverlay,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
@@ -14,7 +14,7 @@ import Head from 'next/head';
 import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
-import { updateAssignment, startDay } from '../../../../../common/hooks/useModuleHandler';
+import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
@@ -23,7 +23,6 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
-import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
 import ShareButton from '../../../../../common/components/ShareButton';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
@@ -46,7 +45,7 @@ function Content() {
   const { t, lang } = useTranslation('syllabus');
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { user, isLoading } = useAuth();
-  const { taskTodo, cohortProgram, setTaskTodo } = useModuleMap();
+  const { taskTodo, cohortProgram, setTaskTodo, startDay, updateAssignment } = useModuleHandler();
   const [currentTask, setCurrentTask] = useState(null);
   const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -76,7 +75,6 @@ function Content() {
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentData, setCurrentData] = useState({});
-  const toast = useToast();
   const router = useRouter();
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
@@ -143,12 +141,7 @@ function Content() {
     };
     if (user?.id) {
       await startDay({
-        t,
-        id: user.id,
         newTasks: updatedTasks,
-        taskTodo,
-        setTaskTodo,
-        toast,
         customHandler,
       });
     }
@@ -229,14 +222,14 @@ function Content() {
   const changeStatusAssignment = async (event, task, taskStatus) => {
     event.preventDefault();
     await updateAssignment({
-      t, task, taskStatus, closeSettings, toast, taskTodo, setTaskTodo,
+      task, taskStatus, closeSettings,
     });
   };
 
   const sendProject = async ({ task, githubUrl, taskStatus }) => {
     setShowModal(true);
     await updateAssignment({
-      t, task, closeSettings, toast, githubUrl, taskStatus, taskTodo, setTaskTodo,
+      task, closeSettings, githubUrl, taskStatus,
     });
   };
 

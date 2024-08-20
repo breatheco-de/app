@@ -16,7 +16,7 @@ import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
-import { nestAssignments } from '../../../../common/hooks/useModuleHandler';
+import { nestAssignments } from '../../../../common/handlers/cohorts';
 import useStyle from '../../../../common/hooks/useStyle';
 import bc from '../../../../common/services/breathecode';
 import Heading from '../../../../common/components/Heading';

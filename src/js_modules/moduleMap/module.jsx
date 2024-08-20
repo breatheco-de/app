@@ -7,10 +7,9 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import { updateAssignment } from '../../common/hooks/useModuleHandler';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
-import useModuleMap from '../../common/store/actions/moduleMapAction';
 import { ButtonHandlerByTaskStatus } from './taskHandler';
 import ModuleComponent from '../../common/components/Module';
 import bc from '../../common/services/breathecode';
@@ -24,7 +23,7 @@ function Module({
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { taskTodo, setTaskTodo } = useModuleMap();
+  const { taskTodo, updateAssignment } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
@@ -151,7 +150,7 @@ function Module({
         ...task,
       });
       await updateAssignment({
-        t, task, taskStatus, closeSettings, toast, taskTodo, setTaskTodo,
+        task, taskStatus, closeSettings,
       });
     }
   };
@@ -161,7 +160,7 @@ function Module({
   }) => {
     setShowModal(true);
     await updateAssignment({
-      t, task, closeSettings, toast, githubUrl, taskStatus, taskTodo, setTaskTodo,
+      task, closeSettings, githubUrl, taskStatus,
     });
   };
 

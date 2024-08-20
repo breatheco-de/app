@@ -5,9 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { devLog, getStorageItem } from '../../utils';
-import useCohort from '../store/actions/cohortAction';
-import useModuleMap from '../store/actions/moduleMapAction';
-import { nestAssignments } from './useModuleHandler';
+import useCohortAction from '../store/actions/cohortAction';
+import useModuleHandler from './useModuleHandler';
+import { nestAssignments } from '../handlers/cohorts';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
@@ -15,8 +15,8 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useCohort();
-  const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleMap();
+  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useCohortAction();
+  const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
     cohortSession,
