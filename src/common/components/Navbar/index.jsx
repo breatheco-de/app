@@ -527,7 +527,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
+              <Link variant="buttonDefault" href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
                 {t('get-started')}
               </Link>
             </Box>
