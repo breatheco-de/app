@@ -673,7 +673,7 @@ function Content() {
                   onClick={onToggle}
                   color={hexColor.blueDefault}
                 >
-                  <Icon width="14px" height="14px" icon={Open ? 'close' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 <Box display="flex" gridGap="3rem">

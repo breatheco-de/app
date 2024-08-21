@@ -63,12 +63,6 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
     <>
       <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={{ base: 100, lg: Open ? 10 : 0 }}>
         <Box style={slide}>
-          <Box padding="24px 16px" background={hexColor.blueDefault}>
-            <NextChakraLink href={cohortSession?.selectedProgramSlug} fontSize="17px" color="white" display="flex" gap="10px" alignItems="center">
-              <Icon style={{ transform: 'rotate(180deg)' }} icon="logout" color="white" />
-              {t('dashboard:back-to-dashboard')}
-            </NextChakraLink>
-          </Box>
           <Box
             padding="1.5rem"
             // position="sticky"
@@ -96,7 +90,7 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
               display={{ base: 'flex', lg: 'none' }}
               width="fit-content"
             >
-              <Icon width="14px" height="14px" icon={Open ? 'close' : 'list'} />
+              <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
               {t(Open ? 'hide-menu' : 'show-menu')}
             </Button>
           </Box>
