@@ -481,12 +481,6 @@ function Page({ data }) {
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
-              <Flex color={!isVisibilityPublic ? 'success' : 'danger'} width="fit-content" borderRadius="18px" alignItems="center" padding="4px 10px" gridGap="8px" background={!isVisibilityPublic ? 'green.light' : 'red.light'}>
-                {isVisibilityPublic && <Icon icon="dot" width="8px" height="8px" color="currentColor" margin="2px 0 0 0" />}
-                <Text size="12px" fontWeight={700} color="currentColor">
-                  {!isVisibilityPublic ? t('free-course') : t('live-bootcamp')}
-                </Text>
-              </Flex>
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
                 <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
