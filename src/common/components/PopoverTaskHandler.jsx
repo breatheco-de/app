@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { Box, PopoverArrow, Text, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger } from '@chakra-ui/react';
 import * as Yup from 'yup';
@@ -53,8 +54,8 @@ export function textByTaskStatus(currentTask) {
     }
     return {
       icon: {
-        icon: 'unchecked',
-        color: '#C4C4C4',
+        icon: 'longArrowRight',
+        color: 'white',
         width: '20px',
       },
       text: t('common:taskStatus.send-project'),
@@ -107,17 +108,12 @@ export function IconByTaskStatus({ currentTask, noDeliveryFormat }) {
   return <Icon icon="unchecked" color="#C4C4C4" width="27px" />;
 }
 
-function PopoverTaskHandler({
-  isLoading,
+function PopoverCustomContent({
   currentAssetData,
   currentTask,
   sendProject,
   onClickHandler,
-  settingsOpen,
-  allowText,
   closeSettings,
-  toggleSettings,
-  buttonChildren,
 }) {
   const { t } = useTranslation('dashboard');
   const { state } = useCohortHandler();
@@ -133,7 +129,6 @@ function PopoverTaskHandler({
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
   const toast = useToast();
 
-  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
   const deliveryFormatIsUrl = deliveryFormatExists && currentAssetData?.delivery_formats.includes('url');
@@ -142,7 +137,6 @@ function PopoverTaskHandler({
   const howToSendProjectUrl = 'https://4geeksacademy.notion.site/How-to-deliver-a-project-e1db0a8b1e2e4fbda361fc2f5457c0de';
   const maxFileSize = 1048576 * 10; // 10mb
   const fileErrorExists = fileProps.some((file) => file.formatError) || fileProps.some((file) => file.sizeError);
-  const isButtonDisabled = currentTask === null || taskIsApproved;
 
   const customUrlValidation = Yup.object().shape({
     githubUrl: Yup.string().matches(
@@ -234,7 +228,290 @@ function PopoverTaskHandler({
     closeSettings();
   };
 
+  return (
+    <PopoverContent>
+      <PopoverArrow />
+      <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
+      <PopoverCloseButton />
+      <PopoverBody>
+        {noDeliveryFormat ? (
+          <Box display="flex" flexDirection="column" gridGap="10px">
+            <Text size="md">
+              {t('deliverProject.no-delivery-needed')}
+            </Text>
+
+            <Button
+              width="fit-content"
+              onClick={() => {
+                sendProject({ task: currentTask, taskStatus: 'DONE' });
+              }}
+              colorScheme="blue"
+              isLoading={isSubmitting}
+              type="submit"
+            >
+              {t('deliverProject.handler-text')}
+            </Button>
+          </Box>
+        ) : (
+          <>
+            {typeof currentAssetData === 'object' && deliveryFormatIsUrl ? (
+              <Formik
+                initialValues={{ githubUrl: currentTask?.github_url || '' }}
+                onSubmit={() => {
+                  setIsSubmitting(true);
+                  if (githubUrl !== '') {
+                    sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
+                    setIsSubmitting(false);
+                    onClickHandler();
+                  }
+                }}
+                validationSchema={regexUrlExists ? customUrlValidation : githubUrlValidation}
+              >
+                {() => (
+                  <Form
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gridGap: currentAssetData?.delivery_instructions?.length ? '0px' : '14px',
+                    }}
+                  >
+                    <Field name="githubUrl">
+                      {({ field, form }) => {
+                        setGithubUrl(form.values.githubUrl);
+                        return (
+                          <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
+                            <Input
+                              {...field}
+                              type="text"
+                              id="githubUrl"
+                              color={lightColor}
+                              _focus={{
+                                color: commonInputActiveColor,
+                              }}
+                              placeholder="https://..."
+                            />
+                            <FormErrorMessage marginTop="10px">
+                              {form.errors.githubUrl}
+                            </FormErrorMessage>
+                          </FormControl>
+                        );
+                      }}
+                    </Field>
+                    <Box>
+                      {currentAssetData?.delivery_instructions?.length > 2 ? (
+                        <Box
+                          height="100%"
+                          margin="0 rem auto 0 auto"
+                          transition="background 0.2s ease-in-out"
+                          borderRadius="3px"
+                          maxWidth="1280px"
+                          background={useColorModeValue('white', 'dark')}
+                          width={{ base: '100%', md: 'auto' }}
+                          className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+                        >
+                          <MarkDownParser content={currentAssetData?.delivery_instructions} />
+                        </Box>
+                      ) : (
+                        <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
+                      )}
+                    </Box>
+                    <Button
+                    // mt={4}
+                      width="fit-content"
+                      colorScheme="blue"
+                      isLoading={isSubmitting}
+                      type="submit"
+                    >
+                      {t('deliverProject.handler-text')}
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            ) : (
+              <Box>
+                {currentAssetData?.delivery_instructions?.length > 2 ? (
+                  <Box
+                    height="100%"
+                    margin="0 rem auto 0 auto"
+                    transition="background 0.2s ease-in-out"
+                    borderRadius="3px"
+                    maxWidth="1280px"
+                    background={useColorModeValue('white', 'dark')}
+                    width={{ base: '100%', md: 'auto' }}
+                    className={`markdown-body ${useColorModeValue('light', 'dark')}`}
+                  >
+                    <MarkDownParser content={currentAssetData?.delivery_instructions} />
+                  </Box>
+                ) : (
+                  <Text size="md">
+                    {t('deliverProject.file-upload')}
+                    <strong>{currentAssetData?.delivery_formats?.replaceAll(',', ', ').replaceAll('.', '').toUpperCase()}</strong>
+                  </Text>
+                )}
+
+                <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
+                  <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
+                    <Box className="icon-bounce">
+                      <Icon icon="upload" color="currentColor" width="24" height="24" />
+                    </Box>
+                  </Box>
+                  <Input
+                    type="file"
+                    name="Upload file"
+                    title=""
+                    ref={fileInputRef}
+                    onChange={handleChangeFile}
+                    accept={currentAssetData?.delivery_formats}
+                    placeholder="Upload profile image"
+                    multiple="multiple"
+                    position="absolute"
+                    width="100%"
+                    height="100%"
+                    cursor="pointer"
+                    opacity="0"
+                    padding="0"
+                    onDragOver={() => setDragOver(true)}
+                    onDragLeave={() => setDragOver(false)}
+                  />
+                </Box>
+
+                {fileProps.some((file) => typeof file?.type === 'string') && (
+                <>
+                  <Box ref={fileContainerRef} maxHeight="300px" overflowY="auto">
+                    {fileProps.map((file) => {
+                      const errorExists = file.formatError || file.sizeError;
+                      const extension = file.name.split('.').pop();
+                      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                      const isImage = imageExtensions.includes(extension);
+                      const icon = iconDict.includes(extension) ? extension : 'file';
+                      return (
+                        <Box key={file.name} display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
+                          <Box display="flex" gridGap="9px">
+                            <Icon icon={isImage ? 'image' : icon} color={hexColor.black} width="32px" height="41px" />
+                            <Box position="relative">
+                              <Text size="14px" style={{ margin: '0px' }} withLimit={file.name.length > 20}>
+                                {file.name}
+                              </Text>
+                              <Text size="14px" style={{ margin: '0px' }} color={errorExists && hexColor.danger} display="flex" gridGap="6px">
+                                {errorExists ? (
+                                  <>
+                                    <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
+                                    {file.formatError
+                                      ? t('deliverProject.error-file-format')
+                                      : file.sizeError && t('deliverProject.error-file-size')}
+                                  </>
+                                ) : formatBytes(file.size)}
+                              </Text>
+                            </Box>
+                          </Box>
+                          <Box
+                            borderRadius="20px"
+                            p="7px"
+                            backgroundColor="gray.500"
+                            onClick={() => {
+                              handleRemoveFileInList(file.name);
+                            }}
+                            cursor="pointer"
+                          >
+                            <Icon icon="close" width="10px" height="10px" color="#ffffff" />
+                          </Box>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                  <Box py="12px" color={lightColor}>
+                    {t('deliverProject.total-size', { size: formatBytes(fileSumSize) })}
+                  </Box>
+                </>
+                )}
+                <Box display="flex" justifyContent="space-evenly" mb="6px">
+                  <Button
+                    variant="default"
+                    onClick={() => handleUploadFile()}
+                    isLoading={isUploading}
+                    isDisabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                    textTransform="uppercase"
+                  >
+                    {t('common:upload')}
+                  </Button>
+                  <Button variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
+                    {t('common:cancel')}
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </>
+        )}
+      </PopoverBody>
+    </PopoverContent>
+  );
+}
+
+function PopoverTaskHandler({
+  isGuidedExperience,
+  isLoading,
+  currentAssetData,
+  currentTask,
+  sendProject,
+  onClickHandler,
+  settingsOpen,
+  allowText,
+  closeSettings,
+  toggleSettings,
+  buttonChildren,
+}) {
+  const { hexColor } = useStyle();
+  const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
+  const isButtonDisabled = currentTask === null || taskIsApproved;
+
+  const handleCloseFile = () => {
+    closeSettings();
+  };
+
   const textAndIcon = textByTaskStatus(currentTask || {});
+
+  if (isGuidedExperience) {
+    return (
+      <Popover
+        id="task-status"
+        isOpen={settingsOpen}
+        onClose={handleCloseFile}
+        trigger="click"
+      >
+        <PopoverTrigger>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Button
+              display="flex"
+              isLoading={isLoading}
+              isDisabled={isButtonDisabled}
+              width="60px"
+              height="60px"
+              background={hexColor.blueDefault}
+              padding="24px"
+              borderRadius="full"
+              variant="default"
+              gridGap="12px"
+              onClick={() => toggleSettings()}
+            >
+              <Icon {...textAndIcon.icon} />
+            </Button>
+            <Text mt="10px" size="md">
+              {textAndIcon.text}
+            </Text>
+          </Box>
+        </PopoverTrigger>
+
+        <PopoverCustomContent
+          currentAssetData={currentAssetData}
+          currentTask={currentTask}
+          sendProject={sendProject}
+          onClickHandler={onClickHandler}
+          allowText={allowText}
+          closeSettings={closeSettings}
+        />
+      </Popover>
+    );
+  }
 
   return (
     <Popover
@@ -277,221 +554,13 @@ function PopoverTaskHandler({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverHeader>{t('deliverProject.title')}</PopoverHeader>
-        <PopoverCloseButton />
-        <PopoverBody>
-          {noDeliveryFormat ? (
-            <Box display="flex" flexDirection="column" gridGap="10px">
-              <Text size="md">
-                {t('deliverProject.no-delivery-needed')}
-              </Text>
-
-              <Button
-                width="fit-content"
-                onClick={() => {
-                  sendProject({ task: currentTask, taskStatus: 'DONE' });
-                }}
-                colorScheme="blue"
-                isLoading={isSubmitting}
-                type="submit"
-              >
-                {t('deliverProject.handler-text')}
-              </Button>
-            </Box>
-          ) : (
-            <>
-              {typeof currentAssetData === 'object' && deliveryFormatIsUrl ? (
-                <Formik
-                  initialValues={{ githubUrl: currentTask?.github_url || '' }}
-                  onSubmit={() => {
-                    setIsSubmitting(true);
-                    if (githubUrl !== '') {
-                      sendProject({ task: currentTask, githubUrl, taskStatus: 'DONE' });
-                      setIsSubmitting(false);
-                      onClickHandler();
-                    }
-                  }}
-                  validationSchema={regexUrlExists ? customUrlValidation : githubUrlValidation}
-                >
-                  {() => (
-                    <Form
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gridGap: currentAssetData?.delivery_instructions?.length ? '0px' : '14px',
-                      }}
-                    >
-                      <Field name="githubUrl">
-                        {({ field, form }) => {
-                          setGithubUrl(form.values.githubUrl);
-                          return (
-                            <FormControl isInvalid={form.errors.githubUrl && form.touched.githubUrl}>
-                              <Input
-                                {...field}
-                                type="text"
-                                id="githubUrl"
-                                color={lightColor}
-                                _focus={{
-                                  color: commonInputActiveColor,
-                                }}
-                                placeholder="https://..."
-                              />
-                              <FormErrorMessage marginTop="10px">
-                                {form.errors.githubUrl}
-                              </FormErrorMessage>
-                            </FormControl>
-                          );
-                        }}
-                      </Field>
-                      <Box>
-                        {currentAssetData?.delivery_instructions?.length > 2 ? (
-                          <Box
-                            height="100%"
-                            margin="0 rem auto 0 auto"
-                            transition="background 0.2s ease-in-out"
-                            borderRadius="3px"
-                            maxWidth="1280px"
-                            background={useColorModeValue('white', 'dark')}
-                            width={{ base: '100%', md: 'auto' }}
-                            className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-                          >
-                            <MarkDownParser content={currentAssetData?.delivery_instructions} />
-                          </Box>
-                        ) : (
-                          <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
-                        )}
-                      </Box>
-                      <Button
-                      // mt={4}
-                        width="fit-content"
-                        colorScheme="blue"
-                        isLoading={isSubmitting}
-                        type="submit"
-                      >
-                        {t('deliverProject.handler-text')}
-                      </Button>
-                    </Form>
-                  )}
-                </Formik>
-              ) : (
-                <Box>
-                  {currentAssetData?.delivery_instructions?.length > 2 ? (
-                    <Box
-                      height="100%"
-                      margin="0 rem auto 0 auto"
-                      transition="background 0.2s ease-in-out"
-                      borderRadius="3px"
-                      maxWidth="1280px"
-                      background={useColorModeValue('white', 'dark')}
-                      width={{ base: '100%', md: 'auto' }}
-                      className={`markdown-body ${useColorModeValue('light', 'dark')}`}
-                    >
-                      <MarkDownParser content={currentAssetData?.delivery_instructions} />
-                    </Box>
-                  ) : (
-                    <Text size="md">
-                      {t('deliverProject.file-upload')}
-                      <strong>{currentAssetData?.delivery_formats?.replaceAll(',', ', ').replaceAll('.', '').toUpperCase()}</strong>
-                    </Text>
-                  )}
-
-                  <Box className={`upload-wrapper ${dragOver && 'dragOver'}`} m="10px 0" width={{ base: 'auto', md: '100%' }} height="86px" position="relative" color={dragOver ? 'blue.600' : 'blue.default'} _hover={{ color: 'blue.default' }} transition="0.3s all ease-in-out" borderRadius="12px" background={featuredColor}>
-                    <Box width="100%" height="100%" position="absolute" display="flex" justifyContent="center" alignItems="center" border="1px solid currentColor" cursor="pointer" borderWidth="2px" borderRadius="7px">
-                      <Box className="icon-bounce">
-                        <Icon icon="upload" color="currentColor" width="24" height="24" />
-                      </Box>
-                    </Box>
-                    <Input
-                      type="file"
-                      name="Upload file"
-                      title=""
-                      ref={fileInputRef}
-                      onChange={handleChangeFile}
-                      accept={currentAssetData?.delivery_formats}
-                      placeholder="Upload profile image"
-                      multiple="multiple"
-                      position="absolute"
-                      width="100%"
-                      height="100%"
-                      cursor="pointer"
-                      opacity="0"
-                      padding="0"
-                      onDragOver={() => setDragOver(true)}
-                      onDragLeave={() => setDragOver(false)}
-                    />
-                  </Box>
-
-                  {fileProps.some((file) => typeof file?.type === 'string') && (
-                  <>
-                    <Box ref={fileContainerRef} maxHeight="300px" overflowY="auto">
-                      {fileProps.map((file) => {
-                        const errorExists = file.formatError || file.sizeError;
-                        const extension = file.name.split('.').pop();
-                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-                        const isImage = imageExtensions.includes(extension);
-                        const icon = iconDict.includes(extension) ? extension : 'file';
-                        return (
-                          <Box key={file.name} display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
-                            <Box display="flex" gridGap="9px">
-                              <Icon icon={isImage ? 'image' : icon} color={hexColor.black} width="32px" height="41px" />
-                              <Box position="relative">
-                                <Text size="14px" style={{ margin: '0px' }} withLimit={file.name.length > 20}>
-                                  {file.name}
-                                </Text>
-                                <Text size="14px" style={{ margin: '0px' }} color={errorExists && hexColor.danger} display="flex" gridGap="6px">
-                                  {errorExists ? (
-                                    <>
-                                      <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
-                                      {file.formatError
-                                        ? t('deliverProject.error-file-format')
-                                        : file.sizeError && t('deliverProject.error-file-size')}
-                                    </>
-                                  ) : formatBytes(file.size)}
-                                </Text>
-                              </Box>
-                            </Box>
-                            <Box
-                              borderRadius="20px"
-                              p="7px"
-                              backgroundColor="gray.500"
-                              onClick={() => {
-                                handleRemoveFileInList(file.name);
-                              }}
-                              cursor="pointer"
-                            >
-                              <Icon icon="close" width="10px" height="10px" color="#ffffff" />
-                            </Box>
-                          </Box>
-                        );
-                      })}
-                    </Box>
-                    <Box py="12px" color={lightColor}>
-                      {t('deliverProject.total-size', { size: formatBytes(fileSumSize) })}
-                    </Box>
-                  </>
-                  )}
-                  <Box display="flex" justifyContent="space-evenly" mb="6px">
-                    <Button
-                      variant="default"
-                      onClick={() => handleUploadFile()}
-                      isLoading={isUploading}
-                      isDisabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
-                      textTransform="uppercase"
-                    >
-                      {t('common:upload')}
-                    </Button>
-                    <Button variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
-                      {t('common:cancel')}
-                    </Button>
-                  </Box>
-                </Box>
-              )}
-            </>
-          )}
-        </PopoverBody>
-      </PopoverContent>
+      <PopoverCustomContent
+        currentAssetData={currentAssetData}
+        currentTask={currentTask}
+        sendProject={sendProject}
+        onClickHandler={onClickHandler}
+        closeSettings={closeSettings}
+      />
     </Popover>
   );
 }
@@ -507,6 +576,7 @@ PopoverTaskHandler.propTypes = {
   allowText: PropTypes.bool,
   toggleSettings: PropTypes.func,
   buttonChildren: PropTypes.node,
+  isGuidedExperience: PropTypes.bool,
 };
 
 PopoverTaskHandler.defaultProps = {
@@ -520,6 +590,7 @@ PopoverTaskHandler.defaultProps = {
   allowText: false,
   toggleSettings: () => {},
   buttonChildren: null,
+  isGuidedExperience: false,
 };
 
 // TextByTaskStatus.propTypes = {

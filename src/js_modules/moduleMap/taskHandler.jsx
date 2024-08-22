@@ -14,7 +14,7 @@ import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../co
 
 export function ButtonHandlerByTaskStatus({
   onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
-  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, variant,
+  settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, isGuidedExperience,
 }) {
   const { hexColor, backgroundColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -135,6 +135,7 @@ export function ButtonHandlerByTaskStatus({
     }
     return (
       <PopoverTaskHandler
+        isGuidedExperience={isGuidedExperience}
         currentAssetData={currentAssetData}
         currentTask={currentTask}
         sendProject={sendProject}
@@ -147,7 +148,7 @@ export function ButtonHandlerByTaskStatus({
     );
   }
 
-  if (variant === 'rounded') {
+  if (isGuidedExperience) {
     return (
       <Box display="flex" flexDirection="column" alignItems="center">
         <Button
@@ -212,7 +213,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   currentAssetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   fileData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onlyPopoverDialog: PropTypes.bool,
-  variant: PropTypes.string,
+  isGuidedExperience: PropTypes.bool,
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
@@ -223,5 +224,5 @@ ButtonHandlerByTaskStatus.defaultProps = {
   toggleSettings: () => {},
   handleOpen: () => {},
   onlyPopoverDialog: false,
-  variant: '',
+  isGuidedExperience: false,
 };

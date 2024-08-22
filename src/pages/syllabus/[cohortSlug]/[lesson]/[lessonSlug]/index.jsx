@@ -1102,6 +1102,7 @@ function Content() {
                 )}
                 <ButtonHandlerByTaskStatus
                   allowText
+                  isGuidedExperience={isAvailableAsSaas}
                   variant="rounded"
                   currentTask={currentTask}
                   sendProject={sendProject}

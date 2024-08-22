@@ -118,7 +118,7 @@ function MdCallToAction({ assetData }) {
   );
 }
 
-function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
+function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }) {
   const childrenExists = props?.children?.length >= 0;
   const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
   const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
@@ -127,8 +127,8 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
       className="MDCheckbox"
       {...props}
       subTasksLoaded={subTasksLoaded}
-      subTasksProps={subTasksProps}
-      setSubTasksProps={setSubTasksProps}
+      newSubTasks={newSubTasks}
+      setNewSubTasks={setNewSubTasks}
       subTasks={subTasks}
       updateSubTask={updateSubTask}
     />
@@ -144,7 +144,7 @@ function MarkDownParser({
   const { t, lang } = useTranslation('common');
   const [subTasks, setSubTasks] = useState([]);
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
-  const [subTasksProps, setSubTasksProps] = useState([]);
+  const [newSubTasks, setNewSubTasks] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [fileContext, setFileContext] = useState('');
   const { state } = useCohortHandler();
@@ -183,12 +183,12 @@ function MarkDownParser({
 
   const createSubTasksIfNotExists = async () => {
     // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
-    if (currentTask?.id && subTasksProps.length > 0) {
+    if (currentTask?.id && newSubTasks.length > 0) {
       const resp = await bc.todo().subtask().update(
         currentTask?.id,
         [
           // ...cleanedSubTasks,
-          ...subTasksProps,
+          ...newSubTasks,
         ],
       );
       if (resp.status >= 200 && resp.status < 400) {
@@ -200,8 +200,10 @@ function MarkDownParser({
 
   // Create subTasks if not exists
   useEffect(() => {
-    createSubTasksIfNotExists();
-  }, [subTasksProps]);
+    if (subTasksLoaded && subTasks.length === 0) {
+      createSubTasksIfNotExists();
+    }
+  }, [subTasksLoaded, subTasks, newSubTasks]);
 
   const {
     token, assetSlug, gitpod, interactive,
@@ -328,6 +330,7 @@ function MarkDownParser({
           />
         )}
         content={frontMatter}
+        currentData={currentData}
       >
         {withToc && (
           <Toc content={content} />
@@ -370,7 +373,7 @@ function MarkDownParser({
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
-          li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
+          li: ({ ...props }) => ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }),
           quote: Quote,
         }}
       >
