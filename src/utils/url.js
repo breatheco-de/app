@@ -33,9 +33,18 @@ const parseQuerys = (query, connector = false) => {
   return queryString;
 };
 
+const getPrismicPagesUrls = (prismicPagesList) => {
+  const onlyUrlsList = prismicPagesList.map((prismicPage) => {
+    if (prismicPage.lang.includes('es')) return `/es/${prismicPage.uid}`;
+    return `/${prismicPage.uid}`;
+  });
+  return onlyUrlsList;
+};
+
 export {
   isAbsoluteUrl,
   getUrlProps,
   urlExists,
   parseQuerys,
+  getPrismicPagesUrls,
 };
