@@ -104,14 +104,18 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
   let offset = 0;
   let allResults = [];
 
-  const qsRequest = parseQuerys({
+  const baseQuery = {
     asset_type: type || undefined,
     status: 'PUBLISHED',
-    limit,
-    offset,
     academy: WHITE_LABEL_ACADEMY,
     expand: 'technologies',
     ...extraQuerys,
+  };
+
+  const qsRequest = parseQuerys({
+    ...baseQuery,
+    limit,
+    offset,
   });
 
   // let response = fetchWithEncoding(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`, ['br', 'gzip', 'deflate']);
@@ -139,14 +143,9 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
   while (!onlyFirstFetch && (results.length + offset < count)) {
     offset += limit;
     const newQsRequests = parseQuerys({
-      asset_type: type === null ? undefined : type,
-      status: 'PUBLISHED',
+      ...baseQuery,
       limit,
       offset,
-      big: 'true',
-      academy: WHITE_LABEL_ACADEMY,
-      expand: 'technologies',
-      ...extraQuerys,
     });
 
     response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset${newQsRequests}`)
