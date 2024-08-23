@@ -8,7 +8,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_COUPON,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -135,8 +135,8 @@ const useSignup = () => {
     type: SET_SELECTED_SERVICE,
     payload,
   });
-  const setCoupon = (payload) => dispatch({
-    type: SET_COUPON,
+  const setSelfAppliedCoupon = (payload) => dispatch({
+    type: SET_SELF_APPLIED_COUPON,
     payload,
   });
 
@@ -151,7 +151,7 @@ const useSignup = () => {
           token: data?.token || checkoutData.token,
           how_many_installments: data?.installments || selectedPlanCheckoutData?.how_many_months || undefined,
           chosen_period: manyInstallmentsExists ? undefined : (selectedPlanCheckoutData?.period || 'HALF'),
-          coupons: checkoutData?.discountCoupon?.slug ? [checkoutData.discountCoupon.slug] : undefined,
+          coupons: checkoutData?.coupons,
         };
       }
       return {
@@ -453,13 +453,13 @@ const useSignup = () => {
     };
   };
 
-  const getSelfApliedCoupon = async (plan) => {
+  const getSelfAppliedCoupon = async (plan) => {
     try {
       if (plan) {
         const { data } = await bc.payment({ plan }).verifyCoupon();
         const coupon = data[0];
         if (coupon) {
-          setCoupon({
+          setSelfAppliedCoupon({
             ...coupon,
             plan,
           });
@@ -489,7 +489,7 @@ const useSignup = () => {
     setIsSubmittingCard,
     setIsSubmittingPayment,
     setPaymentInfo,
-    setCoupon,
+    setSelfAppliedCoupon,
     handlePayment,
     setPlanData,
     setSelectedPlanCheckoutData,
@@ -501,7 +501,7 @@ const useSignup = () => {
     setSelectedService,
     getPaymentMethods,
     getPriceWithDiscount,
-    getSelfApliedCoupon,
+    getSelfAppliedCoupon,
   };
 };
 

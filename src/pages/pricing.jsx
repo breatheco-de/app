@@ -41,7 +41,7 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
-  const { getSelfApliedCoupon } = useSignup();
+  const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
@@ -127,7 +127,7 @@ function PricingView() {
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    await getSelfApliedCoupon(suggestedPlan.slug);
+    await getSelfAppliedCoupon(suggestedPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))

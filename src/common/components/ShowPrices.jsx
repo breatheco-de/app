@@ -83,14 +83,14 @@ function ShowPrices({
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
   const { getPriceWithDiscount, state } = useSignup();
-  const { coupon } = state;
+  const { selfAppliedCoupon } = state;
 
   const applyDiscountCoupons = (pricingList) => {
-    if (coupon) {
+    if (selfAppliedCoupon) {
       return pricingList.map((item) => {
         const { price } = item;
         if (price > 0) {
-          const discountOperation = getPriceWithDiscount(price, coupon);
+          const discountOperation = getPriceWithDiscount(price, selfAppliedCoupon);
 
           return {
             ...item,
@@ -144,8 +144,8 @@ function ShowPrices({
     if (selectedFinanceIndex === index) {
       return {
         borderBottom: '4px solid',
-        borderColor: coupon ? 'white' : 'blue.default',
-        color: coupon ? 'white' : 'blue.default',
+        borderColor: selfAppliedCoupon ? 'white' : 'blue.default',
+        color: selfAppliedCoupon ? 'white' : 'blue.default',
         cursor: 'pointer',
         fontWeight: '700',
       };
@@ -173,12 +173,12 @@ function ShowPrices({
     }
   }, [externalSelection]);
 
-  const discountOperation = getPriceWithDiscount(0, coupon);
+  const discountOperation = getPriceWithDiscount(0, selfAppliedCoupon);
 
   return (
     <>
-      <Box position="relative" borderRadius="12px" padding="16px" background={coupon ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
-        {coupon && (
+      <Box position="relative" borderRadius="12px" padding="16px" background={selfAppliedCoupon ? hexColor.green : featuredColor} display="flex" flex={0.5} flexDirection="column" gridGap="20px">
+        {selfAppliedCoupon && (
           <Box position="absolute" right="20px" top="-20px">
             <Box
               borderRadius="55px"
@@ -213,7 +213,7 @@ function ShowPrices({
           </Box>
         )}
         <Box width="100%" display="flex" flexWrap="wrap" gridGap="5px 10px" justifyContent={{ base: 'center', sm: 'space-between' }} alignItems="center" mb="6px">
-          <Heading color={coupon && 'white'} as="h2" size="sm">
+          <Heading color={selfAppliedCoupon && 'white'} as="h2" size="sm">
             {title || data?.pricing['choose-plan']}
           </Heading>
           {!isTotallyFree && financeSelected[1] && !isOnlyOneItem && (
@@ -249,7 +249,7 @@ function ShowPrices({
           )}
         </Box>
         {dataList?.length > 0 && dataList.map((item) => (
-          <PlanCard key={item?.plan_id} isCouponAvailable={!!coupon} item={item} handleSelect={handleSelect} selectedId={selectedId} />
+          <PlanCard key={item?.plan_id} isCouponAvailable={!!selfAppliedCoupon} item={item} handleSelect={handleSelect} selectedId={selectedId} />
         ))}
       </Box>
       <Box mt="20px" display="flex" flex={0.5} flexDirection="column" gridGap="20px">
