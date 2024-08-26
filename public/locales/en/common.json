@@ -235,6 +235,7 @@
   "free": "Free",
   "login": "Login",
   "privacy-policy": "Privacy policy",
+  "privacy-policy-link": "/privacy-policy",
   "bootcamp": {
     "planType": "bootcamp",
     "type": "Unlimited Experience",

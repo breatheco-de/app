@@ -279,7 +279,7 @@ function SignupForm({
                 <Text size="10px" textAlign="left">
                   {t('validators.termns-and-conditions-required')}
                   {' '}
-                  <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">
+                  <NextChakraLink variant="default" fontSize="10px" href={t('common:privacy-policy-link')} target="_blank">
                     {t('common:privacy-policy')}
                   </NextChakraLink>
                   .

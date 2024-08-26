@@ -142,7 +142,7 @@ function MktTrustCards({
 
   useEffect(() => {
     fetchCards();
-  }, []);
+  }, [lang]);
 
   return (
     <Box id={id} padding={{ base: '20px', md: '0' }} px={{ base: '10px', md: '2rem' }} width="100%" maxWidth="1280px" margin="0 auto" background={slice?.primary?.background} {...rest}>
