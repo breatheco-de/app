@@ -728,6 +728,7 @@ function Content() {
               <ExerciseGuidedExperience currentTask={currentTask} currentData={currentData} />
             ) : (
               <Box
+                id="markdown-body"
                 className={`markdown-body horizontal-sroll ${colorMode}`}
                 background={backgroundColor}
                 borderRadius="11px"
