@@ -286,7 +286,8 @@ function Dashboard() {
       }).then((cohort) => {
         reportDatalayer({
           dataLayer: {
-            cohort,
+            current_cohort_id: cohort.id,
+            current_cohort_slug: cohort.slug,
           },
         });
         // Fetch cohort assignments (lesson, exercise, project, quiz)

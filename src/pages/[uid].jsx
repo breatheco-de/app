@@ -32,6 +32,7 @@ function Page({ page }) {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(page.structuredData) }}
           />
+          <meta name="google" content="notranslate" />
         </Head>
       )}
       <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>

@@ -101,7 +101,7 @@ function PaymentInfo() {
   useEffect(() => {
     reportDatalayer({
       dataLayer: {
-        event: 'checkout_complete_purchase',
+        event: 'checkout_payment_info_rendered',
         value: state?.selectedPlanCheckoutData?.price,
       },
     });
