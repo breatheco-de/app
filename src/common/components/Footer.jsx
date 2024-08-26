@@ -41,7 +41,7 @@ function Footer({ pageProps }) {
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
-  if (isAuthenticated) return null;
+  if (isAuthenticated) return <Container as="footer" mt="3rem" />;
 
   return (
     <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
