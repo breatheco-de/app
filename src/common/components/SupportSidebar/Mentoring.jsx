@@ -140,7 +140,10 @@ function Mentoring({
           ...mentorshipServiceSet,
         }))));
 
-    const allConsumables = await Promise.all(reqConsumables);
+    let allConsumables = await Promise.all(reqConsumables);
+    if (allConsumables.length > 1) {
+      allConsumables = allConsumables.filter((consumable) => consumable?.balance?.unit !== 0);
+    }
     setConsumables(allConsumables);
     setAllMentorsAvailable(mentors);
   };
