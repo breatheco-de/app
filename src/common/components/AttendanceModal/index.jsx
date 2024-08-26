@@ -72,7 +72,11 @@ function AttendanceModal({
   useEffect(() => {
     // Mark checkboxes with attendanceStudents {user.id}
     if (attendanceTaken?.attendanceStudents) {
-      const checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
+      let checkedStudents = attendanceTaken?.attendanceStudents.map((student) => String(student.user.id));
+      // If user is currently changing something prioritize the changes instead of data coming from db
+      const studentsBeforeRefresh = JSON.parse(localStorage.getItem('students_checked_status')) || [];
+      //if user have not edited anything at all, use the data from the db
+      if (studentsBeforeRefresh?.length > 0) checkedStudents = studentsBeforeRefresh;
 
       setChecked(checkedStudents);
       if (autoSelect) {
@@ -214,6 +218,17 @@ function AttendanceModal({
         .finally(() => setIsLoading(false));
     }
   }, [attendanceList, students, currModuleData, day]);
+
+  useEffect(() => {
+    // if user is currently editing save the changes until it closes the modal
+    const currentChecked = students?.filter((item) => checked.includes(String(item.user.id))).map((item) => String(item.user.id));
+    localStorage.setItem('students_checked_status', JSON.stringify(currentChecked));
+  }, [checked, students]);
+
+  useEffect(() => {
+    // if user change day or module, discart changes
+    localStorage.clear('students_checked_id', JSON.stringify(checked));
+  }, [currModuleData, day]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -449,7 +464,7 @@ AttendanceModal.defaultProps = {
   title: '',
   message: '',
   isOpen: true,
-  onClose: () => {},
+  onClose: () => { },
 };
 
 export default AttendanceModal;
