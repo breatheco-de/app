@@ -37,8 +37,8 @@ export default class CustomDocument extends Document {
         <Head>
           <meta charSet="UTF-8" />
           <meta content="ie=edge" httpEquiv="X-UA-Compatible" />
+          <meta name="google" content="notranslate" />
         </Head>
-
         <body>
           <ColorModeScript />
           <Main />

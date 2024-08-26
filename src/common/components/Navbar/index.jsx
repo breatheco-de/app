@@ -25,7 +25,7 @@ import Text from '../Text';
 import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
-import { isWindow } from '../../../utils';
+import { isWindow, setStorageItem } from '../../../utils';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
 import axios from '../../../axios';
 import modifyEnv from '../../../../modifyEnv';
@@ -520,6 +520,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                 fontSize="14px"
                 padding="12px 0"
                 lineHeight="22px"
+                onClick={() => setStorageItem('redirect', router?.asPath)}
                 _hover={{
                   textDecoration: 'none',
                 }}
@@ -527,7 +528,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
+              <Link variant="buttonDefault" href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
                 {t('get-started')}
               </Link>
             </Box>
