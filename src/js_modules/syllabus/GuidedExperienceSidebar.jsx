@@ -154,7 +154,9 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
                 })}
               </Accordion>
             ) : (
-              <Spinner color={hexColor.blueDefault} />
+              <Box width="20px" height="20px" margin="10px auto">
+                <Spinner color={hexColor.blueDefault} />
+              </Box>
             )}
           </Box>
         </Box>

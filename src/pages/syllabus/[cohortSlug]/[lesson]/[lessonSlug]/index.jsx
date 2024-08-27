@@ -650,7 +650,7 @@ function Content() {
           />
         )}
 
-        <Box width={{ base: '100%', md: '100%', lg: 'calc(100% - 26.6vw)' }} margin="0 auto" height="auto">
+        <Box width="100%" minWidth="0" margin="0 auto" height="auto">
           {!isAvailableAsSaas && !isQuiz && currentData?.intro_video_url && (
             <ReactPlayerV2
               url={currentData?.intro_video_url}
@@ -661,7 +661,7 @@ function Content() {
             mt={!isAvailableAsSaas && '25px'}
             padding={{ base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
             width="100%"
-            maxWidth="1024px"
+            maxWidth="1280px"
           >
             {isAvailableAsSaas && (
               <Box margin="15px 0" display="flex" alignItems="center" justifyContent="space-between">
@@ -825,36 +825,38 @@ function Content() {
                   </Box>
                 )}
 
-                <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
-                  {repoUrl && !isQuiz && !isAvailableAsSaas && (
-                    <Link
-                      display="flex"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      width="100%"
-                      gridGap="8px"
-                      padding={{ base: '8px 12px', md: '8px' }}
-                      background="transparent"
-                      href={repoUrl}
-                      _hover={{ opacity: 0.7 }}
-                      style={{ color: fontColor, textDecoration: 'none' }}
-                    >
-                      <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                      {t('edit-page')}
-                    </Link>
-                  )}
+                {(!isAvailableAsSaas || ipynbHtmlUrl) && (
+                  <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
+                    {repoUrl && !isQuiz && !isAvailableAsSaas && (
+                      <Link
+                        display="flex"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        width="100%"
+                        gridGap="8px"
+                        padding={{ base: '8px 12px', md: '8px' }}
+                        background="transparent"
+                        href={repoUrl}
+                        _hover={{ opacity: 0.7 }}
+                        style={{ color: fontColor, textDecoration: 'none' }}
+                      >
+                        <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                        {t('edit-page')}
+                      </Link>
+                    )}
 
-                  {ipynbHtmlUrl && currentData?.readme_url && (
-                    <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
-                  )}
+                    {ipynbHtmlUrl && currentData?.readme_url && (
+                      <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+                    )}
 
-                  {ipynbHtmlUrl && readmeUrlPathname && (
-                    <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
-                      <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
-                      {t('open-google-collab')}
-                    </Link>
-                  )}
-                </Box>
+                    {ipynbHtmlUrl && readmeUrlPathname && (
+                      <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                        <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                        {t('open-google-collab')}
+                      </Link>
+                    )}
+                  </Box>
+                )}
                 {ipynbHtmlUrl && (
                   <iframe
                     id="iframe"
