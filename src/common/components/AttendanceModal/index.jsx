@@ -223,12 +223,14 @@ function AttendanceModal({
     // if user is currently editing save the changes until it closes the modal
     const currentChecked = students?.filter((item) => checked.includes(String(item.user.id))).map((item) => String(item.user.id));
     localStorage.setItem('students_checked_status', JSON.stringify(currentChecked));
-  }, [checked, students]);
+  }, [checked]);
 
   useEffect(() => {
     // if user change day or module, discart changes
     localStorage.clear('students_checked_id', JSON.stringify(checked));
   }, [currModuleData, day]);
+
+  console.log(JSON.parse(localStorage.getItem('students_checked_status')) || []);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
