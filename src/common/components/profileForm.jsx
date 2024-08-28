@@ -299,7 +299,7 @@ function ProfileForm({ profile }) {
                       onClick={(e) => {
                         e.preventDefault();
                         if (profile?.github?.username) {
-                          window.open(`https://rigobot.herokuapp.com/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                          window.open(`${process.env.RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
                         }
                       }}
                     >
