@@ -50,9 +50,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       .catch(() => []);
     const data = assetList.howTos.find((l) => l?.slug === slug);
 
-    console.log('data');
-    console.log(data);
-
     const engPrefix = {
       us: 'en',
       en: 'en',
