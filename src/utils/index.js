@@ -32,24 +32,24 @@ const slugify = (str) => (typeof str === 'string' ? str
   .replace(/^-+|-+$/g, '')
   : '');
 
-  const unSlugify = (str, capitalize = false) => (typeof str === 'string'
-    ? str
-      .replace(/-/g, ' ')
-      .replace(
-        /\w\S*/g,
-        (txt) => {
-          const firstLetter = capitalize ? txt.charAt(0).toUpperCase() : txt.charAt(0);
-          return firstLetter + txt.substring(1).toLowerCase();
-        },
-      )
-    : '');
+const unSlugify = (str, capitalize = false) => (typeof str === 'string'
+  ? str
+    .replace(/-/g, ' ')
+    .replace(
+      /\w\S*/g,
+      (txt) => {
+        const firstLetter = capitalize ? txt.charAt(0).toUpperCase() : txt.charAt(0);
+        return firstLetter + txt.substring(1).toLowerCase();
+      },
+    )
+  : '');
 
 const unSlugifyCapitalize = (str) => (typeof str === 'string' ? str
   .replace(/-/g, ' ')
   .replace(
-/\w\S*/g,
-  (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
-)
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
+  )
   : '');
 
 function slugToTitle(slug) {
@@ -60,7 +60,7 @@ function slugToTitle(slug) {
       return word.charAt(0) + word.slice(1);
     },
   ).join(' ').replace(/([A-Z])/g, ' $1')
-  .trim();
+    .trim();
 }
 
 const cleanQueryStrings = (url) => url.split('?')[0];
@@ -116,8 +116,8 @@ const devLog = (msg, ...params) => { // Relevant logs only in dev mode
 const devLogTable = (msg, array) => { // Relevant table logs with title only in dev mode
   if (isDevMode) {
     console.group();
-      console.log(`%c🛠️${msg}`, 'font-size: 14px');
-      console.table(array);
+    console.log(`%c🛠️${msg}`, 'font-size: 14px');
+    console.table(array);
     console.groupEnd();
   }
 };
@@ -127,19 +127,19 @@ const objectAreNotEqual = (t1, t2) => Object.keys(t1).map((l) => t1[l] === t2[l]
 function removeURLParameter(url, parameter) {
   const urlparts = url.split('?');
   if (urlparts.length >= 2) {
-      const prefix = `${encodeURIComponent(parameter)}=`;
-      const pars = urlparts[1].split(/[&;]/g);
+    const prefix = `${encodeURIComponent(parameter)}=`;
+    const pars = urlparts[1].split(/[&;]/g);
 
-      // reverse iteration as may be destructive
-      // eslint-disable-next-line no-plusplus
-      for (let i = pars.length; i-- > 0;) {
-          // idiom for string.startsWith
-          if (pars[i].lastIndexOf(prefix, 0) !== -1) {
-              pars.splice(i, 1);
-          }
+    // reverse iteration as may be destructive
+    // eslint-disable-next-line no-plusplus
+    for (let i = pars.length; i-- > 0;) {
+      // idiom for string.startsWith
+      if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+        pars.splice(i, 1);
       }
+    }
 
-      return urlparts[0] + (pars.length > 0 ? `?${pars.join('&')}` : '');
+    return urlparts[0] + (pars.length > 0 ? `?${pars.join('&')}` : '');
   }
   return url;
 }
@@ -297,7 +297,7 @@ const getQueryString = (key, def) => {
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 const lengthOfString = (string) => (typeof string === 'string' ? string?.replaceAll(/\s/g, '').length : 0);
 
-const syncInterval = (callback = () => {}) => {
+const syncInterval = (callback = () => { }) => {
   const now = new Date();
   const secondsToNextMinute = 60 - now.getSeconds();
 
@@ -348,7 +348,7 @@ function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
 
 function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pricePerUnit, startDiscountFrom = 0 }) {
   if (numItems > maxItems) {
-      console.log('numItems cannot be greater than maxItems');
+    console.log('numItems cannot be greater than maxItems');
   }
 
   let totalDiscountRatio = 0;
@@ -357,12 +357,12 @@ function getDiscountedPrice({ numItems, maxItems, discountRatio, bundleSize, pri
   const maxDiscount = 0.2;
 
   for (let i = startDiscountFrom; i < Math.floor(numItems / bundleSize); i += 1) {
-      totalDiscountRatio += currentDiscountRatio;
-      currentDiscountRatio -= currentDiscountRatio * discountNerf;
+    totalDiscountRatio += currentDiscountRatio;
+    currentDiscountRatio -= currentDiscountRatio * discountNerf;
   }
 
   if (totalDiscountRatio > maxDiscount) {
-      totalDiscountRatio = maxDiscount;
+    totalDiscountRatio = maxDiscount;
   }
 
   const amount = pricePerUnit * numItems;
@@ -402,11 +402,17 @@ function cleanObject(obj) {
 
 function decodeBase64(encoded) {
   // Decode from base64 and convert to UTF-8 and remove � characters if they exist
-    const decoded = new TextDecoder('utf-8')
-      .decode(Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)))
-      .replace(/�/g, '');
+  const decoded = new TextDecoder('utf-8')
+    .decode(Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0)))
+    .replace(/�/g, '');
 
-    return decoded;
+  return decoded;
+}
+
+function checkForConsumablesAvailable(consumables) {
+  const consumablesAvailable = consumables.filter((consumable) => consumable?.balance?.unit !== 0);
+  if (consumablesAvailable.length > 0) return consumablesAvailable;
+  return consumables;
 }
 
 export {
@@ -419,5 +425,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem,
+  removeSessionStorageItem, checkForConsumablesAvailable,
 };

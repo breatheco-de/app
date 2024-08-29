@@ -16,6 +16,7 @@ import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import { checkForConsumablesAvailable } from '../../../utils';
 
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
@@ -140,11 +141,9 @@ function Mentoring({
           ...mentorshipServiceSet,
         }))));
 
-    let allConsumables = await Promise.all(reqConsumables);
-    if (allConsumables.length > 1) {
-      allConsumables = allConsumables.filter((consumable) => consumable?.balance?.unit !== 0);
-    }
-    setConsumables(allConsumables);
+    const allConsumables = await Promise.all(reqConsumables);
+    const validConsumables = checkForConsumablesAvailable(allConsumables);
+    setConsumables(validConsumables);
     setAllMentorsAvailable(mentors);
   };
 

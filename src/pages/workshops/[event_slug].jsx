@@ -14,7 +14,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, checkForConsumablesAvailable } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -351,7 +351,8 @@ function Page({ eventData, asset }) {
   };
 
   const consumableEventList = consumables?.data?.event_type_sets || [];
-  const currentConsumable = consumableEventList?.length > 0 ? consumableEventList?.find(
+  const availableConsumables = checkForConsumablesAvailable(consumableEventList);
+  const currentConsumable = availableConsumables?.length > 0 ? availableConsumables?.find(
     (c) => subscriptions.some(
       (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),
     ),
