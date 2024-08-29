@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-dupe-else-if */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-extra-boolean-cast */
@@ -15,7 +16,7 @@ import { isWindow, assetTypeValues, getExtensionName } from '../../../../../util
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/taskHandler';
+import { ButtonHandlerByTaskStatus } from '../../../../../js_modules/moduleMap/ButtonHandlerByTaskStatus';
 import getMarkDownContent from '../../../../../common/components/MarkDownParser/markdown';
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
@@ -30,8 +31,9 @@ import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
-import bc from '../../../../../common/services/breathecode';
+import TaskCodeRevisions from '../../../../../js_modules/syllabus/TaskCodeRevisions';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
+import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
@@ -70,7 +72,6 @@ function Content() {
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
-  const [currentAssetData, setCurrentAssetData] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
@@ -189,31 +190,20 @@ function Content() {
     setModalSettingsOpen(false);
   };
 
-  const toggleSettings = async () => {
-    const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-    if (assetResp.status < 400) {
-      const assetData = await assetResp.data;
-      setCurrentAssetData(assetData);
-      if (openNextPageModal) {
-        setModalSettingsOpen(!modalSettingsOpen);
-      } else {
-        setSettingsOpen(!settingsOpen);
-      }
+  const toggleSettings = () => {
+    if (openNextPageModal) {
+      setModalSettingsOpen(!modalSettingsOpen);
+    } else {
+      setSettingsOpen(!settingsOpen);
     }
   };
 
   const handleOpen = async (onOpen = () => {}) => {
     if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-      const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
-      if (assetResp?.status < 400) {
-        const assetData = await assetResp.data;
-        setCurrentAssetData(assetData);
-
-        if (typeof assetData?.delivery_formats === 'string' && !assetData?.delivery_formats.includes('url')) {
-          const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
-          const respData = await fileResp.data;
-          setFileData(respData);
-        }
+      if (typeof currentData?.delivery_formats === 'string' && !currentData?.delivery_formats.includes('url')) {
+        const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
+        const respData = await fileResp.data;
+        setFileData(respData);
       }
       onOpen();
     }
@@ -724,6 +714,7 @@ function Content() {
                 </Box>
               </Box>
             )}
+            {/* <TaskCodeRevisions currentTask={currentTask} /> */}
             {isAvailableAsSaas && isExercise ? (
               <ExerciseGuidedExperience currentTask={currentTask} currentData={currentData} />
             ) : (
@@ -964,7 +955,7 @@ function Content() {
                         currentTask={currentTask}
                         sendProject={sendProject}
                         changeStatusAssignment={changeStatusAssignment}
-                        currentAssetData={currentAssetData}
+                        currentAssetData={currentData}
                         toggleSettings={toggleSettings}
                         closeSettings={closeSettings}
                         settingsOpen={settingsOpen}
@@ -1110,7 +1101,7 @@ function Content() {
                   currentTask={currentTask}
                   sendProject={sendProject}
                   changeStatusAssignment={changeStatusAssignment}
-                  currentAssetData={currentAssetData}
+                  currentAssetData={currentData}
                   toggleSettings={toggleSettings}
                   closeSettings={closeSettings}
                   settingsOpen={settingsOpen}
@@ -1174,7 +1165,7 @@ function Content() {
                 changeStatusAssignment={changeStatusAssignment}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
-                currentAssetData={currentAssetData}
+                currentAssetData={currentData}
                 settingsOpen={modalSettingsOpen}
                 handleOpen={handleOpen}
                 fileData={fileData}

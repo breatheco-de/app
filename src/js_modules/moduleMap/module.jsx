@@ -10,7 +10,7 @@ import { useState, memo } from 'react';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
-import { ButtonHandlerByTaskStatus } from './taskHandler';
+import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
 import ModuleComponent from '../../common/components/Module';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';

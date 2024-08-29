@@ -16,7 +16,7 @@ export function ButtonHandlerByTaskStatus({
   onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, isGuidedExperience,
 }) {
-  const { hexColor, backgroundColor } = useStyle();
+  const { hexColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -125,7 +125,6 @@ export function ButtonHandlerByTaskStatus({
             isStudent
             changeStatusAssignment={changeStatusAssignment}
             externalFiles={fileData}
-            currentAssetData={currentAssetData}
             currentTask={currentTask}
             projectLink={currentTask?.github_url}
             onClose={() => setIsReviewModalOpen(false)}

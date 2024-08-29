@@ -1,14 +1,17 @@
-import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
+/* eslint-disable no-unused-vars */
+import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import CodeRevisionsList from './CodeRevisionsList';
-import Heading from '../Heading';
-import useStyle from '../../hooks/useStyle';
-import bc from '../../services/breathecode';
-import Icon from '../Icon';
-import Text from '../Text';
-import MarkDownParser from '../MarkDownParser';
+import useAuth from '../../common/hooks/useAuth';
+import useStyle from '../../common/hooks/useStyle';
+import bc from '../../common/services/breathecode';
+import CodeRevisionsList from '../../common/components/ReviewModal/CodeRevisionsList';
+import Icon from '../../common/components/Icon';
+import Heading from '../../common/components/Heading';
+import Text from '../../common/components/Text';
+import MarkDownParser from '../../common/components/MarkDownParser';
+import { error } from '../../utils/logging';
 
 const inputReviewRateCommentLimit = 100;
 const defaultReviewRateData = {
@@ -19,13 +22,25 @@ const defaultReviewRateData = {
   submitType: null,
   revision_rating: null,
 };
-function ReviewCodeRevision({ contextData, setContextData, stages, setStage, disableRate }) {
-  const { lightColor, hexColor, featuredLight } = useStyle();
+function TaskCodeRevisions({ currentTask }) {
+  const { lightColor, hexColor, featuredLight, backgroundColor4 } = useStyle();
+  const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
+  const toast = useToast();
+  const [contextData, setContextData] = useState({
+    commitFiles: {
+      task: {},
+      fileList: [],
+    },
+    commitFile: {},
+    code_revisions: [],
+    my_revisions: [],
+    revision_content: {},
+  });
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
   const { t } = useTranslation('assignments');
 
   const reviewRateStatus = reviewRateData?.status;
-  const data = contextData?.commitFiles || {};
+  const commitFiles = contextData?.commitFiles || {};
   const codeRevisions = contextData?.code_revisions || [];
   const revisionContent = contextData?.revision_content;
   const hasRevision = revisionContent !== undefined;
@@ -53,8 +68,8 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
   };
   const selectCodeRevision = (revision, resetReviewRate = true) => {
     const content = revision?.original_code;
-    const fileContent = data?.fileList?.length > 0
-      ? data?.fileList.find((l) => l.id === revision?.file?.id)
+    const fileContent = commitFiles?.fileList?.length > 0
+      ? commitFiles?.fileList.find((l) => l.id === revision?.file?.id)
       : {};
     const decodedReviewCodeContent = atob(content);
     if (resetReviewRate) {
@@ -64,29 +79,83 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
       ...prevState,
       commitFile: {
         ...fileContent,
-        task: data?.task || {},
+        task: commitFiles?.task || {},
         code: fileContent?.content,
       },
       revision_content: {
         path: revision?.file?.name,
         ...revision,
-        task: data?.task || {},
+        task: commitFiles?.task || {},
         code: decodedReviewCodeContent,
       },
     }));
   };
 
-  useEffect(() => {
-    if (codeRevisions?.length > 0 && !revisionContent?.id) {
-      const firstCodeRevision = codeRevisions?.[0] || {};
-      const hasBeenReviewed = firstCodeRevision?.revision_rating > 0 || firstCodeRevision?.revision_rating !== null;
-      selectCodeRevision({
-        ...firstCodeRevision,
-        revision_rating: firstCodeRevision?.revision_rating,
-        hasBeenReviewed,
-      });
+  const getRepoFiles = async () => {
+    try {
+      if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
+      const response = await bc.assignments().personalFiles(currentTask.id);
+      const data = await response.json();
+
+      if (response.ok) {
+        setContextData((prevState) => ({
+          ...prevState,
+          commitFiles: {
+            task: currentTask,
+            fileList: data,
+          },
+        }));
+      } else {
+        setContextData((prevState) => ({
+          ...prevState,
+          commitFiles: {
+            task: currentTask,
+            fileList: [],
+          },
+        }));
+      }
+    } catch (errorMsg) {
+      error('Error fetching repo files:', errorMsg);
     }
-  }, [codeRevisions, revisionContent]);
+  };
+  const getCodeRevisions = async () => {
+    try {
+      console.log('isAuthenticatedWithRigobot');
+      console.log(isAuthenticatedWithRigobot);
+      console.log('currentTask.github_url');
+      console.log(currentTask.github_url);
+      if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
+      const response = await bc.assignments().getPersonalCodeRevisionsByTask(currentTask.id);
+      const data = await response.json();
+
+      if (response.ok) {
+        const codeRevisionsSortedByDate = data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        setContextData((prev) => ({
+          ...prev,
+          code_revisions: codeRevisionsSortedByDate,
+          my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
+        }));
+      } else {
+        toast({
+          title: t('alert-message:something-went-wrong'),
+          description: `Cannot get code revisions: ${data?.detail}`,
+          status: 'error',
+          duration: 5000,
+          position: 'top',
+          isClosable: true,
+        });
+      }
+    } catch (errorMsg) {
+      error('Error fetching code revisions:', errorMsg);
+    }
+  };
+
+  useEffect(() => {
+    if (currentTask) {
+      getRepoFiles();
+      getCodeRevisions();
+    }
+  }, [currentTask?.id]);
 
   const handleSelectReviewRate = (status) => {
     setReviewRateData((prev) => ({ ...prev, status }));
@@ -134,7 +203,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
   };
 
   return (
-    <Flex flexDirection="row" height="30rem" justifyContent="center" gridGap="6px" width="100%" maxHeight={reviewRateStatus ? 'auto' : '30rem'}>
+    <Box padding="16px" borderRadius="16px" background={backgroundColor4} width="100%">
       {codeRevisions?.length > 0 ? (
         <>
           <Box width="100%" flex={0.65}>
@@ -143,7 +212,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
                 {t('code-review.select-file-to-review')}
               </Heading>
               <Heading size="18px" fontWeight={700}>
-                {data?.task?.title}
+                {commitFiles?.task?.title}
               </Heading>
             </Flex>
             <Flex my="10px" py="10px" px="10px" borderRadius="10px" background={featuredLight}>
@@ -179,12 +248,12 @@ ${revisionContent?.code}
                           />
                         </Box>
                       </Flex>
-                      <Button isDisabled={!contextData.commitFile?.id} onClick={() => setStage(stages.code_review)} color={!contextData.commitFile?.id && 'white'} variant="link" fontSize="17px" gridGap="15px">
+                      {/* <Button isDisabled={!contextData.commitFile?.id} color={!contextData.commitFile?.id && 'white'} variant="link" fontSize="17px" gridGap="15px">
                         {contextData.commitFile?.id && (
                           <Icon icon="longArrowRight" width="20px" height="20px" color={hexColor.blueDefault} />
                         )}
                         {contextData.commitFile?.id ? t('code-review.go-to-review') : 'No commit file found'}
-                      </Button>
+                      </Button> */}
                       <Divider mt="-8px" />
                     </>
                   ) : (
@@ -213,44 +282,42 @@ ${revisionContent?.code}
                       </Flex>
                     </>
                   )}
-                  {!disableRate && (
-                    <Flex flexDirection="column" gridGap="24px">
-                      {reviewRateStatus && <Divider margin="18px 0 -8px 0" />}
-                      <Box fontSize="14px" textAlign="center">
-                        {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
-                        {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
-                        {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
-                      </Box>
-                      <Flex justifyContent="center" gridGap="3.5rem">
-                        <Button
-                          opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
-                          onClick={() => handleSelectReviewRate('like')}
-                          variant="unstyled"
-                          height="auto"
-                          gridGap="10px"
-                          aria-label="Mark as Useful"
-                          _hover={{
-                            opacity: 1,
-                          }}
-                        >
-                          <Icon icon="feedback-like" width="54px" height="54px" />
-                        </Button>
-                        <Button
-                          opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
-                          onClick={() => handleSelectReviewRate('dislike')}
-                          variant="unstyled"
-                          height="auto"
-                          gridGap="10px"
-                          aria-label="Mark as not useful"
-                          _hover={{
-                            opacity: 1,
-                          }}
-                        >
-                          <Icon icon="feedback-dislike" width="54px" height="54px" />
-                        </Button>
-                      </Flex>
+                  <Flex flexDirection="column" gridGap="24px">
+                    {reviewRateStatus && <Divider margin="18px 0 -8px 0" />}
+                    <Box fontSize="14px" textAlign="center">
+                      {(reviewRateStatus === null && !revisionContent?.hasBeenReviewed) && t('code-review.rate-comment')}
+                      {(reviewRateStatus === 'like' || (reviewRateStatus === null && revisionContent?.is_good)) && t('code-review.you-liked-this-comment')}
+                      {(reviewRateStatus === 'dislike' || (reviewRateStatus === null && !revisionContent?.is_good)) && t('code-review.you-disliked-this-comment')}
+                    </Box>
+                    <Flex justifyContent="center" gridGap="3.5rem">
+                      <Button
+                        opacity={((reviewRateStatus !== 'dislike' && revisionContent?.hasBeenReviewed && revisionContent?.is_good) || reviewRateStatus === 'like') ? 1 : 0.5}
+                        onClick={() => handleSelectReviewRate('like')}
+                        variant="unstyled"
+                        height="auto"
+                        gridGap="10px"
+                        aria-label="Mark as Useful"
+                        _hover={{
+                          opacity: 1,
+                        }}
+                      >
+                        <Icon icon="feedback-like" width="54px" height="54px" />
+                      </Button>
+                      <Button
+                        opacity={((reviewRateStatus !== 'like' && revisionContent?.hasBeenReviewed && revisionContent?.is_good === false) || reviewRateStatus === 'dislike') ? 1 : 0.5}
+                        onClick={() => handleSelectReviewRate('dislike')}
+                        variant="unstyled"
+                        height="auto"
+                        gridGap="10px"
+                        aria-label="Mark as not useful"
+                        _hover={{
+                          opacity: 1,
+                        }}
+                      >
+                        <Icon icon="feedback-dislike" width="54px" height="54px" />
+                      </Button>
                     </Flex>
-                  )}
+                  </Flex>
                 </Flex>
               )}
               {hasRevision && reviewRateData.submited && (
@@ -284,31 +351,14 @@ ${revisionContent?.code}
           </Text>
         </Flex>
       )}
-    </Flex>
+    </Box>
   );
 }
-ReviewCodeRevision.propTypes = {
-  stages: PropTypes.shape({
-    initial: PropTypes.string,
-    file_list: PropTypes.string,
-    code_review: PropTypes.string,
-    review_code_revision: PropTypes.string,
-  }),
-  setStage: PropTypes.func,
-  contextData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  setContextData: PropTypes.func,
-  disableRate: PropTypes.bool,
+TaskCodeRevisions.propTypes = {
+  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-ReviewCodeRevision.defaultProps = {
-  stages: {
-    initial: 'initial',
-    file_list: 'file_list',
-    code_review: 'code_review',
-    review_code_revision: 'review_code_revision',
-  },
-  setStage: () => {},
-  setContextData: () => {},
-  disableRate: false,
+TaskCodeRevisions.defaultProps = {
+  currentTask: null,
 };
 
-export default ReviewCodeRevision;
+export default TaskCodeRevisions;
