@@ -18,7 +18,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
 
-function ExerciseGuidedExperience({ currentTask, currentData }) {
+function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
   const { state } = useCohortHandler();
@@ -106,10 +106,10 @@ function ExerciseGuidedExperience({ currentTask, currentData }) {
 
   const token = localStorage.getItem('accessToken');
 
-  const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`;
-  const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentData?.url}`;
+  const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
+  const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
 
-  const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url?.split('/blob')?.[0];
   const repoName = urlToClone?.split('/')?.pop();
 
   return (
@@ -118,10 +118,10 @@ function ExerciseGuidedExperience({ currentTask, currentData }) {
         <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStated ? 'column' : 'row' }}>
           <Box maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '40%' }}>
             <Heading color="white" mb="16px" size="l" fontWeight="400">
-              {currentData?.title}
+              {currentAsset?.title}
             </Heading>
             <Text color="white" size="l">
-              {currentData?.description}
+              {currentAsset?.description}
             </Text>
           </Box>
           <Box width="100%" borderRadius="11px" overflow="hidden">
@@ -131,7 +131,7 @@ function ExerciseGuidedExperience({ currentTask, currentData }) {
                 width: '100%',
                 borderRadius: '11px',
               }}
-              url={currentData?.intro_video_url}
+              url={currentAsset?.intro_video_url}
             />
           </Box>
         </Box>
@@ -221,7 +221,7 @@ function ExerciseGuidedExperience({ currentTask, currentData }) {
           content={t('common:learnpack.cloneInstructions', {
             repoName,
             urlToClone,
-            readmeUrl: currentData?.readme_url,
+            readmeUrl: currentAsset?.readme_url,
           }, { returnObjects: true })}
           showLineNumbers={false}
         />
@@ -232,12 +232,12 @@ function ExerciseGuidedExperience({ currentTask, currentData }) {
 
 ExerciseGuidedExperience.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ExerciseGuidedExperience.defaultProps = {
   currentTask: null,
-  currentData: null,
+  currentAsset: null,
 };
 
 export default ExerciseGuidedExperience;

@@ -2,8 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const useModuleMap = () => {
   const dispatch = useDispatch();
-  const taskTodo = useSelector((state) => state.moduleMapReducer.taskTodo);
-  const cohortProgram = useSelector((state) => state.moduleMapReducer.cohortProgram);
+  const state = useSelector((reducerState) => reducerState.moduleMapReducer);
 
   const setTaskTodo = (newState) => {
     dispatch({
@@ -19,11 +18,18 @@ const useModuleMap = () => {
     });
   };
 
+  const setCurrentTask = (newState) => {
+    dispatch({
+      type: 'CHANGE_CURRENT_TASK',
+      payload: newState,
+    });
+  };
+
   return {
-    cohortProgram,
-    taskTodo,
     setTaskTodo,
     setCohortProgram,
+    setCurrentTask,
+    state,
   };
 };
 

@@ -45,15 +45,15 @@ import { log } from '../../../../../utils/logging';
 
 function Content() {
   const { t, lang } = useTranslation('syllabus');
+  const router = useRouter();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading } = useAuth();
-  const { taskTodo, cohortProgram, setTaskTodo, startDay, updateAssignment } = useModuleHandler();
-  const [currentTask, setCurrentTask] = useState(null);
+  const { taskTodo, cohortProgram, setTaskTodo, startDay, updateAssignment, setCurrentTask, currentTask } = useModuleHandler();
   const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
-  const { isOpen, onToggle } = useDisclosure();
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
@@ -75,8 +75,7 @@ function Content() {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
-  const [currentData, setCurrentData] = useState({});
-  const router = useRouter();
+  const [currentAsset, setCurrentAsset] = useState({});
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortAssignments, getCohortData, prepareTasks, state,
@@ -178,7 +177,7 @@ function Content() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentData?.translations?.us || currentData?.translations?.en || lessonSlug;
+    const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
       && el.associated_slug === assetSlug));
@@ -200,7 +199,7 @@ function Content() {
 
   const handleOpen = async (onOpen = () => {}) => {
     if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
-      if (typeof currentData?.delivery_formats === 'string' && !currentData?.delivery_formats.includes('url')) {
+      if (typeof currentAsset?.delivery_formats === 'string' && !currentAsset?.delivery_formats.includes('url')) {
         const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
         const respData = await fileResp.data;
         setFileData(respData);
@@ -225,7 +224,7 @@ function Content() {
 
   const cleanCurrentData = () => {
     setShowModal(false);
-    setCurrentData({});
+    setCurrentAsset({});
     setCurrentSelectedModule(null);
     setCallToActionProps({});
     setReadme(null);
@@ -243,7 +242,7 @@ function Content() {
     setReadme({
       content: t('no-content-found-description'),
     });
-    setCurrentData({
+    setCurrentAsset({
       title: t('no-content-found'),
     });
   };
@@ -281,7 +280,7 @@ function Content() {
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           if (isIpynb) {
             setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
-            setCurrentData(data);
+            setCurrentAsset(data);
           } else {
             setIpynbHtmlUrl(null);
             if (currentTranslationSlug === undefined) {
@@ -304,14 +303,14 @@ function Content() {
                   // Binary base64 decoding ⇢ UTF-8
                   const markdown = getMarkDownContent(markdownData);
                   setReadme(markdown);
-                  setCurrentData(currData);
+                  setCurrentAsset(currData);
                 }
               })
               .catch(() => {
                 setReadme({
                   content: t('no-traduction-found-description'),
                 });
-                setCurrentData({
+                setCurrentAsset({
                   ...data,
                   title: t('no-traduction-found'),
                 });
@@ -371,7 +370,7 @@ function Content() {
       },
     ] : [];
 
-  const videoTutorial = currentData?.solution_video_url ? [{
+  const videoTutorial = currentAsset?.solution_video_url ? [{
     icon: 'youtube',
     slug: 'video-player',
     title: 'Video tutorial',
@@ -482,7 +481,7 @@ function Content() {
         }
       } else {
         setCurrentBlankProps(lastPrevTask);
-        setCurrentData(lastPrevTask);
+        setCurrentAsset(lastPrevTask);
         router.push({
           query: {
             cohortSlug,
@@ -570,7 +569,7 @@ function Content() {
     },
   ];
 
-  const url = currentData?.readme_url || currentData?.url;
+  const url = currentAsset?.readme_url || currentAsset?.url;
   const repoUrl = (ipynbHtmlUrl && url) ? `${url.replace('.inpynb', `${router.locale === 'en' ? '' : `.${router.locale}`}.inpynb`)}` : url;
   const inputModalLink = currentBlankProps && currentBlankProps.target === 'blank' ? currentBlankProps.url : `${ORIGIN_HOST}/syllabus/${cohortSlug}/${nextAssignment?.type?.toLowerCase()}/${nextAssignment?.slug}`;
 
@@ -579,7 +578,7 @@ function Content() {
   return (
     <>
       <Head>
-        <title>{currentData?.title || '4Geeks'}</title>
+        <title>{currentAsset?.title || '4Geeks'}</title>
       </Head>
       <Flex background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
         <ModalInfo
@@ -641,9 +640,9 @@ function Content() {
         )}
 
         <Box width="100%" minWidth="0" margin="0 auto" height="auto">
-          {!isAvailableAsSaas && !isQuiz && currentData?.intro_video_url && (
+          {!isAvailableAsSaas && !isQuiz && currentAsset?.intro_video_url && (
             <ReactPlayerV2
-              url={currentData?.intro_video_url}
+              url={currentAsset?.intro_video_url}
             />
           )}
           <Box
@@ -716,7 +715,7 @@ function Content() {
             )}
             {/* <TaskCodeRevisions currentTask={currentTask} /> */}
             {isAvailableAsSaas && isExercise ? (
-              <ExerciseGuidedExperience currentTask={currentTask} currentData={currentData} />
+              <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
             ) : (
               <Box
                 id="markdown-body"
@@ -805,13 +804,13 @@ function Content() {
                   </SimpleModal>
                 )}
 
-                {!isQuiz && currentData?.solution_video_url && showSolutionVideo && (
+                {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                   <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
                     <Heading as="h2" size="16">
                       Video Tutorial
                     </Heading>
                     <ReactPlayerV2
-                      url={currentData?.solution_video_url}
+                      url={currentAsset?.solution_video_url}
                     />
                   </Box>
                 )}
@@ -836,7 +835,7 @@ function Content() {
                       </Link>
                     )}
 
-                    {ipynbHtmlUrl && currentData?.readme_url && (
+                    {ipynbHtmlUrl && currentAsset?.readme_url && (
                       <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
                     )}
 
@@ -880,7 +879,7 @@ function Content() {
                     readme={readme}
                     currentBlankProps={currentBlankProps}
                     callToActionProps={callToActionProps}
-                    currentData={currentData}
+                    currentData={currentAsset}
                     lesson={lesson}
                     quizSlug={quizSlug}
                     lessonSlug={lessonSlug}
@@ -888,7 +887,7 @@ function Content() {
                     isGuidedExperience={isAvailableAsSaas}
                     alerMessage={(
                       <>
-                        {currentData?.solution_url && (
+                        {currentAsset?.solution_url && (
                           <AlertMessage
                             type="warning"
                             zIndex={99}
@@ -904,13 +903,13 @@ function Content() {
                             <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
                               {t('solution-message')}
                               {' '}
-                              <Link fontSize="15px" textDecoration="underline" href={currentData?.solution_url} target="_blank">
+                              <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
                                 You can see it here
                               </Link>
                             </Text>
                           </AlertMessage>
                         )}
-                        {currentData?.superseded_by?.slug && (
+                        {currentAsset?.superseded_by?.slug && (
                           <AlertMessage
                             type="warning"
                             zIndex={99}
@@ -926,8 +925,8 @@ function Content() {
                             <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
                               {t('superseded-message')}
                               {' '}
-                              <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentData?.superseded_by?.slug}`}>
-                                {currentData?.superseded_by?.title}
+                              <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
+                                {currentAsset?.superseded_by?.title}
                               </Link>
                             </Text>
                           </AlertMessage>
@@ -955,7 +954,7 @@ function Content() {
                         currentTask={currentTask}
                         sendProject={sendProject}
                         changeStatusAssignment={changeStatusAssignment}
-                        currentAssetData={currentData}
+                        currentAssetData={currentAsset}
                         toggleSettings={toggleSettings}
                         closeSettings={closeSettings}
                         settingsOpen={settingsOpen}
@@ -1073,7 +1072,7 @@ function Content() {
                     </Text>
                   </Box>
                 )}
-                {!isQuiz && currentData?.intro_video_url && (
+                {!isQuiz && currentAsset?.intro_video_url && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Button
                       display="flex"
@@ -1101,7 +1100,7 @@ function Content() {
                   currentTask={currentTask}
                   sendProject={sendProject}
                   changeStatusAssignment={changeStatusAssignment}
-                  currentAssetData={currentData}
+                  currentAssetData={currentAsset}
                   toggleSettings={toggleSettings}
                   closeSettings={closeSettings}
                   settingsOpen={settingsOpen}
@@ -1131,7 +1130,7 @@ function Content() {
       >
         <Box padding="20px">
           <ReactPlayerV2
-            url={currentData?.intro_video_url}
+            url={currentAsset?.intro_video_url}
           />
         </Box>
       </SimpleModal>
@@ -1165,7 +1164,7 @@ function Content() {
                 changeStatusAssignment={changeStatusAssignment}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
-                currentAssetData={currentData}
+                currentAssetData={currentAsset}
                 settingsOpen={modalSettingsOpen}
                 handleOpen={handleOpen}
                 fileData={fileData}
