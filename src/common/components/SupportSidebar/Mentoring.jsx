@@ -155,7 +155,6 @@ function Mentoring({
 
   useEffect(() => {
     const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
-
     if (existsCohortSession) {
       setIsAvailableForConsumables(cohortSession?.available_as_saas);
     }
@@ -166,9 +165,11 @@ function Mentoring({
     }
   }, [allCohorts]);
 
-  const mentorshipService = consumables?.mentorship_service_sets?.find(
-    (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
-  );
+  const mentorshipService = consumables?.length > 0 ? consumables?.find(
+    (c) => subscriptions.some(
+      (s) => c?.slug.toLowerCase() === s?.selected_mentorship_service_set?.slug.toLowerCase(),
+    ),
+  ) : {};
 
   return !isLoading && user?.id && (
     <Box>
