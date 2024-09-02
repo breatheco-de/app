@@ -22,22 +22,15 @@ const defaultReviewRateData = {
 function TaskCodeRevisions({ currentTask }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
-  const { isAuthenticatedWithRigobot, user } = useAuth();
+  const { isAuthenticatedWithRigobot } = useAuth();
   const toast = useToast();
   const [contextData, setContextData] = useState({
-    commitFiles: {
-      task: {},
-      fileList: [],
-    },
-    commitFile: {},
     code_revisions: [],
-    my_revisions: [],
     revision_content: {},
   });
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
 
   const reviewRateStatus = reviewRateData?.status;
-  const commitFiles = contextData?.commitFiles || {};
   const codeRevisions = contextData?.code_revisions || [];
   const revisionContent = contextData?.revision_content;
   const hasRevision = revisionContent !== undefined;
@@ -52,22 +45,13 @@ function TaskCodeRevisions({ currentTask }) {
 
   const selectCodeRevision = (revision) => {
     const content = revision?.original_code;
-    const fileContent = commitFiles?.fileList?.length > 0
-      ? commitFiles?.fileList.find((l) => l.id === revision?.file?.id)
-      : {};
     const decodedReviewCodeContent = atob(content);
 
     setContextData((prevState) => ({
       ...prevState,
-      commitFile: {
-        ...fileContent,
-        task: commitFiles?.task || {},
-        code: fileContent?.content,
-      },
       revision_content: {
         path: revision?.file?.name,
         ...revision,
-        task: commitFiles?.task || {},
         code: decodedReviewCodeContent,
       },
     }));
@@ -82,33 +66,6 @@ function TaskCodeRevisions({ currentTask }) {
     }
   };
 
-  const getRepoFiles = async () => {
-    try {
-      if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
-      const response = await bc.assignments().personalFiles(currentTask.id);
-      const data = await response.json();
-
-      if (response.ok) {
-        setContextData((prevState) => ({
-          ...prevState,
-          commitFiles: {
-            task: currentTask,
-            fileList: data,
-          },
-        }));
-      } else {
-        setContextData((prevState) => ({
-          ...prevState,
-          commitFiles: {
-            task: currentTask,
-            fileList: [],
-          },
-        }));
-      }
-    } catch (errorMsg) {
-      error('Error fetching repo files:', errorMsg);
-    }
-  };
   const getCodeRevisions = async () => {
     try {
       if (!isAuthenticatedWithRigobot || !currentTask.github_url) return;
@@ -120,7 +77,6 @@ function TaskCodeRevisions({ currentTask }) {
         setContextData((prev) => ({
           ...prev,
           code_revisions: codeRevisionsSortedByDate,
-          my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
         toast({
@@ -139,7 +95,6 @@ function TaskCodeRevisions({ currentTask }) {
 
   useEffect(() => {
     if (currentTask) {
-      getRepoFiles();
       getCodeRevisions();
     }
   }, [currentTask?.id]);
