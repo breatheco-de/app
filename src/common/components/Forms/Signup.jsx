@@ -260,7 +260,6 @@ function SignupForm({
                   flex={1}
                   flexDirection="column"
                   fontSize="12px"
-                  color="blue.default2"
                   gridGap="4px"
                 >
                   <PhoneInput
@@ -271,7 +270,6 @@ function SignupForm({
                     required
                     {...field}
                   />
-                  {t('phone-info')}
                 </Box>
               ) : (
                 <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
