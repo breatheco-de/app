@@ -56,6 +56,7 @@ const useStyle = () => {
     green: '#38A56A',
     greenLight: '#25BF6C',
     greenLight2: '#A4FFBD',
+    greenLight3: '#D7FFE2',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
     successLight: useColorModeValue('#e9ffef', '#A4FFBD'),
   };

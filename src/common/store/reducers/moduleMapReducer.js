@@ -2,6 +2,7 @@ const initialState = {
   cohortProgram: {},
   taskTodo: [],
   currentTask: null,
+  subTasks: [],
 };
 
 const moduleMapReducer = (state = initialState, action) => {
@@ -20,6 +21,11 @@ const moduleMapReducer = (state = initialState, action) => {
       return {
         ...state,
         currentTask: action.payload,
+      };
+    case 'CHANGE_SUB_TASKS':
+      return {
+        ...state,
+        subTasks: action.payload,
       };
     default:
       return state;

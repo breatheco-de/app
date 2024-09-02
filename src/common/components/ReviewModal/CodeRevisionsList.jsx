@@ -6,7 +6,7 @@ import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 
-function CodeRevisionsList({ contextData, selectCodeRevision }) {
+function CodeRevisionsList({ contextData, selectCodeRevision, ...rest }) {
   const { fontColor, borderColor, hexColor, featuredLight } = useStyle();
   const { t } = useTranslation('assignments');
 
@@ -14,7 +14,7 @@ function CodeRevisionsList({ contextData, selectCodeRevision }) {
   const revisionContent = contextData?.revision_content;
 
   return (
-    <Flex overflow="auto" height="24rem" py="0.5rem" flexDirection="column" gridGap="12px">
+    <Flex overflow="auto" height="24rem" py="0.5rem" flexDirection="column" gridGap="12px" {...rest}>
       {codeRevisions.map((commit) => {
         const isSelected = revisionContent?.id === commit?.id;
         const hasBeenReviewed = typeof commit?.is_good === 'boolean';
@@ -29,7 +29,7 @@ function CodeRevisionsList({ contextData, selectCodeRevision }) {
               <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} />
               <Flex flexDirection="column" justifyContent="center" gridGap="9px" maxWidth="102px">
                 <Flex flexDirection="column" gridGap="0px">
-                  <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
+                  <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {commit?.file?.name}
                   </Text>
                   <Text fontSize="12px" fontWeight={400} title={commit?.file?.commit_hash}>

@@ -25,10 +25,18 @@ const useModuleMap = () => {
     });
   };
 
+  const setSubTasks = (newState) => {
+    dispatch({
+      type: 'CHANGE_SUB_TASKS',
+      payload: newState,
+    });
+  };
+
   return {
     setTaskTodo,
     setCohortProgram,
     setCurrentTask,
+    setSubTasks,
     state,
   };
 };

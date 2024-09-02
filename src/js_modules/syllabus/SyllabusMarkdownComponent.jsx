@@ -16,6 +16,7 @@ function SyllabusMarkdownComponent({
         content={readme.content}
         callToActionProps={callToActionProps}
         withToc={lesson?.toLowerCase() === 'read'}
+        showContentHeading={!(currentData.asset_type === 'PROJECT' && isGuidedExperience)}
         isGuidedExperience={isGuidedExperience}
         frontMatter={{
           title: currentData.title,

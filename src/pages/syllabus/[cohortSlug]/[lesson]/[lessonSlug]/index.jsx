@@ -31,7 +31,7 @@ import ScrollTop from '../../../../../common/components/scrollTop';
 import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar';
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
-import TaskCodeRevisions from '../../../../../js_modules/syllabus/TaskCodeRevisions';
+import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
@@ -108,6 +108,8 @@ function Content() {
 
   const isQuiz = lesson === 'answer';
   const isExercise = lesson === 'practice';
+  const isProject = lesson === 'project';
+  const isDelivered = currentTask?.task_status === 'DONE';
 
   const filteredCurrentAssignments = filteredEmptyModules.map((section) => {
     const currentAssignments = showPendingTasks
@@ -575,6 +577,31 @@ function Content() {
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
 
+  const deliveredProjectStyles = {
+    borderRadius: '11px',
+    pt: '2rem !important',
+  };
+
+  const projectStyles = {
+    borderRadius: '0 0 11px 11px',
+    pt: '3rem !important',
+  };
+
+  const getStyles = () => {
+    let markdownStyles = {};
+    if (isQuiz) return markdownStyles;
+
+    if (isAvailableAsSaas) {
+      markdownStyles = { padding: { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' } };
+      if (isProject) {
+        if (isDelivered) markdownStyles = { ...markdownStyles, ...deliveredProjectStyles };
+        else markdownStyles = { ...markdownStyles, ...projectStyles };
+      }
+    }
+
+    return markdownStyles;
+  };
+
   return (
     <>
       <Head>
@@ -713,315 +740,324 @@ function Content() {
                 </Box>
               </Box>
             )}
-            {/* <TaskCodeRevisions currentTask={currentTask} /> */}
-            {isAvailableAsSaas && isExercise ? (
+            {isExercise && isAvailableAsSaas && currentAsset?.id ? (
               <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
             ) : (
               <Box
-                id="markdown-body"
-                className={`markdown-body horizontal-sroll ${colorMode}`}
-                background={backgroundColor}
-                borderRadius="11px"
-                flexGrow={1}
-                marginLeft={0}
-                marginBottom="20px"
-                padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
-                transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-                transitionProperty="margin"
-                transitionDuration={Open ? '225ms' : '195ms'}
-                transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-                transitionDelay="0ms"
-                position="relative"
+                id="main-container"
+                className={`horizontal-sroll ${colorMode}`}
                 height={!isQuiz && isAvailableAsSaas && '70vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
+                borderRadius="11px 11px 0 0"
+                position="relative"
               >
+                {isProject && isAvailableAsSaas && currentAsset?.id && (
+                  <ProjectBoardGuidedExperience currentAsset={currentAsset} />
+                )}
+                <Box
+                  id="markdown-body"
+                  className={`markdown-body ${colorMode}`}
+                  background={backgroundColor}
+                  borderRadius="11px"
+                  flexGrow={1}
+                  marginLeft={0}
+                  marginBottom="20px"
+                  padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
+                  transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+                  transitionProperty="margin"
+                  transitionDuration={Open ? '225ms' : '195ms'}
+                  transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+                  transitionDelay="0ms"
+                  position="relative"
+                  {...getStyles()}
+                >
+                  {extendedInstructions !== null && (
+                    <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
+                      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+                        <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+                          {`${t('teacherSidebar.instructions')}:`}
+                        </Heading>
+                        {sortedAssignments.length > 0 && (
+                          <ReactSelect
+                            unstyled
+                            color="#0097CD"
+                            fontWeight="700"
+                            id="cohort-select"
+                            fontSize="25px"
+                            placeholder={t('common:select-cohort')}
+                            noOptionsMessage={() => t('common:no-options-message')}
+                            defaultValue={{
+                              value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
+                              slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
+                              label: selectedSyllabus?.id
+                                ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label}`
+                                : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label}`,
+                            }}
+                            onChange={({ value }) => {
+                              setCurrentSelectedModule(parseInt(value, 10));
+                            }}
+                            options={sortedAssignments.map((module) => ({
+                              value: module?.id,
+                              slug: module.slug,
+                              label: `#${module?.id} - ${module?.label}`,
+                            }))}
+                          />
+                        )}
+                      </Box>
 
-                {extendedInstructions !== null && (
-                  <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
-                    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-                      <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
-                        {`${t('teacherSidebar.instructions')}:`}
-                      </Heading>
-                      {sortedAssignments.length > 0 && (
-                        <ReactSelect
-                          unstyled
-                          color="#0097CD"
-                          fontWeight="700"
-                          id="cohort-select"
-                          fontSize="25px"
-                          placeholder={t('common:select-cohort')}
-                          noOptionsMessage={() => t('common:no-options-message')}
-                          defaultValue={{
-                            value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
-                            slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
-                            label: selectedSyllabus?.id
-                              ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label}`
-                              : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label}`,
+                      {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
+                        <AlertMessage
+                          type="info"
+                          style={{
+                            margin: '20px 0 18px 0',
                           }}
-                          onChange={({ value }) => {
-                            setCurrentSelectedModule(parseInt(value, 10));
-                          }}
-                          options={sortedAssignments.map((module) => ({
-                            value: module?.id,
-                            slug: module.slug,
-                            label: `#${module?.id} - ${module?.label}`,
-                          }))}
+                          dangerouslySetInnerHTML
+                          title={t('teacherSidebar.no-need-to-teach-today.title')}
+                          message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
                         />
                       )}
-                    </Box>
+                      {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
+                        <AlertMessage
+                          type="warning"
+                          style={{
+                            margin: '20px 0 18px 0',
+                          }}
+                          message={t('teacherSidebar.alert-updated-module-instructions')}
+                        />
+                      )}
 
-                    {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-                      <AlertMessage
-                        type="info"
-                        style={{
-                          margin: '20px 0 18px 0',
-                        }}
-                        dangerouslySetInnerHTML
-                        title={t('teacherSidebar.no-need-to-teach-today.title')}
-                        message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-                      />
-                    )}
-                    {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-                      <AlertMessage
-                        type="warning"
-                        style={{
-                          margin: '20px 0 18px 0',
-                        }}
-                        message={t('teacherSidebar.alert-updated-module-instructions')}
-                      />
-                    )}
+                      <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+                        <Heading as="h2" size="sm" style={{ margin: '0' }}>
+                          {`${label} - `}
+                          {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
+                        </Heading>
+                        <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+                          {teacherInstructions}
+                        </Text>
+                      </Box>
+                      <MarkDownParser content={extendedInstructions?.content || ''} />
+                    </SimpleModal>
+                  )}
 
-                    <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
-                      <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                        {`${label} - `}
-                        {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
+                  {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
+                    <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
+                      <Heading as="h2" size="16">
+                        Video Tutorial
                       </Heading>
-                      <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-                        {teacherInstructions}
-                      </Text>
+                      <ReactPlayerV2
+                        url={currentAsset?.solution_video_url}
+                      />
                     </Box>
-                    <MarkDownParser content={extendedInstructions?.content || ''} />
-                  </SimpleModal>
-                )}
+                  )}
 
-                {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
-                  <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
-                    <Heading as="h2" size="16">
-                      Video Tutorial
-                    </Heading>
-                    <ReactPlayerV2
-                      url={currentAsset?.solution_video_url}
-                    />
-                  </Box>
-                )}
+                  {(!isAvailableAsSaas || ipynbHtmlUrl) && (
+                    <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
+                      {repoUrl && !isQuiz && !isAvailableAsSaas && (
+                        <Link
+                          display="flex"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          width="100%"
+                          gridGap="8px"
+                          padding={{ base: '8px 12px', md: '8px' }}
+                          background="transparent"
+                          href={repoUrl}
+                          _hover={{ opacity: 0.7 }}
+                          style={{ color: fontColor, textDecoration: 'none' }}
+                        >
+                          <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                          {t('edit-page')}
+                        </Link>
+                      )}
 
-                {(!isAvailableAsSaas || ipynbHtmlUrl) && (
-                  <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
-                    {repoUrl && !isQuiz && !isAvailableAsSaas && (
-                      <Link
-                        display="flex"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        width="100%"
-                        gridGap="8px"
-                        padding={{ base: '8px 12px', md: '8px' }}
-                        background="transparent"
-                        href={repoUrl}
-                        _hover={{ opacity: 0.7 }}
-                        style={{ color: fontColor, textDecoration: 'none' }}
-                      >
-                        <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                        {t('edit-page')}
-                      </Link>
-                    )}
+                      {ipynbHtmlUrl && currentAsset?.readme_url && (
+                        <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+                      )}
 
-                    {ipynbHtmlUrl && currentAsset?.readme_url && (
-                      <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
-                    )}
-
-                    {ipynbHtmlUrl && readmeUrlPathname && (
-                      <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
-                        <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
-                        {t('open-google-collab')}
-                      </Link>
-                    )}
-                  </Box>
-                )}
-                {ipynbHtmlUrl && (
-                  <iframe
-                    id="iframe"
-                    src={`${ipynbHtmlUrl}&theme=${colorMode}`}
-                    style={{
-                      width: '100%',
-                      height: '99vh',
-                      borderRadius: '14px',
-                    }}
-                    title="4Geeks IPython Notebook"
-                  />
-                )}
-
-                {isQuiz ? (
-                  <Box background={featuredColor} width="100%" height="100vh" borderRadius="14px">
+                      {ipynbHtmlUrl && readmeUrlPathname && (
+                        <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                          <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                          {t('open-google-collab')}
+                        </Link>
+                      )}
+                    </Box>
+                  )}
+                  {ipynbHtmlUrl && (
                     <iframe
                       id="iframe"
-                      src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                      src={`${ipynbHtmlUrl}&theme=${colorMode}`}
                       style={{
                         width: '100%',
-                        height: '100%',
+                        height: '99vh',
                         borderRadius: '14px',
                       }}
-                      title="Breathecode Quiz"
+                      title="4Geeks IPython Notebook"
                     />
-                  </Box>
-                ) : (
-                  <SyllabusMarkdownComponent
-                    ipynbHtmlUrl={ipynbHtmlUrl}
-                    readme={readme}
-                    currentBlankProps={currentBlankProps}
-                    callToActionProps={callToActionProps}
-                    currentData={currentAsset}
-                    lesson={lesson}
-                    quizSlug={quizSlug}
-                    lessonSlug={lessonSlug}
-                    currentTask={currentTask}
-                    isGuidedExperience={isAvailableAsSaas}
-                    alerMessage={(
-                      <>
-                        {currentAsset?.solution_url && (
-                          <AlertMessage
-                            type="warning"
-                            zIndex={99}
-                            full
-                            borderRadius="8px"
-                            backgroundColor={featuredCard.yellow.featured}
-                            margin="1rem 0"
-                            style={{
-                              width: '100%',
-                              height: 'auto',
-                            }}
-                          >
-                            <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                              {t('solution-message')}
-                              {' '}
-                              <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
-                                You can see it here
-                              </Link>
-                            </Text>
-                          </AlertMessage>
-                        )}
-                        {currentAsset?.superseded_by?.slug && (
-                          <AlertMessage
-                            type="warning"
-                            zIndex={99}
-                            full
-                            borderRadius="8px"
-                            backgroundColor={featuredCard.yellow.featured}
-                            margin="1rem 0"
-                            style={{
-                              width: '100%',
-                              height: 'auto',
-                            }}
-                          >
-                            <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                              {t('superseded-message')}
-                              {' '}
-                              <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
-                                {currentAsset?.superseded_by?.title}
-                              </Link>
-                            </Text>
-                          </AlertMessage>
-                        )}
-                      </>
                   )}
-                  />
-                )}
-                {!isQuiz && !isAvailableAsSaas && (
-                  <Box
-                    margin="2.5rem 0 0 0"
-                    padding="1.75rem 0 "
-                    borderTop="2px solid"
-                    borderColor={commonBorderColor}
-                    display="flex"
-                    flexDirection={{ base: 'column', md: 'row' }}
-                    gridGap="20px"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    width="100%"
-                  >
-                    <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
-                      <ButtonHandlerByTaskStatus
-                        allowText
-                        currentTask={currentTask}
-                        sendProject={sendProject}
-                        changeStatusAssignment={changeStatusAssignment}
-                        currentAssetData={currentAsset}
-                        toggleSettings={toggleSettings}
-                        closeSettings={closeSettings}
-                        settingsOpen={settingsOpen}
-                        handleOpen={handleOpen}
-                        fileData={fileData}
-                      />
-                      {currentTask?.task_status === 'DONE' && showModal && (
-                      <ShareButton
-                        variant="outline"
-                        title={t('projects:share-certificate.title')}
-                        shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                        link={shareLink}
-                        socials={socials}
-                        currentTask={currentTask}
-                        onlyModal
-                        withParty
-                      />
-                      )}
-                    </Box>
-                    <Box display="flex" gridGap="3rem">
-                      {(previousAssignment || !!prevModule) && (
-                      <Box
-                        color="blue.default"
-                        cursor="pointer"
-                        fontSize="15px"
-                        display="flex"
-                        alignItems="center"
-                        gridGap="10px"
-                        letterSpacing="0.05em"
-                        fontWeight="700"
-                        onClick={nextPage}
-                      >
-                        <Box
-                          as="span"
-                          display="block"
-                        >
-                          <Icon icon="arrowLeft2" width="18px" height="10px" />
-                        </Box>
-                        {t('previous-page')}
-                      </Box>
-                      )}
 
-                      {(nextAssignment || !!nextModule) && (
-                      <Box
-                        color="blue.default"
-                        cursor="pointer"
-                        fontSize="15px"
-                        display="flex"
-                        alignItems="center"
-                        gridGap="10px"
-                        letterSpacing="0.05em"
-                        fontWeight="700"
-                        onClick={nextPage}
-                      >
-                        {t('next-page')}
-                        <Box
-                          as="span"
-                          display="block"
-                          transform="rotate(180deg)"
-                        >
-                          <Icon icon="arrowLeft2" width="18px" height="10px" />
-                        </Box>
-                      </Box>
-                      )}
+                  {isQuiz ? (
+                    <Box background={featuredColor} width="100%" height="100vh" borderRadius="14px">
+                      <iframe
+                        id="iframe"
+                        src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '14px',
+                        }}
+                        title="Breathecode Quiz"
+                      />
                     </Box>
-                  </Box>
-                )}
+                  ) : (
+                    <SyllabusMarkdownComponent
+                      ipynbHtmlUrl={ipynbHtmlUrl}
+                      readme={readme}
+                      currentBlankProps={currentBlankProps}
+                      callToActionProps={callToActionProps}
+                      currentData={currentAsset}
+                      lesson={lesson}
+                      quizSlug={quizSlug}
+                      lessonSlug={lessonSlug}
+                      currentTask={currentTask}
+                      isGuidedExperience={isAvailableAsSaas}
+                      alerMessage={(
+                        <>
+                          {currentAsset?.solution_url && (
+                            <AlertMessage
+                              type="warning"
+                              zIndex={99}
+                              full
+                              borderRadius="8px"
+                              backgroundColor={featuredCard.yellow.featured}
+                              margin="1rem 0"
+                              style={{
+                                width: '100%',
+                                height: 'auto',
+                              }}
+                            >
+                              <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                                {t('solution-message')}
+                                {' '}
+                                <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
+                                  You can see it here
+                                </Link>
+                              </Text>
+                            </AlertMessage>
+                          )}
+                          {currentAsset?.superseded_by?.slug && (
+                            <AlertMessage
+                              type="warning"
+                              zIndex={99}
+                              full
+                              borderRadius="8px"
+                              backgroundColor={featuredCard.yellow.featured}
+                              margin="1rem 0"
+                              style={{
+                                width: '100%',
+                                height: 'auto',
+                              }}
+                            >
+                              <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                                {t('superseded-message')}
+                                {' '}
+                                <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
+                                  {currentAsset?.superseded_by?.title}
+                                </Link>
+                              </Text>
+                            </AlertMessage>
+                          )}
+                        </>
+                    )}
+                    />
+                  )}
+                  {!isQuiz && !isAvailableAsSaas && (
+                    <Box
+                      margin="2.5rem 0 0 0"
+                      padding="1.75rem 0 "
+                      borderTop="2px solid"
+                      borderColor={commonBorderColor}
+                      display="flex"
+                      flexDirection={{ base: 'column', md: 'row' }}
+                      gridGap="20px"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      width="100%"
+                    >
+                      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
+                        <ButtonHandlerByTaskStatus
+                          allowText
+                          currentTask={currentTask}
+                          sendProject={sendProject}
+                          changeStatusAssignment={changeStatusAssignment}
+                          currentAssetData={currentAsset}
+                          toggleSettings={toggleSettings}
+                          closeSettings={closeSettings}
+                          settingsOpen={settingsOpen}
+                          handleOpen={handleOpen}
+                          fileData={fileData}
+                        />
+                        {currentTask?.task_status === 'DONE' && showModal && (
+                        <ShareButton
+                          variant="outline"
+                          title={t('projects:share-certificate.title')}
+                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                          link={shareLink}
+                          socials={socials}
+                          currentTask={currentTask}
+                          onlyModal
+                          withParty
+                        />
+                        )}
+                      </Box>
+                      <Box display="flex" gridGap="3rem">
+                        {(previousAssignment || !!prevModule) && (
+                        <Box
+                          color="blue.default"
+                          cursor="pointer"
+                          fontSize="15px"
+                          display="flex"
+                          alignItems="center"
+                          gridGap="10px"
+                          letterSpacing="0.05em"
+                          fontWeight="700"
+                          onClick={nextPage}
+                        >
+                          <Box
+                            as="span"
+                            display="block"
+                          >
+                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                          </Box>
+                          {t('previous-page')}
+                        </Box>
+                        )}
+
+                        {(nextAssignment || !!nextModule) && (
+                        <Box
+                          color="blue.default"
+                          cursor="pointer"
+                          fontSize="15px"
+                          display="flex"
+                          alignItems="center"
+                          gridGap="10px"
+                          letterSpacing="0.05em"
+                          fontWeight="700"
+                          onClick={nextPage}
+                        >
+                          {t('next-page')}
+                          <Box
+                            as="span"
+                            display="block"
+                            transform="rotate(180deg)"
+                          >
+                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                          </Box>
+                        </Box>
+                        )}
+                      </Box>
+                    </Box>
+                  )}
+                </Box>
               </Box>
             )}
             {isAvailableAsSaas && !isExercise && (
@@ -1072,7 +1108,7 @@ function Content() {
                     </Text>
                   </Box>
                 )}
-                {!isQuiz && currentAsset?.intro_video_url && (
+                {!isQuiz && currentAsset?.intro_video_url && !isProject && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Button
                       display="flex"

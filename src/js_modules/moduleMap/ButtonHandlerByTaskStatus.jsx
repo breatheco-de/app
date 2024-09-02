@@ -57,12 +57,29 @@ export function ButtonHandlerByTaskStatus({
 
   const textAndIcon = textByTaskStatus(currentTask || {});
 
-  function OpenModalButton() {
-    return (
-      <>
-        {currentTask?.description && (
+  // PRROJECT CASE
+  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status && !isGuidedExperience) {
+    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog) {
+      return (
+        <>
+          {currentTask?.description && (
+            <Button
+              variant="none"
+              onClick={() => {
+                if (currentTask) {
+                  setLoaders((prevState) => ({
+                    ...prevState,
+                    isOpeningReviewModal: true,
+                  }));
+                  handleOpen(() => openAssignmentFeedbackModal());
+                }
+              }}
+            >
+              <Icon icon="comment" color={hexColor.blueDefault} />
+            </Button>
+          )}
           <Button
-            variant="none"
+            isLoading={loaders.isOpeningReviewModal}
             onClick={() => {
               if (currentTask) {
                 setLoaders((prevState) => ({
@@ -72,53 +89,28 @@ export function ButtonHandlerByTaskStatus({
                 handleOpen(() => openAssignmentFeedbackModal());
               }
             }}
+            isDisabled={isButtonDisabled}
+            display="flex"
+            minWidth="26px"
+            minHeight="26px"
+            height="fit-content"
+            background={allowText ? 'blue.default' : 'none'}
+            lineHeight={allowText ? '15px' : '0'}
+            padding={allowText ? '12px 24px' : '0'}
+            borderRadius={allowText ? '3px' : '30px'}
+            variant={allowText ? 'default' : 'none'}
+            textTransform={allowText ? 'uppercase' : 'none'}
+            gridGap={allowText ? '12px' : '0'}
           >
-            <Icon icon="comment" color={hexColor.blueDefault} />
+            {allowText ? (
+              <>
+                <Icon {...textAndIcon.icon} />
+                {textAndIcon.text}
+              </>
+            ) : (
+              <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
+            )}
           </Button>
-        )}
-        <Button
-          isLoading={loaders.isOpeningReviewModal}
-          onClick={() => {
-            if (currentTask) {
-              setLoaders((prevState) => ({
-                ...prevState,
-                isOpeningReviewModal: true,
-              }));
-              handleOpen(() => openAssignmentFeedbackModal());
-            }
-          }}
-          isDisabled={isButtonDisabled}
-          display="flex"
-          minWidth="26px"
-          minHeight="26px"
-          height="fit-content"
-          background={allowText ? 'blue.default' : 'none'}
-          lineHeight={allowText ? '15px' : '0'}
-          padding={allowText ? '12px 24px' : '0'}
-          borderRadius={allowText ? '3px' : '30px'}
-          variant={allowText ? 'default' : 'none'}
-          textTransform={allowText ? 'uppercase' : 'none'}
-          gridGap={allowText ? '12px' : '0'}
-        >
-          {allowText ? (
-            <>
-              <Icon {...textAndIcon.icon} />
-              {textAndIcon.text}
-            </>
-          ) : (
-            <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
-          )}
-        </Button>
-      </>
-    );
-  }
-
-  // PRROJECT CASE
-  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
-    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog) {
-      return (
-        <>
-          <OpenModalButton />
 
           <ReviewModal
             isOpen={isReviewModalOpen}
