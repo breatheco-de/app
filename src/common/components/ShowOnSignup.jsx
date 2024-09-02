@@ -131,6 +131,14 @@ function ShowOnSignUp({
               subscribeValues={subscribeValues}
               conversionTechnologies={conversionTechnologies}
               buttonStyles={{ background: hexColor.greenLight, ...buttonStyles }}
+              textAlign="left"
+              extraFields={[{
+                name: 'phone',
+                required: true,
+                type: 'phone',
+                label: '',
+                error: t('validators.invalid-phone'),
+              }]}
               onHandleSubmit={(data) => {
                 onSubmit();
                 handleSubscribeToPlan({ slug: defaultPlan, accessToken: data?.access_token, disableRedirects: true })
