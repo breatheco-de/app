@@ -16,7 +16,7 @@ import getMarkDownContent from '../../common/components/MarkDownParser/markdown'
 import { MDSkeleton } from '../../common/components/Skeleton';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
+import MktSideRecommendations from '../../common/components/MktSideRecommendations';
 // import DynamicCallToAction from '../../common/components/DynamicCallToAction';
 // import PodcastCallToAction from '../../common/components/PodcastCallToAction';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
@@ -234,7 +234,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
         padding="0 10px"
       >
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '0' }}>
-          <MktSideRecommendedCourses technologies={lesson?.technologies} />
+          <MktSideRecommendations technologies={lesson?.technologies} />
           {/* <DynamicCallToAction
             assetId={lesson?.id}
             assetTechnologies={lesson?.technologies?.map((item) => item?.slug)}
@@ -335,7 +335,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
             </>
           )}
           <Box display={{ base: 'initial', md: 'none' }}>
-            <MktSideRecommendedCourses technologies={lesson?.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+            <MktSideRecommendations technologies={lesson?.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
           </Box>
 
           {isIpynb && markdown === '' && ipynbHtml?.html && (

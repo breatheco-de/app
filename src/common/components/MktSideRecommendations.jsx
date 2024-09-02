@@ -21,7 +21,7 @@ import { reportDatalayer } from '../../utils/requests';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-function Container({ course, courses, borderRadius, children, ...rest }) {
+function Container({ recommendation, recommendations, borderRadius, children, ...rest }) {
   const router = useRouter();
   const { fontColor } = useStyle();
   const bgColor = useColorModeValue('gray.light3', 'featuredDark');
@@ -31,20 +31,20 @@ function Container({ course, courses, borderRadius, children, ...rest }) {
 
   if (screenWidth < 768) {
     return (
-      <Link href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+      <Link href={`${ORIGIN_HOST}${langConnector}/${recommendation?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: recommendations?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
   }
 
   return (
-    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+    <Box minWidth={{ base: recommendations?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
       {children}
     </Box>
   );
 }
 
-function MktSideRecommendedCourses({ title, endpoint, technologies, containerPadding, ...rest }) {
+function MktSideRecommendations({ title, endpoint, technologies, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const { hexColor } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
@@ -75,7 +75,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
     return matchingTechnologies.length >= 2;
   });
 
-  const sortAndSetCourses = (tutorials) => {
+  const sortAndSetRecommendations = (tutorials) => {
     tutorials.sort((a, b) => {
       const aMatches = a.technologies.filter((tech) => technologiesArray.includes(tech)).length;
       const bMatches = b.technologies.filter((tech) => technologiesArray.includes(tech)).length;
@@ -112,7 +112,7 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
       const matchingTutorials = filterMatchingTutorials(tutorialsData);
 
       if (matchingTutorials.length > 1) {
-        sortAndSetCourses(matchingTutorials);
+        sortAndSetRecommendations(matchingTutorials);
       } else {
         await fetchAndSetCourses();
       }
@@ -199,12 +199,12 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
               return (
                 <Container border="1px solid" borderColor={{ base: 'default', md: 'success' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
-                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" justifyContent={recom?.icon_url ? 'start' : 'center'}>
+                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
 
                     {recom?.icon_url
                       && <Image display={{ base: 'none', md: 'inherit' }} src={recom?.icon_url} width="46px" height="46px" borderRadius="8px" background={recom?.color || 'green.400'} />}
-                    <Heading as="span" size="18px">
+                    <Heading as="span" size="18px" padding={recom?.icon_url ? '0' : '0 20px'}>
                       {recom?.course_translation?.title || recom.title}
                     </Heading>
                   </Box>
@@ -251,14 +251,14 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   );
 }
 
-MktSideRecommendedCourses.propTypes = {
+MktSideRecommendations.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   endpoint: PropTypes.string,
   containerPadding: PropTypes.string,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
 };
 
-MktSideRecommendedCourses.defaultProps = {
+MktSideRecommendations.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
   containerPadding: '9px 8px',
@@ -266,16 +266,16 @@ MktSideRecommendedCourses.defaultProps = {
 };
 
 Container.propTypes = {
-  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
-  courses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  recommendation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  recommendations: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
   children: PropTypes.node.isRequired,
   borderRadius: PropTypes.string,
 };
 
 Container.defaultProps = {
-  course: {},
-  courses: [],
+  recommendation: {},
+  recommendations: [],
   borderRadius: '8px',
 };
 
-export default MktSideRecommendedCourses;
+export default MktSideRecommendations;

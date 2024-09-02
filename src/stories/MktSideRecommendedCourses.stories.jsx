@@ -1,17 +1,17 @@
 import React from 'react';
-import MktSideRecommendedCourses from '../common/components/MktSideRecommendedCourses';
+import MktSideRecommendations from '../common/components/MktSideRecommendations';
 import { Box } from '@chakra-ui/react';
 
 export default {
-  title: 'Components/MktSideRecommendedCourses',
-  component: MktSideRecommendedCourses,
+  title: 'Components/MktSideRecommendations',
+  component: MktSideRecommendations,
   argTypes: {},
 };
 
 const Component = (args) => {
   return (
     <Box width={args.width}>
-      <MktSideRecommendedCourses {...args} />
+      <MktSideRecommendations {...args} />
     </Box>
   )
 };
