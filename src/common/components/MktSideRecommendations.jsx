@@ -15,7 +15,7 @@ import { getBrowserSize, setStorageItem } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import { parseQuerys } from '../../utils/url';
-// import { error } from '../../utils/logging';
+import { error } from '../../utils/logging';
 import { reportDatalayer } from '../../utils/requests';
 
 const defaultEndpoint = '/v1/marketing/course';
@@ -101,8 +101,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     }
   };
 
-  const handleFetchError = (error) => {
-    console.error('Fetch error:', error);
+  const handleFetchError = (err) => {
+    error(err);
     setIsLoading(false);
   };
 
@@ -118,8 +118,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
       }
 
       setIsLoading(false);
-    } catch (error) {
-      handleFetchError(error);
+    } catch (err) {
+      handleFetchError(err);
     }
   };
 
