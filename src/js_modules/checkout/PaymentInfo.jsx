@@ -354,6 +354,7 @@ function PaymentInfo() {
                   allowToggle: true,
                 }}
                 descriptionStyle={{ padding: '10px 0 0 0' }}
+                defaultIndex={paymentMethods.length === 1 && [0]}
               />
             </Flex>
           </>

@@ -12,7 +12,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import NextChakraLink from '../NextChakraLink';
 import FieldForm from './FieldForm';
-import { email as emailRe } from '../../../utils/regex';
+import { email as emailRe, phone as phoneRe } from '../../../utils/regex';
 import useEmailValidation from './useEmailValidation';
 import PhoneInput from '../PhoneInput';
 import Text from '../Text';
@@ -34,6 +34,14 @@ function SignupForm({
 }) {
   const { userSession } = useSession();
   const { t, lang } = useTranslation('signup');
+  const extraFieldsNames = extraFields.reduce((extra, field) => {
+    const name = typeof field === 'string' ? field : field.name;
+    const newValues = { ...extra };
+    newValues[name] = '';
+
+    return newValues;
+  }, {});
+
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { emailValidation, thriggerValidation } = useEmailValidation();
   const { hexColor, featuredColor } = useStyle();
@@ -46,6 +54,7 @@ function SignupForm({
     phone: '',
     email: '',
     confirm_email: '',
+    ...extraFieldsNames,
   });
   const [isChecked, setIsChecked] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
@@ -60,6 +69,22 @@ function SignupForm({
 
   const { syllabus } = router.query;
 
+  const extraFieldsValidations = extraFields.reduce((extra, field) => {
+    const isString = typeof field === 'string';
+    const name = isString ? field : field.name;
+    let validator = Yup;
+
+    if (isString || field.type === 'text' || field.type === 'phone') validator = validator.string();
+
+    if (field === 'phone' || field.type === 'phone') validator = validator.matches(phoneRe, field?.error || t('validators.invalid-phone'));
+
+    if (isString || field.required) validator = validator.required(field?.error || 'Required');
+
+    const validations = { ...extra };
+    validations[name] = validator;
+    return validations;
+  }, {});
+
   // const defaultPlanSlug = planSlug || BASE_PLAN;
   const signupValidation = Yup.object().shape({
     first_name: Yup.string()
@@ -73,7 +98,7 @@ function SignupForm({
     email: Yup.string()
       .matches(emailRe, t('validators.invalid-email'))
       .required(t('validators.email-required')),
-    phone: Yup.string(),
+    ...extraFieldsValidations,
     // .matches(phone, t('validators.invalid-phone')),
     // confirm_email: Yup.string()
     //   .oneOf([Yup.ref('email'), null], t('validators.confirm-email-not-match'))
@@ -229,13 +254,12 @@ function SignupForm({
                   />
                 </Box>
               </Box>
-              {extraFields.includes('phone') && (
+              {extraFields.map((field) => (field === 'phone' || field?.type === 'phone' ? (
                 <Box
                   display="flex"
                   flex={1}
                   flexDirection="column"
                   fontSize="12px"
-                  color="blue.default2"
                   gridGap="4px"
                 >
                   <PhoneInput
@@ -243,11 +267,22 @@ function SignupForm({
                     setVal={setFormProps}
                     placeholder={t('common:phone')}
                     formData={formProps}
-                    required={false}
+                    required
+                    {...field}
                   />
-                  {t('phone-info')}
                 </Box>
-              )}
+              ) : (
+                <Box display="flex" gridGap="18px" flexDirection={{ base: 'column', md: 'row' }}>
+                  <Box display="flex" flexDirection={{ base: 'column', sm: columnLayout ? 'column' : 'row' }} gridGap="18px" flex={1}>
+                    <FieldForm
+                      type="text"
+                      formProps={formProps}
+                      setFormProps={setFormProps}
+                      {...field}
+                    />
+                  </Box>
+                </Box>
+              )))}
               <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="18px">
                 <Box
                   display="flex"
