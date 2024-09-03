@@ -110,41 +110,41 @@ function TaskCodeRevisions() {
     }
   };
 
-  const submitReviewRate = (type) => {
-    setReviewRateData((prev) => ({ ...prev, isSubmitting: true }));
-    const argsData = {
-      send: {
-        is_good: reviewRateData.status === 'like',
-        comment: reviewRateData.comment,
-      },
-      skip: {
-        is_good: reviewRateData.status === 'like',
-        comment: null,
-      },
-    };
-    bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])
-      .then(({ data }) => {
-        setReviewRateData((prev) => ({ ...prev, submited: true }));
-        const updatedRevisionContent = {
-          ...data,
-          is_good: typeof data?.is_good === 'string' ? data?.is_good === 'True' : data?.is_good,
-          hasBeenReviewed: true,
-        };
-        const updateCodeRevisions = contextData.code_revisions.map((revision) => {
-          if (revision.id === revisionContent.id) {
-            return updatedRevisionContent;
-          }
-          return revision;
-        });
-        selectCodeRevision(updatedRevisionContent);
-        setContextData((prevState) => ({
-          ...prevState,
-          code_revisions: updateCodeRevisions,
-        }));
-      })
-      .finally(() => {
-        setReviewRateData((prev) => ({ ...prev, isSubmitting: false }));
+  const submitReviewRate = async (type) => {
+    try {
+      setReviewRateData((prev) => ({ ...prev, isSubmitting: true }));
+      const argsData = {
+        send: {
+          is_good: reviewRateData.status === 'like',
+          comment: reviewRateData.comment,
+        },
+        skip: {
+          is_good: reviewRateData.status === 'like',
+          comment: null,
+        },
+      };
+      const { data } = await bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type]);
+
+      setReviewRateData((prev) => ({ ...prev, submited: true }));
+      const updatedRevisionContent = {
+        ...data,
+        is_good: typeof data?.is_good === 'string' ? data?.is_good === 'True' : data?.is_good,
+        hasBeenReviewed: true,
+      };
+      const updateCodeRevisions = contextData.code_revisions.map((revision) => {
+        if (revision.id === revisionContent.id) {
+          return updatedRevisionContent;
+        }
+        return revision;
       });
+      selectCodeRevision(updatedRevisionContent);
+      setContextData((prevState) => ({
+        ...prevState,
+        code_revisions: updateCodeRevisions,
+      }));
+    } finally {
+      setReviewRateData((prev) => ({ ...prev, isSubmitting: false }));
+    }
   };
 
   return (
@@ -279,7 +279,7 @@ ${revisionContent?.code}
                       <Button variant="default" isLoading={reviewRateData.isSubmitting} isDisabled={reviewRateData.comment.length < 10} onClick={() => submitReviewRate('send')}>
                         <Icon icon="send" />
                       </Button>
-                      <Button variant="ghost" isLoading={reviewRateData.isSubmitting} onClick={() => handleSelectReviewRate(null)} fontSize="13px" fontWeight={700} color="red">
+                      <Button variant="ghost" isDisabled={reviewRateData.isSubmitting} onClick={() => handleSelectReviewRate(null)} fontSize="13px" fontWeight={700} color="red">
                         X
                       </Button>
                     </Flex>
