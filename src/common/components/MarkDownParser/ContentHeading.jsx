@@ -17,6 +17,18 @@ function ContentHeading({
     QUIZ: 'answer',
   };
 
+  const guidedExperienceStyles = () => {
+    if (!isGuidedExperience) return {};
+
+    return {
+      background: backgroundColor4,
+      margin: { base: '0px -10px', md: '0px -2rem' },
+      borderRadius: '11px 11px 0 0',
+      padding: '15px',
+      borderBottom: '1px solid #BBE5FE',
+    };
+  };
+
   return content && Object.keys(content).length !== 0 && (
     <Box
       borderStyle="solid"
@@ -27,11 +39,8 @@ function ContentHeading({
           display="flex"
           justifyContent="space-between"
           gridGap="16px"
-          background={isGuidedExperience && backgroundColor4}
-          margin={isGuidedExperience ? { base: '0px -10px', md: '0px -2rem' } : { base: '1rem 0 0 0', md: '2rem 0 0 0' }}
-          borderRadius={isGuidedExperience && '11px 11px 0 0'}
-          padding={isGuidedExperience && '15px'}
-          borderBottom={isGuidedExperience && '1px solid #BBE5FE'}
+          margin={{ base: '1rem 0 0 0', md: '2rem 0 0 0' }}
+          {...guidedExperienceStyles()}
         >
           <Box display="flex" width={{ base: 'auto', md: 'calc(100% - 182px)' }} gridGap="16px" alignItems="center">
             <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />

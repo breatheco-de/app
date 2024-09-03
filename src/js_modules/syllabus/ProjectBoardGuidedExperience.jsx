@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
@@ -107,7 +106,6 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
   const assetType = currentAsset?.asset_type;
 
   const isDelivered = currentTask?.task_status === 'DONE';
-  const isRevissionPending = currentTask?.revission_status === 'DONE';
 
   const assetTypeIcons = {
     LESSON: 'book',
@@ -184,7 +182,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
           )}
         </Box>
         {isDelivered && (
-          <TaskCodeRevisions currentTask={currentTask} />
+          <TaskCodeRevisions />
         )}
       </Box>
       <Box

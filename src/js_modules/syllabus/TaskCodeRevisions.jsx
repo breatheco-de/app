@@ -1,8 +1,8 @@
 import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
-import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../common/hooks/useAuth';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 import CodeRevisionsList from '../../common/components/ReviewModal/CodeRevisionsList';
@@ -19,8 +19,9 @@ const defaultReviewRateData = {
   isSubmitting: false,
   submited: false,
 };
-function TaskCodeRevisions({ currentTask }) {
+function TaskCodeRevisions() {
   const { t } = useTranslation('syllabus');
+  const { currentTask } = useModuleHandler();
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
   const { isAuthenticatedWithRigobot } = useAuth();
   const toast = useToast();
@@ -301,11 +302,5 @@ ${revisionContent?.code}
     </Box>
   );
 }
-TaskCodeRevisions.propTypes = {
-  currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-};
-TaskCodeRevisions.defaultProps = {
-  currentTask: null,
-};
 
 export default TaskCodeRevisions;

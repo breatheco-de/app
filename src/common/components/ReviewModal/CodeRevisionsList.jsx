@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Box, Button, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -24,7 +23,7 @@ function CodeRevisionsList({ contextData, selectCodeRevision, ...rest }) {
           hasBeenReviewed,
         };
         return (
-          <Flex cursor="pointer" onClick={() => selectCodeRevision(dataStruct)} _hover={{ background: featuredLight }} border="1px solid" borderColor={isSelected ? 'blue.default' : borderColor} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
+          <Flex key={commit.id} cursor="pointer" onClick={() => selectCodeRevision(dataStruct)} _hover={{ background: featuredLight }} border="1px solid" borderColor={isSelected ? 'blue.default' : borderColor} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
             <Flex flex={0.3} gridGap="10px">
               <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} />
               <Flex flexDirection="column" justifyContent="center" gridGap="9px" maxWidth="102px">
@@ -74,7 +73,7 @@ function CodeRevisionsList({ contextData, selectCodeRevision, ...rest }) {
 }
 CodeRevisionsList.propTypes = {
   selectCodeRevision: PropTypes.func,
-  contextData: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  contextData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 CodeRevisionsList.defaultProps = {
   selectCodeRevision: () => {},

@@ -1,7 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-dupe-else-if */
-/* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable no-extra-boolean-cast */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -98,7 +94,7 @@ function Content() {
   );
 
   const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules[prevModule?.modules?.length - 1];
+  const lastPrevTask = prevModule?.modules && prevModule.modules[prevModule.modules.length - 1];
 
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
@@ -109,7 +105,6 @@ function Content() {
   const isQuiz = lesson === 'answer';
   const isExercise = lesson === 'practice';
   const isProject = lesson === 'project';
-  const isDelivered = currentTask?.task_status === 'DONE';
 
   const filteredCurrentAssignments = filteredEmptyModules.map((section) => {
     const currentAssignments = showPendingTasks
@@ -384,9 +379,11 @@ function Content() {
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const prevIndex = currentIndex - 1;
+
     if (prevIndex >= 0) {
       return section[prevIndex];
     }
+
     return null;
   })[currentModuleIndex];
 
@@ -422,9 +419,9 @@ function Content() {
           },
         });
       }
-    } else if (!!nextModule) {
+    } else if (nextModule) {
       if (firstTask.target !== 'blank') {
-        if (cohortSlug && !!firstTask && !!nextModule?.filteredModules[0]) {
+        if (cohortSlug && !!firstTask && nextModule?.filteredModules[0]) {
           router.push({
             query: {
               cohortSlug,
@@ -470,7 +467,7 @@ function Content() {
           },
         });
       }
-    } else if (!!prevModule) {
+    } else if (prevModule) {
       if (lastPrevTask.target !== 'blank') {
         if (cohortSlug && !!lastPrevTask) {
           router.push({
@@ -516,29 +513,19 @@ function Content() {
       setOpenNextPageModal(true);
     } else if (nextAssignment !== null || !!firstTask) {
       setClickedPage(nextAssignment);
-      if (!taskIsNotDone) {
-        if (nextAssignment?.target === 'blank') {
-          setCurrentBlankProps(nextAssignment);
-          router.push({
-            query: {
-              cohortSlug,
-              lesson: nextAssignment?.type?.toLowerCase(),
-              lessonSlug: nextAssignment?.slug,
-            },
-          });
-        } else {
-          setCurrentBlankProps(null);
-          handleNextPage();
-        }
+      if (nextAssignment?.target === 'blank') {
+        setCurrentBlankProps(nextAssignment);
+        router.push({
+          query: {
+            cohortSlug,
+            lesson: nextAssignment?.type?.toLowerCase(),
+            lessonSlug: nextAssignment?.slug,
+          },
+        });
+      } else {
+        setCurrentBlankProps(null);
+        handleNextPage();
       }
-    } else if (nextModule && cohortSlug && !!firstTask) {
-      router.push({
-        query: {
-          cohortSlug,
-          lesson: firstTask?.type?.toLowerCase(),
-          lessonSlug: firstTask?.slug,
-        },
-      });
     } else {
       setOpenNextModuleModal(true);
     }
@@ -577,29 +564,31 @@ function Content() {
 
   const cohortModule = sortedAssignments.find((module) => module?.id === cohortSession?.current_module);
 
-  const deliveredProjectStyles = {
-    borderRadius: '11px',
-    pt: '2rem !important',
+  const projectStyles = {
+    DONE: {
+      borderRadius: '11px',
+      pt: '2rem !important',
+    },
+    PENDING: {
+      borderRadius: '0 0 11px 11px',
+      pt: '3rem !important',
+    },
   };
 
-  const projectStyles = {
-    borderRadius: '0 0 11px 11px',
-    pt: '3rem !important',
+  const assetTypeStyles = {
+    answer: {},
+    read: {},
+    practice: {},
+    project: { ...projectStyles[currentTask?.task_status] },
   };
 
   const getStyles = () => {
-    let markdownStyles = {};
-    if (isQuiz) return markdownStyles;
+    if (isQuiz || !isAvailableAsSaas) return {};
 
-    if (isAvailableAsSaas) {
-      markdownStyles = { padding: { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' } };
-      if (isProject) {
-        if (isDelivered) markdownStyles = { ...markdownStyles, ...deliveredProjectStyles };
-        else markdownStyles = { ...markdownStyles, ...projectStyles };
-      }
-    }
-
-    return markdownStyles;
+    return {
+      padding: { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' },
+      ...assetTypeStyles[lesson],
+    };
   };
 
   return (
@@ -1020,7 +1009,7 @@ function Content() {
                           gridGap="10px"
                           letterSpacing="0.05em"
                           fontWeight="700"
-                          onClick={nextPage}
+                          onClick={prevPage}
                         >
                           <Box
                             as="span"
@@ -1061,29 +1050,31 @@ function Content() {
               </Box>
             )}
             {isAvailableAsSaas && !isExercise && (
-              <Box justifyContent="space-between" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px" paddingBottom="20px">
-                <Box display="flex" flexDirection="column" alignItems="center">
-                  <Link
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    width="60px"
-                    height="60px"
-                    background={backgroundColor}
-                    padding="12px"
-                    borderRadius="full"
-                    variant="default"
-                    href={repoUrl}
-                    style={{ color: fontColor, textDecoration: 'none' }}
-                  >
-                    <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                  </Link>
-                  <Text mt="10px" size="md">
-                    {t('get-help')}
-                  </Text>
-                </Box>
+              <Box mt="20px" justifyContent="center" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
+                {!isQuiz && (
+                  <Box display="flex" flexDirection="column" alignItems="center">
+                    <Link
+                      display="flex"
+                      flexDirection="column"
+                      justifyContent="center"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      width="60px"
+                      height="60px"
+                      background={backgroundColor}
+                      padding="12px"
+                      borderRadius="full"
+                      variant="default"
+                      href={repoUrl}
+                      style={{ color: fontColor, textDecoration: 'none' }}
+                    >
+                      <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
+                    </Link>
+                    <Text mt="10px" size="md">
+                      {t('get-help')}
+                    </Text>
+                  </Box>
+                )}
                 {repoUrl && !isQuiz && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Link

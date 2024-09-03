@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/self-closing-comp */
-/* eslint-disable react/no-unstable-nested-components */
 import {
   Button, Box,
 } from '@chakra-ui/react';
