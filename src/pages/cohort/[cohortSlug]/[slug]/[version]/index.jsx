@@ -58,7 +58,6 @@ function Dashboard() {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -77,6 +76,7 @@ function Dashboard() {
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
+  const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
@@ -279,12 +279,14 @@ function Dashboard() {
       getCohortData({
         cohortSlug,
       }).then((cohort) => {
-        reportDatalayer({
-          dataLayer: {
-            current_cohort_id: cohort.id,
-            current_cohort_slug: cohort.slug,
-          },
-        });
+        if (cohort) {
+          reportDatalayer({
+            dataLayer: {
+              current_cohort_id: cohort.id,
+              current_cohort_slug: cohort.slug,
+            },
+          });
+        }
         // Fetch cohort assignments (lesson, exercise, project, quiz)
         getCohortAssignments({
           slug, cohort,
@@ -497,9 +499,7 @@ function Dashboard() {
                 <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
-                    user={user}
                     students={onlyStudentsActive}
-                    sortedAssignments={sortedAssignments}
                     width="100%"
                   />
                 </OnlyFor>
@@ -726,9 +726,7 @@ function Dashboard() {
               <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
-                  user={user}
                   students={onlyStudentsActive}
-                  sortedAssignments={sortedAssignments}
                   width="100%"
                 />
               </OnlyFor>

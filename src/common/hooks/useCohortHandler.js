@@ -1,4 +1,3 @@
-/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable camelcase */
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
@@ -8,7 +7,7 @@ import useAuth from './useAuth';
 import { devLog, getStorageItem } from '../../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import useModuleHandler from './useModuleHandler';
-import { nestAssignments } from '../handlers/cohorts';
+import { processRelatedAssignments } from '../handlers/cohorts';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
@@ -58,8 +57,8 @@ function useCohortHandler() {
   }) => {
     if (user) {
       const academyId = cohort?.academy.id;
-      const { version } = cohort?.syllabus_version;
-      const syllabusSlug = cohort?.syllabus_version.slug || slug;
+      const version = cohort?.syllabus_version?.version;
+      const syllabusSlug = cohort?.syllabus_version?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
         // Fetch cohortProgram and TaskTodo then apply to moduleMap store
@@ -154,26 +153,24 @@ function useCohortHandler() {
 
   // Sort all data fetched in order of taskTodo
   const prepareTasks = () => {
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
-    const cohort = cohortProgram.json ? moduleData : [];
+    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules || [];
     const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
     if (cohortProgram.json && taskTodo) {
-      cohort.map((assignment) => {
+      moduleData.map((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
         if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = nestAssignments({
-            id,
-            read: lessons,
-            practice: replits,
-            project: assignments,
-            answer: quizzes,
-            taskTodo,
-          });
-          const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
+          const nestedAssignments = processRelatedAssignments(assignment, taskTodo);
+
+          // this properties name's reassignment is done to keep compatibility with deprecated functions
+          const {
+            content: modules,
+            filteredContent: filteredModules,
+            filteredContentByPending: filteredModulesByPending,
+          } = nestedAssignments;
 
           // Data to be sent to [sortedAssignments] = state
           const assignmentsStruct = {

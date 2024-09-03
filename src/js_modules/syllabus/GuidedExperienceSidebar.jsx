@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
 import {
   Box,
@@ -15,7 +14,6 @@ import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
 import { Config, getSlideProps } from './config';
-import NextChakraLink from '../../common/components/NextChakraLink';
 import Timeline from '../../common/components/Timeline';
 import Icon from '../../common/components/Icon';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
