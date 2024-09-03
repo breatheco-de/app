@@ -110,18 +110,13 @@ function useCohortHandler() {
         const { cohorts } = data;
 
         const parsedCohorts = cohorts.map(((elem) => {
-          const { cohort } = elem;
+          const { cohort, ...cohort_user } = elem;
           const { syllabus_version } = cohort;
           return {
             ...elem.cohort,
             selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
             cohort_role: elem.role,
-            cohort_user: {
-              created_at: elem.created_at,
-              educational_status: elem.educational_status,
-              finantial_status: elem.finantial_status,
-              role: elem.role,
-            },
+            cohort_user,
           };
         }));
 

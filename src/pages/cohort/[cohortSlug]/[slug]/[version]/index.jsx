@@ -181,7 +181,7 @@ function Dashboard() {
       });
   };
   useEffect(() => {
-    if (cohortSession?.id) {
+    if (cohortSession?.cohort_user) {
       if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
         router.push('/choose-program');
       } else {
