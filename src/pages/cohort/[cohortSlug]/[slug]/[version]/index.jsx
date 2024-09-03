@@ -69,7 +69,7 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
 
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
@@ -82,7 +82,7 @@ function Dashboard() {
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, taskCohortNull } = state;
+  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -181,23 +181,17 @@ function Dashboard() {
       });
   };
   useEffect(() => {
-    if (isAuthenticated) {
-      bc.admissions().me()
-        .then((resp) => {
-          const data = resp?.data;
-          const cohorts = data?.cohorts;
-          const currentCohort = cohorts?.find((l) => l?.cohort?.slug === cohortSlug);
-          if (currentCohort?.finantial_status === 'LATE' || currentCohort?.educational_status === 'SUSPENDED') {
-            router.push('/choose-program');
-          } else {
-            const isReadyToShowGithubMessage = cohorts?.some(
-              (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-            );
-            setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-          }
-        });
+    if (cohortSession?.id) {
+      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
+        router.push('/choose-program');
+      } else {
+        const isReadyToShowGithubMessage = myCohorts.some(
+          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+        );
+        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
+      }
     }
-  }, [isAuthenticated]);
+  }, [cohortSession]);
 
   useEffect(() => {
     if (showGithubWarning === 'active') {

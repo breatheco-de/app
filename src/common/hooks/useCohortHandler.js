@@ -15,7 +15,7 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useCohortAction();
+  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
   const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
@@ -101,7 +101,6 @@ function useCohortHandler() {
 
   const getCohortData = async ({
     cohortSlug,
-  // eslint-disable-next-line consistent-return
   }) => {
     try {
       // Fetch cohort data with pathName structure
@@ -109,32 +108,38 @@ function useCohortHandler() {
         const { data } = await bc.admissions().me();
         if (!data) throw new Error('No data');
         const { cohorts } = data;
-        // find cohort with current slug
-        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-        const currentCohort = findCohort?.cohort;
 
-        if (assetSlug && (!currentCohort)) {
-          handleRedirectToPublicPage();
-        }
-        if (currentCohort) {
-          const { syllabus_version } = currentCohort;
-          setCohortSession({
-            ...cohortSession,
-            ...currentCohort,
-            selectedProgramSlug: `/cohort/${currentCohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: findCohort.role,
+        const parsedCohorts = cohorts.map(((elem) => {
+          const { cohort } = elem;
+          const { syllabus_version } = cohort;
+          return {
+            ...elem.cohort,
+            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+            cohort_role: elem.role,
             cohort_user: {
-              created_at: findCohort.created_at,
-              educational_status: findCohort.educational_status,
-              finantial_status: findCohort.finantial_status,
-              role: findCohort.role,
+              created_at: elem.created_at,
+              educational_status: elem.educational_status,
+              finantial_status: elem.finantial_status,
+              role: elem.role,
             },
-          });
-          return currentCohort;
+          };
+        }));
+
+        // find cohort with current slug
+        const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+
+        if (!currentCohort) {
+          if (assetSlug) return handleRedirectToPublicPage();
+
+          return router.push('/choose-program');
         }
-      } else {
-        handleRedirectToPublicPage();
+
+        setCohortSession(currentCohort);
+        setMyCohorts(parsedCohorts);
+        return currentCohort;
       }
+
+      return handleRedirectToPublicPage();
     } catch (error) {
       handleRedirectToPublicPage();
       toast({
@@ -145,9 +150,7 @@ function useCohortHandler() {
         duration: 7000,
         isClosable: true,
       });
-      setTimeout(() => {
-        localStorage.removeItem('cohortSession');
-      }, 4000);
+      return localStorage.removeItem('cohortSession');
     }
   };
 

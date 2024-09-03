@@ -1,4 +1,5 @@
 import {
+  SET_MY_COHORTS,
   SET_COHORT_SESSION,
   SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
@@ -6,6 +7,7 @@ import {
 } from '../types';
 
 const initialState = {
+  myCohorts: [],
   cohortSession: {},
   sortedAssignments: [],
   taskCohortNull: [],
@@ -14,6 +16,13 @@ const initialState = {
 
 const cohortHandlerReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_MY_COHORTS: {
+      const { myCohorts } = action.payload;
+      return {
+        ...state,
+        myCohorts,
+      };
+    }
     case SET_COHORT_SESSION: {
       const { cohortSession } = action.payload;
       return {
