@@ -5,12 +5,9 @@ import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 import Text from '../Text';
 
-function CodeRevisionsList({ contextData, selectCodeRevision, ...rest }) {
+function CodeRevisionsList({ codeRevisions, revisionContent, selectCodeRevision, ...rest }) {
   const { fontColor, borderColor, hexColor, featuredLight } = useStyle();
   const { t } = useTranslation('assignments');
-
-  const codeRevisions = contextData?.code_revisions || [];
-  const revisionContent = contextData?.revision_content;
 
   return (
     <Flex overflow="auto" height="24rem" py="0.5rem" flexDirection="column" gridGap="12px" {...rest}>
@@ -73,10 +70,13 @@ function CodeRevisionsList({ contextData, selectCodeRevision, ...rest }) {
 }
 CodeRevisionsList.propTypes = {
   selectCodeRevision: PropTypes.func,
-  contextData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  revisionContent: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  codeRevisions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 CodeRevisionsList.defaultProps = {
   selectCodeRevision: () => {},
+  revisionContent: null,
+  codeRevisions: [],
 };
 
 export default CodeRevisionsList;

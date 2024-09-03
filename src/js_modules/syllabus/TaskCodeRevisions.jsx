@@ -176,7 +176,7 @@ function TaskCodeRevisions() {
       {codeRevisions?.length > 0 ? (
         <>
           {!revisionContent?.id ? (
-            <CodeRevisionsList contextData={contextData} selectCodeRevision={selectCodeRevision} height="auto" />
+            <CodeRevisionsList codeRevisions={contextData?.code_revisions} revisionContent={contextData?.revision_content} selectCodeRevision={selectCodeRevision} height="auto" />
           ) : (
             <>
               <Flex background={backgroundColor} padding="24px" borderRadius="11px" flexDirection="column" overflow="auto" gridGap="12px" flex={0.35} width="100%" mt={!hasRevision && '3.4rem'}>

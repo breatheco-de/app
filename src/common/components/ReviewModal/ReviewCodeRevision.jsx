@@ -150,7 +150,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
               <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
               <Box fontSize="12px" flex={0.33} textAlign="center">{t('code-review.feedback-status')}</Box>
             </Flex>
-            <CodeRevisionsList contextData={contextData} selectCodeRevision={selectCodeRevision} />
+            <CodeRevisionsList codeRevisions={contextData?.code_revisions} revisionContent={contextData?.revision_content} selectCodeRevision={selectCodeRevision} />
           </Box>
           {revisionContent?.id && (
             <Flex flexDirection="column" overflow="auto" gridGap="12px" flex={0.35} width="100%" padding="8px" mt={!hasRevision && '3.4rem'}>
