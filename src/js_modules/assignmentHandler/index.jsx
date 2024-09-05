@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unstable-nested-components */
 import {
-  Box, Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useToast, useColorModeValue, useDisclosure,
+  Box, Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useToast, useColorModeValue, useDisclosure,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -11,6 +11,8 @@ import {
 } from 'react';
 import bc from '../../common/services/breathecode';
 import Icon from '../../common/components/Icon';
+import Text from '../../common/components/Text';
+import SimpleModal from '../../common/components/SimpleModal';
 import useStyle from '../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
 import ReviewModalComponent from '../../common/components/ReviewModal';
@@ -204,10 +206,41 @@ function DeliverHandler({
   );
 }
 
-export function NoInfoModal({ isOpen, onClose }) {
+export function NoInfoModal({ isOpen, onClose, selectedCohort }) {
   const { t } = useTranslation('assignments');
+  const toast = useToast();
+  const [isSyncOpen, setIsSyncOpen] = useState(false);
   const { hexColor } = useStyle();
   const borderColor2 = useColorModeValue('gray.250', 'gray.500');
+
+  const syncCohort = async () => {
+    try {
+      const resp = await bc.assignments().syncCohort(selectedCohort.id);
+      if (resp.status >= 400) throw new Error('Sync error');
+
+      const { message } = resp.data;
+
+      toast({
+        position: 'top',
+        title: 'Success',
+        description: message,
+        status: 'success',
+        duration: 5000,
+      });
+    } catch (e) {
+      console.log(e);
+      toast({
+        position: 'top',
+        title: t('error-msg'),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSyncOpen(false);
+      onClose();
+    }
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -227,8 +260,33 @@ export function NoInfoModal({ isOpen, onClose }) {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6} px={{ base: '10px', md: '35px' }}>
-          <Box display="flex" flexDirection="column" pt={4} pb={5}>
-            <Text>{t('no-information')}</Text>
+          <Box display="flex" flexDirection="column" pt={4} pb={5} gap="20px">
+            <Text size="md">{t('no-information')}</Text>
+            {selectedCohort && (
+              <>
+                <Text size="md" textAlign="center">{t('sync-cohort')}</Text>
+                <Button variant="default" width="50%" margin="auto" onClick={() => setIsSyncOpen(true)}>
+                  {t('sync')}
+                </Button>
+              </>
+            )}
+            <SimpleModal
+              maxWidth="500px"
+              isOpen={isSyncOpen}
+              onClose={setIsSyncOpen}
+              headerStyles={{ textAlign: 'center' }}
+              title={t('sync-cohort-title')}
+            >
+              <Text mt="20px" size="md" textAlign="center">{t('sync-warning')}</Text>
+              <Box mt="20px" display="flex" gap="15px" width="100%">
+                <Button fontSize="13px" width="100%" onClick={() => setIsSyncOpen(false)}>
+                  {t('cancel')}
+                </Button>
+                <Button variant="default" width="100%" onClick={syncCohort}>
+                  {t('sync')}
+                </Button>
+              </Box>
+            </SimpleModal>
           </Box>
         </ModalBody>
       </ModalContent>
@@ -393,6 +451,11 @@ ReviewModal.defaultProps = {
 NoInfoModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  selectedCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+};
+
+NoInfoModal.defaultProps = {
+  selectedCohort: null,
 };
 
 DetailsModal.propTypes = {
