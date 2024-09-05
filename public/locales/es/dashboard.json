@@ -4,6 +4,7 @@
   },
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
+  "back-to-dash": "Regresar al Dashboard",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "Progreso en el programa",
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
@@ -15,9 +16,9 @@
     "cta-description": "Tu plan actual no incluye acceso a esta cohorte, por favor actualiza para acceder al contenido.",
     "cta-cohort-not-found": "Esta cohorte no existe o no tienes acceso para unirte.",
     "cta-button": "Revisar plan",
-    "join-next-cohort":"Únete a la cohorte",
-    "start-course":"Empezar este curso",
-    "join-more":"Únete a más de 100 personas que toman este curso ahora mismo",
+    "join-next-cohort": "Únete a la cohorte",
+    "start-course": "Empezar este curso",
+    "join-more": "Únete a más de 100 personas que toman este curso ahora mismo",
     "preview-description": "Estás revisando esta cohorte en \"modo de vista previa\". Para comenzar a aprender e interactuar con el material, únete a la cohorte."
   },
   "modules": {
@@ -104,7 +105,14 @@
     "get-unlimited-mentorship": "y obtén tutoría ilimitada",
     "you-have": "Tienes",
     "available-sessions": "sesiones disponibles",
-    "tooltip": "Las tutorías se recargan cada semana"
+    "tooltip": "Las tutorías se recargan cada semana",
+    "mentor-sessions-available": "sesiones de mentoria disponibles",
+    "action": "Reservar mentoria"
+  },
+  "schedule-steps": {
+    "select-mentorship": "Primero selecciona un tipo de tutoria",
+    "select-mentor": "Ahora busca un mentor",
+    "schedule": "Agenda la sesión"
   },
   "deliverProject": {
     "title": "Entregar tarea",

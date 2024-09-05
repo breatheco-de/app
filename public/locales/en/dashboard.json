@@ -3,6 +3,7 @@
     "title": "Dashboard"
   },
   "title": "Your News",
+  "back-to-dash": "Back to Dashboard",
   "backToChooseProgram": "Back to choose program",
   "moduleMap": "Module map",
   "progressText": "progress in the program",
@@ -14,9 +15,9 @@
     "cta-description": "Your current plan does not include access to this cohort, please upgrade to access the content.",
     "cta-cohort-not-found": "This cohort does not exist or you don't have access to join.",
     "cta-button": "Review plan",
-    "join-next-cohort":"Join next cohort",
-    "start-course":"Start this course",
-    "join-more":"Join more than 100 people taking this course right now",
+    "join-next-cohort": "Join next cohort",
+    "start-course": "Start this course",
+    "join-more": "Join more than 100 people taking this course right now",
     "preview-description": "You are reviewing this cohort dashboard on \"preview mode\", in order to start learning and interact with the materials please join the cohort."
   },
   "already-have-this-cohort": "You are already a member of this cohort",
@@ -104,7 +105,14 @@
     "get-unlimited-mentorship": "and get unlimited mentorship",
     "you-have": "You have",
     "available-sessions": "available sessions",
-    "tooltip": "Mentorships reload every week"
+    "tooltip": "Mentorships reload every week",
+    "mentor-sessions-available": "mentor sessions available",
+    "action": "Schedule session"
+  },
+  "schedule-steps": {
+    "select-mentorship": "First select a type of mentorship",
+    "select-mentor": "Now search for a mentor",
+    "schedule": "Schedule the session"
   },
   "deliverProject": {
     "title": "Deliver assignment",
