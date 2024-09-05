@@ -774,6 +774,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           showCodeReviews={(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate}
           loaders={loaders}
           proceedToCommitFiles={proceedToCommitFiles}
+          hasCommitFiles={contextData.commitFiles?.fileList?.length > 0}
           {...rest}
         />
       )}

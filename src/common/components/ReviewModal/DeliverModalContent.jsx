@@ -37,6 +37,7 @@ function DeliverModal({
   setStage,
   loaders,
   proceedToCommitFiles,
+  hasCommitFiles,
 }) {
   const { t } = useTranslation('assignments');
   const { modal, borderColor2, featuredColor, hexColor } = useStyle();
@@ -133,10 +134,12 @@ function DeliverModal({
                 </Button>
               )}
             </Flex>
-            <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-              {t('code-review.start-code-review')}
-              <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
-            </Button>
+            {hasCommitFiles && (
+              <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+                {t('code-review.start-code-review')}
+                <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+              </Button>
+            )}
           </Flex>
         )}
         {!readOnly && (
@@ -228,6 +231,7 @@ DeliverModal.propTypes = {
   setStage: PropTypes.func,
   loaders: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   proceedToCommitFiles: PropTypes.func,
+  hasCommitFiles: PropTypes.bool,
 };
 DeliverModal.defaultProps = {
   isStudent: false,
@@ -237,6 +241,7 @@ DeliverModal.defaultProps = {
   setStage: () => {},
   loaders: {},
   proceedToCommitFiles: () => {},
+  hasCommitFiles: true,
 };
 
 export default DeliverModal;
