@@ -67,8 +67,8 @@ function HrComponent() {
 function IframeComponent({ src, title, width, height }) {
   return (<iframe src={src} width={width} height={height} title={title || 'iframe-content'} className="MDIframe" />);
 }
-function OnlyForComponent({ cohortSession, profile, ...props }) {
-  return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
+function OnlyForComponent({ profile, ...props }) {
+  return (<OnlyForBanner profile={profile} {...props} />);
 }
 
 function CodeViewerComponent(props) {
@@ -371,7 +371,7 @@ function MarkDownParser({
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
+          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, profile }),
           codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox

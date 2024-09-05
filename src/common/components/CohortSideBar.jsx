@@ -20,6 +20,7 @@ import AvatarUser from '../../js_modules/cohortSidebar/avatarUser';
 import { AvatarSkeleton } from './Skeleton';
 import useOnline from '../hooks/useOnline';
 import useStyle from '../hooks/useStyle';
+import useCohortHandler from '../hooks/useCohortHandler';
 import useProgramList from '../store/actions/programListAction';
 import { isWindow } from '../../utils';
 
@@ -215,7 +216,7 @@ function ProfilesSection({
 }
 
 function CohortSideBar({
-  title, teacherVersionActive, cohort, cohortCity, width, containerStyle,
+  title, teacherVersionActive, width, containerStyle,
   studentAndTeachers, isDisabled,
 }) {
   const { t } = useTranslation('dashboard');
@@ -226,6 +227,9 @@ function CohortSideBar({
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
   const [graduatedStudentsLoading, setGraduatedStudentsLoading] = useState(true);
   const { addTeacherProgramList } = useProgramList();
+  const { state } = useCohortHandler();
+  const { cohortSession: cohort } = state;
+  const cohortCity = cohort?.name;
   const teacher = studentAndTeachers.filter((st) => st?.role === 'TEACHER');
   const activeStudents = studentAndTeachers.filter(
     (st) => st?.role === 'STUDENT' && ['ACTIVE', 'GRADUATED'].includes(st?.educational_status),
@@ -517,8 +521,6 @@ CohortSideBar.propTypes = {
   teacherVersionActive: PropTypes.bool,
   containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   studentAndTeachers: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
-  cohortCity: PropTypes.string,
-  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isDisabled: PropTypes.bool,
   // handleStudySession: PropTypes.func,
 };
@@ -528,8 +530,6 @@ CohortSideBar.defaultProps = {
   teacherVersionActive: false,
   containerStyle: {},
   studentAndTeachers: [],
-  cohortCity: 'Miami Downtown',
-  cohort: {},
   isDisabled: false,
   // handleStudySession: () => {},
 };

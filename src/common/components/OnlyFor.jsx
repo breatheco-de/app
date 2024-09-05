@@ -39,13 +39,13 @@ function Component({ withBanner, children }) {
 }
 
 function OnlyFor({
-  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
+  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
 }) {
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
   const { state } = useCohortHandler();
-  const { userCapabilities: cohortCapabilities } = state;
+  const { userCapabilities: cohortCapabilities, cohortSession } = state;
 
   const profileCapabilities = profile?.permissionsSlug || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
@@ -85,7 +85,6 @@ function OnlyFor({
 }
 
 OnlyFor.propTypes = {
-  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   academy: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,

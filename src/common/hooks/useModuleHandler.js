@@ -93,7 +93,6 @@ function useModuleHandler() {
           });
           toast({
             position: 'top',
-            // title: `"${res.data.title}" has been updated successfully`,
             title: isDelivering
               ? t('alert-message:delivery-success')
               : t('alert-message:delivery-removed'),
@@ -129,7 +128,6 @@ function useModuleHandler() {
           title: label
             ? t('alert-message:module-started', { title: label })
             : t('alert-message:module-sync-success'),
-          // title: `Module ${label ? `${label}started` : 'synchronized'} successfully`,
           status: 'success',
           duration: 6000,
           isClosable: true,

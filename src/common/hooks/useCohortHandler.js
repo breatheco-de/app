@@ -52,7 +52,7 @@ function useCohortHandler() {
     }
   };
 
-  const getCohortAssignments = ({
+  const getCohortAssignments = async ({
     slug, cohort,
   }) => {
     if (user) {
@@ -62,17 +62,16 @@ function useCohortHandler() {
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
         // Fetch cohortProgram and TaskTodo then apply to moduleMap store
-        Promise.all([
-          bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
-          bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
-          bc.auth().getRoles(currentAcademy?.role), // Roles
-        ]).then((
-          [taskTodoData, programData, userRoles],
-        ) => {
+        try {
+          const [taskTodoData, programData, userRoles] = await Promise.all([
+            bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
+            bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
+            bc.auth().getRoles(currentAcademy?.role), // Roles
+          ]);
           setUserCapabilities(userRoles.data.capabilities);
           setTaskTodo(taskTodoData.data.results);
           setCohortProgram(programData.data);
-        }).catch((err) => {
+        } catch (err) {
           console.log(err);
           toast({
             position: 'top',
@@ -83,7 +82,7 @@ function useCohortHandler() {
             isClosable: true,
           });
           router.push('/choose-program');
-        });
+        }
       }
     }
   };
@@ -113,7 +112,7 @@ function useCohortHandler() {
           const { cohort, ...cohort_user } = elem;
           const { syllabus_version } = cohort;
           return {
-            ...elem.cohort,
+            ...cohort,
             selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
             cohort_role: elem.role,
             cohort_user,
@@ -140,7 +139,6 @@ function useCohortHandler() {
       toast({
         position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
-        // title: 'Invalid cohort slug',
         status: 'error',
         duration: 7000,
         isClosable: true,
@@ -156,7 +154,7 @@ function useCohortHandler() {
     devLog('json.days:', moduleData);
 
     if (cohortProgram.json && taskTodo) {
-      moduleData.map((assignment) => {
+      moduleData.forEach((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
@@ -196,14 +194,12 @@ function useCohortHandler() {
               ...assignmentsStruct,
             });
           }
-
-          const filterNotEmptyModules = assignmentsRecopilated.filter(
-            (l) => l.modules.length > 0,
-          );
-          return setSortedAssignments(filterNotEmptyModules);
         }
-        return null;
       });
+      const filterNotEmptyModules = assignmentsRecopilated.filter(
+        (l) => l.modules.length > 0,
+      );
+      setSortedAssignments(filterNotEmptyModules);
     }
   };
 

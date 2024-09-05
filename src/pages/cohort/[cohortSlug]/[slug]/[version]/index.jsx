@@ -490,7 +490,7 @@ function Dashboard() {
                 flexDirection="column"
                 gridGap="30px"
               >
-                <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
                     students={onlyStudentsActive}
@@ -531,9 +531,7 @@ function Dashboard() {
                 {cohortSession?.kickoff_date && (
                   <CohortSideBar
                     teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-                    cohort={cohortSession}
                     studentAndTeachers={studentAndTeachers}
-                    cohortCity={cohortSession?.name}
                     width="100%"
                   />
                 )}
@@ -717,7 +715,7 @@ function Dashboard() {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+              <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
                   students={onlyStudentsActive}
@@ -765,8 +763,6 @@ function Dashboard() {
                 <CohortSideBar
                   teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
                   studentAndTeachers={studentAndTeachers}
-                  cohort={cohortSession}
-                  cohortCity={cohortSession?.name}
                   width="100%"
                 />
               )}
