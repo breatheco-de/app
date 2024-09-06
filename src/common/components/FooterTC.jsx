@@ -7,15 +7,24 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 import logoData from '../../../public/logo.json';
 import NextChakraLink from './NextChakraLink';
 import useAuth from '../hooks/useAuth';
 
 function FooterTC({ pageProps }) {
   const { t } = useTranslation('footer');
+  const { isAuthenticated } = useAuth();
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
   const actualYear = new Date().getFullYear();
-  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+  const noFooterRoutes = ['/cohort/[cohortSlug]/[slug]/[version]', '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]'];
+
+  console.log(router.pathname);
+
+  if (noFooterRoutes.includes(router.pathname)) {
+    return null;
+  }
 
   return (
     <Container as={isAuthenticated && 'footer'} maxW>
@@ -25,7 +34,6 @@ function FooterTC({ pageProps }) {
         padding="20px 20px 5px 20px"
         justifyContent={['center', 'center', 'space-between', 'space-between']}
         wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
-                // alignItems="center"
         textAlign="center"
       >
         <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
