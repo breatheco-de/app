@@ -20,8 +20,6 @@ function FooterTC({ pageProps }) {
   const router = useRouter();
   const noFooterRoutes = ['/cohort/[cohortSlug]/[slug]/[version]', '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]'];
 
-  console.log(router.pathname);
-
   if (noFooterRoutes.includes(router.pathname)) {
     return null;
   }
