@@ -424,7 +424,7 @@ function LiveEvent({
                 marginBottom="5px"
                 marginTop="0"
               >
-                {t('live-class')}
+                {cohorts[0].cohort.name}
               </Text>
               <Text
                 fontSize="12px"
