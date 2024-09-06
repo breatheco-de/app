@@ -20,6 +20,7 @@ import NextChakraLink from './NextChakraLink';
 import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
+import useAuth from '../hooks/useAuth';
 import bc from '../services/breathecode';
 import logoData from '../../../public/logo.json';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
@@ -31,6 +32,7 @@ function Footer({ pageProps }) {
   const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
   const [formStatus, setFormStatus] = useState('');
+  const { isAuthenticated } = useAuth();
 
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
   const actualYear = new Date().getFullYear();
@@ -38,6 +40,8 @@ function Footer({ pageProps }) {
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
+
+  if (isAuthenticated) return <Container as="footer" mt="3rem" />;
 
   return (
     <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
