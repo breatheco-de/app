@@ -55,8 +55,8 @@ export function ButtonHandlerByTaskStatus({
   const textAndIcon = textByTaskStatus(currentTask || {});
 
   // PRROJECT CASE
-  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status && !isGuidedExperience) {
-    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog) {
+  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
+    if ((currentTask.task_status === 'DONE' || taskIsApprovedOrRejected) && !onlyPopoverDialog && !isGuidedExperience) {
       return (
         <>
           {currentTask?.description && (

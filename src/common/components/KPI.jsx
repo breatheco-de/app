@@ -76,7 +76,7 @@ function KPI({
         )}
         <Box display="flex" gridGap="6px">
           {chart === null && (
-            <Heading as="p" size={fontSize} padding="0" margin="0" color={numberColors}>
+            <Heading as="p" size={fontSize} padding="0" margin="0" color={numberColors} {...textProps}>
               {unit}
               {value}
               {/* {value.toString().length >= 3
@@ -130,7 +130,7 @@ KPI.propTypes = {
   fontSize: PropTypes.string,
   iconSize: PropTypes.string,
   labelSize: PropTypes.string,
-  textProps: PropTypes.objectOf(PropTypes.string),
+  textProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   // variationUnit: PropTypes.string.isRequired,
 };
 

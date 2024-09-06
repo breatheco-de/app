@@ -62,6 +62,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
               <Box width="100%" borderRadius="11px" overflow="hidden" height="100%">
                 <ReactPlayerV2
                   className="react-player-border-radius"
+                  controls={false}
                   withThumbnail
                   containerStyle={{ height: '100%' }}
                   iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
@@ -80,6 +81,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
         {!isDelivered && (
           <ReactPlayerV2
             className="react-player-border-radius"
+            controls={false}
             withThumbnail
             iframeStyle={{ background: 'none', borderRadius: '11px' }}
             thumbnailStyle={{

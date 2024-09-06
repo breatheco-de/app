@@ -39,7 +39,7 @@ export const getSlideProps = (open) => {
     width: 'inherit',
     transform: open ? 'translateX(0rem)' : 'translateX(-30rem)',
     visibility: open ? 'visible' : 'hidden',
-    height: isBelowTablet ? '100%' : '100vh',
+    height: isBelowTablet ? '100%' : '93vh',
     outline: 0,
     borderRight: 1,
     borderStyle: 'solid',

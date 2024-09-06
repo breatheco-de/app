@@ -105,6 +105,7 @@ function Content() {
   const isQuiz = lesson === 'answer';
   const isExercise = lesson === 'practice';
   const isProject = lesson === 'project';
+  const isLesson = lesson === 'read';
 
   const filteredCurrentAssignments = filteredEmptyModules.map((section) => {
     const currentAssignments = showPendingTasks
@@ -576,14 +577,14 @@ function Content() {
   };
 
   const assetTypeStyles = {
-    answer: {},
+    answer: { padding: '0px', height: '100%', mb: '0px' },
     read: {},
     practice: {},
     project: { ...projectStyles[currentTask?.task_status] },
   };
 
   const getStyles = () => {
-    if (isQuiz || !isAvailableAsSaas) return {};
+    if (!isAvailableAsSaas) return {};
 
     return {
       padding: { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' },
@@ -663,12 +664,12 @@ function Content() {
           )}
           <Box
             margin="0 auto 0 auto"
-            mt={!isAvailableAsSaas && '25px'}
+            mt="25px"
             padding={{ base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
             width="100%"
             maxWidth="1280px"
           >
-            {isAvailableAsSaas && (
+            {/* {isAvailableAsSaas && (
               <Box margin="15px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
                   aria-label="Close Timeline"
@@ -728,14 +729,14 @@ function Content() {
                   )}
                 </Box>
               </Box>
-            )}
+            )} */}
             {isExercise && isAvailableAsSaas && currentAsset?.id ? (
               <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
             ) : (
               <Box
                 id="main-container"
                 className={`horizontal-sroll ${colorMode}`}
-                height={!isQuiz && isAvailableAsSaas && '70vh'}
+                height={isAvailableAsSaas && '70vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
                 borderRadius="11px 11px 0 0"
                 position="relative"
@@ -885,7 +886,7 @@ function Content() {
                   )}
 
                   {isQuiz ? (
-                    <Box background={featuredColor} width="100%" height="100vh" borderRadius="14px">
+                    <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                       <iframe
                         id="iframe"
                         src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
@@ -1049,9 +1050,30 @@ function Content() {
                 </Box>
               </Box>
             )}
-            {isAvailableAsSaas && !isExercise && (
-              <Box mt="20px" justifyContent="center" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
-                {!isQuiz && (
+            {isAvailableAsSaas && (
+              <Box mt="20px" justifyContent="space-between" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
+                {(previousAssignment || !!prevModule) && (
+                  <Box
+                    color="blue.default"
+                    cursor="pointer"
+                    fontSize="15px"
+                    display="flex"
+                    alignItems="center"
+                    gridGap="10px"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                    onClick={prevPage}
+                  >
+                    <Box
+                      as="span"
+                      display="block"
+                    >
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
+                    </Box>
+                    {t('previous-page')}
+                  </Box>
+                )}
+                {(isLesson || isProject) && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Link
                       display="flex"
@@ -1075,7 +1097,7 @@ function Content() {
                     </Text>
                   </Box>
                 )}
-                {repoUrl && !isQuiz && (
+                {repoUrl && (isLesson || isProject) && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Link
                       display="flex"
@@ -1099,7 +1121,7 @@ function Content() {
                     </Text>
                   </Box>
                 )}
-                {!isQuiz && currentAsset?.intro_video_url && !isProject && (
+                {isLesson && currentAsset?.intro_video_url && (
                   <Box display="flex" flexDirection="column" alignItems="center">
                     <Button
                       display="flex"
@@ -1120,20 +1142,22 @@ function Content() {
                     </Text>
                   </Box>
                 )}
-                <ButtonHandlerByTaskStatus
-                  allowText
-                  isGuidedExperience={isAvailableAsSaas}
-                  variant="rounded"
-                  currentTask={currentTask}
-                  sendProject={sendProject}
-                  changeStatusAssignment={changeStatusAssignment}
-                  currentAssetData={currentAsset}
-                  toggleSettings={toggleSettings}
-                  closeSettings={closeSettings}
-                  settingsOpen={settingsOpen}
-                  handleOpen={handleOpen}
-                  fileData={fileData}
-                />
+                {!isExercise && (
+                  <ButtonHandlerByTaskStatus
+                    allowText
+                    isGuidedExperience={isAvailableAsSaas}
+                    variant="rounded"
+                    currentTask={currentTask}
+                    sendProject={sendProject}
+                    changeStatusAssignment={changeStatusAssignment}
+                    currentAssetData={currentAsset}
+                    toggleSettings={toggleSettings}
+                    closeSettings={closeSettings}
+                    settingsOpen={settingsOpen}
+                    handleOpen={handleOpen}
+                    fileData={fileData}
+                  />
+                )}
                 {currentTask?.task_status === 'DONE' && showModal && (
                   <ShareButton
                     variant="outline"
@@ -1146,6 +1170,28 @@ function Content() {
                     withParty
                   />
                 )}
+                {(nextAssignment || !!nextModule) && (
+                  <Box
+                    color="blue.default"
+                    cursor="pointer"
+                    fontSize="15px"
+                    display="flex"
+                    alignItems="center"
+                    gridGap="10px"
+                    letterSpacing="0.05em"
+                    fontWeight="700"
+                    onClick={nextPage}
+                  >
+                    {t('next-page')}
+                    <Box
+                      as="span"
+                      display="block"
+                      transform="rotate(180deg)"
+                    >
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
+                    </Box>
+                  </Box>
+                )}
               </Box>
             )}
           </Box>
@@ -1157,6 +1203,7 @@ function Content() {
       >
         <Box padding="20px">
           <ReactPlayerV2
+            controls={false}
             url={currentAsset?.intro_video_url}
           />
         </Box>

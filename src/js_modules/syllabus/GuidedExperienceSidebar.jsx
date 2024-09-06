@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect, useRef } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -9,6 +11,7 @@ import {
   AccordionPanel,
   AccordionIcon,
   Spinner,
+  IconButton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -59,6 +62,26 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
 
   return (
     <>
+      <IconButton
+        style={{ zIndex: 20 }}
+        aria-label="Open Timeline"
+        variant="default"
+        display={Open ? 'none' : 'initial'}
+        onClick={onToggle}
+        width="17px"
+        height="36px"
+        minW={0}
+        position="fixed"
+        top="50%"
+        left="0"
+        padding={0}
+        icon={(
+          <ChevronRightIcon
+            width="17px"
+            height="36px"
+          />
+        )}
+      />
       <Box position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }} display={Open ? 'initial' : 'none'} flex="0 0 auto" minWidth="290px" width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }} zIndex={{ base: 100, lg: Open ? 10 : 0 }}>
         <Box style={slide}>
           <Box
@@ -79,7 +102,31 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
                 <Heading size="xsm">{cohortSession.syllabus_version?.name}</Heading>
               </Box>
             )}
-            <Button
+            <IconButton
+              aria-label="Close Timeline"
+              style={{ zIndex: 20 }}
+              variant="default"
+              onClick={onToggle}
+              width="17px"
+              height="36px"
+              minW={0}
+              position="absolute"
+              transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+              transitionProperty="margin"
+              transitionDuration={Open ? '225ms' : '195ms'}
+              transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+              top="50%"
+              right="-20px"
+              padding={0}
+              icon={(
+                <ChevronLeftIcon
+                  width="17px"
+                  height="36px"
+                />
+              )}
+              marginBottom="1rem"
+            />
+            {/* <Button
               aria-label="Close Timeline"
               gap="10px"
               variant="ghost"
@@ -90,7 +137,7 @@ function GuidedExperienceSidebar({ filteredEmptyModules, onClickAssignment, isOp
             >
               <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
               {t(Open ? 'hide-menu' : 'show-menu')}
-            </Button>
+            </Button> */}
           </Box>
 
           <Box
