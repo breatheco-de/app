@@ -19,8 +19,9 @@ function orderArrayByRole(array) {
 function Instructors({ isLoading, list, limit, ...rest }) {
   const { t } = useTranslation('common');
   const { featuredColor } = useStyle();
-  const intructorsToShow = list.length > limit ? orderArrayByRole(list.slice(0, limit)) : orderArrayByRole(list);
-  const restInstructors = list.length - limit;
+  const orderedList = orderArrayByRole(list);
+  const intructorsToShow = orderedList.length > limit ? orderedList.slice(0, limit) : orderedList;
+  const restInstructors = orderedList.length - limit;
 
   return (
     <Flex flexDirection="column" gridGap="16px" margin="8px 0" {...rest}>
