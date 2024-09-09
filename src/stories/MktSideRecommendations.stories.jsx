@@ -28,5 +28,22 @@ Tutorials.args = {
   width: '350px',
   title: 'Asset Recommendation',
   endpoint: '/v1/marketing/course',
-  technologies: ['flask', 'apis'],
+  technologies: [
+    {
+      description: "",
+      icon_url: null,
+      is_deprecated: false,
+      slug: "apis",
+      title: "APIs",
+      visibility: "PUBLIC",
+    },
+    {
+      description: "",
+      icon_url: "https://storage.googleapis.com/breathecode/logos-technologias/Flask.png",
+      is_deprecated: false,
+      slug: "flask",
+      title: "Flask",
+      visibility: "PUBLIC",
+    }
+  ],
 };

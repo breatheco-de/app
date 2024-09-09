@@ -194,6 +194,8 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
 
   const isIpynb = ipynbHtml?.statusText === 'OK' || ipynbHtml?.iframe;
 
+  console.log(lesson);
+
   return (
     <>
       {lesson?.structuredData?.name && (
