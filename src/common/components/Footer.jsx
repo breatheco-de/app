@@ -22,9 +22,9 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import bc from '../services/breathecode';
-import logoData from '../../../public/logo.json';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
+import FooterTC from './FooterTC';
 
 function Footer({ pageProps }) {
   const captcha = useRef(null);
@@ -34,14 +34,12 @@ function Footer({ pageProps }) {
   const [formStatus, setFormStatus] = useState('');
   const { isAuthenticated } = useAuth();
 
-  const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
-  const actualYear = new Date().getFullYear();
   const iconogram = t('iconogram', {}, { returnObjects: true });
 
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
-  if (isAuthenticated) return <Container as="footer" mt="3rem" />;
+  if (isAuthenticated) return <FooterTC pageProps={pageProps} />;
 
   return (
     <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">
@@ -345,29 +343,7 @@ function Footer({ pageProps }) {
           <Divider borderBottomWidth="2px" />
         </>
       )}
-      <Flex
-        key="copyright"
-        padding="20px 20px 0 20px"
-        justifyContent={['center', 'center', 'space-between', 'space-between']}
-        wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
-        // alignItems="center"
-        textAlign="center"
-      >
-        <Text marginBottom={['20px', '20px', '0', '0']} fontSize="sm">{t('copyright', { name: copyrightName, year: actualYear })}</Text>
-        <Flex
-          wrap={['wrap', 'wrap', 'nowrap', 'nowrap']}
-          justifyContent={['center', 'center', 'space-between', 'space-between']}
-          width={['100%', '100%', '35%', '25%']}
-        // alignItems="center"
-        >
-          <NextChakraLink href={t('terms.href')}>
-            <Text fontSize="sm">{t('terms.label')}</Text>
-          </NextChakraLink>
-          <NextChakraLink href={t('privacy.href')}>
-            <Text fontSize="sm">{t('privacy.label')}</Text>
-          </NextChakraLink>
-        </Flex>
-      </Flex>
+      <FooterTC />
     </Container>
   );
 }

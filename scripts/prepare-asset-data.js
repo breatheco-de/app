@@ -8,10 +8,10 @@ async function prepareAssetData() {
 
   console.time('Time fetching data');
 
-  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons, expand: 'technologies' }, 'lesson');
-  const excersises = await getAsset('EXERCISE', { expand: 'technologies' }, 'excersise');
-  const projects = await getAsset('PROJECT', { expand: 'technologies' }, 'project');
-  const howTos = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo, expand: 'technologies' }, 'how-to');
+  const lessons = await getAsset('LESSON,ARTICLE', { exclude_category: excludeCagetoriesFor.lessons, expand: 'technologies,readme' }, 'lesson');
+  const excersises = await getAsset('EXERCISE', { expand: 'technologies,readme' }, 'excersise');
+  const projects = await getAsset('PROJECT', { expand: 'technologies,readme' }, 'project');
+  const howTos = await getAsset('LESSON,ARTICLE', { category: categoriesFor.howTo, expand: 'technologies,readme' }, 'how-to');
   const events = await getEvents();
   const landingTechnologies = await getLandingTechnologies([...lessons, ...projects, ...excersises, ...howTos]);
 
