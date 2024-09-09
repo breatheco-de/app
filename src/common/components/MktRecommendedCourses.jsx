@@ -154,9 +154,9 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
                 });
               }}
               href={course?.course_translation?.landing_url}
-              programName={course?.course_translation?.title}
-              programSlug={course?.slug}
-              programDescription={course?.course_translation?.description}
+              programName={course.course_translation.title}
+              programSlug={course.slug}
+              programDescription={course.course_translation.description}
               // flexShrink="0"
             />
           ))}
