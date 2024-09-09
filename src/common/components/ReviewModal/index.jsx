@@ -572,6 +572,13 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       {currentTask?.title}
                     </Link>
                   )}
+                  {currentTask?.delivered_at && (
+                    <Text size="md" fontWeight={700}>
+                      {t('code-review.delivered-at')}
+                      {'  '}
+                      {currentTask.delivered_at}
+                    </Text>
+                  )}
                 </Flex>
 
                 {Array.isArray(fileData) && fileData.length > 0 && (
