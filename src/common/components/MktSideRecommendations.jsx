@@ -90,13 +90,11 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     const coursesData = await response.json();
 
     if (coursesData.length > 0) {
-      const sortedCourses = coursesData.filter((course) => course.visibility !== 'UNLISTED')
-        .sort((a, b) => {
-          const aMatches = a.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
-          const bMatches = b.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
-          return bMatches - aMatches;
-        });
-      console.log(sortedCourses);
+      const sortedCourses = coursesData.sort((a, b) => {
+        const aMatches = a.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
+        const bMatches = b.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
+        return bMatches - aMatches;
+      });
       setRecommendations(sortedCourses.slice(0, coursesLimit));
     }
   };
@@ -125,8 +123,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
 
   const getLink = (recommendation) => {
     if (recommendation?.course_translation?.landing_url) return recommendation?.course_translation?.landing_url;
-    if (recommendation.asset_type === 'EXERCISE') return `${ORIGIN_HOST}${langConnector}/interactive-exercise/${recommendation?.slug}`;
-    return `${ORIGIN_HOST}${langConnector}/how-to/${recommendation?.slug}`;
+    return `${ORIGIN_HOST}${langConnector}/interactive-exercise/${recommendation?.slug}`;
   };
 
   useEffect(() => {
@@ -138,8 +135,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
       <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding="10px 20px" bottom="0" position="sticky" marginBottom="20px" display={{ base: 'block', md: 'none' }} textAlign="left">
         {recommendations.map((recom) => {
           const recomLink = getLink(recom);
-          const link = recom?.course_translation?.landing_url ? `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}&internal_cta_campaign=null`
-            : recomLink;
+          const link = `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}`;
 
           return (
             <>
@@ -188,12 +184,11 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
             {title || t('continue-learning-course')}
           </Heading>
         )}
-        {!isLoading && recommendations?.length > 0 ? (
+        {!isLoading ? (
           <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
             {recommendations.map((recom) => {
               const recomLink = getLink(recom);
-              const link = recom?.course_translation?.landing_url ? `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}&internal_cta_campaign=null`
-                : recomLink;
+              const link = `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}`;
               const tags = [];
 
               return (

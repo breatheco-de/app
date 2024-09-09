@@ -19,6 +19,14 @@ const Component = (args) => {
 export const Default = Component.bind({});
 Default.args = {
   width: '350px',
-  title: 'Title',
-  endpoint: '/v1/marketing/course'
+  title: 'Course Recommendations',
+  endpoint: '/v1/marketing/course',
+};
+
+export const Tutorials = Component.bind({});
+Tutorials.args = {
+  width: '350px',
+  title: 'Asset Recommendation',
+  endpoint: '/v1/marketing/course',
+  technologies: ['flask', 'apis'],
 };
