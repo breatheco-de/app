@@ -155,7 +155,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
           return (
             <>
               <Box display="flex" alignItems="center" gap="10px">
-                <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" background={recom?.color || 'green.400'} />
+                <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" color="white" background={determineIconBackgroundColor(recom)} />
                 <Heading as="span" size="18px">
                   {recom?.course_translation?.title || recom.title}
                 </Heading>
