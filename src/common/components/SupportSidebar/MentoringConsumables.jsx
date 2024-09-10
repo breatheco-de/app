@@ -53,9 +53,9 @@ function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mento
       </Button>
 
       {!disableBackButton && (
-      <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
-        {t('common:go-back')}
-      </Button>
+        <Button variant="link" fontSize="14px" onClick={() => setMentoryProps({})} letterSpacing="0.05em">
+          {t('common:go-back')}
+        </Button>
       )}
     </Box>
   );
@@ -144,18 +144,6 @@ function MentoringConsumables({
     }
   }, [allMentorsAvailable]);
 
-  const checkForConsumableAvailable = (consumableList, serviceSelected) => {
-    const filteredConsumables = consumableList.filter((consumable) => consumable?.mentorship_services?.some((service) => serviceSelected?.slug === service.slug));
-
-    const validConsumable = filteredConsumables.find((consumable) => consumable?.balance?.unit === -1 || consumable?.balance?.unit > 0);
-
-    if (validConsumable) {
-      return validConsumable;
-    }
-    const balanceZeroConsumable = filteredConsumables.find((consumable) => consumable?.balance?.unit === 0);
-    return balanceZeroConsumable;
-  };
-
   const manageMentorsData = (service, data) => {
     reportDatalayer({
       dataLayer: {
@@ -165,8 +153,7 @@ function MentoringConsumables({
         mentorship_service: service?.slug,
       },
     });
-    const relatedConsumable = checkForConsumableAvailable(consumables, service);
-
+    const relatedConsumable = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
     setProgramMentors(data);
     setConsumableOfService({
       ...relatedConsumable,
@@ -555,7 +542,7 @@ MentoringConsumables.defaultProps = {
   consumables: {},
   mentorshipService: {},
   programServices: [],
-  setProgramMentors: () => {},
+  setProgramMentors: () => { },
   subscriptionData: {},
   allSubscriptions: [],
 };

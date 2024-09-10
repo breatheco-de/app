@@ -390,11 +390,6 @@ function Page({ eventData, asset }) {
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
 
-  console.log('AAAAAAAAAA', availableConsumables);
-  console.log('CURRENT CONSUMABLE', currentConsumable);
-  console.log('suscription for current event', subscriptionsForCurrentEvent);
-  console.log('SUSCRIPCIONT', subscriptions);
-
   useEffect(() => {
     if (subscriptionsForCurrentEvent.length === 0) setDenyAccessToEvent(true);
     else {

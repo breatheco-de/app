@@ -15,7 +15,7 @@
   "confirm-attendance": "Si, si asistiré",
   "deny-attendance" : "No, no asistiré",
   "denny-access":{
-    "description": "",
+    "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
     "can-join": "pueden entrar"
   },
