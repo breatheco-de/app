@@ -97,6 +97,7 @@
     "waiting-for-review": "Esperando revisión",
     "student-name": "Estudiante {{name}}",
     "project-delivered": "Proyecto entregado:",
+    "delivered-at": "Entregado el:",
     "your-teacher-said": "Tu profesor dijo:",
     "feedback-will-be-shown-here": "El comentario del profesor se mostrará aquí si es aprobado",
     "read-code-reviews": "(Leer revisiones de código)",
