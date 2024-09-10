@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { Box, Button, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import { format } from 'date-fns';
 import SimpleModal from '../SimpleModal';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
@@ -573,10 +574,10 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Link>
                   )}
                   {currentTask?.delivered_at && (
-                    <Text size="md" fontWeight={700}>
+                    <Text size="md">
                       {t('code-review.delivered-at')}
                       {'  '}
-                      {currentTask.delivered_at}
+                      {format(new Date(currentTask.delivered_at), 'MM/dd/yyyy')}
                     </Text>
                   )}
                 </Flex>
