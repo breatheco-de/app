@@ -186,7 +186,7 @@ function Content() {
     const assetSlug = currentData?.translations?.us || currentData?.translations?.en || lessonSlug;
     if (contextState.taskTodo.length > 0) {
       setCurrentTask(contextState.taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-      && el.associated_slug === assetSlug));
+        && el.associated_slug === assetSlug));
     }
   }, [contextState.taskTodo, lessonSlug, lesson]);
 
@@ -208,7 +208,7 @@ function Content() {
     }
   };
 
-  const handleOpen = async (onOpen = () => {}) => {
+  const handleOpen = async (onOpen = () => { }) => {
     if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
       const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
       if (assetResp?.status < 400) {
@@ -798,7 +798,7 @@ function Content() {
                           {t('solution-message')}
                           {' '}
                           <Link fontSize="15px" textDecoration="underline" href={currentData?.solution_url} target="_blank">
-                            You can see it here
+                            {t('click-to-review')}
                           </Link>
                         </Text>
                       </AlertMessage>
