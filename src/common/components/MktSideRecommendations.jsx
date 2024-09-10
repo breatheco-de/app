@@ -135,10 +135,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     if (recom?.color) {
       return recom.color;
     }
-    if (recom?.icon_url) {
-      return 'green.400';
-    }
-    return 'gray.100';
+    return 'blue.50';
   };
 
   useEffect(() => {
@@ -155,7 +152,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
           return (
             <>
               <Box display="flex" alignItems="center" gap="10px">
-                <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" color="white" background={determineIconBackgroundColor(recom)} />
+                <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} color="white" background={determineIconBackgroundColor(recom)} />
                 <Heading as="span" size="18px">
                   {recom?.course_translation?.title || recom.title}
                 </Heading>
@@ -183,6 +180,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                 background="white"
                 gridGap="10px"
                 width="100%"
+                _hover="none"
+                marginTop="10px"
               >
                 <Box as="span" display="flex">
                   {t('learn-more')}
@@ -207,13 +206,13 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               const tags = [];
 
               return (
-                <Container border="1px solid" borderColor={{ base: 'default', md: 'success' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
+                <Container border="1px solid" borderColor={{ base: 'default', md: 'blue.400' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
-                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
+                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
 
-                    <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '5px'} background={determineIconBackgroundColor(recom)} />
-                    <Heading as="span" size="18px" padding={recom?.icon_url ? '0' : '0 20px'}>
+                    <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} background={determineIconBackgroundColor(recom)} />
+                    <Heading as="span" size="18px">
                       {recom?.course_translation?.title || recom.title}
                     </Heading>
                   </Box>
@@ -237,7 +236,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                     href={link}
                     alignItems="center"
                     display="flex"
-                    colorScheme={{ base: 'default', md: 'success' }}
+                    colorScheme={{ base: 'default', md: 'blue.400' }}
                     width="auto"
                     color={{ base: 'green.light', md: 'white' }}
                     gridGap="10px"
