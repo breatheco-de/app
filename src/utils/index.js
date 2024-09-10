@@ -409,12 +409,6 @@ function decodeBase64(encoded) {
   return decoded;
 }
 
-function checkForConsumablesAvailable(consumables) {
-  const consumablesAvailable = consumables.filter((consumable) => consumable?.balance?.unit !== 0);
-  if (consumablesAvailable.length > 0) return consumablesAvailable;
-  return consumables;
-}
-
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -425,5 +419,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, checkForConsumablesAvailable,
+  removeSessionStorageItem,
 };

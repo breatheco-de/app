@@ -16,7 +16,6 @@ import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
-import { checkForConsumablesAvailable } from '../../../utils';
 
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
@@ -131,6 +130,19 @@ function Mentoring({
     return [];
   };
 
+  const sortByConsumptionAvailability = (allConsumables) => allConsumables.sort((a, b) => {
+    const balanceA = a?.balance?.unit;
+    const balanceB = b?.balance?.unit;
+
+    if (balanceA === -1 && balanceB !== -1) return -1;
+    if (balanceA !== -1 && balanceB === -1) return 1;
+
+    if (balanceA > 0 && balanceB <= 0) return -1;
+    if (balanceA <= 0 && balanceB > 0) return 1;
+
+    return 0;
+  });
+
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
     const reqConsumables = await bc.payment().service().consumable()
@@ -142,8 +154,8 @@ function Mentoring({
         }))));
 
     const allConsumables = await Promise.all(reqConsumables);
-    const validConsumables = checkForConsumablesAvailable(allConsumables);
-    setConsumables(validConsumables);
+    const sortedConsumables = sortByConsumptionAvailability(allConsumables);
+    setConsumables(sortedConsumables);
     setAllMentorsAvailable(mentors);
   };
 

@@ -144,6 +144,18 @@ function MentoringConsumables({
     }
   }, [allMentorsAvailable]);
 
+  const checkForConsumableAvailable = (consumableList, serviceSelected) => {
+    const filteredConsumables = consumableList.filter((consumable) => consumable?.mentorship_services?.some((service) => serviceSelected?.slug === service.slug));
+
+    const validConsumable = filteredConsumables.find((consumable) => consumable?.balance?.unit === -1 || consumable?.balance?.unit > 0);
+
+    if (validConsumable) {
+      return validConsumable;
+    }
+    const balanceZeroConsumable = filteredConsumables.find((consumable) => consumable?.balance?.unit === 0);
+    return balanceZeroConsumable;
+  };
+
   const manageMentorsData = (service, data) => {
     reportDatalayer({
       dataLayer: {
@@ -153,12 +165,13 @@ function MentoringConsumables({
         mentorship_service: service?.slug,
       },
     });
-    const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
+    const relatedConsumable = checkForConsumableAvailable(consumables, service);
+
     setProgramMentors(data);
     setConsumableOfService({
-      ...relatedConsumables,
+      ...relatedConsumable,
       balance: {
-        unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+        unit: service?.academy?.available_as_saas === false ? -1 : relatedConsumable?.balance?.unit,
       },
       available_as_saas: service?.academy?.available_as_saas,
     });

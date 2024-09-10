@@ -14,7 +14,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, checkForConsumablesAvailable } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -166,6 +166,7 @@ function Page({ eventData, asset }) {
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [noConsumablesFound, setNoConsumablesFound] = useState(false);
+  const [denyAccessToEvent, setDenyAccessToEvent] = useState(false);
 
   const router = useRouter();
   const { locale } = router;
@@ -350,10 +351,36 @@ function Page({ eventData, asset }) {
       });
   };
 
+  const sortByConsumptionAvailability = (consum) => consum.sort((a, b) => {
+    const balanceA = a?.balance?.unit;
+    const balanceB = b?.balance?.unit;
+
+    if (balanceA === -1 && balanceB !== -1) return -1;
+    if (balanceA !== -1 && balanceB === -1) return 1;
+
+    if (balanceA > 0 && balanceB <= 0) return -1;
+    if (balanceA <= 0 && balanceB > 0) return 1;
+
+    return 0;
+  });
+
+  const getSubscriptionForCurrentEvent = () => {
+    if (!subscriptions || !event?.event_type?.slug) return [];
+    const currentEventSlug = event.event_type.slug;
+
+    const filteredSubscriptions = subscriptions.filter((subscription) => {
+      const eventTypes = subscription.selected_event_type_set?.event_types || [];
+      return eventTypes.some((eventType) => eventType.slug === currentEventSlug);
+    });
+
+    return filteredSubscriptions;
+  };
+
   const consumableEventList = consumables?.data?.event_type_sets || [];
-  const availableConsumables = checkForConsumablesAvailable(consumableEventList);
+  const availableConsumables = sortByConsumptionAvailability(consumableEventList);
+  const subscriptionsForCurrentEvent = getSubscriptionForCurrentEvent();
   const currentConsumable = availableConsumables?.length > 0 ? availableConsumables?.find(
-    (c) => subscriptions.some(
+    (c) => subscriptionsForCurrentEvent.some(
       (s) => c?.slug.toLowerCase() === s?.selected_event_type_set?.slug.toLowerCase(),
     ),
   ) : {};
@@ -362,6 +389,18 @@ function Page({ eventData, asset }) {
 
   const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
+
+  console.log('AAAAAAAAAA', availableConsumables);
+  console.log('CURRENT CONSUMABLE', currentConsumable);
+  console.log('suscription for current event', subscriptionsForCurrentEvent);
+  console.log('SUSCRIPCIONT', subscriptions);
+
+  useEffect(() => {
+    if (subscriptionsForCurrentEvent.length === 0) setDenyAccessToEvent(true);
+    else {
+      setDenyAccessToEvent(false);
+    }
+  }, [subscriptionsForCurrentEvent]);
 
   const dynamicFormInfo = () => {
     if (finishedEvent) {
@@ -375,7 +414,7 @@ function Page({ eventData, asset }) {
         title: '',
         childrenDescription: (
           <Text size="14px" fontWeight={700} lineHeight="18px">
-            {t('no-consumables.description')}
+            {!denyAccessToEvent ? t('no-consumables.description') : `${t('denny-access.description')} '${event?.event_type?.name}' ${t('denny-access.can-join')}`}
           </Text>
         ),
       });
@@ -877,7 +916,7 @@ function Page({ eventData, asset }) {
                       <Box display="flex" flexDirection="column" alignItems="center">
                         {hasFetchedAndNoConsumablesToUse && (
                           <Text marginBottom="10px" size="14px" fontWeight={700} lineHeight="18px">
-                            {t('no-consumables.description')}
+                            {!denyAccessToEvent ? t('no-consumables.description') : `${t('denny-access.description')} '${event?.event_type?.name}' ${t('denny-access.can-join')}`}
                           </Text>
                         )}
                         <Button
@@ -890,10 +929,11 @@ function Page({ eventData, asset }) {
                           alignItems="center"
                           gridGap="10px"
                           width="100%"
+                          isDisabled={denyAccessToEvent}
                           background={hexColor.greenLight}
                         >
-                          {t('no-consumables.get-more-workshops')}
-                          <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                          {denyAccessToEvent ? t('no-consumables.get-more-workshops') : t('denny-access.button')}
+                          {!denyAccessToEvent && <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />}
                         </Button>
                       </Box>
                     )}
@@ -1029,10 +1069,11 @@ function Page({ eventData, asset }) {
                             alignItems="center"
                             gridGap="10px"
                             width="100%"
+                            isDisabled={denyAccessToEvent}
                             background={hexColor.greenLight}
                           >
-                            {t('no-consumables.get-more-workshops')}
-                            <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+                            {!denyAccessToEvent ? t('no-consumables.get-more-workshops') : t('denny-access.button')}
+                            {!denyAccessToEvent && <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />}
                           </Button>
                         </Box>
                       ) : (
