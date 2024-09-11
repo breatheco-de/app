@@ -20,24 +20,35 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
+  // const toast = useToast();
   const { t } = useTranslation('dashboard');
-  const [savedChanges, setSavedChanges] = useState({});
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const router = useRouter();
-  const [consumables, setConsumables] = useState({});
+  const { isLoading, user } = useAuth();
+  const { slug } = router.query;
+
+  const [savedChanges, setSavedChanges] = useState({});
+  const [consumables, setConsumables] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
   const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
-  const { isLoading, user } = useAuth();
-  // const toast = useToast();
-  const { slug } = router.query;
+  const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
+  const step1 = !mentoryProps?.service;
+  const step2 = mentoryProps?.service && !mentoryProps?.date;
 
-  const [searchProps, setSearchProps] = useState({
-    serviceSearch: '',
-    mentorSearch: '',
-  });
+  const formatDate = (date, formatStr) => (date ? format(new Date(date), formatStr, { locale: es }) : null);
+
+  const dateFormated = {
+    en: formatDate(mentoryProps?.date, 'MMMM dd'),
+    es: formatDate(mentoryProps?.date, "dd 'de' MMMM"),
+  };
+
+  const dateFormated2 = {
+    en: formatDate(mentoryProps?.date, 'MMMM dd, yyyy'),
+    es: formatDate(mentoryProps?.date, "dd 'de' MMMM, yyyy"),
+  };
 
   const servicesFiltered = programServices.list.filter(
     (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
@@ -62,21 +73,12 @@ function Mentoring({
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
       const fullName = `${mentor.user.first_name} ${mentor.user.last_name}`.toLowerCase();
-      const mentorServices = fullName.includes(searchProps.mentorSearch) && mentor.services.some((sv) => sv.status === 'ACTIVE'
-        && sv.slug === mentoryProps?.service?.slug);
-      return mentorServices;
+      return (
+        fullName.includes(searchProps.mentorSearch)
+        && mentor.services.some((sv) => sv.status === 'ACTIVE' && sv.slug === mentoryProps?.service?.slug)
+      );
     },
   );
-
-  const dateFormated = {
-    en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd'),
-    es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM", { locale: es }),
-  };
-
-  const dateFormated2 = {
-    en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd, yyyy'),
-    es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM, yyyy", { locale: es }),
-  };
 
   useEffect(() => {
     if (mentoryProps?.time) {
@@ -91,9 +93,6 @@ function Mentoring({
     }
   }, [mentoryProps?.time]);
 
-  const step1 = !mentoryProps?.service;
-  const step2 = mentoryProps?.service && !mentoryProps?.date;
-
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.list.map((service) => service?.slug);
 
@@ -105,7 +104,6 @@ function Mentoring({
       }
       academies[academy.id].services.push(restOfService);
     });
-
     // Convert the object to an array of academies with their services
     const academyData = Object.entries(academies).map(([academy, values]) => ({
       id: Number(academy),
@@ -140,6 +138,8 @@ function Mentoring({
     if (balanceA > 0 && balanceB <= 0) return -1;
     if (balanceA <= 0 && balanceB > 0) return 1;
 
+    if (balanceA > 0 && balanceB > 0) return balanceB - balanceA;
+
     return 0;
   });
 
@@ -169,19 +169,17 @@ function Mentoring({
     const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
     if (existsCohortSession) {
       setIsAvailableForConsumables(cohortSession?.available_as_saas);
+      return;
     }
-    if (!existsCohortSession) {
-      if (allCohorts.length > 0) {
-        setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
+    if (allCohorts.length > 0) {
+      const hasBootcampCohort = allCohorts?.some((c) => c.cohort?.available_as_saas === false);
+      if (hasBootcampCohort) {
+        setIsAvailableForConsumables(false);
       }
     }
   }, [allCohorts]);
 
-  const mentorshipService = consumables?.length > 0 ? consumables?.find(
-    (c) => subscriptions.some(
-      (s) => c?.slug.toLowerCase() === s?.selected_mentorship_service_set?.slug.toLowerCase(),
-    ),
-  ) : {};
+  const mentorshipService = consumables.length > 0 ? consumables[0] : {};
 
   return !isLoading && user?.id && (
     <Box>
