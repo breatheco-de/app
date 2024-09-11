@@ -17,7 +17,7 @@ import Icon from '../../../common/components/Icon';
 import TagCapsule from '../../../common/components/TagCapsule';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import GridContainer from '../../../common/components/GridContainer';
-import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+import MktSideRecommendations from '../../../common/components/MktSideRecommendations';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
@@ -186,7 +186,7 @@ export default function HowToSlug({ data, markdown }) {
       )}
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
-          <MktSideRecommendedCourses technologies={data.technologies} />
+          <MktSideRecommendations technologies={data.technologies} />
         </Box>
         <Box
           gridColumn="2 / span 12"
@@ -289,7 +289,7 @@ export default function HowToSlug({ data, markdown }) {
           <MktEventCards isSmall hideDescription title={t('common:upcoming-workshops')} margin="4rem 0 31px 0" />
         </Box>
         <Box display={{ base: 'initial', md: 'none' }} width="100%" height="auto">
-          <MktSideRecommendedCourses technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
+          <MktSideRecommendations technologies={data.technologies} title={false} padding="0" containerPadding="16px 14px" borderRadius="0px" skeletonHeight="80px" skeletonBorderRadius="0" />
         </Box>
       </GridContainer>
     </>

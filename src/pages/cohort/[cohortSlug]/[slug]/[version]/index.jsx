@@ -70,7 +70,7 @@ function Dashboard() {
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
-
+  const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { user, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -270,6 +270,7 @@ function Dashboard() {
   // Fetch cohort data with pathName structure
   useEffect(() => {
     if (user) {
+      setIsLoadingAssigments(true);
       getCohortData({
         cohortSlug,
       }).then((cohort) => {
@@ -283,6 +284,8 @@ function Dashboard() {
         getCohortAssignments({
           user, setContextState, slug, cohort,
         });
+      }).finally(() => {
+        setIsLoadingAssigments(false);
       });
     }
   }, [user]);
@@ -331,9 +334,11 @@ function Dashboard() {
 
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
-    prepareTasks({
-      cohortProgram, contextState, nestAssignments,
-    });
+    if (contextState.cohortProgram && typeof contextState.cohortProgram === 'object' && contextState.taskTodo) {
+      prepareTasks({
+        cohortProgram, contextState, nestAssignments,
+      });
+    }
   }, [contextState.cohortProgram, contextState.taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
@@ -500,27 +505,27 @@ function Dashboard() {
                   />
                 </OnlyFor>
                 {academyOwner?.white_labeled && (
-                <Box
-                  className="white-label"
-                  borderRadius="md"
-                  padding="10px"
-                  display="flex"
-                  justifyContent="space-around"
-                  bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
-                >
-                  <Avatar
-                    name={academyOwner.name}
-                    src={academyOwner.icon_url}
-                  />
-                  <Box className="white-label-text" width="80%">
-                    <Text size="md" fontWeight="700" marginBottom="5px">
-                      {academyOwner.name}
-                    </Text>
-                    <Text size="sm">
-                      {t('whiteLabeledText')}
-                    </Text>
+                  <Box
+                    className="white-label"
+                    borderRadius="md"
+                    padding="10px"
+                    display="flex"
+                    justifyContent="space-around"
+                    bg={colorMode === 'light' ? '#F2F2F2' || 'blue.light' : 'featuredDark'}
+                  >
+                    <Avatar
+                      name={academyOwner.name}
+                      src={academyOwner.icon_url}
+                    />
+                    <Box className="white-label-text" width="80%">
+                      <Text size="md" fontWeight="700" marginBottom="5px">
+                        {academyOwner.name}
+                      </Text>
+                      <Text size="sm">
+                        {t('whiteLabeledText')}
+                      </Text>
+                    </Box>
                   </Box>
-                </Box>
                 )}
                 <LiveEvent
                   featureLabel={t('common:live-event.title')}
@@ -564,7 +569,7 @@ function Dashboard() {
                           <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
                             {t('intro-video-title')}
                           </Box>
-                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{ }} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
                         </AccordionButton>
                       </span>
                       <AccordionPanel padding="0px 4px 4px 4px">
@@ -648,9 +653,9 @@ function Dashboard() {
                   </InputRightElement>
                 </InputGroup>
                 {modulesExists && (
-                <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={commonFontColor}>
-                  {t('modules.show-pending-tasks')}
-                </Checkbox>
+                  <Checkbox onChange={(e) => setShowPendingTasks(e.target.checked)} textAlign="right" gridGap="10px" display="flex" flexDirection="row-reverse" color={commonFontColor}>
+                    {t('modules.show-pending-tasks')}
+                  </Checkbox>
                 )}
               </Box>
             </Box>
@@ -661,7 +666,7 @@ function Dashboard() {
               display="flex"
               flexDirection="column"
             >
-              {sortedAssignments && sortedAssignments.length >= 1 ? (
+              {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments ? (
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
@@ -704,9 +709,9 @@ function Dashboard() {
                     );
                   })}
                   {sortedAssignmentsSearched && sortedAssignmentsSearched.length <= 0 && (
-                  <Text size="l">
-                    {t('modules.search-not-found')}
-                  </Text>
+                    <Text size="l">
+                      {t('modules.search-not-found')}
+                    </Text>
                   )}
                 </>
               ) : <ModuleMapSkeleton />}
