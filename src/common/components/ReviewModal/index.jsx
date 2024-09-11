@@ -85,7 +85,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasNotBeenReviewed = revisionStatus === PENDING;
   const hasBeenApproved = revisionStatus === APPROVED;
   const hasBeenRejected = revisionStatus === REJECTED;
-  const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
+  const noFilesToReview = !hasBeenApproved && (contextData?.commitFiles?.fileList?.length === 0 || !('commitFiles' in contextData));
   const codeRevisionsNotExists = typeof contextData?.code_revisions === 'undefined';
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.current;
@@ -782,7 +782,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           showCodeReviews={(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate}
           loaders={loaders}
           proceedToCommitFiles={proceedToCommitFiles}
-          hasCommitFiles={contextData.commitFiles?.fileList?.length > 0}
           {...rest}
         />
       )}

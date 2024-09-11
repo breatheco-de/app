@@ -23,7 +23,7 @@ import bc from '../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
-function DeliverModal({
+function DeliverModalContent({
   isStudent,
   currentTask,
   projectLink,
@@ -36,7 +36,6 @@ function DeliverModal({
   setStage,
   loaders,
   proceedToCommitFiles,
-  hasCommitFiles,
 }) {
   const { t } = useTranslation('assignments');
   const { modal, borderColor2, featuredColor, hexColor } = useStyle();
@@ -133,12 +132,10 @@ function DeliverModal({
                 </Button>
               )}
             </Flex>
-            {hasCommitFiles && (
-              <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
-                {t('code-review.start-code-review')}
-                <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
-              </Button>
-            )}
+            <Button height="auto" width="fit-content" onClick={proceedToCommitFiles} isLoading={loaders.isFetchingCommitFiles} variant="link" display="flex" alignItems="center" gridGap="10px" justifyContent="start">
+              {t('code-review.start-code-review')}
+              <Icon icon="longArrowRight" width="24px" height="10px" color={hexColor.blueDefault} />
+            </Button>
           </Flex>
         )}
         {!readOnly && (
@@ -217,7 +214,7 @@ function DeliverModal({
   );
 }
 
-DeliverModal.propTypes = {
+DeliverModalContent.propTypes = {
   isStudent: PropTypes.bool,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
@@ -230,9 +227,8 @@ DeliverModal.propTypes = {
   setStage: PropTypes.func,
   loaders: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   proceedToCommitFiles: PropTypes.func,
-  hasCommitFiles: PropTypes.bool,
 };
-DeliverModal.defaultProps = {
+DeliverModalContent.defaultProps = {
   isStudent: false,
   readOnly: false,
   showCodeReviews: false,
@@ -240,7 +236,6 @@ DeliverModal.defaultProps = {
   setStage: () => {},
   loaders: {},
   proceedToCommitFiles: () => {},
-  hasCommitFiles: true,
 };
 
-export default DeliverModal;
+export default DeliverModalContent;
