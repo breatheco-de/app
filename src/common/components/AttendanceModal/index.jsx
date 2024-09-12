@@ -448,7 +448,7 @@ AttendanceModal.defaultProps = {
   title: '',
   message: '',
   isOpen: true,
-  onClose: () => {},
+  onClose: () => { },
 };
 
 export default AttendanceModal;

@@ -18,12 +18,8 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
-// import DynamicCallToAction from '../../common/components/DynamicCallToAction';
-// import PodcastCallToAction from '../../common/components/PodcastCallToAction';
-// import MktSideRecommendedCourses from '../../common/components/MktSideRecommendedCourses';
 import { cleanObject, isWindow } from '../../utils/index';
 import { ORIGIN_HOST } from '../../utils/variables';
-import { getCacheItem, setCacheItem } from '../../utils/requests';
 import { log } from '../../utils/logging';
 import RelatedContent from '../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
@@ -58,43 +54,32 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    let result;
-    let markdown;
-    result = await getCacheItem(slug);
+    const assetList = await import('../../lib/asset-list.json')
+      .then((res) => res.default)
+      .catch(() => []);
+    const result = assetList.projects.find((l) => l?.slug === slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    if (!result) {
-      console.log(`${slug} not found on cache`);
-      const assetList = await import('../../lib/asset-list.json')
-        .then((res) => res.default)
-        .catch(() => []);
-      result = assetList.projects.find((l) => l?.slug === slug);
+    const engPrefix = {
+      us: 'en',
+      en: 'en',
+    };
 
-      const engPrefix = {
-        us: 'en',
-        en: 'en',
+    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
+
+    if (result.asset_type !== 'PROJECT' || !isCurrenLang) {
+      return {
+        notFound: true,
       };
-
-      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
-
-      if (result.asset_type !== 'PROJECT' || !isCurrenLang) {
-        return {
-          notFound: true,
-        };
-      }
-      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-      if (markdownResp.status >= 400) {
-        return {
-          notFound: true,
-        };
-      }
-      markdown = await markdownResp.text();
-
-      await setCacheItem(slug, { ...result, markdown });
-    } else {
-      markdown = result.markdown;
     }
+
+    if (!result.readme?.decoded) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const markdown = result.readme.decoded;
 
     const {
       title, description, translations, preview,

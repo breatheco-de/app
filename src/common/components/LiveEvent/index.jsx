@@ -233,15 +233,16 @@ function LiveEvent({
 
   useEffect(() => {
     let intervalVar;
-    // applyFilters();
     updateTimes();
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       updateTimes();
-      intervalVar = setInterval(updateTimes(), 60 * 1000);
+      intervalVar = setInterval(updateTimes, 60 * 1000);
     }, secondsToNextMinute * 1000);
+
     return () => {
       clearInterval(intervalVar);
+      clearTimeout(timeoutId);
     };
   }, [mainClasses, otherEvents]);
 

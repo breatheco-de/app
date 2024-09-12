@@ -60,7 +60,6 @@ function ContactInformation({
           showVerifyEmail={false}
           courseChoosed={courseChoosed}
           extraFields={['phone']}
-          // maxWidth="490px"
           maxWidth={{ base: 'auto', lg: '490px' }}
           onHandleSubmit={(data) => {
             setVerifyEmailProps({

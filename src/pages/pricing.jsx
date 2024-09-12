@@ -346,7 +346,7 @@ function PricingView() {
                       <Link
                         variant="buttonDefault"
                         borderRadius="3px"
-                        href={`/pricing?course=${course?.slug}`}
+                        href={`/${lang}/pricing?course=${course?.slug}`}
                         textAlign="center"
                         width="100%"
                         opacity="0.9"
