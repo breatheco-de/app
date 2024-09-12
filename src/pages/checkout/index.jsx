@@ -238,7 +238,6 @@ function Checkout() {
     reportDatalayer({
       dataLayer: {
         event: 'begin_checkout',
-        plan: defaultPlan,
         path: '/checkout',
         conversion_info: userSession,
       },

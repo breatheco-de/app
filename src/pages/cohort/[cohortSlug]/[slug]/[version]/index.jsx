@@ -35,6 +35,7 @@ import {
   includesToLowerCase,
   getStorageItem,
   sortToNearestTodayDate,
+  syncInterval,
   getBrowserSize,
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
@@ -265,6 +266,16 @@ function Dashboard() {
           },
         });
       });
+    syncInterval(() => {
+      setLiveClasses((prev) => {
+        const validatedEventList = prev?.length > 0
+          ? prev?.filter((l) => isValidDate(l?.starting_at) && isValidDate(l?.ending_at))
+          : [];
+        const sortDateToLiveClass = sortToNearestTodayDate(validatedEventList, TwelveHours);
+        const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.hash && l?.starting_at && l?.ending_at);
+        return existentLiveClasses;
+      });
+    });
   }, []);
 
   // Fetch cohort data with pathName structure

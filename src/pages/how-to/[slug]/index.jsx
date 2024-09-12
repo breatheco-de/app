@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-no-useless-fragment */
+/* eslint-disable no-continue */
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import {
@@ -18,9 +20,12 @@ import TagCapsule from '../../../common/components/TagCapsule';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
 import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
+// import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
 import useStyle from '../../../common/hooks/useStyle';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 
@@ -45,32 +50,43 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    const assetList = await import('../../../lib/asset-list.json')
-      .then((res) => res.default)
-      .catch(() => []);
-    const data = assetList.howTos.find((l) => l?.slug === slug);
-
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
-
-    const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
-
-    if (!isCurrenLang) {
-      return {
-        notFound: true,
-      };
-    }
+    let data;
+    let markdown;
+    data = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
+    if (!data) {
+      console.log(`${slug} not found on cache`);
+      const assetList = await import('../../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      data = assetList.howTos.find((l) => l?.slug === slug);
 
-    if (!data.readme?.decoded) {
-      return {
-        notFound: true,
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
-    }
 
-    const markdown = data.readme.decoded;
+      const isCurrenLang = locale === engPrefix[data?.lang] || locale === data?.lang;
+
+      if (!isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+
+      markdown = await markdownResp.text();
+      await setCacheItem(slug, { ...data, markdown });
+    } else {
+      markdown = data.markdown;
+    }
 
     const {
       title, description, translations, preview,
@@ -187,6 +203,17 @@ export default function HowToSlug({ data, markdown }) {
       <GridContainer gridTemplateColumns="4fr repeat(12, 1fr)" margin={{ base: '0 10px', md: '0 auto' }} gridGap="36px" padding={{ base: '', md: '0 10px' }}>
         <Box display={{ base: 'none', md: 'block' }} position={{ base: 'inherit', md: 'sticky' }} top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '6.2rem 0 0 0' }}>
           <MktSideRecommendedCourses technologies={data.technologies} />
+          {/* <DynamicCallToAction
+            assetId={data.id}
+            assetTechnologies={data.technologies?.map((item) => item?.slug)}
+            assetType={data.asset_type.toLowerCase()}
+            placement="side"
+            marginTop="40px"
+          />
+          <PodcastCallToAction
+            placement="side"
+            marginTop="40px"
+          /> */}
         </Box>
         <Box
           gridColumn="2 / span 12"

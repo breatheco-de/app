@@ -8,18 +8,10 @@ import { adjustNumberBeetwenMinMax } from '../../utils';
 import Heading from './Heading';
 import Icon from './Icon';
 
-function orderArrayByRole(array) {
-  return array.sort((a, b) => {
-    if (a.role === 'TEACHER') return -1;
-    if (b.role === 'TEACHER') return 1;
-    return 0;
-  });
-}
-
 function Instructors({ isLoading, list, limit, ...rest }) {
   const { t } = useTranslation('common');
   const { featuredColor } = useStyle();
-  const intructorsToShow = list.length > limit ? orderArrayByRole(list.slice(0, limit)) : orderArrayByRole(list);
+  const intructorsToShow = list.length > limit ? list.slice(0, limit) : list;
   const restInstructors = list.length - limit;
 
   return (

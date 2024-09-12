@@ -192,7 +192,7 @@ const useSignup = () => {
               value: selectedPlanCheckoutData?.price,
               currency,
               payment_type: 'Credit card',
-              plan: selectedPlanCheckoutData?.plan_slug,
+              plan: selectedPlanCheckoutData?.slug,
               period_label: selectedPlanCheckoutData?.period_label,
               items: simplePlans,
             },

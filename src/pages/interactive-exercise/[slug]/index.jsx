@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import {
   Box,
   useColorModeValue,
@@ -22,9 +23,14 @@ import useAuth from '../../../common/hooks/useAuth';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import MktRecommendedCourses from '../../../common/components/MktRecommendedCourses';
+// import DynamicCallToAction from '../../../common/components/DynamicCallToAction';
+// import PodcastCallToAction from '../../../common/components/PodcastCallToAction';
+// import CustomTheme from '../../../../styles/theme';
 import GridContainer from '../../../common/components/GridContainer';
+// import MktSideRecommendedCourses from '../../../common/components/MktSideRecommendedCourses';
 import { cleanObject, isWindow } from '../../../utils';
 import { ORIGIN_HOST } from '../../../utils/variables';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
@@ -54,31 +60,42 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
-    const assetList = await import('../../../lib/asset-list.json')
-      .then((res) => res.default)
-      .catch(() => []);
-
-    const result = assetList.excersises.find((l) => l?.slug === slug);
+    let result;
+    let markdown;
+    result = await getCacheItem(slug);
     const langPrefix = locale === 'en' ? '' : `/${result?.lang || locale}`;
 
-    const engPrefix = {
-      us: 'en',
-      en: 'en',
-    };
-    const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
-
-    if (result.asset_type !== 'EXERCISE' || !isCurrenLang) {
-      return {
-        notFound: true,
+    if (!result) {
+      console.log(`${slug} not found on cache`);
+      const assetList = await import('../../../lib/asset-list.json')
+        .then((res) => res.default)
+        .catch(() => []);
+      result = assetList.excersises.find((l) => l?.slug === slug);
+      const engPrefix = {
+        us: 'en',
+        en: 'en',
       };
-    }
+      const isCurrenLang = locale === engPrefix[result?.lang] || locale === result?.lang;
 
-    if (!result.readme?.decoded) {
-      return {
-        notFound: true,
-      };
+      if (result.asset_type !== 'EXERCISE' || !isCurrenLang) {
+        return {
+          notFound: true,
+        };
+      }
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, { ...result, markdown });
+    } else {
+      markdown = result.markdown;
     }
-    const markdown = result.readme.decoded;
 
     const {
       title, translations, description, preview,
@@ -338,6 +355,9 @@ function Exercise({ exercise, markdown }) {
         gridGap="36px"
         padding={{ base: '0 10px', md: '0' }}
       >
+        {/* <Box display={{ base: 'none', lg: 'grid' }} position="sticky" top="20px" height="fit-content" gridColumn="1 / span 1" margin={{ base: '0 0 40px', md: '1rem 0 0 0' }}>
+          <MktSideRecommendedCourses />
+        </Box> */}
         <Box display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
           <Box
             display={{ base: 'flex', md: 'none' }}
