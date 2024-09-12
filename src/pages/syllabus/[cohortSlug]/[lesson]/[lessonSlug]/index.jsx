@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link,
-  useColorModeValue, Modal, ModalOverlay,
+  useColorModeValue, Modal, ModalOverlay, useToast,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -42,6 +42,7 @@ import { log } from '../../../../../utils/logging';
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
+  const toast = useToast();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading } = useAuth();
@@ -82,6 +83,7 @@ function SyllabusContent() {
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState({});
+  const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortAssignments, getCohortData, prepareTasks, state,
@@ -593,8 +595,34 @@ function SyllabusContent() {
   };
 
   const openAiChat = async () => {
-    const resp = await bc.todo().postCompletionJob(currentTask.id);
-    console.log(resp);
+    try {
+      setIsLoadingRigobot(true);
+      const [completionResp, tokenResp] = await Promise.all([
+        bc.todo().postCompletionJob(currentTask.id),
+        bc.auth().temporalToken(),
+      ]);
+
+      const completionId = completionResp.data.id;
+      const temporalToken = tokenResp.data.token;
+
+      const { data } = await bc.rigobot().meToken(temporalToken);
+      const rigobotToken = data.key;
+
+      const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
+
+      window.open(aiChat, '_blank');
+    } catch (e) {
+      console.log(e);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-ai-chat'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoadingRigobot(false);
+    }
   };
 
   return (
@@ -1002,6 +1030,7 @@ function SyllabusContent() {
                       variant="default"
                       onClick={openAiChat}
                       style={{ color: fontColor, textDecoration: 'none' }}
+                      isLoading={isLoadingRigobot}
                     >
                       <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
                     </Button>

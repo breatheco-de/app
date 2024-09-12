@@ -366,6 +366,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
+      meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
     };
   },
 };

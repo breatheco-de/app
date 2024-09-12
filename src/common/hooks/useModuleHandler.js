@@ -43,7 +43,7 @@ function useModuleHandler() {
         toast({
           position: 'top',
           title: t('alert-message:assignment-update-error'),
-          status: 'errror',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
@@ -107,7 +107,7 @@ function useModuleHandler() {
         toast({
           position: 'top',
           title: t('alert-message:delivery-error'),
-          status: 'errror',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
