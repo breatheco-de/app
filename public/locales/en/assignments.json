@@ -97,6 +97,7 @@
     "waiting-for-review": "Waiting for review",
     "student-name": "Student {{name}}",
     "project-delivered": "Project delivered:",
+    "delivered-at": "Delivered at:",
     "your-teacher-said": "Your teacher said:",
     "feedback-will-be-shown-here": "The teacher's feedback will be shown here if it's approved",
     "read-code-reviews": "(Read code reviews)",

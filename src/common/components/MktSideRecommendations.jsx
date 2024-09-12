@@ -21,7 +21,7 @@ import { reportDatalayer } from '../../utils/requests';
 const defaultEndpoint = '/v1/marketing/course';
 const coursesLimit = 1;
 
-function Container({ course, courses, borderRadius, children, ...rest }) {
+function Container({ recommendation, recommendations, borderRadius, children, ...rest }) {
   const router = useRouter();
   const { fontColor } = useStyle();
   const bgColor = useColorModeValue('gray.light3', 'featuredDark');
@@ -31,25 +31,25 @@ function Container({ course, courses, borderRadius, children, ...rest }) {
 
   if (screenWidth < 768) {
     return (
-      <Link href={`${ORIGIN_HOST}${langConnector}/${course?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+      <Link href={`${ORIGIN_HOST}${langConnector}/${recommendation?.slug}`} _hover={{ textDecoration: 'none' }} minWidth={{ base: recommendations?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
         {children}
       </Link>
     );
   }
 
   return (
-    <Box minWidth={{ base: courses?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
+    <Box minWidth={{ base: recommendations?.length > 1 ? '285px' : '100%', md: 'auto' }} justifyContent="space-between" display="flex" flexDirection={{ base: 'row', md: 'column' }} gridGap="10px" background={bgColor} color={fontColor} borderRadius={borderRadius} {...rest}>
       {children}
     </Box>
   );
 }
 
-function MktSideRecommendedCourses({ title, endpoint, technologies, containerPadding, ...rest }) {
+function MktSideRecommendations({ title, endpoint, technologies, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const { hexColor } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  const [courses, setCourses] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const router = useRouter();
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
   const qs = parseQuerys({
@@ -64,49 +64,100 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   const technologiesList = technologies.map((tech) => tech?.slug || tech);
   const technologiesArray = typeof technologiesList === 'string' ? technologiesList.split(',') : technologiesList;
 
-  const fetchCourses = async () => {
-    try {
-      const res = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
-      const data = await res.json();
+  const fetchTutorials = async () => {
+    const response = await fetch(`${BREATHECODE_HOST}/v1/registry/asset?asset_type=EXERCISE&status=PUBLISHED&technologies=${technologiesArray.join(',')}`, { headers });
+    if (!response.ok) throw new Error(`Failed to fetch tutorials: ${response.statusText}`);
+    return response.json();
+  };
 
-      if (res?.status < 400 && data.length > 0) {
-        const coursesSorted = [];
-        for (let i = 0; i < technologiesArray.length; i += 1) {
-          const course = data.find((c) => c?.technologies?.includes(technologiesArray[i]) && c?.visibility !== 'UNLISTED');
-          const alreadyExists = coursesSorted.some((c) => c?.slug === course?.slug);
+  const filterMatchingTutorials = (tutorialsData) => tutorialsData.filter((tutorial) => {
+    const matchingTechnologies = tutorial.technologies.filter((tech) => technologiesArray.includes(tech));
+    return matchingTechnologies.length >= 2;
+  });
 
-          if (course && !alreadyExists) {
-            coursesSorted.push(course);
-          }
-        }
+  const sortAndSetRecommendations = (tutorials) => {
+    tutorials.sort((a, b) => {
+      const aMatches = a.technologies.filter((tech) => technologiesArray.includes(tech)).length;
+      const bMatches = b.technologies.filter((tech) => technologiesArray.includes(tech)).length;
+      return bMatches - aMatches;
+    });
+    setRecommendations([tutorials[0]]);
+  };
 
-        const list = coursesSorted?.length > 0 ? coursesSorted : data;
-        setIsLoading(false);
+  const fetchAndSetCourses = async () => {
+    const response = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
+    if (!response.ok) throw new Error(`Failed to fetch courses: ${response.statusText}`);
+    const coursesData = await response.json();
 
-        setCourses(list?.filter((course) => course?.course_translation && course?.visibility !== 'UNLISTED').slice(0, coursesLimit));
-      }
-    } catch (e) {
-      error(e);
+    if (coursesData.length > 0) {
+      const sortedCourses = coursesData.sort((a, b) => {
+        const aMatches = a.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
+        const bMatches = b.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
+        return bMatches - aMatches;
+      });
+      setRecommendations(sortedCourses.slice(0, coursesLimit));
     }
   };
 
+  const handleFetchError = (err) => {
+    error(err);
+    setIsLoading(false);
+  };
+
+  const fetchContent = async () => {
+    try {
+      const tutorialsData = await fetchTutorials();
+      const matchingTutorials = filterMatchingTutorials(tutorialsData);
+
+      if (matchingTutorials.length > 1) {
+        sortAndSetRecommendations(matchingTutorials);
+      } else {
+        await fetchAndSetCourses();
+      }
+
+      setIsLoading(false);
+    } catch (err) {
+      handleFetchError(err);
+    }
+  };
+
+  const getLink = (recommendation) => {
+    if (recommendation?.course_translation?.landing_url) return recommendation?.course_translation?.landing_url;
+    return `${ORIGIN_HOST}${langConnector}/interactive-exercise/${recommendation?.slug}`;
+  };
+
+  const getMainTechIcon = () => {
+    const techWithURL = technologies.find((tech) => tech.icon_url !== null);
+    return techWithURL.icon_url;
+  };
+
+  const determineIconBackgroundColor = (recom) => {
+    if (recom?.color) {
+      return recom.color;
+    }
+    if (recom?.icon_url) {
+      return 'green.400';
+    }
+    return 'gray.100';
+  };
+
   useEffect(() => {
-    fetchCourses();
+    fetchContent();
   }, []);
 
-  return courses?.length > 0 && (
+  return recommendations?.length > 0 && (
     <>
       <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding="10px 20px" bottom="0" position="sticky" marginBottom="20px" display={{ base: 'block', md: 'none' }} textAlign="left">
-        {courses.map((course) => {
-          const courseLink = course?.course_translation?.landing_url;
-          const link = courseLink || `${ORIGIN_HOST}${langConnector}/${course?.slug}`;
+        {recommendations.map((recom) => {
+          const recomLink = getLink(recom);
+          const link = `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}`;
 
           return (
             <>
               <Box display="flex" alignItems="center" gap="10px">
-                <Image src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background={course?.color || 'green.400'} />
+                <Image src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" color="white" background={determineIconBackgroundColor(recom)} />
                 <Heading as="span" size="18px">
-                  {course?.course_translation?.title}
+                  {recom?.course_translation?.title || recom.title}
                 </Heading>
               </Box>
               <Link
@@ -116,14 +167,14 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                   reportDatalayer({
                     dataLayer: {
                       event: 'ad_interaction',
-                      course_slug: course.slug,
-                      course_title: course.title,
+                      course_slug: recom.slug,
+                      course_title: recom?.course_translation?.title || recom.title,
                       ad_position: 'top-left',
                       ad_type: 'course',
                     },
                   });
                 }}
-                href={`${link}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${course?.slug}&internal_cta_campaign=null`}
+                href={link}
                 alignItems="center"
                 display="flex"
                 justifyContent="center"
@@ -148,30 +199,26 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
             {title || t('continue-learning-course')}
           </Heading>
         )}
-        {!isLoading && courses?.length > 0 ? (
+        {!isLoading ? (
           <Box display="flex" flexDirection={{ base: 'row', md: 'column' }} overflow="auto" gridGap="14px">
-            {courses.map((course) => {
-              const courseLink = course?.course_translation?.landing_url;
-              const link = courseLink || `${ORIGIN_HOST}${langConnector}/${course?.slug}`;
-              // const tags = course?.technologies?.length > 0 && typeof course?.technologies === 'string'
-              //   ? course?.technologies?.split(',').map((tag) => toCapitalize(tag?.trim()))
-              //   : [];
+            {recommendations.map((recom) => {
+              const recomLink = getLink(recom);
+              const link = `${recomLink}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${recom?.slug}`;
               const tags = [];
-              // const tags = ['Free course'];
 
               return (
-                <Container border="1px solid" borderColor={{ base: 'default', md: 'success' }} key={course?.slug} course={course} courses={courses} borderRadius={rest.borderRadius} padding={containerPadding}>
+                <Container border="1px solid" borderColor={{ base: 'default', md: 'success' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                   <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
 
-                    <Image display={{ base: 'none', md: 'inherit' }} src={course?.icon_url} width="46px" height="46px" borderRadius="8px" background={course?.color || 'green.400'} />
-                    <Heading as="span" size="18px">
-                      {course?.course_translation?.title}
+                    <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '5px'} background={determineIconBackgroundColor(recom)} />
+                    <Heading as="span" size="18px" padding={recom?.icon_url ? '0' : '0 20px'}>
+                      {recom?.course_translation?.title || recom.title}
                     </Heading>
                   </Box>
                   <Text display={{ base: 'none', md: 'inherit' }} fontSize="12px" lineHeight="14px" padding="0 20px">
-                    {course?.course_translation?.description || course?.course_translation?.short_description}
+                    {recom?.course_translation?.description || recom?.course_translation?.short_description || recom.description}
                   </Text>
                   <Link
                     variant={{ base: '', md: 'buttonDefault' }}
@@ -180,14 +227,14 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
                       reportDatalayer({
                         dataLayer: {
                           event: 'ad_interaction',
-                          course_slug: course.slug,
-                          course_title: course.title,
+                          course_slug: recom.slug,
+                          course_title: recom?.course_translation?.title ? recom.course_translation.title : recom.title,
                           ad_position: 'top-left',
                           ad_type: 'course',
                         },
                       });
                     }}
-                    href={`${link}?internal_cta_placement=mktsiderecommendedcourses&internal_cta_content=${course?.slug}&internal_cta_campaign=null`}
+                    href={link}
                     alignItems="center"
                     display="flex"
                     colorScheme={{ base: 'default', md: 'success' }}
@@ -213,14 +260,14 @@ function MktSideRecommendedCourses({ title, endpoint, technologies, containerPad
   );
 }
 
-MktSideRecommendedCourses.propTypes = {
+MktSideRecommendations.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
   endpoint: PropTypes.string,
   containerPadding: PropTypes.string,
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
 };
 
-MktSideRecommendedCourses.defaultProps = {
+MktSideRecommendations.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
   containerPadding: '9px 8px',
@@ -228,16 +275,16 @@ MktSideRecommendedCourses.defaultProps = {
 };
 
 Container.propTypes = {
-  course: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
-  courses: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  recommendation: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
+  recommendations: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.objectOf(PropTypes.any), PropTypes.string])),
   children: PropTypes.node.isRequired,
   borderRadius: PropTypes.string,
 };
 
 Container.defaultProps = {
-  course: {},
-  courses: [],
+  recommendation: {},
+  recommendations: [],
   borderRadius: '8px',
 };
 
-export default MktSideRecommendedCourses;
+export default MktSideRecommendations;
