@@ -377,11 +377,6 @@ function SyllabusContent() {
     id: 3,
   }] : [];
 
-  console.log('sortedAssignments');
-  console.log(sortedAssignments);
-  console.log('filteredCurrentAssignments');
-  console.log(filteredCurrentAssignments);
-
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
     const prevIndex = currentIndex - 1;
