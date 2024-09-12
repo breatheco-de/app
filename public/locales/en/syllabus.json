@@ -30,5 +30,6 @@
   "start-next-module": "Yes, let's start the next module",
   "superseded-message": "This lesson belongs to the legacy archive, we recommend reading a more updated version:",
   "solution-message": "This project includes a model solution that you can review if you need additional guidance.",
-  "open-solution": "Click here to review the model solution"
+  "open-solution": "Click here to review the model solution",
+  "click-to-review": "Click here to review the solution."
 }
