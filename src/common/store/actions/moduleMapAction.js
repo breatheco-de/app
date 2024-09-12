@@ -32,11 +32,27 @@ const useModuleMap = () => {
     });
   };
 
+  const setNextModule = (payload) => {
+    dispatch({
+      type: 'CHANGE_NEXT_MODULE',
+      payload,
+    });
+  };
+
+  const setPrevModule = (payload) => {
+    dispatch({
+      type: 'CHANGE_PREV_MODULE',
+      payload,
+    });
+  };
+
   return {
     setTaskTodo,
     setCohortProgram,
     setCurrentTask,
     setSubTasks,
+    setNextModule,
+    setPrevModule,
     state,
   };
 };

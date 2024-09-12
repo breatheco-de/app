@@ -9,14 +9,16 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
 
 function Timeline({
-  title, assignments, technologies, width, onClickAssignment, showPendingTasks,
+  title, assignments, technologies, width, onClickAssignment, showPendingTasks, variant,
 }) {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
+  const { hexColor, fontColor, backgroundColor } = useStyle();
   const { lessonSlug } = router.query;
   const [currentAssignment, setCurrentAssignment] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
@@ -62,6 +64,52 @@ function Timeline({
     return lang === 'en' ? (item?.translations?.en?.title || item?.translations?.us?.title)
       : (item?.translations?.[lang]?.title || item?.title);
   };
+
+  if (variant === 'guided-experience') {
+    return (
+      <Box>
+        {assignments.length > 0 ? assignments.map((item, index) => {
+          const mapIndex = index;
+          const muted = item?.slug !== currentAssignment?.slug;
+          const assignmentTitle = getAssignmentTitle(item);
+
+          return (
+            <Box
+              key={`${item?.id}-${mapIndex}`}
+              id={item.slug}
+              cursor="pointer"
+              onClick={(e) => handleClick(e, item)}
+              width="100%"
+              borderRadius="0px 8px 8px 0px "
+              bg={!muted ? backgroundColor : 'none'}
+              borderLeft={!muted && `4px solid ${hexColor.blueDefault}`}
+              padding="16px"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              gap="5px"
+            >
+              <Box>
+                <Flex gap="10px" mb="10px">
+                  <Text size="md" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
+                  <Icon width="20px" height="20px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
+                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{item.type}</Text>
+                </Flex>
+                <Text size="l" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
+              </Box>
+              {item.task_status === 'DONE' && (
+                <Icon icon="checked2" color={hexColor.green} />
+              )}
+            </Box>
+          );
+        }) : (
+          <Text size="sm" margin={0} color={fontColor2} textAlign="left">
+            {showPendingTasks ? t('no-modules-to-show') : t('module-not-started')}
+          </Text>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -147,6 +195,7 @@ Timeline.propTypes = {
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
+  variant: PropTypes.string,
 };
 
 Timeline.defaultProps = {
@@ -156,6 +205,7 @@ Timeline.defaultProps = {
   width: '100%',
   onClickAssignment: () => {},
   showPendingTasks: false,
+  variant: '',
 };
 
 export default memo(Timeline);

@@ -30,7 +30,7 @@ export const getSlideProps = (open) => {
     minWidth: '290px',
     zIndex: 1200,
     position: isBelowLaptop ? 'inherit' : 'sticky',
-    backgroundColor: Config().bgColor,
+    background: Config().bgColor,
     top: 0,
     left: 0,
     display: 'flex',

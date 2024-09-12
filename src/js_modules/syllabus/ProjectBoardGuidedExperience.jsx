@@ -191,7 +191,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
         zIndex="20"
         background={backgroundColor4}
         position="sticky"
-        top="0"
+        top="-1px"
         // margin={{ base: '-1.5rem -10px 0 -10px', md: '-1.5rem -2rem 0 -2rem' }}
         borderBottom="1px solid #BBE5FE"
         padding="15px"
@@ -206,8 +206,8 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
           </Heading>
         </Box>
         <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
-          <Icon icon="layout" color={hexColor.blue} />
-          {t('back-to-board')}
+          <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
+          {t('back-to-top')}
         </Button>
       </Box>
     </>

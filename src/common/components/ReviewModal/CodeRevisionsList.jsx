@@ -41,12 +41,18 @@ function CodeRevisionsList({ codeRevisions, revisionContent, selectCodeRevision,
             </Flex>
 
             <Flex flex={0.3} justifyContent="center" alignItems="center">
-              <Flex width="auto" position="relative" justifyContent="center">
-                <Box position="absolute" top={-1.5} right={-2} background={hasBeenReviewed ? 'success' : 'yellow.default'} fontSize="10px" padding="3px" fontWeight={700} height="auto" borderRadius="50%">
-                  <Icon icon={hasBeenReviewed ? 'verified2' : 'asterisk'} width="8px" height="8px" />
+              {hasBeenReviewed ? (
+                <Box background={commit.is_good ? hexColor.greenLight3 : 'red.light'} borderRadius="full">
+                  <Icon icon={`feedback-${commit.is_good ? 'like' : 'dislike'}`} width="20px" height="20px" />
                 </Box>
-                <Icon icon="code-comment" width="20px" height="20px" color={hexColor.black} />
-              </Flex>
+              ) : (
+                <Flex width="auto" position="relative" justifyContent="center">
+                  <Box position="absolute" top={-1.5} right={-2} background="yellow.default" fontSize="10px" padding="3px" fontWeight={700} height="auto" borderRadius="50%">
+                    <Icon icon="asterisk" width="8px" height="8px" />
+                  </Box>
+                  <Icon icon="code-comment" width="20px" height="20px" color={hexColor.black} />
+                </Flex>
+              )}
             </Flex>
             <Button
               variant="link"

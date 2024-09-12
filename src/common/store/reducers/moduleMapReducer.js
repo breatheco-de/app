@@ -3,6 +3,8 @@ const initialState = {
   taskTodo: [],
   currentTask: null,
   subTasks: [],
+  nextModule: null,
+  prevModule: null,
 };
 
 const moduleMapReducer = (state = initialState, action) => {
@@ -26,6 +28,16 @@ const moduleMapReducer = (state = initialState, action) => {
       return {
         ...state,
         subTasks: action.payload,
+      };
+    case 'CHANGE_NEXT_MODULE':
+      return {
+        ...state,
+        nextModule: action.payload,
+      };
+    case 'CHANGE_PREV_MODULE':
+      return {
+        ...state,
+        prevModule: action.payload,
       };
     default:
       return state;

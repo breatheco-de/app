@@ -7,7 +7,7 @@ import { reportDatalayer } from '../../utils/requests';
 function useModuleHandler() {
   const { t } = useTranslation('alert-message');
   const toast = useToast();
-  const { setTaskTodo, setCohortProgram, state, setCurrentTask, setSubTasks } = useModuleMap();
+  const { setTaskTodo, setCohortProgram, state, setCurrentTask, setSubTasks, setNextModule, setPrevModule } = useModuleMap();
   const { taskTodo } = state;
 
   const updateAssignment = async ({
@@ -157,6 +157,8 @@ function useModuleHandler() {
     setCohortProgram,
     setCurrentTask,
     setSubTasks,
+    setNextModule,
+    setPrevModule,
     ...state,
   };
 }

@@ -13,12 +13,12 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
 function TimelineSidebar({
-  filteredEmptyModules, onClickAssignment, showPendingTasks, setShowPendingTasks,
+  onClickAssignment, showPendingTasks, setShowPendingTasks,
   isOpen, onToggle, isStudent, teacherInstructions,
 }) {
   const { t } = useTranslation('syllabus');
   const { state } = useCohortHandler();
-  const { cohortSession } = state;
+  const { cohortSession, sortedAssignments } = state;
   const Open = !isOpen;
   const slide = getSlideProps(Open);
   const {
@@ -136,7 +136,7 @@ function TimelineSidebar({
 
               </Box>
             )}
-            {filteredEmptyModules.length > 0 && filteredEmptyModules.map((section) => {
+            {sortedAssignments.length > 0 && sortedAssignments.map((section) => {
               const currentAssignments = showPendingTasks
                 ? section.filteredModulesByPending
                 : section.filteredModules;
@@ -167,7 +167,6 @@ function TimelineSidebar({
 }
 
 TimelineSidebar.propTypes = {
-  filteredEmptyModules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
   isOpen: PropTypes.bool,
@@ -177,7 +176,6 @@ TimelineSidebar.propTypes = {
   teacherInstructions: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 TimelineSidebar.defaultProps = {
-  filteredEmptyModules: [],
   onClickAssignment: () => {},
   showPendingTasks: false,
   isOpen: false,

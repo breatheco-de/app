@@ -39,13 +39,25 @@ import { ORIGIN_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
-function Content() {
+function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading } = useAuth();
-  const { taskTodo, cohortProgram, setTaskTodo, startDay, updateAssignment, setCurrentTask, currentTask } = useModuleHandler();
+  const {
+    taskTodo,
+    cohortProgram,
+    setTaskTodo,
+    startDay,
+    updateAssignment,
+    setCurrentTask,
+    currentTask,
+    nextModule,
+    setNextModule,
+    prevModule,
+    setPrevModule,
+  } = useModuleHandler();
   const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
@@ -57,8 +69,6 @@ function Content() {
   const [extendedIsEnabled, setExtendedIsEnabled] = useState(false);
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [currentSelectedModule, setCurrentSelectedModule] = useState(null);
-  const [nextModule, setNextModule] = useState(null);
-  const [prevModule, setPrevModule] = useState(null);
   const [openNextModuleModal, setOpenNextModuleModal] = useState(false);
   const [quizSlug, setQuizSlug] = useState(null);
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
@@ -89,10 +99,6 @@ function Content() {
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
-  const filteredEmptyModules = sortedAssignments.filter(
-    (assignment) => assignment.modules.length > 0,
-  );
-
   const firstTask = nextModule?.modules[0];
   const lastPrevTask = prevModule?.modules && prevModule.modules[prevModule.modules.length - 1];
 
@@ -107,19 +113,13 @@ function Content() {
   const isProject = lesson === 'project';
   const isLesson = lesson === 'read';
 
-  const filteredCurrentAssignments = filteredEmptyModules.map((section) => {
-    const currentAssignments = showPendingTasks
-      ? section.filteredModulesByPending
-      : section.filteredModules;
-    return currentAssignments;
-  });
+  const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
+    ? section.filteredModulesByPending
+    : section.filteredModules));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => {
-    const currIndex = s?.some((l) => l.slug === lessonSlug);
-    return currIndex;
-  });
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug));
 
-  const currentModule = filteredEmptyModules[currentModuleIndex];
+  const currentModule = sortedAssignments[currentModuleIndex];
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -246,7 +246,7 @@ function Content() {
   };
 
   useEffect(() => {
-    const currTask = filteredEmptyModules[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
+    const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const englishTaskUrls = {
       en: currTask?.translations?.en,
       us: currTask?.translations?.us,
@@ -376,6 +376,11 @@ function Content() {
     actionHandler: () => setShowSolutionVideo(!showSolutionVideo),
     id: 3,
   }] : [];
+
+  console.log('sortedAssignments');
+  console.log(sortedAssignments);
+  console.log('filteredCurrentAssignments');
+  console.log(filteredCurrentAssignments);
 
   const previousAssignment = filteredCurrentAssignments.map((section) => {
     const currentIndex = section.findIndex((l) => l.slug === lessonSlug);
@@ -592,6 +597,11 @@ function Content() {
     };
   };
 
+  const openAiChat = async () => {
+    const resp = await bc.todo().postCompletionJob(currentTask.id);
+    console.log(resp);
+  };
+
   return (
     <>
       <Head>
@@ -628,7 +638,6 @@ function Content() {
         {isAvailableAsSaas ? (
           <GuidedExperienceSidebar
             currentModuleIndex={currentModuleIndex}
-            filteredEmptyModules={filteredEmptyModules}
             onClickAssignment={onClickAssignment}
             isOpen={isOpen}
             onToggle={onToggle}
@@ -636,7 +645,6 @@ function Content() {
           />
         ) : (
           <TimelineSidebar
-            filteredEmptyModules={filteredEmptyModules}
             onClickAssignment={onClickAssignment}
             showPendingTasks={showPendingTasks}
             setShowPendingTasks={setShowPendingTasks}
@@ -669,7 +677,7 @@ function Content() {
             width="100%"
             maxWidth="1280px"
           >
-            {/* {isAvailableAsSaas && (
+            {isAvailableAsSaas && (
               <Box margin="15px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
                   aria-label="Close Timeline"
@@ -729,7 +737,7 @@ function Content() {
                   )}
                 </Box>
               </Box>
-            )} */}
+            )}
             {isExercise && isAvailableAsSaas && currentAsset?.id ? (
               <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
             ) : (
@@ -761,73 +769,6 @@ function Content() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {extendedInstructions !== null && (
-                    <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
-                      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
-                        <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
-                          {`${t('teacherSidebar.instructions')}:`}
-                        </Heading>
-                        {sortedAssignments.length > 0 && (
-                          <ReactSelect
-                            unstyled
-                            color="#0097CD"
-                            fontWeight="700"
-                            id="cohort-select"
-                            fontSize="25px"
-                            placeholder={t('common:select-cohort')}
-                            noOptionsMessage={() => t('common:no-options-message')}
-                            defaultValue={{
-                              value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
-                              slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
-                              label: selectedSyllabus?.id
-                                ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label}`
-                                : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label}`,
-                            }}
-                            onChange={({ value }) => {
-                              setCurrentSelectedModule(parseInt(value, 10));
-                            }}
-                            options={sortedAssignments.map((module) => ({
-                              value: module?.id,
-                              slug: module.slug,
-                              label: `#${module?.id} - ${module?.label}`,
-                            }))}
-                          />
-                        )}
-                      </Box>
-
-                      {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-                        <AlertMessage
-                          type="info"
-                          style={{
-                            margin: '20px 0 18px 0',
-                          }}
-                          dangerouslySetInnerHTML
-                          title={t('teacherSidebar.no-need-to-teach-today.title')}
-                          message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-                        />
-                      )}
-                      {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-                        <AlertMessage
-                          type="warning"
-                          style={{
-                            margin: '20px 0 18px 0',
-                          }}
-                          message={t('teacherSidebar.alert-updated-module-instructions')}
-                        />
-                      )}
-
-                      <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
-                        <Heading as="h2" size="sm" style={{ margin: '0' }}>
-                          {`${label} - `}
-                          {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
-                        </Heading>
-                        <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
-                          {teacherInstructions}
-                        </Text>
-                      </Box>
-                      <MarkDownParser content={extendedInstructions?.content || ''} />
-                    </SimpleModal>
-                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
@@ -1051,47 +992,24 @@ function Content() {
               </Box>
             )}
             {isAvailableAsSaas && (
-              <Box mt="20px" justifyContent="space-between" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
-                {(previousAssignment || !!prevModule) && (
-                  <Box
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="15px"
-                    display="flex"
-                    alignItems="center"
-                    gridGap="10px"
-                    letterSpacing="0.05em"
-                    fontWeight="700"
-                    onClick={prevPage}
-                  >
-                    <Box
-                      as="span"
-                      display="block"
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                    </Box>
-                    {t('previous-page')}
-                  </Box>
-                )}
+              <Box mt="20px" justifyContent="center" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
                 {(isLesson || isProject) && (
                   <Box display="flex" flexDirection="column" alignItems="center">
-                    <Link
+                    <Button
                       display="flex"
                       flexDirection="column"
                       justifyContent="center"
-                      target="_blank"
-                      rel="noopener noreferrer"
                       width="60px"
                       height="60px"
                       background={backgroundColor}
                       padding="12px"
                       borderRadius="full"
                       variant="default"
-                      href={repoUrl}
+                      onClick={openAiChat}
                       style={{ color: fontColor, textDecoration: 'none' }}
                     >
                       <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                    </Link>
+                    </Button>
                     <Text mt="10px" size="md">
                       {t('get-help')}
                     </Text>
@@ -1169,28 +1087,6 @@ function Content() {
                     onlyModal
                     withParty
                   />
-                )}
-                {(nextAssignment || !!nextModule) && (
-                  <Box
-                    color="blue.default"
-                    cursor="pointer"
-                    fontSize="15px"
-                    display="flex"
-                    alignItems="center"
-                    gridGap="10px"
-                    letterSpacing="0.05em"
-                    fontWeight="700"
-                    onClick={nextPage}
-                  >
-                    {t('next-page')}
-                    <Box
-                      as="span"
-                      display="block"
-                      transform="rotate(180deg)"
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                    </Box>
-                  </Box>
                 )}
               </Box>
             )}
@@ -1296,8 +1192,75 @@ function Content() {
           </ModalBody>
         </ModalContent>
       </Modal>
+      {extendedInstructions !== null && (
+        <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>
+            <Heading size="m" style={{ margin: '0' }} padding={{ base: '0', md: '0 0 5px 0 !important' }}>
+              {`${t('teacherSidebar.instructions')}:`}
+            </Heading>
+            {sortedAssignments.length > 0 && (
+              <ReactSelect
+                unstyled
+                color="#0097CD"
+                fontWeight="700"
+                id="cohort-select"
+                fontSize="25px"
+                placeholder={t('common:select-cohort')}
+                noOptionsMessage={() => t('common:no-options-message')}
+                defaultValue={{
+                  value: selectedSyllabus?.id || defaultSelectedSyllabus?.id,
+                  slug: selectedSyllabus?.slug || defaultSelectedSyllabus?.slug,
+                  label: selectedSyllabus?.id
+                    ? `#${selectedSyllabus?.id} - ${selectedSyllabus?.label}`
+                    : `#${defaultSelectedSyllabus?.id} - ${defaultSelectedSyllabus?.label}`,
+                }}
+                onChange={({ value }) => {
+                  setCurrentSelectedModule(parseInt(value, 10));
+                }}
+                options={sortedAssignments.map((module) => ({
+                  value: module?.id,
+                  slug: module.slug,
+                  label: `#${module?.id} - ${module?.label}`,
+                }))}
+              />
+            )}
+          </Box>
+
+          {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
+          <AlertMessage
+            type="info"
+            style={{
+              margin: '20px 0 18px 0',
+            }}
+            dangerouslySetInnerHTML
+            title={t('teacherSidebar.no-need-to-teach-today.title')}
+            message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
+          />
+          )}
+          {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
+          <AlertMessage
+            type="warning"
+            style={{
+              margin: '20px 0 18px 0',
+            }}
+            message={t('teacherSidebar.alert-updated-module-instructions')}
+          />
+          )}
+
+          <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
+            <Heading as="h2" size="sm" style={{ margin: '0' }}>
+              {`${label} - `}
+              {t('teacherSidebar.module-duration', { duration: selectedSyllabus?.duration_in_days || currentModule?.duration_in_days || 1 })}
+            </Heading>
+            <Text size="15px" letterSpacing="0.05em" style={{ margin: '0' }}>
+              {teacherInstructions}
+            </Text>
+          </Box>
+          <MarkDownParser content={extendedInstructions?.content || ''} />
+        </SimpleModal>
+      )}
     </>
   );
 }
 
-export default asPrivate(Content);
+export default asPrivate(SyllabusContent);
