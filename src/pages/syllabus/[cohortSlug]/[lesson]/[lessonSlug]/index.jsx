@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link,
-  useColorModeValue, Modal, ModalOverlay, useToast,
+  useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
   ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -1017,7 +1017,7 @@ function SyllabusContent() {
             {isAvailableAsSaas && (
               <Box mt="20px" justifyContent="center" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
                 {(isLesson || isProject) && (
-                  <Box display="flex" flexDirection="column" alignItems="center">
+                  <Tooltip label={t('get-help')} placement="top">
                     <Button
                       display="flex"
                       flexDirection="column"
@@ -1034,13 +1034,10 @@ function SyllabusContent() {
                     >
                       <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
                     </Button>
-                    <Text mt="10px" size="md">
-                      {t('get-help')}
-                    </Text>
-                  </Box>
+                  </Tooltip>
                 )}
                 {repoUrl && (isLesson || isProject) && (
-                  <Box display="flex" flexDirection="column" alignItems="center">
+                  <Tooltip label={t('contribute')} placement="top">
                     <Link
                       display="flex"
                       flexDirection="column"
@@ -1058,13 +1055,10 @@ function SyllabusContent() {
                     >
                       <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
                     </Link>
-                    <Text mt="10px" size="md">
-                      {t('contribute')}
-                    </Text>
-                  </Box>
+                  </Tooltip>
                 )}
                 {isLesson && currentAsset?.intro_video_url && (
-                  <Box display="flex" flexDirection="column" alignItems="center">
+                  <Tooltip label={t('watch-intro')} placement="top">
                     <Button
                       display="flex"
                       flexDirection="column"
@@ -1079,10 +1073,7 @@ function SyllabusContent() {
                     >
                       <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
                     </Button>
-                    <Text mt="10px" size="md">
-                      {t('watch-intro')}
-                    </Text>
-                  </Box>
+                  </Tooltip>
                 )}
                 {!isExercise && (
                   <ButtonHandlerByTaskStatus

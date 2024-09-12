@@ -1,12 +1,11 @@
 import {
-  Button, Box,
+  Button, Tooltip,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import useStyle from '../../common/hooks/useStyle';
 import ReviewModal from '../../common/components/ReviewModal';
 import Icon from '../../common/components/Icon';
-import Text from '../../common/components/Text';
 import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../common/components/PopoverTaskHandler';
 
 export function ButtonHandlerByTaskStatus({
@@ -138,7 +137,7 @@ export function ButtonHandlerByTaskStatus({
 
   if (isGuidedExperience) {
     return (
-      <Box display="flex" flexDirection="column" alignItems="center">
+      <Tooltip label={textAndIcon.text} placement="top">
         <Button
           isLoading={loaders.isChangingTaskStatus}
           onClick={handleTaskButton}
@@ -153,10 +152,7 @@ export function ButtonHandlerByTaskStatus({
         >
           <Icon {...textAndIcon.icon} />
         </Button>
-        <Text mt="10px" size="md">
-          {textAndIcon.text}
-        </Text>
-      </Box>
+      </Tooltip>
     );
   }
 

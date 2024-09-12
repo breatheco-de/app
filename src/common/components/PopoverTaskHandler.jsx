@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Box, PopoverArrow, Text, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger } from '@chakra-ui/react';
+import { Box, PopoverArrow, Text, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -479,7 +479,7 @@ function PopoverTaskHandler({
         trigger="click"
       >
         <PopoverTrigger>
-          <Box display="flex" flexDirection="column" alignItems="center">
+          <Tooltip label={textAndIcon.text} placement="top">
             <Button
               display="flex"
               isLoading={isLoading}
@@ -495,10 +495,7 @@ function PopoverTaskHandler({
             >
               <Icon {...textAndIcon.icon} />
             </Button>
-            <Text mt="10px" size="md">
-              {textAndIcon.text}
-            </Text>
-          </Box>
+          </Tooltip>
         </PopoverTrigger>
 
         <PopoverCustomContent
