@@ -89,6 +89,7 @@ function SyllabusContent() {
     getCohortAssignments, getCohortData, prepareTasks, state,
   } = useCohortHandler();
   const { cohortSession, sortedAssignments } = state;
+  // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
   const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
@@ -630,24 +631,7 @@ function SyllabusContent() {
       <Head>
         <title>{currentAsset?.title || '4Geeks'}</title>
       </Head>
-      <Flex background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
-        <ModalInfo
-          isOpen={openTargetBlankModal}
-          onClose={() => setOpenTargetBlankModal(false)}
-          title={t('dashboard:modules.target-blank-title')}
-          isReadonly
-          description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
-          link={inputModalLink}
-          handlerText={t('common:open')}
-          closeText={t('common:close')}
-          closeButtonVariant="outline"
-          actionHandler={() => {
-            setOpenTargetBlankModal(false);
-            if (currentBlankProps && currentBlankProps.target === 'blank') {
-              window.open(currentBlankProps.url, '_blank');
-            }
-          }}
-        />
+      <Flex className="flex-container" minHeight="93vh" background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
         <StickySideBar
           width="auto"
           menu={[
@@ -695,13 +679,13 @@ function SyllabusContent() {
           )}
           <Box
             margin="0 auto 0 auto"
-            mt="25px"
+            mt={!isAvailableAsSaas && '25px'}
             padding={{ base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
             width="100%"
             maxWidth="1280px"
           >
             {isAvailableAsSaas && (
-              <Box margin="15px 0" display="flex" alignItems="center" justifyContent="space-between">
+              <Box margin="5px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
                   aria-label="Close Timeline"
                   display="flex"
@@ -1207,6 +1191,23 @@ function SyllabusContent() {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <ModalInfo
+        isOpen={openTargetBlankModal}
+        onClose={() => setOpenTargetBlankModal(false)}
+        title={t('dashboard:modules.target-blank-title')}
+        isReadonly
+        description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
+        link={inputModalLink}
+        handlerText={t('common:open')}
+        closeText={t('common:close')}
+        closeButtonVariant="outline"
+        actionHandler={() => {
+          setOpenTargetBlankModal(false);
+          if (currentBlankProps && currentBlankProps.target === 'blank') {
+            window.open(currentBlankProps.url, '_blank');
+          }
+        }}
+      />
       {extendedInstructions !== null && (
         <SimpleModal isOpen={extendedIsEnabled} onClose={() => setExtendedIsEnabled(false)} padding="2rem 0 2rem 0" style={{ margin: '3rem 0' }}>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '0', md: '10px' }} alignItems={{ base: 'start', md: 'center' }}>

@@ -91,11 +91,11 @@ function Timeline({
             >
               <Box>
                 <Flex gap="10px" mb="10px">
-                  <Text size="md" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
-                  <Icon width="20px" height="20px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
+                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
+                  <Icon width="16px" height="16px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
                   <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{item.type}</Text>
                 </Flex>
-                <Text size="l" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
+                <Text size="sm" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
               </Box>
               {item.task_status === 'DONE' && (
                 <Icon icon="checked2" color={hexColor.green} />
