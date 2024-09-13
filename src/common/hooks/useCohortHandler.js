@@ -149,11 +149,11 @@ function useCohortHandler() {
 
   // Sort all data fetched in order of taskTodo
   const prepareTasks = () => {
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules || [];
+    const moduleData = cohortProgram?.json?.days || cohortProgram?.json?.modules || [];
     const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
-    if (cohortProgram.json && taskTodo) {
+    if (cohortProgram?.json && taskTodo) {
       moduleData.forEach((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,

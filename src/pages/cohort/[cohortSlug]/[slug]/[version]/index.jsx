@@ -451,9 +451,9 @@ function Dashboard() {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
+            {(cohortSession?.syllabus_version?.name || cohortProgram?.name) ? (
               <Heading as="h1" size="xl">
-                {cohortSession?.syllabus_version?.name || cohortProgram?.name}
+                {cohortSession?.syllabus_version?.name || cohortProgram.name}
               </Heading>
             ) : (
               <Skeleton
