@@ -133,6 +133,7 @@ function MentorshipSchedule() {
     const allConsumables = await Promise.all(reqConsumables);
 
     setConsumables(allConsumables);
+    console.log(allConsumables);
     setAllMentorsAvailable(mentors);
   };
 
