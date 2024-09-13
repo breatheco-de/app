@@ -1004,8 +1004,8 @@ function SyllabusContent() {
                             display="flex"
                             flexDirection="column"
                             justifyContent="center"
-                            width="60px"
-                            height="60px"
+                            width="40px"
+                            height="40px"
                             background={backgroundColor}
                             padding="12px"
                             borderRadius="full"
@@ -1026,10 +1026,9 @@ function SyllabusContent() {
                             justifyContent="center"
                             target="_blank"
                             rel="noopener noreferrer"
-                            width="60px"
-                            height="60px"
+                            width="40px"
+                            height="40px"
                             background={backgroundColor}
-                            padding="12px"
                             borderRadius="full"
                             variant="default"
                             href={repoUrl}
@@ -1045,8 +1044,8 @@ function SyllabusContent() {
                             display="flex"
                             flexDirection="column"
                             justifyContent="center"
-                            width="60px"
-                            height="60px"
+                            width="40px"
+                            height="40px"
                             background={backgroundColor}
                             padding="12px"
                             borderRadius="full"

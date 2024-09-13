@@ -142,10 +142,10 @@ export function ButtonHandlerByTaskStatus({
           isLoading={loaders.isChangingTaskStatus}
           onClick={handleTaskButton}
           isDisabled={isButtonDisabled}
-          width="60px"
-          height="60px"
+          width="40px"
+          height="40px"
           background={hexColor.blueDefault}
-          padding="24px"
+          padding="20px"
           borderRadius="full"
           variant="default"
           gridGap="12px"
