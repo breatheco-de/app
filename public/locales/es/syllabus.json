@@ -54,5 +54,6 @@
   "total-time": "Tiempo total",
   "successful-compiles": "Compilaciones exitosas",
   "successful-tests": "Pasos exitosos",
-  "total-errors": "Total de errores"
+  "total-errors": "Total de errores",
+  "click-to-review": "Pincha aquí para revisar la solución."
 }

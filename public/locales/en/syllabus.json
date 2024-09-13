@@ -54,5 +54,6 @@
   "total-time": "Total time worked on this package",
   "successful-compiles": "Succesfull compiles",
   "successful-tests": "Succesfull tests",
-  "total-errors": "Total errors"
+  "total-errors": "Total errors",
+  "click-to-review": "Click here to review the solution."
 }

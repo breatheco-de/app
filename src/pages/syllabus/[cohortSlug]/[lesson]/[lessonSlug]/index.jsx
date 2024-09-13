@@ -198,7 +198,7 @@ function SyllabusContent() {
     }
   };
 
-  const handleOpen = async (onOpen = () => {}) => {
+  const handleOpen = async (onOpen = () => { }) => {
     if (currentTask && currentTask?.task_type === 'PROJECT' && currentTask.task_status === 'DONE') {
       if (typeof currentAsset?.delivery_formats === 'string' && !currentAsset?.delivery_formats.includes('url')) {
         const fileResp = await bc.todo().getFile({ id: currentTask.id, academyId: cohortSession?.academy?.id });
