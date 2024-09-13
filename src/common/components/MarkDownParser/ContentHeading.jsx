@@ -44,7 +44,7 @@ function ContentHeading({
         >
           <Box display="flex" width={{ base: 'auto', md: 'calc(100% - 182px)' }} gridGap="16px" alignItems="center">
             <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color="#0097CD" width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
-            <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
+            <Heading size={isGuidedExperience ? 'xsm' : 'm'} display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
               {title}
             </Heading>
           </Box>

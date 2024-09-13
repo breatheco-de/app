@@ -92,7 +92,7 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, backgroundColor4, hexColor, featuredColor, colorMode } = useStyle();
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -751,7 +751,7 @@ function SyllabusContent() {
               <Box
                 id="main-container"
                 className={`horizontal-sroll ${colorMode}`}
-                height={isAvailableAsSaas && '70vh'}
+                height={isAvailableAsSaas && '80vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
                 borderRadius="11px 11px 0 0"
                 position="relative"
@@ -905,7 +905,7 @@ function SyllabusContent() {
                             </AlertMessage>
                           )}
                         </>
-                    )}
+                      )}
                     />
                   )}
                   {!isQuiz && !isAvailableAsSaas && (
@@ -995,98 +995,100 @@ function SyllabusContent() {
                       </Box>
                     </Box>
                   )}
+                  {isAvailableAsSaas && (
+                    <Box bottom="0" position="sticky" paddingBottom="20px" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                      <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} mt="20px" justifyContent="center" display="flex" gridGap="20px">
+                        {(isLesson || isProject) && (
+                        <Tooltip label={t('get-help')} placement="top">
+                          <Button
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            width="60px"
+                            height="60px"
+                            background={backgroundColor}
+                            padding="12px"
+                            borderRadius="full"
+                            variant="default"
+                            onClick={openAiChat}
+                            style={{ color: fontColor, textDecoration: 'none' }}
+                            isLoading={isLoadingRigobot}
+                          >
+                            <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
+                          </Button>
+                        </Tooltip>
+                        )}
+                        {repoUrl && (isLesson || isProject) && (
+                        <Tooltip label={t('contribute')} placement="top">
+                          <Link
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            width="60px"
+                            height="60px"
+                            background={backgroundColor}
+                            padding="12px"
+                            borderRadius="full"
+                            variant="default"
+                            href={repoUrl}
+                            style={{ color: fontColor, textDecoration: 'none' }}
+                          >
+                            <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
+                          </Link>
+                        </Tooltip>
+                        )}
+                        {isLesson && currentAsset?.intro_video_url && (
+                        <Tooltip label={t('watch-intro')} placement="top">
+                          <Button
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            width="60px"
+                            height="60px"
+                            background={backgroundColor}
+                            padding="12px"
+                            borderRadius="full"
+                            variant="default"
+                            onClick={() => setModalIntroOpen(true)}
+                          >
+                            <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                          </Button>
+                        </Tooltip>
+                        )}
+                        {!isExercise && (
+                        <ButtonHandlerByTaskStatus
+                          allowText
+                          isGuidedExperience={isAvailableAsSaas}
+                          variant="rounded"
+                          currentTask={currentTask}
+                          sendProject={sendProject}
+                          changeStatusAssignment={changeStatusAssignment}
+                          currentAssetData={currentAsset}
+                          toggleSettings={toggleSettings}
+                          closeSettings={closeSettings}
+                          settingsOpen={settingsOpen}
+                          handleOpen={handleOpen}
+                          fileData={fileData}
+                        />
+                        )}
+                        {currentTask?.task_status === 'DONE' && showModal && (
+                        <ShareButton
+                          variant="outline"
+                          title={t('projects:share-certificate.title')}
+                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                          link={shareLink}
+                          socials={socials}
+                          currentTask={currentTask}
+                          onlyModal
+                          withParty
+                        />
+                        )}
+                      </Box>
+                    </Box>
+                  )}
                 </Box>
-              </Box>
-            )}
-            {isAvailableAsSaas && (
-              <Box mt="20px" justifyContent="center" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '20px', md: '50px' }} paddingBottom="20px">
-                {(isLesson || isProject) && (
-                  <Tooltip label={t('get-help')} placement="top">
-                    <Button
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="center"
-                      width="60px"
-                      height="60px"
-                      background={backgroundColor}
-                      padding="12px"
-                      borderRadius="full"
-                      variant="default"
-                      onClick={openAiChat}
-                      style={{ color: fontColor, textDecoration: 'none' }}
-                      isLoading={isLoadingRigobot}
-                    >
-                      <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                    </Button>
-                  </Tooltip>
-                )}
-                {repoUrl && (isLesson || isProject) && (
-                  <Tooltip label={t('contribute')} placement="top">
-                    <Link
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="center"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      width="60px"
-                      height="60px"
-                      background={backgroundColor}
-                      padding="12px"
-                      borderRadius="full"
-                      variant="default"
-                      href={repoUrl}
-                      style={{ color: fontColor, textDecoration: 'none' }}
-                    >
-                      <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
-                    </Link>
-                  </Tooltip>
-                )}
-                {isLesson && currentAsset?.intro_video_url && (
-                  <Tooltip label={t('watch-intro')} placement="top">
-                    <Button
-                      display="flex"
-                      flexDirection="column"
-                      justifyContent="center"
-                      width="60px"
-                      height="60px"
-                      background={backgroundColor}
-                      padding="12px"
-                      borderRadius="full"
-                      variant="default"
-                      onClick={() => setModalIntroOpen(true)}
-                    >
-                      <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
-                    </Button>
-                  </Tooltip>
-                )}
-                {!isExercise && (
-                  <ButtonHandlerByTaskStatus
-                    allowText
-                    isGuidedExperience={isAvailableAsSaas}
-                    variant="rounded"
-                    currentTask={currentTask}
-                    sendProject={sendProject}
-                    changeStatusAssignment={changeStatusAssignment}
-                    currentAssetData={currentAsset}
-                    toggleSettings={toggleSettings}
-                    closeSettings={closeSettings}
-                    settingsOpen={settingsOpen}
-                    handleOpen={handleOpen}
-                    fileData={fileData}
-                  />
-                )}
-                {currentTask?.task_status === 'DONE' && showModal && (
-                  <ShareButton
-                    variant="outline"
-                    title={t('projects:share-certificate.title')}
-                    shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                    link={shareLink}
-                    socials={socials}
-                    currentTask={currentTask}
-                    onlyModal
-                    withParty
-                  />
-                )}
               </Box>
             )}
           </Box>

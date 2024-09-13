@@ -89,7 +89,10 @@ function ProjectHeading({ currentAsset, isDelivered }) {
               borderRadius: '11px',
             }}
             url={currentAsset?.intro_video_url}
-            containerStyle={{ width: '100%', maxWidth: '600px' }}
+            containerStyle={{
+              width: '100%',
+              maxWidth: { base: 'none', sm: '50%' },
+            }}
           />
         )}
       </Box>
