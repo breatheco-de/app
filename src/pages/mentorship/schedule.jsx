@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, Fragment } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useColorModeValue, useToast, Container, Box, InputGroup, Input, Button } from '@chakra-ui/react';
 
 import { useRouter } from 'next/router';
@@ -55,21 +55,9 @@ function MentorshipSchedule() {
   };
   const availableForConsume = calculateExistenceOfConsumable();
 
-  const getAllSyllabus = () => {
-    const syllabus = [];
-    const allCohorts = admissionsData?.cohorts || [];
-
-    allCohorts.forEach(({ cohort }) => {
-      if (!syllabus.includes(cohort.syllabus_version.slug)) syllabus.push(cohort.syllabus_version.slug);
-    });
-    return syllabus;
-  };
-
-  const allSyllabus = useMemo(getAllSyllabus, [admissionsData]);
-
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
-      const mentorshipPromises = userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
+      const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
         .then((resp) => {
           const data = resp?.data;
           if (data !== undefined && data.length > 0) {
@@ -98,42 +86,48 @@ function MentorshipSchedule() {
       const response = await bc.admissions().me();
       const admissionsFromDB = response.data;
       setAdmissionsData(admissionsFromDB);
-      getServices(admissionsData.roles);
+      getServices(admissionsFromDB.roles);
     } catch (error) {
       console.error('Error fetching admissions data:', error);
     }
   };
 
+  const allSyllabus = useMemo(() => {
+    const allCohorts = admissionsData?.cohorts || [];
+    const syllabus = [...new Set(allCohorts.map(({ cohort }) => cohort.syllabus_version.slug))];
+    return syllabus;
+  }, [admissionsData]);
+
   const getAllMentorsAvailable = async () => {
-    const servicesSlugs = mentorshipServices.data.map((serv) => serv?.slug);
+    const servicesSlugs = mentorshipServices.data.map(({ slug }) => slug);
 
-    const academies = {};
-
-    mentorshipServices.data.forEach((serv) => {
-      const { academy, ...restOfService } = serv;
-      if (!academies[academy.id]) {
-        academies[academy.id] = { services: [] };
+    const academies = mentorshipServices.data.reduce((acc, { academy, ...restOfService }) => {
+      if (!acc[academy.id]) {
+        acc[academy.id] = { services: [] };
       }
-      academies[academy.id].services.push(restOfService);
-    });
+      acc[academy.id].services.push(restOfService);
+      return acc;
+    }, {});
 
-    const academyData = Object.entries(academies).map(([academy, values]) => ({
-      id: Number(academy),
-      services: values.services,
+    const academyData = Object.entries(academies).map(([id, { services }]) => ({
+      id: Number(id),
+      services,
     }));
 
-    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
-      const mentors = academyData.map((academy) => bc.mentorship({
+    const getMentorsForAcademy = async (academy) => {
+      const res = await bc.mentorship({
         services: academy.services.map((s) => s.slug).join(','),
         syllabus: allSyllabus?.join(','),
         status: 'ACTIVE',
         academy: academy.id,
-      }).getMentor()
-        .then((res) => {
-          const allMentors = res?.data;
-          return allMentors;
-        }));
-      const mentorsList = (await Promise.all(mentors)).flat();
+      }).getMentor();
+
+      return res?.data || [];
+    };
+
+    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
+      const mentorsPromises = academyData.map(getMentorsForAcademy);
+      const mentorsList = (await Promise.all(mentorsPromises)).flat();
       return mentorsList;
     }
 
@@ -153,6 +147,7 @@ function MentorshipSchedule() {
     const allConsumables = await Promise.all(reqConsumables);
 
     setConsumables(allConsumables);
+    console.log(allConsumables);
     setAllMentorsAvailable(mentors);
   };
 
@@ -160,10 +155,9 @@ function MentorshipSchedule() {
     const filteredConsumables = consumables.filter((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === serv?.slug));
 
     const relatedConsumables = filteredConsumables.find((consumable) => consumable?.balance?.unit === -1)
-            || filteredConsumables.find((consumable) => consumable?.balance?.unit > 0)
-            || filteredConsumables.find((consumable) => consumable?.balance?.unit === 0);
+      || filteredConsumables.find((consumable) => consumable?.balance?.unit > 0)
+      || filteredConsumables.find((consumable) => consumable?.balance?.unit === 0);
 
-    // const relatedConsumables = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
     if (relatedConsumables) {
       reportDatalayer({
         dataLayer: {
@@ -181,8 +175,11 @@ function MentorshipSchedule() {
       },
       available_as_saas: serv?.academy?.available_as_saas,
     });
-    setMentoryProps({ ...mentoryProps, serv });
+
+    setMentoryProps({ ...mentoryProps, serviceSelected: serv });
   };
+
+  console.log(consumableOfService);
 
   const handleService = async (serv) => {
     try {
@@ -220,7 +217,7 @@ function MentorshipSchedule() {
       if (mentorshipFound.length > 0) {
         setMentoryProps((prev) => ({
           ...prev,
-          service: mentorshipFound[0],
+          serviceSelected: mentorshipFound[0],
         }));
       }
     }
@@ -232,7 +229,7 @@ function MentorshipSchedule() {
         setOpenSearchMentor(false);
         setMentoryProps((prev) => ({
           ...prev,
-          mentor: isolateMentor[0],
+          mentorSelected: isolateMentor[0],
         }));
       }
     }
@@ -241,8 +238,8 @@ function MentorshipSchedule() {
   };
 
   const handleMentorSelection = (ment) => {
-    if (mentoryProps.service.slug) {
-      setMentoryProps({ ...mentoryProps, ment });
+    if (mentoryProps.serviceSelected.slug) {
+      setMentoryProps({ ...mentoryProps, mentorSelected: ment });
       setSearchProps({
         serviceSearch: '',
         mentorSearch: '',
@@ -286,7 +283,7 @@ function MentorshipSchedule() {
 
   const handleOpenCloseMentor = () => {
     setMentoryProps((prevState) => {
-      const { mentor: mentorToRemove, ...remainingProps } = prevState;
+      const { mentorSelected: mentorToRemove, ...remainingProps } = prevState;
       return remainingProps;
     });
     setOpenSearchMentor(true);
@@ -298,17 +295,17 @@ function MentorshipSchedule() {
         event: 'book_mentorship_session',
         path: router.pathname,
         consumables_amount: consumableOfService.balance.unit,
-        mentorship_service: mentoryProps?.service?.slug,
-        mentor_name: `${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`,
-        mentor_id: mentoryProps.mentor.slug,
-        mentor_booking_url: mentoryProps.mentor.booking_url,
+        mentorship_service: mentoryProps?.serviceSelected?.slug,
+        mentor_name: `${mentoryProps.mentorSelected.user.first_name} ${mentoryProps.mentorSelected.user.last_name}`,
+        mentor_id: mentoryProps.mentorSelected.slug,
+        mentor_booking_url: mentoryProps.mentorSelected.booking_url,
       },
     });
   };
 
   const handleTitleStep = () => {
-    if (!mentoryProps.service && !mentoryProps.mentor) return t('schedule-steps.select-mentorship');
-    if (mentoryProps.service && !mentoryProps.mentor) return t('schedule-steps.select-mentor');
+    if (!mentoryProps.serviceSelected && !mentoryProps.mentorSelected) return t('schedule-steps.select-mentorship');
+    if (mentoryProps.serviceSelected && !mentoryProps.mentorSelected) return t('schedule-steps.select-mentor');
     return t('schedule-steps.schedule');
   };
 
@@ -322,382 +319,158 @@ function MentorshipSchedule() {
   // console.log("mentores disponibles", allMentorsAvailable)
   // console.log("consumable of service", consumableOfService)
   // console.log("consumable of service balance", consumableOfService?.balance?.unit)
-  console.log('mentoryProps', mentoryProps);
+  // console.log('mentoryProps', mentoryProps);
   // console.log("available for consume", availableForConsume)
   // console.log("access token", accessToken)
   // console.log("opensearch service",openSearchService)
   // console.log("opensearch mentor",openSearchMentor)
 
   return !isLoading && user && !mentorshipServices.isLoading && (
-    <Container
-      as="div"
-      height="100%"
-      maxWidth="full"
-      minHeight="87.5vh"
-      display="flex"
-      flexDirection="column"
-      padding={0}
-    >
-      <Link
-        href="/choose-program"
-        color="#0196d1"
-        display="inline-block"
-        letterSpacing="0.05em"
-        fontWeight="700"
-        paddingBottom="10px"
-        width="fit-content"
-        padding="3rem 0 0 1rem"
-      >
+    <Container as="div" height="100%" maxWidth="full" minHeight="87.5vh" display="flex" flexDirection="column" padding={0}>
+      <Link href="/choose-program" color="#0196d1" display="inline-block" letterSpacing="0.05em" fontWeight="700" width="fit-content" padding="3rem 0 0.6rem 1rem">
         {`← ${t('back-to-dash')}`}
       </Link>
-      <Container
-        as="div"
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        marginTop="2.5rem"
-        textAlign="center"
-        padding="10px"
-        borderRadius="10px"
-      >
+      <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding="10px" borderRadius="10px">
         <Heading>
           {t('supportSideBar.schedule-button')}
         </Heading>
-        <Text
-          size="18px"
-          fontWeight="bold"
-          marginTop="1rem"
-        >
-          {t('mentorship.you-have')}
-          {' '}
-          {servicesByMentorAvailable?.length}
-          {' '}
-          {t('mentorship.mentor-sessions-available')}
+        <Text size="18px" fontWeight="bold" marginTop="1rem">
+          {`${t('mentorship.you-have')} ${servicesByMentorAvailable?.length} ${t('mentorship.mentor-sessions-available')}`}
         </Text>
-        <Box
-          as="div"
-          display="flex"
-          flexDirection="column"
-          marginTop="3rem"
-          background={commonBackground}
-          padding={isTabletOrPhone ? '5px' : '10px'}
-          width="100%"
-          justifyContent="center"
-          alignItems="center"
-          borderRadius="10px"
-        >
+        <Container as="div" display="flex" flexDirection="column" marginTop="3rem" background={commonBackground} padding={isTabletOrPhone ? '5px' : '10px'} width="100%" justifyContent="center" alignItems="center" borderRadius="10px">
           <Text size="15px">{handleTitleStep()}</Text>
-
           <Box marginTop="1rem" width="100%">
-            {openSearchService
-                            && (
-                            <Input
-                              onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })}
-                              borderBottomRadius="0"
-                              border="0"
-                              padding="0 1px"
-                              placeholder={t('supportSideBar.select-type')}
-                            />
-                            )}
-            <Box
-              maxHeight="10rem"
-              overflow="auto"
-              borderRadius="0.375rem"
-              border="1px solid #0097CF"
-            >
-
-              {servicesByMentorAvailable?.length > 0 && !mentorshipServices.isLoading
-                ? (
-                  <>
-                    {mentoryProps.service
-                      ? (
-                        <Box
-                          display="flex"
-                          justifyContent="space-between"
-                          py="5px"
-                          width="100%"
-                          px="10px"
-                          textAlign="start"
-                        >
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                          >
-                            {mentoryProps?.service && !openSearchService
-                                                            && (
-                                                            <Icon
-                                                              icon="verified2"
-                                                              color="green"
-                                                              width="20px"
-                                                              height="15px"
-                                                              mr="5px"
-                                                            />
-                                                            )}
-                            {mentoryProps.service?.name}
-                          </Box>
-                          {mentoryProps?.service && !openSearchService
-                                                        && (
-                                                        <Button
-                                                          background="transparent"
-                                                          _hover={false}
-                                                          _active={false}
-                                                          padding={0}
-                                                        >
-                                                          <Icon
-                                                            icon="arrowDown"
-                                                            color="#606060"
-                                                            width="30px"
-                                                            height="30px"
-                                                            onClick={() => handleOpenCloseService()}
-                                                          />
-                                                        </Button>
-                                                        )}
+            {openSearchService && (
+              <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })} borderBottomRadius="0" border="0" padding="0 1px" placeholder={t('supportSideBar.select-type')} />
+            )}
+            <Box maxHeight="10rem" overflow="auto" borderRadius="0.375rem" border="1px solid #0097CF">
+              {servicesByMentorAvailable?.length > 0 && !mentorshipServices.isLoading ? (
+                <div>
+                  {mentoryProps.serviceSelected ? (
+                    <Box display="flex" justifyContent="space-between" py="5px" width="100%" px="10px" textAlign="start">
+                      <Box display="flex" alignItems="center">
+                        {mentoryProps?.serviceSelected && !openSearchService && (
+                          <Icon icon="verified2" color="green" width="20px" height="15px" mr="5px" />
+                        )}
+                        {mentoryProps.serviceSelected?.name}
+                      </Box>
+                      {mentoryProps?.serviceSelected && !openSearchService
+                        && (
+                          <Button background="transparent" _hover={false} _active={false} padding={0}>
+                            <Icon icon="arrowDown" color="#606060" width="30px" height="30px" onClick={() => handleOpenCloseService()} />
+                          </Button>
+                        )}
+                    </Box>
+                  ) : (
+                    servicesByMentorAvailable.filter((serv) => serv.name.toLowerCase().includes(searchProps.serviceSearch || '')).map((serv) => (
+                      <Box key={serv?.name} display="flex" justifyContent="space-between" borderTop="1px solid" cursor="pointer" borderColor={borderColor} py="14px" width="100%" px="22px" onClick={() => handleService(serv)}>
+                        <Box display="flex" alignItems="center">
+                          {mentoryProps.serviceSelected ? mentoryProps.serviceSelected.name : serv.name}
                         </Box>
-                      )
-                      : servicesByMentorAvailable.filter((serv) => serv.name.toLowerCase().includes(searchProps.serviceSearch || '')).map((serv) => (
-                        <Box
-                          key={serv?.name}
-                          display="flex"
-                          justifyContent="space-between"
-                          borderTop="1px solid"
-                          cursor="pointer"
-                          borderColor={borderColor}
-                          py="14px"
-                          width="100%"
-                          px="22px"
-                          onClick={() => handleService(serv)}
-                        >
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                          >
-                            {mentoryProps.serv ? mentoryProps.serv.name : serv.name}
-                          </Box>
-                        </Box>
-                      ))}
-                  </>
-                )
-                : (
-                  <Box
-                    borderTop="1px solid"
-                    borderColor={borderColor}
-                    py="14px"
-                    width="100%"
-                    px="22px"
-                  >
-                    No service
-                  </Box>
-                )}
+                      </Box>
+                    ))
+                  )}
+                </div>
+              ) : (
+                <Box borderTop="1px solid" borderColor={borderColor} py="14px" width="100%" px="22px">
+                  No service
+                </Box>
+              )}
             </Box>
           </Box>
-          {mentoryProps?.service && (
-          <>
-            {openSearchMentor && !mentoryProps.mentor
-                                && (
-                                <InputGroup mt="15px" borderColor={borderColor}>
-                                  <Input
-                                    onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })}
-                                    borderBottomRadius="0"
-                                    border="0"
-                                    padding="0 1px"
-                                    placeholder={t('supportSideBar.search-mentor')}
-                                  />
-                                </InputGroup>
-                                )}
-            <Box
-              maxHeight="18rem"
-              width="100%"
-              overflow="auto"
-              borderRadius="0.375rem"
-              border="1px solid #0097CF"
-              marginTop="10px"
-            >
-              {mentorsByService.length > 0
-                ? (
-                  <>
-                    {(mentoryProps.service && mentoryProps.mentor)
-                      ? (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          gridGap="18px"
-                          flexDirection="row"
-                          py="5px"
-                          width="100%"
-                          px="10px"
-                          textAlign="start"
-                        >
+          <Box width="100%">
+            {mentoryProps?.serviceSelected && (
+              <Box>
+                {openSearchMentor && !mentoryProps.mentorSelected && (
+                  <InputGroup mt="15px" borderColor={borderColor}>
+                    <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} borderBottomRadius="0" border="0" padding="0 1px" placeholder={t('supportSideBar.search-mentor')} />
+                  </InputGroup>
+                )}
+                <Box maxHeight="18rem" width="100%" overflow="auto" borderRadius="0.375rem" border="1px solid #0097CF" marginTop="10px">
+                  {mentorsByService.length > 0 ? (
+                    <Box>
+                      {(mentoryProps.serviceSelected && mentoryProps.mentorSelected) ? (
+                        <Box display="flex" alignItems="center" gridGap="18px" flexDirection="row" py="5px" width="100%" px="10px" textAlign="start">
                           <Box display="flex" alignItems="center">
-                            <Icon
-                              icon="verified2"
-                              color="green"
-                              width="20px"
-                              height="15px"
-                              mr="5px"
-                            />
-                            <Image
-                              src={mentoryProps.mentor?.user.profile?.avatar_url}
-                              alt={`${mentoryProps.mentor?.user?.first_name} ${mentoryProps.mentor?.user?.last_name}`}
-                              width={isTabletOrPhone ? 30 : 50}
-                              height={isTabletOrPhone ? 30 : 50}
-                              objectFit="cover"
-                              styleImg={{ borderRadius: '50px' }}
-                            />
+                            <Icon icon="verified2" color="green" width="20px" height="15px" mr="5px" />
+                            <Image src={mentoryProps.mentorSelected?.user.profile?.avatar_url} alt={`${mentoryProps.mentorSelected?.user?.first_name} ${mentoryProps.mentorSelected?.user?.last_name}`} width={isTabletOrPhone ? 30 : 50} height={isTabletOrPhone ? 30 : 50} objectFit="cover" styleImg={{ borderRadius: '50px' }} />
                           </Box>
-                          <Box
-                            display="flex"
-                            flexGrow={1}
-                          >
-                            <Box
-                              display="flex"
-                              flexDirection="column"
-                              width="100%"
-                            >
-                              <Box
-                                fontSize="15px"
-                                fontWeight="600"
-                              >
-                                {`${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`}
+                          <Box display="flex" flexGrow={1}>
+                            <Box display="flex" flexDirection="column" width="100%">
+                              <Box fontSize="15px" fontWeight="600">
+                                {`${mentoryProps.mentorSelected.user.first_name} ${mentoryProps.mentorSelected.user.last_name}`}
                               </Box>
                               <Box>
-                                {(mentoryProps.mentor.one_line_bio && mentoryProps.mentor.one_line_bio !== '') ? `${mentoryProps.mentor.one_line_bio} ` : ''}
+                                {(mentoryProps.mentorSelected.one_line_bio && mentoryProps.mentorSelected.one_line_bio !== '') ? `${mentoryProps.mentorSelected.one_line_bio} ` : ''}
                               </Box>
                             </Box>
-                            <Box
-                              display="flex"
-                              alignItems="center"
-                              justifyContent="center"
-                            >
-                              <Button
-                                background="transparent"
-                                _hover={false}
-                                _active={false}
-                                padding={0}
-                              >
-                                <Icon
-                                  icon="arrowDown"
-                                  color="#606060"
-                                  width="30px"
-                                  height="30px"
-                                  maxHeight="30px"
-                                  onClick={() => handleOpenCloseMentor()}
-                                />
+                            <Box display="flex" alignItems="center" justifyContent="center">
+                              <Button background="transparent" _hover={false} _active={false} padding={0}>
+                                <Icon icon="arrowDown" color="#606060" width="30px" height="30px" maxHeight="30px" onClick={() => handleOpenCloseMentor()} />
                               </Button>
                             </Box>
                           </Box>
                         </Box>
-                      )
-                      : mentorsByService.filter((ment) => `${ment.user.first_name} ${ment.user.last_name}`.toLowerCase().includes(searchProps.mentorSearch || '')).map((ment, i) => (
-                        <Fragment key={ment?.user?.id}>
-                          {i !== 0 && (
-                          <Box as="hr" borderColor="gray.300" margin="0 18px" />
-                          )}
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            gridGap="18px"
-                            flexDirection="row"
-                            py="5px"
-                            width="100%"
-                            px="18px"
-                            cursor="pointer"
-                            textAlign="start"
-                            onClick={() => handleMentorSelection(ment)}
-                          >
-                            <Box display="flex" alignItems="center">
-                              <Image
-                                src={ment?.user.profile?.avatar_url}
-                                alt={`${ment?.user?.first_name} ${ment?.user?.last_name}`}
-                                width={50}
-                                height={50}
-                                objectFit="cover"
-                                styleImg={{ borderRadius: '50px' }}
-                              />
-                            </Box>
-                            <Box
-                              display="flex"
-                              justifyContent="space-between"
-                              flexGrow={1}
-                            >
-                              <Box
-                                display="flex"
-                                flexDirection="column"
-                                width="100%"
-                              >
-                                <Box
-                                  fontSize="15px"
-                                  fontWeight="600"
-                                >
-                                  {`${ment.user.first_name} ${ment.user.last_name}`}
-                                </Box>
-                                <Box>
-                                  {(ment.one_line_bio && ment.one_line_bio !== '') ? `${ment.one_line_bio} ` : ''}
+                      ) : (
+                        mentorsByService.filter((ment) => `${ment.user.first_name} ${ment.user.last_name}`.toLowerCase().includes(searchProps.mentorSearch || '')).map((ment, i) => (
+                          <div key={ment?.user?.id}>
+                            {i !== 0 && (
+                              <Box as="hr" borderColor="gray.300" margin="0 18px" />
+                            )}
+                            <Box display="flex" alignItems="center" gridGap="18px" flexDirection="row" py="5px" width="100%" px="18px" cursor="pointer" textAlign="start" onClick={() => handleMentorSelection(ment)}>
+                              <Box display="flex" alignItems="center">
+                                <Image src={ment?.user.profile?.avatar_url} alt={`${ment?.user?.first_name} ${ment?.user?.last_name}`} width={50} height={50} objectFit="cover" styleImg={{ borderRadius: '50px' }} />
+                              </Box>
+                              <Box display="flex" justifyContent="space-between" flexGrow={1}>
+                                <Box display="flex" flexDirection="column" width="100%">
+                                  <Box fontSize="15px" fontWeight="600">
+                                    {`${ment.user.first_name} ${ment.user.last_name}`}
+                                  </Box>
+                                  <Box>
+                                    {(ment.one_line_bio && ment.one_line_bio !== '') ? `${ment.one_line_bio} ` : ''}
+                                  </Box>
                                 </Box>
                               </Box>
                             </Box>
-                          </Box>
-                        </Fragment>
-                      ))}
-                  </>
-                )
-                : (
-                  <Box
-                    borderTop="1px solid"
-                    py="14px"
-                    width="100%"
-                    px="22px"
-                  >
-                    {t('supportSideBar.no-mentors')}
+                          </div>
+                        ))
+                      )}
+                    </Box>
+                  ) : (
+                    <Box borderTop="1px solid" py="14px" width="100%" px="22px">
+                      {t('supportSideBar.no-mentors')}
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            )}
+          </Box>
+          <Box>
+            {mentoryProps.serviceSelected && mentoryProps.mentorSelected && !openSearchMentor && !openSearchService && availableForConsume && (
+              <Box>
+                {mentoryProps.mentorSelected.booking_url ? (
+                  <Link variant="default" onClick={() => reportBookMentor()} href={`${BREATHECODE_HOST}/mentor/${mentoryProps.mentorSelected?.slug}?utm_campaign=${mentoryProps?.serviceSelected?.slug}&utm_source=4geeks&salesforce_uuid=${user?.id}&token=${accessToken}`} target="_blank" rel="noopener noreferrer" background="#0196d1" display="flex" marginTop="12px" padding="10px" borderRadius="5px" alignItems="center">
+                    <Text color="white" fontSize="15px">
+                      {t('mentorship.action')}
+                    </Text>
+                    <Icon icon="longArrowRight" color="white" width="30px" height="15px" ml="10px" />
+                  </Link>
+                ) : (
+                  <Box fontSize="15px">
+                    {t('supportSideBar.no-mentor-link')}
                   </Box>
                 )}
-            </Box>
-          </>
-          )}
-          {mentoryProps.service && mentoryProps.mentor && !openSearchMentor && !openSearchService && availableForConsume
-                        && (
-                        <>
-                          {mentoryProps.mentor.booking_url
-                            ? (
-                              <Link
-                                variant="default"
-                                onClick={() => reportBookMentor()}
-                                href={`${BREATHECODE_HOST}/mentor/${mentoryProps.mentor?.slug}?utm_campaign=${mentoryProps?.service?.slug}&utm_source=4geeks&salesforce_uuid=${user?.id}&token=${accessToken}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                background="#0196d1"
-                                display="flex"
-                                marginTop="12px"
-                                padding="10px"
-                                borderRadius="5px"
-                                alignItems="center"
-                              >
-                                <Text color="white" fontSize="15px">
-                                  {t('mentorship.action')}
-                                </Text>
-                                <Icon
-                                  icon="longArrowRight"
-                                  color="white"
-                                  width="30px"
-                                  height="15px"
-                                  ml="10px"
-                                />
-                              </Link>
-                            )
-                            : (
-                              <Box fontSize="15px">
-                                {t('supportSideBar.no-mentor-link')}
-                              </Box>
-                            )}
-                        </>
-                        )}
-          {mentoryProps.service && mentoryProps.mentor && !availableForConsume
-                        && (
-                        <Box fontSize="15px" margin="10px 0 0 0">
-                          {t('supportSideBar.no-mentoring-available')}
-                        </Box>
-                        )}
-        </Box>
+              </Box>
+            )}
+          </Box>
+          <Box>
+            {mentoryProps.serviceSelected && mentoryProps.mentorSelected && !availableForConsume && (
+              <Box fontSize="15px" margin="10px 0 0 0">
+                {t('supportSideBar.no-mentoring-available')}
+              </Box>
+            )}
+          </Box>
+        </Container>
       </Container>
     </Container>
   );
