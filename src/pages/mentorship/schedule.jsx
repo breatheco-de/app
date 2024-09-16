@@ -1,10 +1,13 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useColorModeValue, useToast, Container, Box, InputGroup, Input, Button } from '@chakra-ui/react';
-
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import PropTypes from 'prop-types';
 import { getStorageItem } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
+import { validatePlanExistence } from '../../common/handlers/subscriptions';
+import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
+import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import useStyle from '../../common/hooks/useStyle';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
@@ -15,30 +18,44 @@ import Image from '../../common/components/Image';
 import bc from '../../common/services/breathecode';
 import modifyEnv from '../../../modifyEnv';
 
+function NoConsumablesCard({ t, handleGetMoreMentorships, isLoading }) {
+  return (
+    <Box fontSize="15px" margin="10px 0 0 0" display="flex" flexDirection="column">
+      {t('supportSideBar.no-mentoring-available')}
+      <Button
+        height="auto"
+        padding="3px 5px"
+        variant="default"
+        fontSize="15px"
+        background="none"
+        isLoading={isLoading}
+        fontWeight={700}
+        onClick={() => handleGetMoreMentorships()}
+        color="blue.400"
+      >
+        {t('supportSideBar.get-more-mentorships')}
+      </Button>
+    </Box>
+  );
+}
+
 function MentorshipSchedule() {
   let isTabletOrPhone = false;
   if (typeof window !== 'undefined') {
     isTabletOrPhone = window.innerWidth < 780;
   }
-  const { t } = useTranslation('dashboard');
   const router = useRouter();
+  const { t } = useTranslation('dashboard');
+  const { fetchSubscriptions } = useSubscriptionsHandler();
   const { service, mentor } = router.query;
+  const { borderColor } = useStyle();
+  const { isLoading, user, isAuthenticated } = useAuth();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const accessToken = getStorageItem('accessToken');
   const toast = useToast();
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
-  const { borderColor } = useStyle();
-
-  const { isLoading, user, isAuthenticated } = useAuth();
-  const [mentorshipServices, setMentorshipServices] = useState({
-    isLoading: true,
-    data: [],
-  });
-  const [searchProps, setSearchProps] = useState({
-    serviceSearch: '',
-    mentorSearch: '',
-  });
-  const [admissionsData, setAdmissionsData] = useState();
+  const [mentorshipServices, setMentorshipServices] = useState({ isLoading: true, data: [] });
+  const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
   const [servicesByMentorAvailable, setServicesByMentorsAvailable] = useState([]);
   const [openSearchService, setOpenSearchService] = useState(true);
   const [openSearchMentor, setOpenSearchMentor] = useState(true);
@@ -47,6 +64,10 @@ function MentorshipSchedule() {
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [mentorsByService, setMentorsByService] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
+  const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
+  const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
+  const [subscriptionData, setSubscriptionData] = useState([]);
 
   const calculateExistenceOfConsumable = () => {
     if (consumableOfService.available_as_saas === false) return true;
@@ -85,18 +106,11 @@ function MentorshipSchedule() {
     try {
       const response = await bc.admissions().me();
       const admissionsFromDB = response.data;
-      setAdmissionsData(admissionsFromDB);
       getServices(admissionsFromDB.roles);
     } catch (error) {
       console.error('Error fetching admissions data:', error);
     }
   };
-
-  const allSyllabus = useMemo(() => {
-    const allCohorts = admissionsData?.cohorts || [];
-    const syllabus = [...new Set(allCohorts.map(({ cohort }) => cohort.syllabus_version.slug))];
-    return syllabus;
-  }, [admissionsData]);
 
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = mentorshipServices.data.map(({ slug }) => slug);
@@ -117,7 +131,6 @@ function MentorshipSchedule() {
     const getMentorsForAcademy = async (academy) => {
       const res = await bc.mentorship({
         services: academy.services.map((s) => s.slug).join(','),
-        syllabus: allSyllabus?.join(','),
         status: 'ACTIVE',
         academy: academy.id,
       }).getMentor();
@@ -125,7 +138,7 @@ function MentorshipSchedule() {
       return res?.data || [];
     };
 
-    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
+    if (servicesSlugs.length > 0) {
       const mentorsPromises = academyData.map(getMentorsForAcademy);
       const mentorsList = (await Promise.all(mentorsPromises)).flat();
       return mentorsList;
@@ -147,39 +160,36 @@ function MentorshipSchedule() {
     const allConsumables = await Promise.all(reqConsumables);
 
     setConsumables(allConsumables);
-    console.log(allConsumables);
     setAllMentorsAvailable(mentors);
   };
 
   const manageMentorsData = (serv) => {
     const filteredConsumables = consumables.filter((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === serv?.slug));
 
-    const relatedConsumables = filteredConsumables.find((consumable) => consumable?.balance?.unit === -1)
+    const relatedConsumable = filteredConsumables.find((consumable) => consumable?.balance?.unit === -1)
       || filteredConsumables.find((consumable) => consumable?.balance?.unit > 0)
       || filteredConsumables.find((consumable) => consumable?.balance?.unit === 0);
 
-    if (relatedConsumables) {
+    if (relatedConsumable) {
       reportDatalayer({
         dataLayer: {
           event: 'select_mentorship_service',
           path: router.pathname,
-          consumables_amount: relatedConsumables.balance?.unit,
+          consumables_amount: relatedConsumable.balance?.unit,
           mentorship_service: serv?.slug,
         },
       });
     }
     setConsumableOfService({
-      ...relatedConsumables,
+      ...relatedConsumable,
       balance: {
-        unit: serv?.academy?.available_as_saas === false ? -1 : relatedConsumables?.balance?.unit,
+        unit: serv?.academy?.available_as_saas === false ? -1 : relatedConsumable?.balance?.unit,
       },
       available_as_saas: serv?.academy?.available_as_saas,
     });
 
     setMentoryProps({ ...mentoryProps, serviceSelected: serv });
   };
-
-  console.log(consumableOfService);
 
   const handleService = async (serv) => {
     try {
@@ -232,6 +242,7 @@ function MentorshipSchedule() {
           mentorSelected: isolateMentor[0],
         }));
       }
+      return servicesOfMentor;
     }
 
     return servicesWithMentors.length > 0 ? servicesWithMentors : allMentorsAvailable;
@@ -304,31 +315,69 @@ function MentorshipSchedule() {
   };
 
   const handleTitleStep = () => {
-    if (!mentoryProps.serviceSelected && !mentoryProps.mentorSelected) return t('schedule-steps.select-mentorship');
+    if (!mentoryProps.serviceSelected) return t('schedule-steps.select-mentorship');
     if (mentoryProps.serviceSelected && !mentoryProps.mentorSelected) return t('schedule-steps.select-mentor');
     return t('schedule-steps.schedule');
   };
 
-  // console.log(isTabletOrPhone)
-  // console.log("available for consume", availableForConsume)
-  // console.log(servicesByMentorAvailable);
-  // console.log("Soy admissions Data", admissionsData)
-  // console.log("All sylabus", allSyllabus)
-  // console.log("mentorship services", mentorshipServices.data)
-  // console.log("consumibles", consumables)
-  // console.log("mentores disponibles", allMentorsAvailable)
-  // console.log("consumable of service", consumableOfService)
-  // console.log("consumable of service balance", consumableOfService?.balance?.unit)
-  // console.log('mentoryProps', mentoryProps);
-  // console.log("available for consume", availableForConsume)
-  // console.log("access token", accessToken)
-  // console.log("opensearch service",openSearchService)
-  // console.log("opensearch mentor",openSearchMentor)
+  const handleDescription = () => {
+    if (mentor) return `${t('mentorship.no-available-for-teacher')} ${mentor}`;
+    return t('mentorship.no-available');
+  };
+
+  useEffect(() => {
+    if (mentoryProps.serviceSelected) {
+      fetchSubscriptions()
+        .then((data) => {
+          setSubscriptionData(data);
+          reportDatalayer({
+            dataLayer: {
+              event: 'subscriptions_load',
+              method: 'native',
+              plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+              subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            },
+          });
+        });
+    }
+  }, [mentoryProps.serviceSelected]);
+
+  const getMostRecentPaidAt = (invoices) => invoices.reduce((latest, invoice) => {
+    const paidAtDate = new Date(invoice.paid_at);
+    return paidAtDate > latest ? paidAtDate : latest;
+  }, new Date(0));
+
+  const sortByMostRecentInvoice = (a, b) => {
+    const latestA = getMostRecentPaidAt(a.invoices);
+    const latestB = getMostRecentPaidAt(b.invoices);
+    return latestB - latestA;
+  };
+
+  const handleGetMoreMentorships = async () => {
+    setIsFetchingDataForModal(true);
+    const academyService = mentoryProps?.serviceSelected;
+    const allSubscriptions = subscriptionData.subscriptions;
+    const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((serv) => serv.slug === mentoryProps?.serviceSelected?.slug));
+    const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
+
+    validatePlanExistence(allSubscriptions, currentSubscription?.plans?.[0]?.slug).then((data) => {
+      setDataToGetAccessModal({
+        ...data,
+        event: '',
+        academyService,
+      });
+      setIsModalToGetAccessOpen(true);
+    })
+      .finally(() => setIsFetchingDataForModal(false));
+  };
 
   return !isLoading && user && !mentorshipServices.isLoading && (
-    <Container as="div" height="100%" maxWidth="full" minHeight="87.5vh" display="flex" flexDirection="column" padding={0}>
+    <Container as="div" height="100%" maxWidth="full" minHeight="87.5vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('#f9f9f9', '#171f2a')}>
       <Link href="/choose-program" color="#0196d1" display="inline-block" letterSpacing="0.05em" fontWeight="700" width="fit-content" padding="3rem 0 0.6rem 1rem">
-        {`← ${t('back-to-dash')}`}
+        <Box display="flex" alignItems="center" justifyContent="center" gap="5px">
+          <Icon icon="arrowLeft2" color="#0196d1" width="15px" height="15px" />
+          <Box as="span">{`${t('back-to-dash')}`}</Box>
+        </Box>
       </Link>
       <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding="10px" borderRadius="10px">
         <Heading>
@@ -347,16 +396,16 @@ function MentorshipSchedule() {
               {servicesByMentorAvailable?.length > 0 && !mentorshipServices.isLoading ? (
                 <div>
                   {mentoryProps.serviceSelected ? (
-                    <Box display="flex" justifyContent="space-between" py="5px" width="100%" px="10px" textAlign="start">
+                    <Box display="flex" justifyContent="space-between" py="5px" width="100%" px="10px" textAlign="start" height="4rem">
                       <Box display="flex" alignItems="center">
                         {mentoryProps?.serviceSelected && !openSearchService && (
-                          <Icon icon="verified2" color="green" width="20px" height="15px" mr="5px" />
+                          <Icon icon="verified2" color="#25BF6C" width="20px" height="15px" mr="5px" />
                         )}
                         {mentoryProps.serviceSelected?.name}
                       </Box>
                       {mentoryProps?.serviceSelected && !openSearchService
                         && (
-                          <Button background="transparent" _hover={false} _active={false} padding={0}>
+                          <Button background="transparent" _hover={false} _active={false} alignSelf="center" padding={0}>
                             <Icon icon="arrowDown" color="#606060" width="30px" height="30px" onClick={() => handleOpenCloseService()} />
                           </Button>
                         )}
@@ -373,7 +422,7 @@ function MentorshipSchedule() {
                 </div>
               ) : (
                 <Box borderTop="1px solid" borderColor={borderColor} py="14px" width="100%" px="22px">
-                  No service
+                  {handleDescription()}
                 </Box>
               )}
             </Box>
@@ -390,17 +439,17 @@ function MentorshipSchedule() {
                   {mentorsByService.length > 0 ? (
                     <Box>
                       {(mentoryProps.serviceSelected && mentoryProps.mentorSelected) ? (
-                        <Box display="flex" alignItems="center" gridGap="18px" flexDirection="row" py="5px" width="100%" px="10px" textAlign="start">
+                        <Box display="flex" alignItems="center" gridGap="18px" flexDirection="row" py="5px" width="100%" px="10px" textAlign="start" height="4rem">
                           <Box display="flex" alignItems="center">
-                            <Icon icon="verified2" color="green" width="20px" height="15px" mr="5px" />
+                            <Icon icon="verified2" color="#25BF6C" width="20px" height="15px" mr="5px" />
                             <Image src={mentoryProps.mentorSelected?.user.profile?.avatar_url} alt={`${mentoryProps.mentorSelected?.user?.first_name} ${mentoryProps.mentorSelected?.user?.last_name}`} width={isTabletOrPhone ? 30 : 50} height={isTabletOrPhone ? 30 : 50} objectFit="cover" styleImg={{ borderRadius: '50px' }} />
                           </Box>
                           <Box display="flex" flexGrow={1}>
-                            <Box display="flex" flexDirection="column" width="100%">
-                              <Box fontSize="15px" fontWeight="600">
+                            <Box display="flex" flexDirection="column" width="100%" justifyContent="center">
+                              <Box fontWeight="600">
                                 {`${mentoryProps.mentorSelected.user.first_name} ${mentoryProps.mentorSelected.user.last_name}`}
                               </Box>
-                              <Box>
+                              <Box fontSize="14px">
                                 {(mentoryProps.mentorSelected.one_line_bio && mentoryProps.mentorSelected.one_line_bio !== '') ? `${mentoryProps.mentorSelected.one_line_bio} ` : ''}
                               </Box>
                             </Box>
@@ -426,7 +475,7 @@ function MentorshipSchedule() {
                                   <Box fontSize="15px" fontWeight="600">
                                     {`${ment.user.first_name} ${ment.user.last_name}`}
                                   </Box>
-                                  <Box>
+                                  <Box fontSize="14px">
                                     {(ment.one_line_bio && ment.one_line_bio !== '') ? `${ment.one_line_bio} ` : ''}
                                   </Box>
                                 </Box>
@@ -465,15 +514,31 @@ function MentorshipSchedule() {
           </Box>
           <Box>
             {mentoryProps.serviceSelected && mentoryProps.mentorSelected && !availableForConsume && (
-              <Box fontSize="15px" margin="10px 0 0 0">
-                {t('supportSideBar.no-mentoring-available')}
-              </Box>
+              <NoConsumablesCard t={t} isLoading={isFetchingDataForModal} mentoryProps={mentoryProps} handleGetMoreMentorships={handleGetMoreMentorships} setMentoryProps={setMentoryProps} mt="30px" />
             )}
           </Box>
+          <ModalToGetAccess
+            isOpen={isModalToGetAccessOpen}
+            stage={stageType.outOfConsumables}
+            externalData={dataToGetAccessModal}
+            onClose={() => {
+              setIsModalToGetAccessOpen(false);
+            }}
+          />
         </Container>
       </Container>
     </Container>
   );
 }
+
+NoConsumablesCard.defaultProps = {
+  isLoading: false, // Valor por defecto cuando no se pasa esta prop
+};
+
+NoConsumablesCard.propTypes = {
+  t: PropTypes.func.isRequired,
+  handleGetMoreMentorships: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+};
 
 export default MentorshipSchedule;
