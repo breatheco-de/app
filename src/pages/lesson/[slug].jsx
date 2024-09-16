@@ -45,8 +45,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    const markdown = '';
-    const ipynbHtml = {};
+    let markdown = '';
+    let ipynbHtml = {};
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     const assetList = await import('../../lib/asset-list.json')
       .then((res) => res.default)
@@ -65,11 +65,11 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    // if (!lesson.readme) {
-    //   return {
-    //     notFound: true,
-    //   };
-    // }
+    if (!lesson.readme) {
+      return {
+        notFound: true,
+      };
+    }
 
     const urlPathname = lesson?.readme_url ? lesson?.readme_url.split('https://github.com')[1] : null;
     const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
@@ -77,16 +77,16 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     const translatedExtension = (lesson?.lang === 'us' || lesson?.lang === null) ? '' : `.${lesson?.lang}`;
     const finalPathname = `https://colab.research.google.com/github${pathnameWithoutExtension}${translatedExtension}.${extension}`;
 
-    // if (extension !== 'ipynb') {
-    //   markdown = lesson.readme.decoded;
-    // } else {
-    //   const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
+    if (extension !== 'ipynb') {
+      markdown = lesson.readme.decoded;
+    } else {
+      const ipynbIframe = `${process.env.BREATHECODE_HOST}/v1/registry/asset/preview/${slug}`;
 
-    //   ipynbHtml = {
-    //     html: lesson.readme.html,
-    //     iframe: ipynbIframe,
-    //   };
-    // }
+      ipynbHtml = {
+        html: lesson.readme.html,
+        iframe: ipynbIframe,
+      };
+    }
 
     const { title, description, translations } = lesson;
     const translationInEnglish = translations?.en || translations?.us;
