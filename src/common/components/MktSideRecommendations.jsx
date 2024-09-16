@@ -142,6 +142,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     fetchContent();
   }, []);
 
+  console.log(recommendations);
+
   return recommendations?.length > 0 && (
     <>
       <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding="10px 20px" bottom="0" position="sticky" marginBottom="20px" display={{ base: 'block', md: 'none' }} textAlign="left">
@@ -206,7 +208,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               const tags = [];
 
               return (
-                <Container border="1px solid" borderColor={{ base: 'default', md: 'blue.400' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
+                <Container border="1px solid" borderColor={recom.color || { base: 'default', md: 'success' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                   <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
