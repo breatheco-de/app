@@ -57,17 +57,17 @@ function MentorshipSchedule() {
   const [mentorshipServices, setMentorshipServices] = useState({ isLoading: true, data: [] });
   const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
   const [servicesByMentorAvailable, setServicesByMentorsAvailable] = useState([]);
-  const [openSearchService, setOpenSearchService] = useState(true);
-  const [openSearchMentor, setOpenSearchMentor] = useState(true);
   const [consumableOfService, setConsumableOfService] = useState({});
   const [consumables, setConsumables] = useState([]);
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [mentorsByService, setMentorsByService] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
+  const [subscriptionData, setSubscriptionData] = useState([]);
+  const [openSearchService, setOpenSearchService] = useState(true);
+  const [openSearchMentor, setOpenSearchMentor] = useState(true);
   const [isFetchingDataForModal, setIsFetchingDataForModal] = useState(false);
   const [isModalToGetAccessOpen, setIsModalToGetAccessOpen] = useState(false);
-  const [subscriptionData, setSubscriptionData] = useState([]);
 
   const calculateExistenceOfConsumable = () => {
     if (consumableOfService.available_as_saas === false) return true;
@@ -393,7 +393,7 @@ function MentorshipSchedule() {
               <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })} borderBottomRadius="0" border="0" padding="0 1px" placeholder={t('supportSideBar.select-type')} />
             )}
             <Box maxHeight="10rem" overflow="auto" borderRadius="0.375rem" border="1px solid #0097CF">
-              {servicesByMentorAvailable?.length > 0 && !mentorshipServices.isLoading ? (
+              {servicesByMentorAvailable?.length > 0 ? (
                 <div>
                   {mentoryProps.serviceSelected ? (
                     <Box display="flex" justifyContent="space-between" py="5px" width="100%" px="10px" textAlign="start" height="4rem">
