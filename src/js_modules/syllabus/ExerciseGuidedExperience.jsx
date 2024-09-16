@@ -113,7 +113,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const repoName = urlToClone?.split('/')?.pop();
 
   return (
-    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="32px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
+    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
       <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
         <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStated ? 'column' : 'row' }} justifyContent="space-between">
           <Box maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '40%' }}>
