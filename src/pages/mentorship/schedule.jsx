@@ -10,6 +10,27 @@ import Link from '../../common/components/NextChakraLink';
 import bc from '../../common/services/breathecode';
 import MentoringConsumables from '../../common/components/SupportSidebar/MentoringConsumables';
 
+function NoConsumablesCard({ t, handleGetMoreMentorships, isLoading }) {
+  return (
+    <Box fontSize="15px" margin="10px 0 0 0" display="flex" flexDirection="column">
+      {t('supportSideBar.no-mentoring-available')}
+      <Button
+        height="auto"
+        padding="3px 5px"
+        variant="default"
+        fontSize="15px"
+        background="none"
+        isLoading={isLoading}
+        fontWeight={700}
+        onClick={() => handleGetMoreMentorships()}
+        color="blue.400"
+      >
+        {t('supportSideBar.get-more-mentorships')}
+      </Button>
+    </Box>
+  );
+}
+
 function MentorshipSchedule() {
   let isTabletOrPhone = false;
   if (typeof window !== 'undefined') {
@@ -111,7 +132,7 @@ function MentorshipSchedule() {
       return res?.data || [];
     };
 
-    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
+    if (servicesSlugs.length > 0) {
       const mentorsPromises = academyData.map(getMentorsForAcademy);
       const mentorsList = (await Promise.all(mentorsPromises)).flat();
       return mentorsList;
@@ -133,7 +154,6 @@ function MentorshipSchedule() {
     const allConsumables = await Promise.all(reqConsumables);
 
     setConsumables(allConsumables);
-    console.log(allConsumables);
     setAllMentorsAvailable(mentors);
   };
 
@@ -221,5 +241,15 @@ function MentorshipSchedule() {
     </Container>
   );
 }
+
+NoConsumablesCard.defaultProps = {
+  isLoading: false, // Valor por defecto cuando no se pasa esta prop
+};
+
+NoConsumablesCard.propTypes = {
+  t: PropTypes.func.isRequired,
+  handleGetMoreMentorships: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+};
 
 export default MentorshipSchedule;
