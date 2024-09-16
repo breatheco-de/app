@@ -142,8 +142,6 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     fetchContent();
   }, []);
 
-  console.log(recommendations);
-
   return recommendations?.length > 0 && (
     <>
       <Box color="white" zIndex="10" borderRadius="11px 11px 0 0" background={hexColor.greenLight} padding="10px 20px" bottom="0" position="sticky" marginBottom="20px" display={{ base: 'block', md: 'none' }} textAlign="left">
