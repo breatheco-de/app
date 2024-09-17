@@ -7,12 +7,9 @@ import {
   // useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
-import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
@@ -22,12 +19,11 @@ function Mentoring({
 }) {
   // const toast = useToast();
   const { t } = useTranslation('dashboard');
-  const { state } = useCohortHandler();
-  const { cohortSession } = state;
   const router = useRouter();
   const { isLoading, user } = useAuth();
   const { slug } = router.query;
-
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
   const [savedChanges, setSavedChanges] = useState({});
   const [consumables, setConsumables] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
@@ -36,23 +32,7 @@ function Mentoring({
   const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
   const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
   const step1 = !mentoryProps?.service;
-  const step2 = mentoryProps?.service && !mentoryProps?.date;
-
-  const formatDate = (date, formatStr) => (date ? format(new Date(date), formatStr, { locale: es }) : null);
-
-  const dateFormated = {
-    en: formatDate(mentoryProps?.date, 'MMMM dd'),
-    es: formatDate(mentoryProps?.date, "dd 'de' MMMM"),
-  };
-
-  const dateFormated2 = {
-    en: formatDate(mentoryProps?.date, 'MMMM dd, yyyy'),
-    es: formatDate(mentoryProps?.date, "dd 'de' MMMM, yyyy"),
-  };
-
-  const servicesFiltered = programServices.list.filter(
-    (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
-  );
+  const step2 = mentoryProps?.service;
 
   const filterServices = () => {
     if (subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0) {
@@ -169,70 +149,38 @@ function Mentoring({
     const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
     if (existsCohortSession) {
       setIsAvailableForConsumables(cohortSession?.available_as_saas);
-      return;
-    }
-    if (allCohorts.length > 0) {
-      const hasBootcampCohort = allCohorts?.some((c) => c.cohort?.available_as_saas === false);
-      if (hasBootcampCohort) {
-        setIsAvailableForConsumables(false);
-      }
     }
   }, [allCohorts]);
 
-  const mentorshipService = consumables.length > 0 ? consumables[0] : {};
+  console.log(cohortSession);
 
   return !isLoading && user?.id && (
     <Box>
       <Box fontSize="16px" padding="6px 8px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
         {t('supportSideBar.mentoring-label')}
       </Box>
-      {isAvailableForConsumables ? (
-        <MentoringConsumables
-          {...{
-            mentoryProps,
-            width,
-            consumables,
-            mentorshipService,
-            setMentoryProps,
-            programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
-            servicesFiltered: suscriptionServicesFiltered,
-            dateFormated,
-            searchProps,
-            setSearchProps,
-            setProgramMentors,
-            savedChanges,
-            setSavedChanges,
-            mentorsFiltered,
-            step1,
-            step2,
-            dateFormated2,
-            allMentorsAvailable,
-            subscriptionData,
-            allSubscriptions: subscriptions,
-          }}
-        />
-      ) : (
-        <MentoringFree
-          {...{
-            mentoryProps,
-            width,
-            setMentoryProps,
-            programServices: programServices.list,
-            dateFormated,
-            servicesFiltered,
-            searchProps,
-            setSearchProps,
-            setProgramMentors,
-            savedChanges,
-            setSavedChanges,
-            mentorsFiltered,
-            step1,
-            step2,
-            dateFormated2,
-            allMentorsAvailable,
-          }}
-        />
-      )}
+      <MentoringConsumables
+        {...{
+          mentoryProps,
+          width,
+          consumables,
+          setMentoryProps,
+          programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
+          servicesFiltered: suscriptionServicesFiltered,
+          searchProps,
+          setSearchProps,
+          setProgramMentors,
+          savedChanges,
+          setSavedChanges,
+          mentorsFiltered,
+          step1,
+          step2,
+          allMentorsAvailable,
+          subscriptionData,
+          isAvailableForConsumables,
+          allSubscriptions: subscriptions,
+        }}
+      />
     </Box>
   );
 }
