@@ -18,7 +18,7 @@ function Timeline({
 }) {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
-  const { hexColor, fontColor, backgroundColor } = useStyle();
+  const { hexColor, fontColor, backgroundColor, backgroundColor3 } = useStyle();
   const { lessonSlug } = router.query;
   const [currentAssignment, setCurrentAssignment] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
@@ -32,6 +32,16 @@ function Timeline({
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
+      });
+    }
+  };
+
+  const scrollTop = () => {
+    const element = document.getElementById('main-container');
+    if (element) {
+      element.scrollTo({
+        behavior: 'smooth',
+        top: 0,
       });
     }
   };
@@ -56,6 +66,7 @@ function Timeline({
     e.preventDefault();
     e.stopPropagation();
     onClickAssignment(e, item);
+    scrollTop();
   };
 
   const getAssignmentTitle = (item) => {
@@ -67,7 +78,7 @@ function Timeline({
 
   if (variant === 'guided-experience') {
     return (
-      <Box>
+      <Box display="flex" flexDirection="column" gap="5px">
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
           const muted = item?.slug !== currentAssignment?.slug;
@@ -88,6 +99,7 @@ function Timeline({
               alignItems="center"
               justifyContent="space-between"
               gap="5px"
+              _hover={{ background: backgroundColor3 }}
             >
               <Box>
                 <Flex gap="10px" mb="10px">

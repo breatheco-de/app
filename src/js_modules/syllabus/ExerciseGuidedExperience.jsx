@@ -187,6 +187,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             alignItems="center"
             textDecoration="none"
             _hover={{ opacity: 0.7 }}
+            fontSize="17px"
           >
             <Icon icon="prov-bridge" width="20px" height="20px" />
             {t('common:learnpack.open-in-learnpack-button.text')}
@@ -197,6 +198,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             color="white"
             whiteSpace="normal"
             onClick={() => setShowCloneModal(true)}
+            fontSize="17px"
           >
             {t('common:learnpack.open-locally')}
           </Button>

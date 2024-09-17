@@ -109,13 +109,14 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
             <>
               <Box mb="8px" display="flex" gap="10px" alignItems="center">
                 <NextChakraLink variant="ghost" href={cohortSession.selectedProgramSlug}>
-                  <Icon icon="arrowLeft" width="19px" height="10px" />
+                  <Icon style={{ display: 'inline' }} icon="arrowLeft" width="19px" height="10px" />
+                  {'  '}
+                  {currentModule.label && (
+                    <Heading display="inline" size="18px" fontWeight="400">
+                      {currentModule.label.toUpperCase()}
+                    </Heading>
+                  )}
                 </NextChakraLink>
-                {currentModule.label && (
-                <Heading size="18px" fontWeight="400">
-                  {currentModule.label.toUpperCase()}
-                </Heading>
-                )}
               </Box>
               <Timeline
                 variant="guided-experience"
