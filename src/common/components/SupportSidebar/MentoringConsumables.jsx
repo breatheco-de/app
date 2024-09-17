@@ -156,7 +156,6 @@ function MentoringConsumables({
         mentorship_service: service?.slug,
       },
     });
-    console.log('AAAAAAAAAAAA', service);
     const relatedConsumable = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
     setProgramMentors(mentors);
     setConsumableOfService({
@@ -177,7 +176,6 @@ function MentoringConsumables({
     try {
       if (allMentorsAvailable.length > 0) {
         const mentorsByService = allMentorsAvailable.filter((mentor) => mentor.services.some((s) => s.slug === service.slug));
-        console.log(service);
         manageMentorsData(service, mentorsByService);
       } else {
         const res = await bc.mentorship({

@@ -152,8 +152,6 @@ function Mentoring({
     }
   }, [allCohorts]);
 
-  console.log(cohortSession);
-
   return !isLoading && user?.id && (
     <Box>
       <Box fontSize="16px" padding="6px 8px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
