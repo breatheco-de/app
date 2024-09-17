@@ -45,6 +45,8 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
     });
   }) : [];
 
+  const hasNonSaasCourse = chooseList.some(({ cohort }) => !cohort.available_as_saas);
+
   const marketingCourses = marketingCursesList.filter(
     (item) => !activeSubscriptionCohorts.some(
       (activeCohort) => activeCohort?.all_subscriptions?.some(
@@ -67,6 +69,12 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
         setMarketingCursesList(data);
       });
   }, [router?.locale]);
+
+  const filterForNonSaasStudents = (course) => {
+    if (!hasNonSaasCourse) return true;
+
+    return course.plan_slug === process.env.BASE_PLAN;
+  };
 
   return (
     <>
@@ -101,7 +109,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
         onClose={() => setUpgradeModalIsOpen(false)}
       />
 
-      {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
+      {!isNotAvailableForMktCourses && marketingCourses.some((l) => l?.course_translation?.title) && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
@@ -115,7 +123,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCourses.map((item) => (
+            {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
               <ProgramCard
                 isMarketingCourse
                 icon="coding"
