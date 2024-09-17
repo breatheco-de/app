@@ -36,8 +36,8 @@ const ProjectList = forwardRef(({
   const breakpointColumnsObj = {
     default: 3,
     1100: 3,
-    700: 2,
-    500: 1,
+    880: 2,
+    590: 1,
   };
 
   return (
