@@ -52,8 +52,8 @@
   "completion-percentage": "Completion percentage",
   "total-steps": "Total steps completed",
   "total-time": "Total time worked on this package",
-  "successful-compiles": "Succesfull compiles",
-  "successful-tests": "Succesfull tests",
+  "successful-compiles": "Successfull compiles",
+  "successful-tests": "Successfull tests",
   "total-errors": "Total errors",
   "click-to-review": "Click here to review the solution."
 }
