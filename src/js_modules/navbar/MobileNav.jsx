@@ -8,14 +8,13 @@ import {
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import { useRouter } from 'next/router';
 import Icon from '../../common/components/Icon';
 import MobileItem from './MobileItem';
 import LanguageSelector from '../../common/components/LanguageSelector';
-// import syllabusList from '../../../public/syllabus.json';
 import NextChakraLink from '../../common/components/NextChakraLink';
-// import UpgradeExperience from '../../common/components/UpgradeExperience';
 import useStyle from '../../common/hooks/useStyle';
-// import UpgradeExperience from '../../common/components/UpgradeExperience';
+import { setStorageItem } from '../../utils';
 
 function MobileNav({
   // eslint-disable-next-line no-unused-vars
@@ -24,6 +23,7 @@ function MobileNav({
   const [privateItems, setPrivateItems] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
   const { t } = useTranslation('navbar');
+  const router = useRouter();
   const commonColors = useColorModeValue('white', 'gray.800');
   // const readSyllabus = JSON.parse(syllabusList);
   const prismicRef = process.env.PRISMIC_REF;
@@ -100,6 +100,7 @@ function MobileNav({
       <Box display={{ base: 'flex', md: 'none' }} padding="0.5rem 0">
         <NextChakraLink
           href="/login"
+          onClick={() => setStorageItem('redirect', router?.asPath)}
           fontSize="16px"
           lineHeight="22px"
           margin="0"

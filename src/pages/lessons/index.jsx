@@ -229,6 +229,7 @@ function Projects({ lessons, technologyTags, difficulties, count }) {
         withContainer
         gridColumn="1 / span 10"
         maxWidth="1280px"
+        padding="0 15px"
       >
         <Text
           size="md"

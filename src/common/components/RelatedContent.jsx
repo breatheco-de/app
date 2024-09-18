@@ -12,6 +12,13 @@ import Text from './Text';
 import NextChakraLink from './NextChakraLink';
 import { isValidDate } from '../../utils';
 
+const assetTypePaths = [
+  'how-to',
+  'lesson',
+  'interactive-exercise',
+  'interactive-coding-tutorial',
+];
+
 function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficulty, projectPath, ...rest }) {
   const { t, lang } = useTranslation('common');
   const [contentList, setContentList] = useState([]);
@@ -57,10 +64,8 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
       </Heading>
       <Flex as="ul" flexDirection="column" gridGap="20px" width="100%">
         {contentList.map((item) => {
-          const isLesson = getAssetPath(item) === 'lesson';
-          const isExercise = getAssetPath(item) === 'interactive-exercise';
-          const isProject = getAssetPath(item) === 'interactive-coding-tutorial';
-          const isHowTo = getAssetPath(item) === 'how-to';
+          const assetPath = getAssetPath(item);
+
           const prefixLang = item?.lang === 'us' ? '' : `/${item?.lang}`;
           const date = new Date(item?.published_at);
           const dateCreated = isValidDate(item?.published_at) ? {
@@ -69,18 +74,7 @@ function RelatedContent({ slug, type, extraQuerys, technologies, pathWithDifficu
           } : {};
 
           const getLink = () => {
-            if (isLesson) {
-              return `${prefixLang}/lesson/${item.slug}`;
-            }
-            if (isExercise) {
-              return `${prefixLang}/interactive-exercise/${item.slug}`;
-            }
-            if (isProject) {
-              return `${prefixLang}/interactive-coding-tutorial/${item.slug}`;
-            }
-            if (isHowTo) {
-              return `${prefixLang}/how-to/${item.slug}`;
-            }
+            if (assetTypePaths.includes(assetPath)) return `${prefixLang}/${assetPath}/${item.slug}`;
             return `/${projectPath}${checkIsPathDifficulty(item.difficulty)}/${item.slug}`;
           };
           return (

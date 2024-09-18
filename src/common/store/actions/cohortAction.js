@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  SET_MY_COHORTS,
   SET_COHORT_SESSION,
   SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
@@ -7,10 +8,19 @@ import {
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
-const useCohort = () => {
+const useCohortAction = () => {
   const dispatch = useDispatch();
   const [, persistCohortSession] = usePersistent('cohortSession', {});
   const state = useSelector((reducerState) => reducerState.cohortReducer);
+
+  const setMyCohorts = (payload) => {
+    dispatch({
+      type: SET_MY_COHORTS,
+      payload: {
+        myCohorts: payload,
+      },
+    });
+  };
 
   const setCohortSession = (payload) => {
     dispatch({
@@ -51,6 +61,7 @@ const useCohort = () => {
 
   return {
     state,
+    setMyCohorts,
     setCohortSession,
     setTaskCohortNull,
     setSortedAssignments,
@@ -58,4 +69,4 @@ const useCohort = () => {
   };
 };
 
-export default useCohort;
+export default useCohortAction;

@@ -4,28 +4,26 @@ import React, {
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
-  Box, Flex, useColorMode, useColorModeValue,
+  Box,
+  Flex,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
+import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
 
-const color = {
-  light: 'blue.light',
-  dark: 'featuredDark',
-};
-
 function Timeline({
-  title, assignments, technologies, width, onClickAssignment, showPendingTasks,
+  title, assignments, technologies, width, onClickAssignment, showPendingTasks, variant,
 }) {
   const { t, lang } = useTranslation('syllabus');
-  const { colorMode } = useColorMode();
   const router = useRouter();
+  const { hexColor, fontColor, backgroundColor, backgroundColor3 } = useStyle();
   const { lessonSlug } = router.query;
   const [currentAssignment, setCurrentAssignment] = useState(null);
-  const [currentDefaultSlug, setCurrentDefaultSlug] = useState(null);
   const fontColor1 = useColorModeValue('gray.dark', 'white');
   const fontColor2 = useColorModeValue('gray.dark', 'gray.light');
+  const bgColor = useColorModeValue('blue.light', 'featuredDark');
 
   // scroll scrollIntoView for id when lessonSlug changes
   const scrollIntoView = (id) => {
@@ -38,28 +36,92 @@ function Timeline({
     }
   };
 
+  const scrollTop = () => {
+    const element = document.getElementById('main-container');
+    if (element) {
+      element.scrollTo({
+        behavior: 'smooth',
+        top: 0,
+      });
+    }
+  };
+
   useEffect(() => {
     if (assignments?.length > 0) {
       const assignmentFound = assignments.find((item) => (
         item?.translations?.us?.slug === lessonSlug
         || item?.translations?.es?.slug === lessonSlug
+        || item?.slug === lessonSlug
       ));
-      const slug = currentAssignment?.translations?.us?.slug || currentAssignment?.translations?.en?.slug;
-      setCurrentDefaultSlug(slug);
       setCurrentAssignment(assignmentFound);
     }
   }, [lessonSlug, assignments]);
 
   useEffect(() => {
-    if (currentDefaultSlug) {
-      scrollIntoView(currentDefaultSlug);
+    if (currentAssignment?.slug) {
+      scrollIntoView(currentAssignment.slug);
     }
-  }, [currentDefaultSlug]);
+  }, [currentAssignment]);
   const handleClick = (e, item) => {
     e.preventDefault();
     e.stopPropagation();
     onClickAssignment(e, item);
+    scrollTop();
   };
+
+  const getAssignmentTitle = (item) => {
+    if (!item?.translations) return item?.title;
+
+    return lang === 'en' ? (item?.translations?.en?.title || item?.translations?.us?.title)
+      : (item?.translations?.[lang]?.title || item?.title);
+  };
+
+  if (variant === 'guided-experience') {
+    return (
+      <Box display="flex" flexDirection="column" gap="5px">
+        {assignments.length > 0 ? assignments.map((item, index) => {
+          const mapIndex = index;
+          const muted = item?.slug !== currentAssignment?.slug;
+          const assignmentTitle = getAssignmentTitle(item);
+
+          return (
+            <Box
+              key={`${item?.id}-${mapIndex}`}
+              id={item.slug}
+              cursor="pointer"
+              onClick={(e) => handleClick(e, item)}
+              width="100%"
+              borderRadius="0px 8px 8px 0px "
+              bg={!muted ? backgroundColor : 'none'}
+              borderLeft={!muted && `4px solid ${hexColor.blueDefault}`}
+              padding="16px"
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              gap="5px"
+              _hover={{ background: backgroundColor3 }}
+            >
+              <Box>
+                <Flex gap="10px" mb="10px">
+                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{index + 1}</Text>
+                  <Icon width="16px" height="16px" icon={item.icon} color={muted ? '#6883B4' : hexColor.blueDefault} />
+                  <Text size="sm" color={muted ? '#6883B4' : hexColor.blueDefault} fontWeight="900" marginY={0}>{item.type}</Text>
+                </Flex>
+                <Text size="sm" fontWeight="400" marginY={0} color={muted ? '#6883B4' : fontColor}>{assignmentTitle}</Text>
+              </Box>
+              {item.task_status === 'DONE' && (
+                <Icon icon="checked2" color={hexColor.green} />
+              )}
+            </Box>
+          );
+        }) : (
+          <Text size="sm" margin={0} color={fontColor2} textAlign="left">
+            {showPendingTasks ? t('no-modules-to-show') : t('module-not-started')}
+          </Text>
+        )}
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -97,10 +159,8 @@ function Timeline({
       <Box>
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
-          const muted = item?.slug !== currentDefaultSlug;
-          const assignmentTitle = lang === 'en'
-            ? (item?.translations?.en?.title || item?.translations?.us?.title)
-            : (item?.translations?.[lang]?.title || item?.title);
+          const muted = item?.slug !== currentAssignment?.slug;
+          const assignmentTitle = getAssignmentTitle(item);
 
           return (
             <Box
@@ -119,7 +179,7 @@ function Timeline({
                   </Box>
                 </Box>
               </Box>
-              <Flex cursor="pointer" onClick={(e) => handleClick(e, item)} width="100%" borderRadius="17px" bg={!muted ? color[colorMode] : 'none'} paddingY="10.5px" paddingX="12px">
+              <Flex cursor="pointer" onClick={(e) => handleClick(e, item)} width="100%" borderRadius="17px" bg={!muted ? bgColor : 'none'} paddingY="10.5px" paddingX="12px">
                 <Box padding="8px" bg={!muted ? 'blue.default' : 'none'} borderRadius="50px" height="36px" margin="0">
                   <Icon width="20px" height="20px" icon={item && item?.icon} color={muted ? 'gray' : 'white'} />
                 </Box>
@@ -147,6 +207,7 @@ Timeline.propTypes = {
   width: PropTypes.string,
   onClickAssignment: PropTypes.func,
   showPendingTasks: PropTypes.bool,
+  variant: PropTypes.string,
 };
 
 Timeline.defaultProps = {
@@ -156,6 +217,7 @@ Timeline.defaultProps = {
   width: '100%',
   onClickAssignment: () => {},
   showPendingTasks: false,
+  variant: '',
 };
 
 export default memo(Timeline);

@@ -5,7 +5,9 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
 import { devLog, getStorageItem } from '../../utils';
-import useAssignments from '../store/actions/cohortAction';
+import useCohortAction from '../store/actions/cohortAction';
+import useModuleHandler from './useModuleHandler';
+import { processRelatedAssignments } from '../handlers/cohorts';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
@@ -13,7 +15,8 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, state } = useAssignments();
+  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
+  const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
     cohortSession,
@@ -49,29 +52,26 @@ function useCohortHandler() {
     }
   };
 
-  const getCohortAssignments = ({
-    setContextState, slug, cohort,
+  const getCohortAssignments = async ({
+    slug, cohort,
   }) => {
     if (user) {
-      const academyId = cohort.academy.id;
-      const { version } = cohort.syllabus_version;
-      const syllabusSlug = cohort?.syllabus_version.slug || slug;
+      const academyId = cohort?.academy.id;
+      const version = cohort?.syllabus_version?.version;
+      const syllabusSlug = cohort?.syllabus_version?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
-        // Fetch cohortProgram and TaskTodo then apply to contextState (useModuleMap - action)
-        Promise.all([
-          bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
-          bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
-          bc.auth().getRoles(currentAcademy?.role), // Roles
-        ]).then((
-          [taskTodoData, programData, userRoles],
-        ) => {
+        // Fetch cohortProgram and TaskTodo then apply to moduleMap store
+        try {
+          const [taskTodoData, programData, userRoles] = await Promise.all([
+            bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent(), // Tasks with cohort id
+            bc.syllabus().get(academyId, syllabusSlug, version), // cohortProgram
+            bc.auth().getRoles(currentAcademy?.role), // Roles
+          ]);
           setUserCapabilities(userRoles.data.capabilities);
-          setContextState({
-            taskTodo: taskTodoData.data.results,
-            cohortProgram: programData.data,
-          });
-        }).catch((err) => {
+          setTaskTodo(taskTodoData.data.results);
+          setCohortProgram(programData.data);
+        } catch (err) {
           console.log(err);
           toast({
             position: 'top',
@@ -82,98 +82,91 @@ function useCohortHandler() {
             isClosable: true,
           });
           router.push('/choose-program');
-        });
+        }
       }
     }
   };
 
-  const handleRedirectToPublicPage = () => {
-    axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`)
-      .then((response) => {
-        if (response?.data?.asset_type) {
-          redirectToPublicPage(response.data);
-        }
-      })
-      .catch(() => {
-        router.push('/404');
-      });
+  const handleRedirectToPublicPage = async () => {
+    try {
+      const response = await axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
+      if (response?.data?.asset_type) {
+        redirectToPublicPage(response.data);
+      }
+    } catch (e) {
+      router.push('/404');
+    }
   };
 
-  const getCohortData = ({
+  const getCohortData = async ({
     cohortSlug,
-  }) => new Promise((resolve, reject) => {
-    // Fetch cohort data with pathName structure
-    if (cohortSlug && accessToken) {
-      bc.admissions().me().then(({ data }) => {
+  }) => {
+    try {
+      // Fetch cohort data with pathName structure
+      if (cohortSlug && accessToken) {
+        const { data } = await bc.admissions().me();
         if (!data) throw new Error('No data');
         const { cohorts } = data;
-        // find cohort with current slug
-        const findCohort = cohorts.find((c) => c.cohort.slug === cohortSlug);
-        const currentCohort = findCohort?.cohort;
 
-        if (assetSlug && (!currentCohort)) {
-          handleRedirectToPublicPage();
+        const parsedCohorts = cohorts.map(((elem) => {
+          const { cohort, ...cohort_user } = elem;
+          const { syllabus_version } = cohort;
+          return {
+            ...cohort,
+            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+            cohort_role: elem.role,
+            cohort_user,
+          };
+        }));
+
+        // find cohort with current slug
+        const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+
+        if (!currentCohort) {
+          if (assetSlug) return handleRedirectToPublicPage();
+
+          return router.push('/choose-program');
         }
-        if (currentCohort) {
-          const { syllabus_version } = currentCohort;
-          setCohortSession({
-            ...cohortSession,
-            ...currentCohort,
-            selectedProgramSlug: `/cohort/${currentCohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: findCohort.role,
-            cohort_user: {
-              created_at: findCohort.created_at,
-              educational_status: findCohort.educational_status,
-              finantial_status: findCohort.finantial_status,
-              role: findCohort.role,
-            },
-          });
-          resolve(currentCohort);
-        }
-      }).catch((error) => {
-        handleRedirectToPublicPage();
-        toast({
-          position: 'top',
-          title: t('alert-message:invalid-cohort-slug'),
-          // title: 'Invalid cohort slug',
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-        reject(error);
-        setTimeout(() => {
-          localStorage.removeItem('cohortSession');
-        }, 4000);
-      });
-    } else {
+
+        setCohortSession(currentCohort);
+        setMyCohorts(parsedCohorts);
+        return currentCohort;
+      }
+
+      return handleRedirectToPublicPage();
+    } catch (error) {
       handleRedirectToPublicPage();
+      toast({
+        position: 'top',
+        title: t('alert-message:invalid-cohort-slug'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+      return localStorage.removeItem('cohortSession');
     }
-  });
+  };
 
   // Sort all data fetched in order of taskTodo
-  const prepareTasks = ({
-    cohortProgram, contextState, nestAssignments,
-  }) => {
-    const moduleData = cohortProgram.json?.days || cohortProgram.json?.modules;
-    const cohort = cohortProgram.json ? moduleData : [];
+  const prepareTasks = () => {
+    const moduleData = cohortProgram?.json?.days || cohortProgram?.json?.modules || [];
     const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
-    if (contextState.cohortProgram.json && contextState.taskTodo) {
-      cohort.map((assignment) => {
+    if (cohortProgram?.json && taskTodo) {
+      moduleData.forEach((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,
         } = assignment;
         if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = nestAssignments({
-            id,
-            read: lessons,
-            practice: replits,
-            project: assignments,
-            answer: quizzes,
-            taskTodo: contextState.taskTodo,
-          });
-          const { modules, filteredModules, filteredModulesByPending } = nestedAssignments;
+          const nestedAssignments = processRelatedAssignments(assignment, taskTodo);
+
+          // this properties name's reassignment is done to keep compatibility with deprecated functions
+          const {
+            content: modules,
+            filteredContent: filteredModules,
+            filteredContentByPending: filteredModulesByPending,
+          } = nestedAssignments;
 
           // Data to be sent to [sortedAssignments] = state
           const assignmentsStruct = {
@@ -201,14 +194,12 @@ function useCohortHandler() {
               ...assignmentsStruct,
             });
           }
-
-          const filterNotEmptyModules = assignmentsRecopilated.filter(
-            (l) => l.modules.length > 0,
-          );
-          return setSortedAssignments(filterNotEmptyModules);
         }
-        return null;
       });
+      const filterNotEmptyModules = assignmentsRecopilated.filter(
+        (l) => l.modules.length > 0,
+      );
+      setSortedAssignments(filterNotEmptyModules);
     }
   };
 

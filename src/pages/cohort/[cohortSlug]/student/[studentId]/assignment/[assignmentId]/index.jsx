@@ -20,6 +20,7 @@ import Heading from '../../../../../../../common/components/Heading';
 import Text from '../../../../../../../common/components/Text';
 import Icon from '../../../../../../../common/components/Icon';
 import DottedTimeline from '../../../../../../../common/components/DottedTimeline';
+import { intervalToHours } from '../../../../../../../utils';
 import axiosInstance from '../../../../../../../axios';
 
 function AssignmentReport() {
@@ -66,16 +67,6 @@ function AssignmentReport() {
       setIsFetching(false);
       console.log(e);
     }
-  };
-
-  const intervalToHours = (duration) => {
-    const hours = duration.years * 24 * 365 // Hours from years (assuming 365 days per year)
-             + duration.months * 24 * 30 // Hours from months (assuming 30 days per month)
-             + duration.days * 24 // Hours from days
-             + duration.hours
-             + duration.minutes / 60 // Convert minutes to hours
-             + duration.seconds / 3600;
-    return hours;
   };
 
   useEffect(() => {

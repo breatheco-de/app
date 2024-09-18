@@ -11,6 +11,7 @@ import Icon from './Icon';
 import Text from './Text';
 import AttendanceModal from './AttendanceModal';
 import useCohortHandler from '../hooks/useCohortHandler';
+import useAuth from '../hooks/useAuth';
 import { isValidDate, isWindow } from '../../utils';
 
 function ItemText({ text }) {
@@ -50,9 +51,10 @@ function ItemButton({
 }
 
 function TeacherSidebar({
-  title, user, students, width, sortedAssignments,
+  title, students, width,
 }) {
   const { t } = useTranslation('dashboard');
+  const { user } = useAuth();
   const { colorMode } = useColorMode();
   const [openAttendance, setOpenAttendance] = useState(false);
   const { state } = useCohortHandler();
@@ -163,7 +165,6 @@ function TeacherSidebar({
           <AttendanceModal
             isOpen={openAttendance}
             students={students}
-            sortedAssignments={sortedAssignments}
             onClose={() => setOpenAttendance(false)}
             title={t('attendance-modal.start-today-class')}
             // title="Start your today's class"
@@ -178,18 +179,14 @@ function TeacherSidebar({
 
 TeacherSidebar.propTypes = {
   title: PropTypes.string,
-  user: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   students: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   width: PropTypes.string,
-  sortedAssignments: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
 };
 
 TeacherSidebar.defaultProps = {
   title: 'Actions',
-  user: {},
   students: [],
   width: '100%',
-  sortedAssignments: [],
 };
 
 ItemText.propTypes = {

@@ -125,14 +125,14 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
 
         let endpoint;
         if (path) {
-          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler-with-context/';
+          endpoint = `${RIGOBOT_HOST}/v1/prompting/completion/code-compiler-with-context/`;
           completionJob.inputs = {
             main_file: `File path: ${path}\nFile content:\n${code}`,
             language_and_version: language,
             secondary_files: fileContext,
           };
         } else {
-          endpoint = 'https://rigobot.herokuapp.com/v1/prompting/completion/code-compiler/';
+          endpoint = `${RIGOBOT_HOST}/v1/prompting/completion/code-compiler/`;
           completionJob.inputs = {
             code,
             language_and_version: language,
@@ -241,8 +241,9 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
                     ]);
                   }}
                   defaultLanguage={language}
-                  height="300px"
+                  height="290px"
                   options={{
+                    scrollBeyondLastLine: false,
                     borderRadius: '4px',
                     scrollbar: {
                       alwaysConsumeMouseWheel: false,
