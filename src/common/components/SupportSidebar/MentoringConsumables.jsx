@@ -202,6 +202,7 @@ function MentoringConsumables({
 
     if (queryMentor && allMentorsAvailable.length > 0) {
       const mentorFound = allMentorsAvailable.find((ment) => ment.slug === queryMentor);
+
       if (mentorFound && !hasReset) {
         servWithMentorsAvailable = servicesFiltered.filter((service) => mentorFound.services.some((mentServ) => mentServ.slug === service.slug));
       } else {
@@ -210,7 +211,7 @@ function MentoringConsumables({
           toast({
             position: 'top',
             title: 'Error',
-            description: `${queryMentor} mentor not found`,
+            description: `${t('supportSideBar.mentor-not-found')} "${queryMentor}"`,
             status: 'error',
             duration: 7000,
             isClosable: true,
@@ -228,18 +229,20 @@ function MentoringConsumables({
   useEffect(() => {
     if (queryService && servicesWithMentorsAvailable?.length > 0 && shouldHandleService && !hasReset) {
       const serviceFound = servicesWithMentorsAvailable.find((service) => service.slug === queryService);
+
       if (serviceFound) {
         handleService(serviceFound);
       } else {
         toast({
           position: 'top',
           title: 'Error',
-          description: `${queryService} service not found ${queryMentor ? `for ${queryMentor}` : ''}`,
+          description: `${t('supportSideBar.service-not-found')} "${queryService}" ${queryMentor ? `${t('supportSideBar.for')} "${queryMentor}"` : ''}`,
           status: 'error',
           duration: 7000,
           isClosable: true,
         });
       }
+
       setOpen(true);
       setShouldHandleService(false);
     }
