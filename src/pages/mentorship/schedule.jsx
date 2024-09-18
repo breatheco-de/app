@@ -132,7 +132,7 @@ function MentorshipSchedule() {
       return res?.data || [];
     };
 
-    if (servicesSlugs.length > 0) {
+    if (servicesSlugs.length > 0 || allSyllabus.length > 0) {
       const mentorsPromises = academyData.map(getMentorsForAcademy);
       const mentorsList = (await Promise.all(mentorsPromises)).flat();
       return mentorsList;
@@ -241,15 +241,5 @@ function MentorshipSchedule() {
     </Container>
   );
 }
-
-NoConsumablesCard.defaultProps = {
-  isLoading: false, // Valor por defecto cuando no se pasa esta prop
-};
-
-NoConsumablesCard.propTypes = {
-  t: PropTypes.func.isRequired,
-  handleGetMoreMentorships: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool,
-};
 
 export default MentorshipSchedule;
