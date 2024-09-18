@@ -17,11 +17,11 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
 
 function AttendanceModal({
-  title, message, isOpen, onClose, sortedAssignments, students,
+  title, message, isOpen, onClose, students,
 }) {
   const { t } = useTranslation('dashboard');
   const { state, setCohortSession } = useCohortHandler();
-  const { cohortSession } = state;
+  const { cohortSession, sortedAssignments } = state;
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
@@ -440,7 +440,6 @@ CheckboxCard.propTypes = {
 AttendanceModal.propTypes = {
   title: PropTypes.string,
   message: PropTypes.string,
-  sortedAssignments: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
   students: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)).isRequired,
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,

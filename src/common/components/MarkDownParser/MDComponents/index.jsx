@@ -441,7 +441,7 @@ export function DOMComponent({ children }) {
 }
 
 export function MDCheckbox({
-  index, children, subTasks, subTasksLoaded, subTasksProps, setSubTasksProps, updateSubTask,
+  index, children, subTasks, subTasksLoaded, newSubTasks, setNewSubTasks, updateSubTask,
 }) {
   const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
@@ -463,15 +463,15 @@ export function MDCheckbox({
   const text = renderToStringClient();
 
   const slug = typeof text === 'string' && slugify(text);
-  const currentSubTask = subTasks.length > 0 && subTasks.filter((task) => task?.id === slug);
-  const taskChecked = subTasks && subTasks.filter((task) => task?.id === slug && task?.status !== 'PENDING').length > 0;
+  const currentSubTask = subTasks.find((task) => task?.id === slug);
 
   useEffect(() => {
     // load checked tasks
+    const taskChecked = subTasks.some((task) => task?.id === slug && task?.status !== 'PENDING');
     if (taskChecked) {
       setIsChecked(true);
     }
-  }, [taskChecked]);
+  }, [subTasks]);
 
   const taskStatus = {
     true: 'DONE',
@@ -481,35 +481,25 @@ export function MDCheckbox({
   useEffect(() => {
     if (subTasksLoaded) {
       if (
-        subTasksProps?.length > 0 && subTasksProps.find((l) => l?.id === slug)
+        newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
       ) { return () => {}; }
 
-      if (currentSubTask.length > 0) {
-        setSubTasksProps((prev) => {
-          if (prev.length > 0) {
-            return [...prev, currentSubTask[0]];
-          }
-          return [currentSubTask[0]];
+      if (currentSubTask) {
+        setNewSubTasks((prev) => {
+          const content = [...prev];
+          if (!content.some((subTask) => subTask.id === currentSubTask.id)) content.push(currentSubTask);
+          return content;
         });
       } else {
-        setSubTasksProps((prev) => {
-          if (prev?.length > 0) {
-            return [
-              ...prev,
-              {
-                id: slug,
-                status: 'PENDING',
-                label: text,
-              },
-            ];
-          }
-          return [
-            {
-              id: slug,
-              status: 'PENDING',
-              label: text,
-            },
-          ];
+        setNewSubTasks((prev) => {
+          const task = {
+            id: slug,
+            status: 'PENDING',
+            label: text,
+          };
+          const content = [...prev];
+          if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+          return content;
         });
       }
     }
@@ -543,7 +533,7 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, include, exclude, cohortSession, profile,
+  children, permission, include, exclude, profile,
 }) {
   const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
   log('md_permissions:', allCapabilities);
@@ -553,7 +543,6 @@ export function OnlyForBanner({
       onlyMember
       withBanner
       profile={profile}
-      cohortSession={cohortSession}
       capabilities={allCapabilities}
     >
       {children}
@@ -602,16 +591,16 @@ MDCheckbox.propTypes = {
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   subTasksLoaded: PropTypes.bool,
-  subTasksProps: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  setSubTasksProps: PropTypes.func,
+  newSubTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  setNewSubTasks: PropTypes.func,
   updateSubTask: PropTypes.func,
 };
 MDCheckbox.defaultProps = {
   index: 0,
   subTasks: [],
   subTasksLoaded: false,
-  subTasksProps: [],
-  setSubTasksProps: () => {},
+  newSubTasks: [],
+  setNewSubTasks: () => {},
   updateSubTask: () => {},
 };
 
@@ -632,14 +621,12 @@ MDText.propTypes = {
 OnlyForBanner.propTypes = {
   children: PropTypes.node.isRequired,
   permission: PropTypes.string,
-  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   include: PropTypes.string,
   exclude: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
-  cohortSession: {},
   profile: {},
   include: '',
   exclude: '',

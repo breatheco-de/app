@@ -27,8 +27,6 @@ import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
-import useModuleMap from '../../../../../common/store/actions/moduleMapAction';
-import { nestAssignments } from '../../../../../common/hooks/useModuleHandler';
 import axios from '../../../../../axios';
 import {
   slugify,
@@ -46,6 +44,7 @@ import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
+import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
@@ -58,9 +57,7 @@ function Dashboard() {
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
-  const { contextState, setContextState } = useModuleMap();
   const [showWarningModal, setShowWarningModal] = useState(false);
-  const { cohortProgram } = contextState;
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -71,19 +68,20 @@ function Dashboard() {
   const [liveClasses, setLiveClasses] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
+  const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const {
     state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, taskCohortNull } = state;
+  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -137,13 +135,10 @@ function Dashboard() {
     }));
     await bc.todo({}).updateBulk(tasksToUpdate)
       .then(({ data }) => {
-        setContextState({
-          ...contextState,
-          taskTodo: [
-            ...contextState.taskTodo,
-            ...data,
-          ],
-        });
+        setTaskTodo([
+          ...taskTodo,
+          ...data,
+        ]);
         setModalIsOpen(false);
       })
       .catch(() => {
@@ -185,23 +180,17 @@ function Dashboard() {
       });
   };
   useEffect(() => {
-    if (isAuthenticated) {
-      bc.admissions().me()
-        .then((resp) => {
-          const data = resp?.data;
-          const cohorts = data?.cohorts;
-          const currentCohort = cohorts?.find((l) => l?.cohort?.slug === cohortSlug);
-          if (currentCohort?.finantial_status === 'LATE' || currentCohort?.educational_status === 'SUSPENDED') {
-            router.push('/choose-program');
-          } else {
-            const isReadyToShowGithubMessage = cohorts?.some(
-              (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-            );
-            setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
-          }
-        });
+    if (cohortSession?.cohort_user) {
+      if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
+        router.push('/choose-program');
+      } else {
+        const isReadyToShowGithubMessage = myCohorts.some(
+          (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
+        );
+        setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
+      }
     }
-  }, [isAuthenticated]);
+  }, [cohortSession]);
 
   useEffect(() => {
     if (showGithubWarning === 'active') {
@@ -274,15 +263,17 @@ function Dashboard() {
       getCohortData({
         cohortSlug,
       }).then((cohort) => {
-        reportDatalayer({
-          dataLayer: {
-            current_cohort_id: cohort.id,
-            current_cohort_slug: cohort.slug,
-          },
-        });
+        if (cohort) {
+          reportDatalayer({
+            dataLayer: {
+              current_cohort_id: cohort.id,
+              current_cohort_slug: cohort.slug,
+            },
+          });
+        }
         // Fetch cohort assignments (lesson, exercise, project, quiz)
         getCohortAssignments({
-          user, setContextState, slug, cohort,
+          slug, cohort,
         });
       }).finally(() => {
         setIsLoadingAssigments(false);
@@ -334,12 +325,8 @@ function Dashboard() {
 
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
-    if (contextState.cohortProgram && typeof contextState.cohortProgram === 'object' && contextState.taskTodo) {
-      prepareTasks({
-        cohortProgram, contextState, nestAssignments,
-      });
-    }
-  }, [contextState.cohortProgram, contextState.taskTodo, router]);
+    prepareTasks();
+  }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -464,9 +451,9 @@ function Dashboard() {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            {(cohortSession?.syllabus_version?.name || cohortProgram.name) ? (
+            {(cohortSession?.syllabus_version?.name || cohortProgram?.name) ? (
               <Heading as="h1" size="xl">
-                {cohortSession?.syllabus_version?.name || cohortProgram?.name}
+                {cohortSession?.syllabus_version?.name || cohortProgram.name}
               </Heading>
             ) : (
               <Skeleton
@@ -495,12 +482,10 @@ function Dashboard() {
                 flexDirection="column"
                 gridGap="30px"
               >
-                <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+                <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                   <TeacherSidebar
                     title={t('teacher-sidebar.actions')}
-                    user={user}
                     students={onlyStudentsActive}
-                    sortedAssignments={sortedAssignments}
                     width="100%"
                   />
                 </OnlyFor>
@@ -538,9 +523,7 @@ function Dashboard() {
                 {cohortSession?.kickoff_date && (
                   <CohortSideBar
                     teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
-                    cohort={cohortSession}
                     studentAndTeachers={studentAndTeachers}
-                    cohortCity={cohortSession?.name}
                     width="100%"
                   />
                 )}
@@ -612,7 +595,7 @@ function Dashboard() {
               <Box marginTop="36px">
                 <ProgressBar
                   cohortProgram={cohortProgram}
-                  taskTodo={contextState.taskTodo}
+                  taskTodo={taskTodo}
                   progressText={t('progressText')}
                   width="100%"
                 />
@@ -689,18 +672,13 @@ function Dashboard() {
                     return (
                       <ModuleMap
                         key={index}
-                        userId={user?.id}
                         existsActivities={existsActivities}
                         cohortData={cohortSession}
-                        taskCohortNull={taskCohortNull}
-                        contextState={contextState}
-                        setContextState={setContextState}
                         index={index}
                         title={label}
                         slug={slugify(label)}
                         searchValue={searchValue}
                         description={description}
-                        taskTodo={contextState.taskTodo}
                         modules={modules}
                         filteredModules={filteredModulesSearched}
                         showPendingTasks={showPendingTasks}
@@ -729,18 +707,16 @@ function Dashboard() {
               maxWidth="380px"
               minWidth={{ base: 'auto', md: 'clamp(250px, 32vw, 380px)' }}
             >
-              <OnlyFor onlyTeachers cohortSession={cohortSession} capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
+              <OnlyFor onlyTeachers capabilities={['academy_reporting', 'classroom_activity', 'read_cohort_activity']}>
                 <TeacherSidebar
                   title={t('teacher-sidebar.actions')}
-                  user={user}
                   students={onlyStudentsActive}
-                  sortedAssignments={sortedAssignments}
                   width="100%"
                 />
               </OnlyFor>
               {cohortSession?.stage === 'FINAL_PROJECT' && (
                 <FinalProject
-                  tasks={contextState.taskTodo}
+                  tasks={taskTodo}
                   studentAndTeachers={onlyStudentsActive}
                   isStudent={!profesionalRoles.includes(cohortSession?.cohort_role)}
                 />
@@ -779,8 +755,6 @@ function Dashboard() {
                 <CohortSideBar
                   teacherVersionActive={profesionalRoles.includes(cohortSession?.cohort_role)}
                   studentAndTeachers={studentAndTeachers}
-                  cohort={cohortSession}
-                  cohortCity={cohortSession?.name}
                   width="100%"
                 />
               )}
@@ -904,7 +878,7 @@ function Dashboard() {
                 key={`${module.title}-${i}`}
                 currIndex={i}
                 data={module}
-                taskTodo={contextState.taskTodo}
+                taskTodo={taskTodo}
                 variant="open-only"
               />
             ))}

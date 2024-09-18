@@ -7,7 +7,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, ...rest
 }) {
   const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
@@ -105,7 +105,7 @@ function ReactPlayerV2({
       ) : (
         <>
           {url && !isExternalVideoProvider && (
-            <Box position="relative">
+            <Box position="relative" {...containerStyle}>
               <ReactPlayer
                 className={`react-player ${className}`}
                 url={videoUrl}
@@ -157,6 +157,7 @@ ReactPlayerV2.propTypes = {
   className: PropTypes.string,
   withThumbnail: PropTypes.bool,
   iframeStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
+  containerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   thumbnailStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   withModal: PropTypes.bool,
   title: PropTypes.string,
@@ -169,6 +170,7 @@ ReactPlayerV2.defaultProps = {
   className: '',
   withThumbnail: false,
   iframeStyle: {},
+  containerStyle: {},
   thumbnailStyle: {},
   withModal: false,
   title: '',

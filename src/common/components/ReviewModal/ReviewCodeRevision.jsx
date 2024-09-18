@@ -2,6 +2,7 @@ import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
+import CodeRevisionsList from './CodeRevisionsList';
 import Heading from '../Heading';
 import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
@@ -19,7 +20,7 @@ const defaultReviewRateData = {
   revision_rating: null,
 };
 function ReviewCodeRevision({ contextData, setContextData, stages, setStage, disableRate }) {
-  const { fontColor, borderColor, lightColor, hexColor, featuredLight } = useStyle();
+  const { lightColor, hexColor, featuredLight } = useStyle();
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
   const { t } = useTranslation('assignments');
 
@@ -149,62 +150,7 @@ function ReviewCodeRevision({ contextData, setContextData, stages, setStage, dis
               <Box fontSize="12px" flex={0.33}>{t('code-review.filename')}</Box>
               <Box fontSize="12px" flex={0.33} textAlign="center">{t('code-review.feedback-status')}</Box>
             </Flex>
-            <Flex overflow="auto" height="24rem" py="0.5rem" flexDirection="column" gridGap="12px">
-              {codeRevisions?.length > 0 && codeRevisions.map((commit) => {
-                const isSelected = revisionContent?.id === commit?.id;
-                const hasBeenReviewed = typeof commit?.is_good === 'boolean';
-                const dataStruct = {
-                  ...commit,
-                  revision_rating: commit?.revision_rating,
-                  hasBeenReviewed,
-                };
-                return (
-                  <Flex cursor="pointer" onClick={() => selectCodeRevision(dataStruct)} _hover={{ background: featuredLight }} border="1px solid" borderColor={isSelected ? 'blue.default' : borderColor} justifyContent="space-between" alignItems="center" height="48px" padding="4px 8px" borderRadius="8px">
-                    <Flex flex={0.3} gridGap="10px">
-                      <Icon icon="file2" width="22px" height="22px" display="flex" alignItems="center" color={fontColor} />
-                      <Flex flexDirection="column" justifyContent="center" gridGap="9px" maxWidth="102px">
-                        <Flex flexDirection="column" gridGap="0px">
-                          <Text fontSize="12px" fontWeight={700} style={{ textWrap: 'nowrap' }}>
-                            {commit?.file?.name}
-                          </Text>
-                          <Text fontSize="12px" fontWeight={400} title={commit?.file?.commit_hash}>
-                            {`${commit?.file?.commit_hash?.slice(0, 10)}...`}
-                          </Text>
-                        </Flex>
-                        {commit?.committer?.github_username && (
-                          <Box fontSize="12px">
-                            {commit?.committer?.github_username}
-                          </Box>
-                        )}
-                      </Flex>
-                    </Flex>
-
-                    <Flex flex={0.3} justifyContent="center" alignItems="center">
-                      <Flex width="auto" position="relative" justifyContent="center">
-                        <Box position="absolute" top={-1.5} right={-2} background={hasBeenReviewed ? 'success' : 'yellow.default'} fontSize="10px" padding="3px" fontWeight={700} height="auto" borderRadius="50%">
-                          <Icon icon={hasBeenReviewed ? 'verified2' : 'asterisk'} width="8px" height="8px" />
-                        </Box>
-                        <Icon icon="code-comment" width="20px" height="20px" color={hexColor.black} />
-                      </Flex>
-                    </Flex>
-                    <Button
-                      variant="link"
-                      flex={0.3}
-                      height="40px"
-                      onClick={() => selectCodeRevision(dataStruct)}
-                      display="flex"
-                      width="fit-content"
-                      justifyContent="flex-end"
-                      alignItems="center"
-                      padding="0 1rem 0 0"
-                      gridGap="10px"
-                    >
-                      {t('code-review.review')}
-                    </Button>
-                  </Flex>
-                );
-              })}
-            </Flex>
+            <CodeRevisionsList codeRevisions={contextData?.code_revisions} revisionContent={contextData?.revision_content} selectCodeRevision={selectCodeRevision} />
           </Box>
           {revisionContent?.id && (
             <Flex flexDirection="column" overflow="auto" gridGap="12px" flex={0.35} width="100%" padding="8px" mt={!hasRevision && '3.4rem'}>

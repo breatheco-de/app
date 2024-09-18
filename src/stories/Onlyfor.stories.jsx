@@ -65,7 +65,7 @@ Default.args = {
   profile: {
     permissionsSlug: ['join_cohort', 'join_mentorship'],
   },
-  cohortSession: {
+  cohort: {
     academy: {
       id: 4,
     },
