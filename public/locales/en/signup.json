@@ -146,9 +146,10 @@
     "email-required": "Email is required",
     "confirm-email-required": "Confirm Email is required",
     "confirm-email-not-match": "Emails don't match",
-    "termns-and-conditions-required": "I agree to receive information in my email, WhatsApp, and/or other channels about coding workshops, events, courses, and other marketing materials. We'll never share your contact information and you can easily opt out at any moment,"
+    "receive-information": "I agree to receive information in my email, WhatsApp, and/or other channels about coding workshops, events, courses, and other marketing materials. We'll never share your contact information and you can easily opt out at any moment. "
   },
   "no-date-available": "We currently have no dates available for the location entered",
+  "agree-terms-and-conditions": "By signing up, you agree to the",
   "alert-message": {
     "title": "Already a member?",
     "description": "It seems that you already have an account in 4geeks.com",

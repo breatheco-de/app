@@ -146,9 +146,10 @@
     "email-required": "Correo electronico es requerido",
     "confirm-email-required": "Confirmar Correo electrónico es requerido",
     "confirm-email-not-match": "Los correos electrónicos no coinciden",
-    "termns-and-conditions-required": "Acepto recibir información a través de mi correo electrónico, WhatsApp y/o otros canales sobre talleres de programación, eventos, cursos y otros materiales promocionales. Nunca compartiremos tu información de contacto y podrás darte de baja fácilmente en cualquier momento,"
+    "receive-information": "Acepto recibir información a través de mi correo electrónico, WhatsApp y/o otros canales sobre talleres de programación, eventos, cursos y otros materiales promocionales. Nunca compartiremos tu información de contacto y podrás darte de baja fácilmente en cualquier momento."
   },
   "no-date-available": "Actualmente no tenemos fechas disponibles para la ubicación ingresada",
+  "agree-terms-and-conditions": "Al registrarte estás aceptando nuestros",
   "alert-message": {
     "title": "¿Ya eres usuario?",
     "description": "Parece que ya tienes una cuenta",
