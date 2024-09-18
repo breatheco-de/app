@@ -43,6 +43,7 @@ function PaymentInfo() {
     description: '',
   });
   const [readyToRefetch, setReadyToRefetch] = useState(false);
+  const [cohortFound, setCohortFound] = useState(undefined);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const toast = useToast();
   const redirect = getStorageItem('redirect');
@@ -53,16 +54,18 @@ function PaymentInfo() {
   const isPaymentIdle = paymentStatus === 'idle';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
 
-  const redirectTocohort = (cohort) => {
-    const langLink = lang !== 'en' ? `/${lang}` : '';
-    const syllabusVersion = cohort?.syllabus_version;
-    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-    setCohortSession({
-      ...cohort,
-      selectedProgramSlug: cohortDashboardLink,
-    });
-    router.push(cohortDashboardLink);
+  const redirectTocohort = () => {
+    if (isPaymentSuccess) {
+      const langLink = lang !== 'en' ? `/${lang}` : '';
+      const syllabusVersion = cohortFound?.syllabus_version;
+      axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
+      const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+      setCohortSession({
+        ...cohortFound,
+        selectedProgramSlug: cohortDashboardLink,
+      });
+      router.push(cohortDashboardLink);
+    } else setPaymentStatus('idle');
   };
   const joinCohort = (cohort) => {
     reportDatalayer({
@@ -85,7 +88,7 @@ function PaymentInfo() {
           setReadyToRefetch(false);
         }
         if (dataRequested?.status === 'ACTIVE') {
-          redirectTocohort(cohort);
+          setCohortFound(cohort);
         }
       })
       .catch(() => {
@@ -163,7 +166,7 @@ function PaymentInfo() {
     if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
   }, [selectedPlanCheckoutData, isAuthenticated]);
 
-  const handlePaymentErrors = (data, actions = {}, callback = () => {}) => {
+  const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
     const silentCode = data?.silent_code;
     setIsSubmittingPayment(false);
     actions?.setSubmitting(false);
@@ -213,6 +216,8 @@ function PaymentInfo() {
         .then((respPayment) => {
           if (respPayment.status === 'FULFILLED') {
             setPaymentStatus('success');
+            setReadyToRefetch(true);
+            setIsSubmittingPayment(true);
             setSelectedPlanCheckoutData({
               ...selectedPlanCheckoutData,
               payment_success: true,
@@ -367,14 +372,7 @@ function PaymentInfo() {
           variant="default"
           // mt="12px"
           isLoading={isSubmittingPayment}
-          onClick={() => {
-            if (isPaymentSuccess) {
-              setIsSubmittingPayment(true);
-              setReadyToRefetch(true);
-            } else {
-              setPaymentStatus('idle');
-            }
-          }}
+          onClick={() => redirectTocohort()}
         >
           {isPaymentSuccess ? 'Start learning' : 'Try again'}
         </Button>

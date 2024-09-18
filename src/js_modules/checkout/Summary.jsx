@@ -38,6 +38,7 @@ function Summary() {
     title: '',
     description: '',
   });
+  const [cohortFound, setCohortFound] = useState(undefined);
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
@@ -89,18 +90,23 @@ function Summary() {
     });
   }, []);
 
-  const redirectTocohort = (cohort) => {
-    const langLink = lang !== 'en' ? `/${lang}` : '';
-    const syllabusVersion = cohort?.syllabus_version;
+  console.log(cohortFound);
 
-    axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-    setCohortSession({
-      ...cohort,
-      selectedProgramSlug: cohortDashboardLink,
-    });
-    router.push(cohortDashboardLink);
+  const redirectTocohort = () => {
+    if (isPaymentSuccess && cohortFound) {
+      const langLink = lang !== 'en' ? `/${lang}` : '';
+      const syllabusVersion = cohortFound?.syllabus_version;
+
+      axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
+      const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+      setCohortSession({
+        ...cohortFound,
+        selectedProgramSlug: cohortDashboardLink,
+      });
+      router.push(cohortDashboardLink);
+    } else setPaymentStatus('idle');
   };
+
   const joinCohort = (cohort) => {
     reportDatalayer({
       dataLayer: {
@@ -122,7 +128,7 @@ function Summary() {
           setReadyToRefetch(false);
         }
         if (dataRequested?.id) {
-          redirectTocohort(cohort);
+          setCohortFound(cohort);
         }
       })
       .catch(() => {
@@ -242,11 +248,13 @@ function Summary() {
             }
           }
           if (respPayment.status === 'FULFILLED') {
+            setPaymentStatus('success');
+            setReadyToRefetch(true);
+            setIsSubmitting(true);
             setSelectedPlanCheckoutData({
               ...selectedPlanCheckoutData,
               payment_success: true,
             });
-            setPaymentStatus('success');
           }
         })
         .catch(() => {
@@ -261,6 +269,7 @@ function Summary() {
         });
     }
   };
+
   useEffect(() => {
     setHasMounted(true);
   }, []);
@@ -486,14 +495,7 @@ function Summary() {
               variant="default"
               // mt="12px"
               isLoading={isSubmitting}
-              onClick={() => {
-                if (isPaymentSuccess) {
-                  setIsSubmitting(true);
-                  setReadyToRefetch(true);
-                } else {
-                  setPaymentStatus('idle');
-                }
-              }}
+              onClick={() => redirectTocohort()}
             >
               {isPaymentSuccess ? t('start-free-course') : t('try-again')}
             </Button>
