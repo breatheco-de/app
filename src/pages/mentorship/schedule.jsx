@@ -190,7 +190,7 @@ function MentorshipSchedule() {
       <Link href="/choose-program" color="#0196d1" display="inline-block" letterSpacing="0.05em" fontWeight="700" width="fit-content" padding="3rem 0 0.6rem 1rem">
         <Box display="flex" alignItems="center" justifyContent="center" gap="5px">
           <Icon icon="arrowLeft2" color="#0196d1" width="15px" height="15px" />
-          <Box as="span">{`${t('back-to-dash')}`}</Box>
+          <Box as="span">{`${t('back-to-dashboard')}`}</Box>
         </Box>
       </Link>
       <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding="0px" borderRadius="10px">
