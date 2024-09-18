@@ -24,15 +24,12 @@ function Mentoring({
   const { slug } = router.query;
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const [savedChanges, setSavedChanges] = useState({});
   const [consumables, setConsumables] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
   const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
   const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
-  const step1 = !mentoryProps?.service;
-  const step2 = mentoryProps?.service;
 
   const filterServices = () => {
     if (subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0) {
@@ -60,19 +57,6 @@ function Mentoring({
     },
   );
 
-  useEffect(() => {
-    if (mentoryProps?.time) {
-      const [hours, minutes] = mentoryProps.time.split(':');
-
-      const nDate = mentoryProps?.date
-        && new Date(mentoryProps.date);
-
-      nDate.setHours(+hours, +minutes, 0, 0); // set hours/minute;
-      setMentoryProps({ ...mentoryProps, date: nDate });
-      setSavedChanges({ ...mentoryProps, date: nDate });
-    }
-  }, [mentoryProps?.time]);
-
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.list.map((service) => service?.slug);
 
@@ -84,7 +68,7 @@ function Mentoring({
       }
       academies[academy.id].services.push(restOfService);
     });
-    // Convert the object to an array of academies with their services
+
     const academyData = Object.entries(academies).map(([academy, values]) => ({
       id: Number(academy),
       services: values.services,
@@ -168,11 +152,7 @@ function Mentoring({
           searchProps,
           setSearchProps,
           setProgramMentors,
-          savedChanges,
-          setSavedChanges,
           mentorsFiltered,
-          step1,
-          step2,
           allMentorsAvailable,
           subscriptionData,
           isAvailableForConsumables,

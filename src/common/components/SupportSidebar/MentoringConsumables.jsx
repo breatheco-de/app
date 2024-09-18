@@ -91,12 +91,11 @@ function ProfilesSection({
 
 function MentoringConsumables({
   mentoryProps, width, consumables, isAvailableForConsumables, setMentoryProps,
-  programServices, servicesFiltered, searchProps,
-  setSearchProps, setProgramMentors, savedChanges, setSavedChanges,
+  programServices, servicesFiltered, searchProps, setSearchProps, setProgramMentors,
   mentorsFiltered, allMentorsAvailable, subscriptionData, allSubscriptions,
+  queryService, queryMentor, titleSize,
 }) {
   const { t } = useTranslation('dashboard');
-
   const { user } = useAuth();
   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
@@ -112,9 +111,8 @@ function MentoringConsumables({
   const [hasReset, setHasReset] = useState(false);
   const [shouldHandleService, setShouldHandleService] = useState(true);
   const router = useRouter();
+  const { slug } = router.query;
   const toast = useToast();
-  const { slug, queryService, queryMentor } = router.query;
-
   const mentorshipBalance = consumableOfService?.balance?.unit;
   const currentBalance = Number(mentorshipBalance && mentorshipBalance);
 
@@ -168,7 +166,6 @@ function MentoringConsumables({
 
     setTimeout(() => {
       setMentoryProps({ ...mentoryProps, service });
-      setSavedChanges({ ...savedChanges, service });
     }, 50);
   };
 
@@ -209,6 +206,16 @@ function MentoringConsumables({
         servWithMentorsAvailable = servicesFiltered.filter((service) => mentorFound.services.some((mentServ) => mentServ.slug === service.slug));
       } else {
         servWithMentorsAvailable = getAllServicesWithMentors();
+        if (!hasReset) {
+          toast({
+            position: 'top',
+            title: 'Error',
+            description: `${queryMentor} mentor not found`,
+            status: 'error',
+            duration: 7000,
+            isClosable: true,
+          });
+        }
       }
     } else {
       servWithMentorsAvailable = getAllServicesWithMentors();
@@ -227,7 +234,7 @@ function MentoringConsumables({
         toast({
           position: 'top',
           title: 'Error',
-          description: `${queryService} Service nor found`,
+          description: `${queryService} service not found ${queryMentor ? `for ${queryMentor}` : ''}`,
           status: 'error',
           duration: 7000,
           isClosable: true,
@@ -261,16 +268,16 @@ function MentoringConsumables({
       .finally(() => setIsFetchingDataForModal(false));
   };
 
-  const reportBookMentor = () => {
+  const reportBookMentor = (mentorSelected) => {
     reportDatalayer({
       dataLayer: {
         event: 'book_mentorship_session',
         path: router.pathname,
         consumables_amount: currentBalance,
         mentorship_service: mentoryProps?.service?.slug,
-        mentor_name: `${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`,
-        mentor_id: mentoryProps.mentor.slug,
-        mentor_booking_url: mentoryProps.mentor.booking_url,
+        mentor_name: `${mentorSelected.user.first_name} ${mentorSelected.user.last_name}`,
+        mentor_id: mentorSelected.slug,
+        mentor_booking_url: mentorSelected.booking_url,
       },
     });
   };
@@ -298,7 +305,7 @@ function MentoringConsumables({
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
           {!mentoryProps?.service && (consumables?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
             <>
-              <Heading size="14px" textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+              <Heading size={titleSize} textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                 {t('supportSideBar.mentoring')}
                 <br />
                 <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
@@ -389,24 +396,6 @@ function MentoringConsumables({
                 </Box>
               </Box>
             )}
-            {mentoryProps?.mentor && (
-              <Box background={commonBackground} display="flex" gridGap="14px" justifyContent="center" alignItems="center" py="15px" w="100%" borderTop="1px solid" borderColor={borderColor} borderBottomRadius={!mentoryProps?.date ? '0.375rem' : '0'}>
-                <Image
-                  src={mentoryProps.mentor?.user.profile?.avatar_url}
-                  alt={`selected ${mentoryProps.mentor?.user?.first_name} ${mentoryProps.mentor?.user?.last_name}`}
-                  width={40}
-                  height={40}
-                  objectFit="cover"
-                  style={{ minWidth: '40px', width: '40px !important', height: '40px !important' }}
-                  styleImg={{ borderRadius: '50px' }}
-                />
-                <Box>
-                  <Box fontWeight="700" fontSize="15px" color={useColorModeValue('gray.900', 'white')} letterSpacing="0.05em">
-                    {`${mentoryProps.mentor.user.first_name} ${mentoryProps.mentor.user.last_name}`}
-                  </Box>
-                </Box>
-              </Box>
-            )}
 
             {!mentoryProps?.service && programServices.length > 0 && (
               <>
@@ -445,7 +434,6 @@ function MentoringConsumables({
                         <Box as="hr" borderColor="gray.300" margin="0 18px" />
                       )}
                       <Box display="flex" gridGap="18px" flexDirection="row" py="14px" width="100%" px="18px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
-                        {/* onClick={() => { setMentoryProps({ ...mentoryProps, mentor }); setSavedChanges({ ...savedChanges, mentor }); }} */}
                         <Image
                           src={mentor?.user.profile?.avatar_url}
                           alt={`${mentor?.user?.first_name} ${mentor?.user?.last_name}`}
@@ -508,14 +496,15 @@ function MentoringConsumables({
 MentoringConsumables.propTypes = {
   mentoryProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
   width: PropTypes.string,
+  titleSize: PropTypes.string,
+  queryService: PropTypes.string,
+  queryMentor: PropTypes.string,
   consumables: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   setMentoryProps: PropTypes.func.isRequired,
   programServices: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])),
   servicesFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   searchProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
   setSearchProps: PropTypes.func.isRequired,
-  savedChanges: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any, PropTypes.string])).isRequired,
-  setSavedChanges: PropTypes.func.isRequired,
   setProgramMentors: PropTypes.func,
   mentorsFiltered: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   subscriptionData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
@@ -523,8 +512,11 @@ MentoringConsumables.propTypes = {
 };
 
 MentoringConsumables.defaultProps = {
+  queryService: undefined,
+  queryMentor: undefined,
   mentoryProps: [],
   width: '100%',
+  titleSize: '14px',
   consumables: {},
   programServices: [],
   setProgramMentors: () => { },
