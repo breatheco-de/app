@@ -73,17 +73,17 @@
     "no-mentors": "No hay mentores disponibles",
     "no-mentor-link": "No hay enlace para crear sesión con este mentor",
     "search-mentor": "Buscar mentor por nombre",
-    "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
+    "start-mentorship": "Para comenzar, seleccione un tipo de mentoría",
     "mentoring-label": "Mentoría",
-    "mentoring": "Programe una sesión de tutoría 1-1.",
-    "select-type": "Seleccione un tipo de tutoría",
-    "mentoring-available": "Tutorías disponibles",
-    "no-mentoring-available": "No tienes tutorías disponibles.",
+    "mentoring": "Programe una sesión de mentoría 1-1.",
+    "select-type": "Seleccione un tipo de mentoría",
+    "mentoring-available": "Mentorías disponibles",
+    "no-mentoring-available": "No tienes mentorías disponibles.",
     "create-session-text": "Agendar ahora",
     "learn-more": "Aprender mas.",
     "learn-more-link": "https://4geeks.com/es/docs/knowledge-base-4geeks/sesiones-de-tutoria",
     "get-more-mentorships": "Consigue más mentorías",
-    "schedule-button": "Programar una sesión de tutoría",
+    "schedule-button": "Programar una sesión de mentoría",
     "mentors-available": "+{{count}} Mentores disponibles",
     "actionButtons": [
       {
@@ -101,18 +101,18 @@
     ]
   },
   "mentorship": {
-    "no-mentorship": "Se ha quedado sin tutorías, pero no se preocupe, puede obtener más con unos pocos clics.",
-    "get-unlimited-mentorship": "y obtén tutoría ilimitada",
+    "no-mentorship": "Se ha quedado sin mentorías, pero no se preocupe, puede obtener más con unos pocos clics.",
+    "get-unlimited-mentorship": "y obtén mentorías ilimitadas",
     "you-have": "Tienes",
     "available-sessions": "sesiones disponibles",
-    "tooltip": "Las tutorías se recargan cada semana",
+    "tooltip": "Las mentorías se recargan cada semana",
     "mentor-sessions-available": "sesiones de mentoria disponibles",
     "action": "Reservar mentoria",
     "no-available": "No hay servicios disponibles",
     "no-available-for-teacher": "No hay servicios disponibles para"
   },
   "schedule-steps": {
-    "select-mentorship": "Primero selecciona un tipo de tutoria",
+    "select-mentorship": "Primero selecciona un tipo de mentoría",
     "select-mentor": "Ahora busca un mentor",
     "schedule": "Agenda la sesión"
   },
