@@ -23,13 +23,12 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const activeCohorts = handlers.getActiveCohorts(chooseList);
-  const finishedCohorts = handlers.getCohortsFinished(chooseList);
   const { featuredColor } = useStyle();
   const router = useRouter();
-
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
-  const activeSubscriptionCohorts = activeCohorts?.length > 0 ? activeCohorts.map((item) => {
+
+  const finishedCohorts = handlers.getCohortsFinished(chooseList);
+  const activeCohorts = handlers.getActiveCohorts(chooseList).map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
     return ({
@@ -43,20 +42,14 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
       all_subscriptions: currentCohortProps?.all_subscriptions,
       subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
     });
-  }) : [];
+  });
 
   const hasNonSaasCourse = chooseList.some(({ cohort }) => !cohort.available_as_saas);
 
   const marketingCourses = marketingCursesList.filter(
-    (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.all_subscriptions?.some(
-        (sb) => sb?.selected_cohort_set?.slug === item?.slug,
-      ),
+    (item) => !activeCohorts.some(
+      (activeCohort) => activeCohort.slug === item?.cohort?.slug,
     ) && item?.course_translation?.title,
-  );
-
-  const isNotAvailableForMktCourses = activeSubscriptionCohorts.some(
-    (item) => item.cohort?.available_as_saas === false,
   );
 
   useEffect(() => {
@@ -78,7 +71,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
 
   return (
     <>
-      {activeSubscriptionCohorts.length > 0 && (
+      {activeCohorts.length > 0 && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
@@ -88,11 +81,11 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
           </Box>
           <Box
             display="grid"
-            gridTemplateColumns={{ base: activeSubscriptionCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
+            gridTemplateColumns={{ base: activeCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
             height="auto"
             gridGap="4rem"
           >
-            {activeSubscriptionCohorts.map((item) => (
+            {activeCohorts.map((item) => (
               <Programs
                 key={item?.cohort?.slug}
                 item={item}
@@ -109,7 +102,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
         onClose={() => setUpgradeModalIsOpen(false)}
       />
 
-      {!isNotAvailableForMktCourses && marketingCourses.some((l) => l?.course_translation?.title) && (
+      {marketingCourses?.length > 0 && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
