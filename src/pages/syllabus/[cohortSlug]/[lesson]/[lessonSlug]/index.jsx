@@ -766,7 +766,6 @@ function SyllabusContent() {
                   borderRadius="11px"
                   flexGrow={1}
                   marginLeft={0}
-                  marginBottom="20px"
                   padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
                   transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
                   transitionProperty="margin"
@@ -996,7 +995,7 @@ function SyllabusContent() {
                     </Box>
                   )}
                   {isAvailableAsSaas && (
-                    <Box bottom="0" position="sticky" paddingBottom="20px" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                    <Box className="controls-panel" bottom="0" position="sticky" paddingBottom="20px" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
                       <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} mt="20px" justifyContent="center" display="flex" gridGap="20px">
                         {(isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
