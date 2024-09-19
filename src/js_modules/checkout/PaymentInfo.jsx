@@ -49,6 +49,7 @@ function PaymentInfo() {
   const redirect = getStorageItem('redirect');
   const redirectedFrom = getStorageItem('redirected-from');
   const router = useRouter();
+  const { backgroundColor, fontColor, hexColor } = useStyle();
 
   const isPaymentSuccess = paymentStatus === 'success';
   const isPaymentIdle = paymentStatus === 'idle';
@@ -67,6 +68,7 @@ function PaymentInfo() {
       router.push(cohortDashboardLink);
     } else setPaymentStatus('idle');
   };
+
   const joinCohort = (cohort) => {
     reportDatalayer({
       dataLayer: {
@@ -91,15 +93,14 @@ function PaymentInfo() {
           setCohortFound(cohort);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('Error al unirse a la cohorte:', error);
         setIsSubmittingPayment(false);
         setTimeout(() => {
           setReadyToRefetch(false);
         }, 600);
       });
   };
-
-  const { backgroundColor, fontColor, hexColor } = useStyle();
 
   useEffect(() => {
     reportDatalayer({
@@ -112,7 +113,7 @@ function PaymentInfo() {
 
   useEffect(() => {
     let interval;
-    if (readyToRefetch && timeElapsed < 10) {
+    if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
       interval = setInterval(() => {
         getAllMySubscriptions()
           .then((subscriptions) => {
@@ -161,6 +162,13 @@ function PaymentInfo() {
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
+
+  useEffect(() => {
+    if (isPaymentSuccess) {
+      setIsSubmittingPayment(true);
+      setReadyToRefetch(true);
+    }
+  }, [isPaymentSuccess]);
 
   useEffect(() => {
     if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
@@ -216,8 +224,6 @@ function PaymentInfo() {
         .then((respPayment) => {
           if (respPayment.status === 'FULFILLED') {
             setPaymentStatus('success');
-            setReadyToRefetch(true);
-            setIsSubmittingPayment(true);
             setSelectedPlanCheckoutData({
               ...selectedPlanCheckoutData,
               payment_success: true,
@@ -371,6 +377,7 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
+          isDisabled={isPaymentSuccess && !cohortFound}
           isLoading={isSubmittingPayment}
           onClick={() => redirectTocohort()}
         >

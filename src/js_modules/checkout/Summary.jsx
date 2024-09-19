@@ -90,21 +90,17 @@ function Summary() {
     });
   }, []);
 
-  console.log(cohortFound);
-
   const redirectTocohort = () => {
-    if (isPaymentSuccess && cohortFound) {
-      const langLink = lang !== 'en' ? `/${lang}` : '';
-      const syllabusVersion = cohortFound?.syllabus_version;
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const syllabusVersion = cohortFound?.syllabus_version;
 
-      axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
-      const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-      setCohortSession({
-        ...cohortFound,
-        selectedProgramSlug: cohortDashboardLink,
-      });
-      router.push(cohortDashboardLink);
-    } else setPaymentStatus('idle');
+    axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
+    const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    setCohortSession({
+      ...cohortFound,
+      selectedProgramSlug: cohortDashboardLink,
+    });
+    router.push(cohortDashboardLink);
   };
 
   const joinCohort = (cohort) => {
@@ -131,7 +127,8 @@ function Summary() {
           setCohortFound(cohort);
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error);
         setTimeout(() => {
           setReadyToRefetch(false);
         }, 600);
@@ -189,6 +186,13 @@ function Summary() {
     }
     return () => clearInterval(interval);
   }, [readyToRefetch, timeElapsed]);
+
+  useEffect(() => {
+    if (isPaymentSuccess) {
+      setIsSubmitting(true);
+      setReadyToRefetch(true);
+    }
+  }, [isPaymentSuccess]);
 
   const handleSubmit = () => {
     if (!isPaymentIdle || isSubmitting || !selectedPlanCheckoutData?.plan_id) return;
@@ -249,8 +253,6 @@ function Summary() {
           }
           if (respPayment.status === 'FULFILLED') {
             setPaymentStatus('success');
-            setReadyToRefetch(true);
-            setIsSubmitting(true);
             setSelectedPlanCheckoutData({
               ...selectedPlanCheckoutData,
               payment_success: true,
@@ -494,6 +496,7 @@ function Summary() {
               height="45px"
               variant="default"
               // mt="12px"
+              isDisabled={isPaymentSuccess && !cohortFound}
               isLoading={isSubmitting}
               onClick={() => redirectTocohort()}
             >
