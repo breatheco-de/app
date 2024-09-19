@@ -998,8 +998,8 @@ function SyllabusContent() {
                     </Box>
                   )}
                   {isAvailableAsSaas && (
-                    <Box className="controls-panel" bottom="0" position="sticky" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
+                    <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
                         {(isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
                           <Button
