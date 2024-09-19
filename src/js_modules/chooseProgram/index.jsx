@@ -48,7 +48,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
 
   const marketingCourses = marketingCursesList.filter(
     (item) => !activeCohorts.some(
-      (activeCohort) => activeCohort.slug === item?.cohort?.slug,
+      ({ cohort }) => cohort.slug === item?.cohort?.slug,
     ) && item?.course_translation?.title,
   );
 
