@@ -169,7 +169,7 @@ function TaskCodeRevisions() {
           </Heading>
         </Flex>
       ) : (
-        <Heading size="18px" mb="8px">
+        <Heading size="18px" mb="16px">
           {t('code-reviews')}
         </Heading>
       )}

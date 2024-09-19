@@ -63,6 +63,7 @@ function SyllabusContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
+  const [solutionVideoOpen, setSolutionVideoOpen] = useState(false);
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
@@ -632,13 +633,15 @@ function SyllabusContent() {
         <title>{currentAsset?.title || '4Geeks'}</title>
       </Head>
       <Flex className="flex-container" minHeight="93vh" background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
-        <StickySideBar
-          width="auto"
-          menu={[
-            ...teacherActions,
-            ...videoTutorial,
-          ]}
-        />
+        {!isAvailableAsSaas && (
+          <StickySideBar
+            width="auto"
+            menu={[
+              ...teacherActions,
+              ...videoTutorial,
+            ]}
+          />
+        )}
 
         <ScrollTop />
 
@@ -995,8 +998,8 @@ function SyllabusContent() {
                     </Box>
                   )}
                   {isAvailableAsSaas && (
-                    <Box className="controls-panel" bottom="0" position="sticky" paddingBottom="20px" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} mt="20px" justifyContent="center" display="flex" gridGap="20px">
+                    <Box className="controls-panel" bottom="0" position="sticky" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                      <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
                         {(isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
                           <Button
@@ -1055,6 +1058,24 @@ function SyllabusContent() {
                           </Button>
                         </Tooltip>
                         )}
+                        {currentAsset?.solution_video_url && (
+                        <Tooltip label={t('solution-video')} placement="top">
+                          <Button
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            width="40px"
+                            height="40px"
+                            background={hexColor.blueDefault}
+                            padding="12px"
+                            borderRadius="full"
+                            variant="default"
+                            onClick={() => setSolutionVideoOpen(true)}
+                          >
+                            <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                          </Button>
+                        </Tooltip>
+                        )}
                         {!isExercise && (
                         <ButtonHandlerByTaskStatus
                           allowText
@@ -1100,6 +1121,17 @@ function SyllabusContent() {
           <ReactPlayerV2
             controls={false}
             url={currentAsset?.intro_video_url}
+          />
+        </Box>
+      </SimpleModal>
+      <SimpleModal
+        isOpen={solutionVideoOpen}
+        onClose={() => setSolutionVideoOpen(false)}
+      >
+        <Box padding="20px">
+          <ReactPlayerV2
+            controls={false}
+            url={currentAsset?.solution_video_url}
           />
         </Box>
       </SimpleModal>
