@@ -279,36 +279,38 @@ const handlers = {
       quiz: [],
     };
 
-    modules?.forEach((module) => {
-      const {
-        assignments = [],
-        lessons = [],
-        replits = [],
-        quizzes = [],
-      } = module;
+    if (Array.isArray(modules)) {
+      modules?.forEach((module) => {
+        const {
+          assignments = [],
+          lessons = [],
+          replits = [],
+          quizzes = [],
+        } = module;
 
-      const exercisesCount = replits.length;
-      const lessonsCount = lessons.length;
-      const projectCount = assignments.length;
-      const quizzesCount = quizzes.length;
+        const exercisesCount = replits.length;
+        const lessonsCount = lessons.length;
+        const projectCount = assignments.length;
+        const quizzesCount = quizzes.length;
 
-      const assignmentsRecopilatedObj = {
-        exercisesCount,
-        lessonsCount,
-        projectCount,
-        quizzesCount,
-      };
-      const replitsCompletedFromTask = getCompletedTasksFromModule(replits, taskTodo);
-      const quizzesCompletedFromTask = getCompletedTasksFromModule(quizzes, taskTodo);
-      const lessonsCompletedFromTask = getCompletedTasksFromModule(lessons, taskTodo);
-      const assignmentsCompletedFromTask = getCompletedTasksFromModule(assignments, taskTodo);
-      assetsCompleted.exercise.push(...replitsCompletedFromTask);
-      assetsCompleted.lesson.push(...lessonsCompletedFromTask);
-      assetsCompleted.project.push(...assignmentsCompletedFromTask);
-      assetsCompleted.quiz.push(...quizzesCompletedFromTask);
+        const assignmentsRecopilatedObj = {
+          exercisesCount,
+          lessonsCount,
+          projectCount,
+          quizzesCount,
+        };
+        const replitsCompletedFromTask = getCompletedTasksFromModule(replits, taskTodo);
+        const quizzesCompletedFromTask = getCompletedTasksFromModule(quizzes, taskTodo);
+        const lessonsCompletedFromTask = getCompletedTasksFromModule(lessons, taskTodo);
+        const assignmentsCompletedFromTask = getCompletedTasksFromModule(assignments, taskTodo);
+        assetsCompleted.exercise.push(...replitsCompletedFromTask);
+        assetsCompleted.lesson.push(...lessonsCompletedFromTask);
+        assetsCompleted.project.push(...assignmentsCompletedFromTask);
+        assetsCompleted.quiz.push(...quizzesCompletedFromTask);
 
-      assignmentsRecopilated.push(assignmentsRecopilatedObj);
-    });
+        assignmentsRecopilated.push(assignmentsRecopilatedObj);
+      });
+    }
 
     const assignmentsRecopilatedObj = {
       exercise: 0,

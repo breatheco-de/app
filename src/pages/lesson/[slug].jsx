@@ -173,8 +173,6 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const exensionName = getExtensionName(lesson.readme_url);
   const isIpynb = exensionName === 'ipynb' || ipynbHtml?.iframe;
 
-  console.log(lesson);
-
   return (
     <>
       {lesson?.structuredData?.name && (

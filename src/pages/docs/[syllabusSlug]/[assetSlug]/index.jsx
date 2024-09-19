@@ -16,7 +16,7 @@ import { ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
-import { nestAssignments } from '../../../../common/hooks/useModuleHandler';
+import { processRelatedAssignments } from '../../../../common/handlers/cohorts';
 import useStyle from '../../../../common/hooks/useStyle';
 import bc from '../../../../common/services/breathecode';
 import Heading from '../../../../common/components/Heading';
@@ -52,20 +52,14 @@ const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
   return false;
 }).map((assignment) => {
   const {
-    id, label, lessons, replits, assignments, quizzes,
+    id, label,
   } = assignment;
-  const nestedAssignments = nestAssignments({
-    id,
-    read: lessons,
-    practice: replits,
-    project: assignments,
-    answer: quizzes,
-  });
+  const nestedAssignments = processRelatedAssignments(assignment);
 
   const myModule = {
     id,
     label,
-    assets: nestedAssignments.modules,
+    assets: nestedAssignments.content,
   };
   return myModule;
 });

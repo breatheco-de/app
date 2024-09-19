@@ -1,22 +1,25 @@
 import { memo } from 'react';
 import {
-  Box, Button, Heading, useColorModeValue, useToast,
+  Box, Button, Heading, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Text from '../../common/components/Text';
 import Module from './module';
-import { startDay } from '../../common/hooks/useModuleHandler';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
 import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
-  index, userId, contextState, setContextState, slug, modules, filteredModules,
-  title, description, taskTodo, cohortData, taskCohortNull, filteredModulesByPending,
+  index, slug, modules, filteredModules,
+  title, description, cohortData, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
   const { t } = useTranslation('dashboard');
-  const toast = useToast();
+  const { startDay } = useModuleHandler();
+  const { state } = useCohortHandler();
+  const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
@@ -37,12 +40,7 @@ function ModuleMap({
       },
     });
     startDay({
-      t,
-      id: userId,
       newTasks: updatedTasks,
-      contextState,
-      setContextState,
-      toast,
     });
   };
 
@@ -115,7 +113,6 @@ function ModuleMap({
               key={`${module.title}-${cheatedIndex}`}
               currIndex={i}
               data={module}
-              taskTodo={taskTodo}
             />
           );
         }) : (
@@ -155,17 +152,12 @@ function ModuleMap({
 
 ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,
-  userId: PropTypes.number.isRequired,
-  contextState: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  setContextState: PropTypes.func.isRequired,
   title: PropTypes.string,
   slug: PropTypes.string,
   modules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   filteredModules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   description: PropTypes.string,
-  taskTodo: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  taskCohortNull: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   filteredModulesByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   showPendingTasks: PropTypes.bool,
   searchValue: PropTypes.string,
@@ -177,9 +169,7 @@ ModuleMap.defaultProps = {
   title: 'HTML/CSS/Bootstrap',
   slug: 'html-css-bootstrap',
   description: '',
-  taskTodo: [],
   cohortData: {},
-  taskCohortNull: [],
   filteredModulesByPending: [],
   showPendingTasks: false,
   searchValue: '',

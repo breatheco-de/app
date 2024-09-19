@@ -121,18 +121,12 @@ export const processRelatedAssignments = (syllabusData = {}, taskTodo = []) => {
 
     const content = [...updatedRead, ...updatedPractice, ...updatedProject, ...updatedAnswer];
 
-    const includesDailyTask = (module) => {
-      const getModules = taskTodo.some((task) => task.associated_slug === module.slug);
-      return getModules;
-    };
+    const includesDailyTask = (module) => taskTodo.some((task) => task.associated_slug === module.slug);
 
-    const includesStatusPending = (module) => {
-      const getModules = module.task_status === 'PENDING' && module.revision_status !== 'APPROVED';
-      return getModules;
-    };
+    const includesStatusPending = (module) => module.task_status === 'PENDING' && module.revision_status !== 'APPROVED';
 
-    const filteredContent = content.filter((module) => includesDailyTask(module));
-    const filteredContentByPending = content.filter((module) => includesStatusPending(module));
+    const filteredContent = content.filter(includesDailyTask);
+    const filteredContentByPending = content.filter(includesStatusPending);
 
     return {
       filteredContent,
@@ -194,4 +188,18 @@ export const generateCohortSyllabusModules = async (id) => {
     error('generateCohortSyllabusModules:', reqErr);
     return {};
   }
+};
+
+export const getTechonologies = (cohortDays) => {
+  let technologyTags = [];
+
+  for (let i = 0; i < cohortDays.length; i += 1) {
+    if (typeof cohortDays[i].technologies === 'string') technologyTags.push(cohortDays[i].technologies);
+    if (Array.isArray(cohortDays[i].technologies)) {
+      technologyTags = technologyTags.concat(cohortDays[i].technologies);
+    }
+  }
+  technologyTags = [...new Set(technologyTags)];
+
+  return technologyTags;
 };

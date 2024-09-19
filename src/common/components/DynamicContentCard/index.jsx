@@ -113,7 +113,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
       padding={isWorkshop ? '10px 16px 0px' : '16px'}
       gridGap="14px"
       width={isWorkshop ? { base: '310px', md: '360px' } : 'auto'}
-      minWidth={{ base: '280px', md: '310px' }}
+      minWidth="280px"
       background={isWorkshopStarted ? featuredColor : backgroundColor}
       color={fontColor}
       borderRadius="10px"

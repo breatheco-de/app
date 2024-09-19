@@ -8,11 +8,10 @@ import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
 function Programs({ item, onOpenModal, setLateModalProps }) {
-  const { state, setCohortSession } = useCohortHandler();
-  const { cohortSession } = state;
+  const { setCohortSession } = useCohortHandler();
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
-  const { cohort } = item;
+  const { cohort, ...cohortUser } = item;
   const signInDate = item.created_at;
   const { version, slug } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
@@ -44,7 +43,8 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       axios.defaults.headers.common.Academy = cohort.academy.id;
       setCohortSession({
         ...cohort,
-        ...cohortSession,
+        cohort_role: cohortUser?.role,
+        cohort_user: cohortUser,
         selectedProgramSlug: `/cohort/${cohort?.slug}/${slug}/v${version}`,
       });
       router.push(`/cohort/${cohort?.slug}/${slug}/v${version}`);
