@@ -28,7 +28,7 @@ function Mentoring({
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
-  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
+  const [cohortSessionIsSaaS, setCohortSessionIsSaaS] = useState(true);
   const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
 
   const filterServices = () => {
@@ -132,7 +132,7 @@ function Mentoring({
   useEffect(() => {
     const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
     if (existsCohortSession) {
-      setIsAvailableForConsumables(cohortSession?.available_as_saas);
+      setCohortSessionIsSaaS(cohortSession?.available_as_saas);
     }
   }, [allCohorts]);
 
@@ -155,7 +155,7 @@ function Mentoring({
           mentorsFiltered,
           allMentorsAvailable,
           subscriptionData,
-          isAvailableForConsumables,
+          cohortSessionIsSaaS,
           allSubscriptions: subscriptions,
         }}
       />

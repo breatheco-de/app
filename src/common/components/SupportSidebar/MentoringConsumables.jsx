@@ -90,7 +90,7 @@ function ProfilesSection({
 }
 
 function MentoringConsumables({
-  mentoryProps, width, consumables, isAvailableForConsumables, setMentoryProps,
+  mentoryProps, width, consumables, cohortSessionIsSaaS, setMentoryProps,
   programServices, servicesFiltered, searchProps, setSearchProps, setProgramMentors,
   mentorsFiltered, allMentorsAvailable, subscriptionData, allSubscriptions,
   queryService, queryMentor, titleSize,
@@ -109,6 +109,7 @@ function MentoringConsumables({
   const [consumableOfService, setConsumableOfService] = useState({});
   const [servicesWithMentorsAvailable, setServicesWithMentorsAvailable] = useState([]);
   const [hasReset, setHasReset] = useState(false);
+  const [notifyError, setNotifyError] = useState(true);
   const [shouldHandleService, setShouldHandleService] = useState(true);
   const router = useRouter();
   const { slug } = router.query;
@@ -159,7 +160,7 @@ function MentoringConsumables({
     setConsumableOfService({
       ...relatedConsumable,
       balance: {
-        unit: (service?.academy?.available_as_saas === false || isAvailableForConsumables === false) ? -1 : relatedConsumable?.balance?.unit,
+        unit: (service?.academy?.available_as_saas === false || cohortSessionIsSaaS === false) ? -1 : relatedConsumable?.balance?.unit,
       },
       available_as_saas: service?.academy?.available_as_saas,
     });
@@ -197,42 +198,43 @@ function MentoringConsumables({
 
   useEffect(() => {
     const getAllServicesWithMentors = () => servicesFiltered.filter((service) => allMentorsAvailable.some((ment) => ment.services.some((mentServ) => mentServ.slug === service.slug)));
+    const getServicesWithMentor = (mentor) => servicesFiltered.filter((service) => mentor.services.some((mentServ) => mentServ.slug === service.slug));
 
-    let servWithMentorsAvailable;
+    const showErrorToast = () => {
+      toast({
+        position: 'top',
+        title: 'Error',
+        description: `${t('supportSideBar.mentor-not-found')} "${queryMentor}"`,
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+    };
 
-    if (queryMentor && allMentorsAvailable.length > 0) {
+    let servWithMentorsAvailable = getAllServicesWithMentors();
+
+    if (queryMentor && allMentorsAvailable.length > 0 && !hasReset) {
       const mentorFound = allMentorsAvailable.find((ment) => ment.slug === queryMentor);
 
-      if (mentorFound && !hasReset) {
-        servWithMentorsAvailable = servicesFiltered.filter((service) => mentorFound.services.some((mentServ) => mentServ.slug === service.slug));
-      } else {
-        servWithMentorsAvailable = getAllServicesWithMentors();
-        if (!hasReset) {
-          toast({
-            position: 'top',
-            title: 'Error',
-            description: `${t('supportSideBar.mentor-not-found')} "${queryMentor}"`,
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
-        }
+      if (!mentorFound && notifyError) {
+        showErrorToast();
+        setNotifyError(false);
       }
-    } else {
-      servWithMentorsAvailable = getAllServicesWithMentors();
+      if (mentorFound) servWithMentorsAvailable = getServicesWithMentor(mentorFound);
     }
 
     setServicesWithMentorsAvailable(servWithMentorsAvailable);
-    if (!hasReset && queryMentor) setOpen(true);
+
+    if (!hasReset && queryMentor) {
+      setOpen(true);
+    }
   }, [servicesFiltered, queryMentor, hasReset]);
 
   useEffect(() => {
     if (queryService && servicesWithMentorsAvailable?.length > 0 && shouldHandleService && !hasReset) {
       const serviceFound = servicesWithMentorsAvailable.find((service) => service.slug === queryService);
 
-      if (serviceFound) {
-        handleService(serviceFound);
-      } else {
+      if (!serviceFound && notifyError) {
         toast({
           position: 'top',
           title: 'Error',
@@ -241,8 +243,11 @@ function MentoringConsumables({
           duration: 7000,
           isClosable: true,
         });
+        setNotifyError(false);
+        return;
       }
 
+      handleService(serviceFound);
       setOpen(true);
       setShouldHandleService(false);
     }
@@ -295,12 +300,12 @@ function MentoringConsumables({
     >
 
       {open && mentoryProps?.service && (
-        <Box position="absolute" top="16px" left="18px" onClick={() => reset()} cursor="pointer">
+        <Box position="absolute" top="16px" left="18px" onClick={reset} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}
       {open && !mentoryProps?.service && (
-        <Box position="absolute" top="16px" left="18px" onClick={() => reset()} cursor="pointer">
+        <Box position="absolute" top="16px" left="18px" onClick={reset} cursor="pointer">
           <Icon icon="arrowLeft" width="25px" height="25px" color="#606060" />
         </Box>
       )}

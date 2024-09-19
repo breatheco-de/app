@@ -392,9 +392,7 @@ function Page({ eventData, asset }) {
 
   useEffect(() => {
     if (subscriptionsForCurrentEvent.length === 0) setDenyAccessToEvent(true);
-    else {
-      setDenyAccessToEvent(false);
-    }
+    else setDenyAccessToEvent(false);
   }, [subscriptionsForCurrentEvent]);
 
   const dynamicFormInfo = () => {
