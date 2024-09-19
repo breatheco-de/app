@@ -75,6 +75,18 @@ featured {
   border-radius: 4px;
 }
 
+.react-player-border-radius {
+  border-radius: 11px;
+}
+
+.react-player-border-radius iframe {
+  border-radius: 11px;
+}
+
+.react-player-border-radius .react-player__preview {
+  border-radius: 11px;
+}
+
 @keyframes bounce {
   0% {
      opacity: 1;

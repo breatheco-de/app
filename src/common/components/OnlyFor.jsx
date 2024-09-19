@@ -39,19 +39,21 @@ function Component({ withBanner, children }) {
 }
 
 function OnlyFor({
-  cohortSession, academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile,
+  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, profile, cohort,
 }) {
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
   const { state } = useCohortHandler();
-  const { userCapabilities: cohortCapabilities } = state;
+  const { userCapabilities: cohortCapabilities, cohortSession } = state;
+
+  const currentCohort = cohort || cohortSession;
 
   const profileCapabilities = profile?.permissionsSlug || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
   const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
-  const cohortRole = cohortSession?.cohort_role?.toUpperCase() || profileRole || 'NONE';
-  const isCapableAcademy = cohortSession && cohortSession.academy?.id === academyNumber;
+  const cohortRole = currentCohort?.cohort_role?.toUpperCase() || profileRole || 'NONE';
+  const isCapableAcademy = currentCohort && currentCohort.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);
   const isTeacher = teachers.includes(cohortRole);
   const capabilitiesNotExists = capabilities.length <= 0 || capabilities.includes('');
@@ -60,7 +62,7 @@ function OnlyFor({
   ).includes(true);
 
   const haveRequiredCapabilities = () => {
-    if (!cohortSession) return false;
+    if (!currentCohort) return false;
     if (onlyTeachers && isTeacher) {
       if (isCapableRole) return true;
       if (capabilitiesNotExists) return true;
@@ -85,13 +87,13 @@ function OnlyFor({
 }
 
 OnlyFor.propTypes = {
-  cohortSession: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   academy: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   capabilities: PropTypes.arrayOf(PropTypes.string),
   children: PropTypes.node.isRequired,
   onlyMember: PropTypes.bool,
   onlyTeachers: PropTypes.bool,
   profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withBanner: PropTypes.bool,
 };
 
@@ -101,6 +103,7 @@ OnlyFor.defaultProps = {
   onlyMember: false,
   onlyTeachers: false,
   profile: {},
+  cohort: null,
   withBanner: false,
 };
 

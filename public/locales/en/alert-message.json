@@ -78,5 +78,6 @@
   "event-access-error": "You dont have access to apply for this event",
   "error-event-already-started": "You cannot reserve a spot for this event because it has already started.",
   "success-event-reservation": "You have successfully reserved a spot for this event.",
-  "error-creating-code-review": "Something went wrong creating the code review"
+  "error-creating-code-review": "Something went wrong creating the code review",
+  "error-ai-chat": "Something went wrong opening the AI Chat"
 }

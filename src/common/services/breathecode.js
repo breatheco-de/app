@@ -162,6 +162,7 @@ const breathecode = {
       // getTaskByStudent: (cohortId) => axios.get(`${url}/user/me/task?cohort=${cohortId}`),
       getTaskByStudent: () => axios.get(`${url}/user/me/task${qs}`),
       add: (args) => axios.post(`${url}/user/me/task`, args),
+      postCompletionJob: (taskId) => axios.post(`${url}/completion_job/${taskId}`),
       // delete: (id, args) => axios.delete(`${url}/user/${id}/task/${args.id}`, args),
       update: (args) => axios.put(`${url}/task/${args.id}`, args),
       updateBulk: (args) => axios.put(`${url}/user/me/task`, args),
@@ -366,6 +367,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
+      meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
     };
   },
 };

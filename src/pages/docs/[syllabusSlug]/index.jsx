@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../../common/services/breathecode';
-import { nestAssignments } from '../../../common/hooks/useModuleHandler';
+import { processRelatedAssignments } from '../../../common/handlers/cohorts';
 import GridContainer from '../../../common/components/GridContainer';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
@@ -30,20 +30,14 @@ const formatSyllabus = (syllabus) => syllabus.json.days.filter((assignment) => {
   return false;
 }).map((assignment) => {
   const {
-    id, label, lessons, replits, assignments, quizzes,
+    id, label,
   } = assignment;
-  const nestedAssignments = nestAssignments({
-    id,
-    read: lessons,
-    practice: replits,
-    project: assignments,
-    answer: quizzes,
-  });
+  const nestedAssignments = processRelatedAssignments(assignment);
 
   const myModule = {
     id,
     label,
-    assets: nestedAssignments.modules,
+    assets: nestedAssignments.content,
   };
   return myModule;
 });

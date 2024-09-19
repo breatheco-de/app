@@ -333,6 +333,16 @@ function calculateDifferenceDays(date) {
   };
 }
 
+const intervalToHours = (duration) => {
+  const hours = duration.years * 24 * 365 // Hours from years (assuming 365 days per year)
+           + duration.months * 24 * 30 // Hours from months (assuming 30 days per month)
+           + duration.days * 24 // Hours from days
+           + duration.hours
+           + duration.minutes / 60 // Convert minutes to hours
+           + duration.seconds / 3600;
+  return hours;
+};
+
 function adjustNumberBeetwenMinMax({ number = 1, min = 1, max = 10 }) {
   const range = max - min;
   const overflow = (number - max) % range;
@@ -417,7 +427,7 @@ export {
   setStorageItem, toCapitalize, tokenExists, getTimeProps, formatBytes,
   resizeAllMasonryItems, calcSVGViewBox, number2DIgits, getNextDateInMonths,
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
-  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, capitalizeFirstLetter,
+  createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
   removeSessionStorageItem,
 };

@@ -18,6 +18,7 @@ import {
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
+import useModuleHandler from '../../hooks/useModuleHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CallToAction from '../CallToAction';
@@ -66,8 +67,8 @@ function HrComponent() {
 function IframeComponent({ src, title, width, height }) {
   return (<iframe src={src} width={width} height={height} title={title || 'iframe-content'} className="MDIframe" />);
 }
-function OnlyForComponent({ cohortSession, profile, ...props }) {
-  return (<OnlyForBanner cohortSession={cohortSession} profile={profile} {...props} />);
+function OnlyForComponent({ profile, ...props }) {
+  return (<OnlyForBanner profile={profile} {...props} />);
 }
 
 function CodeViewerComponent(props) {
@@ -118,7 +119,7 @@ function MdCallToAction({ assetData }) {
   );
 }
 
-function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }) {
+function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }) {
   const childrenExists = props?.children?.length >= 0;
   const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
   const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
@@ -127,8 +128,8 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
       className="MDCheckbox"
       {...props}
       subTasksLoaded={subTasksLoaded}
-      subTasksProps={subTasksProps}
-      setSubTasksProps={setSubTasksProps}
+      newSubTasks={newSubTasks}
+      setNewSubTasks={setNewSubTasks}
       subTasks={subTasks}
       updateSubTask={updateSubTask}
     />
@@ -139,14 +140,14 @@ function ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTas
 
 function MarkDownParser({
   content, callToActionProps, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData, alerMessage,
+  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience, showContentHeading,
 }) {
   const { t, lang } = useTranslation('common');
-  const [subTasks, setSubTasks] = useState([]);
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
-  const [subTasksProps, setSubTasksProps] = useState([]);
+  const [newSubTasks, setNewSubTasks] = useState([]);
   const [learnpackActions, setLearnpackActions] = useState([]);
   const [fileContext, setFileContext] = useState('');
+  const { subTasks, setSubTasks } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [profile] = usePersistent('profile', {});
@@ -183,12 +184,12 @@ function MarkDownParser({
 
   const createSubTasksIfNotExists = async () => {
     // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
-    if (currentTask?.id && subTasksProps.length > 0) {
+    if (currentTask?.id && newSubTasks.length > 0) {
       const resp = await bc.todo().subtask().update(
         currentTask?.id,
         [
           // ...cleanedSubTasks,
-          ...subTasksProps,
+          ...newSubTasks,
         ],
       );
       if (resp.status >= 200 && resp.status < 400) {
@@ -200,8 +201,10 @@ function MarkDownParser({
 
   // Create subTasks if not exists
   useEffect(() => {
-    createSubTasksIfNotExists();
-  }, [subTasksProps]);
+    if (subTasksLoaded && subTasks.length === 0) {
+      createSubTasksIfNotExists();
+    }
+  }, [subTasksLoaded, subTasks, newSubTasks]);
 
   const {
     token, assetSlug, gitpod, interactive,
@@ -286,7 +289,7 @@ function MarkDownParser({
     <>
       <SimpleModal
         maxWidth="xl"
-        title={t('clone-modal.title')}
+        title={t('learnpack.clone-title')}
         isOpen={showCloneModal}
         onClose={() => {
           setShowCloneModal(false);
@@ -309,34 +312,38 @@ function MarkDownParser({
           showLineNumbers={false}
         />
       </SimpleModal>
-      <ContentHeading
-        titleRightSide={titleRightSide}
-        callToAction={interactive === true && (
-          <CallToAction
-            buttonStyle={{
-              color: 'white',
-            }}
-            localhostOnly={!gitpod}
-            background="blue.default"
-            reverseButtons={cohortSession?.available_as_saas}
-            margin="12px 0 20px 0px"
-            icon="learnpack"
-            text={t('learnpack.description', { projectName: currentData?.title })}
-            width={{ base: '100%', md: 'fit-content' }}
-            buttonsData={learnpackActions}
-          />
-        )}
-        content={frontMatter}
-      >
-        {withToc && (
-          <Toc content={content} />
-        )}
-        {alerMessage && alerMessage}
+      {showContentHeading && (
+        <ContentHeading
+          titleRightSide={titleRightSide}
+          isGuidedExperience={isGuidedExperience}
+          callToAction={interactive === true && (
+            <CallToAction
+              buttonStyle={{
+                color: 'white',
+              }}
+              localhostOnly={!gitpod}
+              background="blue.default"
+              reverseButtons={cohortSession?.available_as_saas}
+              margin="12px 0 20px 0px"
+              icon="learnpack"
+              text={t('learnpack.description', { projectName: currentData?.title })}
+              width={{ base: '100%', md: 'fit-content' }}
+              buttonsData={learnpackActions}
+            />
+          )}
+          content={frontMatter}
+          currentData={currentData}
+        >
+          {withToc && (
+            <Toc content={content} />
+          )}
+          {alerMessage && alerMessage}
 
-        {Array.isArray(subTasks) && subTasks?.length > 0 && (
-          <SubTasks subTasks={subTasks} assetType={assetType} />
-        )}
-      </ContentHeading>
+          {Array.isArray(subTasks) && subTasks?.length > 0 && (
+            <SubTasks subTasks={subTasks} assetType={assetType} />
+          )}
+        </ContentHeading>
+      )}
       {isPublic && withToc && (
         <Toc content={content} />
       )}
@@ -364,12 +371,12 @@ function MarkDownParser({
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, cohortSession, profile }),
+          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, profile }),
           codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
-          li: ({ ...props }) => ListComponent({ subTasksLoaded, subTasksProps, setSubTasksProps, subTasks, updateSubTask, ...props }),
+          li: ({ ...props }) => ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }),
           quote: Quote,
         }}
       >
@@ -392,6 +399,8 @@ MarkDownParser.propTypes = {
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
   alerMessage: PropTypes.node,
+  isGuidedExperience: PropTypes.bool,
+  showContentHeading: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -406,6 +415,8 @@ MarkDownParser.defaultProps = {
   showInlineLineNumbers: true,
   assetData: null,
   alerMessage: null,
+  isGuidedExperience: false,
+  showContentHeading: true,
 };
 
 export default MarkDownParser;

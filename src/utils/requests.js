@@ -113,9 +113,9 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
   };
 
   const qsRequest = parseQuerys({
-    ...baseQuery,
     limit,
     offset,
+    ...baseQuery,
   });
 
   // let response = fetchWithEncoding(`${BREATHECODE_HOST}/v1/registry/asset${qsRequest}`, ['br', 'gzip', 'deflate']);

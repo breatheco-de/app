@@ -55,7 +55,9 @@ export default {
 };
 
 const Component = (args) => {
-  const iconDictSearched = iconDict.filter((icon) => icon?.toLowerCase().includes(args.icon?.toLowerCase()))
+  const iconDictSearched = iconDict.sort(
+    (a, b) => a.localeCompare(b),
+  ).filter((icon) => icon?.toLowerCase().includes(args.icon?.toLowerCase()))
   return (
     <>
       <Box display="grid" gridTemplateColumns={`repeat(auto-fill, minmax(${args.width * 2}px, 1fr))`} gridGap="28px" width="100%" height="fit-content">
