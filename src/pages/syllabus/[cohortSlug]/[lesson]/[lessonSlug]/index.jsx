@@ -28,6 +28,7 @@ import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar'
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
+import OpenWithLearnpackCTA from '../../../../../js_modules/syllabus/OpenWithLearnpackCTA';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
@@ -305,6 +306,8 @@ function SyllabusContent() {
                   // Binary base64 decoding ⇢ UTF-8
                   const markdown = getMarkDownContent(markdownData);
                   setReadme(markdown);
+                  console.log('currData');
+                  console.log(currData);
                   setCurrentAsset(currData);
                 }
               })
@@ -778,6 +781,9 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
+                  {isAvailableAsSaas && currentAsset?.interactive && (
+                    <OpenWithLearnpackCTA currentAsset={currentAsset} />
+                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
