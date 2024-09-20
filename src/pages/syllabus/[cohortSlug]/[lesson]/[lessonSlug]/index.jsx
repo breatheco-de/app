@@ -122,7 +122,7 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug));
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || l.translations?.[language]?.slug === currentAsset?.slug));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -306,8 +306,6 @@ function SyllabusContent() {
                   // Binary base64 decoding ⇢ UTF-8
                   const markdown = getMarkDownContent(markdownData);
                   setReadme(markdown);
-                  console.log('currData');
-                  console.log(currData);
                   setCurrentAsset(currData);
                 }
               })
