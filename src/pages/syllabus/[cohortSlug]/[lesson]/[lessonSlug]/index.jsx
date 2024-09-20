@@ -28,6 +28,7 @@ import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar'
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
+import OpenWithLearnpackCTA from '../../../../../js_modules/syllabus/OpenWithLearnpackCTA';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
@@ -63,6 +64,7 @@ function SyllabusContent() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
+  const [solutionVideoOpen, setSolutionVideoOpen] = useState(false);
   const [openNextPageModal, setOpenNextPageModal] = useState(false);
   const [readme, setReadme] = useState(null);
   const [ipynbHtmlUrl, setIpynbHtmlUrl] = useState(null);
@@ -120,7 +122,7 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug));
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || l.translations?.[language]?.slug === currentAsset?.slug));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -632,13 +634,15 @@ function SyllabusContent() {
         <title>{currentAsset?.title || '4Geeks'}</title>
       </Head>
       <Flex className="flex-container" minHeight="93vh" background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
-        <StickySideBar
-          width="auto"
-          menu={[
-            ...teacherActions,
-            ...videoTutorial,
-          ]}
-        />
+        {!isAvailableAsSaas && (
+          <StickySideBar
+            width="auto"
+            menu={[
+              ...teacherActions,
+              ...videoTutorial,
+            ]}
+          />
+        )}
 
         <ScrollTop />
 
@@ -766,7 +770,6 @@ function SyllabusContent() {
                   borderRadius="11px"
                   flexGrow={1}
                   marginLeft={0}
-                  marginBottom="20px"
                   padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
                   transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
                   transitionProperty="margin"
@@ -776,6 +779,9 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
+                  {isAvailableAsSaas && currentAsset?.interactive && (
+                    <OpenWithLearnpackCTA currentAsset={currentAsset} />
+                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
@@ -996,8 +1002,8 @@ function SyllabusContent() {
                     </Box>
                   )}
                   {isAvailableAsSaas && (
-                    <Box bottom="0" position="sticky" paddingBottom="20px" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} mt="20px" justifyContent="center" display="flex" gridGap="20px">
+                    <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
                         {(isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
                           <Button
@@ -1056,6 +1062,24 @@ function SyllabusContent() {
                           </Button>
                         </Tooltip>
                         )}
+                        {currentAsset?.solution_video_url && (
+                        <Tooltip label={t('solution-video')} placement="top">
+                          <Button
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            width="40px"
+                            height="40px"
+                            background={hexColor.blueDefault}
+                            padding="12px"
+                            borderRadius="full"
+                            variant="default"
+                            onClick={() => setSolutionVideoOpen(true)}
+                          >
+                            <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                          </Button>
+                        </Tooltip>
+                        )}
                         {!isExercise && (
                         <ButtonHandlerByTaskStatus
                           allowText
@@ -1101,6 +1125,17 @@ function SyllabusContent() {
           <ReactPlayerV2
             controls={false}
             url={currentAsset?.intro_video_url}
+          />
+        </Box>
+      </SimpleModal>
+      <SimpleModal
+        isOpen={solutionVideoOpen}
+        onClose={() => setSolutionVideoOpen(false)}
+      >
+        <Box padding="20px">
+          <ReactPlayerV2
+            controls={false}
+            url={currentAsset?.solution_video_url}
           />
         </Box>
       </SimpleModal>
