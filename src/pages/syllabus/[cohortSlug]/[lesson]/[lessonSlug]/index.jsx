@@ -545,15 +545,12 @@ function SyllabusContent() {
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
-  const shareSocialMessage = {
-    en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
-    es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
-  };
+
   const socials = [
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
       color: '#1DA1F2',
     },
     {
