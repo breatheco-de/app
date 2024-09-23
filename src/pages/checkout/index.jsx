@@ -113,6 +113,8 @@ function Checkout() {
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
   const { coupon: couponQuery } = query;
+  const { course } = router.query;
+
   const [coupon] = usePersistentBySession('coupon', '');
 
   const couponValue = useMemo(() => {
@@ -121,7 +123,6 @@ function Checkout() {
     return couponString || formatedCouponQuery;
   }, [coupon, couponQuery]);
 
-  const { course } = router.query;
   const courseChoosed = course;
 
   const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
