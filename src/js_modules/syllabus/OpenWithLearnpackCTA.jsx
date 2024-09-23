@@ -61,6 +61,7 @@ function OpenWithLearnpackCTA({ currentAsset }) {
         text={t('learnpack.description', { projectName: currentAsset?.title })}
         width={{ base: '100%', md: 'fit-content' }}
         buttonsData={learnpackActions}
+        buttoonsContainerStyles={{ alignSelf: 'auto' }}
       />
       <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
     </>

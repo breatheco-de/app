@@ -84,7 +84,7 @@ function SyllabusContent() {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
-  const [currentAsset, setCurrentAsset] = useState({});
+  const [currentAsset, setCurrentAsset] = useState(null);
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
@@ -122,7 +122,8 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || l.translations?.[language]?.slug === currentAsset?.slug));
+  useEffect(() => console.log(currentAsset), [currentAsset]);
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -227,7 +228,7 @@ function SyllabusContent() {
 
   const cleanCurrentData = () => {
     setShowModal(false);
-    setCurrentAsset({});
+    setCurrentAsset(null);
     setCurrentSelectedModule(null);
     setCallToActionProps({});
     setReadme(null);
@@ -572,7 +573,7 @@ function SyllabusContent() {
 
   const projectStyles = {
     DONE: {
-      borderRadius: '11px',
+      borderRadius: currentAsset?.delivery_formats !== 'no_delivery' ? '11px' : '0 0 11px 11px',
       pt: '2rem !important',
     },
     PENDING: {
@@ -779,7 +780,7 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {isAvailableAsSaas && currentAsset?.interactive && (
+                  {isAvailableAsSaas && currentAsset?.interactive && !isQuiz && (
                     <OpenWithLearnpackCTA currentAsset={currentAsset} />
                   )}
 
