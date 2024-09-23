@@ -104,7 +104,7 @@ function MentorshipSchedule() {
       const res = await bc.mentorship({
         services: academy.services.map((s) => s.slug).join(','),
         status: 'ACTIVE',
-        syllabus: allSyllabus?.join(','),
+        syllabus: allSyllabus?.join(',') || undefined,
         academy: academy.id,
       }).getMentor();
 
