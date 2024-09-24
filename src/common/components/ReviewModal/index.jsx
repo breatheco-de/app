@@ -84,7 +84,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   const hasNotBeenReviewed = revisionStatus === PENDING;
   const hasBeenApproved = revisionStatus === APPROVED;
   const hasBeenRejected = revisionStatus === REJECTED;
-  const noFilesToReview = !hasBeenApproved && contextData?.commitFiles?.fileList?.length === 0;
+  const noFilesToReview = !hasBeenApproved && (contextData?.commitFiles?.fileList?.length === 0 || !('commitFiles' in contextData));
   const codeRevisionsNotExists = typeof contextData?.code_revisions === 'undefined';
   const hasFilesToReview = contextData?.code_revisions?.length > 0 || !isStudent; // Used to show rigobot files content
   const stage = stageHistory?.current;
@@ -626,7 +626,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                     </Box>
                   </Box>
                 )}
-                {(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate && (
+                {(!isAuthenticatedWithRigobot || !noFilesToReview) && hasFilesToReview && !disableRate && contextData?.commitFiles?.fileList?.length > 0 && (
                   <Flex padding="8px" flexDirection="column" gridGap="16px" background={featuredColor} borderRadius="4px">
                     <Flex alignItems="center" gridGap="10px">
                       <Icon icon="code" width="18.5px" height="17px" color="currentColor" />

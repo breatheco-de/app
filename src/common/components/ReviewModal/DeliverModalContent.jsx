@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unstable-nested-components */
 import { useEffect, useState, useRef } from 'react';
 import {
   Box,
@@ -24,7 +23,7 @@ import bc from '../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
 
-function DeliverModal({
+function DeliverModalContent({
   isStudent,
   currentTask,
   projectLink,
@@ -215,7 +214,7 @@ function DeliverModal({
   );
 }
 
-DeliverModal.propTypes = {
+DeliverModalContent.propTypes = {
   isStudent: PropTypes.bool,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   projectLink: PropTypes.string.isRequired,
@@ -229,7 +228,7 @@ DeliverModal.propTypes = {
   loaders: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   proceedToCommitFiles: PropTypes.func,
 };
-DeliverModal.defaultProps = {
+DeliverModalContent.defaultProps = {
   isStudent: false,
   readOnly: false,
   showCodeReviews: false,
@@ -239,4 +238,4 @@ DeliverModal.defaultProps = {
   proceedToCommitFiles: () => {},
 };
 
-export default DeliverModal;
+export default DeliverModalContent;

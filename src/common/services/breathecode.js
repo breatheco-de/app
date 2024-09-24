@@ -260,6 +260,7 @@ const breathecode = {
       personalFiles: (taskId) => breathecode.get(`${url}/me/task/${taskId}/commitfile${qs}`),
       personalFile: (commitId) => breathecode.get(`${url}/me/commitfile/${commitId}${qs}`),
       rateCodeRevision: (coderevisionId, data) => axios.post(`${url}/me/coderevision/${coderevisionId}/rate`, data),
+      syncCohort: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/synctasks`),
     };
   },
   feedback: () => {
