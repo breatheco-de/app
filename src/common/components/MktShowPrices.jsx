@@ -161,14 +161,9 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
           firstSectionTitle={t('subscription.upgrade-modal.subscription')}
           secondSectionTitle={t('subscription.upgrade-modal.finance')}
           handleUpgrade={(item) => {
-            const period = item?.period;
-
             const querys = parseQuerys({
               plan: item?.plan_slug,
               plan_id: item?.plan_id,
-              price: item?.price,
-              period,
-              cohort: cohortId,
               coupon: queryCoupon || coupon,
             });
             router.push(`/checkout${querys}`);

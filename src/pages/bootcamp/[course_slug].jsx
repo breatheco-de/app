@@ -207,10 +207,7 @@ function Page({ data }) {
     plan: featuredPlanToEnroll?.plan_slug,
     plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
-    price: featuredPlanToEnroll?.price,
-    period: featuredPlanToEnroll?.period,
-    cohort: cohortId,
-  }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
+  }) : `?plan=${data?.plan_slug}`;
 
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {

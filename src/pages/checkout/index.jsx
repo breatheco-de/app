@@ -100,6 +100,8 @@ function Checkout() {
 
   const cohorts = cohortsData?.cohorts;
 
+  console.log(checkoutData);
+
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
   const { userSession } = useSession();
@@ -162,6 +164,23 @@ function Checkout() {
   };
 
   const handleCoupon = (coupons, actions) => {
+    // Verificar si el cupón ingresado ya está aplicado
+    const alreadyAppliedCoupon = selfAppliedCoupon?.slug === discountCode || selfAppliedCoupon?.slug === couponValue;
+
+    if (alreadyAppliedCoupon) {
+      toast({
+        position: 'top',
+        title: t('alert-message:coupon-already-applied'),
+        status: 'info',
+        duration: 4000,
+        isClosable: true,
+      });
+      if (actions) {
+        actions.setSubmitting(false);
+      }
+      return;
+    }
+
     bc.payment({
       coupons: [coupons || discountCode],
       plan: planFormated,
