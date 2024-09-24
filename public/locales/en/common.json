@@ -162,13 +162,13 @@
           "logo": "/static/images/apple.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
+              "label": "Install node.js on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
             },
             {
-              "label": "Instal Learnpack on your computer",
+              "label": "Install Learnpack on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
@@ -187,13 +187,13 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
+              "label": "Install node.js on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
             },
             {
-              "label": "Instal Learnpack on your computer",
+              "label": "Install Learnpack on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
@@ -212,13 +212,13 @@
           "logo": "/static/images/windows.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
+              "label": "Install node.js on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
             },
             {
-              "label": "Instal Learnpack on your computer",
+              "label": "Install Learnpack on your computer",
               "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
               "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
