@@ -498,7 +498,7 @@ function Summary() {
               // mt="12px"
               isDisabled={isPaymentSuccess && !cohortFound}
               isLoading={isSubmitting}
-              onClick={() => redirectTocohort()}
+              onClick={redirectTocohort}
             >
               {isPaymentSuccess ? t('start-free-course') : t('try-again')}
             </Button>

@@ -56,17 +56,19 @@ function PaymentInfo() {
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
 
   const redirectTocohort = () => {
-    if (isPaymentSuccess) {
-      const langLink = lang !== 'en' ? `/${lang}` : '';
-      const syllabusVersion = cohortFound?.syllabus_version;
-      axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
-      const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
-      setCohortSession({
-        ...cohortFound,
-        selectedProgramSlug: cohortDashboardLink,
-      });
-      router.push(cohortDashboardLink);
-    } else setPaymentStatus('idle');
+    if (!isPaymentSuccess) {
+      setPaymentStatus('idle');
+      return;
+    }
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const syllabusVersion = cohortFound?.syllabus_version;
+    axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
+    const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+    setCohortSession({
+      ...cohortFound,
+      selectedProgramSlug: cohortDashboardLink,
+    });
+    router.push(cohortDashboardLink);
   };
 
   const joinCohort = (cohort) => {
@@ -379,7 +381,7 @@ function PaymentInfo() {
           // mt="12px"
           isDisabled={isPaymentSuccess && !cohortFound}
           isLoading={isSubmittingPayment}
-          onClick={() => redirectTocohort()}
+          onClick={redirectTocohort}
         >
           {isPaymentSuccess ? 'Start learning' : 'Try again'}
         </Button>
