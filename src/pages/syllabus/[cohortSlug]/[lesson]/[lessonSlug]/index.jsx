@@ -77,7 +77,6 @@ function SyllabusContent() {
   const [showSolutionVideo, setShowSolutionVideo] = useState(false);
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
-  const [callToActionProps, setCallToActionProps] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
@@ -230,7 +229,6 @@ function SyllabusContent() {
     setShowModal(false);
     setCurrentAsset(null);
     setCurrentSelectedModule(null);
-    setCallToActionProps({});
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
@@ -273,13 +271,6 @@ function SyllabusContent() {
           // const translatedExtension = language === 'us' ? '' : `.${language}`;
           const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-          setCallToActionProps({
-            token: accessToken,
-            assetSlug: lessonSlug,
-            interactive: data.interactive,
-            gitpod: data.gitpod,
-            assetType: assetTypeValues[lesson],
-          });
           setReadmeUrlPathname(finalPathname);
           let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
           if (isIpynb) {
@@ -855,7 +846,6 @@ function SyllabusContent() {
                       ipynbHtmlUrl={ipynbHtmlUrl}
                       readme={readme}
                       currentBlankProps={currentBlankProps}
-                      callToActionProps={callToActionProps}
                       currentData={currentAsset}
                       lesson={lesson}
                       quizSlug={quizSlug}

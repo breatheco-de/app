@@ -148,7 +148,90 @@
       "type": "dropdown"
     },
     "clone-title": "¿Cómo clonar un proyecto?",
-    "cloneInstructions": "Este ejercicio se puede descargar y ejecutar localmente si tienes node.js instalado (<a class=\"link\" href=\"/es/how-to/como-instalar-nvm-node-version-manager-en-cualquier-sistema-operativo\" target=\"_blank\">pasos de instalación</a>).\n\n Si ya tienes node, toca instalar learnpack y clonar el proyecto en tu computadora escribiendo el siguiente comando en tu terminal:\n\n```bash\n$ npm i @learnpack/learnpack -g\n$ git clone {{urlToClone}}\n```\nNota: Esto creará una nueva carpeta <strong>\"{{repoName}}\"</strong> en tu computadora con el código del proyecto dentro.\n\n<strong>Si quieres usar VSCode:</strong> asegúrate de tener el <a class=\"link\" target=\"_blank\" href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\">LearnPack extension</a> instalado, abre la carpeta en VSCode y escribe `learnpack start` en tu terminal de vscode.\n\n<strong>Para realizar los ejercicios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:\n\n```bash\n$ cd {{repoName}}\n$ learnpack start\n```\nLee el archivo <a class=\"link\" href=\"{{readmeUrl}}\">README.md</a> y sigue el resto de las instrucciones."
+    "cloneInstructions": "Este ejercicio se puede descargar y ejecutar localmente si tienes node.js instalado (<a class=\"link\" href=\"/es/how-to/como-instalar-nvm-node-version-manager-en-cualquier-sistema-operativo\" target=\"_blank\">pasos de instalación</a>).\n\n Si ya tienes node, toca instalar learnpack y clonar el proyecto en tu computadora escribiendo el siguiente comando en tu terminal:\n\n```bash\n$ npm i @learnpack/learnpack -g\n$ git clone {{urlToClone}}\n```\nNota: Esto creará una nueva carpeta <strong>\"{{repoName}}\"</strong> en tu computadora con el código del proyecto dentro.\n\n<strong>Si quieres usar VSCode:</strong> asegúrate de tener el <a class=\"link\" target=\"_blank\" href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\">LearnPack extension</a> instalado, abre la carpeta en VSCode y escribe `learnpack start` en tu terminal de vscode.\n\n<strong>Para realizar los ejercicios sin VSCode:</strong> abre tu terminal en la carpeta recién creada y comienza el programa learnpack:\n\n```bash\n$ cd {{repoName}}\n$ learnpack start\n```\nLee el archivo <a class=\"link\" href=\"{{readmeUrl}}\">README.md</a> y sigue el resto de las instrucciones.",
+    "clone-modal": {
+      "title": "Abrir localmente en tu computadora",
+      "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
+      "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
+      "select-os": "1. Seleccione su sistema operativo",
+      "os-list": [
+        {
+          "name": "macos",
+          "label": "macOS",
+          "logo": "/static/images/apple.png",
+          "steps": [
+            {
+              "label": "Instal node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Instal Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        },
+        {
+          "name": "linux",
+          "label": "Linux",
+          "logo": "/static/images/linux.png",
+          "steps": [
+            {
+              "label": "Instal node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Instal Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        },
+        {
+          "name": "windows",
+          "label": "Windows",
+          "logo": "/static/images/windows.png",
+          "steps": [
+            {
+              "label": "Instal node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Instal Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        }
+      ]
+    }
   },
   "upgrade-plan": {
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
