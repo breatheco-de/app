@@ -164,6 +164,7 @@ function MktShowPrices({ id, externalPlanProps, cohortId, title, gridColumn1, gr
             const querys = parseQuerys({
               plan: item?.plan_slug,
               plan_id: item?.plan_id,
+              cohort: cohortId,
               coupon: queryCoupon || coupon,
             });
             router.push(`/checkout${querys}`);
