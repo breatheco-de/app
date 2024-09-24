@@ -10,27 +10,6 @@ import Link from '../../common/components/NextChakraLink';
 import bc from '../../common/services/breathecode';
 import MentoringConsumables from '../../common/components/SupportSidebar/MentoringConsumables';
 
-function NoConsumablesCard({ t, handleGetMoreMentorships, isLoading }) {
-  return (
-    <Box fontSize="15px" margin="10px 0 0 0" display="flex" flexDirection="column">
-      {t('supportSideBar.no-mentoring-available')}
-      <Button
-        height="auto"
-        padding="3px 5px"
-        variant="default"
-        fontSize="15px"
-        background="none"
-        isLoading={isLoading}
-        fontWeight={700}
-        onClick={() => handleGetMoreMentorships()}
-        color="blue.400"
-      >
-        {t('supportSideBar.get-more-mentorships')}
-      </Button>
-    </Box>
-  );
-}
-
 function MentorshipSchedule() {
   let isTabletOrPhone = false;
   if (typeof window !== 'undefined') {
