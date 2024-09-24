@@ -7,12 +7,9 @@ import {
   // useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import bc from '../../services/breathecode';
-import MentoringFree from './MentoringFree';
 import MentoringConsumables from './MentoringConsumables';
 import useAuth from '../../hooks/useAuth';
 import useCohortHandler from '../../hooks/useCohortHandler';
@@ -20,28 +17,19 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
+  // const toast = useToast();
   const { t } = useTranslation('dashboard');
-  const [savedChanges, setSavedChanges] = useState({});
+  const router = useRouter();
+  const { isLoading, user } = useAuth();
+  const { slug } = router.query;
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const router = useRouter();
-  const [consumables, setConsumables] = useState({});
+  const [consumables, setConsumables] = useState([]);
   const [mentoryProps, setMentoryProps] = useState({});
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [programMentors, setProgramMentors] = useState([]);
-  const [isAvailableForConsumables, setIsAvailableForConsumables] = useState(true);
-  const { isLoading, user } = useAuth();
-  // const toast = useToast();
-  const { slug } = router.query;
-
-  const [searchProps, setSearchProps] = useState({
-    serviceSearch: '',
-    mentorSearch: '',
-  });
-
-  const servicesFiltered = programServices.list.filter(
-    (l) => l.name.toLowerCase().includes(searchProps.serviceSearch),
-  );
+  const [cohortSessionIsSaaS, setCohortSessionIsSaaS] = useState(true);
+  const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
 
   const filterServices = () => {
     if (subscriptionData?.selected_mentorship_service_set?.mentorship_services?.length > 0) {
@@ -62,37 +50,12 @@ function Mentoring({
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
       const fullName = `${mentor.user.first_name} ${mentor.user.last_name}`.toLowerCase();
-      const mentorServices = fullName.includes(searchProps.mentorSearch) && mentor.services.some((sv) => sv.status === 'ACTIVE'
-        && sv.slug === mentoryProps?.service?.slug);
-      return mentorServices;
+      return (
+        fullName.includes(searchProps.mentorSearch)
+        && mentor.services.some((sv) => sv.status === 'ACTIVE' && sv.slug === mentoryProps?.service?.slug)
+      );
     },
   );
-
-  const dateFormated = {
-    en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd'),
-    es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM", { locale: es }),
-  };
-
-  const dateFormated2 = {
-    en: mentoryProps?.date && format(new Date(mentoryProps.date), 'MMMM dd, yyyy'),
-    es: mentoryProps?.date && format(new Date(mentoryProps.date), "dd 'de' MMMM, yyyy", { locale: es }),
-  };
-
-  useEffect(() => {
-    if (mentoryProps?.time) {
-      const [hours, minutes] = mentoryProps.time.split(':');
-
-      const nDate = mentoryProps?.date
-        && new Date(mentoryProps.date);
-
-      nDate.setHours(+hours, +minutes, 0, 0); // set hours/minute;
-      setMentoryProps({ ...mentoryProps, date: nDate });
-      setSavedChanges({ ...mentoryProps, date: nDate });
-    }
-  }, [mentoryProps?.time]);
-
-  const step1 = !mentoryProps?.service;
-  const step2 = mentoryProps?.service && !mentoryProps?.date;
 
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = programServices.list.map((service) => service?.slug);
@@ -106,7 +69,6 @@ function Mentoring({
       academies[academy.id].services.push(restOfService);
     });
 
-    // Convert the object to an array of academies with their services
     const academyData = Object.entries(academies).map(([academy, values]) => ({
       id: Number(academy),
       services: values.services,
@@ -130,6 +92,21 @@ function Mentoring({
     return [];
   };
 
+  const sortByConsumptionAvailability = (allConsumables) => allConsumables.sort((a, b) => {
+    const balanceA = a?.balance?.unit;
+    const balanceB = b?.balance?.unit;
+
+    if (balanceA === -1 && balanceB !== -1) return -1;
+    if (balanceA !== -1 && balanceB === -1) return 1;
+
+    if (balanceA > 0 && balanceB <= 0) return -1;
+    if (balanceA <= 0 && balanceB > 0) return 1;
+
+    if (balanceA > 0 && balanceB > 0) return balanceB - balanceA;
+
+    return 0;
+  });
+
   const getMentorsAndConsumables = async () => {
     const mentors = await getAllMentorsAvailable();
     const reqConsumables = await bc.payment().service().consumable()
@@ -141,7 +118,8 @@ function Mentoring({
         }))));
 
     const allConsumables = await Promise.all(reqConsumables);
-    setConsumables(allConsumables);
+    const sortedConsumables = sortByConsumptionAvailability(allConsumables);
+    setConsumables(sortedConsumables);
     setAllMentorsAvailable(mentors);
   };
 
@@ -153,73 +131,34 @@ function Mentoring({
 
   useEffect(() => {
     const existsCohortSession = typeof cohortSession?.available_as_saas === 'boolean';
-
     if (existsCohortSession) {
-      setIsAvailableForConsumables(cohortSession?.available_as_saas);
-    }
-    if (!existsCohortSession) {
-      if (allCohorts.length > 0) {
-        setIsAvailableForConsumables(allCohorts?.some((c) => c.cohort?.available_as_saas === true));
-      }
+      setCohortSessionIsSaaS(cohortSession?.available_as_saas);
     }
   }, [allCohorts]);
-
-  const mentorshipService = consumables?.mentorship_service_sets?.find(
-    (c) => c?.slug.toLowerCase() === subscriptionData?.selected_mentorship_service_set?.slug.toLowerCase(),
-  );
 
   return !isLoading && user?.id && (
     <Box>
       <Box fontSize="16px" padding="6px 8px" color="black" background="yellow.light" textAlign="center" borderRadius="17px" fontWeight={700}>
         {t('supportSideBar.mentoring-label')}
       </Box>
-      {isAvailableForConsumables ? (
-        <MentoringConsumables
-          {...{
-            mentoryProps,
-            width,
-            consumables,
-            mentorshipService,
-            setMentoryProps,
-            programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
-            servicesFiltered: suscriptionServicesFiltered,
-            dateFormated,
-            searchProps,
-            setSearchProps,
-            setProgramMentors,
-            savedChanges,
-            setSavedChanges,
-            mentorsFiltered,
-            step1,
-            step2,
-            dateFormated2,
-            allMentorsAvailable,
-            subscriptionData,
-            allSubscriptions: subscriptions,
-          }}
-        />
-      ) : (
-        <MentoringFree
-          {...{
-            mentoryProps,
-            width,
-            setMentoryProps,
-            programServices: programServices.list,
-            dateFormated,
-            servicesFiltered,
-            searchProps,
-            setSearchProps,
-            setProgramMentors,
-            savedChanges,
-            setSavedChanges,
-            mentorsFiltered,
-            step1,
-            step2,
-            dateFormated2,
-            allMentorsAvailable,
-          }}
-        />
-      )}
+      <MentoringConsumables
+        {...{
+          mentoryProps,
+          width,
+          consumables,
+          setMentoryProps,
+          programServices: programServices.list?.length > 0 ? programServices.list : subscriptionData?.selected_mentorship_service_set?.mentorship_services,
+          servicesFiltered: suscriptionServicesFiltered,
+          searchProps,
+          setSearchProps,
+          setProgramMentors,
+          mentorsFiltered,
+          allMentorsAvailable,
+          subscriptionData,
+          cohortSessionIsSaaS,
+          allSubscriptions: subscriptions,
+        }}
+      />
     </Box>
   );
 }
