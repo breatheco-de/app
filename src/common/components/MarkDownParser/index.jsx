@@ -8,7 +8,6 @@ import remarkGemoji from 'remark-gemoji';
 import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
 import { Img } from '@chakra-ui/react';
-import useTranslation from 'next-translate/useTranslation';
 import AnchorJS from 'anchor-js';
 import bc from '../../services/breathecode';
 import OpenWithLearnpackCTA from '../../../js_modules/syllabus/OpenWithLearnpackCTA';
@@ -24,7 +23,6 @@ import ContentHeading from './ContentHeading';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import SubTasks from './SubTasks';
 import DynamicCallToAction from '../DynamicCallToAction';
-import SimpleModal from '../SimpleModal';
 
 function MarkdownH2Heading({ children }) {
   return (
@@ -140,13 +138,11 @@ function MarkDownParser({
   content, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
   showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience, showContentHeading,
 }) {
-  const { t } = useTranslation('common');
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [newSubTasks, setNewSubTasks] = useState([]);
   const [fileContext, setFileContext] = useState('');
   const { subTasks, setSubTasks } = useModuleHandler();
   const [profile] = usePersistent('profile', {});
-  const [showCloneModal, setShowCloneModal] = useState(false);
 
   const updateSubTask = async (taskProps) => {
     const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
@@ -243,36 +239,8 @@ function MarkDownParser({
     return contentReplace;
   }, [content]);
 
-  const urlToClone = currentData?.url || currentData?.readme_url?.split('/blob')?.[0];
-  const repoName = urlToClone?.split('/')?.pop();
-
   return (
     <>
-      <SimpleModal
-        maxWidth="xl"
-        title={t('learnpack.clone-title')}
-        isOpen={showCloneModal}
-        onClose={() => {
-          setShowCloneModal(false);
-        }}
-        headerStyles={{
-          textAlign: 'center',
-          textTransform: 'uppercase',
-        }}
-        bodyStyles={{
-          className: 'markdown-body',
-          padding: { base: '10px 30px' },
-        }}
-      >
-        <MarkDownParser
-          content={t('learnpack.cloneInstructions', {
-            repoName,
-            urlToClone,
-            readmeUrl: currentData?.readme_url,
-          }, { returnObjects: true })}
-          showLineNumbers={false}
-        />
-      </SimpleModal>
       {showContentHeading && (
         <ContentHeading
           titleRightSide={titleRightSide}
