@@ -1,0 +1,7 @@
+[
+  {
+    "prompt": "How do I mark the lesson as finished?",
+    "answer": "You can click on the completed button that has a checkmark shown on the bottom right corner.",
+    "DOMTarget": "#completed-button",
+  }
+]
