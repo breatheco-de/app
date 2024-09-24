@@ -85,6 +85,9 @@
     "get-more-mentorships": "Consigue más mentorías",
     "schedule-button": "Programar una sesión de tutoría",
     "mentors-available": "+{{count}} Mentores disponibles",
+    "for": "para",
+    "service-not-found": "no se ha encontrado servicio",
+    "mentor-not-found": "no se ha encontrado el mentor",
     "actionButtons": [
       {
         "name": "mentoring",

@@ -85,6 +85,9 @@
     "get-more-mentorships": "Get more mentorships",
     "schedule-button": "Schedule a mentoring session",
     "mentors-available": "+{{count}} Mentors available",
+    "for": "for",
+    "service-not-found": "couldn't find service",
+    "mentor-not-found": "couldn't find mentor",
     "actionButtons": [
       {
         "name": "mentoring",
