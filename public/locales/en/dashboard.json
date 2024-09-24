@@ -109,7 +109,7 @@
     "mentor-sessions-available": "mentor sessions available",
     "action": "Schedule session",
     "no-available": "No services available",
-    "no-available-for-teacher": "No serives available for"
+    "no-available-for-teacher": "No services available for"
   },
   "schedule-steps": {
     "select-mentorship": "First select a type of mentorship",
