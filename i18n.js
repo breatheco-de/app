@@ -25,7 +25,7 @@ module.exports = {
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard', 'projects', 'assignments'],
     '/survey/[surveyId]': ['survey'],
     '/mentorship': ['mentorship'],
-    '/mentorship/schedule': ['mentorship', 'dashboard'],
+    '/mentorship/schedule': ['mentorship', 'dashboard', 'signup', 'common'],
     '/how-to': ['how-to'],
     '/pricing': ['pricing', 'signup'],
     '/how-to/[slug]': ['how-to'],

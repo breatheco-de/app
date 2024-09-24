@@ -238,7 +238,7 @@ function MentoringConsumables({
         toast({
           position: 'top',
           title: 'Error',
-          description: `${t('supportSideBar.service-not-found')} "${queryService}" ${queryMentor ? `${t('supportSideBar.for')} "${queryMentor}"` : ''}`,
+          description: `${t('supportSideBar.service-not-found')} "${queryService}" ${queryMentor ? `${t('common:word-connector.for')} "${queryMentor}"` : ''}`,
           status: 'error',
           duration: 7000,
           isClosable: true,
@@ -313,7 +313,7 @@ function MentoringConsumables({
         <Box d="flex" flexDirection="column" alignItems="center" justifyContent="center">
           {!mentoryProps?.service && (consumables?.mentorship_service_sets?.length !== 0 || currentBalance !== 0) && (
             <>
-              <Heading size={titleSize} textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
+              <Heading size={titleSize || '14px'} textAlign="center" lineHeight="16.8px" justify="center" mt="0px" mb="0px">
                 {t('supportSideBar.mentoring')}
                 <br />
                 <Link size="14px" variant="default" className="link" href={t('supportSideBar.learn-more-link')} target="_blank" rel="noopener noreferrer">
@@ -373,7 +373,7 @@ function MentoringConsumables({
         )}
 
         {open && mentoryProps?.service && !mentoryProps?.mentor && existConsumablesOnCurrentService && (
-          <Box display="flex" alignItems="center" fontSize="18px" fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0" style={{ textWrap: 'nowrap' }}>
+          <Box display="flex" alignItems="center" fontSize={titleSize || '18px'} fontWeight={700} gridGap="10px" padding="0 10px" margin="10px 0 0px 0" style={{ textWrap: 'nowrap' }}>
             <Box>
               {t('mentorship.you-have')}
             </Box>
@@ -395,7 +395,7 @@ function MentoringConsumables({
         && (
           <>
             {mentoryProps?.service && (
-              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt={currentBalance > 0 ? '22px' : '34px'} px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="22px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                 <Box>
                   <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                 </Box>
@@ -522,9 +522,9 @@ MentoringConsumables.propTypes = {
 MentoringConsumables.defaultProps = {
   queryService: undefined,
   queryMentor: undefined,
+  titleSize: undefined,
   mentoryProps: [],
   width: '100%',
-  titleSize: '14px',
   consumables: {},
   programServices: [],
   setProgramMentors: () => { },

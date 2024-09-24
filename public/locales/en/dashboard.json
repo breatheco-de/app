@@ -3,9 +3,8 @@
     "title": "Dashboard"
   },
   "title": "Your News",
-  "back-to-dashboard": "Back to dashboard",
-  "backToChooseProgram": "Back to choose program",
   "moduleMap": "Module map",
+  "backToChooseProgram": "Back to choose program",
   "progressText": "progress in the program",
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
@@ -85,7 +84,6 @@
     "get-more-mentorships": "Get more mentorships",
     "schedule-button": "Schedule a mentoring session",
     "mentors-available": "+{{count}} Mentors available",
-    "for": "for",
     "service-not-found": "couldn't find service",
     "mentor-not-found": "couldn't find mentor",
     "actionButtons": [

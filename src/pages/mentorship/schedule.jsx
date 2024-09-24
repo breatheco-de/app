@@ -16,7 +16,7 @@ function MentorshipSchedule() {
     isTabletOrPhone = window.innerWidth < 780;
   }
   const router = useRouter();
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation('signup');
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const { service, mentor } = router.query;
   const { isLoading, user, isAuthenticated } = useAuth();
@@ -186,20 +186,20 @@ function MentorshipSchedule() {
   }, [mentoryProps.serviceSelected]);
 
   return !isLoading && user && !mentorshipServices.isLoading && (
-    <Container as="div" height="100%" maxWidth="full" minHeight="87.5vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('#f9f9f9', '#171f2a')} overflow="hidden">
+    <Container as="div" height="100%" maxWidth="full" minHeight="93vh" display="flex" flexDirection="column" padding={0} background={() => useColorModeValue('#f9f9f9', '#171f2a')} overflow="hidden">
       <Link href="/choose-program" color="#0196d1" display="inline-block" letterSpacing="0.05em" fontWeight="700" width="fit-content" padding="3rem 0 0.6rem 1rem">
         <Box display="flex" alignItems="center" justifyContent="center" gap="5px">
           <Icon icon="arrowLeft2" color="#0196d1" width="15px" height="15px" />
-          <Box as="span">{`${t('back-to-dashboard')}`}</Box>
+          <Box as="span">{`${t('consumables.back-to-dashboard')}`}</Box>
         </Box>
       </Link>
       <Container as="div" display="flex" flexDirection="column" justifyContent="center" alignItems="center" marginTop="2.5rem" textAlign="center" padding="0px" borderRadius="10px">
-        <Box textAlign="start">
+        <Box textAlign="start" borderRadius="10px" background={() => useColorModeValue('white', '#27333f')}>
           <MentoringConsumables
             {...{
               mentoryProps,
               width: !isTabletOrPhone ? '650px' : '350px',
-              titleSize: !isTabletOrPhone && '30px',
+              titleSize: !isTabletOrPhone && '24px',
               consumables,
               setMentoryProps,
               programServices: mentorshipServices.data,
