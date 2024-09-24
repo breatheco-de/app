@@ -109,8 +109,7 @@
     "tooltip": "Mentorships reload every week",
     "mentor-sessions-available": "mentoring sessions available",
     "action": "Schedule session",
-    "no-available": "No services available",
-    "no-available-for-teacher": "No services available for"
+    "no-available": "No services available"
   },
   "schedule-steps": {
     "select-mentorship": "First select a type of mentorship",

@@ -110,8 +110,7 @@
     "tooltip": "Las mentorías se recargan cada semana",
     "mentor-sessions-available": "sesiones de mentoria disponibles",
     "action": "Reservar mentoria",
-    "no-available": "No hay servicios disponibles",
-    "no-available-for-teacher": "No hay servicios disponibles para"
+    "no-available": "No hay servicios disponibles"
   },
   "schedule-steps": {
     "select-mentorship": "Primero selecciona un tipo de mentoría",
