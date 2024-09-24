@@ -42,7 +42,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
       >
         <Box display="flex" flexDirection="column" gap="16px">
           <Box mb="16px">
-            <Box display="flex" gridGap="16px" alignItems="center">
+            <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
               <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
               <Heading style={{ fontWeight: '400' }} size="sm" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
                 {title}
@@ -110,7 +110,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
 
-  const isDelivered = currentTask?.task_status === 'DONE';
+  const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
 
   const assetTypeIcons = {
     LESSON: 'book',
@@ -175,7 +175,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
                 </Box>
               ) : (
                 <>
-                  <Heading textAlign="center" size="18px" mb="8px" color={hexColor.fontColor3}>
+                  <Heading textAlign="center" size="18px" mb="16px" color={hexColor.fontColor3}>
                     {t('no-feedback')}
                   </Heading>
                   <Text size="md" textAlign="center" color={hexColor.fontColor3}>
@@ -191,6 +191,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
         )}
       </Box>
       <Box
+        id="project-topbar"
         zIndex="20"
         background={backgroundColor4}
         position="sticky"

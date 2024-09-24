@@ -169,7 +169,7 @@ function TaskCodeRevisions() {
           </Heading>
         </Flex>
       ) : (
-        <Heading size="18px" mb="8px">
+        <Heading size="18px" mb="16px">
           {t('code-reviews')}
         </Heading>
       )}
@@ -279,8 +279,8 @@ ${revisionContent?.code}
                       <Button variant="default" isLoading={reviewRateData.isSubmitting} isDisabled={reviewRateData.comment.length < 10} onClick={() => submitReviewRate('send')}>
                         <Icon icon="send" />
                       </Button>
-                      <Button variant="ghost" isDisabled={reviewRateData.isSubmitting} onClick={() => handleSelectReviewRate(null)} fontSize="13px" fontWeight={700} color="red">
-                        X
+                      <Button variant="link" isDisabled={reviewRateData.isSubmitting} onClick={() => handleSelectReviewRate(null)}>
+                        <Icon width="12px" height="12px" icon="close" color="#EB5757" />
                       </Button>
                     </Flex>
                   </Box>

@@ -3,6 +3,7 @@
   "module-not-started": "Aún no has iniciado este módulo",
   "edit-page": "Editar en Github",
   "no-modules-to-show": "No hay módulos para mostrar",
+  "solution-video": "Ver solución",
   "watch-intro": "Ver introducción",
   "get-help": "Pide ayuda a Rigobot",
   "contribute": "Contribuye a esta lección",
@@ -55,5 +56,6 @@
   "successful-compiles": "Compilaciones exitosas",
   "successful-tests": "Pasos exitosos",
   "total-errors": "Total de errores",
-  "click-to-review": "Pincha aquí para revisar la solución."
+  "click-to-review": "Pincha aquí para revisar la solución.",
+  "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com"
 }

@@ -6,15 +6,14 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
 import modifyEnv from '../../../modifyEnv';
+import ModalToCloneProject from './ModalToCloneProject';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
-import MarkDownParser from '../../common/components/MarkDownParser';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import SimpleModal from '../../common/components/SimpleModal';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
 
@@ -109,9 +108,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
   const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
 
-  const urlToClone = currentAsset?.url || currentAsset?.readme_url?.split('/blob')?.[0];
-  const repoName = urlToClone?.split('/')?.pop();
-
   return (
     <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
       <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
@@ -204,31 +200,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
           </Button>
         </Box>
       </Box>
-      <SimpleModal
-        maxWidth="xl"
-        title={t('common:learnpack.clone-title')}
-        isOpen={showCloneModal}
-        onClose={() => {
-          setShowCloneModal(false);
-        }}
-        headerStyles={{
-          textAlign: 'center',
-          textTransform: 'uppercase',
-        }}
-        bodyStyles={{
-          className: 'markdown-body',
-          padding: { base: '10px 30px' },
-        }}
-      >
-        <MarkDownParser
-          content={t('common:learnpack.cloneInstructions', {
-            repoName,
-            urlToClone,
-            readmeUrl: currentAsset?.readme_url,
-          }, { returnObjects: true })}
-          showLineNumbers={false}
-        />
-      </SimpleModal>
+      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
     </Box>
   );
 }

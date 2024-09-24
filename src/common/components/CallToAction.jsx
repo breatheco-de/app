@@ -16,7 +16,7 @@ import Icon from './Icon';
 function CallToAction({
   background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
   buttonText, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
-  isLoading, reverseButtons,
+  isLoading, reverseButtons, buttonsContainerStyles,
 }) {
   return (
     <Box
@@ -83,6 +83,7 @@ function CallToAction({
           gridTemplateColumns={{ base: 'repeat(auto-fill, minmax(10rem, 1fr))', md: '' }}
           flexDirection={reverseButtons ? 'row-reverse' : 'row'}
           justifyContent={reverseButtons ? 'flex-end' : 'flex-start'}
+          {...buttonsContainerStyles}
         >
           {buttonText && !buttonsData?.length > 0 && (
             <Button width="max-content" isLoading={isLoading} whiteSpace="wrap" as="a" style={buttonStyle} href={href} target={isExternalLink ? '_blank' : '_self'} padding="0.5rem 1rem" height="auto" marginY="auto" textTransform="uppercase" borderColor="white" color="white" variant="outline" onClick={onClick}>
@@ -203,6 +204,7 @@ CallToAction.propTypes = {
   isLoading: PropTypes.bool,
   icon: PropTypes.string,
   reverseButtons: PropTypes.bool,
+  buttonsContainerStyles: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
 };
 
 CallToAction.defaultProps = {
@@ -222,6 +224,7 @@ CallToAction.defaultProps = {
   isLoading: false,
   icon: '',
   reverseButtons: false,
+  buttonsContainerStyles: {},
 };
 
 export default CallToAction;

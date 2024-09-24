@@ -316,12 +316,11 @@ function MarkDownParser({
         <ContentHeading
           titleRightSide={titleRightSide}
           isGuidedExperience={isGuidedExperience}
-          callToAction={interactive === true && (
+          callToAction={interactive && (
             <CallToAction
               buttonStyle={{
                 color: 'white',
               }}
-              localhostOnly={!gitpod}
               background="blue.default"
               reverseButtons={cohortSession?.available_as_saas}
               margin="12px 0 20px 0px"

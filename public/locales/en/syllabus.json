@@ -3,6 +3,7 @@
   "module-not-started": "You haven't started this module yet",
   "no-modules-to-show": "No modules to show",
   "edit-page": "Edit in GitHub",
+  "solution-video": "Solution video",
   "watch-intro": "Watch intro",
   "get-help": "Get help from Rigobot",
   "contribute": "Contribute to this lesson",
@@ -55,5 +56,6 @@
   "successful-compiles": "Successfull compiles",
   "successful-tests": "Successfull tests",
   "total-errors": "Total errors",
-  "click-to-review": "Click here to review the solution."
+  "click-to-review": "Click here to review the solution.",
+  "share-social-message": "I just finished coding {{title}} at 4geeks.com"
 }
