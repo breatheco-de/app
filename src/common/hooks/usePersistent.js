@@ -22,6 +22,8 @@ const usePersistent = (key, initialValue) => {
 
 const usePersistentBySession = (key, initialValue) => {
   const getStoredValues = useMemo(() => {
+    if (typeof window === 'undefined') return initialValue;
+
     const item = isWindow ? window.sessionStorage.getItem(key) : null;
     if (item === null) return initialValue;
 
@@ -34,14 +36,12 @@ const usePersistentBySession = (key, initialValue) => {
 
   const [storedValue, setStoredValue] = useState(getStoredValues);
 
+  console.log(storedValue);
+
   const setValue = (value) => {
-    try {
-      setStoredValue(value);
-      const valueToStore = typeof value === 'object' ? JSON.stringify(value) : value;
-      window.sessionStorage.setItem(key, valueToStore);
-    } catch (error) {
-      console.error('usePersistent_error:', error);
-    }
+    setStoredValue(value);
+    const valueToStore = typeof value === 'object' ? JSON.stringify(value) : value;
+    window.sessionStorage.setItem(key, valueToStore);
   };
   return [storedValue, setValue];
 };
