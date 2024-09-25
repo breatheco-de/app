@@ -41,7 +41,7 @@ const usePersistentBySession = (key, initialValue) => {
     const valueToStore = typeof value === 'object' ? JSON.stringify(value) : value;
     window.sessionStorage.setItem(key, valueToStore);
   };
-  return [storedValue, setValue];
+  return [storedValue !== undefined ? storedValue : initialValue, setValue];
 };
 
 export {
