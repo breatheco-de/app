@@ -87,7 +87,6 @@ function ChooseYourClass({
           };
         });
 
-        //SI NO AÑADO COHORTS ENTONCES TENGO QUE SABER LA IMPORTANCIA
         const filteredCohorts = Array.isArray(formatedData) ? formatedData.filter((item) => item?.never_ends === false) : null;
         setCohorts({
           cohorts: filteredCohorts,

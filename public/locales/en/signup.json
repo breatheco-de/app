@@ -158,7 +158,8 @@
     "validate-email-title": "Verify your email",
     "validate-email-description": "We sent a confirmation email to: <strong>{{email}}</strong>, please check your email and click on the confirmation link.",
     "email-sent-to": "We sent you a confirmation email to {{email}}!",
-    "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email"
+    "email-already-sent": "You have a pending invitation sent less than 1 day ago, check your email",
+    "coupon-already-applied": "Coupon already applied"
   },
   "alert-message-validate-email": {
     "title": "Verify email",

@@ -100,8 +100,6 @@ function Checkout() {
 
   const cohorts = cohortsData?.cohorts;
 
-  console.log(checkoutData);
-
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
   const { userSession } = useSession();
@@ -116,6 +114,7 @@ function Checkout() {
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
   const { coupon: couponQuery } = query;
   const { course } = router.query;
+  const courseChoosed = course;
 
   const [coupon] = usePersistentBySession('coupon', '');
 
@@ -124,8 +123,6 @@ function Checkout() {
     const couponString = coupon?.replaceAll('"', '') || '';
     return couponString || formatedCouponQuery;
   }, [coupon, couponQuery]);
-
-  const courseChoosed = course;
 
   const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
@@ -164,13 +161,12 @@ function Checkout() {
   };
 
   const handleCoupon = (coupons, actions) => {
-    // Verificar si el cupón ingresado ya está aplicado
     const alreadyAppliedCoupon = selfAppliedCoupon?.slug === discountCode || selfAppliedCoupon?.slug === couponValue;
 
     if (alreadyAppliedCoupon) {
       toast({
         position: 'top',
-        title: t('alert-message:coupon-already-applied'),
+        title: t('signup:alert-message.coupon-already-applied'),
         status: 'info',
         duration: 4000,
         isClosable: true,
