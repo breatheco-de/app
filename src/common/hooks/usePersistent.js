@@ -36,8 +36,6 @@ const usePersistentBySession = (key, initialValue) => {
 
   const [storedValue, setStoredValue] = useState(getStoredValues);
 
-  console.log(storedValue);
-
   const setValue = (value) => {
     setStoredValue(value);
     const valueToStore = typeof value === 'object' ? JSON.stringify(value) : value;
