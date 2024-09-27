@@ -155,6 +155,17 @@
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
       "select-os": "1. Select your operating system",
+      "agent-vs-code": {
+        "label": "Open the project in VS Code",
+        "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal.",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
+      },
+      "agent-os": {
+        "label": "Open the project without VSCode",
+        "description": "Use your computer terminal to get inside your recently created folder and start learnpack:",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+      },
       "os-list": [
         {
           "name": "macos",

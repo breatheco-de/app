@@ -154,6 +154,17 @@
       "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
       "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
       "select-os": "1. Seleccione su sistema operativo",
+      "agent-vs-code": {
+        "label": "Abrir el proyecto con VSCode",
+        "description": "Asegúrate de tener la <a href=\"https://learnpack.co\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
+      },
+      "agent-os": {
+        "label": "Abrir el proyecto sin VSCode",
+        "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack:",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+      },
       "os-list": [
         {
           "name": "macos",

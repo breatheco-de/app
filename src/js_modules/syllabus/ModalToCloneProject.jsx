@@ -20,10 +20,11 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import { Code } from '../../common/components/MarkDownParser/MDComponents';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
-function ModalToCloneProject({ isOpen, onClose }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -31,7 +32,16 @@ function ModalToCloneProject({ isOpen, onClose }) {
   const [expanded, setExpanded] = useState(0);
   const { featuredLight, hexColor, borderColor } = useStyle();
 
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
+  const repoName = urlToClone.split('/').pop();
+
   const osList = t('common:learnpack.clone-modal.os-list', {}, { returnObjects: true });
+  const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
+  const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
+
+  const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
+
+  const steps = selectedOs?.steps.concat([finalStep]);
 
   const resetSelector = () => {
     setSelectedOs(null);
@@ -89,7 +99,7 @@ function ModalToCloneProject({ isOpen, onClose }) {
                     {t('common:go-back')}
                   </Button>
                   <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
-                    {selectedOs.steps.map((step, i) => (
+                    {steps.map((step, i) => (
                       <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
                         <Heading position="relative" as="h3">
                           <Checkbox top="10px" left="16px" position="absolute" />
@@ -103,17 +113,25 @@ function ModalToCloneProject({ isOpen, onClose }) {
                           </AccordionButton>
                         </Heading>
                         <AccordionPanel>
-                          <Text size="md">
-                            {step.description}
-                          </Text>
+                          <Text size="md" dangerouslySetInnerHTML={{ __html: step.description }} />
+                          {step.code && (
+                            <Box className="markdown-body">
+                              <pre>
+                                <Code className="language-bash" showLineNumbers={false}>
+                                  {step.code}
+                                </Code>
+                              </pre>
+                            </Box>
+                          )}
                           {step.source && (
-                          <NextChakraLink display="block" marginTop="10px" href={step.source} target="_blank" color={hexColor.blueDefault}>
-                            {t('common:learn-more')}
-                          </NextChakraLink>
+                            <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
+                              {t('common:learn-more')}
+                            </NextChakraLink>
                           )}
                         </AccordionPanel>
                       </AccordionItem>
                     ))}
+
                   </Accordion>
                 </Box>
               )}
@@ -133,7 +151,7 @@ function ModalToCloneProject({ isOpen, onClose }) {
                   className="react-player-border-radius"
                   containerStyle={{ height: '100%' }}
                   iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
-                  url={selectedOs.steps[expanded]?.video}
+                  url={steps && steps[expanded]?.video}
                   height="100%"
                 />
               </>
@@ -148,11 +166,13 @@ function ModalToCloneProject({ isOpen, onClose }) {
 ModalToCloneProject.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ModalToCloneProject.defaultProps = {
   isOpen: false,
   onClose: () => {},
+  currentAsset: null,
 };
 
 export default ModalToCloneProject;
