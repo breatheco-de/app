@@ -53,8 +53,8 @@ function SignupForm({
     first_name: '',
     last_name: '',
     phone: '',
-    email: '',
-    confirm_email: '',
+    : '',
+    confirm_: '',
     ...extraFieldsNames,
   });
   const [isChecked, setIsChecked] = useState(false);
@@ -133,7 +133,7 @@ function SignupForm({
             event: 'sign_up',
             method: 'native',
             email: data.email,
-            phone: data.phone,
+            phone: data.phone || '',
             first_name: data.first_name,
             last_name: data.last_name,
             plan: planFormated,
