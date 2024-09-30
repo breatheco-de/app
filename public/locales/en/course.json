@@ -9,6 +9,8 @@
   "create-account-text": "Create an account and start your coding journey today",
   "live-bootcamp": "Self-paced bootcamp",
   "free-course": "Free Course",
+  "become-a": "Become a",
+  "get-closer-to-job": "get closer to your first job",
   "coupon-bar": {
     "headline": "Prices as low as {{discount}} off!!",
     "ends-in": "Ends in {{time}}",
@@ -20,6 +22,12 @@
     "end": "learning at your own pace",
     "own-pace": "at your own pace"
   },
+  "course-connectors": {
+    "title": "Course content",
+    "start": "Start a career in",
+    "end": "learning at your own pace",
+    "own-pace": "at your own pace"
+  },
   "build-connector": {
     "what-you-will": "Learn by building",
     "description": "When learning to code at your own pace, having access to video tutorials, code examples, and continuous, real-time feedback is crucial to succeed. The tasks you'll tackle will closely resemble those encountered in a real-world tech position. Here's a glimpse of what you'll be working on:",
@@ -27,31 +35,30 @@
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "Why learn with",
-    "benefits-connector": "Learning at your own pace can be challenging, but we've developed the tools to keep you motivated, prevent you from getting stuck on problems,  and accelerate your learning process."
+    "benefits-connector": "Do you want to know more about what make us different? These are the benefits of our study model.",
+    "benefits": "Learn live + learn by doing + learn in community."
   },
   "show-prices": {
     "title": "Learning to code at your own pace is possible without a big investment!",
     "description": "Your finances should not stop you from getting into tech. We’ve got your back.<br/><br/>Choose from up-front payment or flexible financing options. Start learning today!"
   },
   "rigobot": {
-    "title": "Meet Rigobot, our internal AI designed for solo learners",
-    "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
+    "title": "Meet Rigobot, your guide of your learning journey",
+    "description": "Rigobot is our AI model that’s being trained the last years to help you on your learning journey. Rigobot is ready to help you while you code whether your are on one of our interactive tutorials or coding a project, it will review your code and give you instant feedback to learn faster and better!",
     "button": "Try Rigobot for free",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "featured-bullets": [
     {
-      "title": "Get help from our internally trained AI as you learn to code."
+      "title": "Get the best of the experience with LearnPack, our powerful AI tool.",
+      "know_more": "Do you want to know more?"
     },
     {
-      "title": "Join weekly live workshops, coding real-life projects with experts."
+      "title": "Follow a structured syllabus with 1000+ exercises and interactive tutorials."
     },
     {
-      "title": "Learn how to build your resume, optimize your LinkedIn profile, prepare for technical interviews, and more.",
+      "title": "Boost your experience with live one-on-one mentoring sessions with industry experts who have already been down this path.",
       "hideOnPublic": true
-    },
-    {
-      "title": "Access <strong>live one-on-one mentoring sessions</strong>."
     }
   ],
   "why-learn-with-4geeks": {
@@ -87,9 +94,9 @@
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "Maximize Your Learning Potential with LearnPack!",
-      "description": "LearnPack is our custom-designed software for self-learners. It integrates our proprietary AI tutor, ready to address any coding-related issues and equipped with automated tests for immediate feedback, allowing for an interactive learning experience anytime!",
-      "button": "Start learning now!",
+      "title": "What is LearnPack?",
+      "description": "LearnPack is a software that allows you to learn through interactive tutorials inside your development environment like VSCode. It has Rigobot (Our AI model) included, so you can get instant feedback while you code!",
+      "button": "Try learnpack for free",
       "link": "#pricing"
     },
     "showOnSignup": [
@@ -138,20 +145,20 @@
         "id": 2,
         "icon": "talking",
         "title": "One-on-one mentoring sessions",
-        "description": "Access a pack of monthly mentorship sessions with our experts and add extra sessions as needed."
+        "description": "Ask for a mentoring session with an expert whenever you want and at the time that best fits you."
       },
       {
         "id": 3,
         "icon": "community",
         "title": "Learn with the community",
-        "description": "Learning alongside others is not only more fun but also helps you progress faster. Join our active learning community for support and collaboration."
+        "description": "Learning with others is more fun, is easier, and you can get farther. Our community won't leave you behind!"
       }
     ]
   },
   "certificate": {
     "image": "/static/images/certificate-preview.webp",
-    "title": "Get certified in your favorite technology",
-    "description": "Your 4Geeks certificate will open doors to professional opportunities with our extensive network of companies across the world. Endorsed by international institutions, it represents a globally recognized standard, unlocking diverse career paths.",
+    "title": "Certificate in your favorite technology",
+    "description": "Your 4Geeks certificate serves as a gateway to professional prospects, supported by a widespread network of companies throughout LATAM and across the globe. Backed by endorsements from numerous international institutions, it symbolizes a globally recognized standard of excellence, paving the way for diverse career opportunities.",
     "button": "See prices",
     "button-link": "#pricing"
   },
