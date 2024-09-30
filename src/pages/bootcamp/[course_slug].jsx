@@ -1,7 +1,7 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
@@ -14,7 +14,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
@@ -23,6 +23,7 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Instructors from '../../common/components/Instructors';
 import Faq from '../../common/components/Faq';
+import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
 import TagCapsule from '../../common/components/TagCapsule';
 import MktTrustCards from '../../common/components/MktTrustCards';
 import MktShowPrices from '../../common/components/MktShowPrices';
@@ -113,25 +114,27 @@ function CouponTopBar() {
       padding="8px 10px"
     >
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
-        <Box display="flex" alignItems="center" gap="10px">
-          <Text color="#FFF" fontSize="18px" fontFamily="inter">
+        <Flex alignItems="center" gap="10px" flexDirection="row" flexWrap="wrap" grow={1} justifyContent="center">
+          <Text color="#FFF" fontSize="15px" fontFamily="inter">
             {t('coupon-bar.headline', { discount })}
           </Text>
-          <Text color="#FFF" fontSize="18px" fontFamily="inter" fontWeight="900">
-            {t('coupon-bar.ends-in', { time: '' })}
-          </Text>
-          <Timer
-            autoRemove
-            variant="text"
-            startingAt={new Date(selfAppliedCoupon?.expires_at).toISOString()}
-            onFinish={() => setSelfAppliedCoupon(null)}
-            color="white"
-            background="none"
-            fontSize="18px"
-            fontFamily="inter"
-            fontWeight="900"
-          />
-        </Box>
+          <Flex gap="10px">
+            <Text color="#FFF" fontSize="15px" fontFamily="inter" fontWeight="900">
+              {t('coupon-bar.ends-in', { time: '' })}
+            </Text>
+            <Timer
+              autoRemove
+              variant="text"
+              startingAt={new Date(selfAppliedCoupon?.expires_at).toISOString()}
+              onFinish={() => setSelfAppliedCoupon(null)}
+              color="white"
+              background="none"
+              fontSize="15px"
+              fontFamily="inter"
+              fontWeight="900"
+            />
+          </Flex>
+        </Flex>
         <NextChakraLink
           href="#pricing"
           variant="default"
@@ -139,10 +142,13 @@ function CouponTopBar() {
           padding="8px"
           color={hexColor.green}
           borderRadius="3px"
+          fontWeight="bold"
         >
-          {t('coupon-bar.see-prices')}
-          {' '}
-          →
+          <Text size="auto" style={{ textWrap: 'nowrap' }}>
+            {t('coupon-bar.see-prices')}
+            {' '}
+            →
+          </Text>
         </NextChakraLink>
       </Box>
     </Box>
@@ -150,6 +156,10 @@ function CouponTopBar() {
 }
 
 function Page({ data }) {
+  const { state } = useSignup();
+  const { selfAppliedCoupon } = state;
+  const showBottomCTA = useRef(null);
+  const [isCtaVisible, setIsCtaVisible] = useState(true);
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { setCohortSession } = useCohortHandler();
@@ -245,6 +255,35 @@ function Page({ data }) {
   };
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
+  const getElementTopOffset = (elem) => {
+    if (elem && isWindow) {
+      const rect = elem.getBoundingClientRect();
+      const { scrollY } = window;
+      return rect.top + scrollY;
+    }
+    return 0;
+  };
+
+  useEffect(() => {
+    if (isWindow) {
+      const handleScroll = () => {
+        if (showBottomCTA.current) {
+          const { scrollY } = window;
+          const top = getElementTopOffset(showBottomCTA.current);
+          setIsCtaVisible(top - scrollY > 700);
+        }
+      };
+
+      window.addEventListener('scroll', handleScroll);
+
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+
+    return undefined;
+  }, [isWindow]);
+
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
       reportDatalayer({
@@ -306,7 +345,7 @@ function Page({ data }) {
     });
     router.push(cohortDashboardLink);
   };
-  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => {} } = {}) => {
+  const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
     bc.admissions().me().then((resp) => {
       const joinedCohortsData = resp?.data;
       const alreadyHaveThisCohort = joinedCohortsData?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohortId);
@@ -465,18 +504,31 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
-  console.log('HOLA');
+  console.log('SOY LA DATA', data);
+  // console.log("SOY LOS STUDENTS", students)
+  // console.log("SOY LA COHORT DATA", cohortData)
+  // console.log("SOY LA COHORT LSIT", courseContentList)
+  // console.log("SOY LA PLAN DATA", planData)
+  // console.log(featuredBullets)
 
   return (
     <>
       {cleanedStructuredData?.name && (
-      <Head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
-        />
-      </Head>
+        <Head>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
+          />
+        </Head>
       )}
+      <FixedBottomCta
+        isCtaVisible={isCtaVisible}
+        onClick={() => router.push('#pricing')}
+        course={data}
+        couponApplied={selfAppliedCoupon}
+        width="calc(100vw - 15px)"
+        left="7.5px"
+      />
       <CouponTopBar />
       <Flex flexDirection="column" mt="2rem">
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
@@ -484,16 +536,13 @@ function Page({ data }) {
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
-                {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
-                </Heading>
-                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
-                  {data?.course_translation?.title}
-                </Heading>
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
-                </Heading>
+                <Flex gap="10px" alignItems="center">
+                  {data.icon_url
+                    && <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" />}
+                  <Heading as="span" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                    {data?.course_translation?.title}
+                  </Heading>
+                </Flex>
               </Flex>
             </Flex>
 
@@ -542,16 +591,30 @@ function Page({ data }) {
 
             <Flex flexDirection="column" gridGap="24px">
               <Flex flexDirection="column" gridGap="16px">
+                <Text size="18px">
+                  {t('become-a')}
+                  {' '}
+                  <Text as="span" color="blue.default" size="18px">Full Stack Developer</Text>
+                  ,
+                  {' '}
+                  {t('common:word-connector.and')}
+                  {' '}
+                  {t('get-closer-to-job')}
+                </Text>
                 {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.filter((bullet) => isVisibilityPublic || !bullet.hideOnPublic).map((item) => (
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                    <Text
-                      size="16px"
-                      fontWeight={400}
-                      color="currentColor"
-                      lineHeight="normal"
-                      dangerouslySetInnerHTML={{ __html: item.title }}
-                    />
+                    <Flex flexDirection="column">
+                      <Text
+                        size="16px"
+                        fontWeight={400}
+                        color="currentColor"
+                        lineHeight="normal"
+                        dangerouslySetInnerHTML={{ __html: item.title }}
+                      />
+                      {item.know_more
+                        && <Link href="/login" size="14px" color="blue.default">{item.know_more}</Link>}
+                    </Flex>
                   </Flex>
                 ))}
               </Flex>
@@ -561,9 +624,9 @@ function Page({ data }) {
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
                 {data?.course_translation?.short_description && (
-                <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
-                  {data?.course_translation?.short_description}
-                </Text>
+                  <Text size="18px" fontWeight={700} color="currentColor" lineHeight="normal">
+                    {data?.course_translation?.short_description}
+                  </Text>
                 )}
                 <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
                   {data?.course_translation?.description}
@@ -593,18 +656,18 @@ function Page({ data }) {
               hideSwitchUser
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
-              <Flex flexDirection="column" position="relative">
-                <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" />
-                <ReactPlayerV2
-                  url={data?.course_translation?.video_url}
-                  withThumbnail
-                  withModal
-                  thumbnailStyle={{
-                    borderRadius: '17px 17px 0 0',
-                  }}
-                  margin="0 0 12px 0"
-                />
-              </Flex>
+                <Flex flexDirection="column" position="relative">
+                  {/* <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" /> */}
+                  <ReactPlayerV2
+                    url={data?.course_translation?.video_url}
+                    withThumbnail
+                    withModal
+                    thumbnailStyle={{
+                      borderRadius: '17px 17px 0 0',
+                    }}
+                    margin="0 0 12px 0"
+                  />
+                </Flex>
               )}
               footerContent={(
                 <Flex flexDirection="column">
@@ -698,7 +761,7 @@ function Page({ data }) {
                     })}
                   </Flex>
                 </Flex>
-            )}
+              )}
             />
           </Flex>
         </GridContainer>
@@ -718,12 +781,12 @@ function Page({ data }) {
             </OneColumnWithIcon>
           </Flex>
           {courseContentList?.length > 0 && (
-          <Flex flexDirection="column" gridColumn="2 / span 12">
-            {/* CourseContent comopnent */}
-            {cohortData?.cohortSyllabus?.syllabus && (
-              <CourseContent data={courseContentList} assetCount={assetCount} />
-            )}
-          </Flex>
+            <Flex flexDirection="column" gridColumn="2 / span 12">
+              {/* CourseContent comopnent */}
+              {cohortData?.cohortSyllabus?.syllabus && (
+                <CourseContent data={courseContentList} assetCount={assetCount} />
+              )}
+            </Flex>
           )}
           <Flex flexDirection="column" gridGap="16px">
             <Heading size="24px" lineHeight="normal" textAlign="center">
@@ -749,15 +812,19 @@ function Page({ data }) {
                   <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
                     <Flex alignItems="center" justifyContent="space-between">
                       {item?.technologies?.length > 0 && (
-                      <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
+                        <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
                       )}
                     </Flex>
                     <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
                       {(lang === 'en' && item?.translations?.us?.title)
-                    || item?.translations?.[lang]?.title
-                    || item?.title}
+                        || item?.translations?.[lang]?.title
+                        || item?.title}
                       <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
                     </Link>
+                    {/* <Flex width="fit-content" background="blue.50" borderRadius="10px" padding="0.2rem" gap="5px">
+                        <Text display="inline">{item?.lang?.toUpperCase()}</Text>
+                        <Text display="inline">flag</Text>
+                    </Flex> */}
                   </Flex>
                 );
               })}
@@ -782,6 +849,9 @@ function Page({ data }) {
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
                     {t('why-learn-4geeks-connector.benefits-connector')}
+                  </Text>
+                  <Text fontWeight="bold" size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
+                    {t('why-learn-4geeks-connector.benefits')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
@@ -866,20 +936,20 @@ function Page({ data }) {
         />
         {/* Pricing */}
         {data?.plan_slug && (
-        <MktShowPrices
-          id="pricing"
-          mt="6.25rem"
-          externalPlanProps={planData}
-          externalSelection={financeSelected}
-          gridTemplateColumns="repeat(12, 1fr)"
-          gridColumn1="1 / span 7"
-          gridColumn2="8 / span 5"
-          gridGap="3rem"
-          title={t('show-prices.title')}
-          description={t('show-prices.description')}
-          plan={data?.plan_slug}
-          cohortId={cohortId}
-        />
+          <MktShowPrices
+            id="pricing"
+            mt="6.25rem"
+            externalPlanProps={planData}
+            externalSelection={financeSelected}
+            gridTemplateColumns="repeat(12, 1fr)"
+            gridColumn1="1 / span 7"
+            gridColumn2="8 / span 5"
+            gridGap="3rem"
+            title={t('show-prices.title')}
+            description={t('show-prices.description')}
+            plan={data?.plan_slug}
+            cohortId={cohortId}
+          />
         )}
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
@@ -892,26 +962,26 @@ function Page({ data }) {
         <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
-            <Faq
-              gridColumn="1 / span 12"
-              background="transparent"
-              headingStyle={{
-                margin: '0px',
-                fontSize: '38px',
-                padding: '0 0 24px',
-              }}
-              padding="1.5rem 0"
-              highlightColor={complementaryBlue}
-              acordionContainerStyle={{
-                background: hexColor.white2,
-                borderRadius: '15px',
-              }}
-              hideLastBorder
-              items={faqList.map((l) => ({
-                label: l?.title,
-                answer: l?.description,
-              }))}
-            />
+              <Faq
+                gridColumn="1 / span 12"
+                background="transparent"
+                headingStyle={{
+                  margin: '0px',
+                  fontSize: '38px',
+                  padding: '0 0 24px',
+                }}
+                padding="1.5rem 0"
+                highlightColor={complementaryBlue}
+                acordionContainerStyle={{
+                  background: hexColor.white2,
+                  borderRadius: '15px',
+                }}
+                hideLastBorder
+                items={faqList.map((l) => ({
+                  label: l?.title,
+                  answer: l?.description,
+                }))}
+              />
             )}
           </GridContainer>
         </Box>
