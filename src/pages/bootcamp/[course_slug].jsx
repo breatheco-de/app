@@ -465,6 +465,8 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
+  console.log('HOLA');
+
   return (
     <>
       {cleanedStructuredData?.name && (
