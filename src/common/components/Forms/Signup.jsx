@@ -53,8 +53,8 @@ function SignupForm({
     first_name: '',
     last_name: '',
     phone: '',
-    : '',
-    confirm_: '',
+    email: '',
+    confirm_email: '',
     ...extraFieldsNames,
   });
   const [isChecked, setIsChecked] = useState(false);
