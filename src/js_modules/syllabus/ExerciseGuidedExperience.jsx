@@ -5,9 +5,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import modifyEnv from '../../../modifyEnv';
 import ModalToCloneProject from './ModalToCloneProject';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
@@ -15,14 +13,16 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
+// import modifyEnv from '../../../modifyEnv';
+// import useCohortHandler from '../../common/hooks/useCohortHandler';
 // import NextChakraLink from '../../common/components/NextChakraLink';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
-  const { state } = useCohortHandler();
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [telemetryReport, setTelemetryReport] = useState([]);
+  // const { state } = useCohortHandler();
   // const { cohortSession } = state;
   // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
