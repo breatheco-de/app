@@ -11,11 +11,11 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
-import NextChakraLink from '../../common/components/NextChakraLink';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
+// import NextChakraLink from '../../common/components/NextChakraLink';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
@@ -105,8 +105,8 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
 
   const token = localStorage.getItem('accessToken');
 
-  const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
-  const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
+  // const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
+  // const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
 
   return (
     <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
