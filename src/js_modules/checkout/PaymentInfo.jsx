@@ -166,10 +166,9 @@ function PaymentInfo() {
   }, [readyToRefetch, timeElapsed]);
 
   useEffect(() => {
-    if (isPaymentSuccess) {
-      setIsSubmittingPayment(true);
-      setReadyToRefetch(true);
-    }
+    if (!isPaymentSuccess) return;
+    setIsSubmittingPayment(true);
+    setReadyToRefetch(true);
   }, [isPaymentSuccess]);
 
   useEffect(() => {

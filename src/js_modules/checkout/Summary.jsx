@@ -188,10 +188,9 @@ function Summary() {
   }, [readyToRefetch, timeElapsed]);
 
   useEffect(() => {
-    if (isPaymentSuccess) {
-      setIsSubmitting(true);
-      setReadyToRefetch(true);
-    }
+    if (isPaymentSuccess) return;
+    setIsSubmitting(true);
+    setReadyToRefetch(true);
   }, [isPaymentSuccess]);
 
   const handleSubmit = () => {
