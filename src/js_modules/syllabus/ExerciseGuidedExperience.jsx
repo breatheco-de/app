@@ -21,10 +21,10 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
   const { state } = useCohortHandler();
-  const { cohortSession } = state;
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [telemetryReport, setTelemetryReport] = useState([]);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const { cohortSession } = state;
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
 
@@ -103,8 +103,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     }
   }, [currentTask]);
 
-  const token = localStorage.getItem('accessToken');
-
+  // const token = localStorage.getItem('accessToken');
   // const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
   // const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
 
