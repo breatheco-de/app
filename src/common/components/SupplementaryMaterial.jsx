@@ -24,6 +24,14 @@ function SupplementaryMaterial({ assets, ...rest }) {
 
   if (assets.length === 0) return null;
 
+  const order = ['LESSON', 'ARTICLE', 'EXERCISE', 'PROJECT'];
+
+  const orderAssets = () => {
+    assets.sort((a, b) => order.indexOf(a.asset_type) - order.indexOf(b.asset_type));
+  };
+
+  orderAssets();
+
   return (
     <WidgetBox
       mt="20px"
