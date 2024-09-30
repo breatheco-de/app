@@ -779,7 +779,7 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {isAvailableAsSaas && currentAsset?.interactive && (
+                  {isProject && isAvailableAsSaas && currentAsset?.interactive && (
                     <OpenWithLearnpackCTA currentAsset={currentAsset} />
                   )}
 

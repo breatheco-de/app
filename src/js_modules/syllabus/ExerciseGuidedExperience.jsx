@@ -171,6 +171,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
           </Box>
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
+          {/*
           <NextChakraLink
             target="__blank"
             href={isExerciseStated ? continueWorkSpace : newWorkspace}
@@ -188,6 +189,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             <Icon icon="prov-bridge" width="20px" height="20px" />
             {t('common:learnpack.open-in-learnpack-button.text')}
           </NextChakraLink>
+          */}
           <Button
             variant="outline"
             borderColor="white"
