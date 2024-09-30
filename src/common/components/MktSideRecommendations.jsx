@@ -212,7 +212,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                   <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                   <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
-                    {(recom.icon_url !== undefined || getMainTechIcon() !== undefined)
+                    {(recom.icon_url || getMainTechIcon())
                       && <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} background={determineIconBackgroundColor(recom)} />}
                     <Heading as="span" size="18px" paddingLeft={!recom.icon_url && !getMainTechIcon() && '20px'}>
                       {recom?.course_translation?.title || recom.title}
