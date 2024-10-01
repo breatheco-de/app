@@ -51,7 +51,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalOverlay />
-      <ModalContent padding="16px" height="80%" overflow="auto">
+      <ModalContent padding="16px" overflow="auto">
         <ModalCloseButton />
         <Box display="flex" gap="16px" height="100%" minHeight="100%">
           <Box width={{ base: '100%', md: '50%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
