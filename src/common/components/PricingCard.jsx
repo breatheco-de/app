@@ -105,7 +105,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const alreadyHaveIt = relatedSubscription?.plans?.[0]?.slug === item?.plan_slug;
 
   const handlePlan = () => {
-    console.log('EJECUTE');
     const langPath = lang === 'en' ? '' : `/${lang}`;
     const qs = parseQuerys({
       plan: selectedFinancing?.plan_slug || item?.plan_slug,
