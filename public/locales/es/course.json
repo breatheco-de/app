@@ -22,12 +22,6 @@
     "end": "aprendiendo a tu propio ritmo",
     "own-pace": "a tu propio ritmo"
   },
-  "course-connectors": {
-    "title": "Contenido del curso",
-    "start": "Start a career in",
-    "end": "learning at your own pace",
-    "own-pace": "at your own pace"
-  },
   "build-connector": {
     "what-you-will": "Aprende construyendo",
     "description": "Cuando aprendes a programar a tu propio ritmo, tener acceso a tutoriales en video, ejemplos de código y retroalimentación continua en tiempo real es crucial para tener éxito. Las tareas que abordarás se asemejarán estrechamente a las encontradas en una posición tecnológica del mundo real. Aquí tienes un vistazo de en qué estarás trabajando:",
@@ -36,30 +30,31 @@
   },
   "why-learn-4geeks-connector": {
     "why-learn-with": "¿Por qué aprender con",
-    "benefits-connector": "¿Quieres saber más sobre lo que nos hace diferentes? Estos son los beneficios de nuestro modelo de estudio.",
-    "benefits": "Aprende en vivo + aprende haciendo + aprende en comunidad."
+    "benefits-connector": "Aprender a tu propio ritmo puede ser desafiante, pero hemos desarrollado las herramientas para mantenerte motivado, evitar que te quedes atascado en problemas y acelerar tu proceso de aprendizaje."
   },
   "show-prices": {
     "title": "¡Aprender a programar a tu propio ritmo es posible sin una gran inversión!",
     "description": "Tus finanzas no deberían impedirte ingresar al mundo de la tecnología. Estamos aquí para apoyarte.<br/><br/>Elige entre el pago único o opciones de financiamiento flexibles. ¡Comienza a aprender hoy mismo!"
   },
   "rigobot": {
-    "title": "Conoce a Rigobot, tu guía en tu viaje de aprendizaje.",
-    "description": "Rigobot es nuestro modelo de IA que ha sido entrenado durante los últimos años para ayudarte en tu viaje de aprendizaje. Rigobot está listo para asistirte mientras programas, ya sea que estés en uno de nuestros tutoriales interactivos o desarrollando un proyecto. Revisará tu código y te proporcionará retroalimentación instantánea para que aprendas de manera más rápida y efectiva.",
+    "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
+    "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
     "button": "Prueba Rigobot gratis",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard"
   },
   "featured-bullets": [
     {
-      "title": "Obtén lo mejor de la experiencia con LearnPack, nuestra poderosa herramienta de IA.",
-      "know_more": "Quieres saber mas?"
+      "title": "Obtén ayuda de nuestra IA entrenada internamente mientras aprendes a programar."
     },
     {
-      "title": "Sigue un plan de estudios estructurado con más de 1000 ejercicios y tutoriales interactivos."
+      "title": "Únete a workshops semanales dónde desarrollarás proyectos de la vida real con expertos."
     },
     {
-      "title": "Mejora tu experiencia con sesiones de mentoría en vivo, uno a uno, con expertos de la industria que ya han recorrido este camino.",
+      "title": "Aprende cómo crear tu curriculum, optimizar tu perfil de LinkedIn, prepárate para entrevistas técnicas y más.",
       "hideOnPublic": true
+    },
+    {
+      "title": "Entra a <strong>sesiones de mentoría en vivo uno a uno</strong>."
     }
   ],
   "why-learn-with-4geeks": {
@@ -95,9 +90,9 @@
   ],
   "features": {
     "what-is-learnpack": {
-      "title": "¿Qué es LearnPack?",
-      "description": "LearnPack es un software que te permite aprender a través de tutoriales interactivos dentro de tu entorno de desarrollo, como VSCode. Incluye a Rigobot (nuestro modelo de IA), para que puedas recibir retroalimentación instantánea mientras codificas.",
-      "button": "Prueba LearnPack gratis.",
+      "title": "¡Maximiza tu aprendizaje con LearnPack!",
+      "description": "LearnPack es nuestro software diseñado especialmente para autodidactas. Integra nuestro tutor de inteligencia artificial exclusivo, listo para abordar cualquier problema relacionado con el código y equipado con pruebas automatizadas para obtener retroalimentación inmediata, ¡permitiendo una experiencia de aprendizaje interactiva en cualquier momento!",
+      "button": "¡Empieza a aprender ahora!",
       "link": "#pricing"
     },
     "showOnSignup": [
@@ -146,20 +141,20 @@
         "id": 2,
         "icon": "talking",
         "title": "Mentorías uno a uno",
-        "description": "Solicita una sesión de mentoría con un experto cuando quieras y en el horario que mejor se adapte a ti."
+        "description": "Accede a un paquete de sesiones mensuales de mentoría con nuestros expertos y añade sesiones adicionales según sea necesario."
       },
       {
         "id": 3,
         "icon": "community",
         "title": "Aprende en comunidad",
-        "description": "Aprender con otros es más divertido, es más fácil, y puedes llegar más lejos. ¡Nuestra comunidad no te dejará atrás!"
+        "description": "Aprender junto a otros no solo es más divertido, sino que también te ayuda a progresar más rápido. Únete a nuestra comunidad activa de aprendizaje para recibir apoyo y colaboración."
       }
     ]
   },
   "certificate": {
     "image": "/static/images/certificate-preview.webp",
     "title": "Certifícate en tu tecnología favorita",
-    "description": "Tu certificado de 4Geeks sirve como una puerta de entrada a oportunidades profesionales, respaldado por una amplia red de empresas en toda LATAM y en todo el mundo. Apoyado por el respaldo de numerosas instituciones internacionales, simboliza un estándar de excelencia reconocido a nivel mundial, allanando el camino para diversas oportunidades laborales.",
+    "description": "Tu certificado de 4Geeks abrirá puertas a oportunidades profesionales con nuestra extensa red de empresas en todo el mundo. Respaldado por instituciones internacionales, representa un estándar reconocido a nivel global, desbloqueando diversos caminos profesionales.",
     "button": "Ver precios",
     "button-link": "#pricing"
   },

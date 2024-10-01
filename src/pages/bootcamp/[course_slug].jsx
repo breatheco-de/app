@@ -523,6 +523,7 @@ function Page({ data }) {
       )}
       <FixedBottomCta
         isCtaVisible={isCtaVisible}
+        videoUrl={data?.course_translation?.video_url}
         onClick={() => router.push('#pricing')}
         course={data}
         couponApplied={selfAppliedCoupon}
@@ -604,17 +605,13 @@ function Page({ data }) {
                 {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.filter((bullet) => isVisibilityPublic || !bullet.hideOnPublic).map((item) => (
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
-                    <Flex flexDirection="column">
-                      <Text
-                        size="16px"
-                        fontWeight={400}
-                        color="currentColor"
-                        lineHeight="normal"
-                        dangerouslySetInnerHTML={{ __html: item.title }}
-                      />
-                      {item.know_more
-                        && <Link href="/login" size="14px" color="blue.default">{item.know_more}</Link>}
-                    </Flex>
+                    <Text
+                      size="16px"
+                      fontWeight={400}
+                      color="currentColor"
+                      lineHeight="normal"
+                      dangerouslySetInnerHTML={{ __html: item.title }}
+                    />
                   </Flex>
                 ))}
               </Flex>
@@ -634,7 +631,7 @@ function Page({ data }) {
               </Flex>
             </Flex>
           </Flex>
-          <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }}>
+          <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
               title={t('join-cohort')}
               maxWidth="396px"
@@ -849,9 +846,6 @@ function Page({ data }) {
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
                     {t('why-learn-4geeks-connector.benefits-connector')}
-                  </Text>
-                  <Text fontWeight="bold" size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
-                    {t('why-learn-4geeks-connector.benefits')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
