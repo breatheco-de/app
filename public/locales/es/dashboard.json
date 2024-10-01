@@ -4,7 +4,6 @@
   },
   "title": "Tus noticias",
   "moduleMap": "Mapa de módulos",
-  "back-to-dashboard": "Volver a dashboard",
   "backToChooseProgram": "Volver a elegir programa",
   "progressText": "Progreso en el programa",
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
@@ -16,9 +15,9 @@
     "cta-description": "Tu plan actual no incluye acceso a esta cohorte, por favor actualiza para acceder al contenido.",
     "cta-cohort-not-found": "Esta cohorte no existe o no tienes acceso para unirte.",
     "cta-button": "Revisar plan",
-    "join-next-cohort":"Únete a la cohorte",
-    "start-course":"Empezar este curso",
-    "join-more":"Únete a más de 100 personas que toman este curso ahora mismo",
+    "join-next-cohort": "Únete a la cohorte",
+    "start-course": "Empezar este curso",
+    "join-more": "Únete a más de 100 personas que toman este curso ahora mismo",
     "preview-description": "Estás revisando esta cohorte en \"modo de vista previa\". Para comenzar a aprender e interactuar con el material, únete a la cohorte."
   },
   "modules": {
@@ -73,17 +72,17 @@
     "no-mentors": "No hay mentores disponibles",
     "no-mentor-link": "No hay enlace para crear sesión con este mentor",
     "search-mentor": "Buscar mentor por nombre",
-    "start-mentorship": "Para comenzar, seleccione un tipo de tutoría",
+    "start-mentorship": "Para comenzar, seleccione un tipo de mentoría",
     "mentoring-label": "Mentoría",
-    "mentoring": "Programe una sesión de tutoría 1-1.",
-    "select-type": "Seleccione un tipo de tutoría",
-    "mentoring-available": "Tutorías disponibles",
-    "no-mentoring-available": "No tienes tutorías disponibles.",
+    "mentoring": "Programe una sesión de mentoría 1-1.",
+    "select-type": "Seleccione un tipo de mentoría",
+    "mentoring-available": "Mentorías disponibles",
+    "no-mentoring-available": "No tienes mentorías disponibles.",
     "create-session-text": "Agendar ahora",
     "learn-more": "Aprender mas.",
     "learn-more-link": "https://4geeks.com/es/docs/knowledge-base-4geeks/sesiones-de-tutoria",
     "get-more-mentorships": "Consigue más mentorías",
-    "schedule-button": "Programar una sesión de tutoría",
+    "schedule-button": "Programar una sesión de mentoría",
     "mentors-available": "+{{count}} Mentores disponibles",
     "for": "para",
     "service-not-found": "no se ha encontrado servicio",
@@ -104,11 +103,19 @@
     ]
   },
   "mentorship": {
-    "no-mentorship": "Se ha quedado sin tutorías, pero no se preocupe, puede obtener más con unos pocos clics.",
-    "get-unlimited-mentorship": "y obtén tutoría ilimitada",
+    "no-mentorship": "Se ha quedado sin mentorías, pero no se preocupe, puede obtener más con unos pocos clics.",
+    "get-unlimited-mentorship": "y obtén mentorías ilimitadas",
     "you-have": "Tienes",
     "available-sessions": "sesiones disponibles",
-    "tooltip": "Las tutorías se recargan cada semana"
+    "tooltip": "Las mentorías se recargan cada semana",
+    "mentor-sessions-available": "sesiones de mentoria disponibles",
+    "action": "Reservar mentoria",
+    "no-available": "No hay servicios disponibles"
+  },
+  "schedule-steps": {
+    "select-mentorship": "Primero selecciona un tipo de mentoría",
+    "select-mentor": "Ahora busca un mentor",
+    "schedule": "Agenda la sesión"
   },
   "deliverProject": {
     "title": "Entregar tarea",
