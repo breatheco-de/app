@@ -398,7 +398,7 @@ function MentoringConsumables({
         && (
           <>
             {mentoryProps?.service && (
-              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} mt="22px" px="20px" py="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
+              <Box display="flex" alignItems="center" justifyContent="flex-start" gridGap="10px" background={commonBackground} px="20px" pt="15px" textAlign="center" w="100%" borderTopRadius="0.375rem">
                 <Box>
                   <Icon icon="checked2" width="15px" height="15px" color={hexColor.greenLight} />
                 </Box>
@@ -410,7 +410,7 @@ function MentoringConsumables({
 
             {!mentoryProps?.service && programServices.length > 0 && (
               <>
-                <InputGroup mt="24px">
+                <InputGroup mt="15px">
                   <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.select-type')} />
                   <InputRightElement>
                     <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
@@ -432,7 +432,7 @@ function MentoringConsumables({
 
             {mentoryProps?.service && !mentoryProps?.mentor && (
               <>
-                <InputGroup mt="24px" borderBottom="1px solid" borderColor={borderColor}>
+                <InputGroup mt="15px" borderBottom="1px solid" borderColor={borderColor}>
                   <Input onChange={(e) => setSearchProps({ ...searchProps, mentorSearch: e.target.value?.toLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.search-mentor')} />
                   <InputRightElement>
                     <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
