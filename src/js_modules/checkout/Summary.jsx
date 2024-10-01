@@ -203,8 +203,6 @@ function Summary() {
         query: {
           ...router.query,
           plan_id: selectedPlanCheckoutData?.plan_id,
-          price: selectedPlanCheckoutData?.price,
-          period: selectedPlanCheckoutData?.period,
         },
       });
     } else {
