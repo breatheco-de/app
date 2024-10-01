@@ -220,7 +220,10 @@ function MentoringConsumables({
         showErrorToast();
         setNotifyError(false);
       }
-      if (mentorFound) servWithMentorsAvailable = getServicesWithMentor(mentorFound);
+      if (mentorFound) {
+        servWithMentorsAvailable = getServicesWithMentor(mentorFound);
+        setProgramMentors([mentorFound]);
+      }
     }
 
     setServicesWithMentorsAvailable(servWithMentorsAvailable);
