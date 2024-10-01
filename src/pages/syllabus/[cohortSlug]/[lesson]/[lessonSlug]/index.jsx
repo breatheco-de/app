@@ -778,7 +778,7 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {Array.isArray(subTasks) && subTasks?.length > 0 && isAvailableAsSaas && (
+                  {Array.isArray(subTasks) && subTasks?.length > 0 && isAvailableAsSaas && currentTask && (
                     <SubTasks subTasks={subTasks} assetType={currentAsset?.asset_type} mt="none" />
                   )}
 
