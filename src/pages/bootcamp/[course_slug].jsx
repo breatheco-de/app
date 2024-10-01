@@ -115,11 +115,11 @@ function CouponTopBar() {
     >
       <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" gap="10px" flexDirection="row" flexWrap="wrap" grow={1} justifyContent="center">
-          <Text color="#FFF" fontSize="15px" fontFamily="inter">
+          <Text color="#FFF" fontSize="18px" fontFamily="inter">
             {t('coupon-bar.headline', { discount })}
           </Text>
           <Flex gap="10px">
-            <Text color="#FFF" fontSize="15px" fontFamily="inter" fontWeight="900">
+            <Text color="#FFF" fontSize="17px" fontFamily="inter" fontWeight="900">
               {t('coupon-bar.ends-in', { time: '' })}
             </Text>
             <Timer
@@ -129,7 +129,7 @@ function CouponTopBar() {
               onFinish={() => setSelfAppliedCoupon(null)}
               color="white"
               background="none"
-              fontSize="15px"
+              fontSize="17px"
               fontFamily="inter"
               fontWeight="900"
             />
