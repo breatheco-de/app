@@ -328,6 +328,8 @@
   "logout-and-switch-user": "Cerrar sesión e iniciar como otro usuario",
   "free": "Gratis",
   "login": "Iniciar sesión",
+  "terms-and-conditions": "Términos y condiciones",
+  "terms-and-conditions-link": "/es/terminos-y-condiciones",
   "privacy-policy": "Política de privacidad",
   "privacy-policy-link": "/es/politicas-de-privacidad",
   "bootcamp": {

@@ -329,6 +329,8 @@
   "logout-and-switch-user": "Logout and switch user",
   "free": "Free",
   "login": "Login",
+  "terms-and-conditions": "Terms and conditions",
+  "terms-and-conditions-link": "/terms-and-conditions",
   "privacy-policy": "Privacy policy",
   "privacy-policy-link": "/privacy-policy",
   "bootcamp": {

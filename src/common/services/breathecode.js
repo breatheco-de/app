@@ -260,6 +260,7 @@ const breathecode = {
       personalFiles: (taskId) => breathecode.get(`${url}/me/task/${taskId}/commitfile${qs}`),
       personalFile: (commitId) => breathecode.get(`${url}/me/commitfile/${commitId}${qs}`),
       rateCodeRevision: (coderevisionId, data) => axios.post(`${url}/me/coderevision/${coderevisionId}/rate`, data),
+      syncCohort: (cohortId) => axios.get(`${url}/academy/cohort/${cohortId}/synctasks`),
     };
   },
   feedback: () => {
@@ -287,6 +288,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       lead: (data) => axios.post(`${url}/lead${qs}`, data),
+      courses: () => axios.get(`${url}/course${qs}`),
     };
   },
 
@@ -325,7 +327,6 @@ const breathecode = {
     return {
       checking: (data) => axios.put(`${url}/checking${qs}`, data),
       subscriptions: () => axios.get(`${url}/me/subscription${qs}`),
-      courses: () => axios.get(`${host}/marketing/course${qs}`),
       pay: (data) => breathecode.post(`${url}/pay${qs}`, data),
       addCard: (data) => breathecode.post(`${url}/card${qs}`, data),
       cancelSubscription: (id) => axios.put(`${url}/subscription/${id}/cancel${qs}`),

@@ -93,6 +93,8 @@ function Footer({ pageProps }) {
                     bc.marketing().lead({
                       email,
                       token,
+                      location: '4geeks-com',
+                      tags: 'newsletter',
                       utm_url: window?.location?.href,
                     })
                       .then((success) => {

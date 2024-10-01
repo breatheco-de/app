@@ -321,7 +321,7 @@ function AcceptInvite() {
                 onChange={() => setIsChecked(!isChecked)}
               />
               <Text fontSize="10px">
-                {t('signup:validators.termns-and-conditions-required')}
+                {t('signup:validators.receive-information')}
                 {' '}
                 <NextChakraLink
                   variant="default"
