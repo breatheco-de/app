@@ -49,7 +49,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="5xl">
       <ModalOverlay />
       <ModalContent padding="16px" height="80%" overflow="auto">
         <ModalCloseButton />
