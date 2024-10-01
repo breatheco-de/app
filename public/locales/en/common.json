@@ -149,7 +149,6 @@
       "type": "dropdown"
     },
     "clone-title": "How to clone a project?",
-    "cloneInstructions": "This exercise can be downloaded and run locally if you have node.js installed (<a class=\"link\" href=\"https://4geeks.com/how-to/install-nvm-on-every-operating-system\" target=\"_blank\">installation steps</a>).\n\n Once you have node.js, it's time to install learnpack and clone this project into your computer by typing the following command on your terminal:\n\n``` bash\n$ npm i @learnpack/learnpack -g\n$ git clone {{urlToClone}}\n```\nNote: This will create a new folder <strong>\"{{repoName}}\"</strong> in your computer.\n\n<strong>If you want to use VSCode:</strong> Make sure you have the <a class=\"link\" target=\"_blank\" href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\">LearnPack extension</a> installed, open the folder in VSCode and type `learnpack start` on your vscode terminal.\n\n<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:\n\n```bash\n$ cd {{repoName}}\n$ learnpack start\n```\nRead the <a class=\"link\" href=\"{{readmeUrl}}\">README.md</a> file and follow the rest of the instructions.",
     "clone-modal": {
       "title": "Open locally on your computer",
       "need-help": "Need help? Schedule a mentoring session",

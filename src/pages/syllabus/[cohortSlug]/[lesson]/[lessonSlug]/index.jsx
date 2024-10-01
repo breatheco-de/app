@@ -121,7 +121,6 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  useEffect(() => console.log(currentAsset), [currentAsset]);
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
   const currentModule = sortedAssignments[currentModuleIndex];
