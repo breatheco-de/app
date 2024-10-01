@@ -4,7 +4,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import { MDSkeleton } from '../../common/components/Skeleton';
 
 function SyllabusMarkdownComponent({
-  ipynbHtmlUrl, readme, currentBlankProps, callToActionProps, currentData, lesson,
+  ipynbHtmlUrl, readme, currentBlankProps, currentData, lesson,
   quizSlug, lessonSlug, currentTask, alerMessage, isGuidedExperience,
 }) {
   const { t } = useTranslation('syllabus');
@@ -14,7 +14,6 @@ function SyllabusMarkdownComponent({
     return (
       <MarkDownParser
         content={readme.content}
-        callToActionProps={callToActionProps}
         withToc={lesson?.toLowerCase() === 'read'}
         showContentHeading={!(currentData.asset_type === 'PROJECT' && isGuidedExperience)}
         isGuidedExperience={isGuidedExperience}
@@ -33,7 +32,6 @@ function SyllabusMarkdownComponent({
     return (
       <MarkDownParser
         content={blankText}
-        callToActionProps={callToActionProps}
         withToc={lesson?.toLowerCase() === 'read'}
         isGuidedExperience={isGuidedExperience}
         frontMatter={{
