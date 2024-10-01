@@ -57,5 +57,8 @@
   "successful-tests": "Pasos exitosos",
   "total-errors": "Total de errores",
   "click-to-review": "Pincha aquí para revisar la solución.",
-  "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com"
+  "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com",
+  "approved": "Aprobado",
+  "rejected": "Rechazado",
+  "pending": "Pendiente"
 }

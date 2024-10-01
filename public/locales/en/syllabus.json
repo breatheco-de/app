@@ -57,5 +57,8 @@
   "successful-tests": "Successfull tests",
   "total-errors": "Total errors",
   "click-to-review": "Click here to review the solution.",
-  "share-social-message": "I just finished coding {{title}} at 4geeks.com"
+  "share-social-message": "I just finished coding {{title}} at 4geeks.com",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "pending": "Pending"
 }

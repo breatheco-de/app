@@ -28,8 +28,8 @@ import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar'
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
-import OpenWithLearnpackCTA from '../../../../../js_modules/syllabus/OpenWithLearnpackCTA';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
+import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
@@ -59,6 +59,7 @@ function SyllabusContent() {
     setNextModule,
     prevModule,
     setPrevModule,
+    subTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -94,12 +95,13 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, backgroundColor4, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+  const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
@@ -122,7 +124,6 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  useEffect(() => console.log(currentAsset), [currentAsset]);
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
   const currentModule = sortedAssignments[currentModuleIndex];
@@ -777,8 +778,8 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {isAvailableAsSaas && currentAsset?.interactive && !isQuiz && (
-                    <OpenWithLearnpackCTA currentAsset={currentAsset} />
+                  {Array.isArray(subTasks) && subTasks?.length > 0 && (
+                    <SubTasks subTasks={subTasks} assetType={currentAsset?.asset_type} mt="none" />
                   )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
@@ -1001,7 +1002,7 @@ function SyllabusContent() {
                   )}
                   {isAvailableAsSaas && (
                     <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
+                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
                         {(isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
                           <Button
@@ -1038,7 +1039,7 @@ function SyllabusContent() {
                             href={repoUrl}
                             style={{ color: fontColor, textDecoration: 'none' }}
                           >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
+                            <Icon style={{ margin: 'auto', display: 'block' }} icon="github-edit" color={hexColor.blueDefault} width="30px" height="30px" />
                           </Link>
                         </Tooltip>
                         )}

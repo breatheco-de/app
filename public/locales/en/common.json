@@ -48,6 +48,7 @@
   "article": "How to",
   "how-to": "How to",
   "quiz": "Quiz",
+  "tasks": "Tasks",
   "filter": "Filter",
   "filters": "Filters",
   "sort": "Sort",
@@ -136,11 +137,13 @@
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
+    "powered-by-learnpack": "Powered by Learnpack",
     "description": "<strong>\"{{projectName}}\"</strong> uses LearnPack for an interactive and auto-graded experience; choose one of the following options to start working on the project:",
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
+    "start-exercise": "Start exercise",
     "recommended": "Recommended",
     "open-in-learnpack-button": {
       "text": "Open in the cloud",

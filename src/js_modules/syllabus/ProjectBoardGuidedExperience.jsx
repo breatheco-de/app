@@ -1,19 +1,83 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import TaskCodeRevisions from './TaskCodeRevisions';
+import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
-import SubTasks from '../../common/components/MarkDownParser/SubTasks';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 
+function SubtasksPill() {
+  const { t } = useTranslation('common');
+  const { subTasks } = useModuleHandler();
+
+  if (!Array.isArray(subTasks) || subTasks.length === 0) return null;
+
+  const tasksDone = subTasks.length > 0 && subTasks?.filter((subtask) => subtask.status === 'DONE');
+
+  return (
+    <Box padding="5px 7px" fontSize="13px" borderRadius="27px" border="1px solid #0084FF" color="#0084FF">
+      {`${tasksDone.length} / ${subTasks.length} ${t('tasks')}`}
+    </Box>
+  );
+}
+
+function StatusPill() {
+  const { t } = useTranslation('syllabus');
+  const { currentTask } = useModuleHandler();
+  const { hexColor } = useStyle();
+
+  if (!currentTask) return null;
+
+  const colorsDict = {
+    APPROVED: {
+      background: hexColor.greenLight2,
+      color: hexColor.greenLight,
+    },
+    REJECTED: {
+      background: 'red.light',
+      color: hexColor.danger,
+    },
+    PENDING: {
+      background: 'yellow.light',
+      color: hexColor.yellowDefault,
+    },
+    IGNORED: {
+      background: hexColor.greenLight,
+      color: hexColor.green,
+    },
+  };
+
+  const labelsDict = {
+    APPROVED: t('approved'),
+    PENDING: t('pending'),
+    IGNORED: t('approved'),
+    REJECTED: t('rejected'),
+  };
+
+  const revisionStatus = currentTask.revision_status;
+
+  return (
+    <Box
+      padding="5px 7px"
+      borderRadius="27px"
+      background={colorsDict[revisionStatus]?.background}
+      color={colorsDict[revisionStatus]?.color}
+      fontWeight="500"
+      fontSize="13px"
+    >
+      {labelsDict[revisionStatus]}
+    </Box>
+  );
+}
+
 function ProjectHeading({ currentAsset, isDelivered }) {
   const { backgroundColor4, hexColor } = useStyle();
-  const { subTasks } = useModuleHandler();
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
@@ -38,63 +102,45 @@ function ProjectHeading({ currentAsset, isDelivered }) {
         display="flex"
         gap="20px"
         justifyContent="space-between"
-        flexDirection={{ base: 'column', sm: 'row' }}
+        flexDirection={{ base: 'column', sm: isDelivered ? 'column' : 'row' }}
       >
         <Box display="flex" flexDirection="column" gap="16px">
-          <Box mb="16px">
-            <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
-              <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
-              <Heading style={{ fontWeight: '400' }} size="sm" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
-                {title}
-              </Heading>
-            </Box>
-            {currentAsset?.description && (
-            <Text style={{ margin: '0px' }} size="l">
-              {currentAsset.description}
-            </Text>
-            )}
-          </Box>
-          <Box display="flex" alignItems="center" gap="16px" flexDirection={{ base: 'column', sm: 'row' }}>
-            {Array.isArray(subTasks) && subTasks?.length > 0 && (
-              <SubTasks variant={isDelivered && 'square'} subTasks={subTasks} assetType={assetType} mt="none" />
-            )}
-            {isDelivered && (
-              <Box width="100%" borderRadius="11px" overflow="hidden" height="100%">
-                <ReactPlayerV2
-                  className="react-player-border-radius"
-                  controls={false}
-                  withThumbnail
-                  containerStyle={{ height: '100%' }}
-                  iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
-                  thumbnailStyle={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: '11px',
-                  }}
-                  url={currentAsset?.intro_video_url}
-                  height="100%"
-                />
+          <Box mb="16px" display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
+            <Box>
+              <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
+                <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
+                <Heading style={{ fontWeight: '400' }} size="sm" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
+                  {title}
+                </Heading>
               </Box>
-            )}
+              {currentAsset?.description && (
+                <Text style={{ margin: '0px' }} size="l">
+                  {currentAsset.description}
+                </Text>
+              )}
+              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} />
+            </Box>
+            <Box display="flex" gap="15px">
+              <StatusPill />
+              <SubtasksPill />
+            </Box>
           </Box>
         </Box>
-        {!isDelivered && (
-          <ReactPlayerV2
-            className="react-player-border-radius"
-            controls={false}
-            withThumbnail
-            iframeStyle={{ background: 'none', borderRadius: '11px' }}
-            thumbnailStyle={{
-              width: '100%',
-              borderRadius: '11px',
-            }}
-            url={currentAsset?.intro_video_url}
-            containerStyle={{
-              width: '100%',
-              maxWidth: { base: 'none', sm: '50%' },
-            }}
-          />
-        )}
+        <ReactPlayerV2
+          className="react-player-border-radius"
+          controls={false}
+          withThumbnail
+          iframeStyle={{ background: 'none', borderRadius: '11px' }}
+          thumbnailStyle={{
+            width: '100%',
+            borderRadius: '11px',
+          }}
+          url={currentAsset?.intro_video_url}
+          containerStyle={{
+            width: '100%',
+            maxWidth: { base: 'none', sm: isDelivered ? 'none' : '50%' },
+          }}
+        />
       </Box>
     </>
   );
@@ -110,6 +156,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
 
+  // const isDelivered = false;
   const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
 
   const assetTypeIcons = {
@@ -209,10 +256,14 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
             {title}
           </Heading>
         </Box>
-        <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
-          <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
-          {t('back-to-top')}
-        </Button>
+        <Box display="flex" alignItems="center" gap="5px">
+          <StatusPill />
+          <SubtasksPill />
+          <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
+            <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
+            {t('back-to-top')}
+          </Button>
+        </Box>
       </Box>
     </>
   );
