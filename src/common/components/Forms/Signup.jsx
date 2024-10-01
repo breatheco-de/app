@@ -133,6 +133,7 @@ function SignupForm({
             event: 'sign_up',
             method: 'native',
             email: data.email,
+            phone: data.phone || '',
             first_name: data.first_name,
             last_name: data.last_name,
             plan: planFormated,
