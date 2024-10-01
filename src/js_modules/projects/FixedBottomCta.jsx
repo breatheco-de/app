@@ -22,7 +22,6 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
         overflow="hidden"
         position="fixed"
         width="100vw"
-        // position="sticky"
         bottom="0"
         zIndex="100"
         borderRadius="11px 11px 0 0"
