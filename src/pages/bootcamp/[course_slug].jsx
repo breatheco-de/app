@@ -504,6 +504,14 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
+  const goToFinancingOptions = () => {
+    router.push('#pricing');
+    setFinanceSelected({
+      selectedFinanceIndex: 1,
+      selectedIndex: 0,
+    });
+  };
+
   console.log('SOY LA DATA', data);
   // console.log("SOY LOS STUDENTS", students)
   // console.log("SOY LA COHORT DATA", cohortData)
@@ -524,7 +532,7 @@ function Page({ data }) {
       <FixedBottomCta
         isCtaVisible={isCtaVisible}
         videoUrl={data?.course_translation?.video_url}
-        onClick={() => router.push('#pricing')}
+        onClick={goToFinancingOptions}
         course={data}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
@@ -537,13 +545,16 @@ function Page({ data }) {
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
-                <Flex gap="10px" alignItems="center">
-                  {data.icon_url
-                    && <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" />}
-                  <Heading as="span" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
-                    {data?.course_translation?.title}
-                  </Heading>
-                </Flex>
+                {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
+                </Heading>
+                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                  {data?.course_translation?.title}
+                </Heading>
+                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
+                </Heading>
               </Flex>
             </Flex>
 
@@ -699,13 +710,7 @@ function Page({ data }) {
                             color="green.400"
                             isLoading={initialDataIsFetching}
                             borderColor="currentColor"
-                            onClick={() => {
-                              router.push('#pricing');
-                              setFinanceSelected({
-                                selectedFinanceIndex: 1,
-                                selectedIndex: 0,
-                              });
-                            }}
+                            onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}
                           </Button>

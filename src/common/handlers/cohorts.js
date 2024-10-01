@@ -155,7 +155,6 @@ export const processRelatedAssignments = (syllabusData = {}, taskTodo = []) => {
 export const generateCohortSyllabusModules = async (id) => {
   try {
     const cohortAndSyllabus = await getCohortSyllabus(id);
-    console.log(cohortAndSyllabus);
     const syllabusData = cohortAndSyllabus?.syllabus;
     const cohortSyllabusList = syllabusData.json?.days || syllabusData.json?.modules;
 

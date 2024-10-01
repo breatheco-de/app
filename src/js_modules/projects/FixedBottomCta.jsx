@@ -58,17 +58,17 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           )}
           {course && (
             <>
-              <Heading size="21px">{t('course:join-cohort')}</Heading>
+              <Heading size="21px" pt="10px">{t('course:join-cohort')}</Heading>
               {!videoUrl
                 && (
                 <>
                   <Text>{t('course:create-account-text')}</Text>
-                  <Button _active={{ brackground: hexColor.greenLight }} _focus={{ brackground: hexColor.greenLight }} fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                    {t('signup:free_trial')}
+                  <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
+                    {t('common:start-free-trial')}
                   </Button>
                 </>
                 )}
-              <Button _active={{ brackground: 'red' }} _focus={{ brackground: 'red' }} fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
+              <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
                 {t('common:see-financing-options')}
               </Button>
             </>
