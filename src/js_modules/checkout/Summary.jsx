@@ -188,7 +188,7 @@ function Summary() {
   }, [readyToRefetch, timeElapsed]);
 
   useEffect(() => {
-    if (isPaymentSuccess) return;
+    if (!isPaymentSuccess) return;
     setIsSubmitting(true);
     setReadyToRefetch(true);
   }, [isPaymentSuccess]);
