@@ -110,7 +110,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
 
-  const isDelivered = currentTask?.task_status === 'DONE';
+  const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
 
   const assetTypeIcons = {
     LESSON: 'book',

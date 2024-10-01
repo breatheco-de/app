@@ -195,6 +195,7 @@ function StudentAssignments({ currentStudentList, updpateAssignment, syllabusDat
       <NoInfoModal
         isOpen={currentTask && !currentTask.status}
         onClose={() => setCurrentTask(null)}
+        selectedCohort={selectedCohort}
       />
       <DeliverModal
         currentTask={currentTask}

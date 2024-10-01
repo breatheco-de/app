@@ -29,6 +29,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import useStyle from '../../common/hooks/useStyle';
 import SupportSidebar from '../../common/components/SupportSidebar';
 import Feedback from '../../common/components/Feedback';
+import axios from '../../axios';
 import LanguageSelector from '../../common/components/LanguageSelector';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -124,6 +125,7 @@ function chooseProgram() {
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
+      delete axios.defaults.headers.common.Academy;
       const mentorshipPromises = await userRoles.map((role) => bc.mentorship({ academy: role?.academy?.id }, true).getService()
         .then((resp) => {
           const data = resp?.data;

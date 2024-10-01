@@ -84,7 +84,7 @@ function SyllabusContent() {
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
-  const [currentAsset, setCurrentAsset] = useState({});
+  const [currentAsset, setCurrentAsset] = useState(null);
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
@@ -227,7 +227,7 @@ function SyllabusContent() {
 
   const cleanCurrentData = () => {
     setShowModal(false);
-    setCurrentAsset({});
+    setCurrentAsset(null);
     setCurrentSelectedModule(null);
     setCallToActionProps({});
     setReadme(null);
@@ -544,15 +544,12 @@ function SyllabusContent() {
     answer: 'https://assessment.4geeks.com/quiz',
   };
   const shareLink = currentTask ? `${pathConnector[lesson]}/${currentTask.associated_slug}` : '';
-  const shareSocialMessage = {
-    en: `I just finished coding ${currentTask?.title} at 4geeks.com`,
-    es: `Acabo de terminar de programar ${currentTask?.title} en 4geeks.com`,
-  };
+
   const socials = [
     {
       name: 'twitter',
       label: 'Twitter',
-      href: `https://twitter.com/share?url=&text=${encodeURIComponent(shareSocialMessage[router.locale])} %23100DaysOfCode%0A%0A${shareLink}`,
+      href: `https://twitter.com/share?url=&text=${encodeURIComponent(t('share-social-message', { title: currentTask?.title }))} %23100DaysOfCode%0A%0A${shareLink}`,
       color: '#1DA1F2',
     },
     {
@@ -572,7 +569,7 @@ function SyllabusContent() {
 
   const projectStyles = {
     DONE: {
-      borderRadius: '11px',
+      borderRadius: currentAsset?.delivery_formats !== 'no_delivery' ? '11px' : '0 0 11px 11px',
       pt: '2rem !important',
     },
     PENDING: {
