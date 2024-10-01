@@ -603,16 +603,6 @@ function Page({ data }) {
 
             <Flex flexDirection="column" gridGap="24px">
               <Flex flexDirection="column" gridGap="16px">
-                <Text size="18px">
-                  {t('become-a')}
-                  {' '}
-                  <Text as="span" color="blue.default" size="18px">Full Stack Developer</Text>
-                  ,
-                  {' '}
-                  {t('common:word-connector.and')}
-                  {' '}
-                  {t('get-closer-to-job')}
-                </Text>
                 {Array.isArray(featuredBullets) && featuredBullets?.length > 0 && featuredBullets.filter((bullet) => isVisibilityPublic || !bullet.hideOnPublic).map((item) => (
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
