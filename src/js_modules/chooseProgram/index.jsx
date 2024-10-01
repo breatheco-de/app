@@ -23,13 +23,12 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const [marketingCursesList, setMarketingCursesList] = useState([]);
   const [showFinished, setShowFinished] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
-  const activeCohorts = handlers.getActiveCohorts(chooseList);
-  const finishedCohorts = handlers.getCohortsFinished(chooseList);
   const { featuredColor } = useStyle();
   const router = useRouter();
-
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
-  const activeSubscriptionCohorts = activeCohorts?.length > 0 ? activeCohorts.map((item) => {
+
+  const finishedCohorts = handlers.getCohortsFinished(chooseList);
+  const activeCohorts = handlers.getActiveCohorts(chooseList).map((item) => {
     const cohort = item?.cohort;
     const currentCohortProps = programsList[cohort.slug];
     return ({
@@ -43,18 +42,14 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
       all_subscriptions: currentCohortProps?.all_subscriptions,
       subscription_exists: currentCohortProps?.subscription !== null || currentCohortProps?.plan_financing !== null,
     });
-  }) : [];
+  });
 
-  const marketingCourses = marketingCursesList?.length > 0 ? marketingCursesList.filter(
-    (item) => !activeSubscriptionCohorts.some(
-      (activeCohort) => activeCohort?.all_subscriptions?.some(
-        (sb) => sb?.selected_cohort_set?.slug === item?.slug,
-      ),
+  const hasNonSaasCourse = chooseList.some(({ cohort }) => !cohort.available_as_saas);
+
+  const marketingCourses = marketingCursesList.filter(
+    (item) => !activeCohorts.some(
+      ({ cohort }) => cohort.slug === item?.cohort?.slug,
     ) && item?.course_translation?.title,
-  ) : [];
-
-  const isNotAvailableForMktCourses = activeSubscriptionCohorts.length > 0 && activeSubscriptionCohorts.some(
-    (item) => item?.cohort?.available_as_saas === false,
   );
 
   useEffect(() => {
@@ -62,46 +57,52 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   }, [router.locale]);
 
   useEffect(() => {
-    bc.payment({ academy: WHITE_LABEL_ACADEMY }).courses()
+    bc.marketing({ academy: WHITE_LABEL_ACADEMY }).courses()
       .then(({ data }) => {
         setMarketingCursesList(data);
       });
   }, [router?.locale]);
 
+  const filterForNonSaasStudents = (course) => {
+    if (!hasNonSaasCourse) return true;
+
+    return course.plan_slug === process.env.BASE_PLAN;
+  };
+
   return (
     <>
-      {activeSubscriptionCohorts.length > 0 && (
-        <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
-          <Heading size="sm" width="fit-content" whiteSpace="nowrap">
-            {t('your-active-programs')}
-          </Heading>
-          <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
-        </Box>
+      {activeCohorts.length > 0 && (
+        <>
+          <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
+            <Heading size="sm" width="fit-content" whiteSpace="nowrap">
+              {t('your-active-programs')}
+            </Heading>
+            <Box as="hr" width="100%" margin="0.5rem 0 0 0" />
+          </Box>
+          <Box
+            display="grid"
+            gridTemplateColumns={{ base: activeCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
+            height="auto"
+            gridGap="4rem"
+          >
+            {activeCohorts.map((item) => (
+              <Programs
+                key={item?.cohort?.slug}
+                item={item}
+                handleChoose={handleChoose}
+                onOpenModal={() => setUpgradeModalIsOpen(true)}
+                setLateModalProps={setLateModalProps}
+              />
+            ))}
+          </Box>
+        </>
       )}
       <UpgradeAccessModal
         isOpen={upgradeModalIsOpen}
         onClose={() => setUpgradeModalIsOpen(false)}
       />
-      {activeSubscriptionCohorts.length > 0 && (
-        <Box
-          display="grid"
-          gridTemplateColumns={{ base: activeSubscriptionCohorts.length > 1 ? cardColumnSize : '', md: cardColumnSize }}
-          height="auto"
-          gridGap="4rem"
-        >
-          {activeSubscriptionCohorts.map((item) => (
-            <Programs
-              key={item?.cohort?.slug}
-              item={item}
-              handleChoose={handleChoose}
-              onOpenModal={() => setUpgradeModalIsOpen(true)}
-              setLateModalProps={setLateModalProps}
-            />
-          ))}
-        </Box>
-      )}
 
-      {!isNotAvailableForMktCourses && marketingCourses?.length > 0 && marketingCourses.some((l) => l?.course_translation?.title) && (
+      {marketingCourses?.length > 0 && (
         <>
           <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} margin="5rem  0 3rem 0" alignItems="center" gridGap={{ base: '4px', md: '1rem' }}>
             <Heading size="sm" width="fit-content" whiteSpace="nowrap">
@@ -115,7 +116,7 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
             height="auto"
             gridGap="4rem"
           >
-            {marketingCourses.map((item) => (
+            {marketingCourses.filter(filterForNonSaasStudents).map((item) => (
               <ProgramCard
                 isMarketingCourse
                 icon="coding"
@@ -133,67 +134,65 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
         </>
       )}
 
-      {
-        finishedCohorts.length > 0 && (
-          <>
-            <Box
+      {finishedCohorts.length > 0 && (
+        <>
+          <Box
+            display="flex"
+            margin="2rem auto"
+            flexDirection={{ base: 'column', md: 'row' }}
+            gridGap={{ base: '0', md: '6px' }}
+            justifyContent="center"
+          >
+            <Text
+              size="md"
+            >
+              {isPlural(finishedCohorts)
+                ? t('finished.plural', { finishedCohorts: finishedCohorts.length })
+                : t('finished.singular', { finishedCohorts: finishedCohorts.length })}
+            </Text>
+            <Text
+              as="button"
+              alignSelf="center"
+              size="md"
+              fontWeight="bold"
+              textAlign="left"
+              gridGap="10px"
+              _focus={{
+                boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+              }}
+              color="blue.default"
               display="flex"
-              margin="2rem auto"
-              flexDirection={{ base: 'column', md: 'row' }}
-              gridGap={{ base: '0', md: '6px' }}
-              justifyContent="center"
+              alignItems="center"
+              onClick={() => setShowFinished(!showFinished)}
             >
-              <Text
-                size="md"
-              >
-                {isPlural(finishedCohorts)
-                  ? t('finished.plural', { finishedCohorts: finishedCohorts.length })
-                  : t('finished.singular', { finishedCohorts: finishedCohorts.length })}
-              </Text>
-              <Text
-                as="button"
-                alignSelf="center"
-                size="md"
-                fontWeight="bold"
-                textAlign="left"
-                gridGap="10px"
-                _focus={{
-                  boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
-                }}
-                color="blue.default"
-                display="flex"
-                alignItems="center"
-                onClick={() => setShowFinished(!showFinished)}
-              >
-                {showFinished ? t('finished.hide') : t('finished.show')}
-                <Icon
-                  icon="arrowDown"
-                  width="20px"
-                  height="20px"
-                  style={{ transform: showFinished ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                />
-              </Text>
-            </Box>
-            <Box
-              display="grid"
-              mt="1rem"
-              gridTemplateColumns={cardColumnSize}
-              gridColumnGap="5rem"
-              gridRowGap="3rem"
-              height="auto"
-            >
-              {showFinished && finishedCohorts.map((item) => (
-                <Programs
-                  key={item?.cohort?.slug}
-                  item={item}
-                  handleChoose={handleChoose}
-                  onOpenModal={() => setUpgradeModalIsOpen(true)}
-                />
-              ))}
-            </Box>
-          </>
-        )
-      }
+              {showFinished ? t('finished.hide') : t('finished.show')}
+              <Icon
+                icon="arrowDown"
+                width="20px"
+                height="20px"
+                style={{ transform: showFinished ? 'rotate(180deg)' : 'rotate(0deg)' }}
+              />
+            </Text>
+          </Box>
+          <Box
+            display="grid"
+            mt="1rem"
+            gridTemplateColumns={cardColumnSize}
+            gridColumnGap="5rem"
+            gridRowGap="3rem"
+            height="auto"
+          >
+            {showFinished && finishedCohorts.map((item) => (
+              <Programs
+                key={item?.cohort?.slug}
+                item={item}
+                handleChoose={handleChoose}
+                onOpenModal={() => setUpgradeModalIsOpen(true)}
+              />
+            ))}
+          </Box>
+        </>
+      )}
     </>
   );
 }

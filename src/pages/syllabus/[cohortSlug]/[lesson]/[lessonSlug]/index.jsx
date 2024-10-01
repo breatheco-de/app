@@ -124,7 +124,7 @@ function SyllabusContent() {
     ? section.filteredModulesByPending
     : section.filteredModules));
 
-  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
+  const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || l.translations?.[language]?.slug === currentAsset?.slug));
 
   const currentModule = sortedAssignments[currentModuleIndex];
 
@@ -1003,7 +1003,8 @@ function SyllabusContent() {
                   {isAvailableAsSaas && (
                     <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
                       <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
-                        {(isLesson || isProject) && (
+                        {/* TODO: Hiding it until it's fixed */}
+                        {false && (isLesson || isProject) && (
                         <Tooltip label={t('get-help')} placement="top">
                           <Button
                             display="flex"

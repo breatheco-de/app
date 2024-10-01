@@ -160,12 +160,14 @@ function ProgramCard({
           <Image src={iconLink} width="44px" height="44px" borderRadius="50%" />
         </Box>
       ) : (
-        <Box position="absolute" borderRadius="full" top="-30px" background={iconBackground} padding="10px">
-          <Icon
-            width="32px"
-            height="32px"
-            icon={icon}
-          />
+        <Box position="absolute" top="-30px" padding="10px">
+          <Box borderRadius="full" background={iconBackground} padding="10px">
+            <Icon
+              width="24px"
+              height="24px"
+              icon={icon}
+            />
+          </Box>
         </Box>
       )}
 

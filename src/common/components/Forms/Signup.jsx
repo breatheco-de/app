@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import { Avatar, Box, Button, Checkbox, useToast,
+import {
+  Avatar, Box, Button, Checkbox, useToast,
   Spinner,
   InputGroup,
   InputRightElement,
@@ -132,6 +133,7 @@ function SignupForm({
             event: 'sign_up',
             method: 'native',
             email: data.email,
+            phone: data.phone || '',
             first_name: data.first_name,
             last_name: data.last_name,
             plan: planFormated,
@@ -312,12 +314,7 @@ function SignupForm({
               </Box>
               <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
                 <Text size="10px" textAlign="left">
-                  {t('validators.termns-and-conditions-required')}
-                  {' '}
-                  <NextChakraLink variant="default" fontSize="10px" href={t('common:privacy-policy-link')} target="_blank">
-                    {t('common:privacy-policy')}
-                  </NextChakraLink>
-                  .
+                  {t('validators.receive-information')}
                 </Text>
               </Checkbox>
               {!invertHandlerPosition && showLoginLink && (
@@ -328,17 +325,33 @@ function SignupForm({
                 </Flex>
               )}
             </Box>
-            <Button
-              width="100%"
-              type="submit"
-              variant="default"
-              isDisabled={isDisabled}
-              isLoading={isSubmitting}
-              alignSelf="flex-end"
-              {...buttonStyles}
-            >
-              {t('create-account')}
-            </Button>
+            <Box>
+              <Button
+                width="100%"
+                type="submit"
+                variant="default"
+                isDisabled={isDisabled}
+                isLoading={isSubmitting}
+                alignSelf="flex-end"
+                {...buttonStyles}
+              >
+                {t('create-account')}
+              </Button>
+              <Text size="10px" textAlign="left">
+                {t('agree-terms-and-conditions')}
+                {' '}
+                <NextChakraLink variant="default" fontSize="10px" href={t('common:terms-and-conditions-link')} target="_blank">
+                  {t('common:terms-and-conditions')}
+                </NextChakraLink>
+                {' '}
+                {t('common:word-connector.and')}
+                {' '}
+                <NextChakraLink variant="default" fontSize="10px" href={t('common:privacy-policy-link')} target="_blank">
+                  {t('common:privacy-policy')}
+                </NextChakraLink>
+                .
+              </Text>
+            </Box>
             {invertHandlerPosition && showLoginLink && (
               <Flex fontSize="13px" backgroundColor={featuredColor} justifyContent="center" alignItems="center" borderRadius="4px" gridGap="6px">
                 {t('already-have-account')}
@@ -449,7 +462,7 @@ SignupForm.propTypes = {
   formContainerStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 SignupForm.defaultProps = {
-  onHandleSubmit: () => {},
+  onHandleSubmit: () => { },
   planSlug: null,
   courseChoosed: '',
   showVerifyEmail: true,

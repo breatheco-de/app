@@ -5,26 +5,26 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import modifyEnv from '../../../modifyEnv';
 import ModalToCloneProject from './ModalToCloneProject';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
-import NextChakraLink from '../../common/components/NextChakraLink';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
+// import modifyEnv from '../../../modifyEnv';
+// import useCohortHandler from '../../common/hooks/useCohortHandler';
+// import NextChakraLink from '../../common/components/NextChakraLink';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
-  const { state } = useCohortHandler();
-  const { cohortSession } = state;
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [telemetryReport, setTelemetryReport] = useState([]);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+  // const { state } = useCohortHandler();
+  // const { cohortSession } = state;
+  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
 
@@ -103,10 +103,9 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     }
   }, [currentTask]);
 
-  const token = localStorage.getItem('accessToken');
-
-  const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
-  const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
+  // const token = localStorage.getItem('accessToken');
+  // const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
+  // const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
 
   return (
     <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
@@ -171,6 +170,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
           </Box>
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
+          {/*
           <NextChakraLink
             target="__blank"
             href={isExerciseStated ? continueWorkSpace : newWorkspace}
@@ -188,6 +188,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             <Icon icon="prov-bridge" width="20px" height="20px" />
             {t('common:learnpack.open-in-learnpack-button.text')}
           </NextChakraLink>
+          */}
           <Button
             variant="outline"
             borderColor="white"
