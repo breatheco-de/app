@@ -60,6 +60,7 @@ function SyllabusContent() {
     prevModule,
     setPrevModule,
     subTasks,
+    setSubTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -233,6 +234,7 @@ function SyllabusContent() {
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
+    setSubTasks([]);
   };
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
