@@ -16,7 +16,6 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import CallToAction from '../../common/components/CallToAction';
 import modifyEnv from '../../../modifyEnv';
 import ModalToCloneProject from './ModalToCloneProject';
-import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 
@@ -68,16 +67,14 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
         <Box mt="10px" background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
           <Icon icon="learnpack" />
           <Box>
-            <Heading color="white" fontWeight="400" size="xsm">
-              {t('learnpack.powered-by-learnpack')}
-            </Heading>
+            <Text color="white" size="md">
+              {t('learnpack.choose-open')}
+            </Text>
             <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
               <Popover>
                 <PopoverTrigger>
                   <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" color="blue.default">
-                    {t('learnpack.start-exercise')}
-                    {'  '}
-                    →
+                    {t('learnpack.open-in-learnpack-button.text')}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent width="min-content">

@@ -137,7 +137,7 @@
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
-    "powered-by-learnpack": "Powered by Learnpack",
+    "choose-open": "Choose how to open this project",
     "description": "<strong>\"{{projectName}}\"</strong> uses LearnPack for an interactive and auto-graded experience; choose one of the following options to start working on the project:",
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",

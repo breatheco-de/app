@@ -105,7 +105,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
         flexDirection={{ base: 'column', sm: isDelivered ? 'column' : 'row' }}
       >
         <Box display="flex" flexDirection="column" gap="16px" width="100%">
-          <Box mb="16px" display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
+          <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
             <Box>
               <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
                 <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
