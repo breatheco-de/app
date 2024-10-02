@@ -15,6 +15,7 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
   const { hexColor } = useStyle();
 
   if (!isCtaVisible) return null;
+  console.log(videoUrl);
 
   return (
     <>
@@ -35,7 +36,7 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
         <Box paddingBottom="20px">
           {videoUrl && (
             <ReactPlayerV2
-              title="Video tutorial"
+              title={asset && 'Video tutorial'}
               withModal
               url={videoUrl}
               withThumbnail
@@ -58,15 +59,14 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           {course && (
             <>
               <Heading size="21px" pt="10px">{t('course:join-cohort')}</Heading>
-              {!videoUrl
-                && (
+              {!videoUrl && (
                 <>
                   <Text>{t('course:create-account-text')}</Text>
                   <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
                     {t('common:start-free-trial')}
                   </Button>
                 </>
-                )}
+              )}
               <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
                 {t('common:see-financing-options')}
               </Button>
