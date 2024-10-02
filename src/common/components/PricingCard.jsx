@@ -109,8 +109,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
     const qs = parseQuerys({
       plan: selectedFinancing?.plan_slug || item?.plan_slug,
       plan_id: selectedFinancing?.plan_id || item?.plan_id,
-      price: selectedFinancing?.price || item?.price,
-      period: selectedFinancing?.period || item?.period,
       coupon: coupon || queryCoupon,
       cohort: courseData?.cohort?.id,
     });

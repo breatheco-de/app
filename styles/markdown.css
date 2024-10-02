@@ -488,6 +488,13 @@ blockquote > :last-child {
   padding: 0 0 0 16px;
 }
 
+.highlight-command {
+  background: #2d2d2d;
+  padding: 2px 5px;
+  border-radius: 5px;
+  color: #ccc;
+}
+
 /* .highlight {
   font-size: .85em;
   line-height: 2.0;

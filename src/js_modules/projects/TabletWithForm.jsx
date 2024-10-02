@@ -15,12 +15,12 @@ import Link from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import SimpleTable from './SimpleTable';
+import ModalToCloneProject from '../syllabus/ModalToCloneProject';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useStyle from '../../common/hooks/useStyle';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import MarkDownParser from '../../common/components/MarkDownParser';
 import SimpleModal from '../../common/components/SimpleModal';
 
 const TabletWithForm = React.forwardRef(({
@@ -62,9 +62,6 @@ const TabletWithForm = React.forwardRef(({
       },
     });
   };
-
-  const urlToClone = asset?.url || asset?.readme_url.split('/blob')?.[0];
-  const repoName = urlToClone.split('/').pop();
 
   return (
     <>
@@ -335,31 +332,7 @@ const TabletWithForm = React.forwardRef(({
             </Link>
           </Text>
         </SimpleModal>
-        <SimpleModal
-          maxWidth="xl"
-          title={t('clone-modal.title')}
-          isOpen={showCloneModal}
-          onClose={() => {
-            setShowCloneModal(false);
-          }}
-          headerStyles={{
-            textAlign: 'center',
-            textTransform: 'uppercase',
-          }}
-          bodyStyles={{
-            className: 'markdown-body',
-            padding: { base: '10px 30px' },
-          }}
-        >
-          <MarkDownParser
-            content={t('common:learnpack.cloneInstructions', {
-              repoName,
-              urlToClone,
-              readmeUrl: asset?.readme_url,
-            }, { returnObjects: true })}
-            showLineNumbers={false}
-          />
-        </SimpleModal>
+        <ModalToCloneProject currentAsset={asset} isOpen={showCloneModal} onClose={setShowCloneModal} />
         <Box px="22px" pb="0" pt="0" display={{ base: 'none', md: 'block' }}>
           <SimpleTable
             href={href}

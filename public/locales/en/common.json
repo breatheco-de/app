@@ -61,17 +61,17 @@
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
   "learn-more": "Learn more",
-  "more-technologies":"More technologies",
-  "continue-learning":"Continue learning about:",
+  "more-technologies": "More technologies",
+  "continue-learning": "Continue learning about:",
   "technologies-and-more": "{{technologies}} and more.",
   "user-id": "User ID",
   "day": "Day",
   "days": "Days",
   "short-seconds": "Sec",
   "interactive": "Interactive",
-  "beginner": "Beginner", 
-  "easy": "Easy", 
-  "intermediate": "Intermediate", 
+  "beginner": "Beginner",
+  "easy": "Easy",
+  "intermediate": "Intermediate",
   "hard": "Hard",
   "taken-by": "Taken by",
   "attended": "Attended",
@@ -114,7 +114,7 @@
   "clear-all": "Clear all",
   "english": "English",
   "spanish": "Spanish",
-  "remaining":"Remaining",
+  "remaining": "Remaining",
   "show-more": "Show more",
   "show-less": "Show less",
   "seach-technology": "Search technology",
@@ -152,13 +152,106 @@
       "type": "dropdown"
     },
     "clone-title": "How to clone a project?",
-    "cloneInstructions": "This exercise can be downloaded and run locally if you have node.js installed (<a class=\"link\" href=\"https://4geeks.com/how-to/install-nvm-on-every-operating-system\" target=\"_blank\">installation steps</a>).\n\n Once you have node.js, it's time to install learnpack and clone this project into your computer by typing the following command on your terminal:\n\n``` bash\n$ npm i @learnpack/learnpack -g\n$ git clone {{urlToClone}}\n```\nNote: This will create a new folder <strong>\"{{repoName}}\"</strong> in your computer.\n\n<strong>If you want to use VSCode:</strong> Make sure you have the <a class=\"link\" target=\"_blank\" href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\">LearnPack extension</a> installed, open the folder in VSCode and type `learnpack start` on your vscode terminal.\n\n<strong>To run without VSCode:</strong> Use your computer terminal to get inside your recently created folder and start learnpack:\n\n```bash\n$ cd {{repoName}}\n$ learnpack start\n```\nRead the <a class=\"link\" href=\"{{readmeUrl}}\">README.md</a> file and follow the rest of the instructions."  
+    "clone-modal": {
+      "title": "Open locally on your computer",
+      "need-help": "Need help? Schedule a mentoring session",
+      "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
+      "select-os": "1. Select your operating system",
+      "agent-vs-code": {
+        "label": "Open the project in VS Code",
+        "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal.",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
+      },
+      "agent-os": {
+        "label": "Open the project without VSCode",
+        "description": "Use your computer terminal to get inside your recently created folder and start learnpack:",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+      },
+      "os-list": [
+        {
+          "name": "macos",
+          "label": "macOS",
+          "logo": "/static/images/apple.png",
+          "steps": [
+            {
+              "label": "Install node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Install Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        },
+        {
+          "name": "linux",
+          "label": "Linux",
+          "logo": "/static/images/linux.png",
+          "steps": [
+            {
+              "label": "Install node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Install Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        },
+        {
+          "name": "windows",
+          "label": "Windows",
+          "logo": "/static/images/windows.png",
+          "steps": [
+            {
+              "label": "Install node.js on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Install Learnpack on your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            },
+            {
+              "label": "Clone project into your computer",
+              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+            }
+          ]
+        }
+      ]
+    }
   },
   "upgrade-plan": {
     "title": "We are sorry, you don't have enough privileges to access this block of content, please signup or upgrade your plan to access it.",
     "button": "Upgrade plan"
   },
-  "asset-type-pronouns" : {
+  "asset-type-pronouns": {
     "lesson": "This lesson",
     "exercise": "This exercise",
     "project": "This project",
@@ -256,15 +349,17 @@
     "sub-description": "Join a cohort in a live classroom environment and  unlimited support until you find a job.",
     "service_items": {
       "title": "Everything on Live & with Feedback plus...",
-      "items": [{
-        "label": "Unlimited live workshops "
-      },
-      {
-        "label": "Unlimited one-on-one mentoring sessions"
-      },
-      {
-        "label": "Unlimited group mentoring sessions"
-      }]
+      "items": [
+        {
+          "label": "Unlimited live workshops "
+        },
+        {
+          "label": "Unlimited one-on-one mentoring sessions"
+        },
+        {
+          "label": "Unlimited group mentoring sessions"
+        }
+      ]
     },
     "featured_info": [
       {
@@ -273,7 +368,11 @@
           "title": "Live classes",
           "icon": "onlinePeople"
         },
-        "features": [{ "description": "Take part of a group of students learning together with a teacher on weekly live classes." }]
+        "features": [
+          {
+            "description": "Take part of a group of students learning together with a teacher on weekly live classes."
+          }
+        ]
       },
       {
         "service": {
@@ -281,7 +380,11 @@
           "title": "Career support",
           "icon": "support"
         },
-        "features": [{ "description": "Get feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more." }]
+        "features": [
+          {
+            "description": "Get feedback on your resume, LinkedIn and other online profiles, and access our vast hiring partner network, internship opportunities and more."
+          }
+        ]
       },
       {
         "service": {
@@ -289,7 +392,11 @@
           "title": "Job guarantee*",
           "icon": "briefcase"
         },
-        "features": [{ "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>" }]
+        "features": [
+          {
+            "description": "Get a job within 6 months upon graduation or get money back; <a style=\"color: #0097CD;\" target=\"__blank\" href='https://storage.googleapis.com/4geeks-academy-website/PDF%20and%20Docs/Conditions%20Job%20Guaranteed%20Program.pdf'>conditions apply.</a>"
+          }
+        ]
       },
       {
         "service": {
@@ -297,7 +404,11 @@
           "title": "Certified by U.S. FL Dep. of Education",
           "icon": "certificate"
         },
-        "features": [{ "description": "Our bootcamp certificates have a badge certified by the US Florida Dep. of Education." }]
+        "features": [
+          {
+            "description": "Our bootcamp certificates have a badge certified by the US Florida Dep. of Education."
+          }
+        ]
       },
       {
         "service": {
@@ -305,7 +416,11 @@
           "title": "Access to premium community",
           "icon": "crown"
         },
-        "features": [{ "description": "Our premium community gives you access to office space worldwide, events inside partner companies and employers, job fairs, networking events, an exclusive slack channel, and more perks." }]
+        "features": [
+          {
+            "description": "Our premium community gives you access to office space worldwide, events inside partner companies and employers, job fairs, networking events, an exclusive slack channel, and more perks."
+          }
+        ]
       },
       {
         "service": {
@@ -313,7 +428,11 @@
           "title": "Office space world-wide",
           "icon": "office"
         },
-        "features": [{ "description": "Get access to office space world-wide." }]
+        "features": [
+          {
+            "description": "Get access to office space world-wide."
+          }
+        ]
       }
     ]
   },
