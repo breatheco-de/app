@@ -113,6 +113,9 @@ function Checkout() {
   const accessToken = getStorageItem('accessToken');
   const tokenExists = accessToken !== null && accessToken !== undefined && accessToken.length > 5;
   const { coupon: couponQuery } = query;
+  const { course } = router.query;
+  const courseChoosed = course;
+
   const [coupon] = usePersistentBySession('coupon', '');
 
   const couponValue = useMemo(() => {
@@ -120,9 +123,6 @@ function Checkout() {
     const couponString = coupon?.replaceAll('"', '') || '';
     return couponString || formatedCouponQuery;
   }, [coupon, couponQuery]);
-
-  const { course } = router.query;
-  const courseChoosed = course;
 
   const queryPlanExists = planFormated !== undefined && planFormated?.length > 0;
   const queryMentorshipServiceSlugExists = mentorshipServiceSetSlug && mentorshipServiceSetSlug?.length > 0;
@@ -161,6 +161,22 @@ function Checkout() {
   };
 
   const handleCoupon = (coupons, actions) => {
+    const alreadyAppliedCoupon = selfAppliedCoupon?.slug === discountCode || selfAppliedCoupon?.slug === couponValue;
+
+    if (alreadyAppliedCoupon) {
+      toast({
+        position: 'top',
+        title: t('signup:alert-message.coupon-already-applied'),
+        status: 'info',
+        duration: 4000,
+        isClosable: true,
+      });
+      if (actions) {
+        actions.setSubmitting(false);
+      }
+      return;
+    }
+
     bc.payment({
       coupons: [coupons || discountCode],
       plan: planFormated,

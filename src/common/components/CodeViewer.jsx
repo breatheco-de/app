@@ -33,6 +33,8 @@ export const languagesLabels = {
   jsx: 'JS',
   js: 'JS',
   javascript: 'JS',
+  node: 'Node.js',
+  'node.js': 'Node.js',
   python: 'Python',
   py: 'Python',
   html: 'Html',
@@ -47,6 +49,8 @@ export const languagesNames = {
   jsx: 'javascript',
   js: 'javascript',
   javascript: 'javascript',
+  node: 'javascript',
+  'node.js': 'javascript',
   python: 'python',
   py: 'python',
   html: 'html',
@@ -60,7 +64,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const editorContainerRef = useRef();
   const router = useRouter();
   const { hexColor } = useStyle();
-  const { t, lang } = useTranslation('code-viewer');
+  const { t } = useTranslation('code-viewer');
   const { isAuthenticated } = useAuth();
   const toast = useToast();
   const [initialTouchY, setInitialTouchY] = useState(null);

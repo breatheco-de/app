@@ -18,7 +18,11 @@ function FooterTC({ pageProps }) {
   const copyrightName = pageProps?.existsWhiteLabel ? logoData.name : '4Geeks';
   const actualYear = new Date().getFullYear();
   const router = useRouter();
-  const noFooterRoutes = ['/cohort/[cohortSlug]/[slug]/[version]', '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]'];
+  const noFooterRoutes = [
+    '/cohort/[cohortSlug]/[slug]/[version]',
+    '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]',
+    '/mentorship/schedule',
+  ];
 
   if (noFooterRoutes.includes(router.pathname)) {
     return null;
