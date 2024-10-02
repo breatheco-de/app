@@ -144,17 +144,17 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
               </NextChakraLink>
             )}
           </Box>
-          <Box width="50%" display={{ base: 'none', md: 'block' }}>
-            {selectedOs && (
-              <>
-                <ReactPlayerV2
-                  className="react-player-border-radius"
-                  containerStyle={{ height: '100%' }}
-                  iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
-                  url={steps && steps[expanded]?.video}
-                  height="100%"
-                />
-              </>
+          <Box width="50%" display={{ base: 'none', md: 'block' }} paddingTop="20px">
+            {selectedOs ? (
+              <ReactPlayerV2
+                className="react-player-border-radius"
+                containerStyle={{ height: '100%' }}
+                iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
+                url={steps && steps[expanded]?.video}
+                height="100%"
+              />
+            ) : (
+              <Box background={featuredLight} borderRadius="11px" width="100%" height="100%" />
             )}
           </Box>
         </Box>
