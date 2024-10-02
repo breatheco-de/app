@@ -273,9 +273,7 @@ function Page({ data }) {
           setIsCtaVisible(top - scrollY > 700);
         }
       };
-
       window.addEventListener('scroll', handleScroll);
-
       return () => {
         window.removeEventListener('scroll', handleScroll);
       };
@@ -511,13 +509,6 @@ function Page({ data }) {
       selectedIndex: 0,
     });
   };
-
-  console.log('SOY LA DATA', data);
-  // console.log("SOY LOS STUDENTS", students)
-  // console.log("SOY LA COHORT DATA", cohortData)
-  // console.log("SOY LA COHORT LSIT", courseContentList)
-  // console.log("SOY LA PLAN DATA", planData)
-  // console.log(featuredBullets)
 
   return (
     <>
