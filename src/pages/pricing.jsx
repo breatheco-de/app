@@ -283,18 +283,20 @@ function PricingView() {
             <Flex
               direction={['column', 'column', 'row', 'row']}
             >
-              <Box>
-                <Text marginBottom="20px" size="xl" as="h2" textAlign="start">
+              <Box maxWidth="350px">
+                <Text size="xl" as="h2" textAlign="start" color={hexColor.blueDefault}>
                   {t('heading')}
                 </Text>
                 <Text
-                  size="38px"
+                  size="30px"
                   flexShrink={[0, 0, 1, 1]}
                   fontWeight="700"
-                  textAlign={['center', 'center', 'left', 'left']}
-                  width={['100%', '100%', '305px', '305px']}
+                  width={['100%', '100%', '100%', '100%']}
                 >
                   {t('choose-your-career-path')}
+                </Text>
+                <Text marginBottom="26px" size="xl" as="h2" textAlign="start">
+                  {t('sub-heading')}
                 </Text>
               </Box>
               <DraggableContainer>
@@ -340,11 +342,6 @@ function PricingView() {
                       </Link>
                       {course?.course_translation?.landing_variables?.length > 0 && (
                         <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px">
-                          <Text fontSize="auto">
-                            {course.course_translation.title}
-                            {' '}
-                            Market:
-                          </Text>
                           {course?.course_translation?.landing_variables.map((content) => {
                             const isUrlImage = content?.icon?.includes('http');
                             return (
