@@ -62,6 +62,8 @@ function StatusPill() {
 
   const revisionStatus = currentTask.revision_status;
 
+  if (currentTask.task_status === 'PENDING') return null;
+
   return (
     <Box
       padding="5px 7px"
