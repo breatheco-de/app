@@ -804,10 +804,6 @@ function Page({ data }) {
                         || item?.title}
                       <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
                     </Link>
-                    {/* <Flex width="fit-content" background="blue.50" borderRadius="10px" padding="0.2rem" gap="5px">
-                        <Text display="inline">{item?.lang?.toUpperCase()}</Text>
-                        <Text display="inline">flag</Text>
-                    </Flex> */}
                   </Flex>
                 );
               })}
