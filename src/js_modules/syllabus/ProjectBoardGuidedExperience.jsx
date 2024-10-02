@@ -32,7 +32,7 @@ function StatusPill() {
   const { currentTask } = useModuleHandler();
   const { hexColor } = useStyle();
 
-  if (!currentTask) return null;
+  if (!currentTask || currentTask.task_status === 'PENDING') return null;
 
   const colorsDict = {
     APPROVED: {
@@ -61,8 +61,6 @@ function StatusPill() {
   };
 
   const revisionStatus = currentTask.revision_status;
-
-  if (currentTask.task_status === 'PENDING') return null;
 
   return (
     <Box
@@ -106,7 +104,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
         justifyContent="space-between"
         flexDirection={{ base: 'column', sm: isDelivered ? 'column' : 'row' }}
       >
-        <Box display="flex" flexDirection="column" gap="16px">
+        <Box display="flex" flexDirection="column" gap="16px" width="100%">
           <Box mb="16px" display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
             <Box>
               <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
@@ -120,11 +118,13 @@ function ProjectHeading({ currentAsset, isDelivered }) {
                   {currentAsset.description}
                 </Text>
               )}
-              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} />
             </Box>
-            <Box display="flex" gap="15px">
-              <StatusPill />
-              <SubtasksPill />
+            <Box>
+              <Box display="flex" gap="15px">
+                <StatusPill />
+                <SubtasksPill />
+              </Box>
+              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} />
             </Box>
           </Box>
         </Box>
