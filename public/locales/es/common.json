@@ -167,14 +167,14 @@
       "os-list": [
         {
           "name": "macos",
-          "label": "macOS",
+          "label": "MacOS",
           "logo": "/static/images/apple.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm"
             },
             {
               "label": "Instal Learnpack on your computer",
@@ -196,10 +196,10 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
+              "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
+              "source": "https://4geeks.com/how-to/install-nvm-linux"
             },
             {
               "label": "Instal Learnpack on your computer",
@@ -221,10 +221,10 @@
           "logo": "/static/images/windows.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Windows.",
+              "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows"
             },
             {
               "label": "Instal Learnpack on your computer",
