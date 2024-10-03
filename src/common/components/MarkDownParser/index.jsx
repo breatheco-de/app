@@ -135,8 +135,8 @@ function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, 
 }
 
 function MarkDownParser({
-  content, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience, showContentHeading,
+  content, withToc, frontMatter, titleRightSide, currentTask, currentData,
+  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience,
 }) {
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [newSubTasks, setNewSubTasks] = useState([]);
@@ -242,28 +242,24 @@ function MarkDownParser({
 
   return (
     <>
-      {showContentHeading && (
+      {!isGuidedExperience && (
         <ContentHeading
           titleRightSide={titleRightSide}
-          isGuidedExperience={isGuidedExperience}
           callToAction={currentData?.interactive && (
             <OpenWithLearnpackCTA currentAsset={currentData} />
           )}
           content={frontMatter}
           currentData={currentData}
-        >
-          {withToc && (
-            <Toc content={content} />
-          )}
-          {alerMessage && alerMessage}
-
-          {Array.isArray(subTasks) && subTasks?.length > 0 && (
-            <SubTasks subTasks={subTasks} assetType={assetType} />
-          )}
-        </ContentHeading>
+        />
       )}
-      {isPublic && withToc && (
+      {withToc && (
         <Toc content={content} />
+      )}
+
+      {alerMessage && alerMessage}
+
+      {Array.isArray(subTasks) && subTasks?.length > 0 && (
+        <SubTasks subTasks={subTasks} assetType={assetType} />
       )}
 
       <ReactMarkdown
@@ -310,14 +306,12 @@ MarkDownParser.propTypes = {
   frontMatter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   titleRightSide: PropTypes.node,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
-  isPublic: PropTypes.bool,
   currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
   alerMessage: PropTypes.node,
   isGuidedExperience: PropTypes.bool,
-  showContentHeading: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
@@ -325,14 +319,12 @@ MarkDownParser.defaultProps = {
   frontMatter: {},
   titleRightSide: null,
   currentTask: {},
-  isPublic: false,
   currentData: {},
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
   alerMessage: null,
   isGuidedExperience: false,
-  showContentHeading: true,
 };
 
 export default MarkDownParser;

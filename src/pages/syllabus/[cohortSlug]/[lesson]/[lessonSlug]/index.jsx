@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -29,6 +30,7 @@ import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedEx
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
+import Topbar from '../../../../../js_modules/syllabus/Topbar';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
@@ -319,6 +321,7 @@ function SyllabusContent() {
         });
     }
     return () => {
+      cleanCurrentData();
       setUserSession({
         translations: [],
       });
@@ -575,7 +578,7 @@ function SyllabusContent() {
 
   const assetTypeStyles = {
     answer: { padding: '0px', height: '100%', mb: '0px' },
-    read: {},
+    read: { borderRadius: '0 0 11px 11px', paddingTop: '20px !important' },
     practice: {},
     project: { ...projectStyles[currentTask?.task_status] },
   };
@@ -755,6 +758,9 @@ function SyllabusContent() {
                 {isProject && isAvailableAsSaas && currentAsset?.id && (
                   <ProjectBoardGuidedExperience currentAsset={currentAsset} />
                 )}
+                {isAvailableAsSaas && isLesson && currentAsset && (
+                  <Topbar currentAsset={currentAsset} />
+                )}
                 <Box
                   id="markdown-body"
                   className={`markdown-body ${colorMode}`}
@@ -771,9 +777,6 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {Array.isArray(subTasks) && subTasks?.length > 0 && isAvailableAsSaas && currentTask && (
-                    <SubTasks subTasks={subTasks} assetType={currentAsset?.asset_type} mt="none" />
-                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
