@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link,
@@ -31,7 +30,6 @@ import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/Exercis
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
 import Topbar from '../../../../../js_modules/syllabus/Topbar';
-import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
@@ -61,10 +59,10 @@ function SyllabusContent() {
     setNextModule,
     prevModule,
     setPrevModule,
-    subTasks,
     setSubTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
+  const mainContainer = useRef(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
@@ -132,6 +130,13 @@ function SyllabusContent() {
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollMainContainerTop = () => {
+    mainContainer.current.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
@@ -403,6 +408,7 @@ function SyllabusContent() {
 
   const handleNextPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
@@ -451,6 +457,7 @@ function SyllabusContent() {
 
   const handlePrevPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
@@ -749,6 +756,7 @@ function SyllabusContent() {
             ) : (
               <Box
                 id="main-container"
+                ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
