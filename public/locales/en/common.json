@@ -168,7 +168,7 @@
       "os-list": [
         {
           "name": "macos",
-          "label": "macOS",
+          "label": "MacOS",
           "logo": "/static/images/apple.png",
           "steps": [
             {
@@ -178,16 +178,16 @@
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
             },
             {
-              "label": "Install Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Install LearnPack on your computer",
+              "description": "You must install LearnPack to run these exercises interactively on your computer, you should run this command on the terminal: `npm install @learnpack/learnpack -g`. Click the link below to read more about LearnPack",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Clone the project into your computer",
+              "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone <repo_url>`. You can check this link if you need a more detailed explanation.",
+              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "source": "https://4geeks.com/how-to/github-clone-repository"
             }
           ]
         },
@@ -203,16 +203,16 @@
               "source": "https://4geeks.com/how-to/install-nvm-linux"
             },
             {
-              "label": "Install Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Install LearnPack on your computer",
+              "description": "You must install LearnPack to run these exercises interactively on your computer, you should run this command on the terminal: `npm install @learnpack/learnpack -g`. Click the link below to read more about LearnPack",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Clone the project into your computer",
+              "description": "On Linux, you can clone the project into your computer by simply running this command in the terminal: `git clone <repo_url>`. You can check this link if you need a more detailed explanation.",
+              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "source": "https://4geeks.com/how-to/github-clone-repository"
             }
           ]
         },
@@ -228,16 +228,22 @@
               "source": "https://4geeks.com/how-to/nvm-install-windows"
             },
             {
-              "label": "Install Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Install LearnPack on your computer",
+              "description": "You must install LearnPack to run these exercises interactively on your computer, you should run this command on the terminal: `npm install @learnpack/learnpack -g`. Click the link below to read more about LearnPack",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Install GIT on your computer",
+              "description": "You must install GIT to clone a GitHub repository locally. You must follow the instructions given in the following link.",
+              "video": "https://www.youtube.com/watch?v=iYkLrXobBbA",
+              "source": "https://git-scm.com/downloads/win"
+            },
+            {
+              "label": "Clone the project into your computer",
+              "description": "You can clone the project into your computer by simply running this command in the terminal: `git clone <repo_url>`. You can check this link if you need a more detailed explanation.",
+              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "source": "https://4geeks.com/how-to/github-clone-repository"
             }
           ]
         }
