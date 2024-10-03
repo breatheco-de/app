@@ -173,8 +173,8 @@
           "steps": [
             {
               "label": "Install node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
             },
             {
@@ -198,9 +198,9 @@
           "steps": [
             {
               "label": "Install node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Linux.",
+              "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
+              "source": "https://4geeks.com/how-to/install-nvm-linux"
             },
             {
               "label": "Install Learnpack on your computer",
@@ -223,9 +223,9 @@
           "steps": [
             {
               "label": "Install node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
               "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "source": "https://4geeks.com/how-to/nvm-install-windows"
             },
             {
               "label": "Install Learnpack on your computer",
