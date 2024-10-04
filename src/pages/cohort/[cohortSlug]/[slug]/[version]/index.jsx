@@ -179,8 +179,29 @@ function Dashboard() {
         });
       });
   };
+
+  const checkNavigationAvailability = () => {
+    if (allSubscriptions) {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      if (!(cohortSubscriptions.length > 0)) router.push('/choose-program');
+
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (fullyPaidSub) return;
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) router.push('/choose-program');
+    }
+  };
+
   useEffect(() => {
     if (cohortSession?.cohort_user) {
+      if (cohortSession.available_as_saas === true) {
+        checkNavigationAvailability();
+      }
       if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
         router.push('/choose-program');
       } else {

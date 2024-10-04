@@ -85,6 +85,7 @@ function SyllabusContent() {
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortAssignments, getCohortData, prepareTasks, state,
@@ -190,6 +191,35 @@ function SyllabusContent() {
     setSettingsOpen(false);
     setModalSettingsOpen(false);
   };
+
+  useEffect(() => {
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(async ({ data }) => {
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true) {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      if (!(cohortSubscriptions.length > 0)) router.push('/choose-program');
+
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (fullyPaidSub) return;
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) router.push('/choose-program');
+    }
+  }, [cohortSession]);
 
   const toggleSettings = () => {
     if (openNextPageModal) {
