@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { useState } from 'react';
 import {
   Box,
@@ -20,7 +21,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
-import { Code } from '../../common/components/MarkDownParser/MDComponents';
+import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
@@ -35,7 +36,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
 
-  const osList = t('common:learnpack.clone-modal.os-list', {}, { returnObjects: true });
+  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: urlToClone }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
 
@@ -113,16 +114,10 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
                           </AccordionButton>
                         </Heading>
                         <AccordionPanel>
-                          <Text size="md" dangerouslySetInnerHTML={{ __html: step.description }} />
-                          {step.code && (
-                            <Box className="markdown-body">
-                              <pre>
-                                <Code className="language-bash" showLineNumbers={false}>
-                                  {step.code}
-                                </Code>
-                              </pre>
-                            </Box>
-                          )}
+                          <MarkDownParser
+                            content={step.description}
+                            showLineNumbers={false}
+                          />
                           {step.source && (
                             <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
                               {t('common:learn-more')}
