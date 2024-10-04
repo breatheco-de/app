@@ -220,9 +220,10 @@ function MarkDownParser({
     //This regex is to remove the runable empty codeblocks
     const emptyCodeRegex = /```([a-zA-Z]+).*runable=("true"|true|'true').*(\n{1,}|\s{1,}\n{1,})?```/gm;
     //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
-    const codeViewerRegex = /(```(?<language>\w+).*runable=("true"|'true'|true).*(?<code>(?:.|\n)*?)```\n?)+/gm;
+    const codeViewerRegex = /(```(?<language>[\w.]+).*runable=("true"|'true'|true).*(?<code>(?:.|\n)*?)```\n?)+/gm;
 
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
+
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);
 
     const contextPathRegex = /```([a-zA-Z]+).*(path=[^\s]*).*([\s\S]+?)```/g;
