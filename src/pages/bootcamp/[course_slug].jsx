@@ -909,6 +909,13 @@ function Page({ data }) {
             gridGap: '32px',
             alignItems: 'start',
           }}
+          slice={{
+            primary: {
+              background_in_dark_mode: '#eef9fd',
+              font_color: 'black',
+              font_color_in_darkmode: 'black',
+            },
+          }}
         />
         {/* Pricing */}
         {data?.plan_slug && (
