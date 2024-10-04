@@ -183,7 +183,7 @@
             },
             {
               "label": "Clone the project into your computer",
-              "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone <repo_url>`. You can check this link if you need a more detailed explanation.",
+              "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone repo_url`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
               "source": "https://4geeks.com/how-to/github-clone-repository"
             }
