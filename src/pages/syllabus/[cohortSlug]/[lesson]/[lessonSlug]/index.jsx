@@ -205,7 +205,7 @@ function SyllabusContent() {
   }, []);
 
   useEffect(() => {
-    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true) {
+    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
       if (!(cohortSubscriptions.length > 0)) router.push('/choose-program');
