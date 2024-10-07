@@ -161,7 +161,7 @@ function Checkout() {
   };
 
   const handleCoupon = (coupons, actions) => {
-    const alreadyAppliedCoupon = selfAppliedCoupon?.slug === discountCode || selfAppliedCoupon?.slug === couponValue;
+    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug === discountCode && selfAppliedCoupon?.slug !== undefined) || (selfAppliedCoupon?.slug === couponValue && selfAppliedCoupon?.slug !== undefined);
 
     if (alreadyAppliedCoupon) {
       toast({
