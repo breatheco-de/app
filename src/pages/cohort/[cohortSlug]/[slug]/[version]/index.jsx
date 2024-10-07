@@ -181,10 +181,23 @@ function Dashboard() {
   };
 
   const checkNavigationAvailability = () => {
+    const showToast = () => {
+      toast({
+        position: 'top',
+        title: t('alert-message:access-denied'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+
     if (allSubscriptions) {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
-      if (cohortSubscriptions.length === 0) router.push('/choose-program');
+      if (cohortSubscriptions.length === 0) {
+        router.push('/choose-program');
+        showToast();
+      }
 
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) return;
@@ -193,7 +206,10 @@ function Dashboard() {
       const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
       const todayDate = new Date();
 
-      if (todayDate > freeTrialExpDate) router.push('/choose-program');
+      if (todayDate > freeTrialExpDate) {
+        router.push('/choose-program');
+        showToast();
+      }
     }
   };
 
