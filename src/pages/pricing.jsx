@@ -45,7 +45,7 @@ function PricingView() {
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
-  const { hexColor } = useStyle();
+  const { hexColor, modal } = useStyle();
   const [isFetching, setIsFetching] = useState({
     courses: true,
     selectedPlan: true,
@@ -267,7 +267,7 @@ function PricingView() {
   console.log(publicMktCourses);
 
   return (
-    <Container maxWidth="100%" background={hexColor.featuredColor} paddingY="4rem">
+    <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
       {isFetching.courses && (
         <LoaderScreen position="fixed" />
       )}
@@ -302,7 +302,7 @@ function PricingView() {
               <DraggableContainer>
                 <Flex gridGap="24px">
                   {publicMktCourses?.length > 0 && publicMktCourses.slice(0, 2).map((course) => (
-                    <Flex key={course.slug} borderRadius="8px" background={hexColor.backgroundColor} padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative">
+                    <Flex key={course.slug} borderRadius="8px" background={modal.background3} padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative">
                       <Box position="absolute" borderRadius="full" top="-30px">
                         <Img src={course.icon_url} width="44px" height="44px" />
                       </Box>
