@@ -160,9 +160,8 @@
       },
       "agent-os": {
         "label": "Abrir el proyecto sin VSCode",
-        "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack:",
-        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+        "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
       "os-list": [
         {
