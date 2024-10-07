@@ -73,7 +73,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
               <Popover>
                 <PopoverTrigger>
-                  <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" color="blue.default">
+                  <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('learnpack.open-in-learnpack-button.text')}
                   </Button>
                 </PopoverTrigger>
@@ -114,7 +114,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                   </PopoverBody>
                 </PopoverContent>
               </Popover>
-              <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" color="blue.default" onClick={() => setShowCloneModal(true)}>
+              <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                 {t('learnpack.open-locally')}
               </Button>
             </Box>
