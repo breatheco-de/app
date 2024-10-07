@@ -391,14 +391,12 @@ function Subscriptions({ cohorts }) {
                       </Text>
                     </Flex>
                   </Flex>
-                  {!isTotallyFree && (
-                    <ButtonHandler
-                      subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
-                      onOpenCancelSubscription={onOpenCancelSubscription}
-                    />
-                  )}
+                  <ButtonHandler
+                    subscription={subscription}
+                    onOpenUpgrade={onOpenUpgrade}
+                    setSubscriptionProps={setSubscriptionProps}
+                    onOpenCancelSubscription={onOpenCancelSubscription}
+                  />
                 </Flex>
               </Flex>
             );
