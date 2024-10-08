@@ -160,8 +160,7 @@
       },
       "agent-os": {
         "label": "Open the project without VSCode",
-        "description": "Use your computer terminal to get inside your recently created folder and start learnpack:",
-        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+        "description": "Use your computer terminal to get inside your recently created folder and start learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```"
       },
       "os-list": [
         {
@@ -183,7 +182,7 @@
             },
             {
               "label": "Clone the project into your computer",
-              "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone repo_url`. You can check this link if you need a more detailed explanation.",
+              "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
               "source": "https://4geeks.com/how-to/github-clone-repository"
             }
