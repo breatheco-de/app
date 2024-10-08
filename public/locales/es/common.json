@@ -170,6 +170,12 @@
           "logo": "/static/images/apple.png",
           "steps": [
             {
+              "label": "Descarga un editor de código o IDE en tu computadora",
+              "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
@@ -195,6 +201,12 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
+              "label": "Descarga un editor de código o IDE en tu computadora",
+              "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
               "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
@@ -219,6 +231,12 @@
           "label": "Windows",
           "logo": "/static/images/windows.png",
           "steps": [
+            {
+              "label": "Descarga un editor de código o IDE en tu computadora",
+              "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
             {
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Windows.",
