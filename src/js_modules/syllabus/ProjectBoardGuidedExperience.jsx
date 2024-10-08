@@ -92,28 +92,10 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
   const { currentTask } = useModuleHandler();
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const { backgroundColor4, hexColor, backgroundColor, featuredLight } = useStyle();
-
-  const title = currentAsset?.title;
-  const assetType = currentAsset?.asset_type;
+  const { hexColor, backgroundColor, featuredLight } = useStyle();
 
   // const isDelivered = false;
   const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
-
-  const assetTypeIcons = {
-    LESSON: 'book',
-    EXERCISE: 'strength',
-    PROJECT: 'code',
-    QUIZ: 'answer',
-  };
-
-  const scrollTop = () => {
-    const markdownBody = document.getElementById('main-container');
-    markdownBody.scroll({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(

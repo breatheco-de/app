@@ -259,7 +259,7 @@
   },
   "subtasks": {
     "title": "{{asset_type}} has {{count}} tasks",
-    "description": "To take better advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
+    "description": "To take advantage of this lesson better, look for the checkboxes and mark them as completed as you progress."
   },
   "related-courses": "Courses related to this article",
   "average-duration": "Average duration",
