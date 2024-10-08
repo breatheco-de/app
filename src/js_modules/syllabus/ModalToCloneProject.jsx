@@ -105,7 +105,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
                           <Checkbox top="10px" left="16px" position="absolute" />
                           <AccordionButton cursor="pointer" _expanded={{ color: ('blue.default') }}>
                             <Box marginLeft="26px" fontFamily="Space Grotesk Variable" as="span" flex="1" fontSize="18px" textAlign="left">
-                              {`${i + 2}.`}
+                              {`${i + 1}.`}
                               {'  '}
                               {step.label}
                             </Box>

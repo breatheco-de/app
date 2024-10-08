@@ -156,7 +156,7 @@
       "title": "Open locally on your computer",
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
-      "select-os": "1. Select your operating system",
+      "select-os": "Select your operating system",
       "agent-vs-code": {
         "label": "Open the project in VS Code",
         "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
