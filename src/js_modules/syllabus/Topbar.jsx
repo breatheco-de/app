@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { Box, Button } from '@chakra-ui/react';
@@ -11,6 +11,7 @@ import Icon from '../../common/components/Icon';
 function TopBar({ currentAsset, ...rest }) {
   const { t } = useTranslation('syllabus');
   const { backgroundColor4, hexColor } = useStyle();
+  const [isVisible, setIsVisible] = useState(false);
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
@@ -29,6 +30,20 @@ function TopBar({ currentAsset, ...rest }) {
       behavior: 'smooth',
     });
   };
+
+  useEffect(() => {
+    const container = document.getElementById('main-container');
+    const handleScroll = () => {
+      const winScroll = container.scrollTop;
+      if (winScroll < 200 && isVisible) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
+    };
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
@@ -58,10 +73,12 @@ function TopBar({ currentAsset, ...rest }) {
               <SubtasksPill />
             </>
           )}
-          <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
-            <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
-            {t('back-to-top')}
-          </Button>
+          {isVisible && (
+            <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
+              <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
+              {t('back-to-top')}
+            </Button>
+          )}
         </Box>
       </Box>
     </>
