@@ -169,6 +169,12 @@
           "logo": "/static/images/apple.png",
           "steps": [
             {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
@@ -194,6 +200,12 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Linux.",
               "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
@@ -218,6 +230,12 @@
           "label": "Windows",
           "logo": "/static/images/windows.png",
           "steps": [
+            {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
