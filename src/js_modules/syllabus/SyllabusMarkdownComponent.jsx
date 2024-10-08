@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import useTranslation from 'next-translate/useTranslation';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 
 function SyllabusMarkdownComponent({
@@ -12,7 +12,7 @@ function SyllabusMarkdownComponent({
 
   if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
     return (
-      <MarkDownParser
+      <ArticleMarkdown
         content={readme.content}
         withToc={lesson?.toLowerCase() === 'read'}
         isGuidedExperience={isGuidedExperience}
@@ -29,7 +29,7 @@ function SyllabusMarkdownComponent({
   }
   if (currentBlankProps?.target === 'blank') {
     return (
-      <MarkDownParser
+      <ArticleMarkdown
         content={blankText}
         withToc={lesson?.toLowerCase() === 'read'}
         isGuidedExperience={isGuidedExperience}
