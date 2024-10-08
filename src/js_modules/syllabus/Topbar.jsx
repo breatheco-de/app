@@ -73,12 +73,10 @@ function TopBar({ currentAsset, ...rest }) {
               <SubtasksPill />
             </>
           )}
-          {isVisible && (
-            <Button display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
-              <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
-              {t('back-to-top')}
-            </Button>
-          )}
+          <Button visibility={!isVisible && 'hidden'} display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
+            <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
+            {t('back-to-top')}
+          </Button>
         </Box>
       </Box>
     </>
