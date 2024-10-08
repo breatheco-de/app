@@ -176,6 +176,12 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "label": "Crea una carpeta donde guardarás estos ejercicios",
+              "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
+              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "source": ""
+            },
+            {
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
@@ -207,6 +213,12 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "label": "Crea una carpeta donde guardarás estos ejercicios",
+              "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
+              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "source": ""
+            },
+            {
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
               "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
@@ -236,6 +248,12 @@
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
               "source": "https://code.visualstudio.com/download"
+            },
+            {
+              "label": "Crea una carpeta donde guardarás estos ejercicios",
+              "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
+              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "source": ""
             },
             {
               "label": "Instala Node.JS en tu computadora",
