@@ -72,8 +72,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
         {autoRemove && timer?.days <= 0 ? null : `${timer?.days} days `}
         {autoRemove && timer?.months <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : `${timer?.hours} hours `}
         {autoRemove && timer?.days <= 0 && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0 ? null : `${timer.minutes} minutes `}
-        {timer?.hours <= 0 && timer.seconds}
-        s
+        {timer?.hours <= 0 && `${timer.seconds} seconds`}
       </Text>
     );
   }
