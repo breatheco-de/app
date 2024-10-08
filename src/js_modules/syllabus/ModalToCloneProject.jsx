@@ -119,7 +119,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
                           />
                           {step.source && (
                             <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
-                              {t('common:learn-more')}
+                              {step['source-label'] || t('common:learn-more')}
                             </NextChakraLink>
                           )}
                         </AccordionPanel>

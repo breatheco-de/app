@@ -187,7 +187,8 @@
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Install NVM"
             },
             {
               "label": "Install LearnPack on your computer",
