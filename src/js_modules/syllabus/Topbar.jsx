@@ -35,7 +35,7 @@ function TopBar({ currentAsset, ...rest }) {
     const container = document.getElementById('main-container');
     const handleScroll = () => {
       const winScroll = container.scrollTop;
-      if (winScroll < 200 && isVisible) {
+      if (winScroll < 200) {
         setIsVisible(false);
       } else {
         setIsVisible(true);

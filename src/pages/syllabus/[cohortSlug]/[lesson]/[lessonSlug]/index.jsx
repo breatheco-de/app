@@ -3,7 +3,7 @@ import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link,
   useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
-  ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
+  ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -1145,9 +1145,6 @@ function SyllabusContent() {
       <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
         <ModalOverlay />
         <ModalContent style={{ margin: '3rem 0' }}>
-          <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
-            {assetTypeValues[lesson]}
-          </ModalHeader>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
             <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
