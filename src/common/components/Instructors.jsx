@@ -27,7 +27,7 @@ function Instructors({ isLoading, list, limit, ...rest }) {
       <Heading size="18px" fontWeight={700}>
         {t('your-tutors-in-this-cohort')}
       </Heading>
-      <Flex gridGap="21px" overflow="auto">
+      <Flex gridGap="21px" overflow="auto" flexWrap="wrap">
         {isLoading
           ? (
             <Skeleton borderRadius="43" width="216px" height="56px" />

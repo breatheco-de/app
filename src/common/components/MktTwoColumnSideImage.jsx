@@ -159,7 +159,7 @@ function MktTwoColumnSideImage({
                 lineHeight={prismicStyles.descriptionLineHeight || '14px'}
                 margin="15px 0"
                 alignItems="center"
-                color={fontColor2}
+                color={fontColor || fontColor2}
               >
                 {description}
               </Text>
