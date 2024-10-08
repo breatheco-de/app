@@ -1142,7 +1142,7 @@ function SyllabusContent() {
           />
         </Box>
       </SimpleModal>
-      <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
+      <Modal isOpen={openNextPageModal} size="xl" onClose={() => setOpenNextPageModal(false)}>
         <ModalOverlay />
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
