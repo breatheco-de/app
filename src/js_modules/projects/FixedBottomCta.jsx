@@ -10,12 +10,11 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, ...rest }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
 
   if (!isCtaVisible) return null;
-  console.log(videoUrl);
 
   return (
     <>
@@ -35,42 +34,42 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
       >
         <Box paddingBottom="20px">
           {videoUrl && (
-            <ReactPlayerV2
-              title={asset && 'Video tutorial'}
-              withModal
-              url={videoUrl}
-              withThumbnail
-              thumbnailStyle={{
-                borderRadius: '0 0 0 0',
-                height: '110px',
-              }}
-            />
+          <ReactPlayerV2
+            title={asset && 'Video tutorial'}
+            withModal
+            url={videoUrl}
+            withThumbnail
+            thumbnailStyle={{
+              borderRadius: '0 0 0 0',
+              height: '110px',
+            }}
+          />
           )}
           {asset && (
-            <>
-              <Heading size="sm" mt="10px">
-                {videoUrl ? t('video-instructions') : t('register')}
-              </Heading>
-              <Button display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                {videoUrl ? t('see-instructions') : t('create-account')}
-              </Button>
-            </>
+          <>
+            <Heading size="sm" mt="10px">
+              {videoUrl ? t('video-instructions') : t('register')}
+            </Heading>
+            <Button display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
+              {videoUrl ? t('see-instructions') : t('create-account')}
+            </Button>
+          </>
           )}
           {course && (
+          <>
+            <Heading size="21px" pt="10px">{t('course:join-cohort')}</Heading>
+            {!videoUrl && (
             <>
-              <Heading size="21px" pt="10px">{t('course:join-cohort')}</Heading>
-              {!videoUrl && (
-                <>
-                  <Text>{t('course:create-account-text')}</Text>
-                  <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                    {t('common:start-free-trial')}
-                  </Button>
-                </>
-              )}
+              <Text>{t('course:create-account-text')}</Text>
               <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
-                {t('common:see-financing-options')}
+                {financingAvailable ? t('common:see-financing-options') : t('common:enroll')}
               </Button>
             </>
+            )}
+            <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
+              {t('common:start-free-trial')}
+            </Button>
+          </>
           )}
         </Box>
       </Box>
@@ -85,11 +84,13 @@ StickyBottomCta.propTypes = {
   couponApplied: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onClick: PropTypes.func.isRequired,
   isCtaVisible: PropTypes.bool.isRequired,
+  financingAvailable: PropTypes.string,
 };
 
 StickyBottomCta.defaultProps = {
   couponApplied: undefined,
   videoUrl: undefined,
+  financingAvailable: undefined,
 };
 
 export default StickyBottomCta;

@@ -522,6 +522,7 @@ function Page({ data }) {
       )}
       <FixedBottomCta
         isCtaVisible={isCtaVisible}
+        financingAvailable={planData.financingOptions.length > 0}
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
