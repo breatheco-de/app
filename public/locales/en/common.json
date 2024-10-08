@@ -169,6 +169,18 @@
           "logo": "/static/images/apple.png",
           "steps": [
             {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
+              "label": "Create a folder to store your exercises",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "source": ""
+            },
+            {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
@@ -194,6 +206,18 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
+              "label": "Create a folder to store your exercises",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "source": ""
+            },
+            {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Linux.",
               "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
@@ -218,6 +242,18 @@
           "label": "Windows",
           "logo": "/static/images/windows.png",
           "steps": [
+            {
+              "label": "Download a code editor or IDE on your computer",
+              "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
+              "video": "",
+              "source": "https://code.visualstudio.com/download"
+            },
+            {
+              "label": "Create a folder to store your exercises",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "source": ""
+            },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
