@@ -840,7 +840,7 @@ function Checkout() {
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlanCheckoutData.price <= 0
                               ? selectedPlanCheckoutData.priceText
-                              : `$${processedPrice.price * selectedPlanCheckoutData.how_many_months} ${selectedPlanCheckoutData.currency?.code}`}
+                              : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
                           </Text>
                         </Flex>
                       </Flex>
