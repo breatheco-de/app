@@ -85,6 +85,7 @@ function SyllabusContent() {
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
+  const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
@@ -221,10 +222,14 @@ function SyllabusContent() {
       if (!(cohortSubscriptions.length > 0)) {
         router.push('/choose-program');
         showToast();
+        return;
       }
 
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-      if (fullyPaidSub) return;
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
 
       const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
       const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
@@ -233,9 +238,12 @@ function SyllabusContent() {
       if (todayDate > freeTrialExpDate) {
         router.push('/choose-program');
         showToast();
+        return;
       }
+
+      setGrantAccess(true);
     }
-  }, [cohortSession]);
+  }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
     if (openNextPageModal) {
@@ -687,6 +695,7 @@ function SyllabusContent() {
             isOpen={isOpen}
             onToggle={onToggle}
             handleStartDay={handleStartDay}
+            grantSyllabusAccess={grantAccess}
           />
         ) : (
           <TimelineSidebar
@@ -897,6 +906,7 @@ function SyllabusContent() {
                       lessonSlug={lessonSlug}
                       currentTask={currentTask}
                       isGuidedExperience={isAvailableAsSaas}
+                      grantSyllabusAccess={grantAccess}
                       alerMessage={(
                         <>
                           {currentAsset?.solution_url && (
