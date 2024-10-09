@@ -691,51 +691,54 @@ function SyllabusContent() {
             maxWidth="1280px"
           >
             {isAvailableAsSaas && (
-              <Box margin="5px 0" display="flex" alignItems="center" justifyContent="space-between">
+              <Box margin="10px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
-                  aria-label="Close Timeline"
+                  size="sm"
+                  aria-label={t(Open ? 'hide-menu' : 'show-menu')}
                   display="flex"
                   gap="10px"
-                  variant="ghost"
-                  onClick={onToggle}
+                  fontSize="12px"
+                  fontWeight="500"
+                  borderRadius="4px"
+                  background={backgroundColor}
                   color={hexColor.blueDefault}
+                  onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 <Box display="flex" gridGap="3rem">
                   {(previousAssignment || !!prevModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={prevPage}
                     >
-                      <Box
-                        as="span"
-                        display="block"
-                      >
-                        <Icon icon="arrowLeft2" width="18px" height="10px" />
-                      </Box>
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
                       {t('previous-page')}
-                    </Box>
+                    </Button>
                   )}
 
                   {(nextAssignment || !!nextModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={nextPage}
                     >
                       {t('next-page')}
@@ -746,7 +749,7 @@ function SyllabusContent() {
                       >
                         <Icon icon="arrowLeft2" width="18px" height="10px" />
                       </Box>
-                    </Box>
+                    </Button>
                   )}
                 </Box>
               </Box>
