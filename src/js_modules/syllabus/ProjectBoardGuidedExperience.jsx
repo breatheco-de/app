@@ -59,10 +59,6 @@ function ProjectHeading({ currentAsset, isDelivered }) {
               )}
             </Box>
             <Box>
-              <Box display="flex" gap="15px">
-                <StatusPill />
-                <SubtasksPill />
-              </Box>
               <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} />
             </Box>
           </Box>
