@@ -14,8 +14,9 @@ import useStyle from '../hooks/useStyle';
 
 function Faq({ items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
   const { hexColor } = useStyle();
+
   return (
-    <Box position="relative" background={hexColor.featuredColor} padding="15px" borderRadius="10px" {...rest}>
+    <Box position="relative" background={hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
       <Heading textAlign="center" margin="20px 0" {...headingStyle}>
         FAQ
       </Heading>
