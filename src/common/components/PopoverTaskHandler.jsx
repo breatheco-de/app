@@ -15,12 +15,12 @@ import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
 
-export function textByTaskStatus(currentTask) {
+export function textByTaskStatus(currentTask, isGuidedExperience) {
   const { t } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
   // task project status
-  if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
+  if (currentTask && currentTask.task_type === 'PROJECT') {
     if (currentTask.task_status === 'DONE' && currentTask.revision_status === 'PENDING') {
       return {
         icon: {
@@ -54,15 +54,15 @@ export function textByTaskStatus(currentTask) {
     }
     return {
       icon: {
-        icon: 'longArrowRight',
-        color: 'white',
+        icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
+        color: isGuidedExperience ? hexColor.blueDefault : 'white',
         width: '20px',
       },
       text: t('common:taskStatus.send-project'),
     };
   }
   // common task status
-  if (currentTask && currentTask.task_type !== 'PROJECT' && currentTask.task_status === 'DONE') {
+  if (currentTask && currentTask.task_status === 'DONE') {
     return {
       icon: {
         icon: 'close',
@@ -468,7 +468,7 @@ function PopoverTaskHandler({
     closeSettings();
   };
 
-  const textAndIcon = textByTaskStatus(currentTask || {});
+  const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience);
 
   if (isGuidedExperience) {
     return (
@@ -486,7 +486,7 @@ function PopoverTaskHandler({
               isDisabled={isButtonDisabled}
               width="40px"
               height="40px"
-              background={hexColor.blueDefault}
+              background="white"
               padding="20px"
               borderRadius="full"
               variant="default"
@@ -590,12 +590,6 @@ PopoverTaskHandler.defaultProps = {
   isGuidedExperience: false,
 };
 
-// TextByTaskStatus.propTypes = {
-//   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-// };
-// TextByTaskStatus.defaultProps = {
-//   currentTask: {},
-// };
 IconByTaskStatus.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   noDeliveryFormat: PropTypes.bool,

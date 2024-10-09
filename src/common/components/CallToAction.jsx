@@ -16,7 +16,7 @@ import Icon from './Icon';
 function CallToAction({
   background, imageSrc, icon, href, styleContainer, isExternalLink, title, text,
   buttonText, onClick, margin, buttonsData, buttonStyle, fontSizeOfTitle,
-  isLoading, reverseButtons, buttonsContainerStyles,
+  isLoading, reverseButtons, buttonsContainerStyles, iconContainerStyles, titleStyles,
 }) {
   return (
     <Box
@@ -41,6 +41,7 @@ function CallToAction({
         width="62px"
         height="62px"
         background="white"
+        {...iconContainerStyles}
       >
         {icon ? (
           <Icon icon={icon} width="40px" height="40px" />
@@ -58,7 +59,7 @@ function CallToAction({
       >
         <Box>
           {title && (
-          <Heading as="h5" fontSize={fontSizeOfTitle} color="white" margin={0} marginBottom="11px">
+          <Heading as="h5" fontSize={fontSizeOfTitle} color="white" margin={0} marginBottom="11px" {...titleStyles}>
             {title}
           </Heading>
           )}
@@ -205,6 +206,8 @@ CallToAction.propTypes = {
   icon: PropTypes.string,
   reverseButtons: PropTypes.bool,
   buttonsContainerStyles: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  iconContainerStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  titleStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CallToAction.defaultProps = {
@@ -225,6 +228,8 @@ CallToAction.defaultProps = {
   icon: '',
   reverseButtons: false,
   buttonsContainerStyles: {},
+  iconContainerStyles: {},
+  titleStyles: {},
 };
 
 export default CallToAction;

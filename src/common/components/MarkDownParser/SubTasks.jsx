@@ -4,12 +4,14 @@ import useTranslation from 'next-translate/useTranslation';
 import Heading from '../Heading';
 import ProgressCircle from '../ProgressCircle';
 import Text from '../Text';
+import useStyle from '../../hooks/useStyle';
 import { toCapitalize } from '../../../utils';
 
 function SubTasks({
   subTasks, title, description, assetType, variant, ...rest
 }) {
   const { t } = useTranslation('common');
+  const { backgroundColor5 } = useStyle();
 
   const tasksDone = subTasks.length > 0 && subTasks?.filter((subtask) => subtask.status === 'DONE');
   const taskPercent = Math.round((tasksDone.length / subTasks.length) * 100);
@@ -32,13 +34,12 @@ function SubTasks({
   return subTasks.length > 0 && (
     <Box
       display="flex"
-      border="2px solid"
-      borderColor="blue.default"
       borderRadius="18px"
       p="16px 22px"
       mt="18px"
       gridGap="19px"
       alignItems="center"
+      background={backgroundColor5}
       {...variantContainerStyles[variant]}
       {...rest}
     >

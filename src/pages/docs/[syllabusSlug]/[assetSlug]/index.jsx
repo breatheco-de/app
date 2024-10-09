@@ -25,7 +25,7 @@ import Link from '../../../../common/components/NextChakraLink';
 import Icon from '../../../../common/components/Icon';
 import { cleanObject, getExtensionName } from '../../../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
-import MarkDownParser from '../../../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../../../common/components/MarkDownParser/ArticleMarkdown';
 import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
@@ -431,7 +431,7 @@ function Docs({ syllabusData, moduleMap }) {
               width={{ base: '100%', md: 'auto' }}
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
-              <MarkDownParser content={markdownData.content} withToc isPublic />
+              <ArticleMarkdown content={markdownData.content} withToc />
             </Box>
           )}
 
