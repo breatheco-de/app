@@ -133,10 +133,12 @@ function SyllabusContent() {
   };
 
   const scrollMainContainerTop = () => {
-    mainContainer.current.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    if (mainContainer?.current) {
+      mainContainer.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
@@ -458,6 +460,7 @@ function SyllabusContent() {
   const handlePrevPage = () => {
     cleanCurrentData();
     scrollMainContainerTop();
+    console.log('HEY!!');
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);

@@ -60,7 +60,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
     <>
       <Box
         position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }}
-        display={{ base: Open ? 'initial' : 'none', lg: Open ? 'flex' : 'none' }}
+        display={Open ? 'flex' : 'none'}
         flex="0 0 auto"
         minWidth="290px"
         width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }}
