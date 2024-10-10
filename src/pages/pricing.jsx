@@ -45,7 +45,7 @@ function PricingView() {
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
-  const { hexColor, featuredColor } = useStyle();
+  const { hexColor, modal } = useStyle();
   const [isFetching, setIsFetching] = useState({
     courses: true,
     selectedPlan: true,
@@ -264,8 +264,10 @@ function PricingView() {
   const existentOptions = switcherInfo.filter((l) => l.exists);
   const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
 
+  console.log(publicMktCourses);
+
   return (
-    <>
+    <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
       {isFetching.courses && (
         <LoaderScreen position="fixed" />
       )}
@@ -273,34 +275,34 @@ function PricingView() {
         maxWidth="1280px"
         position="relative"
         margin="0 auto"
-        my="4rem"
         padding="0 10px"
       >
         <Box marginBottom="20px">
-          <Heading marginBottom="20px" size="xl" as="h2" textAlign="center">
-            {t('heading')}
-          </Heading>
-          <Text maxWidth="900px" margin="0 auto" textAlign="center" text marginBottom="60px" fontSize="26px">
-            {t('sub-heading')}
-          </Text>
 
           {!isAbleToShowPrices && (
             <Flex
               direction={['column', 'column', 'row', 'row']}
             >
-              <Text
-                size="38px"
-                flexShrink={[0, 0, 1, 1]}
-                fontWeight="700"
-                textAlign={['center', 'center', 'left', 'left']}
-                width={['100%', '100%', '305px', '305px']}
-              >
-                {t('choose-your-career-path')}
-              </Text>
+              <Box maxWidth="350px">
+                <Text size="xl" as="h2" textAlign="start" color={hexColor.blueDefault}>
+                  {t('heading')}
+                </Text>
+                <Text
+                  size="30px"
+                  flexShrink={[0, 0, 1, 1]}
+                  fontWeight="700"
+                  width={['100%', '100%', '100%', '100%']}
+                >
+                  {t('choose-your-career-path')}
+                </Text>
+                <Text marginBottom="26px" size="xl" as="h2" textAlign="start">
+                  {t('sub-heading')}
+                </Text>
+              </Box>
               <DraggableContainer>
                 <Flex gridGap="24px">
                   {publicMktCourses?.length > 0 && publicMktCourses.slice(0, 2).map((course) => (
-                    <Flex key={course.slug} borderRadius="8px" padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative" border="1px solid" borderColor={hexColor.borderColor}>
+                    <Flex key={course.slug} borderRadius="8px" background={modal.background3} padding="24px 8px 8px" margin="43px 0 0 0" justifyContent="space-between" minHeight="200px" width={['23rem', '23rem', '27rem', '27rem']} minWidth={['23rem', '23rem', '27rem', '27rem']} flexDirection="column" gridGap="16px" position="relative">
                       <Box position="absolute" borderRadius="full" top="-30px">
                         <Img src={course.icon_url} width="44px" height="44px" />
                       </Box>
@@ -310,6 +312,7 @@ function PricingView() {
                           as="h3"
                           lineHeight="normal"
                           fontWeight="700"
+                          color={course.color}
                         >
                           {course?.course_translation?.title}
                         </Heading>
@@ -320,8 +323,25 @@ function PricingView() {
                           {course?.course_translation?.description}
                         </Text>
                       </Flex>
+                      <Link
+                        variant="buttonDefault"
+                        borderRadius="3px"
+                        href={`/${lang}/pricing?course=${course?.slug}`}
+                        textAlign="center"
+                        width="100%"
+                        opacity="0.9"
+                        _hover={{ opacity: 1 }}
+                        _active={{ opacity: 1 }}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        gap="10px"
+                      >
+                        <Text fontSize="auto">{t('see-plans-and-prices')}</Text>
+                        <Icon icon="longArrowRight" width="18px" height="18px" color="white" />
+                      </Link>
                       {course?.course_translation?.landing_variables?.length > 0 && (
-                        <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px" backgroundColor={featuredColor}>
+                        <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px">
                           {course?.course_translation?.landing_variables.map((content) => {
                             const isUrlImage = content?.icon?.includes('http');
                             return (
@@ -343,18 +363,6 @@ function PricingView() {
                           })}
                         </Flex>
                       )}
-                      <Link
-                        variant="buttonDefault"
-                        borderRadius="3px"
-                        href={`/${lang}/pricing?course=${course?.slug}`}
-                        textAlign="center"
-                        width="100%"
-                        opacity="0.9"
-                        _hover={{ opacity: 1 }}
-                        _active={{ opacity: 1 }}
-                      >
-                        {t('see-plans-and-prices')}
-                      </Link>
                     </Flex>
                   ))}
                 </Flex>
@@ -493,7 +501,7 @@ function PricingView() {
           </Text>
         </Box>
       </Container>
-    </>
+    </Container>
   );
 }
 
