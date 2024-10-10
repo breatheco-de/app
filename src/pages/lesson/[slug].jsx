@@ -7,7 +7,7 @@ import Head from 'next/head';
 import Icon from '../../common/components/Icon';
 import { cleanObject, getExtensionName } from '../../utils';
 import Link from '../../common/components/NextChakraLink';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
 import TagCapsule from '../../common/components/TagCapsule';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
@@ -274,7 +274,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                 width={{ base: '100%', md: 'auto' }}
                 className={`markdown-body ${useColorModeValue('light', 'dark')}`}
               >
-                <MarkDownParser assetData={lesson} content={markdownData.content} withToc isPublic />
+                <ArticleMarkdown assetData={lesson} content={markdownData.content} withToc isPublic />
               </Box>
               {lesson?.slug && (
                 <RelatedContent

@@ -370,6 +370,13 @@ const breathecode = {
       meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
     };
   },
+  provisioning: (query = {}) => {
+    const url = `${host}/provisioning`;
+    const qs = parseQuerys(query);
+    return {
+      academyVendors: (academy) => axios.get(`${url}/academy/${academy}/provisioningprofile${qs}`),
+    };
+  },
 };
 
 export default breathecode;

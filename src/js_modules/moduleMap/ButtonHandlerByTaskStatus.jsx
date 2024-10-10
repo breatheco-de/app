@@ -51,7 +51,7 @@ export function ButtonHandlerByTaskStatus({
     }
   };
 
-  const textAndIcon = textByTaskStatus(currentTask || {});
+  const textAndIcon = textByTaskStatus(currentTask);
 
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {

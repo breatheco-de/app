@@ -13,7 +13,7 @@ import useAuth from '../../common/hooks/useAuth';
 import FixedBottomCta from '../../js_modules/projects/FixedBottomCta';
 import SimpleTable from '../../js_modules/projects/SimpleTable';
 import TabletWithForm from '../../js_modules/projects/TabletWithForm';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 import getMarkDownContent from '../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../common/components/GridContainer';
@@ -334,7 +334,7 @@ function ProjectSlug({ project, markdown }) {
             >
               <Box className={`markdown-body ${colorMode === 'light' ? 'light' : 'dark'}`}>
                 {typeof markdown === 'string' ? (
-                  <MarkDownParser assetData={project} content={markdownData.content} withToc />
+                  <ArticleMarkdown assetData={project} content={markdownData.content} withToc />
                 ) : (
                   <MDSkeleton />
                 )}
