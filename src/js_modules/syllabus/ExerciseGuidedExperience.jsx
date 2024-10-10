@@ -1,30 +1,22 @@
 import { useState, useEffect } from 'react';
 import {
-  Box, Button,
+  Box,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import ModalToCloneProject from './ModalToCloneProject';
+import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
-// import modifyEnv from '../../../modifyEnv';
-// import useCohortHandler from '../../common/hooks/useCohortHandler';
-// import NextChakraLink from '../../common/components/NextChakraLink';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
-  const [showCloneModal, setShowCloneModal] = useState(false);
   const [telemetryReport, setTelemetryReport] = useState([]);
-  // const { state } = useCohortHandler();
-  // const { cohortSession } = state;
-  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
 
@@ -103,10 +95,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     }
   }, [currentTask]);
 
-  // const token = localStorage.getItem('accessToken');
-  // const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
-  // const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
-
   return (
     <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
       <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
@@ -155,53 +143,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
           </Box>
         )}
       </Box>
-      <Box background="blue.1100" borderRadius="11px" padding="16px">
-        <Box display="flex" gap="16px">
-          <Icon icon="learnpack" width="102px" height="102px" />
-          <Box>
-            <Heading size="xsm" mb="15px" color="white">
-              {t('common:learnpack.title')}
-            </Heading>
-            <Text
-              size="l"
-              color="white"
-              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentTask?.title }) }}
-            />
-          </Box>
-        </Box>
-        <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {/*
-          <NextChakraLink
-            target="__blank"
-            href={isExerciseStated ? continueWorkSpace : newWorkspace}
-            borderRadius="3px"
-            background="white"
-            color="blue.1000"
-            padding="7px 16px !important"
-            display="flex"
-            gap="16px"
-            alignItems="center"
-            textDecoration="none"
-            _hover={{ opacity: 0.7 }}
-            fontSize="17px"
-          >
-            <Icon icon="prov-bridge" width="20px" height="20px" />
-            {t('common:learnpack.open-in-learnpack-button.text')}
-          </NextChakraLink>
-          */}
-          <Button
-            variant="outline"
-            borderColor="white"
-            color="white"
-            whiteSpace="normal"
-            onClick={() => setShowCloneModal(true)}
-            fontSize="17px"
-          >
-            {t('common:learnpack.open-locally')}
-          </Button>
-        </Box>
-      </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
+      <OpenWithLearnpackCTA currentAsset={currentAsset} />
     </Box>
   );
 }
