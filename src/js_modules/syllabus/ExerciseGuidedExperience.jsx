@@ -104,6 +104,13 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     }
   }, [currentTask]);
 
+  reportDatalayer({
+    dataLayer: {
+      event: 'open_learnpack_instructions',
+      asset_slug: currentAsset?.slug,
+    },
+  });
+
   // const token = localStorage.getItem('accessToken');
   // const newWorkspace = `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
   // const continueWorkSpace = `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${token}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`;
@@ -195,15 +202,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             borderColor="white"
             color="white"
             whiteSpace="normal"
-            onClick={() => {
-              reportDatalayer({
-                dataLayer: {
-                  event: 'open_learnpack_locally',
-                  asset_slug: currentAsset?.slug,
-                },
-              });
-              setShowCloneModal(true);
-            }}
+            onClick={() => setShowCloneModal(true)}
             fontSize="17px"
           >
             {t('common:learnpack.open-locally')}
