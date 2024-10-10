@@ -16,27 +16,15 @@ function ButtonHandler({
   const planSlug = subscription?.plans?.[0]?.slug;
   const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
 
-  const {
-    getPlanOffer,
-  } = profileHandlers({});
-
+  const { getPlanOffer } = profileHandlers({});
   const handlePlanOffer = () => {
     setIsLoading(true);
-    getPlanOffer({ slug: planSlug, onOpenUpgrade })
-      .finally(() => setIsLoading(false));
+    getPlanOffer({ slug: planSlug, onOpenUpgrade }).finally(() => setIsLoading(false));
   };
 
   const getStyles = () => {
-    if (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
-      return {
-        text: t('subscription.cancel'),
-        style: {
-          variant: 'link',
-        },
-      };
-    }
-
-    if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)) {
+    if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)
+      || (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID') && subscription?.planOffer.slug)) {
       return {
         text: t('subscription.upgrade'),
         style: {
@@ -44,6 +32,15 @@ function ButtonHandler({
           color: 'blue.default',
           borderColor: 'currentColor',
           fontWeight: 700,
+        },
+      };
+    }
+
+    if (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID')) {
+      return {
+        text: t('subscription.cancel'),
+        style: {
+          variant: 'link',
         },
       };
     }
@@ -104,8 +101,8 @@ function ButtonHandler({
           isLoading={isLoading}
           onClick={() => {
             if (isPlanFinancingExpired) handlePlanOffer();
-            if (['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) handlePlanOffer();
-            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing') onOpenCancelSubscription();
+            if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer.slug)) handlePlanOffer();
+            if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer.slug) onOpenCancelSubscription();
             setSubscriptionProps(subscription);
           }}
           color="blue.default"
@@ -131,9 +128,9 @@ ButtonHandler.propTypes = {
 
 ButtonHandler.defaultProps = {
   subscription: {},
-  onOpenUpgrade: () => {},
-  setSubscriptionProps: () => {},
-  onOpenCancelSubscription: () => {},
+  onOpenUpgrade: () => { },
+  setSubscriptionProps: () => { },
+  onOpenCancelSubscription: () => { },
   restStyles: {},
   children: null,
 };
