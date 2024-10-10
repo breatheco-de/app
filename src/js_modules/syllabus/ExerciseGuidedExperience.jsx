@@ -13,6 +13,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import { intervalToHours } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 // import modifyEnv from '../../../modifyEnv';
 // import useCohortHandler from '../../common/hooks/useCohortHandler';
 // import NextChakraLink from '../../common/components/NextChakraLink';
@@ -194,7 +195,15 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
             borderColor="white"
             color="white"
             whiteSpace="normal"
-            onClick={() => setShowCloneModal(true)}
+            onClick={() => {
+              reportDatalayer({
+                dataLayer: {
+                  event: 'open_learnpack_locally',
+                  asset_slug: currentAsset?.slug,
+                },
+              });
+              setShowCloneModal(true)
+            }}
             fontSize="17px"
           >
             {t('common:learnpack.open-locally')}
