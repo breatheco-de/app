@@ -131,7 +131,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
               )}
             </Box>
             {cohortSession?.available_as_saas && (
-              <NextChakraLink href="/choose-program" target="_blank" color={hexColor.blueDefault} textAlign="center">
+              <NextChakraLink href="/mentorship/schedule" target="_blank" color={hexColor.blueDefault} textAlign="center">
                 {t('common:learnpack.clone-modal.need-help')}
                 {' '}
                 →
