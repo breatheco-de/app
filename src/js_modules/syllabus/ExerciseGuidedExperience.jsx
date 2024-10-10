@@ -202,7 +202,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
                   asset_slug: currentAsset?.slug,
                 },
               });
-              setShowCloneModal(true)
+              setShowCloneModal(true);
             }}
             fontSize="17px"
           >
