@@ -175,7 +175,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -188,7 +189,7 @@
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
-              "source-label": "Instalar nvm"
+              "source-label": "Ir a cómo instalar NVM en MacOS"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -200,7 +201,8 @@
               "label": "Clona el proyecto en tu computadora",
               "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         },
@@ -213,7 +215,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -225,7 +228,8 @@
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
               "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
-              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux"
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
+              "source-label": "Ir a cómo instalar NVM en Linux"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -237,7 +241,8 @@
               "label": "Clonar el proyecto en tu computadora",
               "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         },
@@ -250,7 +255,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -262,7 +268,8 @@
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Windows.",
               "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
-              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows"
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
+              "source-label": "Ir a cómo instalar NVM en Windows"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -280,7 +287,8 @@
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         }
