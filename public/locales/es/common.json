@@ -160,33 +160,32 @@
       },
       "agent-os": {
         "label": "Abrir el proyecto sin VSCode",
-        "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack:",
-        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-        "code": "$ cd {{repoName}}\n$ learnpack start\n"
+        "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```",
+        "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
       "os-list": [
         {
           "name": "macos",
-          "label": "macOS",
+          "label": "MacOS",
           "logo": "/static/images/apple.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm"
             },
             {
-              "label": "Instal Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala LearnPack en tu computadora",
+              "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Clona el proyecto en tu computadora",
+              "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
             }
           ]
         },
@@ -196,22 +195,22 @@
           "logo": "/static/images/linux.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
+              "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
+              "source": "https://4geeks.com/how-to/install-nvm-linux"
             },
             {
-              "label": "Instal Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala LearnPack en tu computadora",
+              "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Clonar el proyecto en tu computadora",
+              "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
             }
           ]
         },
@@ -221,22 +220,28 @@
           "logo": "/static/images/windows.png",
           "steps": [
             {
-              "label": "Instal node.js on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala Node.JS en tu computadora",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Windows.",
+              "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows"
             },
             {
-              "label": "Instal Learnpack on your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala LearnPack en tu computadora",
+              "description": "Debes instalar LearnPack para poder correr estos ejercicios de forma interactiva en tu computadora. Para esto debes correr este comando: `npm install @learnpack/learnpack -g`. Abre el siguiente link si quieres leer más sobre LearnPack.",
+              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
-              "label": "Clone project into your computer",
-              "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu",
-              "video": "https://www.youtube.com/watch?v=1I6IiRVYHEo",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "label": "Instala GIT en tu computadora",
+              "description": "Debes instalar GIT para poder clonar el repositorio de GitHub localmente. Para esto sigue los pasos del siguiente link.",
+              "video": "https://www.youtube.com/watch?v=zyrhDewSa2c",
+              "source": "https://git-scm.com/downloads/win"
+            },
+            {
+              "label": "Clona el proyecto en tu computadora",
+              "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
             }
           ]
         }

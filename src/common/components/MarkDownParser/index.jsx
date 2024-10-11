@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -7,12 +8,28 @@ import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
 import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
-import { Img } from '@chakra-ui/react';
+import {
+  Img,
+  Box,
+  Button,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalOverlay,
+  Image,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+  Checkbox,
+} from '@chakra-ui/react';
+import useTranslation from 'next-translate/useTranslation';
 import AnchorJS from 'anchor-js';
+import useCohortHandler from '../../hooks/useCohortHandler';
+import useStyle from '../../hooks/useStyle';
 import bc from '../../services/breathecode';
-import OpenWithLearnpackCTA from '../../../js_modules/syllabus/OpenWithLearnpackCTA';
-
-// import { useRouter } from 'next/router';
+import modifyEnv from '../../../../modifyEnv';
 import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
@@ -21,7 +38,12 @@ import useModuleHandler from '../../hooks/useModuleHandler';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
+import Heading from '../Heading';
+import Text from '../Text';
+import NextChakraLink from '../NextChakraLink';
+import ReactPlayerV2 from '../ReactPlayerV2';
 import SubTasks from './SubTasks';
+import CallToAction from '../CallToAction';
 import DynamicCallToAction from '../DynamicCallToAction';
 
 function MarkdownH2Heading({ children }) {
@@ -131,6 +153,201 @@ function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, 
     />
   ) : (
     <li>{props?.children}</li>
+  );
+}
+
+function OpenWithLearnpackCTA({ currentAsset }) {
+  const { t, lang } = useTranslation('common');
+  const [learnpackActions, setLearnpackActions] = useState([]);
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
+  const [showCloneModal, setShowCloneModal] = useState(false);
+  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
+  const accessToken = localStorage.getItem('accessToken');
+
+  const provisioningLinks = [{
+    title: t('learnpack.new-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`,
+    isExternalLink: true,
+  },
+  {
+    title: t('learnpack.continue-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSession?.id}&repo=${currentAsset?.url}`,
+    isExternalLink: true,
+  }];
+
+  useEffect(() => {
+    const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+    const localhostAction = {
+      text: `${t('learnpack.open-locally')}${cohortSession?.available_as_saas ? ` (${t('learnpack.recommended')})` : ''}`,
+      type: 'button',
+      onClick: () => {
+        setShowCloneModal(true);
+      },
+    };
+    const cloudActions = {
+      ...openInLearnpackAction,
+      text: `${openInLearnpackAction.text}${cohortSession?.available_as_saas === false ? ` (${t('learnpack.recommended')})` : ''}`,
+      links: provisioningLinks,
+    };
+    if (cohortSession?.id) {
+      if (!currentAsset?.gitpod) setLearnpackActions([localhostAction]);
+      else if (cohortSession.available_as_saas) setLearnpackActions([localhostAction, cloudActions]);
+      else setLearnpackActions([cloudActions, localhostAction]);
+    }
+  }, [lang, cohortSession?.id, currentAsset?.url]);
+
+  return (
+    <>
+      <CallToAction
+        buttonStyle={{
+          color: 'white',
+        }}
+        background="blue.default"
+        reverseButtons={cohortSession?.available_as_saas}
+        margin="12px 0 20px 0px"
+        icon="learnpack"
+        text={t('learnpack.description', { projectName: currentAsset?.title })}
+        width={{ base: '100%', md: 'fit-content' }}
+        buttonsData={learnpackActions}
+        buttonsContainerStyles={{ alignSelf: 'auto' }}
+      />
+      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
+    </>
+  );
+}
+
+function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
+  const { t } = useTranslation('syllabus');
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
+  const [selectedOs, setSelectedOs] = useState(null);
+  const [expanded, setExpanded] = useState(0);
+  const { featuredLight, hexColor, borderColor } = useStyle();
+
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
+  const repoName = urlToClone.split('/').pop();
+
+  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: urlToClone }, { returnObjects: true });
+  const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
+  const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
+
+  const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
+
+  const steps = selectedOs?.steps.concat([finalStep]);
+
+  const resetSelector = () => {
+    setSelectedOs(null);
+    setExpanded(0);
+  };
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+      <ModalOverlay />
+      <ModalContent padding="16px" overflow="auto">
+        <ModalCloseButton />
+        <Box display="flex" gap="16px" height="100%" minHeight="100%">
+          <Box width={{ base: '100%', md: '50%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+            <Box>
+              <Heading size="sm" fontWeight="400">
+                {t('common:learnpack.clone-modal.title')}
+              </Heading>
+              <Text mt="16px" size="18px">
+                {t('common:learnpack.clone-modal.description')}
+              </Text>
+              {!selectedOs && (
+                <Box padding="16px">
+                  <Text fontFamily="Space Grotesk Variable" fontWeight="500" fontSize="18px">
+                    {t('common:learnpack.clone-modal.select-os')}
+                  </Text>
+                  <Box mt="12px" display="flex" gap="12px">
+                    {osList.map((os) => (
+                      <Box
+                        borderRadius="8px"
+                        width="140px"
+                        height="140px"
+                        background={featuredLight}
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="center"
+                        cursor="pointer"
+                        onClick={() => setSelectedOs(os)}
+                        _active={{
+                          background: hexColor.featuredColor,
+                          border: '1px solid',
+                          borderColor: hexColor.blueDefault,
+                        }}
+                      >
+                        <Image src={os.logo} alt={os.label} margin="auto" />
+                      </Box>
+                    ))}
+                  </Box>
+                </Box>
+              )}
+              {selectedOs && (
+                <Box>
+                  <Button variant="link" textDecoration="none" onClick={resetSelector}>
+                    ←
+                    {'  '}
+                    {t('common:go-back')}
+                  </Button>
+                  <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
+                    {steps.map((step, i) => (
+                      <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
+                        <Heading position="relative" as="h3">
+                          <Checkbox top="10px" left="16px" position="absolute" />
+                          <AccordionButton cursor="pointer" _expanded={{ color: ('blue.default') }}>
+                            <Box marginLeft="26px" fontFamily="Space Grotesk Variable" as="span" flex="1" fontSize="18px" textAlign="left">
+                              {`${i + 2}.`}
+                              {'  '}
+                              {step.label}
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </Heading>
+                        <AccordionPanel>
+                          <MarkDownParser
+                            content={step.description}
+                            showLineNumbers={false}
+                          />
+                          {step.source && (
+                            <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
+                              {t('common:learn-more')}
+                            </NextChakraLink>
+                          )}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    ))}
+
+                  </Accordion>
+                </Box>
+              )}
+            </Box>
+            {cohortSession?.available_as_saas && (
+              <NextChakraLink href="/choose-program" target="_blank" color={hexColor.blueDefault} textAlign="center">
+                {t('common:learnpack.clone-modal.need-help')}
+                {' '}
+                →
+              </NextChakraLink>
+            )}
+          </Box>
+          <Box width="50%" display={{ base: 'none', md: 'block' }} paddingTop="20px">
+            {selectedOs ? (
+              <ReactPlayerV2
+                className="react-player-border-radius"
+                containerStyle={{ height: '100%' }}
+                iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
+                url={steps && steps[expanded]?.video}
+                height="100%"
+              />
+            ) : (
+              <Box background={featuredLight} borderRadius="11px" width="100%" height="100%" />
+            )}
+          </Box>
+        </Box>
+      </ModalContent>
+    </Modal>
   );
 }
 
@@ -334,5 +551,7 @@ MarkDownParser.defaultProps = {
   isGuidedExperience: false,
   showContentHeading: true,
 };
+
+export { ModalToCloneProject };
 
 export default MarkDownParser;
