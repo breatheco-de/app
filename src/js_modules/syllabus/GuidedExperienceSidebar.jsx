@@ -24,17 +24,16 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const [moduleLoading, setModuleLoading] = useState(false);
   const { state } = useCohortHandler();
   const { cohortSession, sortedAssignments } = state;
+  const { hexColor, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 
   const Open = !isOpen;
   const { height, display, position, zIndex, ...slideStyles } = getSlideProps(Open);
-  const {
-    currentThemeValue,
-  } = Config();
-  const { hexColor } = useStyle();
+  const { currentThemeValue } = Config();
 
   const currentModule = sortedAssignments[currentModuleIndex];
   const nextModule = sortedAssignments[currentModuleIndex + 1];
+  const prevModule = sortedAssignments[currentModuleIndex - 1];
 
   const openNextModule = async () => {
     try {
@@ -52,11 +51,16 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
     }
   };
 
+  const openPrevModule = () => {
+    const assignment = prevModule.modules[0];
+    onClickAssignment(null, assignment);
+  };
+
   return (
     <>
       <Box
         position={{ base: 'fixed', lg: Open ? 'initial' : 'fixed' }}
-        display={{ base: Open ? 'initial' : 'none', lg: Open ? 'flex' : 'none' }}
+        display={Open ? 'flex' : 'none'}
         flex="0 0 auto"
         minWidth="290px"
         width={{ base: '74.6vw', md: '46.6vw', lg: '26.6vw' }}
@@ -66,34 +70,72 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         height={{ base: '100vh', lg: 'auto' }}
         style={{ ...slideStyles, background }}
       >
-        <Box
-          padding="16px"
-          display="flex"
-          flexDirection="column"
-          gridGap="6px"
-          top={0}
-          zIndex={200}
-        >
+        <Box display="flex" flexDirection="column" gap="8px">
           {cohortSession?.syllabus_version && (
-            <Box display="flex" alignItems="center" gap="10px">
-              {cohortSession?.syllabus_version?.logo && (
-              <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-              )}
-              <Heading size="18px">{cohortSession.syllabus_version?.name}</Heading>
+            <Box padding="16px" background={backgroundColor4} display="flex" flexDirection="column" gap="16px">
+              <NextChakraLink width="fit-content" variant="ghost" display="flex" gap="10px" href={cohortSession.selectedProgramSlug}>
+                <Icon icon="layout" width="19px" height="20px" />
+                <Heading display="inline" size="18px" fontWeight="400">
+                  {t('back-to-program')}
+                </Heading>
+              </NextChakraLink>
+              <Box display="flex" alignItems="center" gap="10px">
+                {cohortSession?.syllabus_version?.logo && (
+                  <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                )}
+                <Heading size="18px">{cohortSession.syllabus_version?.name}</Heading>
+              </Box>
             </Box>
           )}
+
           <Button
-            aria-label="Close Timeline"
+            size="sm"
+            aria-label={t(Open ? 'hide-menu' : 'show-menu')}
             gap="10px"
-            variant="ghost"
-            onClick={onToggle}
+            fontSize="12px"
+            fontWeight="500"
+            borderRadius="4px"
+            background={backgroundColor}
             color={hexColor.blueDefault}
+            onClick={onToggle}
             display={{ base: 'flex', lg: 'none' }}
             width="fit-content"
+            marginLeft="16px"
           >
             <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
             {t(Open ? 'hide-menu' : 'show-menu')}
           </Button>
+          {prevModule && (
+            <Box paddingX="15px">
+              <Button
+                variant="ghost"
+                cursor="pointer"
+                display="flex"
+                alignItems="center"
+                width="100%"
+                justifyContent="flex-start"
+                gap="10px"
+                onClick={openPrevModule}
+                textAlign="left"
+                paddingY="5px"
+                height="fit-content"
+                lineHeight="1.7"
+                isDisabled={moduleLoading}
+              >
+                <Icon icon="arrowLeft" color={hexColor.black} />
+                <span>
+                  <Text as="span" color={fontColor2}>
+                    {t('back-to-previous')}
+                  </Text>
+                  <br />
+                  <Text as="span" mt="8px">
+                    {prevModule.label}
+                  </Text>
+                </span>
+              </Button>
+              <Divider mt="5px" borderColor="#D3DBE9" />
+            </Box>
+          )}
         </Box>
 
         <Box
@@ -107,17 +149,11 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
         >
           {currentModule && grantSyllabusAccess ? (
             <>
-              <Box mb="8px" display="flex" gap="10px" alignItems="center">
-                <NextChakraLink variant="ghost" href={cohortSession.selectedProgramSlug}>
-                  <Icon style={{ display: 'inline' }} icon="arrowLeft" width="19px" height="10px" />
-                  {'  '}
-                  {currentModule.label && (
-                    <Heading display="inline" size="18px" fontWeight="400">
-                      {currentModule.label.toUpperCase()}
-                    </Heading>
-                  )}
-                </NextChakraLink>
-              </Box>
+              {currentModule.label && (
+                <Heading mb="16px" size="18px" fontWeight="400">
+                  {currentModule.label.toUpperCase()}
+                </Heading>
+              )}
               <Timeline
                 variant="guided-experience"
                 assignments={currentModule.filteredModules}
@@ -126,32 +162,32 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
               />
               <Divider borderColor="#D3DBE9" />
               {nextModule && (
-              <Button
-                variant="ghost"
-                cursor="pointer"
-                display="flex"
-                mt="8px"
-                alignItems="center"
-                width="100%"
-                justifyContent="space-between"
-                onClick={openNextModule}
-                textAlign="left"
-                paddingY="5px"
-                height="fit-content"
-                lineHeight="1.7"
-                isLoading={moduleLoading}
-              >
-                <span>
-                  <Text as="span">
-                    {t('start-next')}
-                  </Text>
-                  <br />
-                  <Text as="span" color={hexColor.blueDefault} mt="8px">
-                    {nextModule.label}
-                  </Text>
-                </span>
-                <Icon icon="arrowLeft" style={{ transform: 'rotate(180deg)' }} color={hexColor.blueDefault} />
-              </Button>
+                <Button
+                  variant="ghost"
+                  cursor="pointer"
+                  display="flex"
+                  mt="8px"
+                  alignItems="center"
+                  width="100%"
+                  justifyContent="space-between"
+                  onClick={openNextModule}
+                  textAlign="left"
+                  paddingY="5px"
+                  height="fit-content"
+                  lineHeight="1.7"
+                  isLoading={moduleLoading}
+                >
+                  <span>
+                    <Text as="span">
+                      {t('start-next')}
+                    </Text>
+                    <br />
+                    <Text as="span" color={hexColor.blueDefault} mt="8px">
+                      {nextModule.label}
+                    </Text>
+                  </span>
+                  <Icon icon="arrowLeft" style={{ transform: 'rotate(180deg)' }} color={hexColor.blueDefault} />
+                </Button>
               )}
             </>
           ) : (
