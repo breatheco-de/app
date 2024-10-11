@@ -14,6 +14,7 @@ import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
@@ -36,7 +37,8 @@ function PaymentInfo() {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
   const cohortId = Number(getQueryString('cohort'));
-  const { setCohortSession } = useCohortHandler();
+  const { setCohortSession, getCohortAssignments } = useCohortHandler();
+  const { cohortProgram } = useModuleHandler();
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
     title: '',
@@ -68,7 +70,15 @@ function PaymentInfo() {
       ...cohortFound,
       selectedProgramSlug: cohortDashboardLink,
     });
-    router.push(cohortDashboardLink);
+
+    getCohortAssignments(
+      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound },
+    );
+
+    console.log(cohortProgram);
+    console.log('FINAL DE LA FUNCION');
+    // router.push(cohortDashboardLink);
+    // router.push(cohortDashboardLink);
   };
 
   const joinCohort = (cohort) => {

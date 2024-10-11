@@ -129,7 +129,26 @@ function SyllabusContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // useEffect(() => {
+  //   const handleStartDay = () => {
+  //     const updatedTasks = (sortedAssignments[0]?.modules || [])?.map((l) => ({
+  //       ...l,
+  //       title: l.title,
+  //       associated_slug: l?.slug?.slug || l.slug,
+  //       description: '',
+  //       task_type: l.task_type,
+  //       cohort: cohortSession.id,
+  //     }));
+  //     startDay({
+  //       newTasks: updatedTasks,
+  //     });
+  //   };
+
+  //   handleStartDay();
+  // }, [])
+
   const handleStartDay = async (module = null, avoidRedirect = false) => {
+    console.log('hola', module);
     const moduleToUpdate = module?.modules || nextModule.modules;
     const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
@@ -182,7 +201,7 @@ function SyllabusContent() {
     const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-      && el.associated_slug === assetSlug));
+        && el.associated_slug === assetSlug));
     }
   }, [taskTodo, lessonSlug, lesson]);
 
@@ -928,62 +947,62 @@ function SyllabusContent() {
                           fileData={fileData}
                         />
                         {currentTask?.task_status === 'DONE' && showModal && (
-                        <ShareButton
-                          variant="outline"
-                          title={t('projects:share-certificate.title')}
-                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                          link={shareLink}
-                          socials={socials}
-                          currentTask={currentTask}
-                          onlyModal
-                          withParty
-                        />
+                          <ShareButton
+                            variant="outline"
+                            title={t('projects:share-certificate.title')}
+                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                            link={shareLink}
+                            socials={socials}
+                            currentTask={currentTask}
+                            onlyModal
+                            withParty
+                          />
                         )}
                       </Box>
                       <Box display="flex" gridGap="3rem">
                         {(previousAssignment || !!prevModule) && (
-                        <Box
-                          color="blue.default"
-                          cursor="pointer"
-                          fontSize="15px"
-                          display="flex"
-                          alignItems="center"
-                          gridGap="10px"
-                          letterSpacing="0.05em"
-                          fontWeight="700"
-                          onClick={prevPage}
-                        >
                           <Box
-                            as="span"
-                            display="block"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="15px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            letterSpacing="0.05em"
+                            fontWeight="700"
+                            onClick={prevPage}
                           >
-                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            <Box
+                              as="span"
+                              display="block"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
+                            {t('previous-page')}
                           </Box>
-                          {t('previous-page')}
-                        </Box>
                         )}
 
                         {(nextAssignment || !!nextModule) && (
-                        <Box
-                          color="blue.default"
-                          cursor="pointer"
-                          fontSize="15px"
-                          display="flex"
-                          alignItems="center"
-                          gridGap="10px"
-                          letterSpacing="0.05em"
-                          fontWeight="700"
-                          onClick={nextPage}
-                        >
-                          {t('next-page')}
                           <Box
-                            as="span"
-                            display="block"
-                            transform="rotate(180deg)"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="15px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            letterSpacing="0.05em"
+                            fontWeight="700"
+                            onClick={nextPage}
                           >
-                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            {t('next-page')}
+                            <Box
+                              as="span"
+                              display="block"
+                              transform="rotate(180deg)"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
                           </Box>
-                        </Box>
                         )}
                       </Box>
                     </Box>
@@ -993,108 +1012,108 @@ function SyllabusContent() {
                       <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
                         {/* TODO: Hiding it until it's fixed */}
                         {false && (isLesson || isProject) && (
-                        <Tooltip label={t('get-help')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={openAiChat}
-                            style={{ color: fontColor, textDecoration: 'none' }}
-                            isLoading={isLoadingRigobot}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                          <Tooltip label={t('get-help')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={openAiChat}
+                              style={{ color: fontColor, textDecoration: 'none' }}
+                              isLoading={isLoadingRigobot}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {repoUrl && (isLesson || isProject) && (
-                        <Tooltip label={t('contribute')} placement="top">
-                          <Link
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            borderRadius="full"
-                            variant="default"
-                            href={repoUrl}
-                            style={{ color: fontColor, textDecoration: 'none' }}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
-                          </Link>
-                        </Tooltip>
+                          <Tooltip label={t('contribute')} placement="top">
+                            <Link
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              borderRadius="full"
+                              variant="default"
+                              href={repoUrl}
+                              style={{ color: fontColor, textDecoration: 'none' }}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
+                            </Link>
+                          </Tooltip>
                         )}
                         {isLesson && currentAsset?.intro_video_url && (
-                        <Tooltip label={t('watch-intro')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={() => setModalIntroOpen(true)}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                          <Tooltip label={t('watch-intro')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={() => setModalIntroOpen(true)}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {currentAsset?.solution_video_url && (
-                        <Tooltip label={t('solution-video')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={hexColor.blueDefault}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={() => setSolutionVideoOpen(true)}
-                          >
-                            <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                          <Tooltip label={t('solution-video')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={hexColor.blueDefault}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={() => setSolutionVideoOpen(true)}
+                            >
+                              <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {!isExercise && (
-                        <ButtonHandlerByTaskStatus
-                          allowText
-                          isGuidedExperience={isAvailableAsSaas}
-                          variant="rounded"
-                          currentTask={currentTask}
-                          sendProject={sendProject}
-                          changeStatusAssignment={changeStatusAssignment}
-                          currentAssetData={currentAsset}
-                          toggleSettings={toggleSettings}
-                          closeSettings={closeSettings}
-                          settingsOpen={settingsOpen}
-                          handleOpen={handleOpen}
-                          fileData={fileData}
-                        />
+                          <ButtonHandlerByTaskStatus
+                            allowText
+                            isGuidedExperience={isAvailableAsSaas}
+                            variant="rounded"
+                            currentTask={currentTask}
+                            sendProject={sendProject}
+                            changeStatusAssignment={changeStatusAssignment}
+                            currentAssetData={currentAsset}
+                            toggleSettings={toggleSettings}
+                            closeSettings={closeSettings}
+                            settingsOpen={settingsOpen}
+                            handleOpen={handleOpen}
+                            fileData={fileData}
+                          />
                         )}
                         {currentTask?.task_status === 'DONE' && showModal && (
-                        <ShareButton
-                          variant="outline"
-                          title={t('projects:share-certificate.title')}
-                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                          link={shareLink}
-                          socials={socials}
-                          currentTask={currentTask}
-                          onlyModal
-                          withParty
-                        />
+                          <ShareButton
+                            variant="outline"
+                            title={t('projects:share-certificate.title')}
+                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                            link={shareLink}
+                            socials={socials}
+                            currentTask={currentTask}
+                            onlyModal
+                            withParty
+                          />
                         )}
                       </Box>
                     </Box>
@@ -1267,24 +1286,24 @@ function SyllabusContent() {
           </Box>
 
           {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-          <AlertMessage
-            type="info"
-            style={{
-              margin: '20px 0 18px 0',
-            }}
-            dangerouslySetInnerHTML
-            title={t('teacherSidebar.no-need-to-teach-today.title')}
-            message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-          />
+            <AlertMessage
+              type="info"
+              style={{
+                margin: '20px 0 18px 0',
+              }}
+              dangerouslySetInnerHTML
+              title={t('teacherSidebar.no-need-to-teach-today.title')}
+              message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
+            />
           )}
           {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-          <AlertMessage
-            type="warning"
-            style={{
-              margin: '20px 0 18px 0',
-            }}
-            message={t('teacherSidebar.alert-updated-module-instructions')}
-          />
+            <AlertMessage
+              type="warning"
+              style={{
+                margin: '20px 0 18px 0',
+              }}
+              message={t('teacherSidebar.alert-updated-module-instructions')}
+            />
           )}
 
           <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
