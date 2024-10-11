@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link,
   useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
-  ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
+  ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -28,8 +28,8 @@ import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar'
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
-import OpenWithLearnpackCTA from '../../../../../js_modules/syllabus/OpenWithLearnpackCTA';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
+import Topbar from '../../../../../js_modules/syllabus/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import modifyEnv from '../../../../../../modifyEnv';
@@ -59,8 +59,10 @@ function SyllabusContent() {
     setNextModule,
     prevModule,
     setPrevModule,
+    setSubTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
+  const mainContainer = useRef(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
@@ -95,12 +97,13 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, backgroundColor4, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+  const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
@@ -129,6 +132,15 @@ function SyllabusContent() {
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollMainContainerTop = () => {
+    if (mainContainer?.current) {
+      mainContainer.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
@@ -285,6 +297,7 @@ function SyllabusContent() {
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
+    setSubTasks([]);
   };
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
@@ -369,6 +382,7 @@ function SyllabusContent() {
         });
     }
     return () => {
+      cleanCurrentData();
       setUserSession({
         translations: [],
       });
@@ -450,6 +464,7 @@ function SyllabusContent() {
 
   const handleNextPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
@@ -498,6 +513,8 @@ function SyllabusContent() {
 
   const handlePrevPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
+    console.log('HEY!!');
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
@@ -625,7 +642,7 @@ function SyllabusContent() {
 
   const assetTypeStyles = {
     answer: { padding: '0px', height: '100%', mb: '0px' },
-    read: {},
+    read: { borderRadius: '0 0 11px 11px', paddingTop: '20px !important' },
     practice: {},
     project: { ...projectStyles[currentTask?.task_status] },
   };
@@ -732,51 +749,54 @@ function SyllabusContent() {
             maxWidth="1280px"
           >
             {isAvailableAsSaas && (
-              <Box margin="5px 0" display="flex" alignItems="center" justifyContent="space-between">
+              <Box margin="10px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
-                  aria-label="Close Timeline"
+                  size="sm"
+                  aria-label={t(Open ? 'hide-menu' : 'show-menu')}
                   display="flex"
                   gap="10px"
-                  variant="ghost"
-                  onClick={onToggle}
+                  fontSize="12px"
+                  fontWeight="500"
+                  borderRadius="4px"
+                  background={backgroundColor}
                   color={hexColor.blueDefault}
+                  onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 <Box display="flex" gridGap="3rem">
                   {(previousAssignment || !!prevModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={prevPage}
                     >
-                      <Box
-                        as="span"
-                        display="block"
-                      >
-                        <Icon icon="arrowLeft2" width="18px" height="10px" />
-                      </Box>
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
                       {t('previous-page')}
-                    </Box>
+                    </Button>
                   )}
 
                   {(nextAssignment || !!nextModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={nextPage}
                     >
                       {t('next-page')}
@@ -787,7 +807,7 @@ function SyllabusContent() {
                       >
                         <Icon icon="arrowLeft2" width="18px" height="10px" />
                       </Box>
-                    </Box>
+                    </Button>
                   )}
                 </Box>
               </Box>
@@ -797,6 +817,7 @@ function SyllabusContent() {
             ) : (
               <Box
                 id="main-container"
+                ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
@@ -805,6 +826,9 @@ function SyllabusContent() {
               >
                 {isProject && isAvailableAsSaas && currentAsset?.id && (
                   <ProjectBoardGuidedExperience currentAsset={currentAsset} />
+                )}
+                {isAvailableAsSaas && isLesson && currentAsset && (
+                  <Topbar currentAsset={currentAsset} />
                 )}
                 <Box
                   id="markdown-body"
@@ -822,9 +846,6 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {isProject && isAvailableAsSaas && currentAsset?.interactive && (
-                    <OpenWithLearnpackCTA currentAsset={currentAsset} />
-                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
@@ -1046,7 +1067,7 @@ function SyllabusContent() {
                   )}
                   {isAvailableAsSaas && (
                     <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
+                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
                         {/* TODO: Hiding it until it's fixed */}
                         {false && (isLesson || isProject) && (
                           <Tooltip label={t('get-help')} placement="top">
@@ -1183,12 +1204,9 @@ function SyllabusContent() {
           />
         </Box>
       </SimpleModal>
-      <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
+      <Modal isOpen={openNextPageModal} size="xl" onClose={() => setOpenNextPageModal(false)}>
         <ModalOverlay />
         <ModalContent style={{ margin: '3rem 0' }}>
-          <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
-            {assetTypeValues[lesson]}
-          </ModalHeader>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
             <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">

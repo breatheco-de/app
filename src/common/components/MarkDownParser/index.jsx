@@ -7,21 +7,17 @@ import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
 import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
-import { Img } from '@chakra-ui/react';
+import {
+  Img,
+} from '@chakra-ui/react';
 import AnchorJS from 'anchor-js';
 import bc from '../../services/breathecode';
-import OpenWithLearnpackCTA from '../../../js_modules/syllabus/OpenWithLearnpackCTA';
-
-// import { useRouter } from 'next/router';
 import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
 import { usePersistent } from '../../hooks/usePersistent';
 import useModuleHandler from '../../hooks/useModuleHandler';
-import Toc from './toc';
-import ContentHeading from './ContentHeading';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
-import SubTasks from './SubTasks';
 import DynamicCallToAction from '../DynamicCallToAction';
 
 function MarkdownH2Heading({ children }) {
@@ -135,8 +131,8 @@ function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, 
 }
 
 function MarkDownParser({
-  content, withToc, frontMatter, titleRightSide, currentTask, isPublic, currentData,
-  showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience, showContentHeading,
+  content, currentTask,
+  showLineNumbers, showInlineLineNumbers, assetData,
 }) {
   const [subTasksLoaded, setSubTasksLoaded] = useState(false);
   const [newSubTasks, setNewSubTasks] = useState([]);
@@ -161,14 +157,21 @@ function MarkDownParser({
     }
   };
 
+  const fetchSubtasks = async () => {
+    try {
+      const { data } = await bc.todo().subtask().get(currentTask?.id);
+
+      if (Array.isArray(data)) setSubTasks(data);
+      setSubTasksLoaded(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   // Prefetch subtasks
   useEffect(() => {
     if (currentTask?.id) {
-      bc.todo().subtask().get(currentTask?.id)
-        .then((resp) => {
-          setSubTasks(resp.data);
-          setSubTasksLoaded(true);
-        });
+      fetchSubtasks();
     }
   }, [currentTask]);
 
@@ -195,8 +198,6 @@ function MarkDownParser({
       createSubTasksIfNotExists();
     }
   }, [subTasksLoaded, subTasks, newSubTasks]);
-
-  const assetType = currentData?.asset_type;
 
   // const newLineBeforeCloseTag = /<\//gm;
 
@@ -242,30 +243,6 @@ function MarkDownParser({
 
   return (
     <>
-      {showContentHeading && (
-        <ContentHeading
-          titleRightSide={titleRightSide}
-          isGuidedExperience={isGuidedExperience}
-          callToAction={currentData?.interactive && (
-            <OpenWithLearnpackCTA currentAsset={currentData} />
-          )}
-          content={frontMatter}
-          currentData={currentData}
-        >
-          {withToc && (
-            <Toc content={content} />
-          )}
-          {alerMessage && alerMessage}
-
-          {Array.isArray(subTasks) && subTasks?.length > 0 && (
-            <SubTasks subTasks={subTasks} assetType={assetType} />
-          )}
-        </ContentHeading>
-      )}
-      {isPublic && withToc && (
-        <Toc content={content} />
-      )}
-
       <ReactMarkdown
       // gemoji plugin
         remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
@@ -306,33 +283,17 @@ function MarkDownParser({
 
 MarkDownParser.propTypes = {
   content: PropTypes.string,
-  withToc: PropTypes.bool,
-  frontMatter: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
-  titleRightSide: PropTypes.node,
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
-  isPublic: PropTypes.bool,
-  currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
   showLineNumbers: PropTypes.bool,
   showInlineLineNumbers: PropTypes.bool,
   assetData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object])),
-  alerMessage: PropTypes.node,
-  isGuidedExperience: PropTypes.bool,
-  showContentHeading: PropTypes.bool,
 };
 MarkDownParser.defaultProps = {
   content: '',
-  withToc: false,
-  frontMatter: {},
-  titleRightSide: null,
   currentTask: {},
-  isPublic: false,
-  currentData: {},
   showLineNumbers: true,
   showInlineLineNumbers: true,
   assetData: null,
-  alerMessage: null,
-  isGuidedExperience: false,
-  showContentHeading: true,
 };
 
 export default MarkDownParser;
