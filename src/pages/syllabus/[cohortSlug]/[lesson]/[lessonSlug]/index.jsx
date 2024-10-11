@@ -130,7 +130,6 @@ function SyllabusContent() {
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    console.log('hola', module);
     const moduleToUpdate = module?.modules || nextModule.modules;
     const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
