@@ -60,10 +60,6 @@ function useCohortHandler() {
       const version = cohort?.syllabus_version?.version;
       const syllabusSlug = cohort?.syllabus_version?.slug || slug;
       const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
-      console.log('soy updated user', updatedUser);
-      // console.log("USE", user)
-      // console.log("ACADEMY ID", academyId)
-      console.log('CURRENT ACADMY', currentAcademy);
       if (currentAcademy) {
         // Fetch cohortProgram and TaskTodo then apply to moduleMap store
         try {
@@ -158,7 +154,6 @@ function useCohortHandler() {
     devLog('json.days:', moduleData);
 
     if (cohortProgram?.json && taskTodo) {
-      console.log('ENTRE EN LA PREPARACION');
       moduleData.forEach((assignment) => {
         const {
           id, label, description, lessons, replits, assignments, quizzes,

@@ -129,24 +129,6 @@ function SyllabusContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // useEffect(() => {
-  //   const handleStartDay = () => {
-  //     const updatedTasks = (sortedAssignments[0]?.modules || [])?.map((l) => ({
-  //       ...l,
-  //       title: l.title,
-  //       associated_slug: l?.slug?.slug || l.slug,
-  //       description: '',
-  //       task_type: l.task_type,
-  //       cohort: cohortSession.id,
-  //     }));
-  //     startDay({
-  //       newTasks: updatedTasks,
-  //     });
-  //   };
-
-  //   handleStartDay();
-  // }, [])
-
   const handleStartDay = async (module = null, avoidRedirect = false) => {
     console.log('hola', module);
     const moduleToUpdate = module?.modules || nextModule.modules;

@@ -33,7 +33,6 @@ function ModuleMap({
       task_type: l.task_type,
       cohort: cohortId,
     }));
-    console.log(updatedTasks);
     reportDatalayer({
       dataLayer: {
         event: 'open_syllabus_module',

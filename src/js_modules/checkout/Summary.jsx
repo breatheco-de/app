@@ -37,7 +37,6 @@ function Summary() {
   const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [declinedPaymentProps, setDeclinedPaymentProps] = useState({
@@ -50,7 +49,6 @@ function Summary() {
   const router = useRouter();
   const { query } = router;
   const { mentorship_service_slug, event_service_slug } = query;
-
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
@@ -110,7 +108,6 @@ function Summary() {
       task_type: l.task_type,
       cohort: cohortFound.id,
     }));
-    console.log('updated task', updatedTasks);
     reportDatalayer({
       dataLayer: {
         event: 'open_syllabus_module',
@@ -137,13 +134,22 @@ function Summary() {
       selectedProgramSlug: cohortDashboardLink,
     });
 
-    if (sortedAssignments.length > 0) {
-      openSyllabusAndRedirect();
+    if (!sortedAssignments.length > 0) {
+      router.push(cohortDashboardLink);
+      return;
     }
+
+    openSyllabusAndRedirect();
   };
 
   useEffect(() => {
-    if (sortedAssignments.length > 0 && sortedAssignments[0].modules) setReadyToRedirect(true);
+    if (!(sortedAssignments.length > 0)) return undefined;
+
+    const timer = setTimeout(() => {
+      setReadyToRedirect(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
   }, [sortedAssignments]);
 
   useEffect(() => {
@@ -560,7 +566,7 @@ function Summary() {
               height="45px"
               variant="default"
               // mt="12px"
-              isDisabled={isPaymentSuccess && !cohortFound && !readyToRedirect}
+              isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
               isLoading={isSubmitting || isRedirecting}
               onClick={redirectTocohort}
             >
