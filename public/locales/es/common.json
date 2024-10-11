@@ -20,10 +20,15 @@
     "on": "en",
     "with": "con",
     "for": "para",
+    "minute": "minuto",
+    "hour": "hora",
     "day": "día",
     "week": "semana",
     "month": "mes",
     "year": "año",
+    "seconds": "segundos",
+    "minutes": "minutos",
+    "hours": "horas",
     "days": "días",
     "weeks": "semanas",
     "months": "meses",
@@ -199,7 +204,7 @@
             },
             {
               "label": "Clona el proyecto en tu computadora",
-              "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
@@ -239,7 +244,7 @@
             },
             {
               "label": "Clonar el proyecto en tu computadora",
-              "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
@@ -285,7 +290,7 @@
             },
             {
               "label": "Clona el proyecto en tu computadora",
-              "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone repo_url`. Chequea el siguiente link para una explicación más completa.",
+              "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"

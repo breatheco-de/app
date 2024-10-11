@@ -12,6 +12,7 @@ import KPI from '../../common/components/KPI';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import { intervalToHours } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   const { t } = useTranslation('syllabus');
@@ -95,6 +96,13 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     }
   }, [currentTask]);
 
+  reportDatalayer({
+    dataLayer: {
+      event: 'open_learnpack_instructions',
+      asset_slug: currentAsset?.slug,
+    },
+  });
+  
   return (
     <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
       <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
