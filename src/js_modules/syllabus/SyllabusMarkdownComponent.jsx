@@ -6,11 +6,12 @@ import { MDSkeleton } from '../../common/components/Skeleton';
 function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, currentData, lesson,
   quizSlug, lessonSlug, currentTask, alerMessage, isGuidedExperience,
+  grantSyllabusAccess,
 }) {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
 
-  if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
+  if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank' && grantSyllabusAccess) {
     return (
       <ArticleMarkdown
         content={readme.content}
@@ -27,7 +28,7 @@ function SyllabusMarkdownComponent({
       />
     );
   }
-  if (currentBlankProps?.target === 'blank') {
+  if (currentBlankProps?.target === 'blank' && grantSyllabusAccess) {
     return (
       <ArticleMarkdown
         content={blankText}
@@ -43,7 +44,7 @@ function SyllabusMarkdownComponent({
       />
     );
   }
-  if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
+  if ((ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) || !grantSyllabusAccess) {
     return <MDSkeleton />;
   }
   return false;

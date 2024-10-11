@@ -19,7 +19,7 @@ import Icon from '../../common/components/Icon';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
-function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay }) {
+function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
   const { t } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
   const { state } = useCohortHandler();
@@ -147,7 +147,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
           maxHeight={{ base: '80%', lg: 'none' }}
           padding="15px"
         >
-          {currentModule ? (
+          {currentModule && grantSyllabusAccess ? (
             <>
               {currentModule.label && (
                 <Heading mb="16px" size="18px" fontWeight="400">
@@ -207,6 +207,7 @@ GuidedExperienceSidebar.propTypes = {
   onToggle: PropTypes.func,
   currentModuleIndex: PropTypes.number,
   handleStartDay: PropTypes.func.isRequired,
+  grantSyllabusAccess: PropTypes.bool.isRequired,
 };
 GuidedExperienceSidebar.defaultProps = {
   onClickAssignment: () => {},
