@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
+import Script from 'next/script';
 import { ChakraProvider } from '@chakra-ui/react';
 import { PrismicProvider } from '@prismicio/react';
 import { PrismicPreview } from '@prismicio/next';
@@ -64,6 +65,14 @@ function App({ Component, pageProps }) {
     <QueryClientProvider client={queryClient}>
       <Helmet
         {...pageProps.seo}
+      />
+      <Script
+        src="https://unpkg.com/rigobot-chat-bubble@0.0.34/dist/main.js"
+        onLoad={() => {
+          window.rigo.init(process.env.RIGOBOT_HASH, {
+            context: '',
+          });
+        }}
       />
       <ChakraProvider
         resetCSS

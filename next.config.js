@@ -133,6 +133,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     CAPTCHA_KEY: process.env.CAPTCHA_KEY,
+    RIGOBOT_HASH: process.env.RIGOBOT_HASH,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
   },
   images: {
@@ -157,6 +158,7 @@ module.exports = removeImports(nextTranslate(withBundleAnalyzer({
     TAG_MANAGER_KEY: process.env.TAG_MANAGER_KEY,
     GOOGLE_GEO_KEY: process.env.GOOGLE_GEO_KEY,
     CAPTCHA_KEY: process.env.CAPTCHA_KEY,
+    RIGOBOT_HASH: process.env.RIGOBOT_HASH,
     BREATHECODE_PAYMENT: process.env.BREATHECODE_PAYMENT,
     VERCEL_ENV: process.env.VERCEL_ENV,
     PRISMIC_REF: process.env.PRISMIC_REF,
