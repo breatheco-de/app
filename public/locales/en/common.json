@@ -53,6 +53,7 @@
   "article": "How to",
   "how-to": "How to",
   "quiz": "Quiz",
+  "tasks": "Tasks",
   "filter": "Filter",
   "filters": "Filters",
   "sort": "Sort",
@@ -141,11 +142,13 @@
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
+    "choose-open": "Choose how to open this project",
     "description": "<strong>\"{{projectName}}\"</strong> uses LearnPack for an interactive and auto-graded experience; choose one of the following options to start working on the project:",
     "description2": "This practice will reroute your browser to LearnPack - an interactive learning tool that runs integrated with VSCode.",
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
+    "start-exercise": "Start exercise",
     "recommended": "Recommended",
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
@@ -158,7 +161,7 @@
       "title": "Open locally on your computer",
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
-      "select-os": "1. Select your operating system",
+      "select-os": "Select your operating system",
       "agent-vs-code": {
         "label": "Open the project in VS Code",
         "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
@@ -177,6 +180,7 @@
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
+              "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
@@ -189,7 +193,8 @@
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx"
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
             },
             {
               "label": "Install LearnPack on your computer",
@@ -201,7 +206,8 @@
               "label": "Clone the project into your computer",
               "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
-              "source": "https://4geeks.com/how-to/github-clone-repository"
+              "source": "https://4geeks.com/how-to/github-clone-repository",
+              "source-label": "Go to how to clone a GitHub repository"
             }
           ]
         },
@@ -214,6 +220,7 @@
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
+              "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
@@ -226,7 +233,8 @@
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Linux.",
               "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
-              "source": "https://4geeks.com/how-to/install-nvm-linux"
+              "source": "https://4geeks.com/how-to/install-nvm-linux",
+              "source-label": "Go to how to install nvm on Linux"
             },
             {
               "label": "Install LearnPack on your computer",
@@ -238,7 +246,8 @@
               "label": "Clone the project into your computer",
               "description": "On Linux, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
-              "source": "https://4geeks.com/how-to/github-clone-repository"
+              "source": "https://4geeks.com/how-to/github-clone-repository",
+              "source-label": "Go to how to clone a GitHub repository"
             }
           ]
         },
@@ -251,6 +260,7 @@
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
+              "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
@@ -263,7 +273,8 @@
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
               "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
-              "source": "https://4geeks.com/how-to/nvm-install-windows"
+              "source": "https://4geeks.com/how-to/nvm-install-windows",
+              "source-label": "Go to how to install nvm on Windows"
             },
             {
               "label": "Install LearnPack on your computer",
@@ -281,7 +292,8 @@
               "label": "Clone the project into your computer",
               "description": "You can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
-              "source": "https://4geeks.com/how-to/github-clone-repository"
+              "source": "https://4geeks.com/how-to/github-clone-repository",
+              "source-label": "Go to how to clone a GitHub repository"
             }
           ]
         }
@@ -300,7 +312,7 @@
   },
   "subtasks": {
     "title": "{{asset_type}} has {{count}} tasks",
-    "description": "To take better advantage of this lesson, look for the checkboxes and mark them as completed as you make progress."
+    "description": "To take advantage of this lesson better, look for the checkboxes and mark them as completed as you progress."
   },
   "related-courses": "Courses related to this article",
   "average-duration": "Average duration",

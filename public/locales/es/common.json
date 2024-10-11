@@ -53,6 +53,7 @@
   "article": "Lección",
   "how-to": "Preguntas frecuentes",
   "quiz": "Cuestionario",
+  "tasks": "Tareas",
   "filter": "Filtro",
   "filters": "Filtros",
   "sort": "Ordenar",
@@ -141,6 +142,7 @@
   },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",
+    "choose-open": "Escoge como quieres abrir este proyecto",
     "description": "<strong>\"{{projectName}}\"</strong> utiliza LearnPack para una experiencia interactiva y autoevaluada; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:",
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
@@ -157,7 +159,7 @@
       "title": "Abrir localmente en tu computadora",
       "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
       "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
-      "select-os": "1. Seleccione su sistema operativo",
+      "select-os": "Seleccione su sistema operativo",
       "agent-vs-code": {
         "label": "Abrir el proyecto con VSCode",
         "description": "Asegúrate de tener la <a href=\"https://learnpack.co\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
@@ -178,7 +180,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -190,7 +193,8 @@
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
-              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm"
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "Ir a cómo instalar NVM en MacOS"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -202,7 +206,8 @@
               "label": "Clona el proyecto en tu computadora",
               "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         },
@@ -215,7 +220,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -227,7 +233,8 @@
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Linux.",
               "video": "https://www.youtube.com/watch?v=ur7HWoFxusg",
-              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux"
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
+              "source-label": "Ir a cómo instalar NVM en Linux"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -239,7 +246,8 @@
               "label": "Clonar el proyecto en tu computadora",
               "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         },
@@ -252,7 +260,8 @@
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
-              "source": "https://code.visualstudio.com/download"
+              "source": "https://code.visualstudio.com/download",
+              "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
@@ -264,7 +273,8 @@
               "label": "Instala Node.JS en tu computadora",
               "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js de manera mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en Windows.",
               "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
-              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows"
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
+              "source-label": "Ir a cómo instalar NVM en Windows"
             },
             {
               "label": "Instala LearnPack en tu computadora",
@@ -282,7 +292,8 @@
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
-              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github"
+              "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
+              "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
           ]
         }

@@ -265,7 +265,7 @@ export default function HowToSlug({ data, markdown }) {
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             {markdown ? (
-              <MarkDownParser assetData={data} content={markdownData.content} />
+              <MarkDownParser assetData={data} content={markdownData.content} isPublic withToc={data.enable_table_of_content} />
             ) : (
               <MDSkeleton />
             )}

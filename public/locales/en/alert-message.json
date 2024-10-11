@@ -13,6 +13,7 @@
   "task-cant-sync-with-cohort": "Some Tasks cannot sync with current cohort",
   "unsynced-tasks-removed": "Unsynced tasks successfully removed!",
   "unsynced-tasks-cant-be-removed": "Some Tasks cannot be removed",
+  "access-denied": "You currently don't have access to this program. If you believe this is a mistake, please contact support for assistance.",
   "attendancy-reported": "The Attendance has been reported",
   "attendancy-report-error": "There was an error reporting the attendance",
   "error-getting-previous-attendance": "There was an error getting the previous attendance",

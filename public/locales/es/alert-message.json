@@ -13,6 +13,7 @@
   "task-cant-sync-with-cohort": "Algunas tareas no se pueden sincronizar con la cohorte actual",
   "unsynced-tasks-removed": "¡Las tareas no sincronizadas se eliminaron con éxito!",
   "unsynced-tasks-cant-be-removed": "Algunas tareas no se pueden eliminar",
+  "access-denied": "Actualmente no tienes acceso a este programa. Si crees que se trata de un error, por favor contacta con soporte para recibir ayuda.",
   "attendancy-reported": "La asistencia ha sido enviada",
   "attendancy-report-error": "Hubo un error al enviar la asistencia",
   "error-getting-previous-attendance": "Hubo un error al obtener las asistencias anteriores",
