@@ -23,6 +23,8 @@
   "back": "Back",
   "next-page": "Next",
   "back-to-top": "Back to the top",
+  "back-to-program": "Back to program",
+  "back-to-previous": "Back to previous module",
   "start-next": "Start next module:",
   "no-traduction-found": "No translation found",
   "no-traduction-found-description": ">We are sorry, a translation for this content was not found. We are constantly working to offer our modules in various languages. We appreciate your patience and if you wish to contribute with translations, please visit our repository on GitHub. In the meantime, you can try accessing the content in another available language or check back later to see if the translation has been added.",
@@ -57,5 +59,8 @@
   "successful-tests": "Successfull tests",
   "total-errors": "Total errors",
   "click-to-review": "Click here to review the solution.",
-  "share-social-message": "I just finished coding {{title}} at 4geeks.com"
+  "share-social-message": "I just finished coding {{title}} at 4geeks.com",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "pending": "Pending"
 }
