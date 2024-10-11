@@ -157,14 +157,21 @@ function MarkDownParser({
     }
   };
 
+  const fetchSubtasks = async () => {
+    try {
+      const { data } = await bc.todo().subtask().get(currentTask?.id);
+
+      if (Array.isArray(data)) setSubTasks(data);
+      setSubTasksLoaded(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   // Prefetch subtasks
   useEffect(() => {
     if (currentTask?.id) {
-      bc.todo().subtask().get(currentTask?.id)
-        .then((resp) => {
-          setSubTasks(resp.data);
-          setSubTasksLoaded(true);
-        });
+      fetchSubtasks();
     }
   }, [currentTask]);
 
