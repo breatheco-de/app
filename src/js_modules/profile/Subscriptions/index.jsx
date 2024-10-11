@@ -393,6 +393,7 @@ function Subscriptions({ cohorts }) {
                   </Flex>
                   <ButtonHandler
                     subscription={subscription}
+                    allSubscriptions={subscriptionFiltered}
                     onOpenUpgrade={onOpenUpgrade}
                     setSubscriptionProps={setSubscriptionProps}
                     onOpenCancelSubscription={onOpenCancelSubscription}

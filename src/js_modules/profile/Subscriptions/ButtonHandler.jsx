@@ -7,7 +7,7 @@ import Link from '../../../common/components/NextChakraLink';
 import profileHandlers from './handlers';
 
 function ButtonHandler({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, ...restStyles
+  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
 }) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -15,6 +15,7 @@ function ButtonHandler({
   const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
   const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
+  const planOfferedAcquired = allSubscriptions?.some((sub) => sub.plans.some((plan) => plan.slug === sub.planOffer.slug));
 
   const { getPlanOffer } = profileHandlers({});
   const handlePlanOffer = () => {
@@ -79,6 +80,15 @@ function ButtonHandler({
     //   };
     // }
 
+    if (planOfferedAcquired) {
+      return {
+        text: '',
+        style: {
+          display: 'none',
+        },
+      };
+    }
+
     return {
       text: '',
       style: {
@@ -124,6 +134,7 @@ ButtonHandler.propTypes = {
   onOpenCancelSubscription: PropTypes.func,
   restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   children: PropTypes.node,
+  allSubscriptions: PropTypes.arrayOf(PropTypes.objectOf([PropTypes.any])),
 };
 
 ButtonHandler.defaultProps = {
@@ -133,6 +144,7 @@ ButtonHandler.defaultProps = {
   onOpenCancelSubscription: () => { },
   restStyles: {},
   children: null,
+  allSubscriptions: [],
 };
 
 export default ButtonHandler;
