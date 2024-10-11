@@ -122,7 +122,7 @@ function Summary() {
     router.push(syllabusRedirectURL);
   };
 
-  const redirectTocohort = async () => {
+  const startRedirection = async () => {
     setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
@@ -568,7 +568,7 @@ function Summary() {
               // mt="12px"
               isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
               isLoading={isSubmitting || isRedirecting}
-              onClick={redirectTocohort}
+              onClick={startRedirection}
             >
               {isPaymentSuccess ? t('start-free-course') : t('try-again')}
             </Button>
