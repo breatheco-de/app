@@ -265,6 +265,8 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
       });
   };
 
+  console.log('GOLASASASASAS');
+
   return (
     <>
       <Box flex={0.6} maxHeight="76vh" overflow="auto" onMouseUp={(isStudent || view !== views.initial) ? () => {} : handleSelectedText}>
