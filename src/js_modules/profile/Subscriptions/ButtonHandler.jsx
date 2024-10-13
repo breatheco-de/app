@@ -15,7 +15,11 @@ function ButtonHandler({
   const isFullyPaid = subscription?.status?.toLowerCase() === 'fully_paid';
   const planSlug = subscription?.plans?.[0]?.slug;
   const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
-  const planOfferedAcquired = allSubscriptions?.some((sub) => sub.plans.some((plan) => plan.slug === sub.planOffer.slug));
+  const planOfferedAcquired = allSubscriptions?.some((sub) => sub.plans.some((plan) => plan.slug === subscription?.planOffer?.slug));
+
+  // console.log(planOfferedAcquired, subscription.plans[0].slug, subscription.planOffer.slug)
+  // console.log(allSubscriptions)
+  // console.log(subscription)
 
   const { getPlanOffer } = profileHandlers({});
   const handlePlanOffer = () => {
@@ -24,6 +28,24 @@ function ButtonHandler({
   };
 
   const getStyles = () => {
+    if (planOfferedAcquired && (status === 'FREE_TRIAL' || status === 'FULLY_PAID')) {
+      return {
+        text: '',
+        style: {
+          display: 'none',
+        },
+      };
+    }
+
+    if (planOfferedAcquired && status === 'ACTIVE') {
+      return {
+        text: '',
+        style: {
+          display: 'none',
+        },
+      };
+    }
+
     if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)
       || (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID') && subscription?.planOffer.slug)) {
       return {
@@ -79,15 +101,6 @@ function ButtonHandler({
     //     ),
     //   };
     // }
-
-    if (planOfferedAcquired) {
-      return {
-        text: '',
-        style: {
-          display: 'none',
-        },
-      };
-    }
 
     return {
       text: '',
