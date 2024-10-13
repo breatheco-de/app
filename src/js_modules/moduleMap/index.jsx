@@ -16,7 +16,7 @@ function ModuleMap({
   title, description, cohortData, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const { startDay } = useModuleHandler();
   const { state } = useCohortHandler();
   const { taskCohortNull } = state;
@@ -66,7 +66,7 @@ function ModuleMap({
     >
       <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
         <Heading as="h2" fontSize="22px">
-          {title}
+          {title[lang] || title}
         </Heading>
         <Heading
           as="span"
@@ -80,7 +80,7 @@ function ModuleMap({
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
-        {description}
+        {description[lang] || description}
       </Text>
 
       {isAvailableToSync() && (
