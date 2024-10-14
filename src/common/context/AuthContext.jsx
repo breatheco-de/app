@@ -9,6 +9,7 @@ import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
+import useRigo from '../hooks/useRigo';
 import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
@@ -125,9 +126,11 @@ function AuthProvider({ children, pageProps }) {
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
+  const { rigo } = useRigo();
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { isAuthenticated } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
@@ -231,6 +234,13 @@ function AuthProvider({ children, pageProps }) {
     }
     authHandler();
   }, [router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const token = getToken();
+      rigo.init(token);
+    }
+  }, [isAuthenticated]);
 
   const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');
