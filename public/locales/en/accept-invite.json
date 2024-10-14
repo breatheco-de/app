@@ -1,4 +1,7 @@
 {
   "heading": "You have been invited to {{name}}, please fill out the following information to start learning",
-  "error": "Something went wrong"
+  "error": "Something went wrong",
+  "no-token": "You must include an invite token to see the invite",
+  "accept-and-learn": "Accept and start learning",
+  "belongs-to-other-user": "This invitation belongs to another user"
 }
