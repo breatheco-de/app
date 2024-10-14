@@ -13,9 +13,11 @@ import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
+// import rigo from '../../common/services/rigobot';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
+import useRigo from '../../common/hooks/useRigo';
 import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -152,6 +154,7 @@ function CouponTopBar() {
 function Page({ data }) {
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { getSelfAppliedCoupon } = useSignup();
   const toast = useToast();
@@ -242,6 +245,19 @@ function Page({ data }) {
     return t('common:enroll');
   };
   const featurePrice = getPlanPrice().toLocaleLowerCase();
+
+  useEffect(() => {
+    if (isRigoInitialized && data.course_translation) {
+      const modules = Array.isArray(data.course_translation?.course_modules)
+        ? `\nModules: ${data.course_translation.course_modules.map((module) => module.name).join(', ')}` : '';
+      const payload = `${data.course_translation.description}${modules}`;
+
+      rigo.updateContext({
+        override: true,
+        payload,
+      });
+    }
+  }, [isRigoInitialized]);
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {
@@ -463,6 +479,15 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
+  const tryRigobot = () => {
+    rigo.show({
+      showBubble: true,
+      welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+      collapsed: false,
+      purposeSlug: '4geekscom-public-agent',
+    });
+  };
+
   return (
     <>
       {cleanedStructuredData?.name && (
@@ -552,7 +577,7 @@ function Page({ data }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={tryRigobot} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -703,9 +728,7 @@ function Page({ data }) {
             <OneColumnWithIcon
               title={t('rigobot.title')}
               icon=""
-              handleButton={() => {
-                window.open(`https://github.com/codespaces/new/?repo=${t('rigobot.link').replace('https://github.com/', '')}`, '_blank').focus();
-              }}
+              handleButton={tryRigobot}
               buttonText={t('rigobot.button')}
             >
               <Text size="14px" color="currentColor">
