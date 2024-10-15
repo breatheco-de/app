@@ -55,6 +55,7 @@ function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
             );
           })}
         <Flex
+          id="ai-tutuor"
           alignItems="center"
           gridGap="8px"
           minWidth="144px"

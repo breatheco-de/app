@@ -479,9 +479,10 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
-  const tryRigobot = () => {
+  const tryRigobot = (targetId) => {
     rigo.show({
       showBubble: true,
+      target: targetId,
       welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
       purposeSlug: '4geekscom-public-agent',
@@ -577,7 +578,7 @@ function Page({ data }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={tryRigobot} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('ai-tutor')} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -728,8 +729,9 @@ function Page({ data }) {
             <OneColumnWithIcon
               title={t('rigobot.title')}
               icon=""
-              handleButton={tryRigobot}
+              handleButton={() => tryRigobot('#try-rigobot')}
               buttonText={t('rigobot.button')}
+              buttonProps={{ id: 'try-rigobot' }}
             >
               <Text size="14px" color="currentColor">
                 {t('rigobot.description')}
