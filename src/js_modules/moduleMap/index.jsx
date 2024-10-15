@@ -23,6 +23,7 @@ function ModuleMap({
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
+
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
