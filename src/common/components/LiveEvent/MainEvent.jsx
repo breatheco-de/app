@@ -27,7 +27,7 @@ function MainEvent({
   const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
 
   const isTeacher = cohorts.some(({ cohort, role }) => cohort.slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(role));
-  const joinMessage = () => (isTeacher ? t('start-class') : t('join-class'));
+  const joinMessage = () => (isTeacher ? t('start-class') : event.cohort.name);
 
   return (
     <>
