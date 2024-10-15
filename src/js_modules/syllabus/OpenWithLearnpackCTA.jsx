@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -110,7 +111,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               {t('learnpack.choose-open')}
             </Text>
             <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
-              {vendors.length > 0 && (
+              {/* {vendors.length > 0 && ( */}
+              {true && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -148,7 +150,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
           </Box>
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {vendors.length > 0 && (
+          {/* {vendors.length > 0 && ( */}
+          {true && (
             <Popover>
               <PopoverTrigger>
                 <Button
