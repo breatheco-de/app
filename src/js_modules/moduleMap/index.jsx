@@ -16,18 +16,16 @@ function ModuleMap({
   title, description, cohortData, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
-  const { t, lang } = useTranslation('dashboard');
+  const { t } = useTranslation('dashboard');
   const { startDay } = useModuleHandler();
   const { state } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
-  const languageMap = {
-    en: 'us',
-    es: 'es',
-  };
-  const langKey = languageMap[lang] || 'us';
+  const lang = 'jp';
+
+  const languageFix = (text, lan) => text[lan] || text.us || text;
 
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
@@ -72,7 +70,7 @@ function ModuleMap({
     >
       <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
         <Heading as="h2" fontSize="22px">
-          {title[langKey] || title}
+          {languageFix(title, lang)}
         </Heading>
         <Heading
           as="span"
@@ -86,7 +84,7 @@ function ModuleMap({
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
-        {description[langKey] || description}
+        {languageFix(description, lang)}
       </Text>
 
       {isAvailableToSync() && (

@@ -16,11 +16,17 @@ import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
 import { SILENT_CODE } from '../../lib/types';
 import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
-  const { setCohortSession } = useCohortHandler();
+  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
+  const { sortedAssignments } = cohortState;
+  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const [readyToRedirect, setReadyToRedirect] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState(undefined);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [paymentStatus, setPaymentStatus] = useState('idle');
@@ -31,7 +37,6 @@ function Summary() {
   const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
   const toast = useToast();
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [declinedPaymentProps, setDeclinedPaymentProps] = useState({
@@ -44,7 +49,6 @@ function Summary() {
   const router = useRouter();
   const { query } = router;
   const { mentorship_service_slug, event_service_slug } = query;
-
   const featuredBackground = useColorModeValue('featuredLight', 'featuredDark');
   const { backgroundColor, borderColor, lightColor, hexColor } = useStyle();
   const planId = getQueryString('plan_id');
@@ -90,18 +94,87 @@ function Summary() {
     });
   }, []);
 
-  const redirectTocohort = () => {
+  const openSyllabusAndRedirect = () => {
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
+    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+    const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
+
+    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+      ...l,
+      title: l.title,
+      associated_slug: l?.slug?.slug || l.slug,
+      description: '',
+      task_type: l.task_type,
+      cohort: cohortFound.id,
+    }));
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_syllabus_module',
+        tasks: updatedTasks,
+        cohort_id: cohortFound.id,
+      },
+    });
+    startDay({
+      newTasks: updatedTasks,
+    });
+
+    router.push(syllabusRedirectURL);
+  };
+
+  const startRedirection = async () => {
+    setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
-
     axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+
     setCohortSession({
       ...cohortFound,
       selectedProgramSlug: cohortDashboardLink,
     });
-    router.push(cohortDashboardLink);
+
+    if (!sortedAssignments.length > 0) {
+      router.push(cohortDashboardLink);
+      return;
+    }
+
+    openSyllabusAndRedirect();
   };
+
+  useEffect(() => {
+    if (!(sortedAssignments.length > 0)) return undefined;
+
+    const timer = setTimeout(() => {
+      setReadyToRedirect(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [sortedAssignments]);
+
+  useEffect(() => {
+    prepareTasks();
+  }, [taskTodo, cohortProgram]);
+
+  useEffect(() => {
+    getCohortAssignments(
+      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
+    );
+  }, [updatedUser]);
+
+  useEffect(() => {
+    const fetchMyCohorts = async () => {
+      try {
+        const resp = await bc.admissions().me();
+        const data = resp?.data;
+
+        setUpdatedUser(data);
+      } catch (err) {
+        console.error('Error fetching my cohorts:', err);
+      }
+    };
+    fetchMyCohorts();
+  }, [cohortFound]);
 
   const joinCohort = (cohort) => {
     reportDatalayer({
@@ -493,9 +566,9 @@ function Summary() {
               height="45px"
               variant="default"
               // mt="12px"
-              isDisabled={isPaymentSuccess && !cohortFound}
-              isLoading={isSubmitting}
-              onClick={redirectTocohort}
+              isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+              isLoading={isSubmitting || isRedirecting}
+              onClick={startRedirection}
             >
               {isPaymentSuccess ? t('start-free-course') : t('try-again')}
             </Button>

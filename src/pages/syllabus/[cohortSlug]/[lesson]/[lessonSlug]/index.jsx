@@ -391,19 +391,19 @@ function SyllabusContent() {
   }, [router, lessonSlug]);
 
   useEffect(() => {
-    const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
+    const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currModuleIndex + 1];
     const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
-    const defaultSyllabus = sortedAssignments.filter(
+    const defaultSyllabus = sortedAssignments.find(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
-    )[0];
+    );
 
     if (defaultSyllabus) {
-      setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
+      setSelectedSyllabus(currentSyllabus || defaultSyllabus);
       setNextModule(nextModuleData);
       setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
