@@ -65,7 +65,7 @@ const reducer = (state, action) => {
         user,
       };
     }
-    case 'UPDATE_PROFILE_PICTURE': {
+    case 'UPDATE_PROFILE': {
       return {
         ...state,
         isLoading: false,
@@ -351,9 +351,9 @@ function AuthProvider({ children, pageProps }) {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const updateProfilePicture = async (payload) => {
+  const updateProfile = async (payload) => {
     dispatch({
-      type: 'UPDATE_PROFILE_PICTURE',
+      type: 'UPDATE_PROFILE',
       payload,
     });
   };
@@ -367,7 +367,7 @@ function AuthProvider({ children, pageProps }) {
         login,
         logout,
         register,
-        updateProfilePicture,
+        updateProfile,
       }}
     >
       {children}
