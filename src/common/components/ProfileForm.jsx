@@ -5,52 +5,43 @@ import {
   ModalHeader, ModalOverlay, Stack, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
-// import Icon from '../../common/components/Icon';
-import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import validationSchemas from './Forms/validationSchemas';
 import { getStorageItem, objectAreNotEqual } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import bc from '../services/breathecode';
-import { usePersistent } from '../hooks/usePersistent';
+import useAuth from '../hooks/useAuth';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
-function ProfileForm({ profile }) {
+function ProfileForm() {
   const { t } = useTranslation('profile');
+  const { user, isAuthenticatedWithRigobot, updateProfile } = useAuth();
   const toast = useToast();
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [, setProfile] = usePersistent('profile', {});
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
-  const [hasRigobotConnection, setHasRigobotConnection] = useState(false);
   const accessToken = getStorageItem('accessToken');
 
   const {
     borderColor, backgroundColor, lightColor, disabledColor, modal, disabledBackgroundColor,
   } = useStyle();
 
-  const hasGithub = profile.github && profile.github.username !== '';
-  const verifyRigobotConnection = async () => {
-    const resp = await bc.auth().verifyRigobotConnection(accessToken);
-    if (resp.status === 200) {
-      setHasRigobotConnection(true);
-    }
-  };
+  const hasGithub = user?.github && user.github.username !== '';
+
   useEffect(() => {
-    verifyRigobotConnection();
     const userSchema = {
-      first_name: profile.first_name,
-      last_name: profile.last_name,
-      email: profile.email,
-      phone: profile.phone,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      phone: user.phone,
     };
     setUserInfo(userSchema);
     setDefaultUserInfo(userSchema);
     // }
-  }, [profile]);
+  }, [user]);
 
   const isModified = userInfo !== null
     && defaultUserInfo !== null
@@ -73,12 +64,12 @@ function ProfileForm({ profile }) {
               duration: 9000,
               isClosable: true,
             });
-            setProfile({
-              ...profile,
+            updateProfile({
+              ...user,
               first_name: data.first_name,
               last_name: data.last_name,
               email: data.email,
-              phone: data?.phone,
+              phone: data.phone,
             });
           })
           .catch(() => {
@@ -121,7 +112,7 @@ function ProfileForm({ profile }) {
                         setUserInfo({ ...userInfo, first_name: e.target.value });
                         form.handleChange(e);
                       }}
-                      defaultValue={profile?.first_name || ''}
+                      defaultValue={user?.first_name || ''}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -151,7 +142,7 @@ function ProfileForm({ profile }) {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={profile?.last_name || ''}
+                      defaultValue={user?.last_name || ''}
                       height="50px"
                       borderColor="gray.default"
                       borderRadius="3px"
@@ -182,7 +173,7 @@ function ProfileForm({ profile }) {
                         });
                         form.handleChange(e);
                       }}
-                      defaultValue={profile?.email || ''}
+                      defaultValue={user?.email || ''}
                       isDisabled
                       _disabled={{
                         backgroundColor: disabledBackgroundColor,
@@ -221,9 +212,8 @@ function ProfileForm({ profile }) {
                       margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
                       textAlign="start"
                       cursor="default"
-                      // href="#"
                     >
-                      {profile.github.username.replace(/(:?https?:\/\/)?(?:www\.)?github.com\//gm, '')}
+                      {user.github.username.replace(/(:?https?:\/\/)?(?:www\.)?github.com\//gm, '')}
                     </Text>
                     <Text
                       margin={{ base: '0 14px 0 auto', sm: '0 24px 0 auto' }}
@@ -249,7 +239,6 @@ function ProfileForm({ profile }) {
                     textAlign="start"
                     color="blue.default"
                     cursor="pointer"
-                    // href="#"
                     onClick={(e) => {
                       e.preventDefault();
                       window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
@@ -273,7 +262,7 @@ function ProfileForm({ profile }) {
                 borderColor="gray.default"
                 alignItems="center"
               >
-                {hasRigobotConnection ? (
+                {isAuthenticatedWithRigobot ? (
                   <>
                     <Text
                       margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
@@ -284,11 +273,11 @@ function ProfileForm({ profile }) {
                     </Text>
                   </>
                 ) : (
-                  <Tooltip label={!profile?.github?.username ? t('rigobot-requires-github-connection') : ''} placement="top">
+                  <Tooltip label={!user?.github?.username ? t('rigobot-requires-github-connection') : ''} placement="top">
                     <Button
                       variant="link"
                       fontSize="16px"
-                      isDisabled={!profile?.github?.username}
+                      isDisabled={!user?.github?.username}
                       _hover={{ textDecoration: 'none' }}
                       margin={{ base: '0 14px 0 14px', sm: '0 0 0 24px' }}
                       textAlign="start"
@@ -296,7 +285,7 @@ function ProfileForm({ profile }) {
                       cursor="pointer"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (profile?.github?.username) {
+                        if (user?.github?.username) {
                           window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
                         }
                       }}
@@ -374,13 +363,5 @@ function ProfileForm({ profile }) {
     </Formik>
   );
 }
-
-ProfileForm.propTypes = {
-  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-};
-
-ProfileForm.defaultProps = {
-  profile: {},
-};
 
 export default memo(ProfileForm);
