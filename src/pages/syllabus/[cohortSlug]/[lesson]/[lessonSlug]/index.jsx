@@ -32,11 +32,10 @@ import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/Syllab
 import Topbar from '../../../../../js_modules/syllabus/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
-import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
 import useStyle from '../../../../../common/hooks/useStyle';
-import { ORIGIN_HOST } from '../../../../../utils/variables';
+import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -45,7 +44,7 @@ function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
   const toast = useToast();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const {

@@ -11,12 +11,11 @@ import { memo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import validationSchemas from './Forms/validationSchemas';
 import { getStorageItem, objectAreNotEqual } from '../../utils';
-import { RIGOBOT_HOST } from '../../utils/variables';
+import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
-import modifyEnv from '../../../modifyEnv';
 
 function ProfileForm({ profile }) {
   const { t } = useTranslation('profile');
@@ -28,8 +27,6 @@ function ProfileForm({ profile }) {
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
   const [hasRigobotConnection, setHasRigobotConnection] = useState(false);
   const accessToken = getStorageItem('accessToken');
-
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const {
     borderColor, backgroundColor, lightColor, disabledColor, modal, disabledBackgroundColor,

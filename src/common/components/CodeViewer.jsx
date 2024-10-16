@@ -20,8 +20,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Editor from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
-import modifyEnv from '../../../modifyEnv';
-import { RIGOBOT_HOST } from '../../utils/variables';
+import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
@@ -72,7 +71,6 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [languages, setLanguages] = useState(languagesData);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const handleTouchStart = (event) => {
