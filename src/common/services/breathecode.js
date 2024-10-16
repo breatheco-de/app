@@ -3,9 +3,9 @@ import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
+import { RIGOBOT_HOST } from '../../utils/variables';
 
 const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo_host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;

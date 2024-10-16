@@ -11,6 +11,7 @@ import { memo, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import validationSchemas from './Forms/validationSchemas';
 import { getStorageItem, objectAreNotEqual } from '../../utils';
+import { RIGOBOT_HOST } from '../../utils/variables';
 import bc from '../services/breathecode';
 import { usePersistent } from '../hooks/usePersistent';
 import Icon from './Icon';
@@ -299,7 +300,7 @@ function ProfileForm({ profile }) {
                       onClick={(e) => {
                         e.preventDefault();
                         if (profile?.github?.username) {
-                          window.open(`${process.env.RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                          window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
                         }
                       }}
                     >
