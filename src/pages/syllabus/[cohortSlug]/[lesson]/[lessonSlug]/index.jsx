@@ -34,11 +34,11 @@ import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
+import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
 import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
-import NextChakraLink from '../../../../../common/components/NextChakraLink';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -676,7 +676,7 @@ function SyllabusContent() {
         const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
 
         window.open(aiChat, '_blank');
-      } setShowRigobotModal(true);
+      } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
       toast({
@@ -1209,9 +1209,7 @@ function SyllabusContent() {
           >
             {t('connect-rigobot-message')}
           </Text>
-          <NextChakraLink href="/profile/info" color={hexColor.blueDefault}>
-            {t('connect-rigobot')}
-          </NextChakraLink>
+          <ConnectGithubRigobot width="100%" />
         </Box>
       </SimpleModal>
       <SimpleModal
