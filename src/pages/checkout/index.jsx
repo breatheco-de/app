@@ -518,6 +518,7 @@ function Checkout() {
     };
     setOriginalPlan({ ...originalPlan, selectedPlan });
     setSelectedPlanCheckoutData({ ...originalPlan, selectedPlan });
+    setShowFinantialsOptions(false);
   };
 
   return (
