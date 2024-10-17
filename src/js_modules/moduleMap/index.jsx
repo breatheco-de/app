@@ -16,14 +16,13 @@ function ModuleMap({
   title, description, cohortData, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const { startDay } = useModuleHandler();
   const { state } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
-  const lang = 'jp';
 
   const languageFix = (text, lan) => text[lan] || text.us || text;
 
