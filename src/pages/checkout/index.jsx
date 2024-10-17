@@ -96,6 +96,7 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [showFinantialsOptions, setShowFinantialsOptions] = useState(false);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
@@ -511,6 +512,14 @@ function Checkout() {
     return pricingData;
   }, [selfAppliedCoupon, discountCoupon, selectedPlanCheckoutData]);
 
+  const handlePlanChange = (newPlan) => {
+    const selectedPlan = {
+      ...newPlan,
+    };
+    setOriginalPlan({ ...originalPlan, selectedPlan });
+    setSelectedPlanCheckoutData({ ...originalPlan, selectedPlan });
+  };
+
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -659,18 +668,20 @@ function Checkout() {
           overflow="auto"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+          <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="550px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
             {originalPlan?.title ? (
               <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
                 <Text size="18px">
                   {t('you-are-getting')}
                 </Text>
-                <Flex gridGap="7px">
-                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
-                  <Flex flexDirection="column" gridGap="7px" justifyContent="center">
-                    <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
-                      {originalPlan?.title}
-                    </Heading>
+                <Flex position="relative" gridGap="7px" width="100%">
+                  <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%">
+                    <Flex alignItems="center" gap={1}>
+                      {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
+                      <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
+                        {originalPlan?.title}
+                      </Heading>
+                    </Flex>
                     {selfAppliedCoupon && !originalPlan?.selectedPlan?.isFreeTier && (
                       <Box display="flex" alignItems="center" gap="10px">
                         <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
@@ -688,9 +699,31 @@ function Checkout() {
                         {originalPlan?.selectedPlan?.description || 'Free plan'}
                       </Text>
                     ) : originalPlan?.selectedPlan?.price > 0 && (
-                      <Text size="16px" color="green.400">
-                        {`$${getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).price} / ${originalPlan?.selectedPlan?.title}`}
-                      </Text>
+                      <Flex alignItems="center" justifyContent="space-between">
+                        <Text size="16px" color="green.400">
+                          {`$${getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).price} / ${originalPlan?.selectedPlan?.title}`}
+                        </Text>
+                        <Box position="relative" cursor="pointer">
+                          <Text display="flex" gap="10px" fontSize="16px" color="#0084FF" padding="7px 16px" borderRadius="4px" background="#EEF9FE" onClick={() => setShowFinantialsOptions(!showFinantialsOptions)}>
+                            {t('see-other-plans')}
+                            <img src="/static/images/downArrow.svg" alt="" />
+                          </Text>
+                        </Box>
+                        <Box position="absolute" marginTop="18px" cursor="pointer" boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25);" borderRadius="8px" top="100%" right="50%" transform="translateX(50%)" width="100%" display={showFinantialsOptions ? 'block' : 'none'} background="white">
+                          {originalPlan.plans.map((p) => (
+                            <Box padding="10px" borderRadius="8px" color={originalPlan.selectedPlan.price === p.price ? 'green.400' : 'black'} background={originalPlan.selectedPlan.price === p.price ? '#EDFFF2' : 'transparent'} onClick={() => handlePlanChange(p)}>
+                              $
+                              {p.price}
+                              {' '}
+                              {p.currency.code}
+                              {' '}
+                              /
+                              {' '}
+                              {p.title}
+                            </Box>
+                          ))}
+                        </Box>
+                      </Flex>
                     )}
                   </Flex>
                 </Flex>

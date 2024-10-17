@@ -19,6 +19,7 @@
   "coupon-offer": "{{slug}}: {{value}} off",
   "discount-value-off": "{{value}} Off",
   "add": "Add",
+  "see-other-plans": "See other plans",
   "you-are-getting": "You are getting",
   "plan-is-ready": "You're almost ready! To finish, press the blue button below that says 'Start Learning'.",
   "payment-success": "Payment successful",
