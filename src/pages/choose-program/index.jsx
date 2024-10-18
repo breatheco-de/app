@@ -352,20 +352,33 @@ function chooseProgram() {
     });
   }, []);
 
-  const acceptInvite = ({ id }) => {
-    bc.auth().invites().accept(id).then((res) => {
-      const cohortName = res.data[0].cohort.name;
-      toast({
-        title: t('alert-message:invitation-accepted', { cohortName }),
-        // title: `Cohort ${cohortName} successfully accepted!`,
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      });
-      setTimeout(() => {
-        router.reload();
-      }, 800);
-    });
+  const acceptInvite = async ({ id }) => {
+    try {
+      const res = await bc.auth().invites().accept(id);
+      const { status } = res;
+      if (status >= 200 && status < 400) {
+        const inv = invites.find((invite) => invite.id === id);
+        const cohortName = inv.cohort.name;
+        toast({
+          title: t('alert-message:invitation-accepted', { cohortName }),
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.reload();
+        }, 800);
+      } else {
+        toast({
+          title: t('alert-message:invitation-error'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const inviteWord = () => {
