@@ -7,9 +7,9 @@ import bc from '../services/breathecode';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
-import modifyEnv from '../../../modifyEnv';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
@@ -65,7 +65,7 @@ const reducer = (state, action) => {
         user,
       };
     }
-    case 'UPDATE_PROFILE_PICTURE': {
+    case 'UPDATE_PROFILE': {
       return {
         ...state,
         isLoading: false,
@@ -121,7 +121,6 @@ export const AuthContext = createContext({
 });
 
 function AuthProvider({ children, pageProps }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
@@ -351,9 +350,9 @@ function AuthProvider({ children, pageProps }) {
     dispatch({ type: 'LOGOUT' });
   };
 
-  const updateProfilePicture = async (payload) => {
+  const updateProfile = async (payload) => {
     dispatch({
-      type: 'UPDATE_PROFILE_PICTURE',
+      type: 'UPDATE_PROFILE',
       payload,
     });
   };
@@ -367,7 +366,7 @@ function AuthProvider({ children, pageProps }) {
         login,
         logout,
         register,
-        updateProfilePicture,
+        updateProfile,
       }}
     >
       {children}

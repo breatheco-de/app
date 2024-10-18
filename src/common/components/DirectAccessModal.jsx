@@ -9,8 +9,8 @@ import useStyle from '../hooks/useStyle';
 import useSession from '../hooks/useSession';
 import FieldForm from './Forms/FieldForm';
 import Heading from './Heading';
-import modifyEnv from '../../../modifyEnv';
 import { setStorageItem, toCapitalize } from '../../utils';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
 
 function DirectAccessModal({ title, modalIsOpen }) {
@@ -22,7 +22,6 @@ function DirectAccessModal({ title, modalIsOpen }) {
   const router = useRouter();
   const locale = router?.locale;
   // const technology = router?.query?.technology || 'Python';
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const toast = useToast();
 
   const [formProps, setFormProps] = useState({

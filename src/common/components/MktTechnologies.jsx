@@ -4,10 +4,9 @@ import { Box, Img } from '@chakra-ui/react';
 import axios from 'axios';
 import GridContainer from './GridContainer';
 import DraggableContainer from './DraggableContainer';
-import modifyEnv from '../../../modifyEnv';
+// import modifyEnv from '../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
-
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
 const defaultEndpoint = `${BREATHECODE_HOST}/v1/registry/technology?sort_priority=1`;
 

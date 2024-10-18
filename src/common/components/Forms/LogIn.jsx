@@ -12,14 +12,13 @@ import Icon from '../Icon/index';
 import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
-import modifyEnv from '../../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
   const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
   const toast = useToast();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);

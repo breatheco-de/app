@@ -8,16 +8,15 @@ import Icon from './Icon';
 import axios from '../../axios';
 import DraggableContainer from './DraggableContainer';
 import { sortToNearestTodayDate } from '../../utils';
-import modifyEnv from '../../../modifyEnv';
+// import modifyEnv from '../../../modifyEnv';
 import DynamicContentCard from './DynamicContentCard';
-import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
   const router = useRouter();
   const lang = router.locale;
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const qsConnector = parseQuerys({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,

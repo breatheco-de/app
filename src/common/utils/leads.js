@@ -1,4 +1,4 @@
-import modifyEnv from '../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
 
 /**
@@ -9,7 +9,6 @@ import { log } from '../../utils/logging';
  * @param {session information object} session
  */
 const saveForm = async (formData = null, tags = [], automations = []) => {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   if (!Array.isArray(tags)) throw Error('Tags must be an array');
   if (typeof (formData) !== 'object') throw Error('Missing formData');
 

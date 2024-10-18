@@ -35,8 +35,7 @@ import Stepper from '../../js_modules/checkout/Stepper';
 import ServiceSummary from '../../js_modules/checkout/ServiceSummary';
 import Text from '../../common/components/Text';
 import SelectServicePlan from '../../js_modules/checkout/SelectServicePlan';
-import modifyEnv from '../../../modifyEnv';
-import { BASE_PLAN, ORIGIN_HOST } from '../../utils/variables';
+import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
 import Icon from '../../common/components/Icon';
@@ -75,7 +74,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 };
 
 function Checkout() {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const { query } = router;

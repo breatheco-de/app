@@ -24,11 +24,10 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useAuth from '../../common/hooks/useAuth';
 import Timer from '../../common/components/Timer';
 import Link from '../../common/components/NextChakraLink';
-import { categoriesFor } from '../../utils/variables';
+import { categoriesFor, BREATHECODE_HOST } from '../../utils/variables';
 import ComponentOnTime from '../../common/components/ComponentOnTime';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import MktEventCards from '../../common/components/MktEventCards';
-import modifyEnv from '../../../modifyEnv';
 import { validatePlanExistence } from '../../common/handlers/subscriptions';
 import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetAccess';
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
@@ -41,8 +40,6 @@ const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811556-1d9de108-2166-4803-8014-1e1d406066a2.gif',
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811564-e7889add-dd02-4b91-bb0b-91b9e5f843af.gif',
 ];
-
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
 const langsDict = {
   es: 'es',

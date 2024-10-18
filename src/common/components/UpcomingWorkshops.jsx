@@ -4,9 +4,7 @@ import { format } from 'date-fns';
 import useTranslation from 'next-translate/useTranslation';
 import axios from '../../axios';
 import SmallCardsCarousel from './SmallCardsCarousel';
-import modifyEnv from '../../../modifyEnv';
-
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 const langsDict = {
   es: 'es',

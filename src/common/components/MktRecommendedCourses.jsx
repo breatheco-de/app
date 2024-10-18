@@ -8,9 +8,9 @@ import Heading from './Heading';
 import Text from './Text';
 import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
-import modifyEnv from '../../../modifyEnv';
+// import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
-import { WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import { error } from '../../utils/logging';
 import { setStorageItem, unSlugifyCapitalize } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
@@ -19,7 +19,6 @@ const coursesLimit = 2;
 
 function MktRecommendedCourses({ id, technologies, background, gridColumn, endpoint, title, ...rest }) {
   const { t, lang } = useTranslation('common');
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredLight } = useStyle();
 

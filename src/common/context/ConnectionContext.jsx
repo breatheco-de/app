@@ -6,13 +6,12 @@ import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import { getStorageItem } from '../../utils';
 import useAuth from '../hooks/useAuth';
 import axiosInstance from '../../axios';
-import modifyEnv from '../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import { log } from '../../utils/logging';
 
 export const ConnectionContext = createContext({ usersConnected: [] });
 
 function OnlineContext({ children }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [usersConnected, setUsersConnected] = useState({});
   const accessToken = getStorageItem('accessToken');
   const { isLoading } = useAuth();

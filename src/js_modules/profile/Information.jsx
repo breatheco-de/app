@@ -3,10 +3,9 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import ProfileForm from '../../common/components/profileForm';
+import ProfileForm from '../../common/components/ProfileForm';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
-import { usePersistent } from '../../common/hooks/usePersistent';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
@@ -14,9 +13,8 @@ import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
 
 function Information() {
-  const [profile, setProfile] = usePersistent('profile', {});
   const { t } = useTranslation('profile');
-  const { user, updateProfilePicture } = useAuth();
+  const { user, updateProfile } = useAuth();
   const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +83,7 @@ function Information() {
           if (res.data) {
             bc.auth().updatePicture(formdata).then((res2) => {
               setIsLoading(false);
-              updateProfilePicture({
+              updateProfile({
                 ...user,
                 profile: {
                   ...user.profile,
@@ -124,15 +122,6 @@ function Information() {
     setImageUrls(newImageUrls);
   }, [images]);
 
-  useEffect(() => {
-    if (user) {
-      setProfile({
-        ...profile,
-        ...user,
-      });
-    }
-  }, [user]);
-
   return (
     <>
       {location?.pathname?.includes('info') && (
@@ -145,11 +134,10 @@ function Information() {
       </Text>
       <Box display="flex" flexDirection={{ base: 'column', lg: 'row' }} alignItems={{ base: 'center', lg: 'start' }} gridGap="38px" width="100%" height="auto" borderRadius="17px" border="1px solid" borderColor={borderColor2} p="30px">
         <Avatar
-          // name={user?.first_name}
           width="140px"
           margin="0"
           height="140px"
-          src={profile?.profile?.avatar_url || profile?.github?.avatar_url || ''}
+          src={user?.profile?.avatar_url || user?.github?.avatar_url || ''}
         >
           <Popover trigger="hover" width="fit-content" placement="bottom-start">
             <PopoverTrigger>
@@ -195,7 +183,6 @@ function Information() {
                         image={imageUrls[0]}
                         crop={crop}
                         zoom={zoom}
-                        // onCropComplete={onCropComplete}
                         onCropAreaChange={onCropComplete}
                         style={{
                           containerStyle: {
@@ -208,7 +195,6 @@ function Information() {
                           width: isBelowTablet ? 250 : 380,
                           height: isBelowTablet ? 250 : 380,
                         }}
-                        // showGrid={false}
                         onCropChange={setCrop}
                         onZoomChange={setZoom}
                       />
@@ -238,7 +224,7 @@ function Information() {
             </ModalContent>
           </Modal>
         </Avatar>
-        <ProfileForm profile={profile} />
+        <ProfileForm />
       </Box>
     </>
   );

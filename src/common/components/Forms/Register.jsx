@@ -19,7 +19,6 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import validationSchema from './validationSchemas';
 import { getStorageItem, setStorageItem } from '../../../utils';
-import modifyEnv from '../../../../modifyEnv';
 import NextChakraLink from '../NextChakraLink';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import Text from '../Text';
@@ -27,10 +26,9 @@ import { SILENT_CODE } from '../../../lib/types';
 import bc from '../../services/breathecode';
 import useSession from '../../hooks/useSession';
 import useSubscribeToPlan from '../../hooks/useSubscribeToPlan';
-import { BASE_PLAN } from '../../../utils/variables';
+import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 
 function Register({ setIsLoggedFromRegister }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { userSession } = useSession();
   const { t } = useTranslation('login');
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);

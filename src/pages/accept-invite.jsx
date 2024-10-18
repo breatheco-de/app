@@ -19,10 +19,9 @@ import NextChakraLink from '../common/components/NextChakraLink';
 import LoaderScreen from '../common/components/LoaderScreen';
 import Text from '../common/components/Text';
 import Heading from '../common/components/Heading';
-import modifyEnv from '../../modifyEnv';
+import { BREATHECODE_HOST } from '../utils/variables';
 
 function AcceptInvite() {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t, lang } = useTranslation('accept-invite');
   const [isChecked, setIsChecked] = useState(false);
   const [invite, setInvite] = useState(null);
