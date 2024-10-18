@@ -12,7 +12,7 @@ import {
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
-import modifyEnv from '../../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
@@ -35,7 +35,6 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];

@@ -13,7 +13,7 @@ import useStyle from '../hooks/useStyle';
 import StarRating from './StarRating';
 import { lengthOfString } from '../../utils';
 import axios from '../../axios';
-import modifyEnv from '../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 function TestimonialBox({ picture, name, rating, description }) {
   const { fontColor2, backgroundColor, hexColor } = useStyle();
@@ -67,7 +67,6 @@ function MktTestimonials({
   ...rest
 }) {
   const [testimonialsData, setTestimonialsData] = useState();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const defaultEndpoint = `${BREATHECODE_HOST}/v1/feedback/review?lang=${router?.locale}`;
 

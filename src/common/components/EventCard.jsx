@@ -17,12 +17,6 @@ function EventCard({ id, language, slug, title, ignoreDynamicHandler, descriptio
   const [date, setDate] = useState('');
   const { lightColor, featuredColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
-  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  // const accessToken = getStorageItem('accessToken');
-
-  // const linkQuery = parseQuerys({
-  //   token: accessToken || undefined,
-  // });
 
   const startingSoonDelta = 30;
 
