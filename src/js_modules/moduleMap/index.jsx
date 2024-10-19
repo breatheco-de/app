@@ -4,12 +4,13 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { reportDatalayer } from '../../utils/requests';
+import { languageFix } from '../../utils';
 import Text from '../../common/components/Text';
 import Module from './module';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
-import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
   index, slug, modules, filteredModules,
@@ -23,8 +24,6 @@ function ModuleMap({
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
-
-  const languageFix = (text, lan) => text[lan] || text.us || text;
 
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({

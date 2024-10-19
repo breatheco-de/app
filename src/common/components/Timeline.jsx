@@ -1,14 +1,15 @@
 import React, {
   useEffect, memo, useState,
 } from 'react';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import {
   Box,
   Flex,
   useColorModeValue,
 } from '@chakra-ui/react';
+import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { languageFix } from '../../utils';
 import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 import Text from './Text';
@@ -126,7 +127,7 @@ function Timeline({
   return (
     <>
       <Flex width={width} marginBottom="1.5rem">
-        <Text size="l" fontWeight="900" color={fontColor1}>{title && title.toUpperCase()}</Text>
+        <Text size="l" fontWeight="900" color={fontColor1}>{title && languageFix(title, lang).toUpperCase()}</Text>
         {technologies.length >= 1 && (
           <Text
             size="l"
