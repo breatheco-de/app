@@ -1,6 +1,8 @@
 import axios from 'axios';
+import modifyEnv from '../../modifyEnv';
 
 const BASE_URL = 'https://breathecode.herokuapp.com/v2/media';
+const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 
 const getOperationTypes = async () => {
   const response = await axios.get(`${BASE_URL}/operationtype`);
@@ -9,7 +11,7 @@ const getOperationTypes = async () => {
 
 const getOperationMeta = async (operationType) => {
   const response = await axios.get(`${BASE_URL}/operationtype/${operationType}`);
-  console.log('PASO UNO finalizado');
+  console.log('PASO UNO finalizado', response.data);
   return response.data;
 };
 
@@ -19,29 +21,29 @@ const splitFileIntoChunks = (file, chunkSize) => {
 
   while (start < file.size) {
     const end = Math.min(start + chunkSize, file.size);
-    const chunk = file.slice(start, end);
+    const chunk = file.slice(start, end, file.type);
     chunks.push(chunk);
     start = end;
   }
-  console.log('PASO DOS finalizado');
   return chunks;
 };
 
 const uploadChunk = async (chunk, operationType, totalChunks, chunkIndex, academyID = undefined) => {
   try {
     const url = academyID ? `${BASE_URL}/academy/chunk` : `${BASE_URL}/me/chunk`;
-    console.log('PASO 3 URL USADA', url);
+    console.log(url);
+    console.log(operationType);
     const formData = new FormData();
     formData.append('operation_type', operationType);
     formData.append('total_chunks', totalChunks);
     formData.append('chunk', chunk);
     formData.append('chunk_index', chunkIndex);
 
-    console.log('PASO 3 LA FORM DATA', formData);
+    console.log(BC_ACADEMY_TOKEN);
 
-    const headers = academyID ? { Academy: academyID } : {};
+    const headers = academyID ? { Academy: academyID } : { Authorization: `Token ${BC_ACADEMY_TOKEN}` };
 
-    const response = await axios.post(url, formData, { headers });
+    const response = await axios.put(url, formData, { headers });
     return response.data;
   } catch (error) {
     console.error(`Error uploading chunk ${chunkIndex}:`, error);
@@ -63,7 +65,7 @@ const endFileUpload = async (operationType, totalChunks, filename, mime, meta, a
 };
 
 const uploadFileInChunks = async (file, operationType, academyID = undefined) => {
-  const { chunkSize, maxChunks } = await getOperationMeta(operationType);
+  const { chunk_size: chunkSize, max_chunks: maxChunks } = await getOperationMeta(operationType);
 
   const chunks = splitFileIntoChunks(file, chunkSize);
 
