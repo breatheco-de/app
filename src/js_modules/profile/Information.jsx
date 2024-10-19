@@ -12,6 +12,7 @@ import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
+import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
 
 function Information() {
   const [profile, setProfile] = usePersistent('profile', {});
@@ -69,6 +70,10 @@ function Information() {
         lastModified: Date.now(),
         lastModifiedDate: new Date(),
       });
+      const result = await uploadFileInChunks(imgFile, 'profile-picture');
+
+      console.log(result);
+      console.log(user);
 
       const formdata = new FormData();
       formdata.append('file', imgFile);
