@@ -111,20 +111,19 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               {t('learnpack.choose-open')}
             </Text>
             <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
-              {/* {vendors.length > 0 && ( */}
-              {true && (
-                <Popover>
-                  <PopoverTrigger>
-                    <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                      {t('learnpack.open-in-learnpack-button.text')}
-                    </Button>
-                  </PopoverTrigger>
-                  <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-                </Popover>
-              )}
-              <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
-                {t('learnpack.open-locally')}
-              </Button>
+              {[
+                  <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
+                    {t('learnpack.open-locally')}
+                  </Button>,
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                        {t('learnpack.open-in-learnpack-button.text')}
+                      </Button>
+                    </PopoverTrigger>
+                    <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                  </Popover>
+              ].sort((a,b) => a > b ? cohortSession.available_as_saas : -1}
             </Box>
           </Box>
         </Box>
@@ -150,9 +149,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
           </Box>
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {/* {vendors.length > 0 && ( */}
-          {true && (
-            <Popover>
+          {[<Popover>
               <PopoverTrigger>
                 <Button
                   borderRadius="3px"
@@ -168,8 +165,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 </Button>
               </PopoverTrigger>
               <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-            </Popover>
-          )}
+            </Popover>,
           <Button
             variant="outline"
             borderColor="white"
@@ -179,7 +175,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             fontSize="17px"
           >
             {t('common:learnpack.open-locally')}
-          </Button>
+          </Button>].sort((a,b) => a > b ? cohortSession.available_as_saas : -1}
+          )}
         </Box>
       </Box>
       <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
