@@ -37,6 +37,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import completions from './completion-jobs.json';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -254,6 +255,7 @@ function Page({ data }) {
 
       rigo.updateContext({
         override: true,
+        completions,
         payload,
       });
     }
@@ -495,6 +497,7 @@ function Page({ data }) {
       <Head>
         <script
           type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
         />
       </Head>
@@ -578,7 +581,7 @@ function Page({ data }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('ai-tutor')} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
