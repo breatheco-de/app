@@ -87,6 +87,17 @@ const breathecode = {
     };
   },
 
+  media: () => {
+    const url = `${hostV2}/media`;
+
+    return {
+      operationTypes: () => axios.get(`${url}/operationtype`),
+      operationMeta: (operationType) => axios.get(`${url}/operationtype/${operationType}`),
+      uploadChunk: (prefix, formData, headers) => axios.put(`${url}/${prefix}`, formData, { headers }),
+      endFileUpload: (prefix, args, headers) => axios.post(`${url}/${prefix}`, { ...args }, { headers }),
+    };
+  },
+
   admissions: (query = {}) => {
     const url = `${host}/admissions`;
     const qs = parseQuerys(query);

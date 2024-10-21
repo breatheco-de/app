@@ -12,7 +12,7 @@ import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
-// import { getOperationTypes, uploadFileInChunks } from '../../utils/uploadFileInChunks';
+import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
 // import { getStorageItem } from '../../utils';
 
 function Information() {
@@ -73,10 +73,10 @@ function Information() {
       });
 
       //_____________TEST____________________
-      // const result = await uploadFileInChunks(imgFile, 'profile-picture');
+      const result = await uploadFileInChunks(imgFile, 'profile-picture');
 
       //_______________LOGS_________________________
-      // console.log(result);
+      console.log(result);
       // console.log(user);
 
       //_________ORIGINAL___________________
@@ -149,7 +149,7 @@ function Information() {
 
   //___________________LOGS____________________________
   // console.log("SOY EL ACCES", accessToken)
-  console.log(user);
+  // console.log(user);
   // console.log(operationTypes)
 
   return (

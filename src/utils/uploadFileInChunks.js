@@ -1,16 +1,13 @@
-import axios from 'axios';
-import modifyEnv from '../../modifyEnv';
-
-const BASE_URL = 'https://breathecode.herokuapp.com/v2/media';
-const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
+import bc from '../common/services/breathecode';
+import { getStorageItem } from '.';
 
 const getOperationTypes = async () => {
-  const response = await axios.get(`${BASE_URL}/operationtype`);
+  const response = await bc.media().operationTypes();
   return response.data;
 };
 
 const getOperationMeta = async (operationType) => {
-  const response = await axios.get(`${BASE_URL}/operationtype/${operationType}`);
+  const response = await bc.media().operationMeta(operationType);
   console.log('PASO UNO finalizado', response.data);
   return response.data;
 };
@@ -30,21 +27,29 @@ const splitFileIntoChunks = (file, chunkSize) => {
 
 const uploadChunk = async (chunk, operationType, totalChunks, chunkIndex, academyID = undefined) => {
   try {
-    const url = academyID ? `${BASE_URL}/academy/chunk` : `${BASE_URL}/me/chunk`;
-    console.log(url);
-    console.log(operationType);
+    const prefix = academyID ? 'academy/chunk' : 'me/chunk';
+
+    console.log('ESTE ES EL CHUNK', chunk);
+
     const formData = new FormData();
     formData.append('operation_type', operationType);
     formData.append('total_chunks', totalChunks);
     formData.append('chunk', chunk);
     formData.append('chunk_index', chunkIndex);
 
-    console.log(BC_ACADEMY_TOKEN);
+    const accessToken = getStorageItem('accessToken');
 
-    const headers = academyID ? { Academy: academyID } : { Authorization: `Token ${BC_ACADEMY_TOKEN}` };
+    if (!accessToken) {
+      console.error('No se encontró el accessToken. Asegúrate de que esté almacenado correctamente.');
+      return null;
+    }
 
-    const response = await axios.put(url, formData, { headers });
-    return response.data;
+    const headers = academyID ? { Academy: academyID } : { Authorization: `Token ${accessToken}` };
+
+    const response = await bc.media().uploadChunk(prefix, formData, headers);
+
+    console.log(response);
+    return response;
   } catch (error) {
     console.error(`Error uploading chunk ${chunkIndex}:`, error);
     throw error;
@@ -52,15 +57,16 @@ const uploadChunk = async (chunk, operationType, totalChunks, chunkIndex, academ
 };
 
 const endFileUpload = async (operationType, totalChunks, filename, mime, meta, academyID = undefined) => {
-  const url = academyID ? `${BASE_URL}/academy/chunk/upload` : `${BASE_URL}/me/chunk/upload`;
+  const prefix = academyID ? 'academy/chunk/upload' : 'me/chunk/upload';
 
-  const response = await axios.post(url, {
+  const response = await bc.media().endFileUpload(prefix, {
     operation_type: operationType,
     total_chunks: totalChunks,
     filename,
     mime,
     meta: JSON.stringify(meta),
   });
+
   return response.data;
 };
 
@@ -77,7 +83,7 @@ const uploadFileInChunks = async (file, operationType, academyID = undefined) =>
   const uploadPromises = chunks.map((chunk, index) => uploadChunk(chunk, operationType, totalChunks, index, academyID));
 
   const uploadResponses = await Promise.all(uploadPromises);
-  console.log('ALL CHUNKS UPLOADED!');
+  console.log('ALL CHUNKS UPLOADED!', uploadResponses);
 
   const lastResponse = uploadResponses[uploadResponses.length - 1];
   const { mime, name } = lastResponse;
