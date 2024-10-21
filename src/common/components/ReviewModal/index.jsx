@@ -145,6 +145,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       return prevState;
     });
   };
+
   const rejectOrApprove = (status) => {
     reportDatalayer({
       dataLayer: {
@@ -455,11 +456,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   };
 
-  //LOOOOOOOOOGSSSSSSSSSSSSSSSSSSSS
-  console.log('ESTA ES LA CONSTEXT DATAA', contextData);
-  console.log('ESTA ES LA STAGE ACTUAL', stage);
-  console.log(stages);
-
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -467,6 +463,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         onClose();
         setContextData({});
         setStage(stages.initial);
+        handleResetFlow();
       }}
       title={getTitle()}
       closeOnOverlayClick={false}
@@ -498,6 +495,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           left={5}
           onClick={() => {
             setStage('', 'back');
+            handleResetFlow();
           }}
           aria-label={t('common:go-back')}
         >
