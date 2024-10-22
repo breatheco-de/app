@@ -125,7 +125,7 @@ function AuthProvider({ children, pageProps }) {
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
-  const { rigo } = useRigo();
+  const { rigo, isRigoInitialized } = useRigo();
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -235,11 +235,11 @@ function AuthProvider({ children, pageProps }) {
   }, [router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && isRigoInitialized) {
       const token = getToken();
       rigo.init(token);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isRigoInitialized]);
 
   const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');
