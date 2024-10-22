@@ -94,7 +94,7 @@ const breathecode = {
       operationTypes: () => axios.get(`${url}/operationtype`),
       operationMeta: (operationType) => axios.get(`${url}/operationtype/${operationType}`),
       uploadChunk: (prefix, formData, headers) => axios.put(`${url}/${prefix}`, formData, { headers }),
-      endFileUpload: (prefix, args, headers) => axios.post(`${url}/${prefix}`, { ...args }, { headers }),
+      endFileUpload: (prefix, args, headers) => axios.put(`${url}/${prefix}`, { ...args }, { headers }),
     };
   },
 
