@@ -16,14 +16,13 @@ import LoaderScreen from '../../common/components/LoaderScreen';
 import { formatPrice, getStorageItem } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import modifyEnv from '../../../modifyEnv';
 import CardForm from './CardForm';
 import { SILENT_CODE } from '../../lib/types';
 import { reportDatalayer } from '../../utils/requests';
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 function ServiceSummary({ service }) {
   const { isAuthenticated } = useAuth();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const {
     state, setSelectedService, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,

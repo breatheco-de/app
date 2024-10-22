@@ -13,7 +13,7 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import { error } from '../../utils/logging';
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
@@ -117,7 +117,7 @@ function Feedback({ storyConfig }) {
                 <Text size="12px" textAlign="start" fontWeight="700">
                   {t('feedback.connect-rigobot-text')}
                   {' '}
-                  <Link href={`https://rigobot.herokuapp.com/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
+                  <Link href={`${RIGOBOT_HOST}/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
                     {t('feedback.connect-rigobot')}
                   </Link>
                   .

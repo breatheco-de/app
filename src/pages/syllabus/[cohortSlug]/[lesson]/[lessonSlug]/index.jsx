@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
-  Box, Flex, useDisclosure, Link,
+  Box, Flex, useDisclosure, Link, Avatar,
   useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
   ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
@@ -32,11 +32,11 @@ import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/Syllab
 import Topbar from '../../../../../js_modules/syllabus/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
-import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
+import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
 import useStyle from '../../../../../common/hooks/useStyle';
-import { ORIGIN_HOST } from '../../../../../utils/variables';
+import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
@@ -44,9 +44,9 @@ function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
   const toast = useToast();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
   const { isOpen, onToggle } = useDisclosure();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const {
     taskTodo,
     cohortProgram,
@@ -80,6 +80,7 @@ function SyllabusContent() {
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [showRigobotModal, setShowRigobotModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
@@ -659,21 +660,23 @@ function SyllabusContent() {
 
   const openAiChat = async () => {
     try {
-      setIsLoadingRigobot(true);
-      const [completionResp, tokenResp] = await Promise.all([
-        bc.todo().postCompletionJob(currentTask.id),
-        bc.auth().temporalToken(),
-      ]);
+      if (isAuthenticatedWithRigobot) {
+        setIsLoadingRigobot(true);
+        const [completionResp, tokenResp] = await Promise.all([
+          bc.todo().postCompletionJob(currentTask.id),
+          bc.auth().temporalToken(),
+        ]);
 
-      const completionId = completionResp.data.id;
-      const temporalToken = tokenResp.data.token;
+        const completionId = completionResp.data.id;
+        const temporalToken = tokenResp.data.token;
 
-      const { data } = await bc.rigobot().meToken(temporalToken);
-      const rigobotToken = data.key;
+        const { data } = await bc.rigobot().meToken(temporalToken);
+        const rigobotToken = data.key;
 
-      const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
+        const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
 
-      window.open(aiChat, '_blank');
+        window.open(aiChat, '_blank');
+      } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
       toast({
@@ -1069,8 +1072,7 @@ function SyllabusContent() {
                   {isAvailableAsSaas && (
                     <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
                       <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
-                        {/* TODO: Hiding it until it's fixed */}
-                        {false && (isLesson || isProject) && (
+                        {(isLesson || isProject) && (
                           <Tooltip label={t('get-help')} placement="top">
                             <Button
                               display="flex"
@@ -1192,6 +1194,22 @@ function SyllabusContent() {
             controls={false}
             url={currentAsset?.intro_video_url}
           />
+        </Box>
+      </SimpleModal>
+      <SimpleModal
+        size="md"
+        isOpen={showRigobotModal}
+        onClose={() => setShowRigobotModal(false)}
+      >
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+          <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
+          <Text
+            size="17px"
+            textAlign="center"
+          >
+            {t('connect-rigobot-message')}
+          </Text>
+          <ConnectGithubRigobot width="100%" />
         </Box>
       </SimpleModal>
       <SimpleModal

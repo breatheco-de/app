@@ -7,18 +7,17 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import bc from '../../common/services/breathecode';
 import { getQueryString, toCapitalize, unSlugify } from '../../utils';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import Text from '../../common/components/Text';
 import { parseQuerys } from '../../utils/url';
 import Icon from '../../common/components/Icon';
-import modifyEnv from '../../../modifyEnv';
 
 function SelectServicePlan() {
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const { query } = router;
   const { mentorship_service_slug, event_service_slug } = query;
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { backgroundColor, hexColor, modal } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
   const [subscriptions, setSubscriptions] = useState([]);
