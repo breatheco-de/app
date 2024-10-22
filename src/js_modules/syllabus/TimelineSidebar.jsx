@@ -107,33 +107,36 @@ function TimelineSidebar({
           >
             {!isStudent && (
               <Box padding={{ base: '1rem 1rem 0 1rem', md: '1.5rem 1.5rem 0 1.5rem' }}>
-                <Button
-                  onClick={() => {
-                    if (existContentToShow) {
+                {existContentToShow ? (
+                  <Button
+                    onClick={() => {
                       teacherInstructions.actionHandler();
-                    }
-                  }}
-                  opacity={existContentToShow ? '1' : '0.7'}
-                  cursor={existContentToShow ? 'pointer' : 'unset'}
-                  height="auto"
-                  width="100%"
-                  variant="unstyled"
-                  background={featuredCard.yellow.featured}
-                  padding="8px"
-                  gap="8px"
-                  borderRadius="8px"
-                  display="flex"
-                  alignItems="center"
-                  aria-label="Open Teacher Instructions"
-                >
-                  <Box background="yellow.default" padding="10px" borderRadius="full">
-                    <Icon icon="teacher" color="white" />
+                    }}
+                    height="auto"
+                    width="100%"
+                    variant="unstyled"
+                    background={featuredCard.yellow.featured}
+                    padding="8px"
+                    gap="8px"
+                    borderRadius="8px"
+                    display="flex"
+                    alignItems="center"
+                    aria-label="Open Teacher Instructions"
+                  >
+                    <Box background="yellow.default" padding="10px" borderRadius="full">
+                      <Icon icon="teacher" color="white" />
+                    </Box>
+                    <Text size="l" fontWeight="700" color={fontColor3}>
+                      {t('teacherSidebar.open-instructions')}
+                    </Text>
+                  </Button>
+                ) : (
+                  <Box padding="15px" background="yellow.light" borderRadius="4px">
+                    <Text size="md" fontWeight="700">
+                      {t('teacherSidebar.no-teacher-instructions-found')}
+                    </Text>
                   </Box>
-                  <Text size="l" fontWeight="700" color={fontColor3}>
-                    {t('teacherSidebar.open-instructions')}
-                  </Text>
-                </Button>
-
+                )}
               </Box>
             )}
             {sortedAssignments.length > 0 && sortedAssignments.map((section) => {
