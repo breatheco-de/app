@@ -3,7 +3,7 @@ import React from 'react';
 import * as prismicH from '@prismicio/helpers';
 import PropTypes from 'prop-types';
 import { Box, useColorModeValue } from '@chakra-ui/react';
-import MarkDownParser from '../../src/common/components/MarkDownParser';
+import ArticleMarkdown from '../../src/common/components/MarkDownParser/ArticleMarkdown';
 import Heading from '../../src/common/components/Heading';
 import Text from '../../src/common/components/Text';
 
@@ -43,7 +43,7 @@ function Markdown({ slice }) {
           </Text>
         )}
         {rawText?.length > 0 && (
-          <MarkDownParser content={rawText} isPublic withToc={slice?.primary?.enable_table_of_content} />
+          <ArticleMarkdown content={rawText} isPublic withToc={slice?.primary?.enable_table_of_content} />
         )}
       </Box>
     </Box>

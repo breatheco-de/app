@@ -35,7 +35,7 @@ import '@fontsource/lato/400.css';
 import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
-import modifyEnv from '../../modifyEnv';
+import { BREATHECODE_HOST } from '../utils/variables';
 import AlertMessage from '../common/components/AlertMessage';
 
 function InternalLinkComponent(props) {
@@ -43,7 +43,6 @@ function InternalLinkComponent(props) {
 }
 
 function App({ Component, pageProps }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const domainName = process.env.DOMAIN_NAME;
   const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
 

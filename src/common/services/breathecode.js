@@ -3,9 +3,8 @@ import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
+import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo_host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
@@ -368,6 +367,13 @@ const breathecode = {
     return {
       completionJob: (data) => axios.post(`${url}/prompting/completion/43${qs}`, data),
       meToken: (token) => axios.get(`${url}/auth/me/token?breathecode_token=${token}`),
+    };
+  },
+  provisioning: (query = {}) => {
+    const url = `${host}/provisioning`;
+    const qs = parseQuerys(query);
+    return {
+      academyVendors: (academy) => axios.get(`${url}/academy/${academy}/provisioningprofile${qs}`),
     };
   },
 };

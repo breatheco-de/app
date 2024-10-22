@@ -39,20 +39,19 @@ import {
   isValidDate,
 } from '../../../../../utils/index';
 import { reportDatalayer } from '../../../../../utils/requests';
+import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
@@ -61,6 +60,7 @@ function Dashboard() {
   const [studentAndTeachers, setSudentAndTeachers] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [grantAccess, setGrantAccess] = useState(false);
 
   const [searchValue, setSearchValue] = useState(router.query.search || '');
   const [showPendingTasks, setShowPendingTasks] = useState(false);
@@ -179,6 +179,54 @@ function Dashboard() {
         });
       });
   };
+
+  const checkNavigationAvailability = () => {
+    const showToast = () => {
+      toast({
+        position: 'top',
+        title: t('alert-message:access-denied'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    };
+
+    if (allSubscriptions) {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      if (cohortSubscriptions.length === 0) {
+        router.push('/choose-program');
+        showToast();
+        return;
+      }
+
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) {
+        router.push('/choose-program');
+        showToast();
+        return;
+      }
+
+      setGrantAccess(true);
+    }
+  };
+
+  useEffect(() => {
+    if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
+      checkNavigationAvailability();
+    }
+    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
+  }, [cohortSession, allSubscriptions]);
+
   useEffect(() => {
     if (cohortSession?.cohort_user) {
       if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
@@ -451,7 +499,7 @@ function Dashboard() {
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            {(cohortSession?.syllabus_version?.name || cohortProgram?.name) ? (
+            {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
               <Heading as="h1" size="xl">
                 {cohortSession?.syllabus_version?.name || cohortProgram.name}
               </Heading>
@@ -465,7 +513,7 @@ function Dashboard() {
               />
             )}
 
-            {mainTechnologies ? (
+            {mainTechnologies && grantAccess ? (
               <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
             ) : (
               <SimpleSkeleton
@@ -542,29 +590,40 @@ function Dashboard() {
               </Box>
             )}
             {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
-              <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
-                <AccordionItem background={featuredColor} borderRadius="17px" border="0">
-                  {({ isExpanded }) => (
-                    <>
-                      <span>
-                        <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
-                          <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
-                          <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
-                            {t('intro-video-title')}
-                          </Box>
-                          <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
-                        </AccordionButton>
-                      </span>
-                      <AccordionPanel padding="0px 4px 4px 4px">
-                        <ReactPlayerV2
-                          className="intro-video"
-                          url={cohortSession?.intro_video}
-                        />
-                      </AccordionPanel>
-                    </>
-                  )}
-                </AccordionItem>
-              </Accordion>
+              <>
+                {grantAccess ? (
+                  <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
+                    <AccordionItem background={featuredColor} borderRadius="17px" border="0">
+                      {({ isExpanded }) => (
+                        <>
+                          <span>
+                            <AccordionButton display="flex" gridGap="16px" padding="10.5px 20px" borderRadius="17px">
+                              <Icon icon="cameraFilled" width="29px" height="16px" color="#0097CF" />
+                              <Box as="span" fontSize="21px" fontWeight={700} flex="1" textAlign="left">
+                                {t('intro-video-title')}
+                              </Box>
+                              <Icon icon="arrowRight" width="11px" height="20px" color="currentColor" style={{}} transform={isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'} transition="transform 0.2s ease-in" />
+                            </AccordionButton>
+                          </span>
+                          <AccordionPanel padding="0px 4px 4px 4px">
+                            <ReactPlayerV2
+                              className="intro-video"
+                              url={cohortSession?.intro_video}
+                            />
+                          </AccordionPanel>
+                        </>
+                      )}
+                    </AccordionItem>
+                  </Accordion>
+                ) : (
+                  <SimpleSkeleton
+                    height="450px"
+                    padding="6px 18px 6px 18px"
+                    margin="18px 0"
+                    borderRadius="30px"
+                  />
+                )}
+              </>
             )}
 
             {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
@@ -649,7 +708,7 @@ function Dashboard() {
               display="flex"
               flexDirection="column"
             >
-              {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments ? (
+              {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments && grantAccess ? (
                 <>
                   {sortedAssignmentsSearched.map((assignment, i) => {
                     const {
