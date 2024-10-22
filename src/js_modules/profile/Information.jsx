@@ -12,6 +12,8 @@ import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
+import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
+// import { getStorageItem } from '../../utils';
 
 function Information() {
   const [profile, setProfile] = usePersistent('profile', {});
@@ -70,6 +72,14 @@ function Information() {
         lastModifiedDate: new Date(),
       });
 
+      //_____________TEST____________________
+      const result = await uploadFileInChunks(imgFile, 'profile-picture');
+
+      //_______________LOGS_________________________
+      console.log(result);
+      // console.log(user);
+
+      //_________ORIGINAL___________________
       const formdata = new FormData();
       formdata.append('file', imgFile);
       // formdata.append('name', filename);
@@ -132,6 +142,15 @@ function Information() {
       });
     }
   }, [user]);
+
+  //_____________________TEST____________________
+  // const operationTypes = getOperationTypes()
+  // const accessToken = getStorageItem('accessToken');
+
+  //___________________LOGS____________________________
+  // console.log("SOY EL ACCES", accessToken)
+  // console.log(user);
+  // console.log(operationTypes)
 
   return (
     <>

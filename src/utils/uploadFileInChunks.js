@@ -1,0 +1,113 @@
+import bc from '../common/services/breathecode';
+import { getStorageItem } from '.';
+
+const getOperationTypes = async () => {
+  const response = await bc.media().operationTypes();
+  return response.data;
+};
+
+const getOperationMeta = async (operationType) => {
+  const response = await bc.media().operationMeta(operationType);
+  console.log('PASO UNO finalizado', response.data);
+  return response.data;
+};
+
+const splitFileIntoChunks = (file, chunkSize) => {
+  const chunks = [];
+  let start = 0;
+
+  while (start < file.size) {
+    const end = Math.min(start + chunkSize, file.size);
+    const chunk = file.slice(start, end, file.type);
+    chunks.push(chunk);
+    start = end;
+  }
+  return chunks;
+};
+
+const uploadChunk = async (chunk, operationType, totalChunks, chunkIndex, academyID = undefined) => {
+  try {
+    const prefix = academyID ? 'academy/chunk' : 'me/chunk';
+
+    console.log('ESTE ES EL CHUNK', chunk);
+
+    const formData = new FormData();
+    formData.append('operation_type', operationType);
+    formData.append('total_chunks', totalChunks);
+    formData.append('chunk', chunk);
+    formData.append('chunk_index', chunkIndex);
+
+    const accessToken = getStorageItem('accessToken');
+
+    if (!accessToken) {
+      console.error('No se encontró el accessToken. Asegúrate de que esté almacenado correctamente.');
+      return null;
+    }
+
+    const headers = academyID ? { Academy: academyID } : { Authorization: `Token ${accessToken}` };
+
+    const response = await bc.media().uploadChunk(prefix, formData, headers);
+
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(`Error uploading chunk ${chunkIndex}:`, error);
+    throw error;
+  }
+};
+
+const endFileUpload = async (operationType, totalChunks, filename, mime, meta, academyID = undefined) => {
+  const prefix = academyID ? 'academy/chunk/upload' : 'me/chunk/upload';
+
+  const response = await bc.media().endFileUpload(prefix, {
+    operation_type: operationType,
+    total_chunks: totalChunks,
+    filename,
+    mime,
+    meta: JSON.stringify(meta),
+  });
+
+  return response.data;
+};
+
+const uploadFileInChunks = async (file, operationType, academyID = undefined) => {
+  const { chunk_size: chunkSize, max_chunks: maxChunks } = await getOperationMeta(operationType);
+
+  const chunks = splitFileIntoChunks(file, chunkSize);
+
+  const totalChunks = chunks.length;
+  if (maxChunks && totalChunks > maxChunks) {
+    throw new Error(`El archivo tiene demasiados trozos. Maximo permitido: ${maxChunks}`);
+  }
+
+  const uploadPromises = chunks.map((chunk, index) => uploadChunk(chunk, operationType, totalChunks, index, academyID));
+
+  const uploadResponses = await Promise.all(uploadPromises);
+  console.log('ALL CHUNKS UPLOADED!', uploadResponses);
+
+  const lastResponse = uploadResponses[uploadResponses.length - 1];
+  const { mime, name } = lastResponse;
+
+  const meta = {
+    operation_type: operationType,
+    total_chunks: totalChunks,
+    filename: file.name,
+    mime: file.type,
+    meta: JSON.stringify({
+      slug: operationType,
+      name: file.name,
+      categories: [],
+      academy: academyID || null,
+    }),
+  };
+
+  const finalResponse = await endFileUpload(operationType, totalChunks, name, mime, meta, academyID);
+
+  if (finalResponse.status === 'CREATED') {
+    return finalResponse.id;
+  }
+
+  return finalResponse;
+};
+
+export { uploadFileInChunks, getOperationTypes };
