@@ -5,15 +5,17 @@ import PropTypes from 'prop-types';
 
 import Head from 'next/head';
 import { useEffect } from 'react';
-import { createClient } from '../../prismicio';
-import { components } from '../../slices';
-import { cleanObject, isDevMode } from '../utils';
-import { ORIGIN_HOST } from '../utils/variables';
+import useRigo from '../../common/hooks/useRigo';
+import { createClient } from '../../../prismicio';
+import { components } from '../../../slices';
+import { cleanObject, isDevMode } from '../../utils';
+import { ORIGIN_HOST } from '../../utils/variables';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
+  const { isRigoInitialized, rigo } = useRigo();
 
   useEffect(() => {
     if (!page?.id) {
@@ -24,12 +26,25 @@ function Page({ page }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (isRigoInitialized) {
+      rigo.show({
+        showBubble: false,
+        welcomeMessage: "Hello, I'm Rigo, your ideal coding mentor! How can I help you?",
+        target: '#rigobot-chat',
+        collapsed: false,
+        purposeSlug: '4geekscom-public-agent',
+      });
+    }
+  }, [isRigoInitialized]);
+
   return (
     <>
       {page?.structuredData?.name && (
         <Head>
           <script
             type="application/ld+json"
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: JSON.stringify(page.structuredData) }}
           />
           <meta name="google" content="notranslate" />
