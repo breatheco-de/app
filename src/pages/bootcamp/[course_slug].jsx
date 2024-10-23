@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
@@ -179,7 +180,7 @@ function Page({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
-  const [initialDataIsFetching, setInitialDataIsFetching] = useState(false);
+  const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const faqList = t('faq', {}, { returnObjects: true }) || [];
@@ -258,18 +259,16 @@ function Page({ data }) {
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
   useEffect(() => {
-    if (isRigoInitialized && data.course_translation) {
-      const modules = Array.isArray(data.course_translation?.course_modules)
-        ? `\nModules: ${data.course_translation.course_modules.map((module) => module.name).join(', ')}` : '';
-      const payload = `${data.course_translation.description}${modules}`;
+    if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
+      const context = document.body.innerText;
 
-      rigo.updateContext({
-        override: true,
+      rigo.updateOptions({
         completions,
-        payload,
+        context,
       });
     }
-  }, [isRigoInitialized]);
+  }, [isRigoInitialized, lang, initialDataIsFetching]);
+
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
       const rect = elem.getBoundingClientRect();
@@ -520,7 +519,8 @@ function Page({ data }) {
   const tryRigobot = (targetId) => {
     rigo.show({
       showBubble: true,
-      target: targetId,
+      // target: targetId,
+      highlight: true,
       welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
       purposeSlug: '4geekscom-public-agent',

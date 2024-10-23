@@ -237,7 +237,11 @@ function AuthProvider({ children, pageProps }) {
   useEffect(() => {
     if (isAuthenticated && isRigoInitialized) {
       const token = getToken();
-      rigo.init(token);
+      rigo.updateOptions({
+        user: {
+          token,
+        },
+      });
     }
   }, [isAuthenticated, isRigoInitialized]);
 
