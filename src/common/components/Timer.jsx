@@ -71,8 +71,8 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
         {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${timer?.months === 1 ? t('word-connector.month') : t('word-connector.months')} `}
         {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
         {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
-        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('word-connector.minute') : t('word-connector.minutes')} `}
-        {timer?.hours <= 0 && `${timer.seconds} ${t('word-connector.seconds')}`}
+        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')} `}
+        {timer?.hours <= 0 && `${timer.seconds} ${t('timer.sec')}`}
       </Text>
     );
   }
