@@ -114,16 +114,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                   {t('learnpack.open-locally')}
                 </Button>,
-                  <Popover>
-                    <PopoverTrigger>
-                      <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                        {t('learnpack.open-in-learnpack-button.text')}
-                      </Button>
-                    </PopoverTrigger>
-                    <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-                  </Popover>,
+                <Popover>
+                  <PopoverTrigger>
+                    <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                      {t('learnpack.open-in-learnpack-button.text')}
+                    </Button>
+                  </PopoverTrigger>
+                  <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                </Popover>,
               ].sort((a,b) => {
-                if(a > b) return cohortSession.available_as_saas;
+                if (a > b) return cohortSession.available_as_saas;
                 return -1;
               })}
             </Box>
@@ -179,7 +179,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             >
               {t('common:learnpack.open-locally')}
             </Button>].sort((a,b) => {
-              if(a > b) return cohortSession.available_as_saas;
+              if (a > b) return cohortSession.available_as_saas;
               return -1
             })
           }
