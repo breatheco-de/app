@@ -21,7 +21,6 @@ function ConnectGithubRigobot({ ...rest }) {
   const toast = useToast();
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const accessToken = getStorageItem('accessToken');
 
   const {
     borderColor, backgroundColor, modal,
@@ -80,6 +79,7 @@ function ConnectGithubRigobot({ ...rest }) {
                 cursor="pointer"
                 onClick={(e) => {
                   e.preventDefault();
+                  const accessToken = getStorageItem('accessToken');
                   window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                 }}
               >
@@ -125,7 +125,17 @@ function ConnectGithubRigobot({ ...rest }) {
                   onClick={(e) => {
                     e.preventDefault();
                     if (user?.github?.username) {
-                      window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      const accessToken = getStorageItem('accessToken');
+                      const loginWindow = window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      const checkWindowClosed = setInterval(() => {
+                        if (loginWindow.closed) {
+                            clearInterval(checkWindowClosed); // Stop checking once the window is closed
+                            console.log('Login window has been closed.');
+                
+                            // Handle what should happen when the window is closed
+                            // For example, redirect the user, trigger an action, etc.
+                        }
+                    }, 500);
                     }
                   }}
                 >

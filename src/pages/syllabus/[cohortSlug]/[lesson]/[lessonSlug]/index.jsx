@@ -1201,7 +1201,7 @@ function SyllabusContent() {
         isOpen={showRigobotModal}
         onClose={() => setShowRigobotModal(false)}
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px" paddingBottom="10px">
           <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
           <Text
             size="17px"
