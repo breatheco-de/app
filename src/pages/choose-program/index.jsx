@@ -3,7 +3,6 @@ import {
   Flex, Box, Button, useToast, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
@@ -59,6 +58,7 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
+  const [loadingInvite, setLoadingInvite] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
@@ -74,7 +74,6 @@ function chooseProgram() {
     data: [],
   });
   const { isAuthenticated, user } = useAuth();
-  const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -354,20 +353,21 @@ function chooseProgram() {
 
   const acceptInvite = async ({ id }) => {
     try {
+      setLoadingInvite(id);
       const res = await bc.auth().invites().accept(id);
       const { status } = res;
       if (status >= 200 && status < 400) {
         const inv = invites.find((invite) => invite.id === id);
-        const cohortName = inv.cohort.name;
+        const { name: cohortName } = inv.cohort;
+
+        // await refetch();
+
         toast({
           title: t('alert-message:invitation-accepted', { cohortName }),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
-        setTimeout(() => {
-          router.reload();
-        }, 800);
       } else {
         toast({
           title: t('alert-message:invitation-error'),
@@ -378,6 +378,8 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      setLoadingInvite(null);
     }
   };
 
@@ -460,7 +462,15 @@ function chooseProgram() {
               </Heading>
 
               {invites?.length > 0 && (
-                <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
+                <Box
+                  margin="25px 0 0 0"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="16px 20px"
+                  borderRadius="18px"
+                  background="yellow.light"
+                >
                   <Text
                     color="black"
                     display="flex"
@@ -471,45 +481,43 @@ function chooseProgram() {
                     size="md"
                   >
                     {t('invite.notify', { cohortInvitationWord: inviteWord() })}
-                    <Text
-                      as="button"
-                      size="md"
-                      fontWeight="bold"
-                      textAlign="left"
-                      gridGap="5px"
-                      _focus={{
-                        boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
-                      }}
-                      color="blue.default"
-                      display="flex"
-                      alignItems="center"
-                      onClick={() => setShowInvites(!showInvites)}
-                    >
-                      {showInvites ? t('invite.hide') : t('invite.show')}
-                      <Icon
-                        icon="arrowDown"
-                        width="20px"
-                        height="20px"
-                        style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      />
-                    </Text>
+                  </Text>
+                  <Text
+                    as="button"
+                    size="md"
+                    fontWeight="bold"
+                    textAlign="left"
+                    gridGap="5px"
+                    _focus={{
+                      boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+                    }}
+                    color="blue.default"
+                    display="flex"
+                    alignItems="center"
+                    onClick={() => setShowInvites(!showInvites)}
+                  >
+                    {showInvites ? t('invite.hide') : t('invite.show')}
+                    <Icon
+                      icon="arrowDown"
+                      width="20px"
+                      height="20px"
+                      style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
                   </Text>
                 </Box>
               )}
 
-              {showInvites && invites.map((item, i) => {
+              {showInvites && invites.map((item) => {
                 const { id } = item;
-                const index = i;
                 return (
                   <Module
-                    key={index}
+                    key={`invites-${id}`}
                     data={{
                       title: item.cohort.name,
                     }}
                     containerStyle={{
                       background: '#FFF4DC',
                     }}
-                    width={['70%', '68%', '70%', '50%']}
                     rightItemHandler={(
                       <Button
                         color="blue.default"
@@ -518,6 +526,7 @@ function chooseProgram() {
                         onClick={() => {
                           acceptInvite({ id });
                         }}
+                        isLoading={loadingInvite === id}
                         gridGap="8px"
                       >
                         <Text color="blue.default" size="15px">
