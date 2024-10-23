@@ -74,6 +74,7 @@ function chooseProgram() {
     data: [],
   });
   const { isAuthenticated, user } = useAuth();
+  const [userID, setUserID] = useState(undefined);
   const router = useRouter();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
@@ -282,7 +283,10 @@ function chooseProgram() {
     }
   }, [dataQuery?.id, isLoading]);
 
-  const userID = user?.id;
+  useEffect(() => {
+    if (!user) return;
+    setUserID(user.id);
+  });
 
   useEffect(() => {
     bc.payment({ upcoming: true, limit: 20 }).events()
@@ -443,7 +447,7 @@ function chooseProgram() {
                 fontWeight={800}
                 size="xl"
               >
-                {user?.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
+                {user && user.first_name ? t('welcome-back-user', { name: user?.first_name }) : t('welcome')}
               </Heading>
 
               {invites?.length > 0 && (
