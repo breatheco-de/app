@@ -99,6 +99,10 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
     }
   }, [cohortSession]);
 
+  //______________LOGS_______________
+  console.log('currentAsset', currentAsset);
+  console.log(provisioningLinks);
+
   if (variant === 'small') {
     return (
       <>
@@ -116,7 +120,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                       {t('learnpack.open-in-learnpack-button.text')}
                     </Button>
                   </PopoverTrigger>
-                  <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                  {/* <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} /> */}
                 </Popover>
               )}
               <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
