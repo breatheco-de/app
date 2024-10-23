@@ -122,7 +122,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                   </PopoverTrigger>
                   <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
                 </Popover>,
-              ].sort((a,b) => {
+              ].sort((a, b) => {
                 if (a > b) return cohortSession.available_as_saas;
                 return -1;
               })}
@@ -178,11 +178,10 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               fontSize="17px"
             >
               {t('common:learnpack.open-locally')}
-            </Button>].sort((a,b) => {
-              if (a > b) return cohortSession.available_as_saas;
-              return -1
-            })
-          }
+            </Button>].sort((a, b) => {
+            if (a > b) return cohortSession.available_as_saas;
+            return -1;
+          })}
         </Box>
       </Box>
       <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
