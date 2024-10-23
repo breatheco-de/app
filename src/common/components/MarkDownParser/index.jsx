@@ -15,7 +15,6 @@ import bc from '../../services/breathecode';
 import {
   Wrapper, BeforeAfter, Code, MDCheckbox, MDHeading, MDHr, MDLink, MDText, OnlyForBanner, Quote,
 } from './MDComponents';
-import { usePersistent } from '../../hooks/usePersistent';
 import useModuleHandler from '../../hooks/useModuleHandler';
 import CodeViewer, { languagesLabels, languagesNames } from '../CodeViewer';
 import DynamicCallToAction from '../DynamicCallToAction';
@@ -59,8 +58,8 @@ function HrComponent() {
 function IframeComponent({ src, title, width, height }) {
   return (<iframe src={src} width={width} height={height} title={title || 'iframe-content'} className="MDIframe" />);
 }
-function OnlyForComponent({ profile, ...props }) {
-  return (<OnlyForBanner profile={profile} {...props} />);
+function OnlyForComponent({ ...props }) {
+  return (<OnlyForBanner {...props} />);
 }
 
 function CodeViewerComponent(props) {
@@ -138,7 +137,6 @@ function MarkDownParser({
   const [newSubTasks, setNewSubTasks] = useState([]);
   const [fileContext, setFileContext] = useState('');
   const { subTasks, setSubTasks } = useModuleHandler();
-  const [profile] = usePersistent('profile', {});
 
   const updateSubTask = async (taskProps) => {
     const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
@@ -266,7 +264,7 @@ function MarkDownParser({
           // table: {
           //   component: MDTable,
           // },
-          onlyfor: ({ ...props }) => OnlyForComponent({ ...props, profile }),
+          onlyfor: ({ ...props }) => OnlyForComponent({ ...props }),
           codeviewer: ({ ...props }) => CodeViewerComponent({ ...props, preParsedContent, fileContext }),
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox

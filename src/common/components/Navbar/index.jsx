@@ -26,9 +26,8 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { isWindow, setStorageItem } from '../../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../utils/variables';
 import axios from '../../../axios';
-import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
@@ -36,8 +35,6 @@ import useStyle from '../../hooks/useStyle';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import bc from '../../services/breathecode';
 // import UpgradeExperience from '../UpgradeExperience';
-
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;

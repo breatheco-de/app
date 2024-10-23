@@ -17,7 +17,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
-import modifyEnv from '../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -70,7 +70,6 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [showCloneModal, setShowCloneModal] = useState(false);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
 
   const accessToken = localStorage.getItem('accessToken');
