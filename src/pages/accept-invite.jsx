@@ -20,112 +20,108 @@
 // import useAuth from '../common/hooks/useAuth';
 // import validationSchema from '../common/components/Forms/validationSchemas';
 // import NextChakraLink from '../common/components/NextChakraLink';
-// // import LoaderScreen from '../common/components/LoaderScreen';
 // import Text from '../common/components/Text';
 // import Heading from '../common/components/Heading';
 // import modifyEnv from '../../modifyEnv';
 
 function AcceptInvite() {
-  // const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-  // const toast = useToast();
-  // const router = useRouter();
-  // const { t, lang } = useTranslation('accept-invite');
-  // const { isAuthenticated, user } = useAuth();
-  // const { query } = router;
-  // const { inviteToken } = query;
-  // const [noInviteToken, setNoInviteToken] = useState(false)
-  // const [incorrectUser, setIncorrectUser] = useState(false)
-  // const [isChecked, setIsChecked] = useState(false);
-  // const [invite, setInvite] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [htmlResponse, setHtmlResponse] = useState(false)
-
-  // console.log(user)
+//   const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+//   const toast = useToast();
+//   const router = useRouter();
+//   const { t, lang } = useTranslation('accept-invite');
+//   const { isAuthenticated, user } = useAuth();
+//   const { query } = router;
+//   const { inviteToken } = query;
+//   const [noInviteToken, setNoInviteToken] = useState(false)
+//   const [incorrectUser, setIncorrectUser] = useState(false)
+//   const [isChecked, setIsChecked] = useState(false);
+//   const [invite, setInvite] = useState(null);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [htmlResponse, setHtmlResponse] = useState(false)
 
   // const getInvite = async () => {
-  //   if (!inviteToken) {
-  //     setNoInviteToken(true)
-  //     setIsLoading(false)
-  //     return
-  //   }
-  //   try {
-  //     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
-
-  //     const contentType = resp.headers.get('Content-Type');
-  //     if (contentType && contentType.includes('application/json')) {
-  //       const data = await resp.json();
-  //       setInvite(data);
-  //     } else if (contentType && contentType.includes('text/html')) {
-  //       const htmlData = await resp.text();
-  //       setHtmlResponse(true)
-  //       document.getElementById('htmlOutput').innerHTML = htmlData;
+  //     if (!inviteToken) {
+  //       setNoInviteToken(true)
+  //       setIsLoading(false)
+  //       return
   //     }
+  //     try {
+  //       const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-  //     setIsLoading(false)
-  //   } catch (e) {
-  //     console.log(e)
-  //     setIsLoading(false)
-  //   }
-  // };
+  //       const contentType = resp.headers.get('Content-Type');
+  //       if (contentType && contentType.includes('application/json')) {
+  //         const data = await resp.json();
+  //         setInvite(data);
+  //       } else if (contentType && contentType.includes('text/html')) {
+  //         const htmlData = await resp.text();
+  //         setHtmlResponse(true)
+  //         document.getElementById('htmlOutput').innerHTML = htmlData;
+  //       }
 
-  // useEffect(() => {
-  //   getInvite();
-  // }, []);
+  //       setIsLoading(false)
+  //     } catch (e) {
+  //       console.log(e)
+  //       setIsLoading(false)
+  //     }
+  //   };
 
-  // useEffect(() => {
-  //   if (user?.email !== invite?.email) return
-  //   if (user) setIncorrectUser(true)
-  // }, [invite])
+  //   useEffect(() => {
+  //     getInvite();
+  //   }, []);
 
-  // const putInvite = async (values, actions) => {
-  //   console.log("loas valores",values)
-  //   try {
-  //     const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         ...values,
-  //         repeat_password: values.passwordConfirmation,
-  //       }),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept-Language': lang,
-  //       },
-  //     });
+  //   useEffect(() => {
+  //     if(!user || !invite) return
+  //     if(user?.email !== invite?.email) setIncorrectUser(true)
+  //   }, [invite, user])
 
-  //     const result = await resp.json();
+  //   const putInvite = async (values, actions) => {
+  //     try {
+  //       const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
+  //         method: 'POST',
+  //         body: JSON.stringify({
+  //           ...values,
+  //           repeat_password: values.passwordConfirmation,
+  //         }),
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Accept-Language': lang,
+  //         },
+  //       });
 
-  //     if (resp.status >= 400) {
+  //       const result = await resp.json();
+
+  //       if (resp.status >= 400) {
+  //         toast({
+  //           title: result.detail,
+  //           status: 'error',
+  //           duration: 9000,
+  //           isClosable: true,
+  //         });
+  //       } else if (resp.status >= 200 && resp.status <= 299) {
+  //         toast({
+  //           title: 'Successfully accepted!',
+  //           status: 'success',
+  //           duration: 9000,
+  //           isClosable: true,
+  //         });
+  //         router.push('/login');
+  //       }
+  //       actions.setSubmitting(false);
+  //     } catch (e) {
+  //       console.log(e);
   //       toast({
-  //         title: result.detail,
+  //         title: e?.message || t('error'),
   //         status: 'error',
   //         duration: 9000,
   //         isClosable: true,
   //       });
-  //     } else if (resp.status >= 200 && resp.status <= 299) {
-  //       toast({
-  //         title: 'Successfully accepted!',
-  //         status: 'success',
-  //         duration: 9000,
-  //         isClosable: true,
-  //       });
-  //       router.push('/login');
+  //       actions.setSubmitting(false);
   //     }
-  //     actions.setSubmitting(false);
-  //   } catch (e) {
-  //     console.log(e);
-  //     toast({
-  //       title: e?.message || t('error'),
-  //       status: 'error',
-  //       duration: 9000,
-  //       isClosable: true,
-  //     });
-  //     actions.setSubmitting(false);
-  //   }
-  // };
+  //   };
 
   // if (isLoading) {
   //   return (
@@ -140,6 +136,10 @@ function AcceptInvite() {
   //     </Box>
   //   );
   // }
+
+  //__________________LOGS________________________
+  // console.log("soy el user",user)
+  // console.log("HOLA", incorrectUser)
 
   return (
     <>
@@ -162,7 +162,7 @@ function AcceptInvite() {
           }
         </>
       }
-      {invite && !noInviteToken && !htmlResponse &&
+      {invite && !noInviteToken && !htmlResponse && user &&
         <Flex
           alignItems="center"
           flexDirection="column"
@@ -186,7 +186,8 @@ function AcceptInvite() {
                     <Link href='/choose-program' variant="default">{t('signup:consumables.back-to-dashboard')}</Link>
                   </>
                   :
-                  t('heading', { name: invite?.academy.name })}
+                  t('heading', { name: invite?.academy.name })
+                }
               </Text>
               <Formik
                 initialValues={{
