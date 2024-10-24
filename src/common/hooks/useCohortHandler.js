@@ -53,13 +53,13 @@ function useCohortHandler() {
   };
 
   const getCohortAssignments = async ({
-    slug, cohort,
+    slug, cohort, updatedUser = undefined,
   }) => {
     if (user) {
       const academyId = cohort?.academy.id;
       const version = cohort?.syllabus_version?.version;
       const syllabusSlug = cohort?.syllabus_version?.slug || slug;
-      const currentAcademy = user.roles.find((role) => role.academy.id === academyId);
+      const currentAcademy = user.roles.find((role) => role.academy.id === academyId) || updatedUser?.roles.find((role) => role.academy.id === academyId);
       if (currentAcademy) {
         // Fetch cohortProgram and TaskTodo then apply to moduleMap store
         try {

@@ -60,6 +60,7 @@ const useStyle = () => {
     greenLight: '#25BF6C',
     greenLight2: '#A4FFBD',
     greenLight3: '#D7FFE2',
+    greenLight4: '#F2FFF6',
     fontColor2: useColorModeValue('#3A3A3A', '#EBEBEB'),
     successLight: useColorModeValue('#e9ffef', '#A4FFBD'),
   };

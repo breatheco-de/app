@@ -145,6 +145,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       return prevState;
     });
   };
+
   const rejectOrApprove = (status) => {
     reportDatalayer({
       dataLayer: {
@@ -394,7 +395,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     return t('code-review.rigobot-code-review');
   };
 
-  const getAssetData = async ({ callback = () => {} } = {}) => {
+  const getAssetData = async ({ callback = () => { } } = {}) => {
     const assetResp = await bc.lesson().getAsset(currentTask.associated_slug);
     if (assetResp.status < 400) {
       setLoaders((prevState) => ({
@@ -462,6 +463,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         onClose();
         setContextData({});
         setStage(stages.initial);
+        handleResetFlow();
       }}
       title={getTitle()}
       closeOnOverlayClick={false}
@@ -493,6 +495,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           left={5}
           onClick={() => {
             setStage('', 'back');
+            handleResetFlow();
           }}
           aria-label={t('common:go-back')}
         >
@@ -528,9 +531,9 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       {t('code-review.student-name', { name: fullName })}
                     </Text>
                     {taskStatus === 'DONE' && hasNotBeenReviewed && (
-                    <Box textTransform="uppercase" fontSize="13px" background="yellow.light" color="yellow.default" borderRadius="27px" padding="2px 6px" fontWeight={700} border="2px solid" borderColor="yellow.default">
-                      {t('code-review.waiting-for-review')}
-                    </Box>
+                      <Box textTransform="uppercase" fontSize="13px" background="yellow.light" color="yellow.default" borderRadius="27px" padding="2px 6px" fontWeight={700} border="2px solid" borderColor="yellow.default">
+                        {t('code-review.waiting-for-review')}
+                      </Box>
                     )}
                   </Flex>
                 ) : (
@@ -805,13 +808,13 @@ ReviewModal.propTypes = {
 };
 ReviewModal.defaultProps = {
   isOpen: false,
-  onClose: () => {},
+  onClose: () => { },
   currentTask: {},
   projectLink: '',
   defaultStage: stages.initial,
   externalData: null,
   isStudent: false,
-  changeStatusAssignment: () => {},
+  changeStatusAssignment: () => { },
   fixedStage: false,
   disableRate: false,
   disableLiking: false,
