@@ -263,6 +263,7 @@ function Page({ data }) {
       const context = document.body.innerText;
 
       rigo.updateOptions({
+        showBubble: true,
         completions,
         context,
       });
