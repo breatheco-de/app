@@ -263,7 +263,7 @@ function Page({ data }) {
       const context = document.body.innerText;
 
       rigo.updateOptions({
-        showBubble: true,
+        showBubble: false,
         completions,
         context,
       });
@@ -518,7 +518,7 @@ function Page({ data }) {
     })) : [];
 
   const tryRigobot = (targetId) => {
-    rigo.show({
+    rigo.updateOptions({
       showBubble: true,
       target: targetId,
       highlight: true,
