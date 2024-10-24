@@ -19,6 +19,7 @@
   "coupon-offer": "{{slug}}: {{value}} dto",
   "discount-value-off": "{{value}} dto.",
   "add": "Agregar",
+  "see-other-plans": "Ver otros planes",
   "you-are-getting": "Estás obteniendo",
   "plan-is-ready": "¡Ya estas casi listo! Para finalizar, presiona el botón azul mas abajo que dice \"Empezar a aprender\"",
   "payment-success": "Pago exitoso",
