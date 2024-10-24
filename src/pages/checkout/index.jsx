@@ -517,7 +517,7 @@ function Checkout() {
       ...newPlan,
     };
     setOriginalPlan({ ...originalPlan, selectedPlan });
-    setSelectedPlanCheckoutData({ ...originalPlan, selectedPlan });
+    setSelectedPlanCheckoutData({ ...originalPlan, ...selectedPlan });
     setShowFinantialsOptions(false);
   };
 
