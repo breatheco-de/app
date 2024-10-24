@@ -519,7 +519,7 @@ function Page({ data }) {
   const tryRigobot = (targetId) => {
     rigo.show({
       showBubble: true,
-      // target: targetId,
+      target: targetId,
       highlight: true,
       welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
