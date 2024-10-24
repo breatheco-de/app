@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { intervalToDuration } from 'date-fns';
+import { differenceInMilliseconds } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -15,9 +15,9 @@ function TimeString({ string, label, size, textSize }) {
         {string}
       </Heading>
       {label && (
-      <Text size={textSize} fontWeight={700} textTransform="uppercase">
-        {label}
-      </Text>
+        <Text size={textSize} fontWeight={700} textTransform="uppercase">
+          {label}
+        </Text>
       )}
     </Box>
   );
@@ -35,20 +35,26 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
       interval = setInterval(() => {
         const now = new Date();
         const startingAtDate = new Date(startingAt);
-        const intervalDurationObj = intervalToDuration({
-          start: startingAtDate,
-          end: now,
-        });
+        const differenceInMs = differenceInMilliseconds(now, startingAtDate) * -1;
+
         const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
 
         if (isRemainingToExpire) {
+          const totalSeconds = Math.floor(differenceInMs / 1000);
+          const days = Math.floor(totalSeconds / (24 * 60 * 60));
+          const remainingSecondsForDay = totalSeconds % (24 * 60 * 60);
+
+          const hours = Math.floor(remainingSecondsForDay / (60 * 60));
+          const minutes = Math.floor((remainingSecondsForDay % (60 * 60)) / 60);
+          const seconds = remainingSecondsForDay % 60;
+
           setLoading(false);
+
           setTimer({
-            months: String(intervalDurationObj.months).padStart(2, '0'),
-            days: String(intervalDurationObj.days).padStart(2, '0'),
-            hours: String(intervalDurationObj.hours).padStart(2, '0'),
-            minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
-            seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+            days: String(days).padStart(2, '0'),
+            hours: String(hours).padStart(2, '0'),
+            minutes: String(minutes).padStart(2, '0'),
+            seconds: String(seconds).padStart(2, '0'),
           });
         }
         if (!isRemainingToExpire && !justFinished) {
@@ -68,10 +74,10 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
     if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
     return (
       <Text {...rest}>
-        {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${timer?.months === 1 ? t('word-connector.month') : t('word-connector.months')} `}
+        {/* {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${Number(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')} `} */}
         {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
-        {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
-        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')} `}
+        {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
+        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 || timer?.months > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')} `}
         {timer?.hours <= 0 && `${timer.seconds} ${t('timer.sec')}`}
       </Text>
     );
@@ -157,7 +163,7 @@ Timer.propTypes = {
 };
 Timer.defaultProps = {
   startingAt: null,
-  onFinish: () => {},
+  onFinish: () => { },
   autoRemove: false,
   variant: 'default',
 };
