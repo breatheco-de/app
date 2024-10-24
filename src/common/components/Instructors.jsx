@@ -16,7 +16,7 @@ function orderArrayByRole(array) {
   });
 }
 
-function Instructors({ isLoading, list, limit, ...rest }) {
+function Instructors({ isLoading, list, limit, tryRigobot, ...rest }) {
   const { t } = useTranslation('common');
   const { featuredColor } = useStyle();
   const intructorsToShow = list.length > limit ? orderArrayByRole(list.slice(0, limit)) : orderArrayByRole(list);
@@ -54,7 +54,17 @@ function Instructors({ isLoading, list, limit, ...rest }) {
               </Flex>
             );
           })}
-        <Flex alignItems="center" gridGap="8px" minWidth="144px" padding="4px 8px" background={featuredColor} borderRadius="43">
+        <Flex
+          id="ai-tutor"
+          alignItems="center"
+          gridGap="8px"
+          minWidth="144px"
+          padding="4px 8px"
+          background={featuredColor}
+          borderRadius="43"
+          // cursor="pointer"
+          // onClick={tryRigobot}
+        >
           <Icon icon="avatar-glasses" width="36px" height="42px" />
           <Flex flexDirection="column" gridGap="6px">
             <Text size="14px" fontWeight={700} lineHeight="normal">
@@ -81,10 +91,12 @@ Instructors.propTypes = {
   list: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
   limit: PropTypes.number,
   isLoading: PropTypes.bool,
+  tryRigobot: PropTypes.func,
 };
 Instructors.defaultProps = {
   list: [],
   limit: 2,
   isLoading: false,
+  tryRigobot: () => {},
 };
 export default Instructors;

@@ -3,7 +3,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import TagManager from 'react-gtm-module';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
@@ -14,6 +14,7 @@ import { repositoryName } from '../../prismicio';
 import wrapper from '../store';
 import theme from '../../styles/theme';
 import Navbar from '../common/components/Navbar';
+import RigoProvider from '../common/context/RigoContext';
 import AuthProvider from '../common/context/AuthContext';
 import SessionProvider from '../common/context/SessionContext';
 import ConnectionProvider from '../common/context/ConnectionContext';
@@ -64,37 +65,39 @@ function App({ Component, pageProps }) {
       <Helmet
         {...pageProps.seo}
       />
-      <ChakraProvider
-        resetCSS
-        theme={theme}
-      >
-        <AuthProvider pageProps={pageProps}>
-          <SessionProvider>
-            <ConnectionProvider>
-              <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-              {isEnvModified && (
-              <AlertMessage
-                full
-                type="warning"
-                message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                borderRadius="0px"
-                justifyContent="center"
-              />
-              )}
-              <InterceptionLoader />
+      <RigoProvider>
+        <ChakraProvider
+          resetCSS
+          theme={theme}
+        >
+          <AuthProvider pageProps={pageProps}>
+            <SessionProvider>
+              <ConnectionProvider>
+                <Navbar pageProps={pageProps} translations={pageProps?.translations} />
+                {isEnvModified && (
+                <AlertMessage
+                  full
+                  type="warning"
+                  message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
+                  borderRadius="0px"
+                  justifyContent="center"
+                />
+                )}
+                <InterceptionLoader />
 
-              <PrismicProvider internalLinkComponent={InternalLinkComponent}>
-                <PrismicPreview repositoryName={repositoryName}>
-                  <Component {...pagePropsData} />
-                </PrismicPreview>
-              </PrismicProvider>
+                <PrismicProvider internalLinkComponent={InternalLinkComponent}>
+                  <PrismicPreview repositoryName={repositoryName}>
+                    <Component {...pagePropsData} />
+                  </PrismicPreview>
+                </PrismicProvider>
 
-              <Footer pageProps={pagePropsData} />
-            </ConnectionProvider>
-          </SessionProvider>
-        </AuthProvider>
-      </ChakraProvider>
-      <ReactQueryDevtools initialIsOpen={false} position="bottom" />
+                <Footer pageProps={pagePropsData} />
+              </ConnectionProvider>
+            </SessionProvider>
+          </AuthProvider>
+        </ChakraProvider>
+      </RigoProvider>
+      {/* <ReactQueryDevtools initialIsOpen={false} position="bottom" /> */}
     </QueryClientProvider>
   );
 }

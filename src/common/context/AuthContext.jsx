@@ -10,6 +10,7 @@ import { getPrismicPagesUrls } from '../../utils/url';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
+import useRigo from '../hooks/useRigo';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
@@ -124,9 +125,11 @@ function AuthProvider({ children, pageProps }) {
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
+  const { rigo, isRigoInitialized } = useRigo();
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { isAuthenticated } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
@@ -230,6 +233,17 @@ function AuthProvider({ children, pageProps }) {
     }
     authHandler();
   }, [router]);
+
+  useEffect(() => {
+    if (isAuthenticated && isRigoInitialized) {
+      const token = getToken();
+      rigo.updateOptions({
+        user: {
+          token,
+        },
+      });
+    }
+  }, [isAuthenticated, isRigoInitialized]);
 
   const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');

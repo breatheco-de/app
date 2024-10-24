@@ -109,6 +109,10 @@
             "options": ["Lato", "Space Grotesk Variable"],
             "default_value": "Lato"
           }
+        },
+        "button_id": {
+          "type": "Text",
+          "config": { "label": "Button Id", "placeholder": "" }
         }
       },
       "items": {},

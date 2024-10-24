@@ -115,6 +115,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "Space Grotesk Variable",
 				"type": "Select"
+			},
+			"button_id": {
+				"__TYPE__": "FieldContent",
+				"value": "whose",
+				"type": "Text"
 			}
 		},
 		"items": [

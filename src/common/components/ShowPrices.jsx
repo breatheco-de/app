@@ -10,6 +10,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
+import useRigo from '../hooks/useRigo';
 
 function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
@@ -82,6 +83,7 @@ function ShowPrices({
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
+  const { isRigoInitialized, rigo } = useRigo();
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
 
@@ -130,6 +132,13 @@ function ShowPrices({
   useEffect(() => {
     if (dataList.length === 1) {
       handleSelect(dataList[0]);
+    }
+    if (isRigoInitialized) {
+      const context = document.body.innerText;
+
+      rigo.updateOptions({
+        context,
+      });
     }
   }, []);
 
