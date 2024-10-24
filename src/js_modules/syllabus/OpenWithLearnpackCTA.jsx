@@ -100,10 +100,6 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
     }
   }, [cohortSession]);
 
-  //______________LOGS_______________
-  console.log('currentAsset', currentAsset);
-  console.log(provisioningLinks);
-
   if (variant === 'small') {
     return (
       <>
