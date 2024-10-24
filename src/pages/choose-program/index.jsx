@@ -103,7 +103,7 @@ function chooseProgram() {
     return users || [];
   };
 
-  const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
+  const { isLoading, data: dataQuery, setData: setDataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
   const getMembers = async (cohortSubscription) => {
     const members = await getStudentAndTeachers(cohortSubscription);
@@ -247,37 +247,35 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
+  const processCohort = async (item) => {
+    if (item?.cohort?.slug) {
+      const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
+      const { academy, syllabus_version: syllabusVersion } = item.cohort;
+      const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+      const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
+        role: 'TEACHER,ASSISTANT',
+        cohorts: item?.cohort?.slug,
+        academy: item?.cohort?.academy?.id,
+      }).getMembers();
+      const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
+      const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
+      const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
+      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id });
+
+      setCohortTasks((prev) => ({
+        ...prev,
+        [item?.cohort.slug]: {
+          ...assignmentData,
+          teacher,
+          assistant,
+        },
+      }));
+    }
+  };
+
   useEffect(() => {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
-      dataQuery?.cohorts.map(async (item) => {
-        if (item?.cohort?.slug) {
-          const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
-          const { academy, syllabus_version: syllabusVersion } = item.cohort;
-          const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
-          const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
-            role: 'TEACHER,ASSISTANT',
-            cohorts: item?.cohort?.slug,
-            academy: item?.cohort?.academy?.id,
-          }).getMembers();
-          const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
-          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-          const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-          handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
-            .then((assignmentData) => {
-              if (item?.cohort?.slug) {
-                setCohortTasks((prev) => ({
-                  ...prev,
-                  [item?.cohort.slug]: {
-                    ...assignmentData,
-                    teacher,
-                    assistant,
-                  },
-                }));
-              }
-            });
-        }
-        return null;
-      });
+      dataQuery.cohorts.map(processCohort);
     }
   }, [dataQuery?.id, isLoading]);
 
@@ -334,21 +332,24 @@ function chooseProgram() {
     }
   }, [userID]);
 
-  useEffect(() => {
-    Promise.all([
-      bc.auth().invites().get(),
-    ]).then((
-      [respInvites],
-    ) => {
+  const getPendingInvites = async () => {
+    try {
+      const [respInvites] = await Promise.all([
+        bc.auth().invites().get(),
+      ]);
       setInvites(respInvites.data);
-    }).catch(() => {
+    } catch (e) {
       toast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-    });
+    }
+  };
+
+  useEffect(() => {
+    getPendingInvites();
   }, []);
 
   const acceptInvite = async ({ id }) => {
@@ -357,10 +358,17 @@ function chooseProgram() {
       const res = await bc.auth().invites().accept(id);
       const { status } = res;
       if (status >= 200 && status < 400) {
-        const inv = invites.find((invite) => invite.id === id);
+        const invitationIndex = invites.findIndex((invite) => invite.id === id);
+        const inv = invites[invitationIndex];
         const { name: cohortName } = inv.cohort;
 
-        // await refetch();
+        const { data: refetchData } = await refetch();
+
+        setDataQuery(refetchData.data);
+
+        const invList = [...invites];
+        invList.splice(invitationIndex, 1);
+        setInvites(invList);
 
         toast({
           title: t('alert-message:invitation-accepted', { cohortName }),
@@ -378,6 +386,12 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
+      toast({
+        title: t('alert-message:invitation-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     } finally {
       setLoadingInvite(null);
     }

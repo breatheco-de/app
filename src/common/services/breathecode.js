@@ -97,6 +97,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
         headers: academy && {
           academy,
