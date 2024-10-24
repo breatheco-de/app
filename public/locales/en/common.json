@@ -34,6 +34,11 @@
     "months": "months",
     "years": "years"
   },
+  "timer":{
+    "min": "min",
+    "mins": "mins",
+    "sec": "seg"
+  },
   "no-translation-available": "No translation available",
   "read-next": "Read next",
   "heading": "Welcome to",
