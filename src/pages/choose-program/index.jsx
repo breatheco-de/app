@@ -334,10 +334,18 @@ function chooseProgram() {
 
   const getPendingInvites = async () => {
     try {
-      const [respInvites] = await Promise.all([
-        bc.auth().invites().get(),
+      const { data } = await bc.auth().invites().profileInvites();
+      const { invites: invs, profile_academies: profileAcademies } = data;
+
+      const pendingInvites = invs.filter((inv) => inv.status === 'PENDING').map((inv) => ({ ...inv, type: 'invite' }));
+      const pendingProfileAcademies = profileAcademies
+        .filter((prof) => !pendingInvites.some((inv) => inv.academy.id === prof.academy.id))
+        .map((prof) => ({ ...prof, type: 'profile_academy' }));
+
+      setInvites([
+        ...pendingInvites,
+        ...pendingProfileAcademies,
       ]);
-      setInvites(respInvites.data);
     } catch (e) {
       toast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
@@ -384,6 +392,51 @@ function chooseProgram() {
           isClosable: true,
         });
       }
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: t('alert-message:invitation-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingInvite(null);
+    }
+  };
+
+  const acceptProfileAcademy = async ({ id }) => {
+    try {
+      setLoadingInvite(id);
+      // const res = await bc.auth().invites().accept(id);
+      // const { status } = res;
+      // if (status >= 200 && status < 400) {
+      //   const invitationIndex = invites.findIndex((invite) => invite.id === id);
+      //   const inv = invites[invitationIndex];
+      //   const { name: cohortName } = inv.cohort;
+
+      //   const { data: refetchData } = await refetch();
+
+      //   setDataQuery(refetchData.data);
+
+      //   const invList = [...invites];
+      //   invList.splice(invitationIndex, 1);
+      //   setInvites(invList);
+
+      //   toast({
+      //     title: t('alert-message:invitation-accepted', { cohortName }),
+      //     status: 'success',
+      //     duration: 9000,
+      //     isClosable: true,
+      //   });
+      // } else {
+      //   toast({
+      //     title: t('alert-message:invitation-error'),
+      //     status: 'error',
+      //     duration: 5000,
+      //     isClosable: true,
+      //   });
+      // }
     } catch (e) {
       console.log(e);
       toast({
@@ -522,12 +575,12 @@ function chooseProgram() {
               )}
 
               {showInvites && invites.map((item) => {
-                const { id } = item;
+                const { id, type } = item;
                 return (
                   <Module
                     key={`invites-${id}`}
                     data={{
-                      title: item.cohort.name,
+                      title: type === 'invite' ? item.cohort.name : item.academy.name,
                     }}
                     containerStyle={{
                       background: '#FFF4DC',
@@ -538,7 +591,8 @@ function chooseProgram() {
                         borderColor="blue.default"
                         textTransform="uppercase"
                         onClick={() => {
-                          acceptInvite({ id });
+                          if (type === 'invite') acceptInvite({ id });
+                          else acceptProfileAcademy({ id });
                         }}
                         isLoading={loadingInvite === id}
                         gridGap="8px"
