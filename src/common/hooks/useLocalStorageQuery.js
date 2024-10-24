@@ -15,6 +15,12 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
     }
   }, []);
 
+  const updateData = (payload) => {
+    setData(payload);
+    if (payload) localStorage.setItem('queryCache', JSON.stringify(payload));
+    else localStorage.removeItem('queryCache');
+  };
+
   const queryResult = useQuery({
     queryKey,
     queryFn,
@@ -37,6 +43,7 @@ function useLocalStorageQuery(queryKey, queryFn, options) {
   }, [isSuccess, isError]);
   return {
     data: data || dataFetched,
+    setData: updateData,
     isLoading: isLoading || queryResult.isLoading,
     error: error || queryResult.error,
     refetch: queryResult?.refetch,
