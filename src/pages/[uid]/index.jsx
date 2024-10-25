@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
@@ -17,7 +19,8 @@ const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
-  // const router = useRouter();
+  const router = useRouter();
+  const { t } = useTranslation();
   const { isRigoInitialized, rigo } = useRigo();
 
   useEffect(() => {
