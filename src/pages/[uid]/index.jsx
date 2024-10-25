@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import useTranslation from 'next-translate/useTranslation';
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
@@ -19,8 +16,6 @@ const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
-  const router = useRouter();
-  const { t } = useTranslation();
   const { isRigoInitialized, rigo } = useRigo();
 
   useEffect(() => {
@@ -32,7 +27,20 @@ function Page({ page }) {
     }
   }, []);
 
+  const tryRigobot = () => {
+    rigo.updateOptions({
+      showBubble: true,
+      // target: '#try-rigobot',
+      highlight: true,
+      // welcomeMessage: t('rigobot.message'),
+      collapsed: false,
+      purposeSlug: '4geekscom-public-agent',
+    });
+  };
+
   useEffect(() => {
+    const rigobotButton = document.getElementById('try-rigobot');
+
     if (isRigoInitialized) {
       const context = document.body.innerText;
 
@@ -41,12 +49,13 @@ function Page({ page }) {
         completions,
         context,
       });
+      rigobotButton?.addEventListener('click', tryRigobot);
     }
-  }, [isRigoInitialized]);
 
-  // useEffect(() => {
-  //   console.log('render router!');
-  // }, [router]);
+    return () => {
+      rigobotButton?.removeEventListener('click', tryRigobot);
+    };
+  }, [isRigoInitialized]);
 
   return (
     <>
