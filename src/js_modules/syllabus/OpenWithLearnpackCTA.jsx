@@ -110,7 +110,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               {t('learnpack.choose-open')}
             </Text>
             <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
-              {vendors.length > 0 && !learnpackDeployUrl && (
+              {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -120,10 +120,10 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                   <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
                 </Popover>
               )}
-              {learnpackDeployUrl
+              {learnpackDeployUrl && cohortSession.available_as_saas
                 ? (
                   <Button as="a" href={learnpackDeployUrl} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                    {t('start-asset', { asset_type: currentAsset.asset_type })}
+                    {t('common:learnpack.start-asset', { asset_type: currentAsset?.asset_type?.toLowerCase() || '' })}
                   </Button>
                 )
                 : (
@@ -156,7 +156,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
           </Box>
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {vendors.length > 0 && !learnpackDeployUrl && (
+          {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
             <Popover>
               <PopoverTrigger>
                 <Button
@@ -175,7 +175,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
             </Popover>
           )}
-          {learnpackDeployUrl
+          {learnpackDeployUrl && cohortSession.available_as_saas
             ? (
               <Button
                 as="a"
@@ -189,7 +189,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 alignItems="center"
                 fontSize="17px"
               >
-                {t('start-asset', { asset_type: currentAsset.asset_type })}
+                {t('common:learnpack.start-asset', { asset_type: currentAsset?.asset_type?.toLowerCase() || '' })}
               </Button>
             )
             : (
