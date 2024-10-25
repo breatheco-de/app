@@ -148,6 +148,7 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
+    "start-asset": "Start {{asset_type}}",
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
     "open-in-learnpack-button": {
