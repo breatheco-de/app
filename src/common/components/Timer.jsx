@@ -74,7 +74,6 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
     if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
     return (
       <Text {...rest}>
-        {/* {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${Number(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')} `} */}
         {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
         {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
         {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 || timer?.months > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')} `}
