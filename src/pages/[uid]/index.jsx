@@ -1,20 +1,23 @@
+import { useEffect } from 'react';
+// import { useRouter } from 'next/router';
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import Head from 'next/head';
-import { useEffect } from 'react';
 import useRigo from '../../common/hooks/useRigo';
 import { createClient } from '../../../prismicio';
 import { components } from '../../../slices';
 import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
+import completions from './completion-jobs.json';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
+  // const router = useRouter();
   const { isRigoInitialized, rigo } = useRigo();
 
   useEffect(() => {
@@ -28,15 +31,19 @@ function Page({ page }) {
 
   useEffect(() => {
     if (isRigoInitialized) {
-      rigo.show({
+      const context = document.body.innerText;
+
+      rigo.updateOptions({
         showBubble: false,
-        welcomeMessage: "Hello, I'm Rigo, your ideal coding mentor! How can I help you?",
-        target: '#rigobot-chat',
-        collapsed: false,
-        purposeSlug: '4geekscom-public-agent',
+        completions,
+        context,
       });
     }
   }, [isRigoInitialized]);
+
+  // useEffect(() => {
+  //   console.log('render router!');
+  // }, [router]);
 
   return (
     <>
