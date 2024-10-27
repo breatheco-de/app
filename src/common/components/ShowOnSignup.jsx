@@ -9,8 +9,8 @@ import useGoogleMaps from '../hooks/useGoogleMaps';
 import useSignup from '../store/actions/signupAction';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
-import modifyEnv from '../../../modifyEnv';
 import { setStorageItem } from '../../utils';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import useSubscribeToPlan from '../hooks/useSubscribeToPlan';
 import { error } from '../../utils/logging';
@@ -21,7 +21,6 @@ function ShowOnSignUp({
   conversionTechnologies, setNoConsumablesFound, invertHandlerPosition, formContainerStyle, buttonStyles,
   onLastAttempt, maxAttemptsToRefetch, showVerifyEmail, onSubmit, ...rest
 }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { gmapStatus, getUserLocation } = useGoogleMaps(
     GOOGLE_KEY,

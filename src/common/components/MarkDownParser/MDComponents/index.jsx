@@ -533,7 +533,7 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, include, exclude, profile,
+  children, permission, include, exclude,
 }) {
   const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
   log('md_permissions:', allCapabilities);
@@ -542,7 +542,6 @@ export function OnlyForBanner({
     <OnlyFor
       onlyMember
       withBanner
-      profile={profile}
       capabilities={allCapabilities}
     >
       {children}
@@ -621,13 +620,11 @@ MDText.propTypes = {
 OnlyForBanner.propTypes = {
   children: PropTypes.node.isRequired,
   permission: PropTypes.string,
-  profile: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   include: PropTypes.string,
   exclude: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
-  profile: {},
   include: '',
   exclude: '',
 };
