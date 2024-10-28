@@ -4,25 +4,27 @@ import {
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { reportDatalayer } from '../../utils/requests';
+import { languageFix } from '../../utils';
 import Text from '../../common/components/Text';
 import Module from './module';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
-import { reportDatalayer } from '../../utils/requests';
 
 function ModuleMap({
   index, slug, modules, filteredModules,
   title, description, cohortData, filteredModulesByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const { startDay } = useModuleHandler();
   const { state } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
+
   const handleStartDay = () => {
     const updatedTasks = (modules || [])?.map((l) => ({
       ...l,
@@ -66,7 +68,7 @@ function ModuleMap({
     >
       <Box margin="14px 0" display="flex" alignItems="center" justifyContent="space-between" gridGap="15px">
         <Heading as="h2" fontSize="22px">
-          {title}
+          {languageFix(title, lang)}
         </Heading>
         <Heading
           as="span"
@@ -80,7 +82,7 @@ function ModuleMap({
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
-        {description}
+        {languageFix(description, lang)}
       </Text>
 
       {isAvailableToSync() && (

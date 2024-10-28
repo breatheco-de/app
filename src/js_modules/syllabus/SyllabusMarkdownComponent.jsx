@@ -1,21 +1,21 @@
 /* eslint-disable react/prop-types */
 import useTranslation from 'next-translate/useTranslation';
-import MarkDownParser from '../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../common/components/MarkDownParser/ArticleMarkdown';
 import { MDSkeleton } from '../../common/components/Skeleton';
 
 function SyllabusMarkdownComponent({
   ipynbHtmlUrl, readme, currentBlankProps, currentData, lesson,
   quizSlug, lessonSlug, currentTask, alerMessage, isGuidedExperience,
+  grantSyllabusAccess,
 }) {
   const { t } = useTranslation('syllabus');
   const blankText = t('blank-page', { url: currentBlankProps?.url });
 
-  if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank') {
+  if (ipynbHtmlUrl === null && readme && currentBlankProps?.target !== 'blank' && grantSyllabusAccess) {
     return (
-      <MarkDownParser
+      <ArticleMarkdown
         content={readme.content}
         withToc={lesson?.toLowerCase() === 'read'}
-        showContentHeading={!(currentData.asset_type === 'PROJECT' && isGuidedExperience)}
         isGuidedExperience={isGuidedExperience}
         frontMatter={{
           title: currentData.title,
@@ -28,9 +28,9 @@ function SyllabusMarkdownComponent({
       />
     );
   }
-  if (currentBlankProps?.target === 'blank') {
+  if (currentBlankProps?.target === 'blank' && grantSyllabusAccess) {
     return (
-      <MarkDownParser
+      <ArticleMarkdown
         content={blankText}
         withToc={lesson?.toLowerCase() === 'read'}
         isGuidedExperience={isGuidedExperience}
@@ -44,7 +44,7 @@ function SyllabusMarkdownComponent({
       />
     );
   }
-  if (ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) {
+  if ((ipynbHtmlUrl === null && readme === null && quizSlug !== lessonSlug) || !grantSyllabusAccess) {
     return <MDSkeleton />;
   }
   return false;

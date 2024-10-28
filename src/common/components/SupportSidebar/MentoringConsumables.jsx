@@ -15,11 +15,11 @@ import useAuth from '../../hooks/useAuth';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
-import { AvatarSkeletonWrapped } from '../Skeleton';
-import modifyEnv from '../../../../modifyEnv';
+import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
 import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -97,7 +97,6 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const accessToken = getStorageItem('accessToken');
@@ -108,6 +107,7 @@ function MentoringConsumables({
   const [dataToGetAccessModal, setDataToGetAccessModal] = useState({});
   const [consumableOfService, setConsumableOfService] = useState({});
   const [servicesWithMentorsAvailable, setServicesWithMentorsAvailable] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
   const [hasReset, setHasReset] = useState(false);
   const [notifyError, setNotifyError] = useState(true);
   const [shouldHandleService, setShouldHandleService] = useState(true);
@@ -227,6 +227,10 @@ function MentoringConsumables({
     }
 
     setServicesWithMentorsAvailable(servWithMentorsAvailable);
+
+    setTimeout(() => {
+      setLoadingServices(false);
+    }, 2000);
 
     if (!hasReset && queryMentor) {
       setOpen(true);
@@ -411,20 +415,54 @@ function MentoringConsumables({
             {!mentoryProps?.service && programServices.length > 0 && (
               <>
                 <InputGroup mt="15px">
-                  <Input onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })} background={commonBackground} borderBottomRadius="0" border="0" placeholder={t('supportSideBar.select-type')} />
+                  <Input
+                    onChange={(e) => setSearchProps({ ...searchProps, serviceSearch: e.target.value?.toLocaleLowerCase() })}
+                    background={commonBackground}
+                    borderBottomRadius="0"
+                    border="0"
+                    placeholder={t('supportSideBar.select-type')}
+                  />
                   <InputRightElement>
                     <Icon icon="arrowDown" color="#606060" width="35px" height="30px" ml="10px" />
                   </InputRightElement>
                 </InputGroup>
+
                 <Box maxHeight="10rem" width="100%" overflow="auto" borderBottomRadius="0.375rem">
-                  {servicesWithMentorsAvailable.length > 0 ? servicesWithMentorsAvailable.map((service) => (
-                    <Box key={service.name} borderTop="1px solid" cursor="pointer" onClick={() => handleService(service)} borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px" _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}>
-                      {service.name}
-                    </Box>
-                  )) : (
-                    <Box borderTop="1px solid" borderColor={borderColor} py="14px" background={commonBackground} width="100%" px="22px">
-                      {t('common:search-not-found')}
-                    </Box>
+                  {loadingServices ? (
+                    <CardSkeleton withoutContainer quantity={2} height="40px" gridGap="20px" marginTop="10px" />
+                  ) : (
+                    <>
+                      {servicesWithMentorsAvailable.length > 0 && (
+                        servicesWithMentorsAvailable.map((service) => (
+                          <Box
+                            key={service.name}
+                            borderTop="1px solid"
+                            cursor="pointer"
+                            onClick={() => handleService(service)}
+                            borderColor={borderColor}
+                            py="14px"
+                            background={commonBackground}
+                            width="100%"
+                            px="22px"
+                            _hover={{ background: useColorModeValue('featuredLight', 'gray.700') }}
+                          >
+                            {service.name}
+                          </Box>
+                        ))
+                      )}
+                      {servicesWithMentorsAvailable.length === 0 && (
+                        <Box
+                          borderTop="1px solid"
+                          borderColor={borderColor}
+                          py="14px"
+                          background={commonBackground}
+                          width="100%"
+                          px="22px"
+                        >
+                          {t('common:search-not-found')}
+                        </Box>
+                      )}
+                    </>
                   )}
                 </Box>
               </>

@@ -6,6 +6,8 @@
   "solution-video": "Ver solución",
   "watch-intro": "Ver introducción",
   "get-help": "Pide ayuda a Rigobot",
+  "connect-rigobot-message": "Debes conectar tu cuenta con Github y Rigobot",
+  "connect-rigobot": "Conectar con Rigobot",
   "contribute": "Contribuye a esta lección",
   "show-menu": "Abrir menú",
   "hide-menu": "Cerrar menú",
@@ -23,6 +25,8 @@
   "back": "Volver",
   "next-page": "Siguiente",
   "back-to-top": "Volver arriba",
+  "back-to-program": "Volver al programa",
+  "back-to-previous": "volver al módulo anterior",
   "start-next": "Comenzar siguiente module:",
   "no-traduction-found": "No se encontró traducción",
   "no-traduction-found-description": ">Lo sentimos, no se encontró una traducción para este contenido. Estamos trabajando constantemente para ofrecer nuestros módulos en varios idiomas. Apreciamos tu paciencia y si deseas contribuir con traducciones, por favor visita nuestro repositorio en Github. Mientras tanto, puedes intentar acceder al contenido en otro idioma disponible o volver más tarde para verificar si la traducción ha sido agregada.",
@@ -57,5 +61,8 @@
   "successful-tests": "Pasos exitosos",
   "total-errors": "Total de errores",
   "click-to-review": "Pincha aquí para revisar la solución.",
-  "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com"
+  "share-social-message": "Acabo de terminar de programar {{title}} en 4geeks.com",
+  "approved": "Aprobado",
+  "rejected": "Rechazado",
+  "pending": "Pendiente"
 }

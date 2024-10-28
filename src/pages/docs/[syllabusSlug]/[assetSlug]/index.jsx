@@ -24,13 +24,12 @@ import Text from '../../../../common/components/Text';
 import Link from '../../../../common/components/NextChakraLink';
 import Icon from '../../../../common/components/Icon';
 import { cleanObject, getExtensionName } from '../../../../utils';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../../../utils/variables';
-import MarkDownParser from '../../../../common/components/MarkDownParser';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../../utils/variables';
+import ArticleMarkdown from '../../../../common/components/MarkDownParser/ArticleMarkdown';
 import getMarkDownContent from '../../../../common/components/MarkDownParser/markdown';
 import GridContainer from '../../../../common/components/GridContainer';
 import IpynbHtmlParser from '../../../../common/components/IpynbHtmlParser';
 import { MDSkeleton } from '../../../../common/components/Skeleton';
-import modifyEnv from '../../../../../modifyEnv';
 import Helmet from '../../../../common/components/Helmet';
 
 const redirectLang = {
@@ -149,7 +148,6 @@ export const getStaticProps = async ({ params, locale }) => {
 };
 
 function Docs({ syllabusData, moduleMap }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { syllabusSlug, assetSlug } = router.query;
   const { t, lang } = useTranslation('docs');
@@ -431,7 +429,7 @@ function Docs({ syllabusData, moduleMap }) {
               width={{ base: '100%', md: 'auto' }}
               className={`markdown-body ${useColorModeValue('light', 'dark')}`}
             >
-              <MarkDownParser content={markdownData.content} withToc isPublic />
+              <ArticleMarkdown content={markdownData.content} withToc />
             </Box>
           )}
 

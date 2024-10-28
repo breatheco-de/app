@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import {
-  Box, Flex, useDisclosure, Link,
+  Box, Flex, useDisclosure, Link, Avatar,
   useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
-  ModalContent, ModalHeader, ModalCloseButton, ModalBody, Button,
+  ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -28,15 +28,15 @@ import TimelineSidebar from '../../../../../js_modules/syllabus/TimelineSidebar'
 import GuidedExperienceSidebar from '../../../../../js_modules/syllabus/GuidedExperienceSidebar';
 import ExerciseGuidedExperience from '../../../../../js_modules/syllabus/ExerciseGuidedExperience';
 import ProjectBoardGuidedExperience from '../../../../../js_modules/syllabus/ProjectBoardGuidedExperience';
-import OpenWithLearnpackCTA from '../../../../../js_modules/syllabus/OpenWithLearnpackCTA';
 import SyllabusMarkdownComponent from '../../../../../js_modules/syllabus/SyllabusMarkdownComponent';
+import Topbar from '../../../../../js_modules/syllabus/Topbar';
 import bc from '../../../../../common/services/breathecode';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
-import modifyEnv from '../../../../../../modifyEnv';
 import SimpleModal from '../../../../../common/components/SimpleModal';
 import ReactSelect from '../../../../../common/components/ReactSelect';
+import ConnectGithubRigobot from '../../../../../common/components/ConnectGithubRigobot';
 import useStyle from '../../../../../common/hooks/useStyle';
-import { ORIGIN_HOST } from '../../../../../utils/variables';
+import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 
@@ -44,9 +44,9 @@ function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
   const toast = useToast();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+
   const { isOpen, onToggle } = useDisclosure();
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const {
     taskTodo,
     cohortProgram,
@@ -59,8 +59,10 @@ function SyllabusContent() {
     setNextModule,
     prevModule,
     setPrevModule,
+    setSubTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
+  const mainContainer = useRef(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [modalSettingsOpen, setModalSettingsOpen] = useState(false);
   const [modalIntroOpen, setModalIntroOpen] = useState(false);
@@ -78,6 +80,7 @@ function SyllabusContent() {
   const [selectedSyllabus, setSelectedSyllabus] = useState({});
   const [defaultSelectedSyllabus, setDefaultSelectedSyllabus] = useState({});
   const [showModal, setShowModal] = useState(false);
+  const [showRigobotModal, setShowRigobotModal] = useState(false);
   const [readmeUrlPathname, setReadmeUrlPathname] = useState(null);
   const [openTargetBlankModal, setOpenTargetBlankModal] = useState(null);
   const [currentBlankProps, setCurrentBlankProps] = useState(null);
@@ -85,6 +88,8 @@ function SyllabusContent() {
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
+  const [grantAccess, setGrantAccess] = useState(false);
+  const [allSubscriptions, setAllSubscriptions] = useState(null);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortAssignments, getCohortData, prepareTasks, state,
@@ -93,12 +98,13 @@ function SyllabusContent() {
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
-  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, backgroundColor4, hexColor, featuredColor, colorMode } = useStyle();
+  const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
 
   const commonBorderColor = useColorModeValue('gray.200', 'gray.500');
+  const taskBarBackground = useColorModeValue('#DCE9FF', 'gray.dark');
 
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
@@ -127,6 +133,15 @@ function SyllabusContent() {
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollMainContainerTop = () => {
+    if (mainContainer?.current) {
+      mainContainer.current.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
@@ -182,14 +197,67 @@ function SyllabusContent() {
     const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-      && el.associated_slug === assetSlug));
+        && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
     }
-  }, [taskTodo, lessonSlug, lesson]);
+  }, [taskTodo, lessonSlug, lesson, currentAsset]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
     setModalSettingsOpen(false);
   };
+
+  useEffect(() => {
+    bc.payment({
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+    }).subscriptions()
+      .then(async ({ data }) => {
+        const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+        const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+        setAllSubscriptions([...planFinancings, ...subscriptions]);
+      });
+  }, []);
+
+  const showToast = () => {
+    toast({
+      position: 'top',
+      title: t('alert-message:access-denied'),
+      status: 'error',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  useEffect(() => {
+    if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
+      const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+      const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      if (!(cohortSubscriptions.length > 0)) {
+        router.push('/choose-program');
+        showToast();
+        return;
+      }
+
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (fullyPaidSub) {
+        setGrantAccess(true);
+        return;
+      }
+
+      const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+      const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+      const todayDate = new Date();
+
+      if (todayDate > freeTrialExpDate) {
+        router.push('/choose-program');
+        showToast();
+        return;
+      }
+
+      setGrantAccess(true);
+    }
+    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false) setGrantAccess(true);
+  }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
     if (openNextPageModal) {
@@ -231,6 +299,7 @@ function SyllabusContent() {
     setReadme(null);
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
+    setSubTasks([]);
   };
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
@@ -315,6 +384,7 @@ function SyllabusContent() {
         });
     }
     return () => {
+      cleanCurrentData();
       setUserSession({
         translations: [],
       });
@@ -322,19 +392,19 @@ function SyllabusContent() {
   }, [router, lessonSlug]);
 
   useEffect(() => {
-    const findSelectedSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
+    const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
       (l) => l.modules.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currModuleIndex + 1];
     const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
-    const defaultSyllabus = sortedAssignments.filter(
+    const defaultSyllabus = sortedAssignments.find(
       (l) => l.modules.find((m) => m.slug === lessonSlug),
-    )[0];
+    );
 
     if (defaultSyllabus) {
-      setSelectedSyllabus(findSelectedSyllabus || defaultSyllabus);
+      setSelectedSyllabus(currentSyllabus || defaultSyllabus);
       setNextModule(nextModuleData);
       setPrevModule(prevModuleData);
       setDefaultSelectedSyllabus(defaultSyllabus);
@@ -396,6 +466,7 @@ function SyllabusContent() {
 
   const handleNextPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
     if (nextAssignment !== null) {
       if (nextAssignment?.target === 'blank') {
         setCurrentBlankProps(nextAssignment);
@@ -444,6 +515,8 @@ function SyllabusContent() {
 
   const handlePrevPage = () => {
     cleanCurrentData();
+    scrollMainContainerTop();
+    console.log('HEY!!');
     if (previousAssignment !== null) {
       if (previousAssignment?.target === 'blank') {
         setCurrentBlankProps(previousAssignment);
@@ -571,7 +644,7 @@ function SyllabusContent() {
 
   const assetTypeStyles = {
     answer: { padding: '0px', height: '100%', mb: '0px' },
-    read: {},
+    read: { borderRadius: '0 0 11px 11px', paddingTop: '20px !important' },
     practice: {},
     project: { ...projectStyles[currentTask?.task_status] },
   };
@@ -587,21 +660,23 @@ function SyllabusContent() {
 
   const openAiChat = async () => {
     try {
-      setIsLoadingRigobot(true);
-      const [completionResp, tokenResp] = await Promise.all([
-        bc.todo().postCompletionJob(currentTask.id),
-        bc.auth().temporalToken(),
-      ]);
+      if (isAuthenticatedWithRigobot) {
+        setIsLoadingRigobot(true);
+        const [completionResp, tokenResp] = await Promise.all([
+          bc.todo().postCompletionJob(currentTask.id),
+          bc.auth().temporalToken(),
+        ]);
 
-      const completionId = completionResp.data.id;
-      const temporalToken = tokenResp.data.token;
+        const completionId = completionResp.data.id;
+        const temporalToken = tokenResp.data.token;
 
-      const { data } = await bc.rigobot().meToken(temporalToken);
-      const rigobotToken = data.key;
+        const { data } = await bc.rigobot().meToken(temporalToken);
+        const rigobotToken = data.key;
 
-      const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
+        const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
 
-      window.open(aiChat, '_blank');
+        window.open(aiChat, '_blank');
+      } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
       toast({
@@ -641,6 +716,7 @@ function SyllabusContent() {
             isOpen={isOpen}
             onToggle={onToggle}
             handleStartDay={handleStartDay}
+            grantSyllabusAccess={grantAccess}
           />
         ) : (
           <TimelineSidebar
@@ -677,51 +753,54 @@ function SyllabusContent() {
             maxWidth="1280px"
           >
             {isAvailableAsSaas && (
-              <Box margin="5px 0" display="flex" alignItems="center" justifyContent="space-between">
+              <Box margin="10px 0" display="flex" alignItems="center" justifyContent="space-between">
                 <Button
-                  aria-label="Close Timeline"
+                  size="sm"
+                  aria-label={t(Open ? 'hide-menu' : 'show-menu')}
                   display="flex"
                   gap="10px"
-                  variant="ghost"
-                  onClick={onToggle}
+                  fontSize="12px"
+                  fontWeight="500"
+                  borderRadius="4px"
+                  background={backgroundColor}
                   color={hexColor.blueDefault}
+                  onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="14px" height="14px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 <Box display="flex" gridGap="3rem">
                   {(previousAssignment || !!prevModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={prevPage}
                     >
-                      <Box
-                        as="span"
-                        display="block"
-                      >
-                        <Icon icon="arrowLeft2" width="18px" height="10px" />
-                      </Box>
+                      <Icon icon="arrowLeft2" width="18px" height="10px" />
                       {t('previous-page')}
-                    </Box>
+                    </Button>
                   )}
 
                   {(nextAssignment || !!nextModule) && (
-                    <Box
+                    <Button
+                      size="sm"
                       color="blue.default"
                       cursor="pointer"
-                      fontSize="15px"
+                      fontSize="12px"
                       display="flex"
                       alignItems="center"
                       gridGap="10px"
-                      letterSpacing="0.05em"
-                      fontWeight="700"
+                      fontWeight="500"
+                      borderRadius="4px"
+                      background={backgroundColor}
                       onClick={nextPage}
                     >
                       {t('next-page')}
@@ -732,7 +811,7 @@ function SyllabusContent() {
                       >
                         <Icon icon="arrowLeft2" width="18px" height="10px" />
                       </Box>
-                    </Box>
+                    </Button>
                   )}
                 </Box>
               </Box>
@@ -742,6 +821,7 @@ function SyllabusContent() {
             ) : (
               <Box
                 id="main-container"
+                ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
                 overflowY={isAvailableAsSaas && 'scroll'}
@@ -750,6 +830,9 @@ function SyllabusContent() {
               >
                 {isProject && isAvailableAsSaas && currentAsset?.id && (
                   <ProjectBoardGuidedExperience currentAsset={currentAsset} />
+                )}
+                {isAvailableAsSaas && isLesson && currentAsset && (
+                  <Topbar currentAsset={currentAsset} />
                 )}
                 <Box
                   id="markdown-body"
@@ -767,9 +850,6 @@ function SyllabusContent() {
                   position="relative"
                   {...getStyles()}
                 >
-                  {isProject && isAvailableAsSaas && currentAsset?.interactive && (
-                    <OpenWithLearnpackCTA currentAsset={currentAsset} />
-                  )}
 
                   {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
                     <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
@@ -851,6 +931,7 @@ function SyllabusContent() {
                       lessonSlug={lessonSlug}
                       currentTask={currentTask}
                       isGuidedExperience={isAvailableAsSaas}
+                      grantSyllabusAccess={grantAccess}
                       alerMessage={(
                         <>
                           {currentAsset?.solution_url && (
@@ -928,173 +1009,172 @@ function SyllabusContent() {
                           fileData={fileData}
                         />
                         {currentTask?.task_status === 'DONE' && showModal && (
-                        <ShareButton
-                          variant="outline"
-                          title={t('projects:share-certificate.title')}
-                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                          link={shareLink}
-                          socials={socials}
-                          currentTask={currentTask}
-                          onlyModal
-                          withParty
-                        />
+                          <ShareButton
+                            variant="outline"
+                            title={t('projects:share-certificate.title')}
+                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                            link={shareLink}
+                            socials={socials}
+                            currentTask={currentTask}
+                            onlyModal
+                            withParty
+                          />
                         )}
                       </Box>
                       <Box display="flex" gridGap="3rem">
                         {(previousAssignment || !!prevModule) && (
-                        <Box
-                          color="blue.default"
-                          cursor="pointer"
-                          fontSize="15px"
-                          display="flex"
-                          alignItems="center"
-                          gridGap="10px"
-                          letterSpacing="0.05em"
-                          fontWeight="700"
-                          onClick={prevPage}
-                        >
                           <Box
-                            as="span"
-                            display="block"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="15px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            letterSpacing="0.05em"
+                            fontWeight="700"
+                            onClick={prevPage}
                           >
-                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            <Box
+                              as="span"
+                              display="block"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
+                            {t('previous-page')}
                           </Box>
-                          {t('previous-page')}
-                        </Box>
                         )}
 
                         {(nextAssignment || !!nextModule) && (
-                        <Box
-                          color="blue.default"
-                          cursor="pointer"
-                          fontSize="15px"
-                          display="flex"
-                          alignItems="center"
-                          gridGap="10px"
-                          letterSpacing="0.05em"
-                          fontWeight="700"
-                          onClick={nextPage}
-                        >
-                          {t('next-page')}
                           <Box
-                            as="span"
-                            display="block"
-                            transform="rotate(180deg)"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="15px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            letterSpacing="0.05em"
+                            fontWeight="700"
+                            onClick={nextPage}
                           >
-                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            {t('next-page')}
+                            <Box
+                              as="span"
+                              display="block"
+                              transform="rotate(180deg)"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
                           </Box>
-                        </Box>
                         )}
                       </Box>
                     </Box>
                   )}
                   {isAvailableAsSaas && (
                     <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={backgroundColor4} justifyContent="center" display="flex" gridGap="20px">
-                        {/* TODO: Hiding it until it's fixed */}
-                        {false && (isLesson || isProject) && (
-                        <Tooltip label={t('get-help')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={openAiChat}
-                            style={{ color: fontColor, textDecoration: 'none' }}
-                            isLoading={isLoadingRigobot}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
+                        {(isLesson || isProject) && (
+                          <Tooltip label={t('get-help')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={openAiChat}
+                              style={{ color: fontColor, textDecoration: 'none' }}
+                              isLoading={isLoadingRigobot}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {repoUrl && (isLesson || isProject) && (
-                        <Tooltip label={t('contribute')} placement="top">
-                          <Link
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            borderRadius="full"
-                            variant="default"
-                            href={repoUrl}
-                            style={{ color: fontColor, textDecoration: 'none' }}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
-                          </Link>
-                        </Tooltip>
+                          <Tooltip label={t('contribute')} placement="top">
+                            <Link
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              borderRadius="full"
+                              variant="default"
+                              href={repoUrl}
+                              style={{ color: fontColor, textDecoration: 'none' }}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
+                            </Link>
+                          </Tooltip>
                         )}
                         {isLesson && currentAsset?.intro_video_url && (
-                        <Tooltip label={t('watch-intro')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={backgroundColor}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={() => setModalIntroOpen(true)}
-                          >
-                            <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                          <Tooltip label={t('watch-intro')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={backgroundColor}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={() => setModalIntroOpen(true)}
+                            >
+                              <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {currentAsset?.solution_video_url && (
-                        <Tooltip label={t('solution-video')} placement="top">
-                          <Button
-                            display="flex"
-                            flexDirection="column"
-                            justifyContent="center"
-                            width="40px"
-                            height="40px"
-                            background={hexColor.blueDefault}
-                            padding="12px"
-                            borderRadius="full"
-                            variant="default"
-                            onClick={() => setSolutionVideoOpen(true)}
-                          >
-                            <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
-                          </Button>
-                        </Tooltip>
+                          <Tooltip label={t('solution-video')} placement="top">
+                            <Button
+                              display="flex"
+                              flexDirection="column"
+                              justifyContent="center"
+                              width="40px"
+                              height="40px"
+                              background={hexColor.blueDefault}
+                              padding="12px"
+                              borderRadius="full"
+                              variant="default"
+                              onClick={() => setSolutionVideoOpen(true)}
+                            >
+                              <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                            </Button>
+                          </Tooltip>
                         )}
                         {!isExercise && (
-                        <ButtonHandlerByTaskStatus
-                          allowText
-                          isGuidedExperience={isAvailableAsSaas}
-                          variant="rounded"
-                          currentTask={currentTask}
-                          sendProject={sendProject}
-                          changeStatusAssignment={changeStatusAssignment}
-                          currentAssetData={currentAsset}
-                          toggleSettings={toggleSettings}
-                          closeSettings={closeSettings}
-                          settingsOpen={settingsOpen}
-                          handleOpen={handleOpen}
-                          fileData={fileData}
-                        />
+                          <ButtonHandlerByTaskStatus
+                            allowText
+                            isGuidedExperience={isAvailableAsSaas}
+                            variant="rounded"
+                            currentTask={currentTask}
+                            sendProject={sendProject}
+                            changeStatusAssignment={changeStatusAssignment}
+                            currentAssetData={currentAsset}
+                            toggleSettings={toggleSettings}
+                            closeSettings={closeSettings}
+                            settingsOpen={settingsOpen}
+                            handleOpen={handleOpen}
+                            fileData={fileData}
+                          />
                         )}
                         {currentTask?.task_status === 'DONE' && showModal && (
-                        <ShareButton
-                          variant="outline"
-                          title={t('projects:share-certificate.title')}
-                          shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                          link={shareLink}
-                          socials={socials}
-                          currentTask={currentTask}
-                          onlyModal
-                          withParty
-                        />
+                          <ShareButton
+                            variant="outline"
+                            title={t('projects:share-certificate.title')}
+                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                            link={shareLink}
+                            socials={socials}
+                            currentTask={currentTask}
+                            onlyModal
+                            withParty
+                          />
                         )}
                       </Box>
                     </Box>
@@ -1117,6 +1197,22 @@ function SyllabusContent() {
         </Box>
       </SimpleModal>
       <SimpleModal
+        size="md"
+        isOpen={showRigobotModal}
+        onClose={() => setShowRigobotModal(false)}
+      >
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+          <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
+          <Text
+            size="17px"
+            textAlign="center"
+          >
+            {t('connect-rigobot-message')}
+          </Text>
+          <ConnectGithubRigobot width="100%" />
+        </Box>
+      </SimpleModal>
+      <SimpleModal
         isOpen={solutionVideoOpen}
         onClose={() => setSolutionVideoOpen(false)}
       >
@@ -1127,12 +1223,9 @@ function SyllabusContent() {
           />
         </Box>
       </SimpleModal>
-      <Modal isOpen={openNextPageModal} size="xl" margin="0 10px" onClose={() => setOpenNextPageModal(false)}>
+      <Modal isOpen={openNextPageModal} size="xl" onClose={() => setOpenNextPageModal(false)}>
         <ModalOverlay />
         <ModalContent style={{ margin: '3rem 0' }}>
-          <ModalHeader borderBottom="1px solid" fontSize="15px" borderColor={commonBorderColor} textAlign="center">
-            {assetTypeValues[lesson]}
-          </ModalHeader>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
             <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
@@ -1267,24 +1360,24 @@ function SyllabusContent() {
           </Box>
 
           {selectedSyllabus && cohortModule?.id && cohortModule?.id !== selectedSyllabus?.id && (
-          <AlertMessage
-            type="info"
-            style={{
-              margin: '20px 0 18px 0',
-            }}
-            dangerouslySetInnerHTML
-            title={t('teacherSidebar.no-need-to-teach-today.title')}
-            message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
-          />
+            <AlertMessage
+              type="info"
+              style={{
+                margin: '20px 0 18px 0',
+              }}
+              dangerouslySetInnerHTML
+              title={t('teacherSidebar.no-need-to-teach-today.title')}
+              message={t('teacherSidebar.no-need-to-teach-today.description', { module_name: `#${cohortModule?.id} - ${cohortModule?.label}` })}
+            />
           )}
           {selectedSyllabus && defaultSelectedSyllabus?.id !== selectedSyllabus?.id && (
-          <AlertMessage
-            type="warning"
-            style={{
-              margin: '20px 0 18px 0',
-            }}
-            message={t('teacherSidebar.alert-updated-module-instructions')}
-          />
+            <AlertMessage
+              type="warning"
+              style={{
+                margin: '20px 0 18px 0',
+              }}
+              message={t('teacherSidebar.alert-updated-module-instructions')}
+            />
           )}
 
           <Box display="flex" flexDirection="column" background={featuredColor} p="25px" m="18px 0 30px 0" borderRadius="16px" gridGap="18px">
