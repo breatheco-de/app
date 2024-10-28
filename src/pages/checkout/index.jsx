@@ -82,6 +82,8 @@ function Checkout() {
   });
   const [serviceToRequest, setServiceToRequest] = useState({});
   const [verifyEmailProps, setVerifyEmailProps] = useState({});
+  const [allCoupons, setAllCoupons] = useState([]);
+  const [allDiscounts, setAllDiscounts] = useState([]);
   const [originalPlan, setOriginalPlan] = useState(null);
   const {
     state, toggleIfEnrolled, handleStep, handleChecking, setCohortPlans,
@@ -280,7 +282,7 @@ function Checkout() {
         window.removeEventListener('beforeunload', handleBeforeUnload);
       };
     }
-    return () => {};
+    return () => { };
   }, [stepIndex, isAuthenticated]);
 
   useEffect(() => {
@@ -496,18 +498,26 @@ function Checkout() {
     }
   }, [user?.id]);
 
+  useEffect(() => {
+    const coupons = [];
+    if (selfAppliedCoupon) coupons.push(selfAppliedCoupon);
+    if (discountCoupon) coupons.push(discountCoupon);
+
+    setAllCoupons(coupons);
+  }, [selfAppliedCoupon, discountCoupon]);
+
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlanCheckoutData };
-    const allCoupons = [];
-    if (selfAppliedCoupon) allCoupons.push(selfAppliedCoupon);
-    if (discountCoupon) allCoupons.push(discountCoupon);
+    const discounts = [];
 
     allCoupons.forEach((c) => {
       pricingData = getPriceWithDiscount(pricingData.price, c);
+      discounts.push(pricingData);
     });
 
+    setAllDiscounts(discounts);
     return pricingData;
-  }, [selfAppliedCoupon, discountCoupon, selectedPlanCheckoutData]);
+  }, [allCoupons, selectedPlanCheckoutData]);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -617,7 +627,7 @@ function Checkout() {
               isSecondStep={isSecondStep}
               isThirdStep={isThirdStep}
               isFourthStep={isFourthStep}
-              // handleGoBack={handleGoBack}
+            // handleGoBack={handleGoBack}
             />
           )}
           {!readyToSelectService && isFirstStep && (
@@ -669,29 +679,90 @@ function Checkout() {
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
                     </Heading>
-                    {selfAppliedCoupon && !originalPlan?.selectedPlan?.isFreeTier && (
-                      <Box display="flex" alignItems="center" gap="10px">
-                        <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
-                          <Text color={hexColor.green} fontWeight="700">
-                            {t('coupon-offer', { slug: selfAppliedCoupon.slug.toUpperCase(), value: getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).discount })}
-                          </Text>
-                        </Box>
-                        <Text size="md" color={hexColor.disabledColor} textDecoration="line-through">
-                          {`$${originalPlan?.selectedPlan?.price}`}
-                        </Text>
-                      </Box>
-                    )}
                     {originalPlan?.selectedPlan?.isFreeTier ? (
                       <Text size="16px" color="green.400">
                         {originalPlan?.selectedPlan?.description || 'Free plan'}
                       </Text>
                     ) : originalPlan?.selectedPlan?.price > 0 && (
                       <Text size="16px" color="green.400">
-                        {`$${getPriceWithDiscount(originalPlan?.selectedPlan?.price, selfAppliedCoupon).price} / ${originalPlan?.selectedPlan?.title}`}
+                        {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
                       </Text>
                     )}
                   </Flex>
                 </Flex>
+                {showPriceInformation && (
+                  <Formik
+                    initialValues={{
+                      coupons: couponValue || '',
+                    }}
+                    onSubmit={(_, actions) => {
+                      setCouponError(false);
+                      handleCoupon(discountCode, actions, true);
+                    }}
+                  >
+                    {({ isSubmitting }) => (
+                      <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
+                        <Flex gridGap="15px" width="100%">
+                          <InputGroup size="md">
+                            <Input
+                              value={discountCode}
+                              borderColor={couponError ? 'red.light' : 'inherit'}
+                              disabled={discountCoupon?.slug || isPaymentSuccess}
+                              width="100%"
+                              _disabled={{
+                                borderColor: discountCoupon?.slug ? 'success' : 'inherit',
+                                opacity: 1,
+                              }}
+                              letterSpacing="0.05em"
+                              placeholder="Discount code"
+                              onChange={(e) => {
+                                const { value } = e.target;
+                                const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                setDiscountCode(couponInputValue.replace(/\s/g, '-'));
+                                if (value === '') {
+                                  setDiscountCoupon(null);
+                                  setCouponError(false);
+                                }
+                              }}
+                            />
+                            {discountCoupon?.slug && (
+                              <InputRightElement width="35px">
+                                <Button
+                                  variant="unstyled"
+                                  aria-label="Remove coupon"
+                                  minWidth="auto"
+                                  padding="10px"
+                                  height="auto"
+                                  onClick={() => {
+                                    saveCouponToBag([''], checkoutData?.id);
+                                    removeSessionStorageItem('coupon');
+                                    setDiscountCode('');
+                                    setDiscountCoupon(null);
+                                    setCouponError(false);
+                                  }}
+                                >
+                                  <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                </Button>
+                              </InputRightElement>
+                            )}
+                          </InputGroup>
+                          {!discountCoupon?.slug && !isPaymentSuccess && (
+                            <Button
+                              width="auto"
+                              type="submit"
+                              isLoading={isSubmitting}
+                              height="auto"
+                              variant="outline"
+                              fontSize="17px"
+                            >
+                              {`+ ${t('add')}`}
+                            </Button>
+                          )}
+                        </Flex>
+                      </Form>
+                    )}
+                  </Formik>
+                )}
                 <Divider borderBottomWidth="2px" />
                 {originalPlan?.accordionList?.length > 0 && (
                   <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
@@ -719,104 +790,43 @@ function Checkout() {
                       <Text size="18px" color="currentColor" lineHeight="normal">
                         {selectedPlanCheckoutData?.price <= 0
                           ? selectedPlanCheckoutData?.priceText
-                          : `$${getPriceWithDiscount(selectedPlanCheckoutData?.price, selfAppliedCoupon).price} ${selectedPlanCheckoutData?.currency?.code}`}
+                          : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
                       </Text>
                     </Flex>
                     <Divider margin="6px 0" />
-                    <Formik
-                      initialValues={{
-                        coupons: couponValue || '',
-                      }}
-                      onSubmit={(_, actions) => {
-                        setCouponError(false);
-                        handleCoupon(discountCode, actions, true);
-                      }}
-                    >
-                      {({ isSubmitting }) => (
-                        <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
-                          <Flex gridGap="15px" width="100%">
-                            <InputGroup size="md">
-                              <Input
-                                value={discountCode}
-                                borderColor={couponError ? 'red.light' : 'inherit'}
-                                disabled={discountCoupon?.slug || isPaymentSuccess}
-                                width="100%"
-                                _disabled={{
-                                  borderColor: discountCoupon?.slug ? 'success' : 'inherit',
-                                  opacity: 1,
-                                }}
-                                letterSpacing="0.05em"
-                                placeholder="Discount code"
-                                onChange={(e) => {
-                                  const { value } = e.target;
-                                  const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
-                                  setDiscountCode(couponInputValue.replace(/\s/g, '-'));
-                                  if (value === '') {
-                                    setDiscountCoupon(null);
-                                    setCouponError(false);
-                                  }
-                                }}
-                              />
-                              {discountCoupon?.slug && (
-                                <InputRightElement width="35px">
-                                  <Button
-                                    variant="unstyled"
-                                    aria-label="Remove coupon"
-                                    minWidth="auto"
-                                    padding="10px"
-                                    height="auto"
-                                    onClick={() => {
-                                      saveCouponToBag([''], checkoutData?.id);
-                                      removeSessionStorageItem('coupon');
-                                      setDiscountCode('');
-                                      setDiscountCoupon(null);
-                                      setCouponError(false);
-                                    }}
-                                  >
-                                    <Icon icon="close" color="currentColor" width="10px" height="10px" />
-                                  </Button>
-                                </InputRightElement>
-                              )}
-                            </InputGroup>
-                            {!discountCoupon?.slug && !isPaymentSuccess && (
-                              <Button
-                                width="auto"
-                                type="submit"
-                                isLoading={isSubmitting}
-                                height="auto"
-                                variant="outline"
-                                fontSize="17px"
-                              >
-                                {`+ ${t('add')}`}
-                              </Button>
-                            )}
+
+                    {allCoupons?.length > 0
+                      && allCoupons.map((coup, index) => (
+                        <Flex direction="row" justifyContent="space-between" w="100%">
+                          <Flex gap="10px">
+                            <Text size="lg">{coup?.slug}</Text>
+                            <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
+                              <Text color={hexColor.green} fontWeight="700">
+                                {coup?.discount_value ? t('discount-value-off', { value: `${coup.discount_value * 100}%` }) : ''}
+                              </Text>
+                            </Box>
                           </Flex>
-                        </Form>
-                      )}
-                    </Formik>
-                    {(discountCoupon?.slug || isPaymentSuccess) && (
-                      <Flex justifyContent="space-between" margin={isPaymentSuccess ? '0' : '10px 0 0 0'} width="100%">
-                        <Text size="18px" color="currentColor" lineHeight="normal">
-                          {t('discount-applied')}
-                        </Text>
-                        <Text size="16px" color={discountCoupon?.slug ? 'green.400' : 'currentColor'} padding="0 5px" borderRadius="4px" backgroundColor={discountCoupon?.slug ? 'green.light' : 'transparent'} lineHeight="normal">
-                          {discountCoupon?.slug
-                            ? t('discount-value-off', { value: processedPrice?.discount })
-                            : '--'}
-                        </Text>
-                      </Flex>
-                    )}
-                    <Divider margin="6px 0" />
+                          <Flex gridGap="1rem">
+                            {processedPrice?.originalPrice && (
+                              <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
+                                {`$${allDiscounts[index]?.originalPrice}`}
+                              </Text>
+                            )}
+                            <Text size="18px" color="currentColor" lineHeight="normal">
+                              {selectedPlanCheckoutData.price <= 0
+                                ? selectedPlanCheckoutData.priceText
+                                : `$${allDiscounts[index]?.price}`}
+                            </Text>
+                          </Flex>
+                        </Flex>
+                      ))}
+                    {allCoupons?.length > 0
+                      && <Divider margin="6px 0" />}
                     <Flex justifyContent="space-between" width="100%">
                       <Text size="18px" color="currentColor" lineHeight="normal">
                         {selectedPlanCheckoutData?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
                       </Text>
                       <Flex gridGap="1rem">
-                        {processedPrice?.originalPrice && (
-                          <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                            {`$${processedPrice.originalPrice} ${selectedPlanCheckoutData?.currency?.code}`}
-                          </Text>
-                        )}
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {selectedPlanCheckoutData?.price <= 0
                             ? selectedPlanCheckoutData?.priceText

@@ -90,6 +90,10 @@ function PaymentInfo() {
   };
 
   const startRedirection = async () => {
+    if (!isPaymentSuccess) {
+      setPaymentStatus('idle');
+      return;
+    }
     setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
@@ -450,7 +454,7 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+          isDisabled={(isPaymentSuccess && !cohortFound) || (isPaymentSuccess && !readyToRedirect)}
           isLoading={isSubmittingPayment || isRedirecting}
           onClick={startRedirection}
         >
