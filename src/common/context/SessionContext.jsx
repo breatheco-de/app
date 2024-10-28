@@ -3,8 +3,10 @@ import React, { createContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { isWindow, getQueryString } from '../../utils';
+import useGoogleMaps from '../hooks/useGoogleMaps';
+import { error } from '../../utils/logging';
 
-const initialState = {
+const initialUserSession = {
   utm_placement: '', // the ad placement
   utm_medium: '', // facebook, tiktok, Instagram, google
   utm_source: '', // cpc, organic, etc.
@@ -20,12 +22,32 @@ const initialState = {
 };
 
 export const SessionContext = createContext({
-  ...initialState,
+  userSession: initialUserSession,
+  location: null,
 });
 
 function SessionProvider({ children }) {
-  const [userSession, setUserSession] = useState(initialState);
+  const [userSession, setUserSession] = useState(initialUserSession);
   const router = useRouter();
+  const [location, setLocation] = useState(null);
+  const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
+  const { gmapStatus, getUserLocation } = useGoogleMaps(
+    GOOGLE_KEY,
+    'places',
+  );
+
+  const initLocation = async () => {
+    try {
+      const loc = await getUserLocation();
+      setLocation(loc);
+    } catch (e) {
+      error('function getUserLocation()', e);
+    }
+  };
+
+  useEffect(() => {
+    initLocation();
+  }, [gmapStatus]);
 
   const setConversionUrl = () => {
     if (isWindow) {
@@ -102,6 +124,7 @@ function SessionProvider({ children }) {
             ...session,
           });
         },
+        location,
         setConversionUrl,
       }}
     >

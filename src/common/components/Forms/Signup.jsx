@@ -32,7 +32,7 @@ function SignupForm({
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
   invertHandlerPosition, formContainerStyle, ...rest
 }) {
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const { t, lang } = useTranslation('signup');
   const extraFieldsNames = extraFields.reduce((extra, field) => {
     const name = typeof field === 'string' ? field : field.name;
@@ -62,7 +62,7 @@ function SignupForm({
   const {
     state,
   } = useSignup();
-  const { dateProps, location } = state;
+  const { dateProps } = state;
   const toast = useToast();
   const router = useRouter();
 

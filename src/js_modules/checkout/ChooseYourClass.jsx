@@ -53,7 +53,7 @@ function ChooseYourClass({
   const plan = getQueryString('plan');
   const planFormated = plan ? encodeURIComponent(plan) : undefined;
 
-  const { gmapStatus, geocode, getNearestLocation } = useGoogleMaps(
+  const { gmapStatus, geocode, geolocate } = useGoogleMaps(
     GOOGLE_KEY,
     'places',
   );
@@ -150,7 +150,7 @@ function ChooseYourClass({
   useEffect(() => {
     const userLocation = localStorage.getItem('user-location');
     if (gmapStatus.loaded && GOOGLE_KEY && !userLocation) {
-      getNearestLocation(GOOGLE_KEY).then(({ data }) => {
+      geolocate(GOOGLE_KEY).then(({ data }) => {
         if (data) {
           setCoords({
             latitude: data.location.lat,
