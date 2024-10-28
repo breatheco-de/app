@@ -114,14 +114,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                   {t('learnpack.open-locally')}
                 </Button>,
-                <Popover>
-                  <PopoverTrigger>
-                    <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                      {t('learnpack.open-in-learnpack-button.text')}
-                    </Button>
-                  </PopoverTrigger>
-                  <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-                </Popover>,
+                {currentAsset?.gitpod &&
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                        {t('learnpack.open-in-learnpack-button.text')}
+                      </Button>
+                    </PopoverTrigger>
+                    <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                  </Popover>
+                },
               ].sort((a, b) => {
                 if (a > b) return cohortSession.available_as_saas;
                 return -1;
@@ -152,23 +154,25 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
           {[
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  borderRadius="3px"
-                  background="white"
-                  color="blue.1000"
-                  display="flex"
-                  gap="16px"
-                  alignItems="center"
-                  fontSize="17px"
-                >
-                  <Icon icon="prov-bridge" width="20px" height="20px" />
-                  {t('common:learnpack.open-in-learnpack-button.text')}
-                </Button>
-              </PopoverTrigger>
-              <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-            </Popover>,
+            {currentAsset?.gitpod &&
+              <Popover>
+                <PopoverTrigger>
+                  <Button
+                    borderRadius="3px"
+                    background="white"
+                    color="blue.1000"
+                    display="flex"
+                    gap="16px"
+                    alignItems="center"
+                    fontSize="17px"
+                  >
+                    <Icon icon="prov-bridge" width="20px" height="20px" />
+                    {t('common:learnpack.open-in-learnpack-button.text')}
+                  </Button>
+                </PopoverTrigger>
+                <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+              </Popover>
+            },
             <Button
               variant="outline"
               borderColor="white"
