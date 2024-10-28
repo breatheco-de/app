@@ -126,16 +126,10 @@ function ConnectGithubRigobot({ ...rest }) {
                     e.preventDefault();
                     if (user?.github?.username) {
                       const accessToken = getStorageItem('accessToken');
-                      const loginWindow = window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
-                      const checkWindowClosed = setInterval(() => {
-                        if (loginWindow.closed) {
-                          clearInterval(checkWindowClosed); // Stop checking once the window is closed
-                          console.log('Login window has been closed.');
-
-                          // Handle what should happen when the window is closed
-                          // For example, redirect the user, trigger an action, etc.
-                        }
-                      }, 500);
+                      // const loginWindow = window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      const callBackUrl = window.location.href;
+                      const inviteUrl = `${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}&callback=${callBackUrl}`;
+                      window.location.href = inviteUrl;
                     }
                   }}
                 >
