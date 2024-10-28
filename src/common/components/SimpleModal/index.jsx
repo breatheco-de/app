@@ -5,7 +5,7 @@ import {
 import PropTypes from 'prop-types';
 import useStyle from '../../hooks/useStyle';
 
-function SimpleModal({ isOpen, title, leftButton, isCentered, children, onClose, maxWidth, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, onMouseUp, closeButtonStyles, ...rest }) {
+function SimpleModal({ isOpen, title, size, leftButton, isCentered, children, onClose, bodyStyles, forceHandler, hideCloseButton, headerStyles, closeOnOverlayClick, onMouseUp, closeButtonStyles, ...rest }) {
   const { modal, borderColor2 } = useStyle();
 
   const closeHandler = () => {
@@ -15,11 +15,10 @@ function SimpleModal({ isOpen, title, leftButton, isCentered, children, onClose,
   };
 
   return (
-    <Modal isOpen={isOpen} isCentered={isCentered} onClose={closeHandler} closeOnOverlayClick={closeOnOverlayClick}>
+    <Modal size={size} isOpen={isOpen} isCentered={isCentered} onClose={closeHandler} closeOnOverlayClick={closeOnOverlayClick}>
       <ModalOverlay />
       <Box onMouseUp={onMouseUp}>
         <ModalContent
-          maxWidth={maxWidth}
           background={modal.background2}
           style={{ marginTop: isCentered ? '' : '10vh' }}
           {...rest}
@@ -48,9 +47,9 @@ function SimpleModal({ isOpen, title, leftButton, isCentered, children, onClose,
 SimpleModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  size: PropTypes.string,
   children: PropTypes.node.isRequired,
   onClose: PropTypes.func,
-  maxWidth: PropTypes.string,
   bodyStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
   forceHandler: PropTypes.bool,
   hideCloseButton: PropTypes.bool,
@@ -63,7 +62,7 @@ SimpleModal.propTypes = {
 };
 SimpleModal.defaultProps = {
   title: '',
-  maxWidth: '780px',
+  size: null,
   bodyStyles: {},
   forceHandler: false,
   hideCloseButton: false,

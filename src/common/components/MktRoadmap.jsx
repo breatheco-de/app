@@ -11,9 +11,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
-import modifyEnv from '../../../modifyEnv';
-
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
+import { BREATHECODE_HOST } from '../../utils/variables';
 
 function MktRoadmap({ id, title, course, ...rest }) {
   const [currentTabIndex, setCurrentTabIndex] = useState(0);

@@ -14,10 +14,9 @@ import Text from '../Text';
 import Icon from '../Icon';
 import { isValidDate } from '../../../utils';
 import OtherEvents from './OtherEvents';
-import modifyEnv from '../../../../modifyEnv';
 import MainEvent from './MainEvent';
 import logoData from '../../../../public/logo.json';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../utils/variables';
 
 function LiveEvent({
   mainClasses,
@@ -44,7 +43,6 @@ function LiveEvent({
     main: [],
     other: [],
   });
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const bgColor2 = useColorModeValue('featuredLight', 'featuredDark');
   const textColor = useColorModeValue('black', 'white');

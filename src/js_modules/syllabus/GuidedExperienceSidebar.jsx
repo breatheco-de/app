@@ -10,8 +10,9 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import Heading from '../../common/components/Heading';
+import { languageFix } from '../../utils';
 import { Config, getSlideProps } from './config';
+import Heading from '../../common/components/Heading';
 import Timeline from '../../common/components/Timeline';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import Text from '../../common/components/Text';
@@ -20,7 +21,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
-  const { t } = useTranslation('syllabus');
+  const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
   const { state } = useCohortHandler();
   const { cohortSession, sortedAssignments } = state;
@@ -129,7 +130,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                   </Text>
                   <br />
                   <Text as="span" mt="8px">
-                    {prevModule.label}
+                    {languageFix(prevModule.label, lang)}
                   </Text>
                 </span>
               </Button>
@@ -151,7 +152,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
             <>
               {currentModule.label && (
                 <Heading mb="16px" size="18px" fontWeight="400">
-                  {currentModule.label.toUpperCase()}
+                  {languageFix(currentModule.label, lang).toUpperCase()}
                 </Heading>
               )}
               <Timeline
@@ -183,7 +184,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                     </Text>
                     <br />
                     <Text as="span" color={hexColor.blueDefault} mt="8px">
-                      {nextModule.label}
+                      {languageFix(nextModule.label, lang)}
                     </Text>
                   </span>
                   <Icon icon="arrowLeft" style={{ transform: 'rotate(180deg)' }} color={hexColor.blueDefault} />

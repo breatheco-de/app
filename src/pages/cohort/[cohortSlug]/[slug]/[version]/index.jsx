@@ -39,20 +39,19 @@ import {
   isValidDate,
 } from '../../../../../utils/index';
 import { reportDatalayer } from '../../../../../utils/requests';
+import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
-import modifyEnv from '../../../../../../modifyEnv';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
