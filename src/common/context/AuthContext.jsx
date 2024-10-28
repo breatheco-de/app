@@ -9,7 +9,7 @@ import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
-import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
+import { usePersistentBySession } from '../hooks/usePersistent';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
@@ -95,7 +95,6 @@ const setTokenSession = (token) => {
     removeStorageItem('cohortSession');
     removeStorageItem('accessToken');
     removeStorageItem('taskTodo');
-    removeStorageItem('profile');
     removeStorageItem('sortedAssignments');
     removeStorageItem('days_history_log');
     removeStorageItem('queryCache');
@@ -131,8 +130,6 @@ function AuthProvider({ children, pageProps }) {
     state: false,
     user: null,
   });
-  const [profile, setProfile] = usePersistent('profile', {});
-  // const [session, setSession] = usePersistent('session', {});
 
   const query = isWindow && new URLSearchParams(window.location.search || '');
   const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -181,14 +178,8 @@ function AuthProvider({ children, pageProps }) {
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
-            const permissionsSlug = data.permissions.map((l) => l.codename);
             const settingsLang = data?.settings.lang;
 
-            setProfile({
-              ...profile,
-              ...data,
-              permissionsSlug,
-            });
             reportDatalayer({
               dataLayer: {
                 event: 'session_load',
@@ -332,7 +323,6 @@ function AuthProvider({ children, pageProps }) {
   const logout = (callback = null) => {
     cancelAllCurrentRequests();
     handleSession(null);
-    setProfile({});
 
     if (typeof callback === 'function') callback();
     if (typeof callback !== 'function') {

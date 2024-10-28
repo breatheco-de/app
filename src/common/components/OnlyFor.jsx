@@ -5,8 +5,8 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
+import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
-import { usePersistent } from '../hooks/usePersistent';
 
 function Component({ withBanner, children }) {
   const { t } = useTranslation('common');
@@ -42,19 +42,19 @@ function Component({ withBanner, children }) {
 function OnlyFor({
   academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort,
 }) {
+  const { user } = useAuth();
   const academyNumber = Math.floor(academy);
   const teachers = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const commonUser = ['TEACHER', 'ASSISTANT', 'STUDENT', 'REVIEWER'];
-  const [profile] = usePersistent('profile', {});
 
   const { state } = useCohortHandler();
   const { userCapabilities: cohortCapabilities, cohortSession } = state;
 
   const currentCohort = cohort || cohortSession;
 
-  const profileCapabilities = profile?.permissionsSlug || [];
+  const profileCapabilities = user?.permissions?.map((l) => l.codename) || [];
   const userCapabilities = [...new Set([...cohortCapabilities, ...profileCapabilities])];
-  const profileRole = profile?.roles?.length > 0 && profile?.roles[0]?.role?.toUpperCase();
+  const profileRole = user?.roles?.length > 0 && user.roles[0].role.toUpperCase();
   const cohortRole = currentCohort?.cohort_role?.toUpperCase() || profileRole || 'NONE';
   const isCapableAcademy = currentCohort && currentCohort.academy?.id === academyNumber;
   const isMember = commonUser.includes(cohortRole);

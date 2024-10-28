@@ -51,7 +51,6 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t, lang } = useTranslation('choose-program');
-  const [, setProfile] = usePersistent('profile', {});
   const { setCohortSession } = useCohortHandler();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
@@ -244,7 +243,6 @@ function chooseProgram() {
         };
         return acc;
       }, {}));
-      setProfile(dataQuery);
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
