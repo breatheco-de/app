@@ -114,7 +114,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                   {t('learnpack.open-locally')}
                 </Button>,
-                {currentAsset.gitpod &&
+                currentAsset?.gitpod &&
                   <Popover>
                     <PopoverTrigger>
                       <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -123,7 +123,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                     </PopoverTrigger>
                     <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
                   </Popover>
-                },
+                ,
               ].sort((a, b) => {
                 if (a > b) return cohortSession.available_as_saas;
                 return -1;
@@ -154,7 +154,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
         </Box>
         <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
           {[
-            {currentAsset.gitpod &&
+            currentAsset?.gitpod &&
               <Popover>
                 <PopoverTrigger>
                   <Button
@@ -172,7 +172,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                 </PopoverTrigger>
                 <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
               </Popover>
-            },
+            ,
             <Button
               variant="outline"
               borderColor="white"
