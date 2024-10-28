@@ -3,7 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
-import ProfileForm from '../../common/components/profileForm';
+import ProfileForm from '../../common/components/ProfileForm';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
