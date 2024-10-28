@@ -3,11 +3,11 @@ import useTranslation from 'next-translate/useTranslation';
 import Head from 'next/head';
 import { useCallback, useEffect, useState } from 'react';
 import Cropper from 'react-easy-crop';
-// import ProfileForm from '../../common/components/ProfileForm';
+import ProfileForm from '../../common/components/profileForm';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
-import bc from '../../common/services/breathecode';
+// import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
@@ -16,7 +16,9 @@ import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
 
 function Information() {
   const { t } = useTranslation('profile');
-  const { user, updateProfile } = useAuth();
+  const { user,
+    // updateProfile
+  } = useAuth();
   const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -59,10 +61,8 @@ function Information() {
         imageUrls[0],
         croppedAreaPixels,
       );
-      // setCroppedImage(croppedImg.imgURI); // preview of the image
 
       const filename = images[0].name;
-      // const imgType = images[0].type;
 
       const imgFile = new File([croppedImg.blob], filename, {
         type: 'image/png',
@@ -70,55 +70,55 @@ function Information() {
         lastModifiedDate: new Date(),
       });
 
-      //_____________TEST____________________
-      const result = await uploadFileInChunks(imgFile, 'profile-picture');
+      const meta = {
+        slug: 'profile-picture',
+        name: filename,
+        categories: [],
+        academy: null,
+      };
+
+      const result = await uploadFileInChunks(imgFile, 'profile-picture', meta);
 
       //_______________LOGS_________________________
       console.log(result);
-      // console.log(user);
 
-      //_________ORIGINAL___________________
-      const formdata = new FormData();
-      formdata.append('file', imgFile);
-      // formdata.append('name', filename);
-      // formdata.append('upload_preset', 'breathecode');
-
-      // console.log('_START_:Image uploaded before prepare:', images[0]);
-      // console.log('_PREVIEW_:cropedImg for preview:', croppedImg);
-      // console.log('_FINAL_:Prepared and edited image for endpoint:', imgFile);
+      // const formdata = new FormData();
+      // formdata.append('file', result);
 
       // NOTE: Endpoint updates the image on the second try
-      bc.auth().updatePicture(formdata)
-        .then((res) => {
-          if (res.data) {
-            bc.auth().updatePicture(formdata).then((res2) => {
-              setIsLoading(false);
-              updateProfile({
-                ...user,
-                profile: {
-                  ...user.profile,
-                  avatar_url: res2.data.avatar_url,
-                },
-              });
-              setShowModal(false);
-              toast({
-                position: 'top',
-                title: t('alert-message:submitting-picture-success'),
-                status: 'success',
-                duration: 5000,
-              });
-            });
-          }
-        })
-        .catch(() => {
-          setIsLoading(false);
-          toast({
-            position: 'top',
-            title: t('alert-message:error-submitting-picture'),
-            status: 'error',
-            duration: 5000,
-          });
-        });
+      // bc.auth().updatePicture(formdata)
+      //   .then((res) => {
+      //     console.log(res.data)
+      //     if (res.data) {
+      //       bc.auth().updatePicture(formdata).then((res2) => {
+      //         console.log(res2)
+      //         setIsLoading(false);
+      //         updateProfile({
+      //           ...user,
+      //           profile: {
+      //             ...user.profile,
+      //             avatar_url: res2.data.avatar_url,
+      //           },
+      //         });
+      //         setShowModal(false);
+      //         toast({
+      //           position: 'top',
+      //           title: t('alert-message:submitting-picture-success'),
+      //           status: 'success',
+      //           duration: 5000,
+      //         });
+      //       });
+      //     }
+      //   })
+      //   .catch(() => {
+      //     setIsLoading(false);
+      //     toast({
+      //       position: 'top',
+      //       title: t('alert-message:error-submitting-picture'),
+      //       status: 'error',
+      //       duration: 5000,
+      //     });
+      //   });
     } catch (e) {
       console.error(e);
     }
@@ -252,7 +252,7 @@ function Information() {
             </ModalContent>
           </Modal>
         </Avatar>
-        {/* <ProfileForm /> */}
+        <ProfileForm />
       </Box>
     </>
   );

@@ -8,7 +8,6 @@ const getOperationTypes = async () => {
 
 const getOperationMeta = async (operationType) => {
   const response = await bc.media().operationMeta(operationType);
-  console.log('PASO UNO finalizado', response.data);
   return response.data;
 };
 
@@ -25,14 +24,13 @@ const splitFileIntoChunks = (file, chunkSize) => {
   return chunks;
 };
 
-const uploadChunk = async (chunk, operationType, totalChunks, chunkIndex, academyID = undefined) => {
+const uploadChunk = async (file, chunk, operationType, totalChunks, chunkIndex, academyID = undefined) => {
   try {
     const prefix = academyID ? 'academy/chunk' : 'me/chunk';
 
-    console.log('ESTE ES EL CHUNK', chunk);
-
     const formData = new FormData();
     formData.append('operation_type', operationType);
+    formData.append('filename', file.name);
     formData.append('total_chunks', totalChunks);
     formData.append('chunk', chunk);
     formData.append('chunk_index', chunkIndex);
@@ -64,13 +62,13 @@ const endFileUpload = async (operationType, totalChunks, filename, mime, meta, a
     total_chunks: totalChunks,
     filename,
     mime,
-    meta: JSON.stringify(meta),
+    meta,
   });
 
   return response.data;
 };
 
-const uploadFileInChunks = async (file, operationType, academyID = undefined) => {
+const uploadFileInChunks = async (file, operationType, meta, academyID = undefined) => {
   const { chunk_size: chunkSize, max_chunks: maxChunks } = await getOperationMeta(operationType);
 
   const chunks = splitFileIntoChunks(file, chunkSize);
@@ -80,26 +78,12 @@ const uploadFileInChunks = async (file, operationType, academyID = undefined) =>
     throw new Error(`El archivo tiene demasiados trozos. Maximo permitido: ${maxChunks}`);
   }
 
-  const uploadPromises = chunks.map((chunk, index) => uploadChunk(chunk, operationType, totalChunks, index, academyID));
+  const uploadPromises = chunks.map((chunk, index) => uploadChunk(file, chunk, operationType, totalChunks, index, academyID));
 
   const uploadResponses = await Promise.all(uploadPromises);
-  console.log('ALL CHUNKS UPLOADED!', uploadResponses);
 
   const lastResponse = uploadResponses[uploadResponses.length - 1];
-  const { mime, name } = lastResponse;
-
-  const meta = {
-    operation_type: operationType,
-    total_chunks: totalChunks,
-    filename: file.name,
-    mime: file.type,
-    meta: JSON.stringify({
-      slug: operationType,
-      name: file.name,
-      categories: [],
-      academy: academyID || null,
-    }),
-  };
+  const { mime, name } = lastResponse?.data ?? {};
 
   const finalResponse = await endFileUpload(operationType, totalChunks, name, mime, meta, academyID);
 
