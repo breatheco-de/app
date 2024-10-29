@@ -49,7 +49,7 @@ function Mentoring({
 
   const mentorsFiltered = programMentors.filter(
     (mentor) => {
-      const fullName = `${mentor.user.first_name} ${mentor.user.last_name}`.toLowerCase();
+      const fullName = `${mentor?.user?.first_name} ${mentor?.user?.last_name}`.toLowerCase();
       return (
         fullName.includes(searchProps.mentorSearch)
         && mentor.services.some((sv) => sv.status === 'ACTIVE' && sv.slug === mentoryProps?.service?.slug)

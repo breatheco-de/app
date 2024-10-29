@@ -126,10 +126,10 @@ function ProjectsSection({
               <AvatarUser
                 width="42px"
                 height="42px"
-                key={`${teacher.id} - ${teacher.user.first_name}`}
+                key={`${teacher.id} - ${teacher?.user?.first_name}`}
                 fullName={`${teacher?.user?.first_name} ${teacher?.user?.last_name}`}
                 data={teacher}
-                isOnline={usersConnected?.includes(teacher.user.id)}
+                isOnline={usersConnected?.includes(teacher?.user?.id)}
                 badge
                 customBadge={(
                   <Box position="absolute" bottom="-6px" right="-8px" background="blue.default" borderRadius="50px" p="5px" border="2px solid white">
@@ -141,8 +141,8 @@ function ProjectsSection({
             {assistants?.length > 0 && (
               <AvatarGroup max={assistants?.length <= 2 ? 2 : 1} size="md">
                 {assistants?.map((c, i) => {
-                  const fullName = `${c.user.first_name} ${c.user.last_name}`;
-                  const isOnline = usersConnected?.includes(c.user.id);
+                  const fullName = `${c?.user?.first_name} ${c?.user?.last_name}`;
+                  const isOnline = usersConnected?.includes(c?.user?.id);
                   return (
                     <Fragment key={`${c.id} - ${fullName}`}>
                       <AvatarUser

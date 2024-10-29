@@ -288,7 +288,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
         <Divider orientation="vertical" />
       </Box>
 
-      <Box maxWidth={isStudent ? '455px' : '26.22rem'} maxHeight="76vh" overflow="auto" flex={isStudent ? 0.5 : 0.4}>
+      <Box maxWidth={isStudent ? '455px' : ''} maxHeight="76vh" overflow="auto" flex={isStudent ? 0.5 : 0.4}>
         {view === views.success ? (
           <Flex flexDirection="column" height="100%" alignItems="center" justifyContent="center" gridGap="24px">
             <Text size="26px" fontWeight={700} textAlign="center" lineHeight="34px">
@@ -389,9 +389,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
 
                       <Box fontSize="13px" color="#fff" padding="6px 16px" borderRadius="6px" whiteSpace="pre-wrap" overflow="auto" background="rgb(45, 45, 45)">
                         <MarkDownParser
-                          content={`\`\`\`${revisionContent?.file?.language}
-${revisionContent?.code}
-\`\`\``}
+                          content={`\`\`\`${revisionContent?.file?.language}${revisionContent?.code}\`\`\``}
                         />
                       </Box>
                     </>
