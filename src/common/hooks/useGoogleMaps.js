@@ -53,14 +53,14 @@ const useGoogleMaps = (apiKey, libraries = 'places') => {
     return null;
   };
 
-  const getNearestLocation = (key) => {
+  const geolocate = async (key) => {
     if (gmapStatus.loaded && key) {
-      // Get nearest user location
-      return new Promise((resolve, reject) => {
-        axios.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`)
-          .then((result) => resolve(result))
-          .catch((err) => reject(err));
-      });
+      try {
+        const result = await axios.post(`https://www.googleapis.com/geolocation/v1/geolocate?key=${key}`);
+        return result;
+      } catch (error) {
+        console.error(error);
+      }
     }
     return null;
   };
@@ -68,16 +68,20 @@ const useGoogleMaps = (apiKey, libraries = 'places') => {
   const getUserLocation = async (setCoords = () => {}) => {
     const userLocation = localStorage.getItem('user-location');
     if (gmapStatus.loaded && apiKey && !userLocation) {
-      const { data } = await getNearestLocation(apiKey);
+      const { data } = await geolocate(apiKey);
+      const loc = {};
       if (data) {
         setCoords({
           latitude: data.location.lat,
           longitude: data.location.lng,
         });
+        loc.coordinates = {
+          latitude: data.location.lat,
+          longitude: data.location.lng,
+        };
       }
 
       const results = await geocode({ location: data.location });
-      const loc = {};
 
       results[0].address_components.forEach((comp) => {
         if (comp.types.includes('locality')) loc.city = comp.long_name;
@@ -95,7 +99,7 @@ const useGoogleMaps = (apiKey, libraries = 'places') => {
     return null;
   };
 
-  return { gmapStatus, geocode, getNearestLocation, getUserLocation };
+  return { gmapStatus, geocode, geolocate, getUserLocation };
 };
 
 export default useGoogleMaps;

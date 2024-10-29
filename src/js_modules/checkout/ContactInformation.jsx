@@ -12,7 +12,6 @@ import { getStorageItem, setStorageItem } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
-// import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { reportDatalayer } from '../../utils/requests';
