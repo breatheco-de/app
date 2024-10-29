@@ -47,13 +47,13 @@ function ChooseYourClass({
   const inputRef = useRef();
   const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
-  const { isSecondStep, setLocation } = useSignup();
+  const { isSecondStep } = useSignup();
   const { backgroundColor, backgroundColor3 } = useStyle();
 
   const plan = getQueryString('plan');
   const planFormated = plan ? encodeURIComponent(plan) : undefined;
 
-  const { gmapStatus, geocode, geolocate } = useGoogleMaps(
+  const { gmapStatus, geocode } = useGoogleMaps(
     GOOGLE_KEY,
     'places',
   );
@@ -146,36 +146,6 @@ function ChooseYourClass({
       });
     }
   }, [isSecondStep, gmapStatus]);
-
-  useEffect(() => {
-    const userLocation = localStorage.getItem('user-location');
-    if (gmapStatus.loaded && GOOGLE_KEY && !userLocation) {
-      geolocate(GOOGLE_KEY).then(({ data }) => {
-        if (data) {
-          setCoords({
-            latitude: data.location.lat,
-            longitude: data.location.lng,
-          });
-        }
-
-        geocode({ location: data.location }).then((results) => {
-          const loc = {};
-
-          results[0].address_components.forEach((comp) => {
-            if (comp.types.includes('locality')) loc.city = comp.long_name;
-            if (comp.types.includes('country')) {
-              loc.country = comp.long_name;
-              loc.countryShort = comp.short_name;
-            }
-          });
-          localStorage.setItem('user-location', JSON.stringify(loc));
-          setLocation(loc);
-        });
-      });
-    } else if (userLocation) {
-      setLocation(JSON.parse(userLocation));
-    }
-  }, [gmapStatus]);
 
   return isSecondStep && (
     <Box
