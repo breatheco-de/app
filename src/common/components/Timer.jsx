@@ -30,33 +30,38 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (justFinished) return;
-
-      const now = new Date();
-      const startingAtDate = new Date(startingAt);
-      const intervalDurationObj = intervalToDuration({
-        start: startingAtDate,
-        end: now,
-      });
-      const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
-      if (isRemainingToExpire) {
-        setLoading(false);
-        setTimer({
-          months: String(intervalDurationObj.months).padStart(2, '0'),
-          days: String(intervalDurationObj.days).padStart(2, '0'),
-          hours: String(intervalDurationObj.hours).padStart(2, '0'),
-          minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
-          seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+    let interval;
+    if (justFinished === false) {
+      interval = setInterval(() => {
+        const now = new Date();
+        const startingAtDate = new Date(startingAt);
+        const intervalDurationObj = intervalToDuration({
+          start: startingAtDate,
+          end: now,
         });
-      }
-      if (!isRemainingToExpire && !justFinished) {
-        setJustFinished(true);
-      }
-    }, 1000);
+        const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+        if (isRemainingToExpire) {
+          setLoading(false);
+          setTimer({
+            months: String(intervalDurationObj.months).padStart(2, '0'),
+            days: String(intervalDurationObj.days).padStart(2, '0'),
+            hours: String(intervalDurationObj.hours).padStart(2, '0'),
+            minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
+            seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+          });
+        }
+        if (!isRemainingToExpire && !justFinished) {
+          onFinish();
+          setJustFinished(true);
+          setLoading(false);
+        }
+      }, 1000);
+    }
 
-    return () => clearInterval(interval);
-  }, [justFinished, startingAt, onFinish]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [justFinished]);
 
   console.log(timer.months);
   console.log(timer.days);
