@@ -160,7 +160,6 @@ function Checkout() {
         console.log(e);
       });
   };
-
   const handleCoupon = (coupons, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
 
@@ -197,7 +196,6 @@ function Checkout() {
         }
       });
   };
-
   const findAutoSelectedPlan = (checkingData) => {
     const plans = checkingData?.plans || [];
     const newPlanList = [...plans];
@@ -520,7 +518,6 @@ function Checkout() {
     setSelectedPlanCheckoutData({ ...originalPlan, ...selectedPlan });
     setShowFinantialsOptions(false);
   };
-
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -711,18 +708,20 @@ function Checkout() {
                           </Text>
                         </Box>
                         <Box position="absolute" marginTop="18px" cursor="pointer" boxShadow="0px 4px 4px 0px rgba(0, 0, 0, 0.25);" borderRadius="8px" top="100%" right="50%" transform="translateX(50%)" width="100%" display={showFinantialsOptions ? 'block' : 'none'} background="white">
-                          {originalPlan.plans.map((p) => (
-                            <Box padding="10px" borderRadius="8px" color={originalPlan.selectedPlan.price === p.price ? 'green.400' : 'black'} background={originalPlan.selectedPlan.price === p.price ? '#EDFFF2' : 'transparent'} onClick={() => handlePlanChange(p)}>
-                              $
-                              {p.price}
-                              {' '}
-                              {p.currency.code}
-                              {' '}
-                              /
-                              {' '}
-                              {p.title}
-                            </Box>
-                          ))}
+                          {originalPlan.plans
+                            .sort((a, b) => a.price - b.price)
+                            .map((p) => (
+                              <Box padding="10px" borderRadius="8px" _hover={{ background: '#EDF2F7' }} color={originalPlan.selectedPlan.price === p.price ? 'green.400' : 'black'} background={originalPlan.selectedPlan.price === p.price ? '#EDFFF2' : 'transparent'} onClick={() => handlePlanChange(p)}>
+                                $
+                                {getPriceWithDiscount(p.price, selfAppliedCoupon).price}
+                                {' '}
+                                {p.currency.code}
+                                {' '}
+                                /
+                                {' '}
+                                {p.title}
+                              </Box>
+                            ))}
                         </Box>
                       </Flex>
                     )}
