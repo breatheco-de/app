@@ -68,21 +68,40 @@ const endFileUpload = async (operationType, totalChunks, filename, mime, meta, a
   return response.data;
 };
 
+const getNotifications = async (doneAt) => {
+  const response = await bc.messaging().chunkNotification({ done_at: doneAt });
+  return response.data;
+};
+
 const uploadFileInChunks = async (file, operationType, meta, academyID = undefined) => {
   const { chunk_size: chunkSize, max_chunks: maxChunks } = await getOperationMeta(operationType);
 
   const chunks = splitFileIntoChunks(file, chunkSize);
-
   const totalChunks = chunks.length;
+
   if (maxChunks && totalChunks > maxChunks) {
-    throw new Error(`El archivo tiene demasiados trozos. Maximo permitido: ${maxChunks}`);
+    throw new Error(`El archivo tiene demasiados trozos. Máximo permitido: ${maxChunks}`);
   }
 
-  const uploadPromises = chunks.map((chunk, index) => uploadChunk(file, chunk, operationType, totalChunks, index, academyID));
+  const uploadResponses = [];
+  const notificationsPromises = [];
 
-  const uploadResponses = await Promise.all(uploadPromises);
+  for (let i = 0; i < totalChunks; i += 1) {
+    console.log('SOY EL FILE', file);
+    const response = uploadChunk(file, chunks[i], operationType, totalChunks, i, academyID);
+    uploadResponses.push(response);
 
-  const lastResponse = uploadResponses[uploadResponses.length - 1];
+    const lastDoneAt = new Date().toISOString();
+    const notificationsPromise = getNotifications(lastDoneAt);
+    notificationsPromises.push(notificationsPromise);
+  }
+
+  const responses = await Promise.all(uploadResponses);
+
+  const notifications = await Promise.all(notificationsPromises);
+  console.log('Notifications since last chunk:', notifications);
+
+  const lastResponse = responses[responses.length - 1];
   const { mime, name } = lastResponse?.data ?? {};
 
   const finalResponse = await endFileUpload(operationType, totalChunks, name, mime, meta, academyID);

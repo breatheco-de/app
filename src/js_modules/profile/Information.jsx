@@ -7,7 +7,7 @@ import ProfileForm from '../../common/components/ProfileForm';
 import Text from '../../common/components/Text';
 import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
-// import bc from '../../common/services/breathecode';
+import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
@@ -16,9 +16,7 @@ import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
 
 function Information() {
   const { t } = useTranslation('profile');
-  const { user,
-    // updateProfile
-  } = useAuth();
+  const { user, updateProfile } = useAuth();
   const toast = useToast();
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,48 +77,39 @@ function Information() {
 
       const result = await uploadFileInChunks(imgFile, 'profile-picture', meta);
 
-      //_______________LOGS_________________________
-      console.log(result);
+      if (result) {
+        setTimeout(() => {
+          bc.auth().me().then(({ data }) => {
+            updateProfile({
+              ...user,
+              profile: {
+                ...user.profile,
+                avatar_url: data?.profile?.avatar_url,
+              },
+            });
+          });
+        }, 1000);
+      } else {
+        throw new Error('Error uploading profile picture');
+      }
 
-      // const formdata = new FormData();
-      // formdata.append('file', result);
-
-      // NOTE: Endpoint updates the image on the second try
-      // bc.auth().updatePicture(formdata)
-      //   .then((res) => {
-      //     console.log(res.data)
-      //     if (res.data) {
-      //       bc.auth().updatePicture(formdata).then((res2) => {
-      //         console.log(res2)
-      //         setIsLoading(false);
-      //         updateProfile({
-      //           ...user,
-      //           profile: {
-      //             ...user.profile,
-      //             avatar_url: res2.data.avatar_url,
-      //           },
-      //         });
-      //         setShowModal(false);
-      //         toast({
-      //           position: 'top',
-      //           title: t('alert-message:submitting-picture-success'),
-      //           status: 'success',
-      //           duration: 5000,
-      //         });
-      //       });
-      //     }
-      //   })
-      //   .catch(() => {
-      //     setIsLoading(false);
-      //     toast({
-      //       position: 'top',
-      //       title: t('alert-message:error-submitting-picture'),
-      //       status: 'error',
-      //       duration: 5000,
-      //     });
-      //   });
+      setIsLoading(false);
+      setShowModal(false);
+      toast({
+        position: 'top',
+        title: t('alert-message:submitting-picture-success'),
+        status: 'success',
+        duration: 5000,
+      });
     } catch (e) {
       console.error(e);
+      setIsLoading(false);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-submitting-picture'),
+        status: 'error',
+        duration: 5000,
+      });
     }
   }, [croppedAreaPixels]);
 
@@ -132,14 +121,9 @@ function Information() {
     setImageUrls(newImageUrls);
   }, [images]);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     setProfile({
-  //       ...profile,
-  //       ...user,
-  //     });
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    console.log(user);
+  }, user);
 
   //_____________________TEST____________________
   // const operationTypes = getOperationTypes()

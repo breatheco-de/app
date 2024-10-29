@@ -97,6 +97,14 @@ const breathecode = {
     };
   },
 
+  messaging: () => {
+    const url = `${host}/messaging`;
+
+    return {
+      chunkNotification: (args) => axios.get(`${url}/me/notification`, { ...args }),
+    };
+  },
+
   admissions: (query = {}) => {
     const url = `${host}/admissions`;
     const qs = parseQuerys(query);
