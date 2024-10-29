@@ -1,7 +1,8 @@
+/* eslint-disable camelcase */
 import React, { createContext, useState } from 'react';
 import Script from 'next/script';
 import PropTypes from 'prop-types';
-import { isWindow } from '../../utils';
+import { isWindow, getQueryString } from '../../utils';
 
 export const RigoContext = createContext({
   rigo: null,
@@ -22,13 +23,16 @@ function RigoProvider({ children }) {
       <Script
         src="https://unpkg.com/rigobot-chat-bubble@0.0.44/dist/main.js"
         onLoad={() => {
-          window.rigo.init(process.env.RIGOBOT_HASH, {
-            context: '',
-          });
-          window.rigo.show({
-            showBubble: false,
-          });
-          setIsRigoInitialized(true);
+          const allowRigo = getQueryString('rigo_chat');
+          if (allowRigo && allowRigo.toLowerCase() === 'true') {
+            window.rigo.init(process.env.RIGOBOT_HASH, {
+              context: '',
+            });
+            window.rigo.show({
+              showBubble: false,
+            });
+            setIsRigoInitialized(true);
+          }
         }}
       />
       {children}

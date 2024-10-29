@@ -159,7 +159,7 @@ function CouponTopBar() {
   );
 }
 
-function Page({ data }) {
+function CoursePage({ data }) {
   const { state } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
@@ -1000,12 +1000,12 @@ function Page({ data }) {
   );
 }
 
-Page.propTypes = {
+CoursePage.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
 };
 
-Page.defaultProps = {
+CoursePage.defaultProps = {
   data: {},
 };
 
-export default Page;
+export default CoursePage;
