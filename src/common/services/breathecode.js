@@ -62,6 +62,7 @@ const breathecode = {
         profileInvites: () => axios.get(`${url}/profile/invite/me`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
+      acceptProfileAcademy: (id) => axios.put(`${url}/user/me/profile_academy/${id}/active`),
       getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),

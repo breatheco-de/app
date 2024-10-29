@@ -73,7 +73,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, updateProfile } = useAuth();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -379,7 +379,7 @@ function chooseProgram() {
         setInvites(invList);
 
         toast({
-          title: t('alert-message:invitation-accepted', { cohortName }),
+          title: t('alert-message:invitation-accepted-cohort', { cohortName }),
           status: 'success',
           duration: 9000,
           isClosable: true,
@@ -408,35 +408,40 @@ function chooseProgram() {
   const acceptProfileAcademy = async ({ id }) => {
     try {
       setLoadingInvite(id);
-      // const res = await bc.auth().invites().accept(id);
-      // const { status } = res;
-      // if (status >= 200 && status < 400) {
-      //   const invitationIndex = invites.findIndex((invite) => invite.id === id);
-      //   const inv = invites[invitationIndex];
-      //   const { name: cohortName } = inv.cohort;
+      const res = await bc.auth().acceptProfileAcademy(id);
+      const { status } = res;
+      if (status >= 200 && status < 400) {
+        const invitationIndex = invites.findIndex((invite) => invite.id === id);
 
-      //   const { data: refetchData } = await refetch();
+        const [meRefetch, admissionsRefetch] = await Promise.all([
+          bc.auth().me(),
+          refetch(),
+        ]);
 
-      //   setDataQuery(refetchData.data);
+        const { data: userData } = meRefetch;
+        updateProfile(userData);
 
-      //   const invList = [...invites];
-      //   invList.splice(invitationIndex, 1);
-      //   setInvites(invList);
+        const { data: refetchData } = admissionsRefetch;
+        setDataQuery(refetchData.data);
 
-      //   toast({
-      //     title: t('alert-message:invitation-accepted', { cohortName }),
-      //     status: 'success',
-      //     duration: 9000,
-      //     isClosable: true,
-      //   });
-      // } else {
-      //   toast({
-      //     title: t('alert-message:invitation-error'),
-      //     status: 'error',
-      //     duration: 5000,
-      //     isClosable: true,
-      //   });
-      // }
+        const invList = [...invites];
+        invList.splice(invitationIndex, 1);
+        setInvites(invList);
+
+        toast({
+          title: t('alert-message:invitation-accepted'),
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: t('alert-message:invitation-error'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
     } catch (e) {
       console.log(e);
       toast({
