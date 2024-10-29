@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { differenceInMilliseconds } from 'date-fns';
+import { intervalToDuration } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -30,91 +30,50 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    let interval;
-    if (justFinished === false) {
-      interval = setInterval(() => {
-        const now = new Date();
-        const startingAtDate = new Date(startingAt);
-        const differenceInMs = differenceInMilliseconds(now, startingAtDate) * -1;
+    const interval = setInterval(() => {
+      if (justFinished) return;
 
-        const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+      const now = new Date();
+      const startingAtDate = new Date(startingAt);
+      const intervalDurationObj = intervalToDuration({
+        start: startingAtDate,
+        end: now,
+      });
+      const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+      if (isRemainingToExpire) {
+        setLoading(false);
+        setTimer({
+          months: String(intervalDurationObj.months).padStart(2, '0'),
+          days: String(intervalDurationObj.days).padStart(2, '0'),
+          hours: String(intervalDurationObj.hours).padStart(2, '0'),
+          minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
+          seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
+        });
+      }
+      if (!isRemainingToExpire && !justFinished) {
+        setJustFinished(true);
+      }
+    }, 1000);
 
-        if (isRemainingToExpire) {
-          const totalSeconds = Math.floor(differenceInMs / 1000);
-
-          const months = Math.floor(totalSeconds / (30 * 24 * 60 * 60));
-          const remainingSecondsForMonth = totalSeconds % (30 * 24 * 60 * 60);
-
-          const days = Math.floor(remainingSecondsForMonth / (24 * 60 * 60));
-          const remainingSecondsForDay = remainingSecondsForMonth % (24 * 60 * 60);
-
-          const hours = Math.floor(remainingSecondsForDay / (60 * 60));
-          const minutes = Math.floor((remainingSecondsForDay % (60 * 60)) / 60);
-          const seconds = remainingSecondsForDay % 60;
-
-          setLoading(false);
-
-          setTimer({
-            months: String(months).padStart(2, '0'),
-            days: String(days).padStart(2, '0'),
-            hours: String(hours).padStart(2, '0'),
-            minutes: String(minutes).padStart(2, '0'),
-            seconds: String(seconds).padStart(2, '0'),
-          });
-        }
-        if (!isRemainingToExpire && !justFinished) {
-          onFinish();
-          setJustFinished(true);
-          setLoading(false);
-        }
-      }, 1000);
-    }
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [justFinished]);
+    return () => clearInterval(interval);
+  }, [justFinished, startingAt, onFinish]);
 
   console.log(timer.months);
+  console.log(timer.days);
+  console.log(timer.hours);
+  console.log(timer.minutes);
+  console.log(timer.seconds);
+  console.log('_______');
 
   if (variant === 'text') {
     if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
     return (
       <Text {...rest}>
-        {/* Si queda un número exacto de meses */}
-        {(timer?.months) > 1 && (timer?.days) === 0 ? (
-          `${(timer?.months)} ${(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')}`
-        ) : null}
-
-        {/* Si queda más de un mes con días restantes */}
-        {(timer?.months) > 1 && (timer?.days) > 0 ? (
-          `${(timer?.months)} ${(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')} ${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')}`
-        ) : null}
-
-        {/* Si queda exactamente un mes */}
-        {(timer?.months) === 1 && (timer?.days) > 0 ? (
-          `${(timer?.days)} ${(timer?.days) === 1 ? t('word-connector.day') : t('word-connector.days')} ${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')}`
-        ) : null}
-
-        {/* Si queda menos de 24 horas pero no menos de 1 hora */}
-        {(timer?.days) === 0 && (timer?.hours) > 1 && (timer?.minutes) === 0 ? (
-          `${(timer?.hours)} ${(timer?.hours) === 1 ? t('word-connector.hour') : t('word-connector.hours')}`
-        ) : null}
-
-        {/* Si queda menos de 1 día y menos de 24 horas */}
-        {(timer?.days) === 0 && (timer?.hours) > 0 && (timer?.minutes) > 0 ? (
-          `${(timer?.hours)} ${(timer?.hours) === 1 ? t('word-connector.hour') : t('word-connector.hours')} ${timer?.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')}`
-        ) : null}
-
-        {/* Si queda menos de una hora */}
-        {(timer?.hours) === 0 && (timer?.minutes) > 0 && (timer?.seconds) > 0 ? (
-          `${(timer?.minutes)} ${(timer?.minutes) === 1 ? t('timer.min') : t('timer.mins')} ${timer?.seconds} ${t('timer.sec')}`
-        ) : null}
-
-        {/* Si el tiempo exacto coincide con los casos definidos */}
-        {((timer?.months) <= 1 && (timer?.days) === 0 && (timer?.hours) === 24) ? (
-          `24 ${t('word-connector.hours')}`
-        ) : null}
+        {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${timer?.months === 1 ? t('word-connector.month') : t('word-connector.months')} `}
+        {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
+        {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
+        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('word-connector.minute') : t('word-connector.minutes')} `}
+        {timer?.hours <= 0 && `${timer.seconds} ${t('word-connector.seconds')}`}
       </Text>
     );
   }
