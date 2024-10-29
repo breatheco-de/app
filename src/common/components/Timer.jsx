@@ -41,8 +41,12 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
 
         if (isRemainingToExpire) {
           const totalSeconds = Math.floor(differenceInMs / 1000);
-          const days = Math.floor(totalSeconds / (24 * 60 * 60));
-          const remainingSecondsForDay = totalSeconds % (24 * 60 * 60);
+
+          const months = Math.floor(totalSeconds / (30 * 24 * 60 * 60));
+          const remainingSecondsForMonth = totalSeconds % (30 * 24 * 60 * 60);
+
+          const days = Math.floor(remainingSecondsForMonth / (24 * 60 * 60));
+          const remainingSecondsForDay = remainingSecondsForMonth % (24 * 60 * 60);
 
           const hours = Math.floor(remainingSecondsForDay / (60 * 60));
           const minutes = Math.floor((remainingSecondsForDay % (60 * 60)) / 60);
@@ -51,6 +55,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
           setLoading(false);
 
           setTimer({
+            months: String(months).padStart(2, '0'),
             days: String(days).padStart(2, '0'),
             hours: String(hours).padStart(2, '0'),
             minutes: String(minutes).padStart(2, '0'),
@@ -70,14 +75,46 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
     };
   }, [justFinished]);
 
+  console.log(timer.months);
+
   if (variant === 'text') {
     if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
     return (
       <Text {...rest}>
-        {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
-        {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
-        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 || timer?.months > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')} `}
-        {timer?.hours <= 0 && `${timer.seconds} ${t('timer.sec')}`}
+        {/* Si queda un número exacto de meses */}
+        {(timer?.months) > 1 && (timer?.days) === 0 ? (
+          `${(timer?.months)} ${(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')}`
+        ) : null}
+
+        {/* Si queda más de un mes con días restantes */}
+        {(timer?.months) > 1 && (timer?.days) > 0 ? (
+          `${(timer?.months)} ${(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')} ${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')}`
+        ) : null}
+
+        {/* Si queda exactamente un mes */}
+        {(timer?.months) === 1 && (timer?.days) > 0 ? (
+          `${(timer?.days)} ${(timer?.days) === 1 ? t('word-connector.day') : t('word-connector.days')} ${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')}`
+        ) : null}
+
+        {/* Si queda menos de 24 horas pero no menos de 1 hora */}
+        {(timer?.days) === 0 && (timer?.hours) > 1 && (timer?.minutes) === 0 ? (
+          `${(timer?.hours)} ${(timer?.hours) === 1 ? t('word-connector.hour') : t('word-connector.hours')}`
+        ) : null}
+
+        {/* Si queda menos de 1 día y menos de 24 horas */}
+        {(timer?.days) === 0 && (timer?.hours) > 0 && (timer?.minutes) > 0 ? (
+          `${(timer?.hours)} ${(timer?.hours) === 1 ? t('word-connector.hour') : t('word-connector.hours')} ${timer?.minutes} ${timer?.minutes === 1 ? t('timer.min') : t('timer.mins')}`
+        ) : null}
+
+        {/* Si queda menos de una hora */}
+        {(timer?.hours) === 0 && (timer?.minutes) > 0 && (timer?.seconds) > 0 ? (
+          `${(timer?.minutes)} ${(timer?.minutes) === 1 ? t('timer.min') : t('timer.mins')} ${timer?.seconds} ${t('timer.sec')}`
+        ) : null}
+
+        {/* Si el tiempo exacto coincide con los casos definidos */}
+        {((timer?.months) <= 1 && (timer?.days) === 0 && (timer?.hours) === 24) ? (
+          `24 ${t('word-connector.hours')}`
+        ) : null}
       </Text>
     );
   }
