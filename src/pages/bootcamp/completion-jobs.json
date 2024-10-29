@@ -1,5 +1,22 @@
-[{
-  "prompt": "Who is the cofounder of 4Geeks?",
-  "answer": "Alejandro Sanchez",
-  "DOMTarget": "#try-rigobot"
-}]
+[
+  {
+    "prompt": "Who is the cofounder of 4Geeks?",
+    "answer": "Alejandro Sanchez",
+    "DOMTarget": "#try-rigobot"
+  },
+  {
+    "prompt": "How much is the BootCamp?",
+    "answer": "The BootCamp price is $500",
+    "DOMTarget": ""
+  },
+  {
+    "prompt": "Is there any discount for the BootCamp?",
+    "answer": "Currently there is a discount of 25% with a resulting price of 375$",
+    "DOMTarget": ""
+  },
+  {
+    "prompt": "Do you have financing plans?",
+    "answer": "Yes, you can pay the BootCamp in 3 or 5 months with no interest.",
+    "DOMTarget": ""
+  }
+]
