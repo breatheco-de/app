@@ -1,5 +1,5 @@
 import {
-  NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION,
+  NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA,
   SET_PAYMENT_INFO, SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS,
   TOGGLE_IF_ENROLLED, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON,
@@ -9,7 +9,6 @@ const initialState = {
   stepIndex: 0,
   dateProps: null,
   checkoutData: null,
-  location: null,
   paymentInfo: {
     card_number: '',
     exp: '',
@@ -80,14 +79,6 @@ const signupReducer = (state = initialState, action) => {
       return {
         ...state,
         checkoutData: action.payload,
-      };
-    }
-
-    // location
-    case SET_LOCATION: {
-      return {
-        ...state,
-        location: action.payload,
       };
     }
 

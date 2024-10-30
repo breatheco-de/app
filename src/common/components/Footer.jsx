@@ -21,6 +21,7 @@ import Icon from './Icon';
 import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
+import useSession from '../hooks/useSession';
 import bc from '../services/breathecode';
 import { GithubIcon, LogoIcon, YoutubeIcon } from './Icon/components';
 import { log } from '../../utils/logging';
@@ -28,6 +29,7 @@ import FooterTC from './FooterTC';
 
 function Footer({ pageProps }) {
   const captcha = useRef(null);
+  const { location } = useSession();
   const { t } = useTranslation('footer');
   const { hexColor } = useStyle();
   const [email, setEmail] = useState('');
@@ -39,7 +41,7 @@ function Footer({ pageProps }) {
   const hideDivider = pageProps?.hideDivider === true;
   if (pageProps?.previewMode) return null;
 
-  if (isAuthenticated) return <FooterTC pageProps={pageProps} />;
+  if (isAuthenticated || location?.countryShort === 'ES') return <FooterTC pageProps={pageProps} />;
 
   return (
     <Container background={hexColor.backgroundColor} as="footer" maxW="none" padding="20px" position="absolute" top="100%">

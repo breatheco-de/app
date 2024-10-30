@@ -14,6 +14,7 @@ import TagCapsule from './TagCapsule';
 import { getBrowserSize, setStorageItem } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import { parseQuerys } from '../../utils/url';
 import { error } from '../../utils/logging';
 import { reportDatalayer } from '../../utils/requests';
@@ -47,6 +48,7 @@ function Container({ recommendation, recommendations, borderRadius, children, ..
 function MktSideRecommendations({ title, endpoint, technologies, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const { hexColor } = useStyle();
+  const { location } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [recommendations, setRecommendations] = useState([]);
   const router = useRouter();
@@ -141,6 +143,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
   useEffect(() => {
     fetchContent();
   }, []);
+
+  if (location?.countryShort === 'ES') return null;
 
   return recommendations?.length > 0 && (
     <>

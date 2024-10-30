@@ -6,6 +6,9 @@
   "main-instructor": "Main Instructor",
   "teacher-assistant": "Teacher Assistant",
   "rigo": "Rigo",
+  "rigobot-bubble": {
+    "greeting": "Hi!"
+  },
   "ai-tutor": "AI Tutor",
   "clone-modal": {
     "title": "How to clone a project?"
@@ -148,6 +151,7 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
+    "start-asset": "Start {{asset_type}}",
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
     "open-in-learnpack-button": {
