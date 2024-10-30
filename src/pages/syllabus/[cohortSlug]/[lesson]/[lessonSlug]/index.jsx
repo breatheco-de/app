@@ -149,8 +149,6 @@ function SyllabusContent() {
 
   const handleStartLearnpack = () => setLearnpackStart(true);
 
-  console.log(iframeURL);
-
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };

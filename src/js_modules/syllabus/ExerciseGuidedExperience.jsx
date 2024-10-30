@@ -34,17 +34,11 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
     const iframe = 'true';
     const token = userToken;
 
-    console.log(`${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`);
-
     return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
   const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue]);
-
-  // console.log(iframeURL)
-  // console.log("HOLA", currentAsset)
-  // console.log(currentTask)
 
   useEffect(() => {
     if (isExerciseStated) {
