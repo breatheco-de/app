@@ -1,10 +1,5 @@
 [
   {
-    "prompt": "Who is the cofounder of 4Geeks?",
-    "answer": "Alejandro Sanchez",
-    "DOMTarget": "#try-rigobot"
-  },
-  {
     "prompt": "How much is the BootCamp?",
     "answer": "The BootCamp price is $500",
     "DOMTarget": ""
