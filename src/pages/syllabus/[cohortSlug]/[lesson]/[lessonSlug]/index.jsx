@@ -145,7 +145,7 @@ function SyllabusContent() {
 
     return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
-  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset]);
+  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
 
   const handleStartLearnpack = () => setLearnpackStart(true);
 
