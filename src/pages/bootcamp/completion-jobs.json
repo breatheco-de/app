@@ -15,8 +15,13 @@
     "DOMTarget": ""
   },
   {
-    "prompt": "How long does it take to complete the bootcamp?",
+    "prompt": "How long does it take to complete the BootCamp?",
     "answer": "The BootCamp is self-paced and it should take between 4 and 8 months to complete",
+    "DOMTarget": ""
+  },
+  {
+    "prompt": "What will I be ready for after completing the program?",
+    "answer": "After completing the program you will have all the knowledge and experience to start an entry-level job in the tech industry",
     "DOMTarget": ""
   },
 ]
