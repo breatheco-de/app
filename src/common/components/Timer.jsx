@@ -74,7 +74,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
   }, [justFinished]);
 
   const avoidMonths = (autoRemove && timer?.months <= 0) || (autoRemove && Number(timer?.months) === 1 && timer?.days === '00');
-  const avoidMonthsInDays = (autoRemove && timer?.months !== '01' && timer?.days !== '00') || (autoRemove && timer?.months <= 0) || (autoRemove && timer?.days !== '00') || (autoRemove && timer?.months > 1);
+  const avoidMonthsInDays = (autoRemove && timer?.months !== '01') || (autoRemove && timer?.months <= 0) || (autoRemove && timer?.days !== '00') || (autoRemove && timer?.months > 1);
   const avoidDays = autoRemove && timer?.days <= 0;
   const avoidHours = (autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 || timer?.hours <= 0;
   const avoidMinutes = (autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 || timer?.months > 0;
