@@ -12,6 +12,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { getStorageItem } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
+import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -42,6 +43,7 @@ const TabletWithForm = React.forwardRef(({
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
   const assetUrl = asset?.readme_url || asset?.url;
+  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const getTitleMessage = () => {
     if (user) return '';
@@ -76,8 +78,6 @@ const TabletWithForm = React.forwardRef(({
 
     return `${asset?.learnpack_deploy_url}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
-
-  console.log(asset);
 
   return (
     <>
@@ -164,7 +164,7 @@ const TabletWithForm = React.forwardRef(({
             )}
             {asset.interactive ? (
               <>
-                {asset?.learnpack_deploy_url
+                {asset?.learnpack_deploy_url && !noLearnpackIncluded.includes(asset?.slug)
                   ? (
                     <Button
                       as="a"

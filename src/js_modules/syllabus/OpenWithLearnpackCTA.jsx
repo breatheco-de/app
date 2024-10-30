@@ -9,12 +9,11 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  useColorModeValue } from '@chakra-ui/react';
+} from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { getStorageItem } from '../../utils';
+import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import { BREATHECODE_HOST } from '../../utils/variables';
-
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
@@ -64,30 +63,18 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function OpenWithLearnpackCTA({ currentAsset, variant }) {
-  const { t, lang } = useTranslation('common');
+function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
+  const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
-  const currentThemeValue = useColorModeValue('light', 'dark');
-  const userToken = getStorageItem('accessToken');
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
 
   const accessToken = localStorage.getItem('accessToken');
   const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-
-  const buildLearnpackUrl = () => {
-    if (!learnpackDeployUrl) return null;
-
-    const currentLang = lang === 'en' ? 'us' : lang;
-    const theme = currentThemeValue;
-    const iframe = 'true';
-    const token = userToken;
-
-    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
-  };
+  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const provisioningLinks = [{
     title: t('learnpack.new-exercise'),
@@ -115,6 +102,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
     }
   }, [cohortSession]);
 
+  console.log(cohortSession);
+
   if (variant === 'small') {
     return (
       <>
@@ -135,9 +124,9 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                   <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
                 </Popover>
               )}
-              {learnpackDeployUrl && cohortSession.available_as_saas
+              {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
                 ? (
-                  <Button as="a" href={buildLearnpackUrl()} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                  <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-asset', { asset_type: currentAsset?.asset_type?.toLowerCase() || '' })}
                   </Button>
                 )
@@ -190,12 +179,11 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
             </Popover>
           )}
-          {learnpackDeployUrl && cohortSession.available_as_saas
+          {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
             ? (
               <Button
                 as="a"
-                href={buildLearnpackUrl()}
-                target="_blank"
+                onClick={handleStartLearnpack}
                 borderRadius="3px"
                 background="white"
                 color="blue.1000"
@@ -228,6 +216,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
 
 OpenWithLearnpackCTA.propTypes = {
   variant: PropTypes.string,
+  handleStartLearnpack: PropTypes.func.isRequired,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 OpenWithLearnpackCTA.defaultProps = {
