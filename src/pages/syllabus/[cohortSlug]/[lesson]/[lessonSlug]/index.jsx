@@ -149,6 +149,10 @@ function SyllabusContent() {
 
   const handleStartLearnpack = () => setLearnpackStart(true);
 
+  useEffect(() => {
+    setLearnpackStart(false);
+  }, [currentAsset]);
+
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -855,16 +859,17 @@ function SyllabusContent() {
                 {learnpackStart
                   ? (
                     <>
-                      <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" height="83vh" mb="30px" display="flex" flexDirection="column" justifyContent="space-between">
-                        <Button alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-proyect')}</Button>
-                        <Box flexGrow={100}>
+                      <Box overflowY="auto" overflowX="hidden" borderRadius="11px" background="blue.50" height="83vh" mb="30px" display="flex" flexDirection="column" justifyContent="space-between" width="100%">
+                        <Button color="black" alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-proyect')}</Button>
+                        <Box flexGrow={1} width="100%">
                           <iframe
                             title="proyect-frame"
                             key={iframeURL}
                             src={iframeURL}
                             width="100%"
                             height="100%"
-                            style={{ border: 'none' }}
+                            style={{ border: 'none', display: 'block' }}
+                            scrolling="no"
                           />
                         </Box>
                       </Box>

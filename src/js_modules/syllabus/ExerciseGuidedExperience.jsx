@@ -123,11 +123,11 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   });
 
   return (
-    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background={learnpackStart ? '' : 'blue.1000'} height="83vh" mb="30px" padding={learnpackStart ? '0' : '16px'} display="flex" flexDirection="column" justifyContent="space-between" gap={learnpackStart ? '0px' : '20px'}>
+    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="83vh" mb="30px" padding={learnpackStart ? '0' : '16px'} display="flex" flexDirection="column" justifyContent="space-between" gap={learnpackStart ? '0px' : '20px'}>
       {learnpackStart
         ? (
           <>
-            <Button alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-exercise')}</Button>
+            <Button color="white" alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-exercise')}</Button>
             <Box flexGrow={100}>
               <iframe
                 title="exercise-frame"
@@ -136,6 +136,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
                 width="100%"
                 height="100%"
                 style={{ border: 'none' }}
+                scrolling="no"
               />
             </Box>
           </>
