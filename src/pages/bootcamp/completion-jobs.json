@@ -29,4 +29,9 @@
     "answer": "Yes, if you finish the program and all the mandatory tasks have been accepted, then you will get a certificate that will help you a lot to get a job.",
     "DOMTarget": ""
   },
+  {
+    "prompt": "Will I get feedback about the projects I finish?",
+    "answer": "Yes, after finishing and delivering the project it will be reviewed by Rigobot and give you instant feedback about improvements your code could have.",
+    "DOMTarget": ""
+  },
 ]
