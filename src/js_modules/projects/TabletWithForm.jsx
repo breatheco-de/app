@@ -6,9 +6,12 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import React, { useState } from 'react';
+import { getStorageItem } from '../../utils';
+import { ORIGIN_HOST } from '../../utils/variables';
+import { reportDatalayer } from '../../utils/requests';
 import useAuth from '../../common/hooks/useAuth';
 import Heading from '../../common/components/Heading';
 import Link from '../../common/components/NextChakraLink';
@@ -18,8 +21,6 @@ import SimpleTable from './SimpleTable';
 import ModalToCloneProject from '../syllabus/ModalToCloneProject';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useStyle from '../../common/hooks/useStyle';
-import { ORIGIN_HOST } from '../../utils/variables';
-import { reportDatalayer } from '../../utils/requests';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import SimpleModal from '../../common/components/SimpleModal';
 
@@ -30,12 +31,14 @@ const TabletWithForm = React.forwardRef(({
   href,
   showSimpleTable,
 }, ref) => {
-  const { t } = useTranslation('exercises');
+  const { t, lang } = useTranslation('exercises');
   const { user } = useAuth();
+  const { hexColor, lightColor } = useStyle();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
-  const { hexColor, lightColor } = useStyle();
+  const currentThemeValue = useColorModeValue('light', 'dark');
+  const userToken = getStorageItem('accessToken');
   const textColor = commonTextColor || lightColor;
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
   const assetUrl = asset?.readme_url || asset?.url;
@@ -62,6 +65,19 @@ const TabletWithForm = React.forwardRef(({
       },
     });
   };
+
+  const buildLearnpackUrl = () => {
+    if (!asset?.learnpack_deploy_url) return null;
+
+    const currentLang = lang === 'en' ? 'us' : lang;
+    const theme = currentThemeValue;
+    const iframe = 'true';
+    const token = userToken;
+
+    return `${asset?.learnpack_deploy_url}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+  };
+
+  console.log(asset);
 
   return (
     <>
@@ -161,7 +177,7 @@ const TabletWithForm = React.forwardRef(({
                       alignItems="center"
                       gridGap="8px"
                       background={hexColor.greenLight}
-                      href={asset?.learnpack_deploy_url}
+                      href={buildLearnpackUrl()}
                       target="_blank"
                     >
                       {t('common:learnpack.start-asset', { asset_type: asset?.asset_type?.toLowerCase() || '' })}

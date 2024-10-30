@@ -9,14 +9,16 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-} from '@chakra-ui/react';
+  useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { getStorageItem } from '../../utils';
+import { BREATHECODE_HOST } from '../../utils/variables';
+
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
-import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -63,16 +65,29 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
 }
 
 function OpenWithLearnpackCTA({ currentAsset, variant }) {
-  const { t } = useTranslation('common');
-  const [vendors, setVendors] = useState([]);
+  const { t, lang } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
+  const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
+  const currentThemeValue = useColorModeValue('light', 'dark');
+  const userToken = getStorageItem('accessToken');
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
 
   const accessToken = localStorage.getItem('accessToken');
   const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+
+  const buildLearnpackUrl = () => {
+    if (!learnpackDeployUrl) return null;
+
+    const currentLang = lang === 'en' ? 'us' : lang;
+    const theme = currentThemeValue;
+    const iframe = 'true';
+    const token = userToken;
+
+    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+  };
 
   const provisioningLinks = [{
     title: t('learnpack.new-exercise'),
@@ -122,7 +137,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               )}
               {learnpackDeployUrl && cohortSession.available_as_saas
                 ? (
-                  <Button as="a" href={learnpackDeployUrl} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                  <Button as="a" href={buildLearnpackUrl()} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-asset', { asset_type: currentAsset?.asset_type?.toLowerCase() || '' })}
                   </Button>
                 )
@@ -179,7 +194,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             ? (
               <Button
                 as="a"
-                href={learnpackDeployUrl}
+                href={buildLearnpackUrl()}
                 target="_blank"
                 borderRadius="3px"
                 background="white"
