@@ -148,6 +148,10 @@
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
     "start-asset": "Empezar {{asset_type}}",
+    "asset_types": {
+      "project": "proyecto",
+      "exercise": "ejercicio"
+    },
     "recommended": "Recomendado",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
