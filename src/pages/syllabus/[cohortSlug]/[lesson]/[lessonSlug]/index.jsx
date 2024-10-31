@@ -17,6 +17,7 @@ import getMarkDownContent from '../../../../../common/components/MarkDownParser/
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
+import useRigo from '../../../../../common/hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
@@ -47,6 +48,7 @@ function SyllabusContent() {
 
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
+  const { rigo, isRigoInitialized } = useRigo();
   const {
     taskTodo,
     cohortProgram,
@@ -179,17 +181,46 @@ function SyllabusContent() {
     }
   }, [isLoading]);
 
+  const updateOpenedAt = async () => {
+    try {
+      const result = await bc.todo().update({ ...currentTask, opened_at: new Date() });
+      if (result.data) {
+        const updateTasks = taskTodo.map((task) => ({ ...task }));
+        const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
+        updateTasks[index].opened_at = result.data.opened_at;
+        setTaskTodo([...updateTasks]);
+      }
+    } catch (e) {
+      log('update_task_error:', e);
+    }
+  };
+
+  const getAssetContext = async () => {
+    try {
+      let aiContext;
+      const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
+      if (!cachedContext) {
+        const resp = await bc.lesson().getAssetContext(currentAsset.id);
+        if (resp?.status === 200) {
+          aiContext = resp.data;
+          sessionStorage.setItem(`context-${currentAsset.slug}`, JSON.stringify(aiContext));
+        }
+      } else aiContext = cachedContext;
+
+      if (aiContext) {
+        rigo.updateOptions({
+          showBubble: false,
+          context: aiContext.ai_context,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
-      bc.todo().update({ ...currentTask, opened_at: new Date() })
-        .then((result) => {
-          if (result.data) {
-            const updateTasks = taskTodo.map((task) => ({ ...task }));
-            const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-            updateTasks[index].opened_at = result.data.opened_at;
-            setTaskTodo([...updateTasks]);
-          }
-        }).catch((e) => log('update_task_error:', e));
+      updateOpenedAt();
     }
   }, [currentTask]);
 
@@ -200,6 +231,12 @@ function SyllabusContent() {
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
+
+  useEffect(() => {
+    if (currentAsset && isRigoInitialized) {
+      getAssetContext();
+    }
+  }, [currentAsset, isRigoInitialized]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -661,21 +698,29 @@ function SyllabusContent() {
   const openAiChat = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
-        setIsLoadingRigobot(true);
-        const [completionResp, tokenResp] = await Promise.all([
-          bc.todo().postCompletionJob(currentTask.id),
-          bc.auth().temporalToken(),
-        ]);
+        rigo.updateOptions({
+          showBubble: false,
+          target: '#rigo-chat',
+          highlight: true,
+          // welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+          collapsed: false,
+          purposeSlug: '4geekscom-public-agent',
+        });
+        // setIsLoadingRigobot(true);
+        // const [completionResp, tokenResp] = await Promise.all([
+        //   bc.todo().postCompletionJob(currentTask.id),
+        //   bc.auth().temporalToken(),
+        // ]);
 
-        const completionId = completionResp.data.id;
-        const temporalToken = tokenResp.data.token;
+        // const completionId = completionResp.data.id;
+        // const temporalToken = tokenResp.data.token;
 
-        const { data } = await bc.rigobot().meToken(temporalToken);
-        const rigobotToken = data.key;
+        // const { data } = await bc.rigobot().meToken(temporalToken);
+        // const rigobotToken = data.key;
 
-        const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
+        // const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
 
-        window.open(aiChat, '_blank');
+        // window.open(aiChat, '_blank');
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
@@ -1075,6 +1120,7 @@ function SyllabusContent() {
                         {(isLesson || isProject) && (
                           <Tooltip label={t('get-help')} placement="top">
                             <Button
+                              id="rigo-chat"
                               display="flex"
                               flexDirection="column"
                               justifyContent="center"

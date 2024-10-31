@@ -7,7 +7,7 @@ import bc from '../services/breathecode';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
 import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
@@ -149,6 +149,18 @@ function AuthProvider({ children, pageProps }) {
       warn('error function "updateSettingsLang": ', e);
     }
   };
+  const conntectToRigobot = () => {
+    const accessToken = getToken();
+    const callBackUrl = window.location.href;
+    // Create buffer object, specifying utf8 as encoding
+    const bufferObj = Buffer.from(callBackUrl, 'utf8');
+
+    // Encode the Buffer as a base64 string
+    const base64String = bufferObj.toString('base64');
+    const inviteUrl = `${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}&callback=${base64String}`;
+    window.location.href = inviteUrl;
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
@@ -371,6 +383,7 @@ function AuthProvider({ children, pageProps }) {
         logout,
         register,
         updateProfile,
+        conntectToRigobot,
       }}
     >
       {children}

@@ -16,7 +16,7 @@ import useStyle from '../hooks/useStyle';
 
 function ConnectGithubRigobot({ ...rest }) {
   const { t } = useTranslation('profile');
-  const { user, isAuthenticatedWithRigobot } = useAuth();
+  const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
 
   const toast = useToast();
   const router = useRouter();
@@ -125,11 +125,7 @@ function ConnectGithubRigobot({ ...rest }) {
                   onClick={(e) => {
                     e.preventDefault();
                     if (user?.github?.username) {
-                      const accessToken = getStorageItem('accessToken');
-                      // const loginWindow = window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
-                      const callBackUrl = window.location.href;
-                      const inviteUrl = `${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}&callback=${callBackUrl}`;
-                      window.location.href = inviteUrl;
+                      conntectToRigobot();
                     }
                   }}
                 >

@@ -122,6 +122,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 height="fit-content"
                 lineHeight="1.7"
                 isDisabled={moduleLoading}
+                whiteSpace="normal"
               >
                 <Icon icon="arrowLeft" color={hexColor.black} />
                 <span>
