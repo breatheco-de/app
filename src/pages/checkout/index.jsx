@@ -11,6 +11,11 @@ import {
   InputRightElement,
   Skeleton,
   useToast,
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
 } from '@chakra-ui/react';
 import { useState, useEffect, useMemo } from 'react';
 import getT from 'next-translate/getT';
@@ -39,7 +44,6 @@ import { BASE_PLAN, ORIGIN_HOST, BREATHECODE_HOST } from '../../utils/variables'
 import { reportDatalayer } from '../../utils/requests';
 import { getTranslations, processPlans } from '../../common/handlers/subscriptions';
 import Icon from '../../common/components/Icon';
-import AcordionList from '../../common/components/AcordionList';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 
 export const getStaticProps = async ({ locale, locales }) => {
@@ -107,6 +111,7 @@ function Checkout() {
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const queryPlanId = getQueryString('plan_id');
+  const queryCohort = getQueryString('cohort');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = (plan && encodeURIComponent(plan)) || '';
@@ -519,6 +524,11 @@ function Checkout() {
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
 
+  const redirectToFinancingOption = (planID) => {
+    const currentPlan = originalPlan?.slug || plan;
+    return `${window.location.origin}/${window.location.pathname}?plan=${currentPlan}&plan_id=${planID}`;
+  };
+
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -673,21 +683,73 @@ function Checkout() {
                 <Text size="18px">
                   {t('you-are-getting')}
                 </Text>
-                <Flex gridGap="7px">
+                <Flex gridGap="7px" width="full">
                   {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
-                  <Flex flexDirection="column" gridGap="7px" justifyContent="center">
+                  <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="full">
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
                     </Heading>
-                    {originalPlan?.selectedPlan?.isFreeTier ? (
-                      <Text size="16px" color="green.400">
-                        {originalPlan?.selectedPlan?.description || 'Free plan'}
-                      </Text>
-                    ) : originalPlan?.selectedPlan?.price > 0 && (
-                      <Text size="16px" color="green.400">
-                        {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
-                      </Text>
-                    )}
+                    <Flex justifyContent="space-between" width="full" alignItems="center">
+                      {originalPlan?.selectedPlan?.isFreeTier ? (
+                        <Text size="16px" color="green.400">
+                          {originalPlan?.selectedPlan?.description || 'Free plan'}
+                        </Text>
+                      ) : originalPlan?.selectedPlan?.price > 0 && (
+                        <Text size="16px" color="green.400">
+                          {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
+                        </Text>
+                      )}
+                      {!queryCohort && originalPlan?.financingOptions.length > 0 && (
+                        <Flex flexDirection="column" gridGap="4px">
+                          <Accordion display="flex" flexDirection="column" allowToggle>
+                            <AccordionItem display="flex" gridGap="8px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
+                              {({ isExpanded }) => (
+                                <>
+                                  <Heading as="h3">
+                                    <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0" width="auto">
+                                      <Box as="span" flex="1" fontSize="14px" textAlign="left">
+                                        <Text size="16px" color="blue.1000">See financing options</Text>
+                                      </Box>
+                                      <AccordionIcon
+                                        display="block"
+                                        width="20px"
+                                        height="20px"
+                                        color="blue.1000"
+                                        transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+                                      />
+                                    </AccordionButton>
+                                  </Heading>
+                                  <AccordionPanel padding="0">
+                                    <Flex direction="column" gap="10px">
+                                      {originalPlan.financingOptions.map((option) => (
+                                        <Button
+                                          as="a"
+                                          padding="0 12px 0 0"
+                                          background="none"
+                                          _hover="none"
+                                          _active="none"
+                                          height="auto"
+                                          alignSelf={originalPlan?.selectedPlan ? 'flex-end' : 'flex-start'}
+                                          fontSize="sm"
+                                          color="blue.1000"
+                                          cursor="pointer"
+                                          onClick={() => {
+                                            const url = redirectToFinancingOption(option.plan_id);
+                                            window.location.href = url;
+                                          }}
+                                        >
+                                          {option.title}
+                                        </Button>
+                                      ))}
+                                    </Flex>
+                                  </AccordionPanel>
+                                </>
+                              )}
+                            </AccordionItem>
+                          </Accordion>
+                        </Flex>
+                      )}
+                    </Flex>
                   </Flex>
                 </Flex>
                 {showPriceInformation && (
@@ -766,19 +828,43 @@ function Checkout() {
                 <Divider borderBottomWidth="2px" />
                 {originalPlan?.accordionList?.length > 0 && (
                   <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
-                    <AcordionList
-                      width="100%"
-                      allowMultiple
-                      list={originalPlan.accordionList}
-                      titleStyle={{ textTransform: 'normal', fontSize: '18px' }}
-                      iconColor={hexColor.blueDefault}
-                      paddingButton="10px 17px"
-                      unstyled
-                      gridGap="0"
-                      containerStyles={{ gridGap: '8px' }}
-                      descriptionStyle={{ padding: '0 17px 0px' }}
-                      leftIcon="checked2"
-                    />
+                    <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[]}>
+                      <AccordionItem display="flex" gridGap="10px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
+                        {({ isExpanded }) => (
+                          <>
+                            <Heading as="h3">
+                              <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0">
+                                <Box as="span" flex="1" fontSize="14px" textAlign="left">
+                                  <Text size="lg">{t('course-details')}</Text>
+                                </Box>
+                                <AccordionIcon
+                                  display="block"
+                                  width="30px"
+                                  height="30px"
+                                  color="blue.1000"
+                                  transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+                                />
+                              </AccordionButton>
+                            </Heading>
+                            <AccordionPanel padding="0" fontSize="14px">
+                              <Flex direction="column" gap="20px">
+                                {originalPlan?.accordionList?.map((item) => (
+                                  <>
+                                    <Flex justifyContent="center" direction="column">
+                                      <Flex alignItems="center">
+                                        <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" marginRight="10px" />
+                                        <Text size="lg">{item?.title}</Text>
+                                      </Flex>
+                                      <Text size="md">{item?.description}</Text>
+                                    </Flex>
+                                  </>
+                                ))}
+                              </Flex>
+                            </AccordionPanel>
+                          </>
+                        )}
+                      </AccordionItem>
+                    </Accordion>
                   </Flex>
                 )}
                 {showPriceInformation && (
@@ -839,18 +925,11 @@ function Checkout() {
                         <Text size="18px" color="currentColor" lineHeight="normal">
                           {t('after-all-payments')}
                         </Text>
-                        <Flex gridGap="1rem">
-                          {processedPrice?.originalPrice && (
-                            <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                              {`$${processedPrice.originalPrice * selectedPlanCheckoutData.how_many_months} ${selectedPlanCheckoutData.currency?.code}`}
-                            </Text>
-                          )}
-                          <Text size="18px" color="currentColor" lineHeight="normal">
-                            {selectedPlanCheckoutData.price <= 0
-                              ? selectedPlanCheckoutData.priceText
-                              : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
-                          </Text>
-                        </Flex>
+                        <Text size="18px" color="currentColor" lineHeight="normal">
+                          {selectedPlanCheckoutData.price <= 0
+                            ? selectedPlanCheckoutData.priceText
+                            : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
+                        </Text>
                       </Flex>
                     )}
                   </>
