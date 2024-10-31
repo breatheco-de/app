@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -12,11 +13,12 @@ import {
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import bc from '../../common/services/breathecode';
 import Heading from '../../common/components/Heading';
-import { BREATHECODE_HOST } from '../../utils/variables';
 import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
@@ -62,17 +64,18 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function OpenWithLearnpackCTA({ currentAsset, variant }) {
+function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
   const { t } = useTranslation('common');
-  const [vendors, setVendors] = useState([]);
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
+  const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
 
   const accessToken = localStorage.getItem('accessToken');
   const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const provisioningLinks = [{
     title: t('learnpack.new-exercise'),
@@ -109,8 +112,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             <Text color="white" size="md">
               {t('learnpack.choose-open')}
             </Text>
-            <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
-              {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+            <Box
+              mt="10px"
+              display="flex"
+              gap="10px"
+              flexDirection={{
+                base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
+                md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+              }}
+            >
+              {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -120,13 +131,12 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
                   <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
                 </Popover>
               )}
-              {learnpackDeployUrl && cohortSession.available_as_saas
+              {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
                 ? (
-                  <Button as="a" href={learnpackDeployUrl} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                  <Button as="a" cursor="pointer" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-asset', { asset_type: currentAsset?.asset_type?.toLowerCase() || '' })}
                   </Button>
-                )
-                : (
+                ) : (
                   <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                     {t('learnpack.open-locally')}
                   </Button>
@@ -155,8 +165,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
             />
           </Box>
         </Box>
-        <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+        <Box
+          mt="16px"
+          display="flex"
+          gap="16px"
+          flexDirection={{
+            base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
+            md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+          }}
+        >
+          {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
             <Popover>
               <PopoverTrigger>
                 <Button
@@ -175,12 +193,11 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
               <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
             </Popover>
           )}
-          {learnpackDeployUrl && cohortSession.available_as_saas
+          {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
             ? (
               <Button
                 as="a"
-                href={learnpackDeployUrl}
-                target="_blank"
+                onClick={handleStartLearnpack}
                 borderRadius="3px"
                 background="white"
                 color="blue.1000"
@@ -213,6 +230,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant }) {
 
 OpenWithLearnpackCTA.propTypes = {
   variant: PropTypes.string,
+  handleStartLearnpack: PropTypes.func.isRequired,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 OpenWithLearnpackCTA.defaultProps = {

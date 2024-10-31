@@ -413,7 +413,7 @@ function StudentReport() {
       </>
     ) : (
       <>
-        <Text textAlign="center">{t('lesson-status.pending')}</Text>
+        <Text textAlign="center">{t('lesson-status.not-opened')}</Text>
         <Text textAlign="center">{lesson.title}</Text>
       </>
     );
