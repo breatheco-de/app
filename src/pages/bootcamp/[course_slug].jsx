@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
@@ -13,9 +14,11 @@ import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
+// import rigo from '../../common/services/rigobot';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
+import useRigo from '../../common/hooks/useRigo';
 import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
@@ -36,6 +39,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import completions from './completion-jobs.json';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -155,13 +159,14 @@ function CouponTopBar() {
   );
 }
 
-function Page({ data }) {
+function CoursePage({ data }) {
   const { state } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
   const { isAuthenticated, user, logout } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
+  const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { getSelfAppliedCoupon } = useSignup();
   const toast = useToast();
@@ -175,7 +180,7 @@ function Page({ data }) {
   const [relatedSubscription, setRelatedSubscription] = useState(null);
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
-  const [initialDataIsFetching, setInitialDataIsFetching] = useState(false);
+  const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const faqList = t('faq', {}, { returnObjects: true }) || [];
@@ -252,6 +257,18 @@ function Page({ data }) {
     return t('common:enroll');
   };
   const featurePrice = getPlanPrice().toLocaleLowerCase();
+
+  useEffect(() => {
+    if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
+      const context = document.body.innerText;
+
+      rigo.updateOptions({
+        showBubble: false,
+        completions,
+        context,
+      });
+    }
+  }, [isRigoInitialized, lang, initialDataIsFetching]);
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -500,6 +517,17 @@ function Page({ data }) {
       description: module.description,
     })) : [];
 
+  const tryRigobot = (targetId) => {
+    rigo.updateOptions({
+      showBubble: true,
+      target: targetId,
+      highlight: true,
+      welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+      collapsed: false,
+      purposeSlug: '4geekscom-public-agent',
+    });
+  };
+
   const goToFinancingOptions = () => {
     router.push('#pricing');
     setFinanceSelected({
@@ -514,6 +542,7 @@ function Page({ data }) {
         <Head>
           <script
             type="application/ld+json"
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: JSON.stringify(cleanedStructuredData) }}
           />
         </Head>
@@ -607,7 +636,7 @@ function Page({ data }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -752,10 +781,9 @@ function Page({ data }) {
             <OneColumnWithIcon
               title={t('rigobot.title')}
               icon=""
-              handleButton={() => {
-                window.open(`https://github.com/codespaces/new/?repo=${t('rigobot.link').replace('https://github.com/', '')}`, '_blank').focus();
-              }}
+              handleButton={() => tryRigobot('#try-rigobot')}
               buttonText={t('rigobot.button')}
+              buttonProps={{ id: 'try-rigobot' }}
             >
               <Text size="14px" color="currentColor">
                 {t('rigobot.description')}
@@ -972,12 +1000,12 @@ function Page({ data }) {
   );
 }
 
-Page.propTypes = {
+CoursePage.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
 };
 
-Page.defaultProps = {
+CoursePage.defaultProps = {
   data: {},
 };
 
-export default Page;
+export default CoursePage;

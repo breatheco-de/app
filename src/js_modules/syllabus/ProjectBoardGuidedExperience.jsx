@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useRef, useEffect } from 'react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import { Box, Button, useColorModeValue } from '@chakra-ui/react';
 import SubtasksPill from './SubtasksPill';
 import StatusPill from './StatusPill';
 import Topbar from './Topbar';
@@ -15,7 +15,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 
-function ProjectHeading({ currentAsset, isDelivered }) {
+function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
   const { backgroundColor4, hexColor } = useStyle();
 
   const title = currentAsset?.title;
@@ -59,7 +59,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
               )}
             </Box>
             <Box>
-              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} />
+              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
             </Box>
           </Box>
         </Box>
@@ -83,7 +83,7 @@ function ProjectHeading({ currentAsset, isDelivered }) {
   );
 }
 
-function ProjectBoardGuidedExperience({ currentAsset }) {
+function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
   const { t } = useTranslation('syllabus');
   const { currentTask } = useModuleHandler();
   const headerRef = useRef(null);
@@ -124,10 +124,10 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
         gap="20px"
         mb={isDelivered && '1.5rem'}
         flexDirection={{ base: 'column', md: 'row' }}
-        // margin={{ base: '0px -10px', md: '0px -2rem' }}
+      // margin={{ base: '0px -10px', md: '0px -2rem' }}
       >
         <Box display="flex" flexDirection="column" gap="20px" width="100%">
-          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} />
+          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} />
           {isDelivered && (
             <Box padding="16px" background={backgroundColor} borderRadius="16px" height="100%">
               <Heading size="18px" mb="16px">
@@ -163,6 +163,7 @@ function ProjectBoardGuidedExperience({ currentAsset }) {
 
 ProjectBoardGuidedExperience.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  handleStartLearnpack: PropTypes.func.isRequired,
 };
 ProjectBoardGuidedExperience.defaultProps = {
   currentAsset: null,
@@ -171,6 +172,7 @@ ProjectBoardGuidedExperience.defaultProps = {
 ProjectHeading.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isDelivered: PropTypes.bool,
+  handleStartLearnpack: PropTypes.func.isRequired,
 };
 ProjectHeading.defaultProps = {
   currentAsset: null,

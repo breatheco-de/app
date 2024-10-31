@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link, Avatar,
@@ -8,7 +8,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getStorageItem } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
@@ -90,6 +90,7 @@ function SyllabusContent() {
   const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
+  const [learnpackStart, setLearnpackStart] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
     getCohortAssignments, getCohortData, prepareTasks, state,
@@ -130,6 +131,27 @@ function SyllabusContent() {
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
   const currentModule = sortedAssignments[currentModuleIndex];
+
+  const userToken = getStorageItem('accessToken');
+  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+  const currentThemeValue = useColorModeValue('light', 'dark');
+  const buildLearnpackUrl = () => {
+    if (!learnpackDeployUrl) return null;
+
+    const currentLang = lang === 'en' ? 'us' : lang;
+    const theme = currentThemeValue;
+    const iframe = 'true';
+    const token = userToken;
+
+    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+  };
+  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
+
+  const handleStartLearnpack = () => setLearnpackStart(true);
+
+  useEffect(() => {
+    setLearnpackStart(false);
+  }, [currentAsset]);
 
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -197,9 +219,9 @@ function SyllabusContent() {
     const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-        && el.associated_slug === assetSlug));
+        && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
     }
-  }, [taskTodo, lessonSlug, lesson]);
+  }, [taskTodo, lessonSlug, lesson, currentAsset]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -824,362 +846,385 @@ function SyllabusContent() {
                 ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
-                overflowY={isAvailableAsSaas && 'scroll'}
+                overflowY={isAvailableAsSaas && !learnpackStart && 'scroll'}
                 borderRadius="11px 11px 0 0"
                 position="relative"
               >
-                {isProject && isAvailableAsSaas && currentAsset?.id && (
-                  <ProjectBoardGuidedExperience currentAsset={currentAsset} />
+                {isProject && isAvailableAsSaas && currentAsset?.id && !learnpackStart && (
+                  <ProjectBoardGuidedExperience currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
                 )}
                 {isAvailableAsSaas && isLesson && currentAsset && (
                   <Topbar currentAsset={currentAsset} />
                 )}
-                <Box
-                  id="markdown-body"
-                  className={`markdown-body ${colorMode}`}
-                  background={backgroundColor}
-                  borderRadius="11px"
-                  flexGrow={1}
-                  marginLeft={0}
-                  padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
-                  transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
-                  transitionProperty="margin"
-                  transitionDuration={Open ? '225ms' : '195ms'}
-                  transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
-                  transitionDelay="0ms"
-                  position="relative"
-                  {...getStyles()}
-                >
+                {learnpackStart
+                  ? (
+                    <>
+                      <Box overflowY="auto" overflowX="hidden" borderRadius="11px" background="blue.50" height="83vh" mb="30px" display="flex" flexDirection="column" justifyContent="space-between" width="100%">
+                        <Button color="black" alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-proyect')}</Button>
+                        <Box flexGrow={1} width="100%">
+                          <iframe
+                            title="proyect-frame"
+                            key={iframeURL}
+                            src={iframeURL}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 'none', display: 'block' }}
+                            scrolling="no"
+                          />
+                        </Box>
+                      </Box>
+                    </>
+                  )
+                  : (
+                    <>
+                      <Box
+                        id="markdown-body"
+                        className={`markdown-body ${colorMode}`}
+                        background={backgroundColor}
+                        borderRadius="11px"
+                        flexGrow={1}
+                        marginLeft={0}
+                        padding={!isQuiz && isAvailableAsSaas && { base: '0px 10px 0 10px', md: '0px 2rem 0 2rem' }}
+                        transition={Open ? 'margin 225ms cubic-bezier(0, 0, 0.2, 1) 0ms' : 'margin 195ms cubic-bezier(0.4, 0, 0.6, 1) 0ms'}
+                        transitionProperty="margin"
+                        transitionDuration={Open ? '225ms' : '195ms'}
+                        transitionTimingFunction={Open ? 'cubic-bezier(0, 0, 0.2, 1)' : 'cubic-bezier(0.4, 0, 0.6, 1)'}
+                        transitionDelay="0ms"
+                        position="relative"
+                        {...getStyles()}
+                      >
 
-                  {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
-                    <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
-                      <Heading as="h2" size="16">
-                        Video Tutorial
-                      </Heading>
-                      <ReactPlayerV2
-                        url={currentAsset?.solution_video_url}
-                      />
-                    </Box>
-                  )}
+                        {!isQuiz && currentAsset?.solution_video_url && showSolutionVideo && (
+                          <Box padding="1.2rem 2rem 2rem 2rem" borderRadius="3px" background={featuredColor}>
+                            <Heading as="h2" size="16">
+                              Video Tutorial
+                            </Heading>
+                            <ReactPlayerV2
+                              url={currentAsset?.solution_video_url}
+                            />
+                          </Box>
+                        )}
 
-                  {(!isAvailableAsSaas || ipynbHtmlUrl) && (
-                    <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
-                      {repoUrl && !isQuiz && !isAvailableAsSaas && (
-                        <Link
-                          display="flex"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          width="100%"
-                          gridGap="8px"
-                          padding={{ base: '8px 12px', md: '8px' }}
-                          background="transparent"
-                          href={repoUrl}
-                          _hover={{ opacity: 0.7 }}
-                          style={{ color: fontColor, textDecoration: 'none' }}
-                        >
-                          <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                          {t('edit-page')}
-                        </Link>
-                      )}
+                        {(!isAvailableAsSaas || ipynbHtmlUrl) && (
+                          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
+                            {repoUrl && !isQuiz && !isAvailableAsSaas && (
+                              <Link
+                                display="flex"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                width="100%"
+                                gridGap="8px"
+                                padding={{ base: '8px 12px', md: '8px' }}
+                                background="transparent"
+                                href={repoUrl}
+                                _hover={{ opacity: 0.7 }}
+                                style={{ color: fontColor, textDecoration: 'none' }}
+                              >
+                                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                                {t('edit-page')}
+                              </Link>
+                            )}
 
-                      {ipynbHtmlUrl && currentAsset?.readme_url && (
-                        <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
-                      )}
+                            {ipynbHtmlUrl && currentAsset?.readme_url && (
+                              <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
+                            )}
 
-                      {ipynbHtmlUrl && readmeUrlPathname && (
-                        <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
-                          <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
-                          {t('open-google-collab')}
-                        </Link>
-                      )}
-                    </Box>
-                  )}
-                  {ipynbHtmlUrl && (
-                    <iframe
-                      id="iframe"
-                      src={`${ipynbHtmlUrl}&theme=${colorMode}`}
-                      style={{
-                        width: '100%',
-                        height: '99vh',
-                        borderRadius: '14px',
-                      }}
-                      title="4Geeks IPython Notebook"
-                    />
-                  )}
-
-                  {isQuiz ? (
-                    <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
-                      <iframe
-                        id="iframe"
-                        src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          borderRadius: '14px',
-                        }}
-                        title="Breathecode Quiz"
-                      />
-                    </Box>
-                  ) : (
-                    <SyllabusMarkdownComponent
-                      ipynbHtmlUrl={ipynbHtmlUrl}
-                      readme={readme}
-                      currentBlankProps={currentBlankProps}
-                      currentData={currentAsset}
-                      lesson={lesson}
-                      quizSlug={quizSlug}
-                      lessonSlug={lessonSlug}
-                      currentTask={currentTask}
-                      isGuidedExperience={isAvailableAsSaas}
-                      grantSyllabusAccess={grantAccess}
-                      alerMessage={(
-                        <>
-                          {currentAsset?.solution_url && (
-                            <AlertMessage
-                              type="warning"
-                              zIndex={99}
-                              full
-                              borderRadius="8px"
-                              backgroundColor={featuredCard.yellow.featured}
-                              margin="1rem 0"
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                              }}
-                            >
-                              <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                {t('solution-message')}
-                                {' '}
-                                <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
-                                  You can see it here
-                                </Link>
-                              </Text>
-                            </AlertMessage>
-                          )}
-                          {currentAsset?.superseded_by?.slug && (
-                            <AlertMessage
-                              type="warning"
-                              zIndex={99}
-                              full
-                              borderRadius="8px"
-                              backgroundColor={featuredCard.yellow.featured}
-                              margin="1rem 0"
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                              }}
-                            >
-                              <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
-                                {t('superseded-message')}
-                                {' '}
-                                <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
-                                  {currentAsset?.superseded_by?.title}
-                                </Link>
-                              </Text>
-                            </AlertMessage>
-                          )}
-                        </>
-                      )}
-                    />
-                  )}
-                  {!isQuiz && !isAvailableAsSaas && (
-                    <Box
-                      margin="2.5rem 0 0 0"
-                      padding="1.75rem 0 "
-                      borderTop="2px solid"
-                      borderColor={commonBorderColor}
-                      display="flex"
-                      flexDirection={{ base: 'column', md: 'row' }}
-                      gridGap="20px"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      width="100%"
-                    >
-                      <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
-                        <ButtonHandlerByTaskStatus
-                          allowText
-                          currentTask={currentTask}
-                          sendProject={sendProject}
-                          changeStatusAssignment={changeStatusAssignment}
-                          currentAssetData={currentAsset}
-                          toggleSettings={toggleSettings}
-                          closeSettings={closeSettings}
-                          settingsOpen={settingsOpen}
-                          handleOpen={handleOpen}
-                          fileData={fileData}
-                        />
-                        {currentTask?.task_status === 'DONE' && showModal && (
-                          <ShareButton
-                            variant="outline"
-                            title={t('projects:share-certificate.title')}
-                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                            link={shareLink}
-                            socials={socials}
-                            currentTask={currentTask}
-                            onlyModal
-                            withParty
+                            {ipynbHtmlUrl && readmeUrlPathname && (
+                              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" color="white" href={`https://colab.research.google.com/github${readmeUrlPathname}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                                <Icon icon="collab" color="#A0AEC0" width="28px" height="28px" />
+                                {t('open-google-collab')}
+                              </Link>
+                            )}
+                          </Box>
+                        )}
+                        {ipynbHtmlUrl && (
+                          <iframe
+                            id="iframe"
+                            src={`${ipynbHtmlUrl}&theme=${colorMode}`}
+                            style={{
+                              width: '100%',
+                              height: '99vh',
+                              borderRadius: '14px',
+                            }}
+                            title="4Geeks IPython Notebook"
                           />
                         )}
-                      </Box>
-                      <Box display="flex" gridGap="3rem">
-                        {(previousAssignment || !!prevModule) && (
-                          <Box
-                            color="blue.default"
-                            cursor="pointer"
-                            fontSize="15px"
-                            display="flex"
-                            alignItems="center"
-                            gridGap="10px"
-                            letterSpacing="0.05em"
-                            fontWeight="700"
-                            onClick={prevPage}
-                          >
-                            <Box
-                              as="span"
-                              display="block"
-                            >
-                              <Icon icon="arrowLeft2" width="18px" height="10px" />
-                            </Box>
-                            {t('previous-page')}
-                          </Box>
-                        )}
 
-                        {(nextAssignment || !!nextModule) && (
-                          <Box
-                            color="blue.default"
-                            cursor="pointer"
-                            fontSize="15px"
-                            display="flex"
-                            alignItems="center"
-                            gridGap="10px"
-                            letterSpacing="0.05em"
-                            fontWeight="700"
-                            onClick={nextPage}
-                          >
-                            {t('next-page')}
-                            <Box
-                              as="span"
-                              display="block"
-                              transform="rotate(180deg)"
-                            >
-                              <Icon icon="arrowLeft2" width="18px" height="10px" />
-                            </Box>
+                        {isQuiz ? (
+                          <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
+                            <iframe
+                              id="iframe"
+                              src={`https://assessment.4geeks.com/asset/${quizSlug}?isAnon=true&token=${accessToken}&academy=${cohortSession?.academy?.id}`}
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                borderRadius: '14px',
+                              }}
+                              title="Breathecode Quiz"
+                            />
                           </Box>
-                        )}
-                      </Box>
-                    </Box>
-                  )}
-                  {isAvailableAsSaas && (
-                    <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
-                      <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
-                        {(isLesson || isProject) && (
-                          <Tooltip label={t('get-help')} placement="top">
-                            <Button
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="center"
-                              width="40px"
-                              height="40px"
-                              background={backgroundColor}
-                              padding="12px"
-                              borderRadius="full"
-                              variant="default"
-                              onClick={openAiChat}
-                              style={{ color: fontColor, textDecoration: 'none' }}
-                              isLoading={isLoadingRigobot}
-                            >
-                              <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
-                            </Button>
-                          </Tooltip>
-                        )}
-                        {repoUrl && (isLesson || isProject) && (
-                          <Tooltip label={t('contribute')} placement="top">
-                            <Link
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="center"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              width="40px"
-                              height="40px"
-                              background={backgroundColor}
-                              borderRadius="full"
-                              variant="default"
-                              href={repoUrl}
-                              style={{ color: fontColor, textDecoration: 'none' }}
-                            >
-                              <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
-                            </Link>
-                          </Tooltip>
-                        )}
-                        {isLesson && currentAsset?.intro_video_url && (
-                          <Tooltip label={t('watch-intro')} placement="top">
-                            <Button
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="center"
-                              width="40px"
-                              height="40px"
-                              background={backgroundColor}
-                              padding="12px"
-                              borderRadius="full"
-                              variant="default"
-                              onClick={() => setModalIntroOpen(true)}
-                            >
-                              <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
-                            </Button>
-                          </Tooltip>
-                        )}
-                        {currentAsset?.solution_video_url && (
-                          <Tooltip label={t('solution-video')} placement="top">
-                            <Button
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="center"
-                              width="40px"
-                              height="40px"
-                              background={hexColor.blueDefault}
-                              padding="12px"
-                              borderRadius="full"
-                              variant="default"
-                              onClick={() => setSolutionVideoOpen(true)}
-                            >
-                              <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
-                            </Button>
-                          </Tooltip>
-                        )}
-                        {!isExercise && (
-                          <ButtonHandlerByTaskStatus
-                            allowText
+                        ) : (
+                          <SyllabusMarkdownComponent
+                            ipynbHtmlUrl={ipynbHtmlUrl}
+                            readme={readme}
+                            currentBlankProps={currentBlankProps}
+                            currentData={currentAsset}
+                            lesson={lesson}
+                            quizSlug={quizSlug}
+                            lessonSlug={lessonSlug}
+                            currentTask={currentTask}
                             isGuidedExperience={isAvailableAsSaas}
-                            variant="rounded"
-                            currentTask={currentTask}
-                            sendProject={sendProject}
-                            changeStatusAssignment={changeStatusAssignment}
-                            currentAssetData={currentAsset}
-                            toggleSettings={toggleSettings}
-                            closeSettings={closeSettings}
-                            settingsOpen={settingsOpen}
-                            handleOpen={handleOpen}
-                            fileData={fileData}
+                            grantSyllabusAccess={grantAccess}
+                            alerMessage={(
+                              <>
+                                {currentAsset?.solution_url && (
+                                  <AlertMessage
+                                    type="warning"
+                                    zIndex={99}
+                                    full
+                                    borderRadius="8px"
+                                    backgroundColor={featuredCard.yellow.featured}
+                                    margin="1rem 0"
+                                    style={{
+                                      width: '100%',
+                                      height: 'auto',
+                                    }}
+                                  >
+                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                                      {t('solution-message')}
+                                      {' '}
+                                      <Link fontSize="15px" textDecoration="underline" href={currentAsset?.solution_url} target="_blank">
+                                        You can see it here
+                                      </Link>
+                                    </Text>
+                                  </AlertMessage>
+                                )}
+                                {currentAsset?.superseded_by?.slug && (
+                                  <AlertMessage
+                                    type="warning"
+                                    zIndex={99}
+                                    full
+                                    borderRadius="8px"
+                                    backgroundColor={featuredCard.yellow.featured}
+                                    margin="1rem 0"
+                                    style={{
+                                      width: '100%',
+                                      height: 'auto',
+                                    }}
+                                  >
+                                    <Text size="15px" color={fontColor} letterSpacing="0.05em" style={{ margin: '0' }}>
+                                      {t('superseded-message')}
+                                      {' '}
+                                      <Link fontSize="15px" textDecoration="underline" href={`/${lang}/syllabus/${cohortSlug}/${lesson}/${currentAsset?.superseded_by?.slug}`}>
+                                        {currentAsset?.superseded_by?.title}
+                                      </Link>
+                                    </Text>
+                                  </AlertMessage>
+                                )}
+                              </>
+                            )}
                           />
                         )}
-                        {currentTask?.task_status === 'DONE' && showModal && (
-                          <ShareButton
-                            variant="outline"
-                            title={t('projects:share-certificate.title')}
-                            shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
-                            link={shareLink}
-                            socials={socials}
-                            currentTask={currentTask}
-                            onlyModal
-                            withParty
-                          />
+                        {!isQuiz && !isAvailableAsSaas && (
+                          <Box
+                            margin="2.5rem 0 0 0"
+                            padding="1.75rem 0 "
+                            borderTop="2px solid"
+                            borderColor={commonBorderColor}
+                            display="flex"
+                            flexDirection={{ base: 'column', md: 'row' }}
+                            gridGap="20px"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            width="100%"
+                          >
+                            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="20px">
+                              <ButtonHandlerByTaskStatus
+                                allowText
+                                currentTask={currentTask}
+                                sendProject={sendProject}
+                                changeStatusAssignment={changeStatusAssignment}
+                                currentAssetData={currentAsset}
+                                toggleSettings={toggleSettings}
+                                closeSettings={closeSettings}
+                                settingsOpen={settingsOpen}
+                                handleOpen={handleOpen}
+                                fileData={fileData}
+                              />
+                              {currentTask?.task_status === 'DONE' && showModal && (
+                                <ShareButton
+                                  variant="outline"
+                                  title={t('projects:share-certificate.title')}
+                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  link={shareLink}
+                                  socials={socials}
+                                  currentTask={currentTask}
+                                  onlyModal
+                                  withParty
+                                />
+                              )}
+                            </Box>
+                            <Box display="flex" gridGap="3rem">
+                              {(previousAssignment || !!prevModule) && (
+                                <Box
+                                  color="blue.default"
+                                  cursor="pointer"
+                                  fontSize="15px"
+                                  display="flex"
+                                  alignItems="center"
+                                  gridGap="10px"
+                                  letterSpacing="0.05em"
+                                  fontWeight="700"
+                                  onClick={prevPage}
+                                >
+                                  <Box
+                                    as="span"
+                                    display="block"
+                                  >
+                                    <Icon icon="arrowLeft2" width="18px" height="10px" />
+                                  </Box>
+                                  {t('previous-page')}
+                                </Box>
+                              )}
+
+                              {(nextAssignment || !!nextModule) && (
+                                <Box
+                                  color="blue.default"
+                                  cursor="pointer"
+                                  fontSize="15px"
+                                  display="flex"
+                                  alignItems="center"
+                                  gridGap="10px"
+                                  letterSpacing="0.05em"
+                                  fontWeight="700"
+                                  onClick={nextPage}
+                                >
+                                  {t('next-page')}
+                                  <Box
+                                    as="span"
+                                    display="block"
+                                    transform="rotate(180deg)"
+                                  >
+                                    <Icon icon="arrowLeft2" width="18px" height="10px" />
+                                  </Box>
+                                </Box>
+                              )}
+                            </Box>
+                          </Box>
+                        )}
+                        {isAvailableAsSaas && (
+                          <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
+                            <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
+                              {(isLesson || isProject) && (
+                                <Tooltip label={t('get-help')} placement="top">
+                                  <Button
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    width="40px"
+                                    height="40px"
+                                    background={backgroundColor}
+                                    padding="12px"
+                                    borderRadius="full"
+                                    variant="default"
+                                    onClick={openAiChat}
+                                    style={{ color: fontColor, textDecoration: 'none' }}
+                                    isLoading={isLoadingRigobot}
+                                  >
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
+                                  </Button>
+                                </Tooltip>
+                              )}
+                              {repoUrl && (isLesson || isProject) && (
+                                <Tooltip label={t('contribute')} placement="top">
+                                  <Link
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    width="40px"
+                                    height="40px"
+                                    background={backgroundColor}
+                                    borderRadius="full"
+                                    variant="default"
+                                    href={repoUrl}
+                                    style={{ color: fontColor, textDecoration: 'none' }}
+                                  >
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="github" color={hexColor.blueDefault} width="30px" height="30px" />
+                                  </Link>
+                                </Tooltip>
+                              )}
+                              {isLesson && currentAsset?.intro_video_url && (
+                                <Tooltip label={t('watch-intro')} placement="top">
+                                  <Button
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    width="40px"
+                                    height="40px"
+                                    background={backgroundColor}
+                                    padding="12px"
+                                    borderRadius="full"
+                                    variant="default"
+                                    onClick={() => setModalIntroOpen(true)}
+                                  >
+                                    <Icon style={{ margin: 'auto', display: 'block' }} icon="youtube" width="30px" height="30px" />
+                                  </Button>
+                                </Tooltip>
+                              )}
+                              {currentAsset?.solution_video_url && (
+                                <Tooltip label={t('solution-video')} placement="top">
+                                  <Button
+                                    display="flex"
+                                    flexDirection="column"
+                                    justifyContent="center"
+                                    width="40px"
+                                    height="40px"
+                                    background={hexColor.blueDefault}
+                                    padding="12px"
+                                    borderRadius="full"
+                                    variant="default"
+                                    onClick={() => setSolutionVideoOpen(true)}
+                                  >
+                                    <Icon color="white" style={{ margin: 'auto', display: 'block' }} icon="play" width="30px" height="30px" />
+                                  </Button>
+                                </Tooltip>
+                              )}
+                              {!isExercise && (
+                                <ButtonHandlerByTaskStatus
+                                  allowText
+                                  isGuidedExperience={isAvailableAsSaas}
+                                  variant="rounded"
+                                  currentTask={currentTask}
+                                  sendProject={sendProject}
+                                  changeStatusAssignment={changeStatusAssignment}
+                                  currentAssetData={currentAsset}
+                                  toggleSettings={toggleSettings}
+                                  closeSettings={closeSettings}
+                                  settingsOpen={settingsOpen}
+                                  handleOpen={handleOpen}
+                                  fileData={fileData}
+                                />
+                              )}
+                              {currentTask?.task_status === 'DONE' && showModal && (
+                                <ShareButton
+                                  variant="outline"
+                                  title={t('projects:share-certificate.title')}
+                                  shareText={t('projects:share-certificate.share-via', { project: currentTask?.title })}
+                                  link={shareLink}
+                                  socials={socials}
+                                  currentTask={currentTask}
+                                  onlyModal
+                                  withParty
+                                />
+                              )}
+                            </Box>
+                          </Box>
                         )}
                       </Box>
-                    </Box>
+                    </>
                   )}
-                </Box>
               </Box>
             )}
           </Box>

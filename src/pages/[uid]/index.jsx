@@ -1,19 +1,22 @@
+import { useEffect } from 'react';
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 import Head from 'next/head';
-import { useEffect } from 'react';
-import { createClient } from '../../prismicio';
-import { components } from '../../slices';
-import { cleanObject, isDevMode } from '../utils';
-import { ORIGIN_HOST } from '../utils/variables';
+import useRigo from '../../common/hooks/useRigo';
+import { createClient } from '../../../prismicio';
+import { components } from '../../../slices';
+import { cleanObject, isDevMode } from '../../utils';
+import { ORIGIN_HOST } from '../../utils/variables';
+import completions from './completion-jobs.json';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
+  const { isRigoInitialized, rigo } = useRigo();
 
   useEffect(() => {
     if (!page?.id) {
@@ -24,12 +27,43 @@ function Page({ page }) {
     }
   }, []);
 
+  const tryRigobot = () => {
+    rigo.updateOptions({
+      showBubble: true,
+      // target: '#try-rigobot',
+      highlight: true,
+      // welcomeMessage: t('rigobot.message'),
+      collapsed: false,
+      purposeSlug: '4geekscom-public-agent',
+    });
+  };
+
+  useEffect(() => {
+    const rigobotButton = document.getElementById('try-rigobot');
+
+    if (isRigoInitialized) {
+      const context = document.body.innerText;
+
+      rigo.updateOptions({
+        showBubble: false,
+        completions,
+        context,
+      });
+      rigobotButton?.addEventListener('click', tryRigobot);
+    }
+
+    return () => {
+      rigobotButton?.removeEventListener('click', tryRigobot);
+    };
+  }, [isRigoInitialized]);
+
   return (
     <>
       {page?.structuredData?.name && (
         <Head>
           <script
             type="application/ld+json"
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: JSON.stringify(page.structuredData) }}
           />
           <meta name="google" content="notranslate" />
