@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -111,8 +112,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             <Text color="white" size="md">
               {t('learnpack.choose-open')}
             </Text>
-            <Box mt="10px" display="flex" gap="10px" flexDirection={{ base: 'column', md: 'row' }}>
-              {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+            <Box
+              mt="10px"
+              display="flex"
+              gap="10px"
+              flexDirection={{
+                base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
+                md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+              }}
+            >
+              {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -127,8 +136,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                   <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
                   </Button>
-                )
-                : (
+                ) : (
                   <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
                     {t('learnpack.open-locally')}
                   </Button>
@@ -157,8 +165,16 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             />
           </Box>
         </Box>
-        <Box mt="16px" display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-          {vendors.length > 0 && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+        <Box
+          mt="16px"
+          display="flex"
+          gap="16px"
+          flexDirection={{
+            base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
+            md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+          }}
+        >
+          {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
             <Popover>
               <PopoverTrigger>
                 <Button
