@@ -708,7 +708,7 @@ function Checkout() {
                                   <Heading as="h3">
                                     <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0" width="auto">
                                       <Box as="span" flex="1" fontSize="14px" textAlign="left">
-                                        <Text size="16px" color="blue.1000">See financing options</Text>
+                                        <Text size="16px" color="blue.1000">{t('see-financing-opt')}</Text>
                                       </Box>
                                       <AccordionIcon
                                         display="block"
