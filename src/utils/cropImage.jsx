@@ -67,46 +67,57 @@ export default async function getCroppedImg(
 
   const rotRad = getRadianAngle(rotation);
 
-  // calculate bounding box of the rotated image
+  // calcular el tamaño del cuadro delimitador de la imagen rotada
   const { width: bBoxWidth, height: bBoxHeight } = rotateSize(image.width, image.height, rotation);
 
-  // set canvas size to match the bounding box
+  // configurar el tamaño del canvas para que coincida con el cuadro delimitador
   canvas.width = bBoxWidth;
   canvas.height = bBoxHeight;
 
-  // translate canvas context to a central location to allow rotating and flipping around the center
+  // Rellenar el fondo del canvas con color rojo antes de dibujar la imagen
+  ctx.fillStyle = 'red';
+  ctx.fillRect(0, 0, bBoxWidth, bBoxHeight);
+
+  // traducir el contexto del canvas a una ubicación central para permitir la rotación y volteo alrededor del centro
   ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
   ctx.rotate(rotRad);
   ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
   ctx.translate(-image.width / 2, -image.height / 2);
 
-  // draw rotated image
+  // dibujar la imagen rotada
   ctx.drawImage(image, 0, 0);
 
-  // croppedAreaPixels values are bounding box relative
-  // extract the cropped image using these values
-  const data = ctx.getImageData(pixelCrop.x, pixelCrop.y, pixelCrop.width, pixelCrop.height);
+  // Ahora, establecer el tamaño final del canvas para el área recortada
+  const croppedCanvas = document.createElement('canvas');
+  const croppedCtx = croppedCanvas.getContext('2d');
 
-  // set canvas width to final desired crop size - this will clear existing context
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
+  croppedCanvas.width = pixelCrop.width;
+  croppedCanvas.height = pixelCrop.height;
 
-  // paste generated rotate image at the top left corner
-  ctx.putImageData(data, 0, 0);
+  // Rellenar el fondo del canvas recortado con rojo
+  croppedCtx.fillStyle = 'white';
+  croppedCtx.fillRect(0, 0, pixelCrop.width, pixelCrop.height);
 
-  // As Base64 string
-  const imgURI = canvas.toDataURL('image/png');
+  // Extraer la imagen recortada de la imagen rotada
+  croppedCtx.drawImage(
+    canvas,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height, // origen de la imagen
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height, // destino del recorte
+  );
+
+  // Convertir el canvas a una URL de imagen en formato Base64
+  const imgURI = croppedCanvas.toDataURL('image/png');
   const imgFile64 = imgURI.replace(/^data:image\/(png|jpeg|jpg);base64,/, '');
   const pngBlob = base64ToBlob(imgFile64, 'image/png');
+
   return {
     imgURI,
     blob: pngBlob,
   };
-
-  // As a blob
-  // return new Promise((resolve, reject) => {
-  //   canvas.toBlob((file) => {
-  //     resolve(URL.createObjectURL(file));
-  //   }, 'image/jpeg');
-  // });
 }

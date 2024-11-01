@@ -189,7 +189,7 @@ function Information() {
                     <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                       <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
                     </Box>
-                    <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative">
+                    <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative" background="white">
                       <Cropper
                         restrictPosition={false}
                         image={imageUrls[0]}
