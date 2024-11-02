@@ -11,8 +11,7 @@ import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
-import { uploadFileInChunks } from '../../utils/uploadFileInChunks';
-// import { getStorageItem } from '../../utils';
+import useUploadFileInChunks from '../../common/hooks/useUploadFileInChunks';
 
 function Information() {
   const { t } = useTranslation('profile');
@@ -24,19 +23,19 @@ function Information() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [dragOver, setDragOver] = useState(false);
-  const [images, setImages] = useState([]); // file images
-  const [imageUrls, setImageUrls] = useState([]); // preview of the image
-
+  const [images, setImages] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const fileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 
   const { backgroundColor, borderColor2 } = useStyle();
+  const { uploadFileInChunks, isSplitting, isUploadingChunks, isFinalizing } = useUploadFileInChunks();
 
   const handleFileUpload = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
 
-    // Validate file is of type Image
+    // Validar que el archivo sea de tipo imagen
     if (file && !fileTypes.includes(file.type)) {
       toast({
         position: 'top',
@@ -75,26 +74,35 @@ function Information() {
         academy: null,
       };
 
+      const currentAvatarUrl = user.profile.avatar_url;
       const result = await uploadFileInChunks(imgFile, 'profile-picture', meta);
 
       if (result) {
-        setTimeout(() => {
-          bc.auth().me().then(({ data }) => {
-            updateProfile({
-              ...user,
-              profile: {
-                ...user.profile,
-                avatar_url: data?.profile?.avatar_url,
-              },
-            });
-          });
-        }, 1000);
+        const checkImageUpdate = async (retries, delay) => {
+          if (retries <= 0) return;
+          setTimeout(async () => {
+            const { data } = await bc.auth().me();
+            const requestAvatarURL = data?.profile?.avatar_url;
+            if (currentAvatarUrl !== requestAvatarURL) {
+              updateProfile({
+                ...user,
+                profile: {
+                  ...user.profile,
+                  avatar_url: `${requestAvatarURL}`,
+                },
+              });
+              setShowModal(false);
+              setIsLoading(false);
+            } else {
+              checkImageUpdate(retries - 1, delay);
+            }
+          }, delay);
+        };
+
+        checkImageUpdate(20, 1000);
       } else {
         throw new Error('Error uploading profile picture');
       }
-
-      setIsLoading(false);
-      setShowModal(false);
       toast({
         position: 'top',
         title: t('alert-message:submitting-picture-success'),
@@ -121,18 +129,12 @@ function Information() {
     setImageUrls(newImageUrls);
   }, [images]);
 
-  useEffect(() => {
-    console.log(user);
-  }, user);
-
-  //_____________________TEST____________________
-  // const operationTypes = getOperationTypes()
-  // const accessToken = getStorageItem('accessToken');
-
-  //___________________LOGS____________________________
-  // console.log("SOY EL ACCES", accessToken)
-  // console.log(user);
-  // console.log(operationTypes)
+  const getButtonText = () => {
+    if (isSplitting) return t('splitting-file');
+    if (isUploadingChunks) return t('uploading-chunks');
+    if (isFinalizing) return t('finalizing-upload');
+    return t('ready-upload');
+  };
 
   return (
     <>
@@ -222,8 +224,8 @@ function Information() {
                       <SliderThumb style={{ border: '1px solid #0097CD' }} />
                     </Slider>
                     <Button
-                      isLoading={isLoading}
-                      loadingText={t('common:uploading')}
+                      isLoading={isLoading || isSplitting || isUploadingChunks || isFinalizing}
+                      loadingText={getButtonText()}
                       spinnerPlacement="end"
                       variant="default"
                       onClick={submitImage}
