@@ -138,15 +138,11 @@ function Footer({ pageProps }) {
                     </InputRightElement>
 
                   </InputGroup>
-                  <small style={{ fontSize: '9px', lineHeight: '5px' }}>
-                    This site is protected by reCAPTCHA and the Google
-                    <a href="https://policies.google.com/privacy" target="_blank" style={{ textDecoration: 'underline' }} rel="noreferrer">Privacy Policy</a>
-                    {' '}
-                    and
-                    <a href="https://policies.google.com/terms" target="_blank" style={{ textDecoration: 'underline' }} rel="noreferrer">Terms of Service</a>
-                    {' '}
-                    apply.
-                  </small>
+                  <small
+                    style={{ fontSize: '9px', lineHeight: '5px' }}
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: t('recaptcha') }}
+                  />
                   {process.env.CAPTCHA_KEY && (
                     <Box mt="15px">
                       <ReCAPTCHA
