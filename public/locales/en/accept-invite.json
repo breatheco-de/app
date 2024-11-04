@@ -3,6 +3,7 @@
   "error": "Something went wrong",
   "no-token": "You must include an invite token to see the invite",
   "already-accepted": "The invite has been accepted already",
+  "invalid-user": "This invitation belongs to another user",
   "accept-and-learn": "Accept and start learning",
   "belongs-to-other-user": "This invitation belongs to another user"
 }
