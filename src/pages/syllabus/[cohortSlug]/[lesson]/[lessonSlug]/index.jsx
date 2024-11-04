@@ -89,7 +89,6 @@ function SyllabusContent() {
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
-  const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
@@ -737,8 +736,6 @@ function SyllabusContent() {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsLoadingRigobot(false);
     }
   };
 
@@ -1158,7 +1155,6 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={openAiChat}
                                     style={{ color: fontColor, textDecoration: 'none' }}
-                                    isLoading={isLoadingRigobot}
                                   >
                                     <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
                                   </Button>
