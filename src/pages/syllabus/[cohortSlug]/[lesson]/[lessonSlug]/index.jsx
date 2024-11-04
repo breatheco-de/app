@@ -724,25 +724,9 @@ function SyllabusContent() {
           showBubble: false,
           target: '#rigo-chat',
           highlight: true,
-          // welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
           collapsed: false,
           purposeSlug: '4geekscom-public-agent',
         });
-        // setIsLoadingRigobot(true);
-        // const [completionResp, tokenResp] = await Promise.all([
-        //   bc.todo().postCompletionJob(currentTask.id),
-        //   bc.auth().temporalToken(),
-        // ]);
-
-        // const completionId = completionResp.data.id;
-        // const temporalToken = tokenResp.data.token;
-
-        // const { data } = await bc.rigobot().meToken(temporalToken);
-        // const rigobotToken = data.key;
-
-        // const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
-
-        // window.open(aiChat, '_blank');
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
