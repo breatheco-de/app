@@ -8,6 +8,7 @@ import Heading from './Heading';
 import Text from './Text';
 import PublicCourseCard from './PublicCourseCard';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 // import modifyEnv from '../../../modifyEnv';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
@@ -21,6 +22,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
   const { t, lang } = useTranslation('common');
   const [courses, setCourses] = useState([]);
   const { hexColor, fontColor, featuredLight } = useStyle();
+  const { location } = useSession();
 
   const defaultHostAndEndpoint = `${BREATHECODE_HOST}/v1/marketing/course`;
 
@@ -66,6 +68,8 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
   useEffect(() => {
     getCourses();
   }, []);
+
+  if (location?.countryShort === 'ES') return null;
 
   return courses.length > 0 && (
     <Box width="100%" maxWidth="1280px" margin="2rem auto">
