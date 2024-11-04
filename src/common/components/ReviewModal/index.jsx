@@ -292,6 +292,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         user_id: user.id,
       },
     });
+
     if (revisionStatusUpperCase[reviewStatus] !== undefined) {
       setLoaders((prevState) => ({
         ...prevState,
@@ -311,6 +312,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
             duration: 5000,
             isClosable: true,
           });
+          console.log('APUNTO DE EJECUTAR ASSINGMENT');
           updpateAssignment({
             ...currentTask,
             id: currentTask.id,
