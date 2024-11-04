@@ -130,7 +130,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                     {t('back-to-previous')}
                   </Text>
                   <br />
-                  <Text as="span" mt="8px">
+                  <Text as="span" mt="8px" style={{ textWrap: 'wrap' }}>
                     {languageFix(prevModule.label, lang)}
                   </Text>
                 </span>
@@ -184,7 +184,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                       {t('start-next')}
                     </Text>
                     <br />
-                    <Text as="span" color={hexColor.blueDefault} mt="8px">
+                    <Text as="span" color={hexColor.blueDefault} mt="8px" style={{ textWrap: 'wrap' }}>
                       {languageFix(nextModule.label, lang)}
                     </Text>
                   </span>

@@ -152,6 +152,10 @@
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
     "start-asset": "Start {{asset_type}}",
+    "asset_types": {
+      "project": "project",
+      "exercise": "exercise"
+    },
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
     "open-in-learnpack-button": {
@@ -276,7 +280,7 @@
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
-              "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo",
+              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
               "source-label": "Go to how to install nvm on Windows"
             },
