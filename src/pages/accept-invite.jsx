@@ -42,39 +42,28 @@ function AcceptInvite() {
   const { isAuthenticated, user } = useAuth();
   const { query } = router;
   const { inviteToken } = query;
-  const [noInviteToken, setNoInviteToken] = useState(false);
   const [incorrectUser, setIncorrectUser] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [invite, setInvite] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [htmlResponse, setHtmlResponse] = useState(false);
+  const [isAccepted, setIsAccepted] = useState(false);
 
   const getInvite = async () => {
-    if (!inviteToken) {
-      setNoInviteToken(true);
-      setIsLoading(false);
-      return;
-    }
+    if (!inviteToken) return;
     try {
       const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
         headers: {
           'Content-Type': 'application/json',
         },
       });
+      const data = await resp.json();
 
-      const contentType = resp.headers.get('Content-Type');
-      if (contentType && contentType.includes('application/json')) {
-        const data = await resp.json();
-        setInvite(data);
-      } else if (contentType && contentType.includes('text/html')) {
-        const htmlData = await resp.text();
-        setHtmlResponse(true);
-        document.getElementById('htmlOutput').innerHTML = htmlData;
-      }
+      if (data.status_code > 300) throw new Error(data.detail);
+      setInvite(data);
 
       setIsLoading(false);
     } catch (e) {
-      console.log(e);
+      setIsAccepted(true);
       setIsLoading(false);
     }
   };
@@ -153,101 +142,112 @@ function AcceptInvite() {
 
   return (
     <>
-      {htmlResponse
-        && <Box id="htmlOutput" />}
-      {noInviteToken
+      {!inviteToken
         && (
-        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt="2rem" mb="5rem" position="relative" gap="1rem" height="75vh">
-          <Heading fontWeight="500">
-            {t('no-token')}
-          </Heading>
-          <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault">
-            {t('signup:consumables.back-to-dashboard')}
-          </NextChakraLink>
-        </Box>
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt="2rem" mb="5rem" position="relative" gap="1rem" height="75vh">
+            <Heading fontWeight="500">
+              {t('no-token')}
+            </Heading>
+            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault">
+              {t('signup:consumables.back-to-dashboard')}
+            </NextChakraLink>
+          </Box>
         )}
-      {invite && !noInviteToken && !htmlResponse && user
+      {isAccepted
         && (
-        <Flex alignItems="center" flexDirection="column" width={['90%', '90%', '50%']} m={['40px 20px', '40px 20px', '40px auto']} maxWidth="1366px">
-          <Image width={180} objectFit="cover" src={invite?.academy.logo_url} alt={invite?.academy.name} />
-          <Text size="lg" margin="30px" textAlign="center">
-            {incorrectUser
-              ? (
-                <Box as="span">
-                  {t('belongs-to-other-user')}
-                  {' '}
-                  <NextChakraLink href="/choose-program" variant="default">{t('signup:consumables.back-to-dashboard')}</NextChakraLink>
-                </Box>
-              )
-              : <Box as="span">{t('heading', { name: invite?.academy.name })}</Box>}
-          </Text>
-          <Formik
-            initialValues={{
-              first_name: invite?.first_name,
-              last_name: invite?.last_name,
-              email: invite?.email,
-              phone: '',
-              password: '',
-              passwordConfirmation: '',
-            }}
-            onSubmit={putInvite}
-            validationSchema={validationSchema.invite}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <Flex mt="20px">
-                  <FormField name="first_name" label={t('common:first-name')} placeholder={t('common:first-name')} />
-                  <Box ml="20px">
-                    <FormField name="last_name" label={t('common:last-name')} placeholder={t('common:last-name')} />
-                  </Box>
-                </Flex>
-
-                <Flex mt="20px">
-                  <FormField name="phone" label={t('common:phone')} type="tel" placeholder="+123 4567 8900" />
-                  <Text fontSize="12px" color="blue.default" mt="2">
-                    {t('signup:phone-info')}
-                  </Text>
-                </Flex>
-
-                <Flex mt="20px">
-                  <FormField name="email" label={t('common:email')} type="email" isReadOnly placeholder="jhon.doe@gmail.com" />
-                </Flex>
-
-                <Flex mt="20px">
-                  <FormField name="password" label={t('Choose your password')} type="password" placeholder="***********" />
-                </Flex>
-
-                <Flex mt="20px">
-                  <FormField
-                    name="passwordConfirmation"
-                    label={t('Repeat your password')}
-                    type="password"
-                    placeholder="***********"
-                  />
-                </Flex>
-
-                <Flex mt="20px" align="center">
-                  <Checkbox me="5px" size="md" spacing="8px" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)} />
-                  <Flex fontSize="10px" gap="10px">
-                    <Text>
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt="2rem" mb="5rem" position="relative" gap="1rem" height="75vh">
+            <Heading fontWeight="500">
+              {t('already-accepted')}
+            </Heading>
+            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault">
+              {t('signup:consumables.back-to-dashboard')}
+            </NextChakraLink>
+          </Box>
+        )}
+      {invite && inviteToken && user && !isAccepted
+        && (
+          <Flex alignItems="center" flexDirection="column" width={['90%', '90%', '50%']} m={['40px 20px', '40px 20px', '40px auto']} maxWidth="1366px">
+            <Image width={180} objectFit="cover" src={invite?.academy.logo_url} alt={invite?.academy.name} />
+            <Text size="lg" margin="30px" textAlign="center">
+              {
+                incorrectUser
+                  ? (
+                    <Box as="span">
+                      {t('belongs-to-other-user')}
                       {' '}
-                      {t('signup:validators.receive-information')}
-                      {' '}
-                      {' '}
-                      {' '}
-                    </Text>
-                    <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">{t('common:privacy-policy')}</NextChakraLink>
+                      <NextChakraLink href="/choose-program" variant="default">{t('signup:consumables.back-to-dashboard')}</NextChakraLink>
+                    </Box>
+                  )
+                  : (
+                    <Box as="span">{t('heading', { name: invite?.academy.name })}</Box>
+                  )
+              }
+            </Text>
+            <Formik
+              initialValues={{
+                first_name: invite?.first_name,
+                last_name: invite?.last_name,
+                email: invite?.email,
+                phone: '',
+                password: '',
+                passwordConfirmation: '',
+              }}
+              onSubmit={putInvite}
+              validationSchema={validationSchema.invite}
+            >
+              {({ isSubmitting }) => (
+                <Form>
+                  <Flex mt="20px">
+                    <FormField name="first_name" label={t('common:first-name')} placeholder={t('common:first-name')} />
+                    <Box ml="20px">
+                      <FormField name="last_name" label={t('common:last-name')} placeholder={t('common:last-name')} />
+                    </Box>
                   </Flex>
-                </Flex>
-                {!incorrectUser && (
-                <Button mt="20px" variant="default" width="100%" isLoading={isSubmitting} type="submit" isDisabled={!isChecked}>
-                  {t('accept-and-learn')}
-                </Button>
-                )}
-              </Form>
-            )}
-          </Formik>
-        </Flex>
+
+                  <Flex mt="20px">
+                    <FormField name="phone" label={t('common:phone')} type="tel" placeholder="+123 4567 8900" />
+                    <Text fontSize="12px" color="blue.default" mt="2">
+                      {t('signup:phone-info')}
+                    </Text>
+                  </Flex>
+
+                  <Flex mt="20px">
+                    <FormField name="email" label={t('common:email')} type="email" isReadOnly placeholder="jhon.doe@gmail.com" />
+                  </Flex>
+
+                  <Flex mt="20px">
+                    <FormField name="password" label={t('Choose your password')} type="password" placeholder="***********" />
+                  </Flex>
+
+                  <Flex mt="20px">
+                    <FormField
+                      name="passwordConfirmation"
+                      label={t('Repeat your password')}
+                      type="password"
+                      placeholder="***********"
+                    />
+                  </Flex>
+
+                  <Flex mt="20px" align="center">
+                    <Checkbox me="5px" size="md" spacing="8px" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)} />
+                    <Flex fontSize="10px" gap="10px">
+                      <Text>
+                        {' '}
+                        {t('signup:validators.receive-information')}
+                        {' '}
+                      </Text>
+                      <NextChakraLink variant="default" fontSize="10px" href="/privacy-policy" target="_blank">{t('common:privacy-policy')}</NextChakraLink>
+                    </Flex>
+                  </Flex>
+                  {!incorrectUser && (
+                    <Button mt="20px" variant="default" width="100%" isLoading={isSubmitting} type="submit" isDisabled={!isChecked}>
+                      {t('accept-and-learn')}
+                    </Button>
+                  )}
+                </Form>
+              )}
+            </Formik>
+          </Flex>
         )}
     </>
   );
