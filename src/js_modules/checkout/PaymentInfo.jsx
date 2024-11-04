@@ -454,7 +454,7 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isDisabled={(isPaymentSuccess && !cohortFound) || (isPaymentSuccess && !readyToRedirect)}
+          isDisabled={isPaymentSuccess && (!cohortFound || !readyToRedirect)}
           isLoading={isSubmittingPayment || isRedirecting}
           onClick={startRedirection}
         >
