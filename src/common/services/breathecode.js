@@ -59,8 +59,10 @@ const breathecode = {
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+        profileInvites: () => axios.get(`${url}/profile/invite/me`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
+      acceptProfileAcademy: (id) => axios.put(`${url}/user/me/profile_academy/${id}/active`),
       getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
@@ -97,6 +99,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
         headers: academy && {
           academy,
