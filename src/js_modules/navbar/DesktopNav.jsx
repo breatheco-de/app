@@ -2,12 +2,9 @@ import { Stack } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { memo, useEffect, useState } from 'react';
 import DesktopItem from './DesktopItem';
-// import syllabusList from '../../../public/syllabus.json';
 
 function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   const [privateItems, setPrivateItems] = useState([]);
-  // const readSyllabus = JSON.parse(syllabusList);
-  // const syllabusExists = readSyllabus.length > 0;
 
   useEffect(() => {
     const hasNavItems = NAV_ITEMS?.length > 0;
@@ -18,9 +15,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
   }, [haveSession, NAV_ITEMS]);
 
   const publicItems = NAV_ITEMS?.filter((item) => !item.private) || [];
-  const customPublicItems = [...publicItems];
-  const allItems = [...privateItems, ...customPublicItems];
-  const itemListAsc = allItems.sort((a, b) => a.position - b.position);
+  const allItems = [...privateItems, ...publicItems].sort((a, b) => a.position - b.position);
 
   const prepareSubMenuData = (item) => {
     if (item.id === 'bootcamps') {
@@ -31,7 +26,7 @@ function DesktopNav({ NAV_ITEMS, extraContent, haveSession }) {
 
   return (
     <Stack className="hideOverflowX__" direction="row" width="auto" spacing={4} alignItems="center">
-      {itemListAsc.map((publicItem) => {
+      {allItems.map((publicItem) => {
         const submenuData = prepareSubMenuData(publicItem);
         const subMenuLength = publicItem?.subMenu?.length || 0;
 

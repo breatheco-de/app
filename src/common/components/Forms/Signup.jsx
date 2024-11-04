@@ -32,7 +32,7 @@ function SignupForm({
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
   invertHandlerPosition, formContainerStyle, ...rest
 }) {
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const { t, lang } = useTranslation('signup');
   const extraFieldsNames = extraFields.reduce((extra, field) => {
     const name = typeof field === 'string' ? field : field.name;
@@ -55,14 +55,14 @@ function SignupForm({
     confirm_email: '',
     ...extraFieldsNames,
   });
-  const [isChecked, setIsChecked] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
   const {
     state,
   } = useSignup();
-  const { dateProps, location } = state;
+  const { dateProps } = state;
   const toast = useToast();
   const router = useRouter();
 
@@ -199,7 +199,7 @@ function SignupForm({
     }
   };
 
-  const isDisabled = !isChecked || emailValidation.loading || !emailValidation.valid;
+  const isDisabled = !marketingConsent || emailValidation.loading || !emailValidation.valid;
 
   return (
     <>
@@ -221,6 +221,7 @@ function SignupForm({
             city: location?.city,
             plan: planFormated,
             language: lang,
+            has_marketing_consent: marketingConsent,
           };
           handleSubmit(actions, allValues);
         }}
@@ -310,7 +311,7 @@ function SignupForm({
                   <Box color="blue.default2">{t('email-info')}</Box>
                 </Box>
               </Box>
-              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={marketingConsent} onChange={() => setMarketingConsent(!marketingConsent)}>
                 <Text size="10px" textAlign="left">
                   {t('validators.receive-information')}
                 </Text>
