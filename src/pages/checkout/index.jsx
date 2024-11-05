@@ -525,8 +525,6 @@ function Checkout() {
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
 
-  // console.log(selectedPlanCheckoutData);
-
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -635,7 +633,6 @@ function Checkout() {
               isSecondStep={isSecondStep}
               isThirdStep={isThirdStep}
               isFourthStep={isFourthStep}
-            // handleGoBack={handleGoBack}
             />
           )}
           {!readyToSelectService && isFirstStep && (
