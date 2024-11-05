@@ -7,9 +7,9 @@ import bc from '../services/breathecode';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
-import { BREATHECODE_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
 import axiosInstance, { cancelAllCurrentRequests } from '../../axios';
-import { usePersistent, usePersistentBySession } from '../hooks/usePersistent';
+import { usePersistentBySession } from '../hooks/usePersistent';
 import useRigo from '../hooks/useRigo';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
@@ -96,7 +96,6 @@ const setTokenSession = (token) => {
     removeStorageItem('cohortSession');
     removeStorageItem('accessToken');
     removeStorageItem('taskTodo');
-    removeStorageItem('profile');
     removeStorageItem('sortedAssignments');
     removeStorageItem('days_history_log');
     removeStorageItem('queryCache');
@@ -129,13 +128,11 @@ function AuthProvider({ children, pageProps }) {
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isAuthenticated } = state;
+  const { isAuthenticated, user } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
   });
-  const [profile, setProfile] = usePersistent('profile', {});
-  // const [session, setSession] = usePersistent('session', {});
 
   const query = isWindow && new URLSearchParams(window.location.search || '');
   const queryToken = isWindow && query.get('token')?.split('?')[0];
@@ -152,6 +149,18 @@ function AuthProvider({ children, pageProps }) {
       warn('error function "updateSettingsLang": ', e);
     }
   };
+  const conntectToRigobot = () => {
+    const accessToken = getToken();
+    const callBackUrl = window.location.href;
+    // Create buffer object, specifying utf8 as encoding
+    const bufferObj = Buffer.from(callBackUrl, 'utf8');
+
+    // Encode the Buffer as a base64 string
+    const base64String = bufferObj.toString('base64');
+    const inviteUrl = `${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}&callback=${base64String}`;
+    window.location.href = inviteUrl;
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
@@ -184,14 +193,8 @@ function AuthProvider({ children, pageProps }) {
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
-            const permissionsSlug = data.permissions.map((l) => l.codename);
             const settingsLang = data?.settings.lang;
 
-            setProfile({
-              ...profile,
-              ...data,
-              permissionsSlug,
-            });
             reportDatalayer({
               dataLayer: {
                 event: 'session_load',
@@ -240,6 +243,8 @@ function AuthProvider({ children, pageProps }) {
       rigo.updateOptions({
         user: {
           token,
+          nickname: `${user.first_name} ${user.last_name}`,
+          avatar_url: user.profile?.avatar_url,
         },
       });
     }
@@ -346,7 +351,6 @@ function AuthProvider({ children, pageProps }) {
   const logout = (callback = null) => {
     cancelAllCurrentRequests();
     handleSession(null);
-    setProfile({});
 
     if (typeof callback === 'function') callback();
     if (typeof callback !== 'function') {
@@ -381,6 +385,7 @@ function AuthProvider({ children, pageProps }) {
         logout,
         register,
         updateProfile,
+        conntectToRigobot,
       }}
     >
       {children}

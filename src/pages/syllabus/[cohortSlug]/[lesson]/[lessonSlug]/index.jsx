@@ -17,6 +17,7 @@ import getMarkDownContent from '../../../../../common/components/MarkDownParser/
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
+import useRigo from '../../../../../common/hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
@@ -47,6 +48,7 @@ function SyllabusContent() {
 
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
+  const { rigo, isRigoInitialized } = useRigo();
   const {
     taskTodo,
     cohortProgram,
@@ -87,7 +89,6 @@ function SyllabusContent() {
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
-  const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
@@ -201,17 +202,46 @@ function SyllabusContent() {
     }
   }, [isLoading]);
 
+  const updateOpenedAt = async () => {
+    try {
+      const result = await bc.todo().update({ ...currentTask, opened_at: new Date() });
+      if (result.data) {
+        const updateTasks = taskTodo.map((task) => ({ ...task }));
+        const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
+        updateTasks[index].opened_at = result.data.opened_at;
+        setTaskTodo([...updateTasks]);
+      }
+    } catch (e) {
+      log('update_task_error:', e);
+    }
+  };
+
+  const getAssetContext = async () => {
+    try {
+      let aiContext;
+      const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
+      if (!cachedContext) {
+        const resp = await bc.lesson().getAssetContext(currentAsset.id);
+        if (resp?.status === 200) {
+          aiContext = resp.data;
+          sessionStorage.setItem(`context-${currentAsset.slug}`, JSON.stringify(aiContext));
+        }
+      } else aiContext = cachedContext;
+
+      if (aiContext) {
+        rigo.updateOptions({
+          showBubble: false,
+          context: aiContext.ai_context,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
-      bc.todo().update({ ...currentTask, opened_at: new Date() })
-        .then((result) => {
-          if (result.data) {
-            const updateTasks = taskTodo.map((task) => ({ ...task }));
-            const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-            updateTasks[index].opened_at = result.data.opened_at;
-            setTaskTodo([...updateTasks]);
-          }
-        }).catch((e) => log('update_task_error:', e));
+      updateOpenedAt();
     }
   }, [currentTask]);
 
@@ -222,6 +252,12 @@ function SyllabusContent() {
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
+
+  useEffect(() => {
+    if (currentAsset && isRigoInitialized) {
+      getAssetContext();
+    }
+  }, [currentAsset, isRigoInitialized]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -683,21 +719,13 @@ function SyllabusContent() {
   const openAiChat = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
-        setIsLoadingRigobot(true);
-        const [completionResp, tokenResp] = await Promise.all([
-          bc.todo().postCompletionJob(currentTask.id),
-          bc.auth().temporalToken(),
-        ]);
-
-        const completionId = completionResp.data.id;
-        const temporalToken = tokenResp.data.token;
-
-        const { data } = await bc.rigobot().meToken(temporalToken);
-        const rigobotToken = data.key;
-
-        const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
-
-        window.open(aiChat, '_blank');
+        rigo.updateOptions({
+          showBubble: false,
+          target: '#rigo-chat',
+          highlight: true,
+          collapsed: false,
+          purposeSlug: '4geekscom-public-agent',
+        });
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
@@ -708,8 +736,6 @@ function SyllabusContent() {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsLoadingRigobot(false);
     }
   };
 
@@ -1115,7 +1141,7 @@ function SyllabusContent() {
                         {isAvailableAsSaas && (
                           <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
                             <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
-                              {(isLesson || isProject) && (
+                              {isRigoInitialized && (isLesson || isProject) && (
                                 <Tooltip label={t('get-help')} placement="top">
                                   <Button
                                     display="flex"
@@ -1129,7 +1155,6 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={openAiChat}
                                     style={{ color: fontColor, textDecoration: 'none' }}
-                                    isLoading={isLoadingRigobot}
                                   >
                                     <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
                                   </Button>
@@ -1246,7 +1271,7 @@ function SyllabusContent() {
         isOpen={showRigobotModal}
         onClose={() => setShowRigobotModal(false)}
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px" paddingBottom="10px">
           <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
           <Text
             size="17px"
