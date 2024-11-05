@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import bc from '../services/breathecode';
 import { getStorageItem } from '../../utils';
 
@@ -37,9 +37,8 @@ const useUploadFileInChunks = () => {
       formData.append('chunk_index', chunkIndex);
 
       const accessToken = getStorageItem('accessToken');
-      if (!accessToken) {
-        console.error('No se encontró el accessToken. Asegúrate de que esté almacenado correctamente.');
-        return null;
+      if (!accessToken && !academyID) {
+        throw new Error("Couldn't find the accessToken, make sure you are passing it");
       }
 
       const headers = academyID ? { Academy: academyID } : { Authorization: `Token ${accessToken}` };
@@ -65,7 +64,7 @@ const useUploadFileInChunks = () => {
     return response.data;
   };
 
-  const uploadFileInChunks = useCallback(async (file, operationType, meta, academyID = undefined) => {
+  const uploadFileInChunks = async (file, operationType, meta, academyID = undefined) => {
     setIsSplitting(true);
     setError(null);
 
@@ -78,7 +77,7 @@ const useUploadFileInChunks = () => {
 
       const totalChunks = chunks.length;
       if (maxChunks && totalChunks > maxChunks) {
-        throw new Error(`El archivo tiene demasiados trozos. Máximo permitido: ${maxChunks}`);
+        throw new Error(`Too many pieces. Max allowed: ${maxChunks}`);
       }
 
       setIsUploadingChunks(true);
@@ -103,7 +102,7 @@ const useUploadFileInChunks = () => {
       setIsFinalizing(false);
       throw err;
     }
-  }, []);
+  };
 
   return {
     uploadFileInChunks,
