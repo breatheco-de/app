@@ -121,7 +121,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                 md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
               }}
             >
-              {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+              {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -174,7 +174,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
           }}
         >
-          {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+          {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
             <Popover>
               <PopoverTrigger>
                 <Button
