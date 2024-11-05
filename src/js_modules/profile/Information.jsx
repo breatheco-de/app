@@ -74,7 +74,7 @@ function Information() {
         academy: null,
       };
 
-      const currentAvatarUrl = user.profile.avatar_url;
+      const currentAvatarUrl = user?.profile?.avatar_url;
       const result = await uploadFileInChunks(imgFile, 'profile-picture', meta);
 
       if (result) {
