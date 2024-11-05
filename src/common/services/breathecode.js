@@ -88,6 +88,25 @@ const breathecode = {
     };
   },
 
+  media: () => {
+    const url = `${hostV2}/media`;
+
+    return {
+      operationTypes: () => axios.get(`${url}/operationtype`),
+      operationMeta: (operationType) => axios.get(`${url}/operationtype/${operationType}`),
+      uploadChunk: (prefix, formData, headers) => axios.put(`${url}/${prefix}`, formData, { headers }),
+      endFileUpload: (prefix, args, headers) => axios.put(`${url}/${prefix}`, { ...args }, { headers }),
+    };
+  },
+
+  messaging: () => {
+    const url = `${host}/messaging`;
+
+    return {
+      chunkNotification: (args) => axios.get(`${url}/me/notification`, { ...args }),
+    };
+  },
+
   admissions: (query = {}) => {
     const url = `${host}/admissions`;
     const qs = parseQuerys(query);
