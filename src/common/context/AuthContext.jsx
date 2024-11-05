@@ -128,7 +128,7 @@ function AuthProvider({ children, pageProps }) {
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isAuthenticated } = state;
+  const { isAuthenticated, user } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
@@ -243,6 +243,8 @@ function AuthProvider({ children, pageProps }) {
       rigo.updateOptions({
         user: {
           token,
+          nickname: `${user.first_name} ${user.last_name}`,
+          avatar_url: user.profile?.avatar_url,
         },
       });
     }
