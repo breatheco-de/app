@@ -817,55 +817,67 @@ function SyllabusContent() {
                   <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
-                <Box display="flex" gridGap="3rem">
-                  {(previousAssignment || !!prevModule) && (
-                    <Button
-                      size="sm"
-                      color="blue.default"
-                      cursor="pointer"
-                      fontSize="12px"
-                      display="flex"
-                      alignItems="center"
-                      gridGap="10px"
-                      fontWeight="500"
-                      borderRadius="4px"
-                      background={backgroundColor}
-                      onClick={prevPage}
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                      {t('previous-page')}
-                    </Button>
-                  )}
+                {!learnpackStart
+                  && (
+                    <>
+                      <Box display="flex" gridGap="3rem">
+                        {(previousAssignment || !!prevModule) && (
+                          <Button
+                            size="sm"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="12px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            fontWeight="500"
+                            borderRadius="4px"
+                            background={backgroundColor}
+                            onClick={prevPage}
+                          >
+                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            {t('previous-page')}
+                          </Button>
+                        )}
 
-                  {(nextAssignment || !!nextModule) && (
-                    <Button
-                      size="sm"
-                      color="blue.default"
-                      cursor="pointer"
-                      fontSize="12px"
-                      display="flex"
-                      alignItems="center"
-                      gridGap="10px"
-                      fontWeight="500"
-                      borderRadius="4px"
-                      background={backgroundColor}
-                      onClick={nextPage}
-                    >
-                      {t('next-page')}
-                      <Box
-                        as="span"
-                        display="block"
-                        transform="rotate(180deg)"
-                      >
-                        <Icon icon="arrowLeft2" width="18px" height="10px" />
+                        {(nextAssignment || !!nextModule) && (
+                          <Button
+                            size="sm"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="12px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            fontWeight="500"
+                            borderRadius="4px"
+                            background={backgroundColor}
+                            onClick={nextPage}
+                          >
+                            {t('next-page')}
+                            <Box
+                              as="span"
+                              display="block"
+                              transform="rotate(180deg)"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
+                          </Button>
+                        )}
                       </Box>
-                    </Button>
+                    </>
                   )}
-                </Box>
               </Box>
             )}
             {isExercise && isAvailableAsSaas && currentAsset?.id ? (
-              <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
+              <ExerciseGuidedExperience
+                currentTask={currentTask}
+                currentAsset={currentAsset}
+                handleStartLearnpack={handleStartLearnpack}
+                setLearnpackStart={setLearnpackStart}
+                iframeURL={iframeURL}
+                learnpackStart={learnpackStart}
+              />
             ) : (
               <Box
                 id="main-container"
