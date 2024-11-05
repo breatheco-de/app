@@ -422,7 +422,6 @@ function Checkout() {
                   weekDays,
                   availableTime,
                 };
-                console.log('SOY LA DATA', data);
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
