@@ -11,6 +11,7 @@ import bc from '../../common/services/breathecode';
 import { location } from '../../utils';
 import getCroppedImg from '../../utils/cropImage';
 import Icon from '../../common/components/Icon';
+import useUploadFileInChunks from '../../common/hooks/useUploadFileInChunks';
 
 function Information() {
   const { t } = useTranslation('profile');
@@ -22,19 +23,19 @@ function Information() {
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [dragOver, setDragOver] = useState(false);
-  const [images, setImages] = useState([]); // file images
-  const [imageUrls, setImageUrls] = useState([]); // preview of the image
-
+  const [images, setImages] = useState([]);
+  const [imageUrls, setImageUrls] = useState([]);
   const [isBelowTablet] = useMediaQuery('(max-width: 768px)');
   const fileTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 
   const { backgroundColor, borderColor2 } = useStyle();
+  const { uploadFileInChunks, isSplitting, isUploadingChunks, isFinalizing } = useUploadFileInChunks();
 
   const handleFileUpload = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
 
-    // Validate file is of type Image
+    // Validar que el archivo sea de tipo imagen
     if (file && !fileTypes.includes(file.type)) {
       toast({
         position: 'top',
@@ -57,10 +58,8 @@ function Information() {
         imageUrls[0],
         croppedAreaPixels,
       );
-      // setCroppedImage(croppedImg.imgURI); // preview of the image
 
       const filename = images[0].name;
-      // const imgType = images[0].type;
 
       const imgFile = new File([croppedImg.blob], filename, {
         type: 'image/png',
@@ -68,49 +67,57 @@ function Information() {
         lastModifiedDate: new Date(),
       });
 
-      const formdata = new FormData();
-      formdata.append('file', imgFile);
-      // formdata.append('name', filename);
-      // formdata.append('upload_preset', 'breathecode');
+      const meta = {
+        slug: 'profile-picture',
+        name: filename,
+        categories: [],
+        academy: null,
+      };
 
-      // console.log('_START_:Image uploaded before prepare:', images[0]);
-      // console.log('_PREVIEW_:cropedImg for preview:', croppedImg);
-      // console.log('_FINAL_:Prepared and edited image for endpoint:', imgFile);
+      const currentAvatarUrl = user?.profile?.avatar_url;
+      const result = await uploadFileInChunks(imgFile, 'profile-picture', meta);
 
-      // NOTE: Endpoint updates the image on the second try
-      bc.auth().updatePicture(formdata)
-        .then((res) => {
-          if (res.data) {
-            bc.auth().updatePicture(formdata).then((res2) => {
-              setIsLoading(false);
+      if (result) {
+        const checkImageUpdate = async (retries, delay) => {
+          if (retries <= 0) return;
+          setTimeout(async () => {
+            const { data } = await bc.auth().me();
+            const requestAvatarURL = data?.profile?.avatar_url;
+            if (currentAvatarUrl !== requestAvatarURL) {
               updateProfile({
                 ...user,
                 profile: {
                   ...user.profile,
-                  avatar_url: res2.data.avatar_url,
+                  avatar_url: `${requestAvatarURL}`,
                 },
               });
               setShowModal(false);
-              toast({
-                position: 'top',
-                title: t('alert-message:submitting-picture-success'),
-                status: 'success',
-                duration: 5000,
-              });
-            });
-          }
-        })
-        .catch(() => {
-          setIsLoading(false);
-          toast({
-            position: 'top',
-            title: t('alert-message:error-submitting-picture'),
-            status: 'error',
-            duration: 5000,
-          });
-        });
+              setIsLoading(false);
+            } else {
+              checkImageUpdate(retries - 1, delay);
+            }
+          }, delay);
+        };
+
+        checkImageUpdate(20, 1000);
+      } else {
+        throw new Error('Error uploading profile picture');
+      }
+      toast({
+        position: 'top',
+        title: t('alert-message:submitting-picture-success'),
+        status: 'success',
+        duration: 5000,
+      });
     } catch (e) {
       console.error(e);
+      setIsLoading(false);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-submitting-picture'),
+        status: 'error',
+        duration: 5000,
+      });
     }
   }, [croppedAreaPixels]);
 
@@ -121,6 +128,13 @@ function Information() {
     images?.map((image) => newImageUrls.push(URL.createObjectURL(image)));
     setImageUrls(newImageUrls);
   }, [images]);
+
+  const getButtonText = () => {
+    if (isSplitting) return t('splitting-file');
+    if (isUploadingChunks) return t('uploading-chunks');
+    if (isFinalizing) return t('finalizing-upload');
+    return t('ready-upload');
+  };
 
   return (
     <>
@@ -177,7 +191,7 @@ function Information() {
                     <Box position="absolute" onClick={() => setCrop({ x: 0, y: 0 })} zIndex={99} bottom="15px" left="15px" background="gray.200" borderRadius="50px" p="10px" cursor="pointer">
                       <Icon icon="focus" color="#0097CD" width="25px" height="25px" />
                     </Box>
-                    <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative">
+                    <Box width={{ base: 'auto', md: '33rem' }} height={{ base: '300px', md: '26rem' }} position="relative" background="white">
                       <Cropper
                         restrictPosition={false}
                         image={imageUrls[0]}
@@ -210,8 +224,8 @@ function Information() {
                       <SliderThumb style={{ border: '1px solid #0097CD' }} />
                     </Slider>
                     <Button
-                      isLoading={isLoading}
-                      loadingText={t('common:uploading')}
+                      isLoading={isLoading || isSplitting || isUploadingChunks || isFinalizing}
+                      loadingText={getButtonText()}
                       spinnerPlacement="end"
                       variant="default"
                       onClick={submitImage}

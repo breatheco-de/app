@@ -13,14 +13,14 @@ import AlertMessage from './AlertMessage';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import { error } from '../../utils/logging';
-import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 
 const base64regex = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
 function Feedback({ storyConfig }) {
   const { t, lang } = useTranslation('choose-program');
-  const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
+  const { isAuthenticated, isAuthenticatedWithRigobot, user, conntectToRigobot } = useAuth();
   const accessToken = getStorageItem('accessToken');
   const { backgroundColor, featuredColor, borderColor2, hexColor, featuredLight } = useStyle();
   const [selectedData, setSelectedData] = useState({});
@@ -117,9 +117,20 @@ function Feedback({ storyConfig }) {
                 <Text size="12px" textAlign="start" fontWeight="700">
                   {t('feedback.connect-rigobot-text')}
                   {' '}
-                  <Link href={`${RIGOBOT_HOST}/invite/?referer=4Geeks&token=${accessToken}`} color="currentcolor" textDecoration="underline" fontSize="12px" variant="default">
+                  <Button
+                    variant="link"
+                    height="auto"
+                    as="span"
+                    textAlign="start"
+                    color="currentColor"
+                    cursor="pointer"
+                    textDecoration="underline"
+                    fontSize="12px"
+                    fontWeight="700"
+                    onClick={conntectToRigobot}
+                  >
                     {t('feedback.connect-rigobot')}
-                  </Link>
+                  </Button>
                   .
                 </Text>
               ) : (
