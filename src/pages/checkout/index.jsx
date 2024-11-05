@@ -100,6 +100,7 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [selectedPlanID, setSelectedPlanID] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
@@ -111,7 +112,6 @@ function Checkout() {
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const queryPlanId = getQueryString('plan_id');
-  const queryCohort = getQueryString('cohort');
   const mentorshipServiceSetSlug = getQueryString('mentorship_service_set');
   const eventTypeSetSlug = getQueryString('event_type_set');
   const planFormated = (plan && encodeURIComponent(plan)) || '';
@@ -209,7 +209,9 @@ function Checkout() {
     const defaultAutoSelectedPlan = sortedPlans[0];
     const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
       ? checkingData?.plans[0]
-      : checkingData?.plans.find((item) => item?.plan_id === queryPlanId);
+      : checkingData?.plans.find(
+        (item) => item?.plan_id === (queryPlanId !== undefined ? queryPlanId : selectedPlanID),
+      );
     const autoSelectedPlan = autoSelectedPlanByQueryString?.plan_id
       ? autoSelectedPlanByQueryString
       : defaultAutoSelectedPlan;
@@ -420,7 +422,7 @@ function Checkout() {
                   weekDays,
                   availableTime,
                 };
-
+                console.log('SOY LA DATA', data);
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
@@ -489,7 +491,7 @@ function Checkout() {
     if (!isAuthenticated && !tokenExists) {
       setLoader('plan', false);
     }
-  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
+  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale, selectedPlanID]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -524,10 +526,7 @@ function Checkout() {
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
 
-  const redirectToFinancingOption = (planID) => {
-    const currentPlan = originalPlan?.slug || plan;
-    return `${window.location.origin}/${window.location.pathname}?plan=${currentPlan}&plan_id=${planID}`;
-  };
+  // console.log(selectedPlanCheckoutData);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -699,7 +698,7 @@ function Checkout() {
                           {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
                         </Text>
                       )}
-                      {!queryCohort && originalPlan?.financingOptions.length > 0 && (
+                      {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
                         <Flex flexDirection="column" gridGap="4px">
                           <Accordion display="flex" flexDirection="column" allowToggle>
                             <AccordionItem display="flex" gridGap="8px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
@@ -733,10 +732,7 @@ function Checkout() {
                                           fontSize="sm"
                                           color="blue.1000"
                                           cursor="pointer"
-                                          onClick={() => {
-                                            const url = redirectToFinancingOption(option.plan_id);
-                                            window.location.href = url;
-                                          }}
+                                          onClick={() => setSelectedPlanID(option.plan_id)}
                                         >
                                           {option.title}
                                         </Button>
