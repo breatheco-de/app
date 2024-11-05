@@ -15,9 +15,8 @@ import useSignup from '../common/store/actions/signupAction';
 import LoaderScreen from '../common/components/LoaderScreen';
 import { getQueryString, isWindow, slugToTitle } from '../utils';
 import { fetchSuggestedPlan, getTranslations } from '../common/handlers/subscriptions';
-import modifyEnv from '../../modifyEnv';
 import { parseQuerys } from '../utils/url';
-import { WHITE_LABEL_ACADEMY } from '../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
@@ -64,7 +63,6 @@ function PricingView() {
     yearly: [],
   });
   const router = useRouter();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
   const selectedPlanListExists = selectedPlanData?.planList?.length > 0;

@@ -14,6 +14,7 @@ import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
@@ -35,8 +36,13 @@ function PaymentInfo() {
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
+  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
+  const { sortedAssignments } = cohortState;
+  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const [readyToRedirect, setReadyToRedirect] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [updatedUser, setUpdatedUser] = useState(undefined);
   const cohortId = Number(getQueryString('cohort'));
-  const { setCohortSession } = useCohortHandler();
   const [openDeclinedModal, setOpenDeclinedModal] = useState(false);
   const [declinedModalProps, setDeclinedModalProps] = useState({
     title: '',
@@ -55,21 +61,87 @@ function PaymentInfo() {
   const isPaymentIdle = paymentStatus === 'idle';
   const paymentStatusBgColor = isPaymentSuccess ? 'green.light' : '#ffefef';
 
-  const redirectTocohort = () => {
-    if (!isPaymentSuccess) {
-      setPaymentStatus('idle');
-      return;
-    }
+  const openSyllabusAndRedirect = () => {
+    const langLink = lang !== 'en' ? `/${lang}` : '';
+    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
+    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+    const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
+
+    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+      ...l,
+      title: l.title,
+      associated_slug: l?.slug?.slug || l.slug,
+      description: '',
+      task_type: l.task_type,
+      cohort: cohortFound.id,
+    }));
+    reportDatalayer({
+      dataLayer: {
+        event: 'open_syllabus_module',
+        tasks: updatedTasks,
+        cohort_id: cohortFound.id,
+      },
+    });
+    startDay({
+      newTasks: updatedTasks,
+    });
+
+    router.push(syllabusRedirectURL);
+  };
+
+  const startRedirection = async () => {
+    setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
     axiosInstance.defaults.headers.common.Academy = cohortFound.academy.id;
     const cohortDashboardLink = `${langLink}/cohort/${cohortFound?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+
     setCohortSession({
       ...cohortFound,
       selectedProgramSlug: cohortDashboardLink,
     });
-    router.push(cohortDashboardLink);
+
+    if (!sortedAssignments.length > 0) {
+      router.push(cohortDashboardLink);
+      return;
+    }
+
+    openSyllabusAndRedirect();
   };
+
+  useEffect(() => {
+    if (!(sortedAssignments.length > 0)) return undefined;
+
+    const timer = setTimeout(() => {
+      setReadyToRedirect(true);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [sortedAssignments]);
+
+  useEffect(() => {
+    prepareTasks();
+  }, [taskTodo, cohortProgram]);
+
+  useEffect(() => {
+    getCohortAssignments(
+      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
+    );
+  }, [updatedUser]);
+
+  useEffect(() => {
+    const fetchMyCohorts = async () => {
+      try {
+        const resp = await bc.admissions().me();
+        const data = resp?.data;
+
+        setUpdatedUser(data);
+      } catch (err) {
+        console.error('Error fetching my cohorts:', err);
+      }
+    };
+    fetchMyCohorts();
+  }, [cohortFound]);
 
   const joinCohort = async (cohort) => {
     try {
@@ -374,9 +446,9 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isDisabled={isPaymentSuccess && !cohortFound}
-          isLoading={isSubmittingPayment}
-          onClick={redirectTocohort}
+          isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+          isLoading={isSubmittingPayment || isRedirecting}
+          onClick={startRedirection}
         >
           {isPaymentSuccess ? 'Start learning' : 'Try again'}
         </Button>

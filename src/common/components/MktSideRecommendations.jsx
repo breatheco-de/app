@@ -8,12 +8,13 @@ import Text from './Text';
 import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
 // import Link from './NextChakraLink';
-import modifyEnv from '../../../modifyEnv';
+// import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
 import { getBrowserSize, setStorageItem } from '../../utils';
-import { ORIGIN_HOST, WHITE_LABEL_ACADEMY } from '../../utils/variables';
+import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
+import useSession from '../hooks/useSession';
 import { parseQuerys } from '../../utils/url';
 import { error } from '../../utils/logging';
 import { reportDatalayer } from '../../utils/requests';
@@ -47,8 +48,8 @@ function Container({ recommendation, recommendations, borderRadius, children, ..
 function MktSideRecommendations({ title, endpoint, technologies, containerPadding, ...rest }) {
   const { t, lang } = useTranslation('common');
   const { hexColor } = useStyle();
+  const { location } = useSession();
   const [isLoading, setIsLoading] = useState(true);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const [recommendations, setRecommendations] = useState([]);
   const router = useRouter();
   const langConnector = router.locale === 'en' ? '' : `/${router.locale}`;
@@ -142,6 +143,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
   useEffect(() => {
     fetchContent();
   }, []);
+
+  if (location?.countryShort === 'ES') return null;
 
   return recommendations?.length > 0 && (
     <>

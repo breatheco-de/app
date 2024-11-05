@@ -9,10 +9,9 @@ import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import Signup from '../../common/components/Forms/Signup';
 import { getStorageItem, setStorageItem } from '../../utils';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
-import modifyEnv from '../../../modifyEnv';
-// import useSignup from '../../common/store/actions/signupAction';
 import ModalInfo from '../moduleMap/modalInfo';
 import Text from '../../common/components/Text';
 import { reportDatalayer } from '../../utils/requests';
@@ -20,7 +19,6 @@ import { reportDatalayer } from '../../utils/requests';
 function ContactInformation({
   courseChoosed, setVerifyEmailProps,
 }) {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { t } = useTranslation('signup');
   const router = useRouter();
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);

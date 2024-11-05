@@ -16,10 +16,10 @@ import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
-import modifyEnv from '../../../../modifyEnv';
 import { validatePlanExistence } from '../../handlers/subscriptions';
 import { getStorageItem } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 
 function NoConsumablesCard({ t, setMentoryProps, handleGetMoreMentorships, mentoryProps, subscriptionData, disableBackButton = false, ...rest }) {
   return (
@@ -97,7 +97,6 @@ function MentoringConsumables({
 }) {
   const { t } = useTranslation('dashboard');
   const { user } = useAuth();
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const commonBackground = useColorModeValue('white', 'rgba(255, 255, 255, 0.1)');
   const [open, setOpen] = useState(false);
   const accessToken = getStorageItem('accessToken');

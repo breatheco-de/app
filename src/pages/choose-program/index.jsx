@@ -3,7 +3,6 @@ import {
   Flex, Box, Button, useToast, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import { useRouter } from 'next/router';
 import getT from 'next-translate/getT';
 import ChooseProgram from '../../js_modules/chooseProgram';
 import Text from '../../common/components/Text';
@@ -59,6 +58,7 @@ function chooseProgram() {
   const [events, setEvents] = useState(null);
   const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
+  const [loadingInvite, setLoadingInvite] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
   const [subscriptionLoading, setSubscriptionLoading] = useState(false);
   const { fetchSubscriptions } = useSubscriptionsHandler();
@@ -73,8 +73,7 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { isAuthenticated, user } = useAuth();
-  const router = useRouter();
+  const { isAuthenticated, user, updateProfile } = useAuth();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -104,7 +103,7 @@ function chooseProgram() {
     return users || [];
   };
 
-  const { isLoading, data: dataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
+  const { isLoading, data: dataQuery, setData: setDataQuery, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
 
   const getMembers = async (cohortSubscription) => {
     const members = await getStudentAndTeachers(cohortSubscription);
@@ -248,37 +247,35 @@ function chooseProgram() {
     }
   }, [dataQuery, cohortTasks, subscriptionLoading]);
 
+  const processCohort = async (item) => {
+    if (item?.cohort?.slug) {
+      const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
+      const { academy, syllabus_version: syllabusVersion } = item.cohort;
+      const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+      const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
+        role: 'TEACHER,ASSISTANT',
+        cohorts: item?.cohort?.slug,
+        academy: item?.cohort?.academy?.id,
+      }).getMembers();
+      const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
+      const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
+      const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
+      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id });
+
+      setCohortTasks((prev) => ({
+        ...prev,
+        [item?.cohort.slug]: {
+          ...assignmentData,
+          teacher,
+          assistant,
+        },
+      }));
+    }
+  };
+
   useEffect(() => {
     if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
-      dataQuery?.cohorts.map(async (item) => {
-        if (item?.cohort?.slug) {
-          const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
-          const { academy, syllabus_version: syllabusVersion } = item.cohort;
-          const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
-          const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
-            role: 'TEACHER,ASSISTANT',
-            cohorts: item?.cohort?.slug,
-            academy: item?.cohort?.academy?.id,
-          }).getMembers();
-          const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
-          const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-          const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-          handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id })
-            .then((assignmentData) => {
-              if (item?.cohort?.slug) {
-                setCohortTasks((prev) => ({
-                  ...prev,
-                  [item?.cohort.slug]: {
-                    ...assignmentData,
-                    teacher,
-                    assistant,
-                  },
-                }));
-              }
-            });
-        }
-        return null;
-      });
+      dataQuery.cohorts.map(processCohort);
     }
   }, [dataQuery?.id, isLoading]);
 
@@ -335,37 +332,127 @@ function chooseProgram() {
     }
   }, [userID]);
 
-  useEffect(() => {
-    Promise.all([
-      bc.auth().invites().get(),
-    ]).then((
-      [respInvites],
-    ) => {
-      setInvites(respInvites.data);
-    }).catch(() => {
+  const getPendingInvites = async () => {
+    try {
+      const { data } = await bc.auth().invites().profileInvites();
+      const { invites: invs, profile_academies: profileAcademies } = data;
+
+      const pendingInvites = invs.filter((inv) => inv.status === 'PENDING').map((inv) => ({ ...inv, type: 'invite' }));
+      const pendingProfileAcademies = profileAcademies
+        .filter((prof) => !pendingInvites.some((inv) => inv.academy.id === prof.academy.id))
+        .map((prof) => ({ ...prof, type: 'profile_academy' }));
+
+      setInvites([
+        ...pendingInvites,
+        ...pendingProfileAcademies,
+      ]);
+    } catch (e) {
       toast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
-    });
+    }
+  };
+
+  useEffect(() => {
+    getPendingInvites();
   }, []);
 
-  const acceptInvite = ({ id }) => {
-    bc.auth().invites().accept(id).then((res) => {
-      const cohortName = res.data[0].cohort.name;
+  const acceptInvite = async ({ id }) => {
+    try {
+      setLoadingInvite(id);
+      const res = await bc.auth().invites().accept(id);
+      const { status } = res;
+      if (status >= 200 && status < 400) {
+        const invitationIndex = invites.findIndex((invite) => invite.id === id);
+        const inv = invites[invitationIndex];
+        const { name: cohortName } = inv.cohort;
+
+        const { data: refetchData } = await refetch();
+
+        setDataQuery(refetchData.data);
+
+        const invList = [...invites];
+        invList.splice(invitationIndex, 1);
+        setInvites(invList);
+
+        toast({
+          title: t('alert-message:invitation-accepted-cohort', { cohortName }),
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: t('alert-message:invitation-error'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (e) {
+      console.log(e);
       toast({
-        title: t('alert-message:invitation-accepted', { cohortName }),
-        // title: `Cohort ${cohortName} successfully accepted!`,
-        status: 'success',
-        duration: 9000,
+        title: t('alert-message:invitation-error'),
+        status: 'error',
+        duration: 5000,
         isClosable: true,
       });
-      setTimeout(() => {
-        router.reload();
-      }, 800);
-    });
+    } finally {
+      setLoadingInvite(null);
+    }
+  };
+
+  const acceptProfileAcademy = async ({ id }) => {
+    try {
+      setLoadingInvite(id);
+      const res = await bc.auth().acceptProfileAcademy(id);
+      const { status } = res;
+      if (status >= 200 && status < 400) {
+        const invitationIndex = invites.findIndex((invite) => invite.id === id);
+
+        const [meRefetch, admissionsRefetch] = await Promise.all([
+          bc.auth().me(),
+          refetch(),
+        ]);
+
+        const { data: userData } = meRefetch;
+        updateProfile(userData);
+
+        const { data: refetchData } = admissionsRefetch;
+        setDataQuery(refetchData.data);
+
+        const invList = [...invites];
+        invList.splice(invitationIndex, 1);
+        setInvites(invList);
+
+        toast({
+          title: t('alert-message:invitation-accepted'),
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          title: t('alert-message:invitation-error'),
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: t('alert-message:invitation-error'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setLoadingInvite(null);
+    }
   };
 
   const inviteWord = () => {
@@ -447,7 +534,15 @@ function chooseProgram() {
               </Heading>
 
               {invites?.length > 0 && (
-                <Box margin="25px 0 0 0" display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width={['70%', '68%', '70%', '50%']} background="yellow.light">
+                <Box
+                  margin="25px 0 0 0"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  padding="16px 20px"
+                  borderRadius="18px"
+                  background="yellow.light"
+                >
                   <Text
                     color="black"
                     display="flex"
@@ -458,53 +553,53 @@ function chooseProgram() {
                     size="md"
                   >
                     {t('invite.notify', { cohortInvitationWord: inviteWord() })}
-                    <Text
-                      as="button"
-                      size="md"
-                      fontWeight="bold"
-                      textAlign="left"
-                      gridGap="5px"
-                      _focus={{
-                        boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
-                      }}
-                      color="blue.default"
-                      display="flex"
-                      alignItems="center"
-                      onClick={() => setShowInvites(!showInvites)}
-                    >
-                      {showInvites ? t('invite.hide') : t('invite.show')}
-                      <Icon
-                        icon="arrowDown"
-                        width="20px"
-                        height="20px"
-                        style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                      />
-                    </Text>
+                  </Text>
+                  <Text
+                    as="button"
+                    size="md"
+                    fontWeight="bold"
+                    textAlign="left"
+                    gridGap="5px"
+                    _focus={{
+                      boxShadow: '0 0 0 3px rgb(66 153 225 / 60%)',
+                    }}
+                    color="blue.default"
+                    display="flex"
+                    alignItems="center"
+                    onClick={() => setShowInvites(!showInvites)}
+                  >
+                    {showInvites ? t('invite.hide') : t('invite.show')}
+                    <Icon
+                      icon="arrowDown"
+                      width="20px"
+                      height="20px"
+                      style={{ transform: showInvites ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
                   </Text>
                 </Box>
               )}
 
-              {showInvites && invites.map((item, i) => {
-                const { id } = item;
-                const index = i;
+              {showInvites && invites.map((item) => {
+                const { id, type } = item;
                 return (
                   <Module
-                    key={index}
+                    key={`invites-${id}`}
                     data={{
-                      title: item.cohort.name,
+                      title: type === 'invite' ? item.cohort.name : item.academy.name,
                     }}
                     containerStyle={{
                       background: '#FFF4DC',
                     }}
-                    width={['70%', '68%', '70%', '50%']}
                     rightItemHandler={(
                       <Button
                         color="blue.default"
                         borderColor="blue.default"
                         textTransform="uppercase"
                         onClick={() => {
-                          acceptInvite({ id });
+                          if (type === 'invite') acceptInvite({ id });
+                          else acceptProfileAcademy({ id });
                         }}
+                        isLoading={loadingInvite === id}
                         gridGap="8px"
                       >
                         <Text color="blue.default" size="15px">

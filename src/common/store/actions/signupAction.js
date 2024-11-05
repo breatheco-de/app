@@ -5,14 +5,14 @@ import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import {
-  NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_LOCATION, SET_PAYMENT_INFO,
+  NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
-import modifyEnv from '../../../../modifyEnv';
+import { BREATHECODE_HOST } from '../../../utils/variables';
 import { usePersistent } from '../../hooks/usePersistent';
 import useSession from '../../hooks/useSession';
 import useAuth from '../../hooks/useAuth';
@@ -35,7 +35,6 @@ const useSignup = () => {
   const redirectedFrom = getStorageItem('redirected-from');
   const couponsQuery = getQueryString('coupons');
   const planTranslationsObj = getTranslations(t);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
 
   const { syllabus, academy } = router.query;
   const nextMonthText = getNextDateInMonths(1).translation[locale];
@@ -70,11 +69,6 @@ const useSignup = () => {
   });
   const setCheckoutData = (payload) => dispatch({
     type: SET_CHECKOUT_DATA,
-    payload,
-  });
-
-  const setLocation = (payload) => dispatch({
-    type: SET_LOCATION,
     payload,
   });
 
@@ -483,7 +477,6 @@ const useSignup = () => {
     handleStep,
     setDateProps,
     setCheckoutData,
-    setLocation,
     setPaymentMethods,
     setPaymentStatus,
     setIsSubmittingCard,

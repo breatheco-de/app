@@ -26,9 +26,8 @@ import useAuth from '../../hooks/useAuth';
 import navbarTR from '../../translations/navbar';
 import LanguageSelector from '../LanguageSelector';
 import { isWindow, setStorageItem } from '../../../utils';
-import { WHITE_LABEL_ACADEMY } from '../../../utils/variables';
+import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../../utils/variables';
 import axios from '../../../axios';
-import modifyEnv from '../../../../modifyEnv';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
@@ -37,13 +36,11 @@ import { getAllMySubscriptions } from '../../handlers/subscriptions';
 import bc from '../../services/breathecode';
 // import UpgradeExperience from '../UpgradeExperience';
 
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
 
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
@@ -159,20 +156,22 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   useEffect(() => {
     if (pageProps?.existsWhiteLabel) {
       setITEMS(whiteLabelitems);
-    }
-    if (!pageProps?.existsWhiteLabel) {
-      const preFilteredItems = items.filter((item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true));
+    } else {
+      const preFilteredItems = items.filter(
+        (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
+      );
       if (!isLoading && user?.id) {
         const isBootcampStudent = userCohorts.some(({ cohort }) => !cohort.available_as_saas);
         setITEMS(
-          preFilteredItems.filter((item) => item.disabled !== true && item?.hide_on_auth !== true)
-            .filter((item) => item.id !== 'bootcamps' || !isBootcampStudent),
+          preFilteredItems
+            .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
+            && (item.id !== 'bootcamps' || !isBootcampStudent)),
         );
       } else {
         setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
       }
     }
-  }, [user, userCohorts, isLoading, selectedProgramSlug, mktCourses, router.locale]);
+  }, [user, userCohorts, isLoading, selectedProgramSlug, mktCourses, router.locale, location]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -311,9 +310,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           <Box display={{ base: 'none', lg: 'inherit' }} height="35px" style={{ margin: 0 }}>
             <Divider orientation="vertical" borderColor={hexColor.fontColor3} opacity={0.5} />
           </Box>
-          {/* {isAuthenticated && !hasPaidSubscription && (
-            <UpgradeExperience display={{ base: 'none', sm: 'flex' }} />
-          )} */}
           {hasPaidSubscription && (
             <Box display="flex" alignItems="center" height="100%" zIndex={10}>
               <Icon icon="crown" width="20px" height="26px" color="" />

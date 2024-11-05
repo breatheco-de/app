@@ -6,6 +6,8 @@
   "solution-video": "Ver solución",
   "watch-intro": "Ver introducción",
   "get-help": "Pide ayuda a Rigobot",
+  "connect-rigobot-message": "Debes conectar tu cuenta con Github y Rigobot",
+  "connect-rigobot": "Conectar con Rigobot",
   "contribute": "Contribuye a esta lección",
   "show-menu": "Abrir menú",
   "hide-menu": "Cerrar menú",
@@ -47,6 +49,8 @@
       "description": "Según el plan de estudios y la información que configuraste en la asistencia, los estudiantes están aprendiendo el módulo <strong>\"{{module_name}}\"</strong> hoy. Vuelva a ese módulo para seguir enseñando la clase o actualice la información del módulo en la asistencia si es necesario."
     }
   },
+  "close-exercise": "Cerrar ejercicio",
+  "close-proyect": "Cerrar proyecto",
   "reached-the-end-of-the-module": "Ha llegado al final del módulo actual \"{{label}}\" pero puede iniciar el siguiente módulo \"{{nextModuleLabel}}\" sin problemas.",
   "start-next-module": "Sí, comencemos el siguiente módulo.",
   "superseded-message": "Esta lección pertenece al archivo de legado, recomendamos leer una versión más actualizada:",

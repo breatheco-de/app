@@ -3,9 +3,8 @@ import axios from '../../axios';
 import { parseQuerys } from '../../utils/url';
 import modifyEnv from '../../../modifyEnv';
 import { cleanObject } from '../../utils';
+import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 
-const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
-const RIGOBOT_HOST = modifyEnv({ queryString: 'rigo_host', env: process.env.RIGOBOT_HOST });
 const BC_ACADEMY_TOKEN = modifyEnv({ queryString: 'bc_token', env: process.env.BC_ACADEMY_TOKEN });
 const host = `${BREATHECODE_HOST}/v1`;
 const hostV2 = `${BREATHECODE_HOST}/v2`;
@@ -60,8 +59,10 @@ const breathecode = {
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+        profileInvites: () => axios.get(`${url}/profile/invite/me`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
+      acceptProfileAcademy: (id) => axios.put(`${url}/user/me/profile_academy/${id}/active`),
       getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
@@ -98,6 +99,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
         headers: academy && {
           academy,

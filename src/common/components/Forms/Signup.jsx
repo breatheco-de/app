@@ -19,21 +19,20 @@ import PhoneInput from '../PhoneInput';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
-import { BASE_PLAN } from '../../../utils/variables';
+import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
 import { getStorageItem, setStorageItem, getQueryString } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import bc from '../../services/breathecode';
-import modifyEnv from '../../../../modifyEnv';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
   onHandleSubmit, containerGap, extraFields, columnLayout, conversionTechnologies, showLoginLink,
   invertHandlerPosition, formContainerStyle, ...rest
 }) {
-  const { userSession } = useSession();
+  const { userSession, location } = useSession();
   const { t, lang } = useTranslation('signup');
   const extraFieldsNames = extraFields.reduce((extra, field) => {
     const name = typeof field === 'string' ? field : field.name;
@@ -43,7 +42,6 @@ function SignupForm({
     return newValues;
   }, {});
 
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const { emailValidation, thriggerValidation } = useEmailValidation();
   const { hexColor, featuredColor } = useStyle();
   const plan = getQueryString('plan') || planSlug;
@@ -57,14 +55,14 @@ function SignupForm({
     confirm_email: '',
     ...extraFieldsNames,
   });
-  const [isChecked, setIsChecked] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [showAlreadyMember, setShowAlreadyMember] = useState(false);
   const redirectStorage = getStorageItem('redirect');
   const redirectStorageAlreadyExists = typeof redirectStorage === 'string' && redirectStorage.length > 0;
   const {
     state,
   } = useSignup();
-  const { dateProps, location } = state;
+  const { dateProps } = state;
   const toast = useToast();
   const router = useRouter();
 
@@ -201,7 +199,7 @@ function SignupForm({
     }
   };
 
-  const isDisabled = !isChecked || emailValidation.loading || !emailValidation.valid;
+  const isDisabled = !marketingConsent || emailValidation.loading || !emailValidation.valid;
 
   return (
     <>
@@ -223,6 +221,7 @@ function SignupForm({
             city: location?.city,
             plan: planFormated,
             language: lang,
+            has_marketing_consent: marketingConsent,
           };
           handleSubmit(actions, allValues);
         }}
@@ -312,7 +311,7 @@ function SignupForm({
                   <Box color="blue.default2">{t('email-info')}</Box>
                 </Box>
               </Box>
-              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={isChecked} onChange={() => setIsChecked(!isChecked)}>
+              <Checkbox size="md" spacing="8px" colorScheme="green" isChecked={marketingConsent} onChange={() => setMarketingConsent(!marketingConsent)}>
                 <Text size="10px" textAlign="left">
                   {t('validators.receive-information')}
                 </Text>

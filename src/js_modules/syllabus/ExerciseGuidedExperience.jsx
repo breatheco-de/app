@@ -1,25 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Box,
+  useColorModeValue,
+  Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
+import { getStorageItem, intervalToHours } from '../../utils';
 import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { intervalToHours } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 
 function ExerciseGuidedExperience({ currentTask, currentAsset }) {
-  const { t } = useTranslation('syllabus');
+  const { t, lang } = useTranslation('syllabus');
   const { colorMode } = useStyle();
   const [telemetryReport, setTelemetryReport] = useState([]);
+  const [learnpackStart, setLearnpackStart] = useState(false);
+  const currentThemeValue = useColorModeValue('light', 'dark');
+  const userToken = getStorageItem('accessToken');
+  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+
+  const handleStartLearnpack = () => setLearnpackStart(true);
+  const buildLearnpackUrl = () => {
+    if (!learnpackDeployUrl) return null;
+
+    const currentLang = lang === 'en' ? 'us' : lang;
+    const theme = currentThemeValue;
+    const iframe = 'true';
+    const token = userToken;
+
+    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+  };
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
+  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue]);
 
   useEffect(() => {
     if (isExerciseStated) {
@@ -104,54 +123,75 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
   });
 
   return (
-    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="80vh" mb="30px" padding="16px" display="flex" flexDirection="column" justifyContent="space-between" gap="20px">
-      <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }}>
-        <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStated ? 'column' : 'row' }} justifyContent="space-between">
-          <Box maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '40%' }}>
-            <Heading color="white" mb="16px" size="l" fontWeight="400">
-              {currentAsset?.title}
-            </Heading>
-            <Text color="white" size="l">
-              {currentAsset?.description}
-            </Text>
-          </Box>
-          <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
-            <ReactPlayerV2
-              withThumbnail
-              controls={false}
-              thumbnailStyle={{
-                width: '100%',
-                borderRadius: '11px',
-              }}
-              url={currentAsset?.intro_video_url}
-            />
-          </Box>
-        </Box>
-        {isExerciseStated && (
-          <Box
-            width="100%"
-            height="fit-content"
-            display="flex"
-            flexWrap="wrap"
-            gap="16px"
-          >
-            {telemetryReport.map((elem) => (
-              <KPI
-                label={elem.label}
-                icon={elem.icon}
-                value={elem.value}
-                variationColor="#3A3A3A"
-                background="blue.1200"
-                border="none"
-                height="160px"
-                width={{ base: '100%', md: 'calc(50% - 8px)' }}
-                textProps={{ textTransform: 'none', color: 'gray.dark' }}
+    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="83vh" mb="30px" padding={learnpackStart ? '0' : '16px'} display="flex" flexDirection="column" justifyContent="space-between" gap={learnpackStart ? '0px' : '20px'}>
+      {learnpackStart
+        ? (
+          <>
+            <Button color="white" alignSelf="end" _hover="none" _active="none" background="none" onClick={() => setLearnpackStart(false)}>{t('close-exercise')}</Button>
+            <Box flexGrow={100}>
+              <iframe
+                title="exercise-frame"
+                key={iframeURL}
+                src={iframeURL}
+                width="100%"
+                height="100%"
+                style={{ border: 'none' }}
+                scrolling="no"
               />
-            ))}
-          </Box>
+            </Box>
+          </>
+        )
+        : (
+          <>
+            <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }} flexGrow={100}>
+              <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStated ? 'column' : 'row' }} justifyContent="space-between">
+                <Box maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '40%' }}>
+                  <Heading color="white" mb="16px" size="l" fontWeight="400">
+                    {currentAsset?.title}
+                  </Heading>
+                  <Text color="white" size="l">
+                    {currentAsset?.description}
+                  </Text>
+                </Box>
+                <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStated ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
+                  <ReactPlayerV2
+                    withThumbnail
+                    controls={false}
+                    thumbnailStyle={{
+                      width: '100%',
+                      borderRadius: '11px',
+                    }}
+                    url={currentAsset?.intro_video_url}
+                  />
+                </Box>
+              </Box>
+              {isExerciseStated && (
+                <Box
+                  width="100%"
+                  height="fit-content"
+                  display="flex"
+                  flexWrap="wrap"
+                  gap="16px"
+                >
+                  {telemetryReport.map((elem) => (
+                    <KPI
+                      label={elem.label}
+                      icon={elem.icon}
+                      value={elem.value}
+                      variationColor="#3A3A3A"
+                      background="blue.1200"
+                      border="none"
+                      height="160px"
+                      width={{ base: '100%', md: 'calc(50% - 8px)' }}
+                      textProps={{ textTransform: 'none', color: 'gray.dark' }}
+                    />
+                  ))}
+                </Box>
+              )}
+            </Box>
+            <OpenWithLearnpackCTA currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+          </>
         )}
-      </Box>
-      <OpenWithLearnpackCTA currentAsset={currentAsset} />
     </Box>
   );
 }

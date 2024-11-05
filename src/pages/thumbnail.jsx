@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/router';
 import styles from '../../styles/Home.module.css';
 import { H1 } from '../common/styledComponents/Head';
-import modifyEnv from '../../modifyEnv';
+import { BREATHECODE_HOST } from '../utils/variables';
 
 export const getStaticProps = () => ({
   props: {
@@ -16,7 +16,6 @@ export const getStaticProps = () => ({
 
 export default function Thmbnail() {
   const [asset, setAsset] = useState(null);
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const router = useRouter();
   const { slug } = router.query;
 
