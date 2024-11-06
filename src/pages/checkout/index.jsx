@@ -659,7 +659,6 @@ function Checkout() {
               isSecondStep={isSecondStep}
               isThirdStep={isThirdStep}
               isFourthStep={isFourthStep}
-            // handleGoBack={handleGoBack}
             />
           )}
           {!readyToSelectService && isFirstStep && (
