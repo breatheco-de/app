@@ -16,8 +16,13 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import getT from 'next-translate/getT';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -137,6 +142,23 @@ function Checkout() {
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
   const queryServiceExists = queryMentorshipServiceSlugExists || queryEventTypeSetSlugExists;
+  const [menuWidth, setMenuWidth] = useState('auto');
+  const [isOpenned, setIsOpenned] = useState(false);
+  const flexRef = useRef(null);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (flexRef.current) {
+        setMenuWidth(`${flexRef.current.offsetWidth}px`);
+      }
+    };
+    updateWidth();
+    const handleResize = () => {
+      updateWidth();
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpenned]);
 
   const saveCouponToBag = (coupons, bagId = '') => {
     bc.payment({
@@ -422,7 +444,6 @@ function Checkout() {
                   weekDays,
                   availableTime,
                 };
-                console.log('SOY LA DATA', data);
                 setCohortPlans([data]);
                 handleChecking({ ...defaultCohortProps, plan: data })
                   .then((checkingData) => {
@@ -527,6 +548,8 @@ function Checkout() {
   }, [allCoupons, selectedPlanCheckoutData]);
 
   // console.log(selectedPlanCheckoutData);
+  // console.log(selectedPlanID);
+  // console.log(selectedPlanID === selectedPlanCheckoutData?.plan_id);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -699,50 +722,58 @@ function Checkout() {
                         </Text>
                       )}
                       {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
-                        <Flex flexDirection="column" gridGap="4px">
-                          <Accordion display="flex" flexDirection="column" allowToggle>
-                            <AccordionItem display="flex" gridGap="8px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
-                              {({ isExpanded }) => (
-                                <>
-                                  <Heading as="h3">
-                                    <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0" width="auto">
-                                      <Box as="span" flex="1" fontSize="14px" textAlign="left">
-                                        <Text size="16px" color="blue.1000">{t('see-financing-opt')}</Text>
+                        <Flex flexDirection="column" gap="4px" width="100%">
+                          <Heading ref={flexRef} as="h3" size="sm" width="100%" position="relative">
+                            <Menu>
+                              <MenuButton
+                                as={Button}
+                                background="#eefaf8"
+                                _hover={{ backgroundColor: 'blue.50' }}
+                                _active="none"
+                                padding="8px"
+                                borderRadius="md"
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                onClick={() => setIsOpenned(true)}
+                              >
+                                <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
+                                  <Text size="md" color="blue.1000">{t('see-financing-opt')}</Text>
+                                  <Icon icon="arrowDown" />
+                                </Box>
+                              </MenuButton>
+                              <MenuList
+                                boxShadow="lg"
+                                borderRadius="lg"
+                                zIndex="10"
+                                padding="0"
+                                width={menuWidth}
+                                border="none"
+                              >
+                                {originalPlan.financingOptions.map((option) => (
+                                  <MenuItem
+                                    key={option.plan_id}
+                                    onClick={() => setSelectedPlanID(option.plan_id)}
+                                    fontSize="md"
+                                    color="auto"
+                                    background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.400')}
+                                    _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.400') } : { background: 'none' }}
+                                    padding="8px"
+                                  >
+                                    <Flex justifyContent="space-between" alignItems="center" width="100%">
+                                      <Box flex="1">
+                                        {option.title}
                                       </Box>
-                                      <AccordionIcon
-                                        display="block"
-                                        width="20px"
-                                        height="20px"
-                                        color="blue.1000"
-                                        transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
-                                      />
-                                    </AccordionButton>
-                                  </Heading>
-                                  <AccordionPanel padding="0">
-                                    <Flex direction="column" gap="10px">
-                                      {originalPlan.financingOptions.map((option) => (
-                                        <Button
-                                          as="a"
-                                          padding="0 12px 0 0"
-                                          background="none"
-                                          _hover="none"
-                                          _active="none"
-                                          height="auto"
-                                          alignSelf={originalPlan?.selectedPlan ? 'flex-end' : 'flex-start'}
-                                          fontSize="sm"
-                                          color="blue.1000"
-                                          cursor="pointer"
-                                          onClick={() => setSelectedPlanID(option.plan_id)}
-                                        >
-                                          {option.title}
-                                        </Button>
-                                      ))}
+                                      {option.plan_id === selectedPlanCheckoutData?.plan_id
+                                        && (
+                                          <Icon icon="checked2" width="12px" height="12" color="green" />
+                                        )}
                                     </Flex>
-                                  </AccordionPanel>
-                                </>
-                              )}
-                            </AccordionItem>
-                          </Accordion>
+                                  </MenuItem>
+                                ))}
+                              </MenuList>
+                            </Menu>
+                          </Heading>
                         </Flex>
                       )}
                     </Flex>
