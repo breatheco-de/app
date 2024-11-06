@@ -14,6 +14,7 @@ export function ButtonHandlerByTaskStatus({
 }) {
   const { hexColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [acceptTC, setAcceptTC] = useState(false);
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
     isOpeningReviewModal: false,
@@ -131,6 +132,8 @@ export function ButtonHandlerByTaskStatus({
         allowText={allowText}
         closeSettings={closeSettings}
         toggleSettings={toggleSettings}
+        acceptTC={acceptTC}
+        handleAcceptTC={setAcceptTC}
       />
     );
   }

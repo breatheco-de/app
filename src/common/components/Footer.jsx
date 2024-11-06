@@ -138,6 +138,11 @@ function Footer({ pageProps }) {
                     </InputRightElement>
 
                   </InputGroup>
+                  <small
+                    style={{ fontSize: '9px', lineHeight: '5px' }}
+                    // eslint-disable-next-line react/no-danger
+                    dangerouslySetInnerHTML={{ __html: t('recaptcha') }}
+                  />
                   {process.env.CAPTCHA_KEY && (
                     <Box mt="15px">
                       <ReCAPTCHA
