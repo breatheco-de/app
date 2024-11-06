@@ -103,6 +103,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
     }
   }, [cohortSession]);
 
+  console.log(currentAsset);
+
   if (variant === 'small') {
     return (
       <>
@@ -121,25 +123,37 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                 md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
               }}
             >
-              {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
-                <Popover>
-                  <PopoverTrigger>
-                    <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                      {t('learnpack.open-in-learnpack-button.text')}
-                    </Button>
-                  </PopoverTrigger>
-                  <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-                </Popover>
-              )}
-              {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
+              {currentAsset.external
                 ? (
-                  <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-                    {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+                  <Button as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                    {t('common:learnpack.start-exercise')}
                   </Button>
-                ) : (
-                  <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
-                    {t('learnpack.open-locally')}
-                  </Button>
+                )
+                : (
+                  <>
+                    {
+                      vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
+                        <Popover>
+                          <PopoverTrigger>
+                            <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                              {t('learnpack.open-in-learnpack-button.text')}
+                            </Button>
+                          </PopoverTrigger>
+                          <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                        </Popover>
+                      )
+                    }
+                    {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
+                      ? (
+                        <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+                        </Button>
+                      ) : (
+                        <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
+                          {t('learnpack.open-locally')}
+                        </Button>
+                      )}
+                  </>
                 )}
             </Box>
           </Box>
@@ -174,52 +188,62 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
           }}
         >
-          {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  borderRadius="3px"
-                  background="white"
-                  color="blue.1000"
-                  display="flex"
-                  gap="16px"
-                  alignItems="center"
-                  fontSize="17px"
-                >
-                  <Icon icon="prov-bridge" width="20px" height="20px" />
-                  {t('common:learnpack.open-in-learnpack-button.text')}
-                </Button>
-              </PopoverTrigger>
-              <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
-            </Popover>
-          )}
-          {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
+          {currentAsset.external
             ? (
-              <Button
-                as="a"
-                onClick={handleStartLearnpack}
-                borderRadius="3px"
-                background="white"
-                color="blue.1000"
-                display="flex"
-                gap="16px"
-                alignItems="center"
-                fontSize="17px"
-              >
-                {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+              <Button as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                {t('common:learnpack.start-exercise')}
               </Button>
             )
             : (
-              <Button
-                variant="outline"
-                borderColor="white"
-                color="white"
-                whiteSpace="normal"
-                onClick={() => setShowCloneModal(true)}
-                fontSize="17px"
-              >
-                {t('common:learnpack.open-locally')}
-              </Button>
+              <>
+                {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button
+                        borderRadius="3px"
+                        background="white"
+                        color="blue.1000"
+                        display="flex"
+                        gap="16px"
+                        alignItems="center"
+                        fontSize="17px"
+                      >
+                        <Icon icon="prov-bridge" width="20px" height="20px" />
+                        {t('common:learnpack.open-in-learnpack-button.text')}
+                      </Button>
+                    </PopoverTrigger>
+                    <ProvisioningPopover openInLearnpackAction={openInLearnpackAction} provisioningLinks={provisioningLinks} />
+                  </Popover>
+                )}
+                {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
+                  ? (
+                    <Button
+                      as="a"
+                      onClick={handleStartLearnpack}
+                      borderRadius="3px"
+                      background="white"
+                      color="blue.1000"
+                      display="flex"
+                      gap="16px"
+                      alignItems="center"
+                      fontSize="17px"
+                    >
+                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+                    </Button>
+                  )
+                  : (
+                    <Button
+                      variant="outline"
+                      borderColor="white"
+                      color="white"
+                      whiteSpace="normal"
+                      onClick={() => setShowCloneModal(true)}
+                      fontSize="17px"
+                    >
+                      {t('common:learnpack.open-locally')}
+                    </Button>
+                  )}
+              </>
             )}
         </Box>
       </Box>

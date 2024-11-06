@@ -79,6 +79,8 @@ const TabletWithForm = React.forwardRef(({
     return `${asset?.learnpack_deploy_url}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
 
+  console.log(asset);
+
   return (
     <>
       {showSimpleTable && (
