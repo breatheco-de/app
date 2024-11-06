@@ -106,11 +106,15 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
+    const cohortsGroup = courseData?.cohorts_group?.map(({ id }) => id).join(',');
+    console.log('cohortsGroup');
+    console.log(cohortsGroup);
     const qs = parseQuerys({
       plan: selectedFinancing?.plan_slug || item?.plan_slug,
       plan_id: selectedFinancing?.plan_id || item?.plan_id,
       coupon: coupon || queryCoupon,
       cohort: courseData?.cohort?.id,
+      cohortsGroup,
     });
 
     if (isWindow) {

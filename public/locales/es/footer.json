@@ -2,6 +2,7 @@
   "copyright": "©{{name}} LLC {{year}}",
   "search":"Buscar en 4Geeks",
   "subscribe": "¡Suscríbete para más!",
+  "recaptcha": "Esta página esta protegida por reCAPTCHA y la <a href=\"https://policies.google.com/privacy\">Política de privacidad</a> de Google. Aplican <a href=\"https://policies.google.com/terms\">Condiciones de uso</a>",
   "newsletter": {
     "success": "¡Genial! Te has unido exitosamente, Mantengase al pendiente para más información pronto 😁",
     "error": "Algo ha salido mal"
