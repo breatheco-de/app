@@ -103,8 +103,6 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
     }
   }, [cohortSession]);
 
-  console.log(currentAsset);
-
   if (variant === 'small') {
     return (
       <>
@@ -123,7 +121,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                 md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
               }}
             >
-              {currentAsset.external
+              {currentAsset.external && currentAsset.asset_type === 'EXERCISE'
                 ? (
                   <Button as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-exercise')}
@@ -188,9 +186,20 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
           }}
         >
-          {currentAsset.external
+          {currentAsset.external && currentAsset.asset_type === 'EXERCISE'
             ? (
-              <Button as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+              <Button
+                as="a"
+                href={currentAsset.url}
+                target="_blank"
+                borderRadius="3px"
+                background="white"
+                color="blue.1000"
+                display="flex"
+                gap="16px"
+                alignItems="center"
+                fontSize="17px"
+              >
                 {t('common:learnpack.start-exercise')}
               </Button>
             )
