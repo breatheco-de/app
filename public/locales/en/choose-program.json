@@ -4,6 +4,8 @@
   },
   "title": "Your Programs",
   "welcome-back-user": "Welcome, {{name}}",
+  "hello-user": "Hello, {{name}}",
+  "ready-to-start": "Ready to start learning?",
   "welcome": "Welcome",
   "your-active-programs": "Your active programs",
   "join-our-community": "Join our community",
