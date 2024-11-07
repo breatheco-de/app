@@ -547,10 +547,6 @@ function Checkout() {
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
 
-  // console.log(selectedPlanCheckoutData);
-  // console.log(selectedPlanID);
-  // console.log(selectedPlanID === selectedPlanCheckoutData?.plan_id);
-
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -706,7 +702,7 @@ function Checkout() {
                 </Text>
                 <Flex gridGap="7px" width="full">
                   {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
-                  <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="full">
+                  <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
                     <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
                       {originalPlan?.title}
                     </Heading>
@@ -715,19 +711,19 @@ function Checkout() {
                         <Text size="16px" color="green.400">
                           {originalPlan?.selectedPlan?.description || 'Free plan'}
                         </Text>
-                      ) : originalPlan?.selectedPlan?.price > 0 && (
+                      ) : (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) && (
                         <Text size="16px" color="green.400">
-                          {`$${originalPlan?.selectedPlan?.price} / ${originalPlan?.selectedPlan?.title}`}
+                          {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
                         </Text>
                       )}
                       {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
-                        <Flex flexDirection="column" gap="4px" width="100%">
-                          <Heading ref={flexRef} as="h3" size="sm" width="100%" position="relative">
+                        <Flex flexDirection="column" gap="4px">
+                          <Heading as="h3" size="sm" width="100%" position="relative">
                             <Menu>
                               <MenuButton
                                 as={Button}
-                                background="#eefaf8"
-                                _hover={{ backgroundColor: 'blue.50' }}
+                                background={useColorModeValue('#eefaf8', 'blue.400')}
+                                _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
                                 _active="none"
                                 padding="8px"
                                 borderRadius="md"
@@ -737,8 +733,8 @@ function Checkout() {
                                 onClick={() => setIsOpenned(true)}
                               >
                                 <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
-                                  <Text size="md" color="blue.1000">{t('see-financing-opt')}</Text>
-                                  <Icon icon="arrowDown" />
+                                  <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
+                                  <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
                                 </Box>
                               </MenuButton>
                               <MenuList
@@ -749,20 +745,20 @@ function Checkout() {
                                 width={menuWidth}
                                 border="none"
                               >
-                                {originalPlan.financingOptions.map((option) => (
+                                {originalPlan.plans.map((option) => (
                                   <MenuItem
                                     key={option.plan_id}
                                     onClick={() => setSelectedPlanID(option.plan_id)}
                                     fontSize="md"
                                     color="auto"
-                                    background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.400')}
-                                    _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.400') } : { background: 'none' }}
+                                    background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
+                                    _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
                                     padding="8px"
                                   >
                                     <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                      <Box flex="1">
-                                        {option.title}
-                                      </Box>
+                                      <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? 'green' : 'auto'}>
+                                        {`${option?.price} / ${option?.title}`}
+                                      </Text>
                                       {option.plan_id === selectedPlanCheckoutData?.plan_id
                                         && (
                                           <Icon icon="checked2" width="12px" height="12" color="green" />
