@@ -753,15 +753,15 @@ function Checkout() {
                                     color="auto"
                                     background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
                                     _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
-                                    padding="8px"
+                                    padding="10px"
                                   >
                                     <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                      <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? 'green' : 'auto'}>
+                                      <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
                                         {`${option?.price} / ${option?.title}`}
                                       </Text>
                                       {option.plan_id === selectedPlanCheckoutData?.plan_id
                                         && (
-                                          <Icon icon="checked2" width="12px" height="12" color="green" />
+                                          <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
                                         )}
                                     </Flex>
                                   </MenuItem>
