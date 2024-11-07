@@ -180,7 +180,7 @@ const TabletWithForm = React.forwardRef(({
                       href={buildLearnpackUrl()}
                       target="_blank"
                     >
-                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type.toLowerCase() || ''}`) }).toUpperCase()}
+                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()}
                     </Button>
                   )
                   : (
