@@ -128,7 +128,7 @@ function AuthProvider({ children, pageProps }) {
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { isAuthenticated, user } = state;
+  const { user } = state;
   const [modalState, setModalState] = useState({
     state: false,
     user: null,
@@ -238,7 +238,7 @@ function AuthProvider({ children, pageProps }) {
   }, [router]);
 
   useEffect(() => {
-    if (isAuthenticated && isRigoInitialized) {
+    if (user && isRigoInitialized) {
       const token = getToken();
       rigo.updateOptions({
         user: {
@@ -248,7 +248,7 @@ function AuthProvider({ children, pageProps }) {
         },
       });
     }
-  }, [isAuthenticated, isRigoInitialized]);
+  }, [user, isRigoInitialized]);
 
   const login = async (payload = null, disableRedirect = false) => {
     const redirect = isWindow && localStorage.getItem('redirect');

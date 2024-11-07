@@ -262,10 +262,6 @@ function PricingView() {
   const existentOptions = switcherInfo.filter((l) => l.exists);
   const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
 
-  //delete
-  console.log('publicMktCourses');
-  console.log(publicMktCourses);
-
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
       {isFetching.courses && (
