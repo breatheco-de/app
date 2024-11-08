@@ -57,7 +57,7 @@
     "classmates": "Tus compañeros",
     "active-classmates": "{{studentsLength}} Compañeros",
     "active-geeks": "{{studentsLength}} Geeks Activos",
-    "alumni-geeks": "{{studentsLength}} Exalumnos",
+    "alumni-geeks": "{{studentsLength}} Alumnos",
     "show-more": "Más estudiantes",
     "show-less": "Ocultar estudiantes",
     "no-teachers": "Esta cohorte aún no tiene maestros",

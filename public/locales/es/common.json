@@ -152,7 +152,7 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
-    "start-asset": "Empezar {{asset_type}}",
+    "start-asset": "Empezar {{asset_type}} interactivo",
     "asset_types": {
       "project": "proyecto",
       "exercise": "ejercicio"
