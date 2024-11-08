@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import {
   useEffect, useState,
 } from 'react';
@@ -27,6 +28,7 @@ import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import Module from '../../../../../js_modules/moduleMap/module';
+import Header from '../../../../../js_modules/Cohort/Header';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -406,7 +408,7 @@ function Dashboard() {
 
   return (
     <>
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
+      {/* {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
         <AlertMessage
           full
           type="warning"
@@ -433,7 +435,7 @@ function Dashboard() {
             </Button>
           </Text>
         </AlertMessage>
-      )}
+      )} */}
       {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
         <AlertMessage
           full
@@ -449,58 +451,44 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      <Container maxW="container.xl">
-        <Box width="fit-content" marginTop="18px" marginBottom="48px">
-          <NextChakraLink
-            href="/choose-program"
-            display="flex"
-            flexDirection="row"
-            alignItems="center"
-            onClick={() => {
-              setSortedAssignments([]);
-            }}
-            fontWeight="700"
-            gridGap="12px"
-            color="#0097CF"
-            _focus={{ boxShadow: 'none', color: '#0097CF' }}
-          >
-            <Icon
-              icon="arrowLeft"
-              width="20px"
-              height="20px"
-              style={{ marginRight: '7px' }}
-              color="currentColor"
-            />
-            <span>
-              {t('backToChooseProgram')}
-            </span>
-          </NextChakraLink>
-        </Box>
+      <Header />
+      <Container background={hexColor.lightColor4} maxW="container.xl" maxWidth="none">
 
-        <ModalInfo
-          isOpen={modalIsOpen}
-          onClose={() => setModalIsOpen(false)}
-          title={t('unsynced.title', { taskLength: taskCohortNull && taskCohortNull.length })}
-          description={t('unsynced.description')}
-          handlerColorButton="blue"
-          rejectHandler={() => removeUnsyncedTasks()}
-          forceHandler
-          rejectData={{
-            title: t('unsynced.reject-unsync-title'),
-            closeText: t('unsynced.cancel'),
-            handlerText: t('unsynced.confirm'),
-          }}
-          closeText={t('unsynced.unsync')}
-          actionHandler={() => syncTaskWithCohort()}
-          handlerText={t('unsynced.sync')}
-        />
         <Flex
           justifyContent="space-between"
+          maxWidth="1200px"
+          margin="auto"
           flexDirection={{
             base: 'column', sm: 'column', md: 'row', lg: 'row',
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
+            <Box width="fit-content" margin="18px 0">
+              <NextChakraLink
+                href="/choose-program"
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                onClick={() => {
+                  setSortedAssignments([]);
+                }}
+                fontWeight="700"
+                gridGap="12px"
+                color="#0097CF"
+                _focus={{ boxShadow: 'none', color: '#0097CF' }}
+              >
+                <Icon
+                  icon="arrowLeft"
+                  width="20px"
+                  height="20px"
+                  style={{ marginRight: '7px' }}
+                  color="currentColor"
+                />
+                <span>
+                  {t('backToChooseProgram')}
+                </span>
+              </NextChakraLink>
+            </Box>
             {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
               <Heading as="h1" size="xl">
                 {cohortSession?.syllabus_version?.name || cohortProgram.name}
@@ -515,7 +503,7 @@ function Dashboard() {
               />
             )}
 
-            {mainTechnologies && grantAccess ? (
+            {/* {mainTechnologies && grantAccess ? (
               <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
             ) : (
               <SimpleSkeleton
@@ -525,8 +513,8 @@ function Dashboard() {
                 margin="18px 0"
                 borderRadius="30px"
               />
-            )}
-            {isBelowTablet && (
+            )} */}
+            {/* {isBelowTablet && (
               <Box
                 display={{ base: 'flex', md: 'none' }}
                 flexDirection="column"
@@ -590,7 +578,7 @@ function Dashboard() {
                   />
                 )}
               </Box>
-            )}
+            )} */}
             {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
               <>
                 {grantAccess ? (
@@ -628,7 +616,7 @@ function Dashboard() {
               </>
             )}
 
-            {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
+            {/* {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
@@ -650,9 +638,9 @@ function Dashboard() {
                 buttonText={t('saasCohortcallToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
               />
-            )}
+            )} */}
 
-            {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
+            {/* {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">
                 <ProgressBar
                   cohortProgram={cohortProgram}
@@ -661,11 +649,11 @@ function Dashboard() {
                   width="100%"
                 />
               </Box>
-            )}
+            )} */}
 
-            <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
+            {/* <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" /> */}
 
-            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
+            {/* <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
               <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
 
               <Box display="flex" alignItems="center">
@@ -702,7 +690,7 @@ function Dashboard() {
                   </Checkbox>
                 )}
               </Box>
-            </Box>
+            </Box> */}
             <Box
               id="module-map"
               marginTop="30px"
@@ -758,9 +746,9 @@ function Dashboard() {
             </Box>
 
           </Box>
-          <Box width="5rem" />
+          {/* <Box width="5rem" /> */}
 
-          {!isBelowTablet && (
+          {/* {!isBelowTablet && (
             <Box
               display={{ base: 'none', md: 'flex' }}
               flexDirection="column"
@@ -833,7 +821,7 @@ function Dashboard() {
               )}
               <Feedback />
             </Box>
-          )}
+          )} */}
         </Flex>
       </Container>
       {showGithubWarning === 'active' && (
@@ -946,6 +934,23 @@ function Dashboard() {
           </ModalBody>
         </ModalContent>
       </Modal>
+      <ModalInfo
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+        title={t('unsynced.title', { taskLength: taskCohortNull && taskCohortNull.length })}
+        description={t('unsynced.description')}
+        handlerColorButton="blue"
+        rejectHandler={() => removeUnsyncedTasks()}
+        forceHandler
+        rejectData={{
+          title: t('unsynced.reject-unsync-title'),
+          closeText: t('unsynced.cancel'),
+          handlerText: t('unsynced.confirm'),
+        }}
+        closeText={t('unsynced.unsync')}
+        actionHandler={() => syncTaskWithCohort()}
+        handlerText={t('unsynced.sync')}
+      />
     </>
   );
 }

@@ -574,3 +574,5 @@ MentoringConsumables.defaultProps = {
 };
 
 export default MentoringConsumables;
+
+export { ProfilesSection };

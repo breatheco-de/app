@@ -6,6 +6,11 @@
   "main-instructor": "Instructor Principal",
   "teacher-assistant": "Asistente de Profesor",
   "rigo": "Rigo",
+  "see-workshops": "Ver todos los workshops",
+  "schedule-mentoring": "Agenda una sesión de mentoria",
+  "rigobot-bubble": {
+    "greeting": "Hola!"
+  },
   "ai-tutor": "Tutor IA",
   "clone-modal": {
     "title": "¿Cómo clonar un proyecto?"
