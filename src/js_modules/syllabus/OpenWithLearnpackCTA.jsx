@@ -174,7 +174,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
           }}
         >
-          {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
+          {vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas && (
             <Popover>
               <PopoverTrigger>
                 <Button
