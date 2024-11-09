@@ -17,10 +17,6 @@ function ButtonHandler({
   const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
   const planOfferedAcquired = allSubscriptions?.some((sub) => sub.plans.some((plan) => plan.slug === subscription?.planOffer?.slug));
 
-  // console.log(planOfferedAcquired, subscription.plans[0].slug, subscription.planOffer.slug)
-  // console.log(allSubscriptions)
-  // console.log(subscription)
-
   const { getPlanOffer } = profileHandlers({});
   const handlePlanOffer = () => {
     setIsLoading(true);
