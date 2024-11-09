@@ -11,6 +11,17 @@ import {
 // import io from 'socket.io-client';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import {
+  languageFix,
+  slugify,
+  includesToLowerCase,
+  getStorageItem,
+  sortToNearestTodayDate,
+  getBrowserSize,
+  calculateDifferenceDays,
+  adjustNumberBeetwenMinMax,
+  isValidDate,
+} from '../../../../../utils/index';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
 import TagCapsule from '../../../../../common/components/TagCapsule';
@@ -28,16 +39,7 @@ import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import bc from '../../../../../common/services/breathecode';
 import axios from '../../../../../axios';
-import {
-  slugify,
-  includesToLowerCase,
-  getStorageItem,
-  sortToNearestTodayDate,
-  getBrowserSize,
-  calculateDifferenceDays,
-  adjustNumberBeetwenMinMax,
-  isValidDate,
-} from '../../../../../utils/index';
+
 import { reportDatalayer } from '../../../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
@@ -52,7 +54,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
 
 function Dashboard() {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const toast = useToast();
   const router = useRouter();
   const { colorMode } = useColorMode();
@@ -632,7 +634,7 @@ function Dashboard() {
                 margin="40px 0 auto 0"
                 title={t('callToAction.title')}
                 href={`#${slugify(dailyModuleData.label)}`}
-                text={dailyModuleData.description}
+                text={languageFix(dailyModuleData.description, lang)}
                 buttonText={t('callToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
               />
@@ -644,7 +646,7 @@ function Dashboard() {
                 margin="40px 0 auto 0"
                 title={t('saasCohortcallToAction.title')}
                 href={`#${slugify(lastTaskDoneModuleData.label)}`}
-                text={lastTaskDoneModuleData.description}
+                text={languageFix(lastTaskDoneModuleData.description, lang)}
                 buttonText={t('saasCohortcallToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
               />

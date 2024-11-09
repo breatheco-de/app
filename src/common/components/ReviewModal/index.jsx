@@ -15,7 +15,6 @@ import FileList from './FileList';
 import bc from '../../services/breathecode';
 import LoaderScreen from '../LoaderScreen';
 import ReviewCodeRevision from './ReviewCodeRevision';
-import { usePersistent } from '../../hooks/usePersistent';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import PopoverTaskHandler from '../PopoverTaskHandler';
 import useModuleHandler from '../../hooks/useModuleHandler';
@@ -53,7 +52,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     isFetchingCodeReviews: false,
     isApprovingOrRejecting: false,
   });
-  const [profile] = usePersistent('profile', {});
   const [comment, setComment] = useState('');
   const { updateAssignment } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -200,7 +198,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         setContextData((prev) => ({
           ...prev,
           code_revisions: codeRevisionsSortedByDate,
-          my_revisions: data.filter((revision) => revision?.reviewer?.username === profile?.email),
+          my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
         toast({

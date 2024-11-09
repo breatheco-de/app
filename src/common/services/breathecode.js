@@ -59,8 +59,10 @@ const breathecode = {
       updatePicture: (args) => axios.put(`${url}/profile/me/picture`, args),
       invites: () => ({
         get: () => axios.get(`${url}/user/me/invite?status=PENDING`),
+        profileInvites: () => axios.get(`${url}/profile/invite/me`),
         accept: (id) => axios.put(`${url}/user/me/invite/accepted?id=${id}`),
       }),
+      acceptProfileAcademy: (id) => axios.put(`${url}/user/me/profile_academy/${id}/active`),
       getRoles: (cohortRole) => axios.get(`${url}/role/${cohortRole}`),
       isValidToken: (token) => axios.get(`${url}/token/${token}`),
       register: (payload) => axios.post(`${url}/user/register`, payload),
@@ -86,6 +88,25 @@ const breathecode = {
     };
   },
 
+  media: () => {
+    const url = `${hostV2}/media`;
+
+    return {
+      operationTypes: () => axios.get(`${url}/operationtype`),
+      operationMeta: (operationType) => axios.get(`${url}/operationtype/${operationType}`),
+      uploadChunk: (prefix, formData, headers) => axios.put(`${url}/${prefix}`, formData, { headers }),
+      endFileUpload: (prefix, args, headers) => axios.put(`${url}/${prefix}`, { ...args }, { headers }),
+    };
+  },
+
+  messaging: () => {
+    const url = `${host}/messaging`;
+
+    return {
+      chunkNotification: (args) => axios.get(`${url}/me/notification`, { ...args }),
+    };
+  },
+
   admissions: (query = {}) => {
     const url = `${host}/admissions`;
     const qs = parseQuerys(query);
@@ -97,6 +118,11 @@ const breathecode = {
         },
       }),
       cohorts: () => axios.get(`${url}/cohort/all${qs}`),
+      singleCohortUser: (cohortId, userId, academy) => axios.get(`${url}/academy/cohort/${cohortId}/user/${userId}${qs}`, {
+        headers: academy && {
+          academy,
+        },
+      }),
       cohortUsers: (academy) => axios.get(`${url}/academy/cohort/user${qs}`, {
         headers: academy && {
           academy,
@@ -297,6 +323,7 @@ const breathecode = {
     return {
       get: () => axios.get(`${url}/asset${qs}`),
       getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
+      getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
     };
   },

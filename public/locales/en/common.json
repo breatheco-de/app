@@ -37,6 +37,11 @@
     "months": "months",
     "years": "years"
   },
+  "timer":{
+    "min": "min",
+    "mins": "mins",
+    "sec": "seg"
+  },
   "no-translation-available": "No translation available",
   "read-next": "Read next",
   "heading": "Welcome to",
@@ -151,7 +156,7 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
-    "start-asset": "Start {{asset_type}}",
+    "start-asset": "Start interactive {{asset_type}}",
     "asset_types": {
       "project": "project",
       "exercise": "exercise"
