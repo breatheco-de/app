@@ -148,7 +148,10 @@ function SyllabusContent() {
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
 
-  const handleStartLearnpack = () => setLearnpackStart(true);
+  const handleStartLearnpack = () => {
+    setLearnpackStart(true);
+    onToggle();
+  };
 
   useEffect(() => {
     setLearnpackStart(false);
