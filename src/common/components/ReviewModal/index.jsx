@@ -310,7 +310,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
             duration: 5000,
             isClosable: true,
           });
-          console.log('APUNTO DE EJECUTAR ASSINGMENT');
           updpateAssignment({
             ...currentTask,
             id: currentTask.id,
