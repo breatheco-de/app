@@ -3,7 +3,6 @@ import { Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import Link from '../../../common/components/NextChakraLink';
 import profileHandlers from './handlers';
 
 function ButtonHandler({
@@ -17,10 +16,15 @@ function ButtonHandler({
   const isPlanFinancingExpired = subscription?.type === 'plan_financing' && subscription?.valid_until < new Date().toISOString();
   const planOfferedAcquired = allSubscriptions?.some((sub) => sub.plans.some((plan) => plan.slug === subscription?.planOffer?.slug));
 
-  const { getPlanOffer } = profileHandlers({});
+  const { getPlanOffer, reactivatePlan } = profileHandlers({});
   const handlePlanOffer = () => {
     setIsLoading(true);
     getPlanOffer({ slug: planSlug, onOpenUpgrade }).finally(() => setIsLoading(false));
+  };
+
+  const handleReactivatePlan = () => {
+    setIsLoading(true);
+    reactivatePlan(planSlug, status);
   };
 
   const getStyles = () => {
@@ -70,14 +74,8 @@ function ButtonHandler({
         style: {
           variant: 'default',
           color: 'white',
-          fontWeight: 700,
+          fontWeight: 500,
         },
-        isComponent: true,
-        component: (
-          <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
-            {t('subscription.reactivate-subscription')}
-          </Link>
-        ),
       };
     }
 
@@ -122,6 +120,7 @@ function ButtonHandler({
             if (isPlanFinancingExpired) handlePlanOffer();
             if ((['FREE_TRIAL', 'PAYMENT_ISSUE'].includes(status)) || (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.planOffer.slug)) handlePlanOffer();
             if (['ACTIVE', 'FULLY_PAID'].includes(status) && subscription?.type !== 'plan_financing' && !subscription?.planOffer.slug) onOpenCancelSubscription();
+            if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
           color="blue.default"

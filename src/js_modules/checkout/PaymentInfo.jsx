@@ -201,6 +201,9 @@ function PaymentInfo() {
             const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
               (cohort) => cohort?.id === cohortId,
             ) : {};
+            console.log('las subs', subscriptions);
+            console.log('soy la sub del checkout', checkoutData?.plans[0]?.plan_slug);
+            console.log(isPurchasedPlanFound);
 
             if (isPurchasedPlanFound) {
               if (findedCohort?.id) {
