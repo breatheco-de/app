@@ -2,6 +2,10 @@
   "seo": {
     "title": "Profile"
   },
+  "splitting-file": "Preparing your image... almost there!",
+  "uploading-chunks": "Uploading in style... hang tight!",
+  "finalizing-upload": "Putting the final touches... just a moment!",
+  "ready-upload": "Almost ready!",
   "basic-profile-info": "Basic Profile Information",
   "my-certificates": "My Certificates",
   "view-certificate": "View certificate",

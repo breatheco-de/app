@@ -16,12 +16,11 @@ import useStyle from '../hooks/useStyle';
 
 function ConnectGithubRigobot({ ...rest }) {
   const { t } = useTranslation('profile');
-  const { user, isAuthenticatedWithRigobot } = useAuth();
+  const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
 
   const toast = useToast();
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const accessToken = getStorageItem('accessToken');
 
   const {
     borderColor, backgroundColor, modal,
@@ -80,6 +79,7 @@ function ConnectGithubRigobot({ ...rest }) {
                 cursor="pointer"
                 onClick={(e) => {
                   e.preventDefault();
+                  const accessToken = getStorageItem('accessToken');
                   window.location.href = `${BREATHECODE_HOST}/v1/auth/github/${accessToken}?url=${window.location.href}`;
                 }}
               >
@@ -125,7 +125,7 @@ function ConnectGithubRigobot({ ...rest }) {
                   onClick={(e) => {
                     e.preventDefault();
                     if (user?.github?.username) {
-                      window.open(`${RIGOBOT_HOST}/invite/?referer=4geeks&token=${accessToken}`, '_blank');
+                      conntectToRigobot();
                     }
                   }}
                 >

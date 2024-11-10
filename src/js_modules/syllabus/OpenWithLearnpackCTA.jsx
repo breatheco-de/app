@@ -121,7 +121,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                 md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
               }}
             >
-              {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+              {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
                 <Popover>
                   <PopoverTrigger>
                     <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
@@ -133,8 +133,9 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
               )}
               {learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug)
                 ? (
-                  <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+                  <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" gap="7px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
                     {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+                    <Icon width="12px" color="currentColor" icon="longArrowRight" />
                   </Button>
                 ) : (
                   <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" onClick={() => setShowCloneModal(true)}>
@@ -174,7 +175,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
           }}
         >
-          {vendors.length > 0 && currentAsset?.gitpod && (!learnpackDeployUrl || !cohortSession.available_as_saas) && (
+          {vendors.length > 0 && currentAsset?.gitpod && !learnpackDeployUrl && !cohortSession.available_as_saas && (
             <Popover>
               <PopoverTrigger>
                 <Button
@@ -197,16 +198,18 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
             ? (
               <Button
                 as="a"
+                cursor="pointer"
                 onClick={handleStartLearnpack}
                 borderRadius="3px"
                 background="white"
                 color="blue.1000"
                 display="flex"
-                gap="16px"
+                gap="7px"
                 alignItems="center"
                 fontSize="17px"
               >
                 {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+                <Icon color="currentColor" icon="longArrowRight" />
               </Button>
             )
             : (

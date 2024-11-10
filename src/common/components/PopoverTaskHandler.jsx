@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Box, PopoverArrow, Text, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip } from '@chakra-ui/react';
+import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -114,6 +114,8 @@ function PopoverCustomContent({
   sendProject,
   onClickHandler,
   closeSettings,
+  acceptTC,
+  handleAcceptTC,
 }) {
   const { t } = useTranslation('dashboard');
   const { state } = useCohortHandler();
@@ -225,6 +227,7 @@ function PopoverCustomContent({
     }
   };
   const handleCloseFile = () => {
+    handleAcceptTC(false);
     closeSettings();
   };
 
@@ -315,12 +318,18 @@ function PopoverCustomContent({
                         <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
                       )}
                     </Box>
+                    <Checkbox size="md" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)}>
+                      <Text fontSize="sm">
+                        {t('deliverProject.deliver-confirm')}
+                      </Text>
+                    </Checkbox>
                     <Button
-                    // mt={4}
+                      // mt={4}
                       width="fit-content"
                       colorScheme="blue"
                       isLoading={isSubmitting}
                       type="submit"
+                      isDisabled={!acceptTC}
                     >
                       {t('deliverProject.handler-text')}
                     </Button>
@@ -374,62 +383,66 @@ function PopoverCustomContent({
                     onDragLeave={() => setDragOver(false)}
                   />
                 </Box>
-
+                <Checkbox size="md" mb="10px" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)}>
+                  <Text fontSize="sm">
+                    {t('deliverProject.deliver-confirm')}
+                  </Text>
+                </Checkbox>
                 {fileProps.some((file) => typeof file?.type === 'string') && (
-                <>
-                  <Box ref={fileContainerRef} maxHeight="300px" overflowY="auto">
-                    {fileProps.map((file) => {
-                      const errorExists = file.formatError || file.sizeError;
-                      const extension = file.name.split('.').pop();
-                      const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
-                      const isImage = imageExtensions.includes(extension);
-                      const icon = iconDict.includes(extension) ? extension : 'file';
-                      return (
-                        <Box key={file.name} display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
-                          <Box display="flex" gridGap="9px">
-                            <Icon icon={isImage ? 'image' : icon} color={hexColor.black} width="32px" height="41px" />
-                            <Box position="relative">
-                              <Text size="14px" style={{ margin: '0px' }} withLimit={file.name.length > 20}>
-                                {file.name}
-                              </Text>
-                              <Text size="14px" style={{ margin: '0px' }} color={errorExists && hexColor.danger} display="flex" gridGap="6px">
-                                {errorExists ? (
-                                  <>
-                                    <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
-                                    {file.formatError
-                                      ? t('deliverProject.error-file-format')
-                                      : file.sizeError && t('deliverProject.error-file-size')}
-                                  </>
-                                ) : formatBytes(file.size)}
-                              </Text>
+                  <>
+                    <Box ref={fileContainerRef} maxHeight="300px" overflowY="auto">
+                      {fileProps.map((file) => {
+                        const errorExists = file.formatError || file.sizeError;
+                        const extension = file.name.split('.').pop();
+                        const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
+                        const isImage = imageExtensions.includes(extension);
+                        const icon = iconDict.includes(extension) ? extension : 'file';
+                        return (
+                          <Box key={file.name} display="flex" my="15px" p="8px" border="1px solid" borderColor={featuredColor} background={modal.background} justifyContent="space-between" alignItems="center" borderRadius="7px">
+                            <Box display="flex" gridGap="9px">
+                              <Icon icon={isImage ? 'image' : icon} color={hexColor.black} width="32px" height="41px" />
+                              <Box position="relative">
+                                <Text size="14px" style={{ margin: '0px' }} withLimit={file.name.length > 20}>
+                                  {file.name}
+                                </Text>
+                                <Text size="14px" style={{ margin: '0px' }} color={errorExists && hexColor.danger} display="flex" gridGap="6px">
+                                  {errorExists ? (
+                                    <>
+                                      <Icon icon="warning" width="13px" height="13px" style={{ marginTop: '5px' }} color="currentColor" full secondColor={hexColor.white2} />
+                                      {file.formatError
+                                        ? t('deliverProject.error-file-format')
+                                        : file.sizeError && t('deliverProject.error-file-size')}
+                                    </>
+                                  ) : formatBytes(file.size)}
+                                </Text>
+                              </Box>
+                            </Box>
+                            <Box
+                              borderRadius="20px"
+                              p="7px"
+                              backgroundColor="gray.500"
+                              onClick={() => {
+                                handleRemoveFileInList(file.name);
+                              }}
+                              cursor="pointer"
+                            >
+                              <Icon icon="close" width="10px" height="10px" color="#ffffff" />
                             </Box>
                           </Box>
-                          <Box
-                            borderRadius="20px"
-                            p="7px"
-                            backgroundColor="gray.500"
-                            onClick={() => {
-                              handleRemoveFileInList(file.name);
-                            }}
-                            cursor="pointer"
-                          >
-                            <Icon icon="close" width="10px" height="10px" color="#ffffff" />
-                          </Box>
-                        </Box>
-                      );
-                    })}
-                  </Box>
-                  <Box py="12px" color={lightColor}>
-                    {t('deliverProject.total-size', { size: formatBytes(fileSumSize) })}
-                  </Box>
-                </>
+                        );
+                      })}
+                    </Box>
+                    <Box py="12px" color={lightColor}>
+                      {t('deliverProject.total-size', { size: formatBytes(fileSumSize) })}
+                    </Box>
+                  </>
                 )}
                 <Box display="flex" justifyContent="space-evenly" mb="6px">
                   <Button
                     variant="default"
                     onClick={() => handleUploadFile()}
                     isLoading={isUploading}
-                    isDisabled={isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
+                    isDisabled={!acceptTC || isUploading || fileProps?.length === 0 || fileProps.some((file) => typeof file?.type !== 'string') || fileErrorExists || fileSumSize > maxFileSize}
                     textTransform="uppercase"
                   >
                     {t('common:upload')}
@@ -459,12 +472,15 @@ function PopoverTaskHandler({
   closeSettings,
   toggleSettings,
   buttonChildren,
+  acceptTC,
+  handleAcceptTC,
 }) {
   const { hexColor } = useStyle();
   const taskIsApproved = allowText && currentTask?.revision_status === 'APPROVED';
   const isButtonDisabled = currentTask === null || taskIsApproved;
 
   const handleCloseFile = () => {
+    handleAcceptTC(false);
     closeSettings();
   };
 
@@ -505,6 +521,8 @@ function PopoverTaskHandler({
           onClickHandler={onClickHandler}
           allowText={allowText}
           closeSettings={closeSettings}
+          handleAcceptTC={handleAcceptTC}
+          acceptTC={acceptTC}
         />
       </Popover>
     );
@@ -557,6 +575,8 @@ function PopoverTaskHandler({
         sendProject={sendProject}
         onClickHandler={onClickHandler}
         closeSettings={closeSettings}
+        handleAcceptTC={handleAcceptTC}
+        acceptTC={acceptTC}
       />
     </Popover>
   );
@@ -580,12 +600,12 @@ PopoverTaskHandler.defaultProps = {
   isLoading: false,
   currentAssetData: {},
   currentTask: {},
-  sendProject: () => {},
-  onClickHandler: () => {},
-  closeSettings: () => {},
+  sendProject: () => { },
+  onClickHandler: () => { },
+  closeSettings: () => { },
   settingsOpen: false,
   allowText: false,
-  toggleSettings: () => {},
+  toggleSettings: () => { },
   buttonChildren: null,
   isGuidedExperience: false,
 };

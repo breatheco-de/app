@@ -34,6 +34,11 @@
     "months": "meses",
     "years": "años"
   },
+  "timer":{
+    "min": "min",
+    "mins": "mins",
+    "sec": "seg"
+  },
   "no-translation-available": "No hay traduccion disponible",
   "read-next": "Leer a continuación",
   "heading": "Bienvenido a",
@@ -147,7 +152,7 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
-    "start-asset": "Empezar {{asset_type}}",
+    "start-asset": "Empezar {{asset_type}} interactivo",
     "asset_types": {
       "project": "proyecto",
       "exercise": "ejercicio"
