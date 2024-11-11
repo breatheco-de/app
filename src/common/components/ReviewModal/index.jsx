@@ -290,6 +290,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         user_id: user.id,
       },
     });
+
     if (revisionStatusUpperCase[reviewStatus] !== undefined) {
       setLoaders((prevState) => ({
         ...prevState,
