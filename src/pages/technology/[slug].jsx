@@ -1,12 +1,15 @@
-import useTranslation from 'next-translate/useTranslation';
-import {
-  Box, Flex, useColorModeValue,
-} from '@chakra-ui/react';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
+import {
+  Box, Flex, Container, Image, Button,
+} from '@chakra-ui/react';
+
 import getT from 'next-translate/getT';
+import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Text from '../../common/components/Text';
+import Icon from '../../common/components/Icon';
 import { toCapitalize } from '../../utils';
 import Heading from '../../common/components/Heading';
 import ProjectList from '../../js_modules/projects/ProjectList';
@@ -44,6 +47,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     .catch(() => []);
 
   const allTechnologiesList = assetList.landingTechnologies;
+  const technologiesAvailable = allTechnologiesList.filter((tech) => tech?.lang === locale);
   const technologyData = allTechnologiesList.find((tech) => tech?.slug === slug && tech?.lang === locale) || {};
   const data = technologyData?.assets?.length > 0 ? technologyData.assets.filter((l) => {
     const assetType = l?.asset_type.toUpperCase();
@@ -76,6 +80,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
         locales,
         locale,
       },
+      technologiesAvailable,
       technologyData,
       data: dataByCurrentLanguage.map(
         (l) => ({ ...l, difficulty: l?.difficulty?.toLowerCase() || null }),
@@ -84,7 +89,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   };
 };
 
-function LessonByTechnology({ data, technologyData }) {
+function LessonByTechnology({ data, technologyData, technologiesAvailable }) {
   const { t } = useTranslation('technologies');
   const router = useRouter();
 
@@ -94,43 +99,62 @@ function LessonByTechnology({ data, technologyData }) {
     }
   }, [data]);
 
+  // console.log(data);
+  console.log(technologyData);
+  // console.log(technologiesAvailable);
+
   return technologyData?.slug && data?.length > 0 && (
-    <Box
-      height="100%"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      pt="3rem"
-      maxWidth="1280px"
-      margin="3rem auto 0 auto"
-      padding="0 10px"
-    >
-      <Text
-        as="h1"
-        fontSize="15px"
-        color={useColorModeValue('blue.default', 'blue.300')}
-        display="inline-block"
-        fontWeight="700"
-        paddingBottom="6px"
-      >
-        {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
-      </Text>
-      <Box flex="1" pb="2rem">
-        <Heading as="span" size="xl">
-          {t('landing-technology.subTitle', { technology: toCapitalize(technologyData?.title) })}
-        </Heading>
-
-        <Text
-          size="md"
-          pt="0.6rem"
-          width={{ base: '100%', md: '65%' }}
-          display="flex"
-          textAlign="left"
-        >
-          {technologyData?.description || t('description', { technology: technologyData?.title })}
-        </Text>
+    <Container maxWidth="1280px">
+      {/*TOP BAR*/}
+      <Box padding="30px 20px">
+        {technologiesAvailable.map((tech) => (
+          <>
+            {tech?.icon_url
+              && (
+                <Image width="41px" src={tech.icon_url} />
+              )}
+          </>
+        ))}
       </Box>
-
+      <Flex
+        height="100%"
+        padding="0 10px"
+        gap="10px"
+      >
+        <Flex direction="column" pb="15px" flexGrow="1">
+          <Heading
+            as="h1"
+            display="inline-block"
+            fontWeight="700"
+            paddingBottom="6px"
+          >
+            {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
+          </Heading>
+          <Text size="md">
+            {technologyData?.description ? technologyData?.description : t('landing-technology.defaultDescription')}
+          </Text>
+          <Flex gap="10px" marginTop="10px">
+            <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none">
+              {`${technologyData?.title} roadmaps`}
+              <Icon color="white" icon="longArrowRight" />
+            </Button>
+            <Button border="1px" borderColor="blue.1000" color="blue.1000" _hover="none">
+              {t('request-mentorship')}
+            </Button>
+          </Flex>
+        </Flex>
+        <Box flexGrow="1" width="624px" height="344px">
+          <ReactPlayerV2
+            url={technologyData?.videoUrl || 'https://example.com/video.mp4'}
+            thumbnail={technologyData?.thumbnail}
+            controls
+            withThumbnail
+            withModal
+            title={technologyData?.title || 'Technology Video'}
+            iframeStyle={{ borderRadius: '8px' }}
+          />
+        </Box>
+      </Flex>
       <Flex flexDirection="column" gridGap="3rem">
         <Box display="flex" flexDirection="column" gridGap="18px">
           <ProjectList
@@ -141,13 +165,14 @@ function LessonByTechnology({ data, technologyData }) {
           />
         </Box>
       </Flex>
-    </Box>
+    </Container>
   );
 }
 
 LessonByTechnology.propTypes = {
   data: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  technologiesAvailable: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   // projects: PropTypes.arrayOf(PropTypes.object),
   // exercises: PropTypes.arrayOf(PropTypes.object),
   // howTos: PropTypes.arrayOf(PropTypes.object),
