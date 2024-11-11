@@ -273,8 +273,6 @@ function Assignments() {
     }
   }, [selectedCohort]);
 
-  console.log(currentStudentList);
-
   const loadStudents = (limit = 20, offset = 0, appendMore = false) => {
     setLoadStatus({ loading: true, status: 'loading' });
     const academyId = selectedCohort.academy.id || academy;
@@ -410,7 +408,6 @@ function Assignments() {
 
   const updpateAssignment = (taskUpdated) => {
     const keyIndex = contextState.allTasks.findIndex((x) => x.id === taskUpdated.id);
-    console.log('el student list', currentStudentList);
     setContextState({
       ...contextState,
       allTasks: [
