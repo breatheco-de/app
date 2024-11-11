@@ -294,7 +294,7 @@ function FinalProjects({ finalProjects, loadStatus, updpateProject }) {
                   key={student.id}
                   padding="8px 22px"
                   borderRadius="11px"
-                  color="black"
+                  color="blue.1000"
                   background="gray.light3"
                   display="flex"
                   alignItems="center"
