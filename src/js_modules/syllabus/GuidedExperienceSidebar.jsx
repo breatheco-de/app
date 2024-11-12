@@ -129,10 +129,6 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                   <Text as="span" color={fontColor2}>
                     {t('back-to-previous')}
                   </Text>
-                  <br />
-                  <Text as="span" mt="8px" style={{ textWrap: 'wrap' }}>
-                    {languageFix(prevModule.label, lang)}
-                  </Text>
                 </span>
               </Button>
               <Divider mt="5px" borderColor="#D3DBE9" />
