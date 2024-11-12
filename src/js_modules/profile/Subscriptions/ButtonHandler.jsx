@@ -46,8 +46,7 @@ function ButtonHandler({
       };
     }
 
-    if (status === 'FREE_TRIAL' || (isPlanFinancingExpired && subscription?.planOffer?.pricing_exists)
-      || (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID') && subscription?.planOffer.slug)) {
+    if (status === 'FREE_TRIAL' || (subscription?.type !== 'plan_financing' && (status === 'ACTIVE' || status === 'FULLY_PAID') && subscription?.planOffer.slug)) {
       return {
         text: t('subscription.upgrade'),
         style: {
