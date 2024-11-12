@@ -99,7 +99,7 @@ function Checkout() {
     handleServiceToConsume, isFirstStep, isSecondStep, isThirdStep, isFourthStep, setLoader,
     setSelectedPlanCheckoutData, setCheckoutData, getPriceWithDiscount, getSelfAppliedCoupon,
   } = useSignup();
-  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon } = state;
+  const { stepIndex, checkoutData, selectedPlanCheckoutData, alreadyEnrolled, serviceProps, loader, selfAppliedCoupon, cohortPlans } = state;
   const [readyToSelectService, setReadyToSelectService] = useState(false);
   const [showChooseClass, setShowChooseClass] = useState(true);
   const [discountCode, setDiscountCode] = useState('');
@@ -512,7 +512,22 @@ function Checkout() {
     if (!isAuthenticated && !tokenExists) {
       setLoader('plan', false);
     }
-  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale, selectedPlanID]);
+  }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
+
+  useEffect(() => {
+    setLoader('plan', true);
+    handleChecking({ plan: cohortPlans[0]?.plan })
+      .then((checkingData) => {
+        const autoSelectedPlan = findAutoSelectedPlan(checkingData);
+
+        setSelectedPlanCheckoutData(autoSelectedPlan);
+        handleStep(3);
+        setLoader('plan', false);
+      })
+      .catch(() => {
+        setLoader('plan', false);
+      });
+  }, [selectedPlanID]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
