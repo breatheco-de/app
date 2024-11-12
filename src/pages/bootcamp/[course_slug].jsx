@@ -228,7 +228,7 @@ function CoursePage({ data }) {
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
+        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
       }
       if (featuredPlanToEnroll.period === 'YEAR') {
         return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
