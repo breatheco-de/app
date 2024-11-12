@@ -249,7 +249,7 @@ function PaymentInfo() {
 
   useEffect(() => {
     if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
-  }, [selectedPlanCheckoutData, isAuthenticated]);
+  }, [isAuthenticated]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
     const silentCode = data?.silent_code;

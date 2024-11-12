@@ -105,6 +105,7 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [selectedPlanID, setSelectedPlanID] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
@@ -437,7 +438,7 @@ function Checkout() {
             }
             if (data?.has_waiting_list === false && ((data?.is_renewable === false && !isNotTrial) || data?.is_renewable === true || cohorts?.length === 1)) {
               if (resp.status < 400 && cohorts?.length > 0) {
-                const { kickoffDate, weekDays, availableTime } = cohorts?.[0] ? getTimeProps(cohorts[0]) : {};
+                const { kickoffDate, weekDays, availableTime } = cohorts && cohorts.length > 0 ? getTimeProps(cohorts[0]) : {};
                 const defaultCohortProps = {
                   ...cohorts[0],
                   kickoffDate,
@@ -515,17 +516,19 @@ function Checkout() {
   }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
 
   useEffect(() => {
-    setLoader('plan', true);
+    if (!selectedPlanID) return;
+    setCheckInfoLoader(true);
+    setMenuWidth('auto');
     handleChecking({ plan: cohortPlans[0]?.plan })
       .then((checkingData) => {
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
 
         setSelectedPlanCheckoutData(autoSelectedPlan);
         handleStep(3);
-        setLoader('plan', false);
+        setCheckInfoLoader(false);
       })
       .catch(() => {
-        setLoader('plan', false);
+        setCheckInfoLoader(false);
       });
   }, [selectedPlanID]);
 
@@ -561,6 +564,9 @@ function Checkout() {
     setAllDiscounts(discounts);
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
+
+  // console.log('soy el loader NUEVO', checkInfoLoader);
+  console.log('soy el loader VIEJO', loader.paymentMethods);
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -709,273 +715,277 @@ function Checkout() {
           overflow="auto"
           maxWidth={{ base: '100%', md: '50%' }}
         >
-          <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
-            {originalPlan?.title ? (
-              <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
-                <Text size="18px">
-                  {t('you-are-getting')}
-                </Text>
-                <Flex gridGap="7px" width="full">
-                  {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
-                  <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
-                    <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
-                      {originalPlan?.title}
-                    </Heading>
-                    <Flex justifyContent="space-between" width="full" alignItems="center">
-                      {originalPlan?.selectedPlan?.isFreeTier ? (
-                        <Text size="16px" color="green.400">
-                          {originalPlan?.selectedPlan?.description || 'Free plan'}
-                        </Text>
-                      ) : (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) && (
-                        <Text size="16px" color="green.400">
-                          {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
-                        </Text>
-                      )}
-                      {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
-                        <Flex flexDirection="column" gap="4px">
-                          <Heading as="h3" size="sm" width="100%" position="relative">
-                            <Menu>
-                              <MenuButton
-                                as={Button}
-                                background={useColorModeValue('#eefaf8', 'blue.400')}
-                                _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
-                                _active="none"
-                                padding="8px"
-                                borderRadius="md"
-                                display="flex"
-                                justifyContent="space-between"
-                                alignItems="center"
-                                onClick={() => setIsOpenned(true)}
-                              >
-                                <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
-                                  <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
-                                  <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
-                                </Box>
-                              </MenuButton>
-                              <MenuList
-                                boxShadow="lg"
-                                borderRadius="lg"
-                                zIndex="10"
-                                padding="0"
-                                width={menuWidth}
-                                border="none"
-                              >
-                                {originalPlan.plans.map((option) => (
-                                  <MenuItem
-                                    key={option.plan_id}
-                                    onClick={() => setSelectedPlanID(option.plan_id)}
-                                    fontSize="md"
-                                    color="auto"
-                                    background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                    _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
-                                    padding="10px"
+          {checkInfoLoader
+            ? <LoaderScreen />
+            : (
+              <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
+                {originalPlan?.title ? (
+                  <Flex alignItems="start" flexDirection="column" gridGap="10px" padding="16px" borderRadius="22px" background={showPriceInformation ? 'transparent' : backgroundColor}>
+                    <Text size="18px">
+                      {t('you-are-getting')}
+                    </Text>
+                    <Flex gridGap="7px" width="full">
+                      {!showPriceInformation && <Icon icon="4Geeks-avatar" width="56px" height="57px" maxHeight="57px" borderRadius="50%" background="blue.default" />}
+                      <Flex flexDirection="column" gridGap="7px" justifyContent="center" width="100%" ref={flexRef}>
+                        <Heading fontSize={showPriceInformation ? '38px' : '22px'}>
+                          {originalPlan?.title}
+                        </Heading>
+                        <Flex justifyContent="space-between" width="full" alignItems="center">
+                          {originalPlan?.selectedPlan?.isFreeTier ? (
+                            <Text size="16px" color="green.400">
+                              {originalPlan?.selectedPlan?.description || 'Free plan'}
+                            </Text>
+                          ) : (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) && (
+                            <Text size="16px" color="green.400">
+                              {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+                            </Text>
+                          )}
+                          {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
+                            <Flex flexDirection="column" gap="4px">
+                              <Heading as="h3" size="sm" width="100%" position="relative">
+                                <Menu>
+                                  <MenuButton
+                                    as={Button}
+                                    background={useColorModeValue('#eefaf8', 'blue.400')}
+                                    _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
+                                    _active="none"
+                                    padding="8px"
+                                    borderRadius="md"
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    onClick={() => setIsOpenned(true)}
                                   >
-                                    <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                      <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                        {`${option?.price} / ${option?.title}`}
-                                      </Text>
-                                      {option.plan_id === selectedPlanCheckoutData?.plan_id
-                                        && (
-                                          <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
-                                        )}
-                                    </Flex>
-                                  </MenuItem>
-                                ))}
-                              </MenuList>
-                            </Menu>
-                          </Heading>
-                        </Flex>
-                      )}
-                    </Flex>
-                  </Flex>
-                </Flex>
-                {showPriceInformation && (
-                  <Formik
-                    initialValues={{
-                      coupons: couponValue || '',
-                    }}
-                    onSubmit={(_, actions) => {
-                      setCouponError(false);
-                      handleCoupon(discountCode, actions, true);
-                    }}
-                  >
-                    {({ isSubmitting }) => (
-                      <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
-                        <Flex gridGap="15px" width="100%">
-                          <InputGroup size="md">
-                            <Input
-                              value={discountCode}
-                              borderColor={couponError ? 'red.light' : 'inherit'}
-                              disabled={discountCoupon?.slug || isPaymentSuccess}
-                              width="100%"
-                              _disabled={{
-                                borderColor: discountCoupon?.slug ? 'success' : 'inherit',
-                                opacity: 1,
-                              }}
-                              letterSpacing="0.05em"
-                              placeholder="Discount code"
-                              onChange={(e) => {
-                                const { value } = e.target;
-                                const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
-                                setDiscountCode(couponInputValue.replace(/\s/g, '-'));
-                                if (value === '') {
-                                  setDiscountCoupon(null);
-                                  setCouponError(false);
-                                }
-                              }}
-                            />
-                            {discountCoupon?.slug && (
-                              <InputRightElement width="35px">
-                                <Button
-                                  variant="unstyled"
-                                  aria-label="Remove coupon"
-                                  minWidth="auto"
-                                  padding="10px"
-                                  height="auto"
-                                  onClick={() => {
-                                    saveCouponToBag([''], checkoutData?.id);
-                                    removeSessionStorageItem('coupon');
-                                    setDiscountCode('');
-                                    setDiscountCoupon(null);
-                                    setCouponError(false);
-                                  }}
-                                >
-                                  <Icon icon="close" color="currentColor" width="10px" height="10px" />
-                                </Button>
-                              </InputRightElement>
-                            )}
-                          </InputGroup>
-                          {!discountCoupon?.slug && !isPaymentSuccess && (
-                            <Button
-                              width="auto"
-                              type="submit"
-                              isLoading={isSubmitting}
-                              height="auto"
-                              variant="outline"
-                              fontSize="17px"
-                            >
-                              {`+ ${t('add')}`}
-                            </Button>
+                                    <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
+                                      <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
+                                      <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
+                                    </Box>
+                                  </MenuButton>
+                                  <MenuList
+                                    boxShadow="lg"
+                                    borderRadius="lg"
+                                    zIndex="10"
+                                    padding="0"
+                                    width={menuWidth}
+                                    border="none"
+                                  >
+                                    {originalPlan.plans.map((option) => (
+                                      <MenuItem
+                                        key={option.plan_id}
+                                        onClick={() => setSelectedPlanID(option.plan_id)}
+                                        fontSize="md"
+                                        color="auto"
+                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
+                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
+                                        padding="10px"
+                                      >
+                                        <Flex justifyContent="space-between" alignItems="center" width="100%">
+                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
+                                            {`${option?.price} / ${option?.title}`}
+                                          </Text>
+                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
+                                            && (
+                                              <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
+                                            )}
+                                        </Flex>
+                                      </MenuItem>
+                                    ))}
+                                  </MenuList>
+                                </Menu>
+                              </Heading>
+                            </Flex>
                           )}
                         </Flex>
-                      </Form>
-                    )}
-                  </Formik>
-                )}
-                <Divider borderBottomWidth="2px" />
-                {originalPlan?.accordionList?.length > 0 && (
-                  <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
-                    <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[]}>
-                      <AccordionItem display="flex" gridGap="10px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
-                        {({ isExpanded }) => (
-                          <>
-                            <Heading as="h3">
-                              <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0">
-                                <Box as="span" flex="1" fontSize="14px" textAlign="left">
-                                  <Text size="lg">{t('course-details')}</Text>
-                                </Box>
-                                <AccordionIcon
-                                  display="block"
-                                  width="30px"
-                                  height="30px"
-                                  color="blue.1000"
-                                  transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
-                                />
-                              </AccordionButton>
-                            </Heading>
-                            <AccordionPanel padding="0" fontSize="14px">
-                              <Flex direction="column" gap="20px">
-                                {originalPlan?.accordionList?.map((item) => (
-                                  <>
-                                    <Flex justifyContent="center" direction="column">
-                                      <Flex alignItems="center">
-                                        <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" marginRight="10px" />
-                                        <Text size="lg">{item?.title}</Text>
-                                      </Flex>
-                                      <Text size="md">{item?.description}</Text>
-                                    </Flex>
-                                  </>
-                                ))}
-                              </Flex>
-                            </AccordionPanel>
-                          </>
-                        )}
-                      </AccordionItem>
-                    </Accordion>
-                  </Flex>
-                )}
-                {showPriceInformation && (
-                  <>
-                    <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
-                      <Text size="18px" color="currentColor" lineHeight="normal">
-                        Subtotal:
-                      </Text>
-                      <Text size="18px" color="currentColor" lineHeight="normal">
-                        {selectedPlanCheckoutData?.price <= 0
-                          ? selectedPlanCheckoutData?.priceText
-                          : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
-                      </Text>
+                      </Flex>
                     </Flex>
-                    <Divider margin="6px 0" />
-
-                    {allCoupons?.length > 0
-                      && allCoupons.map((coup, index) => (
-                        <Flex direction="row" justifyContent="space-between" w="100%">
-                          <Flex gap="10px">
-                            <Text size="lg">{coup?.slug}</Text>
-                            <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
-                              <Text color={hexColor.green} fontWeight="700">
-                                {coup?.discount_value ? t('discount-value-off', { value: `${coup.discount_value * 100}%` }) : ''}
-                              </Text>
-                            </Box>
-                          </Flex>
-                          <Flex gridGap="1rem">
-                            {processedPrice?.originalPrice && (
-                              <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                                {`$${allDiscounts[index]?.originalPrice}`}
-                              </Text>
+                    {showPriceInformation && (
+                      <Formik
+                        initialValues={{
+                          coupons: couponValue || '',
+                        }}
+                        onSubmit={(_, actions) => {
+                          setCouponError(false);
+                          handleCoupon(discountCode, actions, true);
+                        }}
+                      >
+                        {({ isSubmitting }) => (
+                          <Form style={{ display: isPaymentSuccess ? 'none' : 'block', width: '100%' }}>
+                            <Flex gridGap="15px" width="100%">
+                              <InputGroup size="md">
+                                <Input
+                                  value={discountCode}
+                                  borderColor={couponError ? 'red.light' : 'inherit'}
+                                  disabled={discountCoupon?.slug || isPaymentSuccess}
+                                  width="100%"
+                                  _disabled={{
+                                    borderColor: discountCoupon?.slug ? 'success' : 'inherit',
+                                    opacity: 1,
+                                  }}
+                                  letterSpacing="0.05em"
+                                  placeholder="Discount code"
+                                  onChange={(e) => {
+                                    const { value } = e.target;
+                                    const couponInputValue = value.replace(/[^a-zA-Z0-9-\s]/g, '');
+                                    setDiscountCode(couponInputValue.replace(/\s/g, '-'));
+                                    if (value === '') {
+                                      setDiscountCoupon(null);
+                                      setCouponError(false);
+                                    }
+                                  }}
+                                />
+                                {discountCoupon?.slug && (
+                                  <InputRightElement width="35px">
+                                    <Button
+                                      variant="unstyled"
+                                      aria-label="Remove coupon"
+                                      minWidth="auto"
+                                      padding="10px"
+                                      height="auto"
+                                      onClick={() => {
+                                        saveCouponToBag([''], checkoutData?.id);
+                                        removeSessionStorageItem('coupon');
+                                        setDiscountCode('');
+                                        setDiscountCoupon(null);
+                                        setCouponError(false);
+                                      }}
+                                    >
+                                      <Icon icon="close" color="currentColor" width="10px" height="10px" />
+                                    </Button>
+                                  </InputRightElement>
+                                )}
+                              </InputGroup>
+                              {!discountCoupon?.slug && !isPaymentSuccess && (
+                                <Button
+                                  width="auto"
+                                  type="submit"
+                                  isLoading={isSubmitting}
+                                  height="auto"
+                                  variant="outline"
+                                  fontSize="17px"
+                                >
+                                  {`+ ${t('add')}`}
+                                </Button>
+                              )}
+                            </Flex>
+                          </Form>
+                        )}
+                      </Formik>
+                    )}
+                    <Divider borderBottomWidth="2px" />
+                    {originalPlan?.accordionList?.length > 0 && (
+                      <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
+                        <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[]}>
+                          <AccordionItem display="flex" gridGap="10px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
+                            {({ isExpanded }) => (
+                              <>
+                                <Heading as="h3">
+                                  <AccordionButton cursor="pointer" _hover={{ backgroundColor: 'transparent' }} padding="0">
+                                    <Box as="span" flex="1" fontSize="14px" textAlign="left">
+                                      <Text size="lg">{t('course-details')}</Text>
+                                    </Box>
+                                    <AccordionIcon
+                                      display="block"
+                                      width="30px"
+                                      height="30px"
+                                      color="blue.1000"
+                                      transform={isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)'}
+                                    />
+                                  </AccordionButton>
+                                </Heading>
+                                <AccordionPanel padding="0" fontSize="14px">
+                                  <Flex direction="column" gap="20px">
+                                    {originalPlan?.accordionList?.map((item) => (
+                                      <>
+                                        <Flex justifyContent="center" direction="column">
+                                          <Flex alignItems="center">
+                                            <Icon icon="checked2" color={hexColor.blueDefault} width="16px" height="16px" marginRight="10px" />
+                                            <Text size="lg">{item?.title}</Text>
+                                          </Flex>
+                                          <Text size="md">{item?.description}</Text>
+                                        </Flex>
+                                      </>
+                                    ))}
+                                  </Flex>
+                                </AccordionPanel>
+                              </>
                             )}
+                          </AccordionItem>
+                        </Accordion>
+                      </Flex>
+                    )}
+                    {showPriceInformation && (
+                      <>
+                        <Flex justifyContent="space-between" width="100%" padding="3rem 0px 0">
+                          <Text size="18px" color="currentColor" lineHeight="normal">
+                            Subtotal:
+                          </Text>
+                          <Text size="18px" color="currentColor" lineHeight="normal">
+                            {selectedPlanCheckoutData?.price <= 0
+                              ? selectedPlanCheckoutData?.priceText
+                              : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                          </Text>
+                        </Flex>
+                        <Divider margin="6px 0" />
+
+                        {allCoupons?.length > 0
+                          && allCoupons.map((coup, index) => (
+                            <Flex direction="row" justifyContent="space-between" w="100%">
+                              <Flex gap="10px">
+                                <Text size="lg">{coup?.slug}</Text>
+                                <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
+                                  <Text color={hexColor.green} fontWeight="700">
+                                    {coup?.discount_value ? t('discount-value-off', { value: `${coup.discount_value * 100}%` }) : ''}
+                                  </Text>
+                                </Box>
+                              </Flex>
+                              <Flex gridGap="1rem">
+                                {processedPrice?.originalPrice && (
+                                  <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
+                                    {`$${allDiscounts[index]?.originalPrice}`}
+                                  </Text>
+                                )}
+                                <Text size="18px" color="currentColor" lineHeight="normal">
+                                  {selectedPlanCheckoutData.price <= 0
+                                    ? selectedPlanCheckoutData.priceText
+                                    : `$${allDiscounts[index]?.price}`}
+                                </Text>
+                              </Flex>
+                            </Flex>
+                          ))}
+                        {allCoupons?.length > 0
+                          && <Divider margin="6px 0" />}
+                        <Flex justifyContent="space-between" width="100%">
+                          <Text size="18px" color="currentColor" lineHeight="normal">
+                            {selectedPlanCheckoutData?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
+                          </Text>
+                          <Flex gridGap="1rem">
                             <Text size="18px" color="currentColor" lineHeight="normal">
-                              {selectedPlanCheckoutData.price <= 0
-                                ? selectedPlanCheckoutData.priceText
-                                : `$${allDiscounts[index]?.price}`}
+                              {selectedPlanCheckoutData?.price <= 0
+                                ? selectedPlanCheckoutData?.priceText
+                                : `$${processedPrice?.price} ${selectedPlanCheckoutData?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>
-                      ))}
-                    {allCoupons?.length > 0
-                      && <Divider margin="6px 0" />}
-                    <Flex justifyContent="space-between" width="100%">
-                      <Text size="18px" color="currentColor" lineHeight="normal">
-                        {selectedPlanCheckoutData?.period !== 'ONE_TIME' ? t('total-now') : t('total')}
-                      </Text>
-                      <Flex gridGap="1rem">
-                        <Text size="18px" color="currentColor" lineHeight="normal">
-                          {selectedPlanCheckoutData?.price <= 0
-                            ? selectedPlanCheckoutData?.priceText
-                            : `$${processedPrice?.price} ${selectedPlanCheckoutData?.currency?.code}`}
-                        </Text>
-                      </Flex>
-                    </Flex>
-                    {selectedPlanCheckoutData?.period !== 'ONE_TIME' && selectedPlanCheckoutData?.price > 0 && (
-                      <Flex justifyContent="space-between" width="100%">
-                        <Text size="18px" color="currentColor" lineHeight="normal">
-                          {t('after-all-payments')}
-                        </Text>
-                        <Text size="18px" color="currentColor" lineHeight="normal">
-                          {selectedPlanCheckoutData.price <= 0
-                            ? selectedPlanCheckoutData.priceText
-                            : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
-                        </Text>
-                      </Flex>
+                        {selectedPlanCheckoutData?.period !== 'ONE_TIME' && selectedPlanCheckoutData?.price > 0 && (
+                          <Flex justifyContent="space-between" width="100%">
+                            <Text size="18px" color="currentColor" lineHeight="normal">
+                              {t('after-all-payments')}
+                            </Text>
+                            <Text size="18px" color="currentColor" lineHeight="normal">
+                              {selectedPlanCheckoutData.price <= 0
+                                ? selectedPlanCheckoutData.priceText
+                                : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
+                            </Text>
+                          </Flex>
+                        )}
+                      </>
                     )}
-                  </>
+                  </Flex>
+                ) : (
+                  <Skeleton height="350px" width="490px" borderRadius="11px" zIndex={10} opacity={1} />
                 )}
               </Flex>
-            ) : (
-              <Skeleton height="350px" width="490px" borderRadius="11px" zIndex={10} opacity={1} />
             )}
-          </Flex>
         </Flex>
       </Flex>
     </Box>
