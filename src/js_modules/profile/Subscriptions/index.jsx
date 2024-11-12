@@ -112,14 +112,33 @@ function Subscriptions({ cohorts }) {
     && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
       .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
-  const subscriptionFiltered = allSubscriptions?.length > 0 ? allSubscriptions.filter((subscription) => {
-    const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-    const suggestedPlan = (subscription?.planOffer?.slug === undefined && subscription?.planOffer?.status) || allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
+  const prioritizeStatus = ['fully_paid', 'active', 'payment_issue', 'expired', 'cancelled', 'error'];
 
-    // Ignore free_trial subscription if plan_offer already exists in list
-    if (isFreeTrial && suggestedPlan !== undefined) return false;
-    return true;
-  }) : [];
+  const subscriptionsFilter = allSubscriptions?.length > 0 ? allSubscriptions
+    .filter((subscription) => {
+      const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
+      const suggestedPlan = (subscription?.planOffer?.slug === undefined && subscription?.planOffer?.status)
+        || allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
+
+      // Ignore free_trial subscription if plan_offer already exists in list
+      if (isFreeTrial && suggestedPlan !== undefined) return false;
+      return true;
+    }).reduce((acc, subscription) => {
+      const planSlug = subscription?.plans?.[0]?.slug;
+
+      if (!planSlug) return acc;
+
+      if (!acc[planSlug]
+        || prioritizeStatus.indexOf(subscription?.status?.toLowerCase())
+        < prioritizeStatus.indexOf(acc[planSlug]?.status?.toLowerCase())) {
+        acc[planSlug] = subscription;
+      }
+
+      return acc;
+    }, {})
+    : [];
+
+  const subscriptionFiltered = Object.values(subscriptionsFilter);
 
   const closeMentorshipsModal = () => setServicesModal(null);
 
@@ -391,14 +410,13 @@ function Subscriptions({ cohorts }) {
                       </Text>
                     </Flex>
                   </Flex>
-                  {!isTotallyFree && (
-                    <ButtonHandler
-                      subscription={subscription}
-                      onOpenUpgrade={onOpenUpgrade}
-                      setSubscriptionProps={setSubscriptionProps}
-                      onOpenCancelSubscription={onOpenCancelSubscription}
-                    />
-                  )}
+                  <ButtonHandler
+                    subscription={subscription}
+                    allSubscriptions={subscriptionFiltered}
+                    onOpenUpgrade={onOpenUpgrade}
+                    setSubscriptionProps={setSubscriptionProps}
+                    onOpenCancelSubscription={onOpenCancelSubscription}
+                  />
                 </Flex>
               </Flex>
             );
