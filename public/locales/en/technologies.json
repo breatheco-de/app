@@ -14,7 +14,9 @@
     "subTitle": "Lessons, exercises, and projects about {{technology}}",
     "defaultDescription": "This tutorial its part of a bigger group of tutorials about web development."
   },
+  "tech-materials": "{{tech}} learning materials",
   "request-mentorship": "Request a mentorship",
+  "popular-exercises": "Popular exercises",
   "lessons-section": "Lessons section",
   "exercises-section": "Exercises section",
   "projects-section": "Projects section",

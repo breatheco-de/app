@@ -99,8 +99,11 @@ function LessonByTechnology({ data, technologyData, technologiesAvailable }) {
     }
   }, [data]);
 
-  // console.log(data);
-  console.log(technologyData);
+  const exercises = data.filter((asset) => asset.asset_type === 'EXERCISE');
+  const lessonMaterials = data.filter((asset) => asset.asset_type !== 'EXERCISE');
+
+  console.log(data);
+  // console.log(technologyData);
   // console.log(technologiesAvailable);
 
   return technologyData?.slug && data?.length > 0 && (
@@ -116,24 +119,15 @@ function LessonByTechnology({ data, technologyData, technologiesAvailable }) {
           </>
         ))}
       </Box>
-      <Flex
-        height="100%"
-        padding="0 10px"
-        gap="10px"
-      >
+      <Flex height="100%" padding="0 10px" gap="10px" flexWrap="wrap">
         <Flex direction="column" pb="15px" flexGrow="1">
-          <Heading
-            as="h1"
-            display="inline-block"
-            fontWeight="700"
-            paddingBottom="6px"
-          >
+          <Heading as="h1" display="inline-block" fontWeight="700" paddingBottom="6px">
             {t('landing-technology.title', { technology: toCapitalize(technologyData?.title) })}
           </Heading>
           <Text size="md">
             {technologyData?.description ? technologyData?.description : t('landing-technology.defaultDescription')}
           </Text>
-          <Flex gap="10px" marginTop="10px">
+          <Flex gap="10px" marginTop="10px" wrap="wrap">
             <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none">
               {`${technologyData?.title} roadmaps`}
               <Icon color="white" icon="longArrowRight" />
@@ -143,7 +137,8 @@ function LessonByTechnology({ data, technologyData, technologiesAvailable }) {
             </Button>
           </Flex>
         </Flex>
-        <Box flexGrow="1" width="624px" height="344px">
+
+        <Box flexGrow="1" maxWidth="624px" width="100%">
           <ReactPlayerV2
             url={technologyData?.videoUrl || 'https://example.com/video.mp4'}
             thumbnail={technologyData?.thumbnail}
@@ -151,19 +146,52 @@ function LessonByTechnology({ data, technologyData, technologiesAvailable }) {
             withThumbnail
             withModal
             title={technologyData?.title || 'Technology Video'}
-            iframeStyle={{ borderRadius: '8px' }}
+            iframeStyle={{
+              borderRadius: '8px',
+              width: '100%',
+              maxHeight: '344px',
+              aspectRatio: '16/9',
+            }}
           />
         </Box>
       </Flex>
-      <Flex flexDirection="column" gridGap="3rem">
-        <Box display="flex" flexDirection="column" gridGap="18px">
-          <ProjectList
-            projects={data}
-            withoutImage
-            isDynamic
-            notFoundMessage={t('common:asset-not-found-in-current-language')}
-          />
-        </Box>
+      <Flex marginTop="20px" flexDirection="column" gap="15px">
+        <Heading as="h2" fontSize="30px" fontWeight="700">
+          {t('popular-exercises')}
+        </Heading>
+        <Flex gap="10px" width="100%">
+          {exercises.length > 0
+            ? (
+              <ProjectList
+                projects={exercises}
+                withoutImage
+                isDynamic
+                notFoundMessage={t('common:asset-not-found-in-current-language')}
+              />
+            ) : (
+              <>
+              </>
+            )}
+        </Flex>
+      </Flex>
+      <Flex marginTop="50px" flexDirection="column" gap="15px">
+        <Heading as="h2" fontSize="30px" fontWeight="700">
+          {t('tech-materials', { tech: technologyData?.title })}
+        </Heading>
+        <Flex gap="10px" width="100%">
+          {exercises.length > 0
+            ? (
+              <ProjectList
+                projects={lessonMaterials}
+                withoutImage
+                isDynamic
+                notFoundMessage={t('common:asset-not-found-in-current-language')}
+              />
+            ) : (
+              <>
+              </>
+            )}
+        </Flex>
       </Flex>
     </Container>
   );
