@@ -227,7 +227,8 @@ function FinalProjects({ finalProjects, loadStatus, updpateProject }) {
   const router = useRouter();
   const { query } = router;
   const { cohortSlug } = query;
-  const { fontColor3 } = useStyle();
+  const { fontColor3, backgroundColor3 } = useStyle();
+
   const [pendingStudents, setPendingStudents] = useState([]);
   const [openStudentsModal, setOpenStudentsModal] = useState(false);
 
@@ -294,8 +295,7 @@ function FinalProjects({ finalProjects, loadStatus, updpateProject }) {
                   key={student.id}
                   padding="8px 22px"
                   borderRadius="11px"
-                  color="blue.1000"
-                  background="gray.light3"
+                  background={backgroundColor3}
                   display="flex"
                   alignItems="center"
                   gap="10px"
