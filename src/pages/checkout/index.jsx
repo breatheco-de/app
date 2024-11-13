@@ -713,6 +713,7 @@ function Checkout() {
           flex={{ base: '1', md: '0.5' }}
           style={{ flexShrink: 0, flexGrow: 1 }}
           overflow="auto"
+          overflowX="hidden"
           maxWidth={{ base: '100%', md: '50%' }}
         >
           {checkInfoLoader
