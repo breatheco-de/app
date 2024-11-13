@@ -27,7 +27,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['shell', 'windows', 'mac', 'linux'];
+const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
 
 export const languagesLabels = {
   jsx: 'JS',
@@ -74,6 +74,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
   const isCodeForPreview = languages.some(({ language }) => language.toLowerCase() === 'html');
+  const isNotExecutable = notExecutables.includes(languages[tabIndex]?.language);
 
   const handleTouchStart = (event) => {
     event.preventDefault();
@@ -232,7 +233,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
             bg="blue.500"
             borderRadius="1px"
           />
-          {!notExecutables.includes(languages[tabIndex]?.language) && languages[tabIndex]?.code.trim() !== '' && (
+          {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
             <>
               {languages[tabIndex]?.running ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
