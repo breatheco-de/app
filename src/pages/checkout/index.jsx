@@ -518,7 +518,6 @@ function Checkout() {
   useEffect(() => {
     if (!selectedPlanID) return;
     setCheckInfoLoader(true);
-    setMenuWidth('auto');
     handleChecking({ plan: cohortPlans[0]?.plan })
       .then((checkingData) => {
         const autoSelectedPlan = findAutoSelectedPlan(checkingData);
@@ -717,7 +716,7 @@ function Checkout() {
           maxWidth={{ base: '100%', md: '50%' }}
         >
           {checkInfoLoader
-            ? <LoaderScreen />
+            ? <LoaderScreen background={backgroundColor3} />
             : (
               <Flex display={{ base: isPaymentSuccess ? 'none' : 'flex', md: 'flex' }} flexDirection="column" width={{ base: 'auto', md: '100%' }} maxWidth="490px" margin={{ base: '2rem 10px 2rem 10px', md: showPriceInformation ? '4rem 0' : '6.2rem 0' }} height="100%" zIndex={10}>
                 {originalPlan?.title ? (
