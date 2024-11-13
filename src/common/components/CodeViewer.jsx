@@ -130,11 +130,10 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     setLanguages(updatedLanguages);
   };
 
-  // eslint-disable-next-line consistent-return
   const run = async () => {
-    if (isAuthenticated || allowNotLogged) {
+    if (isCodeForPreview) showCodePreview();
+    else if (isAuthenticated || allowNotLogged) {
       try {
-        if (isCodeForPreview) return showCodePreview();
         const currLanguage = { ...languages[tabIndex], running: true, output: null };
         setLanguages([
           ...languages.slice(0, tabIndex),
