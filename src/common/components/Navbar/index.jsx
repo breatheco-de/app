@@ -77,8 +77,6 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   } = navbarTR[locale];
   const translationsPropsExists = translations?.length > 0;
 
-  const { selectedProgramSlug } = cohortSession;
-
   const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
 
   const whiteLabelitems = t('white-label-version-items', {
@@ -86,7 +84,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   }, { returnObjects: true });
 
   const items = t('ITEMS', {
-    selectedProgramSlug: selectedProgramSlug || '/choose-program',
+    selectedProgramSlug: programSlug,
   }, { returnObjects: true });
 
   axios.defaults.headers.common['Accept-Language'] = locale;
@@ -171,7 +169,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
       }
     }
-  }, [user, userCohorts, isLoading, selectedProgramSlug, mktCourses, router.locale, location]);
+  }, [user, userCohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
 
   const closeSettings = () => {
     setSettingsOpen(false);

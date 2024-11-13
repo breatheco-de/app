@@ -128,6 +128,9 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
+        console.log('currentCohort');
+        console.log(currentCohort);
+
         setCohortSession(currentCohort);
         setMyCohorts(parsedCohorts);
         return currentCohort;
@@ -205,7 +208,7 @@ function useCohortHandler() {
 
   const getTasksWithoutCohort = ({ setModalIsOpen }) => {
     // Tasks with cohort null
-    if (router.asPath === cohortSession.selectedProgramSlug) {
+    if (router.asPath === cohortSession?.selectedProgramSlug) {
       bc.todo({ cohort: null }).getTaskByStudent()
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(

@@ -26,7 +26,7 @@ function Header() {
     try {
       const { data } = await bc.mentorship({
         status: 'ACTIVE',
-        academy: cohortSession?.academy.id,
+        academy: cohortSession?.academy?.id,
       }).getMentor();
       setMentors(data);
     } catch (e) {

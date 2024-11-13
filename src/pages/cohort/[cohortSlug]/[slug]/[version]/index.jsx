@@ -6,7 +6,7 @@ import {
   Box, Flex, Container, useColorModeValue, Skeleton, useToast,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
-  Modal, ModalBody, ModalCloseButton, ModalContent,
+  Img, Modal, ModalBody, ModalCloseButton, ModalContent,
   ModalHeader, ModalOverlay, Button, Accordion, AccordionItem, AccordionButton, AccordionPanel,
 } from '@chakra-ui/react';
 // import io from 'socket.io-client';
@@ -29,6 +29,7 @@ import TagCapsule from '../../../../../common/components/TagCapsule';
 import ModuleMap from '../../../../../js_modules/moduleMap/index';
 import Module from '../../../../../js_modules/moduleMap/module';
 import Header from '../../../../../js_modules/Cohort/Header';
+import CohortModules from '../../../../../js_modules/Cohort/CohortModules';
 import CohortSideBar from '../../../../../common/components/CohortSideBar';
 import Icon from '../../../../../common/components/Icon';
 import SupportSidebar from '../../../../../common/components/SupportSidebar';
@@ -86,6 +87,8 @@ function Dashboard() {
   } = useCohortHandler();
 
   const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
+
+  const isAvailableAsSaas = cohortSession?.available_as_saas;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -228,7 +231,7 @@ function Dashboard() {
     if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       checkNavigationAvailability();
     }
-    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
+    if (cohortSession?.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   useEffect(() => {
@@ -406,9 +409,11 @@ function Dashboard() {
     return filtered.length !== 0;
   }) : sortedAssignments;
 
+  const mandatoryProjects = getMandatoryProjects();
+
   return (
     <>
-      {/* {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
+      {mandatoryProjects && mandatoryProjects.length > 0 && (
         <AlertMessage
           full
           type="warning"
@@ -419,7 +424,7 @@ function Dashboard() {
             color="black"
             fontWeight="700"
           >
-            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
+            {t('deliverProject.mandatory-message', { count: mandatoryProjects.length })}
             {'  '}
             <Button
               variant="link"
@@ -435,7 +440,7 @@ function Dashboard() {
             </Button>
           </Text>
         </AlertMessage>
-      )} */}
+      )}
       {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
         <AlertMessage
           full
@@ -451,48 +456,68 @@ function Dashboard() {
           />
         </AlertMessage>
       )}
-      <Header />
-      <Container background={hexColor.lightColor4} maxW="container.xl" maxWidth="none">
-
+      {isAvailableAsSaas && (
+        <Header />
+      )}
+      <Container maxW="container.xl" maxWidth="none">
+        <Box
+          width="100%"
+          margin="18px auto"
+          maxWidth="1280px"
+        >
+          <NextChakraLink
+            href="/choose-program"
+            display="flex"
+            flexDirection="row"
+            alignItems="center"
+            onClick={() => {
+              setSortedAssignments([]);
+            }}
+            fontWeight="700"
+            gridGap="12px"
+            color="#0097CF"
+            _focus={{ boxShadow: 'none', color: '#0097CF' }}
+          >
+            <Icon
+              icon="arrowLeft"
+              width="20px"
+              height="20px"
+              style={{ marginRight: '7px' }}
+              color="currentColor"
+            />
+            <span>
+              {t('backToChooseProgram')}
+            </span>
+          </NextChakraLink>
+        </Box>
         <Flex
           justifyContent="space-between"
-          maxWidth="1200px"
+          maxWidth="1280px"
           margin="auto"
           flexDirection={{
             base: 'column', sm: 'column', md: 'row', lg: 'row',
           }}
         >
           <Box width="100%" minW={{ base: 'auto', md: 'clamp(300px, 60vw, 770px)' }}>
-            <Box width="fit-content" margin="18px 0">
-              <NextChakraLink
-                href="/choose-program"
-                display="flex"
-                flexDirection="row"
-                alignItems="center"
-                onClick={() => {
-                  setSortedAssignments([]);
-                }}
-                fontWeight="700"
-                gridGap="12px"
-                color="#0097CF"
-                _focus={{ boxShadow: 'none', color: '#0097CF' }}
-              >
-                <Icon
-                  icon="arrowLeft"
-                  width="20px"
-                  height="20px"
-                  style={{ marginRight: '7px' }}
-                  color="currentColor"
-                />
-                <span>
-                  {t('backToChooseProgram')}
-                </span>
-              </NextChakraLink>
-            </Box>
-            {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess ? (
-              <Heading as="h1" size="xl">
-                {cohortSession?.syllabus_version?.name || cohortProgram.name}
-              </Heading>
+            {cohortSession ? (
+              <>
+                {isAvailableAsSaas ? (
+                  <Box display="flex" alignItems="center" gap="10px">
+                    <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                    <Heading as="h1" size="m">
+                      {cohortSession.syllabus_version?.name || cohortProgram.name}
+                    </Heading>
+                  </Box>
+                ) : (
+                  <>
+                    {(cohortSession?.syllabus_version?.name || cohortProgram?.name) && grantAccess && (
+                    <Heading as="h1" size="xl">
+                      {cohortSession?.syllabus_version?.name || cohortProgram.name}
+                    </Heading>
+                    )}
+                  </>
+                )}
+              </>
             ) : (
               <Skeleton
                 startColor={skeletonStartColor}
@@ -503,18 +528,22 @@ function Dashboard() {
               />
             )}
 
-            {/* {mainTechnologies && grantAccess ? (
-              <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
-            ) : (
-              <SimpleSkeleton
-                height="34px"
-                width="290px"
-                padding="6px 18px 6px 18px"
-                margin="18px 0"
-                borderRadius="30px"
-              />
-            )} */}
-            {/* {isBelowTablet && (
+            {!isAvailableAsSaas && (
+              <>
+                {mainTechnologies && grantAccess ? (
+                  <TagCapsule variant="rounded" gridGap="10px" containerStyle={{ padding: '0px' }} tags={mainTechnologies} style={{ padding: '6px 10px' }} />
+                ) : (
+                  <SimpleSkeleton
+                    height="34px"
+                    width="290px"
+                    padding="6px 18px 6px 18px"
+                    margin="18px 0"
+                    borderRadius="30px"
+                  />
+                )}
+              </>
+            )}
+            {isBelowTablet && !isAvailableAsSaas && (
               <Box
                 display={{ base: 'flex', md: 'none' }}
                 flexDirection="column"
@@ -578,11 +607,11 @@ function Dashboard() {
                   />
                 )}
               </Box>
-            )} */}
+            )}
             {cohortSession?.intro_video && cohortUserDaysCalculated?.isRemainingToExpire === false && (
               <>
                 {grantAccess ? (
-                  <Accordion defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
+                  <Accordion mt="20px" defaultIndex={cohortUserDaysCalculated?.result <= 3 ? [0] : [1]} allowMultiple>
                     <AccordionItem background={featuredColor} borderRadius="17px" border="0">
                       {({ isExpanded }) => (
                         <>
@@ -616,7 +645,7 @@ function Dashboard() {
               </>
             )}
 
-            {/* {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
+            {!cohortSession?.available_as_saas && cohortSession?.current_module && dailyModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
@@ -628,7 +657,7 @@ function Dashboard() {
               />
             )}
 
-            {cohortSession?.available_as_saas && lastTaskDoneModuleData && (
+            {/* {cohortSession?.available_as_saas && lastTaskDoneModuleData && (
               <CallToAction
                 background="blue.default"
                 margin="40px 0 auto 0"
@@ -640,7 +669,7 @@ function Dashboard() {
               />
             )} */}
 
-            {/* {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
+            {(!cohortSession?.intro_video || ['TEACHER', 'ASSISTANT'].includes(cohortSession?.cohort_role) || (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result >= 3)) && (
               <Box marginTop="36px">
                 <ProgressBar
                   cohortProgram={cohortProgram}
@@ -649,11 +678,11 @@ function Dashboard() {
                   width="100%"
                 />
               </Box>
-            )} */}
+            )}
 
-            {/* <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" /> */}
+            <Box height={useColorModeValue('1px', '2px')} bg={useColorModeValue('gray.200', 'gray.700')} marginY="32px" />
 
-            {/* <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
+            <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} justifyContent="space-between" gridGap="18px">
               <Heading as="h2" fontWeight="900" size="15px" textTransform="uppercase">{t('moduleMap')}</Heading>
 
               <Box display="flex" alignItems="center">
@@ -690,7 +719,10 @@ function Dashboard() {
                   </Checkbox>
                 )}
               </Box>
-            </Box> */}
+            </Box>
+            {cohortSession && isAvailableAsSaas && (
+              <CohortModules cohort={cohortSession} />
+            )}
             <Box
               id="module-map"
               marginTop="30px"
@@ -746,9 +778,9 @@ function Dashboard() {
             </Box>
 
           </Box>
-          {/* <Box width="5rem" /> */}
+          {!isAvailableAsSaas && (<Box width="5rem" />)}
 
-          {/* {!isBelowTablet && (
+          {!isBelowTablet && (
             <Box
               display={{ base: 'none', md: 'flex' }}
               flexDirection="column"
@@ -821,7 +853,7 @@ function Dashboard() {
               )}
               <Feedback />
             </Box>
-          )} */}
+          )}
         </Flex>
       </Container>
       {showGithubWarning === 'active' && (
@@ -921,7 +953,7 @@ function Dashboard() {
             <Text color={hexColor.fontColor3} fontSize="14px" lineHeight="24px" marginBottom="15px" fontWeight="400">
               {t('mandatoryProjects.description')}
             </Text>
-            {getMandatoryProjects().map((module, i) => (
+            {mandatoryProjects.map((module, i) => (
               <Module
                 // eslint-disable-next-line react/no-array-index-key
                 key={`${module.title}-${i}`}

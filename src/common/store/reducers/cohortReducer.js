@@ -8,7 +8,7 @@ import {
 
 const initialState = {
   myCohorts: [],
-  cohortSession: {},
+  cohortSession: null,
   sortedAssignments: [],
   taskCohortNull: [],
   userCapabilities: [],

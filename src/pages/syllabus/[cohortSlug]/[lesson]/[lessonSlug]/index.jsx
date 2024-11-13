@@ -314,7 +314,7 @@ function SyllabusContent() {
 
       setGrantAccess(true);
     }
-    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false) setGrantAccess(true);
+    if (cohortSession?.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
@@ -481,7 +481,7 @@ function SyllabusContent() {
     prepareTasks();
   }, [cohortProgram, taskTodo, router]);
 
-  const teacherActions = professionalRoles.includes(cohortSession.cohort_role)
+  const teacherActions = professionalRoles.includes(cohortSession?.cohort_role)
     ? [
       {
         icon: 'key',
@@ -773,7 +773,7 @@ function SyllabusContent() {
             setShowPendingTasks={setShowPendingTasks}
             isOpen={isOpen}
             onToggle={onToggle}
-            isStudent={!professionalRoles.includes(cohortSession.cohort_role)}
+            isStudent={!professionalRoles.includes(cohortSession?.cohort_role)}
             teacherInstructions={{
               existContentToShow: extendedInstructions !== null,
               actionHandler: () => {
