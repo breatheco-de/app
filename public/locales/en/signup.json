@@ -120,7 +120,7 @@
     "free-trial-period": "Free trial for {{qty}} {{period}}",
     "trial": "Trial for 1 month",
     "trial-week": "Trial for 1 week",
-    "monthly": "Monthly",
+    "monthly": "One month",
     "one-time-payment": "one-time payment",
     "one-time-connector": "One-time payment of ${{value}} dollars",
     "installments": "Installments",

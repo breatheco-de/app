@@ -144,7 +144,7 @@ function SyllabusContent() {
     const iframe = 'true';
     const token = userToken;
 
-    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
 
