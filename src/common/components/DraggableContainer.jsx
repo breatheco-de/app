@@ -1,11 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, forwardRef } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Container,
-} from '@chakra-ui/react';
+import { Container } from '@chakra-ui/react';
 
-function DraggableContainer({ children, isDraggable, ...rest }) {
-  const ref = useRef();
+const DraggableContainer = forwardRef(({ children, isDraggable, ...rest }, ref) => {
+  const internalRef = useRef();
+  const scrollRef = ref || internalRef;
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
@@ -15,8 +14,8 @@ function DraggableContainer({ children, isDraggable, ...rest }) {
     if (!isDraggable) return;
     setIsDown(true);
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    setStartX(pageX - ref.current.offsetLeft);
-    setScrollLeft(ref.current.scrollLeft);
+    setStartX(pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
   };
 
   const onMouseLeave = () => {
@@ -31,17 +30,17 @@ function DraggableContainer({ children, isDraggable, ...rest }) {
     if (!isDown || !isDraggable) return;
     e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
-    const x = pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * scrollSpeed; //scroll-fast
-    ref.current.scrollLeft = scrollLeft - walk;
+    const x = pageX - scrollRef.current.offsetLeft;
+    const walk = (x - startX) * scrollSpeed;
+    scrollRef.current.scrollLeft = scrollLeft - walk;
   };
 
   return (
     <Container
-      ref={ref}
+      ref={scrollRef}
       padding="0"
       className="hideOverflowX__"
-      cursor={isDraggable && ref.current?.clientWidth !== ref.current?.scrollWidth && 'grab'}
+      cursor={isDraggable && scrollRef.current?.clientWidth !== scrollRef.current?.scrollWidth && 'grab'}
       maxW="container.xl"
       width="100%"
       overflowX="auto"
@@ -57,7 +56,7 @@ function DraggableContainer({ children, isDraggable, ...rest }) {
       {children}
     </Container>
   );
-}
+});
 
 DraggableContainer.propTypes = {
   children: PropTypes.element.isRequired,

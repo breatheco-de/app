@@ -10,11 +10,12 @@
   "search": "Buscar lección",
   "description": "Explore nuestra lista seleccionada de proyectos, ejercicios y lecciones para aprender {{technology}}",
   "landing-technology": {
-    "title": "Aprende {{technology}}",
+    "title": "Practica {{technology}}",
     "subTitle": "Lecciones, ejercicios y proyectos sobre {{technology}}",
     "defaultDescription": "Este tutorial es parte de un grupo más amplio de tutoriales sobre desarrollo web."
   },
   "tech-materials": "Materiales de aprendizaje de {{tech}}",
+  "tech-workshops": "{{tech}} workshops",
   "request-mentorship": "Solicitar una mentoria",
   "popular-exercises": "Ejercicios populares",
   "lessons-section": "Sección de lecciones",
