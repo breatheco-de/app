@@ -273,13 +273,13 @@
     }],
     "basic-plan": {
       "type": "Fly Solo",
-      "hook-message": "Try the full bootcamp experience for free and decide later",
+      "hook-message": "Try the self-paced experience for free and decide later",
       "title": "No credit card required",
       "description": "Start learning and discover our amazing content and benefits",
       "button-title": "Start for free",
       "service_items": {
         "items": [{
-          "label": "1 Live workshop"
+          "label": "Unlimited Live workshop"
         },
         {
           "label": "1 One-on-one mentoring session"
@@ -317,10 +317,10 @@
       "service_items": {
         "title": "Everything on Fly Solo plus...",
         "items": [{
-          "label": "10 Live workshops p/mo"
+          "label": "Unlimited Live workshops"
         },
         {
-          "label": "2 One-on-one Mentoring sessions p/mo"
+          "label": "4 One-on-one Mentoring sessions"
         }]
       },
       "featured_info": [{
