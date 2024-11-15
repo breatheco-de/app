@@ -44,9 +44,14 @@ function CohortModules({ cohort }) {
               <Box display="flex" justifyContent="space-between" width="100%">
                 <Box display="flex" textAlign="left" gap="10px" alignItems="center">
                   <Icon icon="badge" />
-                  <Heading size="xsm">
+                  <Heading size="18px" fontWeight="400">
                     {cohort.name}
                   </Heading>
+                  <Box padding="5px 7px" borderRadius="27px" background={cohortColor}>
+                    <Text color="white">
+                      10 Modules
+                    </Text>
+                  </Box>
                 </Box>
                 <Box display="flex" gap="5px" alignItems="center">
                   <Text>
@@ -63,11 +68,6 @@ function CohortModules({ cohort }) {
         )}
       </AccordionItem>
     </Accordion>
-  // <Box borderRadius="8px" padding="16px" borderColor={hexColor.blueDefault} border="1px solid">
-  //   <Box>
-
-  //   </Box>
-  // </Box>
   );
 }
 
