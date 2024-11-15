@@ -40,6 +40,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
+import completions from './completion-jobs.json';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -235,6 +236,7 @@ function SyllabusContent() {
         rigo.updateOptions({
           showBubble: false,
           context: aiContext.ai_context,
+          completions,
         });
       }
     } catch (e) {
@@ -725,6 +727,7 @@ function SyllabusContent() {
         rigo.updateOptions({
           showBubble: false,
           target: '#rigo-chat',
+          welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
           highlight: true,
           collapsed: false,
           purposeSlug: '4geekscom-public-agent',
