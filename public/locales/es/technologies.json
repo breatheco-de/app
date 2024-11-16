@@ -5,15 +5,19 @@
     "description": "Desbloquea el poder de programar en {{technology}} con lecciones profundas, ejercicios prácticos y proyectos reales. Domina {{technology}} en 4Geeks.com.",
     "image": "{{domain}}/static/images/image1.png"
   },
-  "backToLessons": "Regresar a lecciones",
-  "title": "{{technology}}",
-  "search": "Buscar lección",
-  "description": "Explore nuestra lista seleccionada de proyectos, ejercicios y lecciones para aprender {{technology}}",
   "landing-technology": {
     "title": "Practica {{technology}}",
     "subTitle": "Lecciones, ejercicios y proyectos sobre {{technology}}",
     "defaultDescription": "Este tutorial es parte de un grupo más amplio de tutoriales sobre desarrollo web."
   },
+  "errors":{
+    "loading-workshops": "error cargando los workshops",
+    "no-data": "No se encontró assets para esta tecnología"
+  },
+  "backToLessons": "Regresar a lecciones",
+  "title": "{{technology}}",
+  "search": "Buscar lección",
+  "description": "Explore nuestra lista seleccionada de proyectos, ejercicios y lecciones para aprender {{technology}}",
   "tech-materials": "Materiales de aprendizaje de {{tech}}",
   "tech-workshops": "{{tech}} workshops",
   "request-mentorship": "Solicitar una mentoria",
@@ -22,4 +26,5 @@
   "exercises-section": "Sección de ejercicios",
   "projects-section": "Sección de proyectos",
   "howTos-section": "Sección de tutoriales"
+
 }

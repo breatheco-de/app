@@ -91,7 +91,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   }
 
   const landingTechnology = assetList.landingTechnologies;
-  const technologyData = landingTechnology[0];
+  const technologyData = landingTechnology[0] || [];
 
   const exercises = technologyData?.assets?.filter(
     (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
@@ -137,20 +137,18 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const toast = useToast();
   const scrollRef = useRef();
   const [workshops, setWorkshops] = useState([]);
-  const techsShown = techsBySortPriority.filter((sortTech) => sortTech.slug !== technologyData.slug && sortTech.icon_url);
-  const exercises = assetData.filter((asset) => asset?.asset_type === 'EXERCISE' && asset.technologies.some((tech) => tech.slug === technologyData?.slug)).slice(0, 3);
-  const lessonMaterials = assetData.filter((asset) => asset?.asset_type !== 'EXERCISE' && asset.technologies.some((tech) => tech.slug === technologyData?.slug));
-  const [visibleItems, setVisibleItems] = useState(undefined);
+  const techsShown = techsBySortPriority?.filter((sortTech) => sortTech.slug !== technologyData.slug && sortTech.icon_url);
+  const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
+  const lessonMaterials = assetData?.filter((asset) => asset?.asset_type !== 'EXERCISE');
 
   const fetchData = async (currentLang, page, tech) => {
-    console.log('me ejecute');
     const { data } = await fetchOtherAssets(currentLang, page, tech.slug);
     return { data: data || { results: [] } };
   };
 
   const handleTechChange = (technology) => {
     if (!technology?.slug) return;
-    router.push(`/technology/${technology.slug}`);
+    router.push(`/${lang}/technology/${technology.slug}`);
   };
 
   const getWorkshops = async () => {
@@ -161,7 +159,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     } catch (err) {
       toast({
         position: 'top',
-        title: 'error loading workshops',
+        title: t('errors.loading-workshops'),
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -170,7 +168,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   };
 
   useEffect(() => {
-    getWorkshops();
+    if (assetData?.length > 0) getWorkshops();
   }, []);
 
   const scrollRight = useCallback(() => {
@@ -183,24 +181,21 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   }, []);
 
   useEffect(() => {
-    setVisibleItems(lessonMaterials.slice(0, contentPerPage));
-  }, []);
-
-  useEffect(() => {
-    if (!technologyData?.slug || assetData?.length === 0) {
-      router.push('/');
+    if ((!technologyData?.slug || assetData?.length === 0)) {
+      toast({
+        position: 'top',
+        title: t('errors.no-data'),
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      router.replace('/');
     }
-  }, [assetData]);
+  }, [technologyData?.slug, assetData]);
 
   console.log(assetData);
-  // console.log(exercises);
-  // console.log(workshops);
-  // console.log(technologyData);
-  // console.log('ASDASDASDASD', currentTech);
-  // console.log('asdasdasdasa', lessonMaterials);
-  // console.log(visibleItems);
-  // console.log(technologiesAvailable);
-  // console.log(techsBySortPriority);
+  console.log(technologyData?.slug);
+  console.log(lessonMaterials);
 
   return technologyData?.slug && assetData?.length > 0 && technologyData && (
     <Container maxWidth="1280px">
@@ -291,8 +286,8 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           )}
         </GridContainer>
       </Flex>
-      <Flex marginTop="50px" flexDirection="column" gap="15px">
-        {workshops?.length > 0 ? (
+      {workshops?.length > 0 && (
+        <Flex marginTop="50px" flexDirection="column" gap="15px">
           <Box width="100%">
             <MktEventCards
               type="carousel"
@@ -300,17 +295,16 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
               title={t('tech-workshops', { tech: technologyData?.title })}
             />
           </Box>
-        )
-          : <Text>THERE ARE NOT WORKSHIPS CURRENTLY</Text>}
-      </Flex>
+        </Flex>
+      )}
       <Flex marginTop="50px" flexDirection="column" gap="15px">
         <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
           {t('tech-materials', { tech: technologyData?.title })}
         </Heading>
-        {visibleItems?.length > 0 ? (
+        {lessonMaterials?.length > 0 ? (
           <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
             <ProjectsLoader
-              articles={assetData}
+              articles={lessonMaterials}
               itemsPerPage={contentPerPage}
               count={count}
               lang={lang}
