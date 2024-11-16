@@ -820,7 +820,7 @@ function SyllabusContent() {
                   color={hexColor.blueDefault}
                   onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'close' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 {!learnpackStart

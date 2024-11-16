@@ -75,14 +75,16 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
           {cohortSession?.syllabus_version && (
             <Box padding="16px" background={backgroundColor4} display="flex" flexDirection="column" gap="16px">
               <NextChakraLink width="fit-content" variant="ghost" display="flex" gap="10px" href={cohortSession.selectedProgramSlug}>
-                <Icon icon="layout" width="19px" height="20px" />
+                <Icon icon="arrowLeft" width="19px" height="20px" />
                 <Heading display="inline" size="18px" fontWeight="400">
                   {t('back-to-program')}
                 </Heading>
               </NextChakraLink>
               <Box display="flex" alignItems="center" gap="10px">
-                {cohortSession?.syllabus_version?.logo && (
+                {cohortSession?.syllabus_version?.logo ? (
                   <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                ) : (
+                  <Icon icon="code" width="19px" height="20px" />
                 )}
                 <Heading size="18px">{cohortSession.syllabus_version?.name}</Heading>
               </Box>
@@ -144,6 +146,9 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
           }}
           maxHeight={{ base: '80%', lg: 'none' }}
           padding="15px"
+          flexGrow="1"
+          display="flex"
+          flexDir="column"
         >
           {currentModule && grantSyllabusAccess ? (
             <>
@@ -157,6 +162,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 assignments={currentModule.filteredModules}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
+                flex="1"
               />
               <Divider borderColor="#D3DBE9" />
               {nextModule && (
