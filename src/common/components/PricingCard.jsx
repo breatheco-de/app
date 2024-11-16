@@ -124,8 +124,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
-  console.log(courseCoupon);
-
   return (
     <Flex
       maxWidth="410px"
