@@ -174,7 +174,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
   const scrollRight = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
-        left: scrollRef.current.scrollLeft + 90,
+        left: scrollRef.current.scrollLeft + 250,
         behavior: 'smooth',
       });
     }
