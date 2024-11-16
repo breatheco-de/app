@@ -124,6 +124,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
+  console.log(courseCoupon);
+
   return (
     <Flex
       maxWidth="410px"
@@ -315,7 +317,9 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${financing?.price} / ${financing?.title}`}
+                        {`$${(typeof courseCoupon?.discount_value === 'number' && typeof financing?.price === 'number')
+                          ? (financing.price - (courseCoupon.discount_value * financing.price))
+                          : financing?.price || 0} / ${financing?.title}`}
                       </Button>
                     ),
                   )}
