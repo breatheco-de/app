@@ -21,7 +21,7 @@ function RigoProvider({ children }) {
       }}
     >
       <Script
-        src="https://unpkg.com/rigobot-chat-bubble@0.0.55/dist/main.js"
+        src="https://unpkg.com/rigobot-chat-bubble@0.0.57/dist/main.js"
         onLoad={() => {
           const persistedRigoChat = localStorage.getItem('rigo_chat');
           const allowRigo = getQueryString('rigo_chat', persistedRigoChat);
