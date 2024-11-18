@@ -81,10 +81,8 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 </Heading>
               </NextChakraLink>
               <Box display="flex" alignItems="center" gap="10px">
-                {cohortSession?.syllabus_version?.logo ? (
+                {cohortSession?.syllabus_version?.logo && (
                   <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                ) : (
-                  <Icon icon="code" width="19px" height="20px" />
                 )}
                 <Heading size="18px">{cohortSession.syllabus_version?.name}</Heading>
               </Box>
@@ -214,9 +212,9 @@ GuidedExperienceSidebar.propTypes = {
   grantSyllabusAccess: PropTypes.bool.isRequired,
 };
 GuidedExperienceSidebar.defaultProps = {
-  onClickAssignment: () => {},
+  onClickAssignment: () => { },
   isOpen: false,
-  onToggle: () => {},
+  onToggle: () => { },
   currentModuleIndex: null,
 };
 
