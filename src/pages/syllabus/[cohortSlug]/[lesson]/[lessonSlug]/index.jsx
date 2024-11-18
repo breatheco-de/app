@@ -745,6 +745,12 @@ function SyllabusContent() {
     }
   };
 
+  const getOverflowY = () => {
+    if (isQuiz) return 'hidden';
+    if (isAvailableAsSaas && !learnpackStart) return 'scroll';
+    return 'auto';
+  };
+
   return (
     <>
       <Head>
@@ -890,7 +896,7 @@ function SyllabusContent() {
                 ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
-                overflowY={isAvailableAsSaas && !learnpackStart && 'scroll'}
+                overflowY={getOverflowY()}
                 borderRadius="11px 11px 0 0"
                 position="relative"
               >

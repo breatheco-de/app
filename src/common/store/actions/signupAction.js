@@ -327,13 +327,7 @@ const useSignup = () => {
           handleStep(1);
           toggleIfEnrolled(true);
         } else {
-          toast({
-            position: 'top',
-            title: t('alert-message:something-went-wrong-choosing-date'),
-            status: 'error',
-            duration: 7000,
-            isClosable: true,
-          });
+          console.err(err);
         }
       });
   });
