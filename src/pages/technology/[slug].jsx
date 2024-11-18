@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Flex, Container, Image, Button, useToast } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -77,6 +77,15 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const response = await bc.lesson({ sort_priority: 1 }).techsBySort();
   const techsBySortPriority = response.data;
 
+  let marketingInfo = {};
+  try {
+    const mktInfoResponse = await bc.lesson(slug).techMktInfo();
+    marketingInfo = mktInfoResponse?.data?.marketing_information || {};
+  } catch (err) {
+    console.log(`Error fetching marketing info for ${slug}:`, err);
+  }
+  const { title = '', description = '', video = '' } = marketingInfo;
+
   let assetList;
   try {
     const { default: allTechnologies } = await import('../../lib/asset-list.json');
@@ -90,17 +99,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     assetList = { landingTechnologies: [] };
   }
 
-  const landingTechnology = assetList.landingTechnologies;
-  const technologyData = landingTechnology[0] || [];
+  const landingTechnology = assetList.landingTechnologies[0] || [];
 
-  const exercises = technologyData?.assets?.filter(
+  const rawTechnologyData = assetList.landingTechnologies.find(
+    (tech) => tech.lang === locale && tech.slug === slug,
+  ) || {};
+
+  const { assets, assetTypesInTechnology, ...technologyData } = rawTechnologyData;
+
+  const exercises = landingTechnology?.assets?.filter(
     (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
   ).slice(0, 3) || [];
 
-  const paginatedAssets = (await fetchOtherAssets(locale, 1, slug)).data;
-  const otherAssets = paginatedAssets.results;
-
-  const { count } = paginatedAssets;
+  const { results: otherAssets, count } = (await fetchOtherAssets(locale, 1, slug)).data;
 
   const assetData = [...exercises, ...otherAssets];
 
@@ -112,8 +123,8 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   return {
     props: {
       seo: {
-        title: technologyData?.title || '',
-        description: t('seo.description', { technology: technologyData?.title }),
+        title: title[locale] || title || technologyData?.title || '',
+        description: description[locale] || description || t('seo.description', { technology: technologyData?.title }),
         image: technologyData?.icon_url || '',
         pathConnector: `/technology/${slug}`,
         url: ogUrl.en,
@@ -125,18 +136,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       technologyData,
       techsBySortPriority,
       assetData,
+      video,
       count,
     },
   };
 };
 
-function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count }) {
+function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, video }) {
   const { t, lang } = useTranslation('technologies');
   const { fontColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const scrollRef = useRef();
   const [workshops, setWorkshops] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
   const techsShown = techsBySortPriority?.filter((sortTech) => sortTech.slug !== technologyData.slug && sortTech.icon_url);
   const exercises = assetData?.filter((asset) => asset?.asset_type === 'EXERCISE');
   const lessonMaterials = assetData?.filter((asset) => asset?.asset_type !== 'EXERCISE');
@@ -171,14 +184,14 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     if (assetData?.length > 0) getWorkshops();
   }, []);
 
-  const scrollRight = useCallback(() => {
+  const scrollRight = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
         left: scrollRef.current.scrollLeft + 250,
         behavior: 'smooth',
       });
     }
-  }, []);
+  };
 
   useEffect(() => {
     if ((!technologyData?.slug || assetData?.length === 0)) {
@@ -193,19 +206,31 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     }
   }, [technologyData?.slug, assetData]);
 
-  console.log(assetData);
-  console.log(technologyData?.slug);
-  console.log(lessonMaterials);
+  const handleMouseDown = () => setIsDragging(false);
+  const handleMouseMove = () => setIsDragging(true);
+  const handleMouseUp = (tech) => {
+    if (!isDragging) {
+      handleTechChange(tech);
+    }
+  };
 
   return technologyData?.slug && assetData?.length > 0 && technologyData && (
     <Container maxWidth="1280px">
-      <Flex padding="30px 20px" gap={{ base: '30px', md: '80px' }} mt="60px" alignItems="center">
+      <Flex padding="30px 20px" gap={{ base: '10px', md: '80px' }} mt="60px" alignItems="center">
         <Flex textAlign="center" alignItems="center" flexDirection="column">
           <Image width="60px" height="60px" src={technologyData.icon_url} objectFit="contain" />
           <Text fontSize="md" marginTop="10px" color="blue.1000">{technologyData.title}</Text>
         </Flex>
         <DraggableContainer ref={scrollRef}>
-          <Flex flexGrow="1" w="100%" h="100%" alignItems="center" gap={{ base: '20px', md: '80px' }} whiteSpace="nowrap">
+          <Flex
+            flexGrow="1"
+            w="100%"
+            h="100%"
+            alignItems="center"
+            gap={{ base: '20px', md: '80px' }}
+            whiteSpace="nowrap"
+            onMouseMove={handleMouseMove}
+          >
             {techsShown.map((tech) => (
               <Box key={tech.title} minWidth="60px">
                 {tech?.icon_url && (
@@ -215,9 +240,10 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                     width="40px"
                     cursor="pointer"
                     objectFit="contain"
-                    onClick={() => handleTechChange(tech)}
                     src={tech.icon_url}
                     filter="grayscale(100%)"
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={() => handleMouseUp(tech)}
                   />
                 )}
               </Box>
@@ -255,8 +281,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
 
         <Box flex="1" maxWidth={{ base: '100%', md: '50%' }} width="100%">
           <ReactPlayerV2
-            url={technologyData?.videoUrl || 'https://example.com/video.mp4'}
-            thumbnail={technologyData?.thumbnail}
+            url={video[lang] || video || 'https://www.youtube.com/watch?v=2Vv-BfVoq4g'}
             controls
             withThumbnail
             withModal
@@ -264,7 +289,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
             iframeStyle={{
               borderRadius: '8px',
               width: '100%',
-              maxHeight: '344px',
+              maxHeight: '100%',
               aspectRatio: '16/9',
             }}
           />
@@ -325,9 +350,14 @@ LessonByTechnology.propTypes = {
   technologyData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   techsBySortPriority: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   count: PropTypes.number.isRequired,
+  video: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object,
+  ]),
 };
 
 LessonByTechnology.defaultProps = {
+  video: '',
   assetData: [],
 };
 
