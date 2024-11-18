@@ -124,6 +124,23 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
+  function calculateCouponOnFinancing(price, discountValue, discountType) {
+    if (typeof price !== 'number' || typeof discountValue !== 'number') {
+      return price || 0;
+    }
+
+    console.log(price - (price * discountValue));
+
+    const discountCalculators = {
+      PERCENT_OFF: () => price - (price * discountValue),
+      FIXED_PRICE: () => discountValue,
+    };
+
+    const discount = (discountCalculators[discountType]?.() || 0);
+
+    return Math.max(price - discount, 0);
+  }
+
   return (
     <Flex
       maxWidth="410px"
@@ -315,9 +332,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${(typeof courseCoupon?.discount_value === 'number' && typeof financing?.price === 'number')
-                          ? (financing.price - (courseCoupon.discount_value * financing.price))
-                          : financing?.price || 0} / ${financing?.title}`}
+                        {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
                       </Button>
                     ),
                   )}
