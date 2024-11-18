@@ -140,8 +140,6 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     return 'blue.50';
   };
 
-  console.log(recommendations);
-
   useEffect(() => {
     fetchContent();
   }, []);
