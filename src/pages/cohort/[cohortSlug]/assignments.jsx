@@ -192,7 +192,7 @@ function Assignments() {
             setStudentLabel(filteredStudent && {
               id: filteredStudent.user.id,
               value:
-                  `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
+                `${filteredStudent.user.first_name}-${filteredStudent.user.last_name}`?.toLowerCase(),
               label: `${filteredStudent.user.first_name} ${filteredStudent.user.last_name}`,
             });
           }
@@ -417,6 +417,8 @@ function Assignments() {
       ],
     });
     const studentKey = currentStudentList.findIndex((x) => x.user.id === taskUpdated.user?.id);
+    if (studentKey < 0) return;
+
     const taskKey = currentStudentList[studentKey].tasks.findIndex((x) => x.id === taskUpdated.id);
     const copyStudentList = [...currentStudentList];
     copyStudentList[studentKey].tasks[taskKey] = taskUpdated;

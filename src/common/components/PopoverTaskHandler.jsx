@@ -318,10 +318,11 @@ function PopoverCustomContent({
                         <Box dangerouslySetInnerHTML={{ __html: t('deliverProject.how-to-deliver-text', { link: howToSendProjectUrl }) }} />
                       )}
                     </Box>
-                    <Text fontSize="sm">
-                      <Checkbox m="4px 5px 0 0" size="md" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)} />
-                      {t('deliverProject.deliver-confirm')}
-                    </Text>
+                    <Checkbox size="md" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)}>
+                      <Text fontSize="sm">
+                        {t('deliverProject.deliver-confirm')}
+                      </Text>
+                    </Checkbox>
                     <Button
                       // mt={4}
                       width="fit-content"
@@ -382,10 +383,11 @@ function PopoverCustomContent({
                     onDragLeave={() => setDragOver(false)}
                   />
                 </Box>
-                <Text fontSize="sm">
-                  <Checkbox m="4px 5px 0 0" size="md" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)} />
-                  {t('deliverProject.deliver-confirm')}
-                </Text>
+                <Checkbox size="md" mb="10px" isChecked={acceptTC} onChange={() => handleAcceptTC((prev) => !prev)}>
+                  <Text fontSize="sm">
+                    {t('deliverProject.deliver-confirm')}
+                  </Text>
+                </Checkbox>
                 {fileProps.some((file) => typeof file?.type === 'string') && (
                   <>
                     <Box ref={fileContainerRef} maxHeight="300px" overflowY="auto">

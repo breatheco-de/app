@@ -76,7 +76,7 @@ const TabletWithForm = React.forwardRef(({
     const iframe = 'true';
     const token = userToken;
 
-    return `${asset?.learnpack_deploy_url}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${asset?.learnpack_deploy_url}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
 
   return (
@@ -180,7 +180,7 @@ const TabletWithForm = React.forwardRef(({
                       href={buildLearnpackUrl()}
                       target="_blank"
                     >
-                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) })}
+                      {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()}
                     </Button>
                   )
                   : (

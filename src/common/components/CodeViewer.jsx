@@ -27,7 +27,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['html', 'css', 'shell', 'windows', 'mac', 'linux'];
+const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
 
 export const languagesLabels = {
   jsx: 'JS',
@@ -73,6 +73,9 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [languages, setLanguages] = useState(languagesData);
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
+  const isCodeForPreview = languages.some(({ language }) => language.toLowerCase() === 'html');
+  const isNotExecutable = notExecutables.includes(languages[tabIndex]?.language);
+
   const handleTouchStart = (event) => {
     event.preventDefault();
     setInitialTouchY(event.touches[0].clientY);
@@ -106,8 +109,30 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     return rigobotToken.key;
   };
 
+  const showCodePreview = () => {
+    const html = languages.find(({ language }) => language.toLowerCase() === 'html');
+    const css = languages.find(({ language }) => language.toLowerCase() === 'css');
+    const js = languages.find(({ language }) => language.toLowerCase() === 'javascript');
+
+    const preview = `
+      <html>
+        <head>
+          <style>${css?.code}</style>
+        </head>
+        <body>
+          ${html?.code}
+          <script>${js?.code}</script>
+        </body>
+      </html>
+    `;
+
+    const updatedLanguages = languages.map((language) => ({ ...language, output: preview }));
+    setLanguages(updatedLanguages);
+  };
+
   const run = async () => {
-    if (isAuthenticated || allowNotLogged) {
+    if (isCodeForPreview) showCodePreview();
+    else if (isAuthenticated || allowNotLogged) {
       try {
         const currLanguage = { ...languages[tabIndex], running: true, output: null };
         setLanguages([
@@ -207,14 +232,14 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
             bg="blue.500"
             borderRadius="1px"
           />
-          {!notExecutables.includes(languages[tabIndex]?.language) && languages[tabIndex]?.code.trim() !== '' && (
+          {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
             <>
               {languages[tabIndex]?.running ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
               ) : (
                 <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
                   <Icon icon="play" width="14px" height="14px" style={{ marginRight: '5px' }} color="white" />
-                  {t('run')}
+                  {isCodeForPreview ? t('preview') : t('run')}
                 </Button>
               )}
             </>
@@ -259,23 +284,38 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
                 />
               </Box>
               <Collapse in={running || (output !== null && output !== undefined)} offsetY="20px">
-                <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
-                  <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
-                    {t('terminal')}
-                    <Tooltip
-                      label={t('loading-output')}
-                      placement="right"
-                      hasArrow
-                    >
-                      <Box>
-                        <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
-                      </Box>
-                    </Tooltip>
-                  </Text>
-                  <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
-                    {output}
-                  </Text>
-                </Box>
+                {isCodeForPreview ? (
+                  <Box borderTop="1px solid #4A5568" borderRadius="0 0 4px 4px">
+                    <iframe
+                      title="Live Preview"
+                      srcDoc={output} // Dynamically inject content
+                      style={{
+                        width: '100%',
+                        height: '300px',
+                        border: '1px solid #4A5568',
+                        borderRadius: '0 0 4px 4px',
+                      }}
+                    />
+                  </Box>
+                ) : (
+                  <Box borderTop="1px solid #4A5568" color="white" padding="20px" background="#00041A" borderRadius="0 0 4px 4px">
+                    <Text display="flex" alignItems="center" gap="5px" fontWeight="700" fontSize="14px" marginBottom="16px" width="fit-content" borderBottom="2px solid white">
+                      {t('terminal')}
+                      <Tooltip
+                        label={t('loading-output')}
+                        placement="right"
+                        hasArrow
+                      >
+                        <Box>
+                          <Icon icon="info" width="14px" height="14px" color={hexColor.blueDefault} />
+                        </Box>
+                      </Tooltip>
+                    </Text>
+                    <Text whiteSpace="pre-line" fontFamily="monospace" padding="8px">
+                      {output}
+                    </Text>
+                  </Box>
+                )}
               </Collapse>
             </TabPanel>
           ))}
