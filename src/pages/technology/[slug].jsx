@@ -281,7 +281,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
 
         <Box flex="1" maxWidth={{ base: '100%', md: '50%' }} width="100%">
           <ReactPlayerV2
-            url={video[lang] || video || 'https://www.youtube.com/watch?v=2Vv-BfVoq4g'}
+            url={video[lang] || video || ''}
             controls
             withThumbnail
             withModal
