@@ -268,7 +268,6 @@ const useSignup = () => {
         reject(error);
       })
       .finally(() => {
-        console.log('finished');
         setLoader('date', false);
       });
   });
