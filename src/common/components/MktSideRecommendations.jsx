@@ -225,7 +225,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                     {recom?.course_translation?.description || recom?.course_translation?.short_description || recom.description}
                   </Text>
                   <Link
-                    variant={{ base: '', md: 'buttonDefault' }}
+                    variant={{ base: '' }}
                     onClick={() => {
                       setStorageItem('redirected-from', link);
                       reportDatalayer({
@@ -239,6 +239,12 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                       });
                     }}
                     href={link}
+                    _hover={{ textDecoratio: 'none' }}
+                    fontWeight="700"
+                    padding="12px 24px"
+                    letterSpacing="0.05em"
+                    fontSize="13px"
+                    borderRadius="3px"
                     alignItems="center"
                     display="flex"
                     colorScheme={{ base: 'default', md: 'blue.400' }}
@@ -246,6 +252,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                     color={{ base: 'green.light', md: 'white' }}
                     gridGap="10px"
                     margin="0 20px"
+                    backgroundColor={recom.color || 'blue.1000'}
                   >
                     <Box as="span" display={{ base: 'none', md: 'flex' }}>
                       {t('learn-more')}
