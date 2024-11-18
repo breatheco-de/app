@@ -131,12 +131,12 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
     const discountCalculators = {
       PERCENT_OFF: () => price - (price * discountValue),
-      FIXED_PRICE: () => discountValue,
+      FIXED_PRICE: () => Math.max(price - discountValue, 0),
     };
 
     const discount = (discountCalculators[discountType]?.() || 0);
 
-    return Math.max(price - discount, 0);
+    return Math.round(discount * 100) / 100;
   }
 
   return (
