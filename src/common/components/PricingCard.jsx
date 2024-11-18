@@ -129,8 +129,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       return price || 0;
     }
 
-    console.log(price - (price * discountValue));
-
     const discountCalculators = {
       PERCENT_OFF: () => price - (price * discountValue),
       FIXED_PRICE: () => discountValue,
