@@ -251,7 +251,6 @@ const useSignup = () => {
         setPlanProps(finalData?.featured_info);
 
         if (response.status < 400) {
-          console.log('apunto de establecer el checkout data');
           setCheckoutData({
             ...data,
             ...finalData,
@@ -269,7 +268,6 @@ const useSignup = () => {
         reject(error);
       })
       .finally(() => {
-        console.log('finished');
         setLoader('date', false);
       });
   });
