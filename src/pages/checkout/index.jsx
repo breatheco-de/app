@@ -564,9 +564,6 @@ function Checkout() {
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
 
-  // console.log('soy el loader NUEVO', checkInfoLoader);
-  console.log('soy el loader VIEJO', loader.paymentMethods);
-
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
       {loader.plan && (
@@ -922,7 +919,7 @@ function Checkout() {
                           <Text size="18px" color="currentColor" lineHeight="normal">
                             {selectedPlanCheckoutData?.price <= 0
                               ? selectedPlanCheckoutData?.priceText
-                              : `$${selectedPlanCheckoutData?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                              : `$${selectedPlanCheckoutData?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
                           </Text>
                         </Flex>
                         <Divider margin="6px 0" />
@@ -941,13 +938,13 @@ function Checkout() {
                               <Flex gridGap="1rem">
                                 {processedPrice?.originalPrice && (
                                   <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                                    {`$${allDiscounts[index]?.originalPrice}`}
+                                    {`$${allDiscounts[index]?.originalPrice?.toFixed(2)}`}
                                   </Text>
                                 )}
                                 <Text size="18px" color="currentColor" lineHeight="normal">
                                   {selectedPlanCheckoutData.price <= 0
                                     ? selectedPlanCheckoutData.priceText
-                                    : `$${allDiscounts[index]?.price}`}
+                                    : `$${allDiscounts[index]?.price?.toFixed(2)}`}
                                 </Text>
                               </Flex>
                             </Flex>
@@ -962,7 +959,7 @@ function Checkout() {
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData?.price <= 0
                                 ? selectedPlanCheckoutData?.priceText
-                                : `$${processedPrice?.price} ${selectedPlanCheckoutData?.currency?.code}`}
+                                : `$${processedPrice?.price?.toFixed(2)} ${selectedPlanCheckoutData?.currency?.code}`}
                             </Text>
                           </Flex>
                         </Flex>
@@ -974,7 +971,7 @@ function Checkout() {
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData.price <= 0
                                 ? selectedPlanCheckoutData.priceText
-                                : `$${processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)} ${selectedPlanCheckoutData.currency?.code}`}
+                                : `$${(processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2)} ${selectedPlanCheckoutData.currency?.code}`}
                             </Text>
                           </Flex>
                         )}

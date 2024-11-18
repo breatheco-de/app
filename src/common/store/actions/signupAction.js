@@ -222,7 +222,6 @@ const useSignup = () => {
   });
 
   const getChecking = (cohortData) => new Promise((resolve, reject) => {
-    console.log('empece a ejecutarme');
     const selectedPlan = cohortData?.plan ? cohortData?.plan : undefined;
     const cohortPlan = cohortPlans?.length > 0 ? cohortPlans[cohortData?.index || 0] : selectedPlan;
 
