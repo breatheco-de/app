@@ -516,7 +516,7 @@ function Checkout() {
   }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
 
   useEffect(() => {
-    if (!selectedPlanID) return;
+    if (!selectedPlanID || !cohortPlans) return;
     setCheckInfoLoader(true);
     handleChecking({ plan: cohortPlans[0]?.plan })
       .then((checkingData) => {
