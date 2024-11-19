@@ -44,6 +44,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: isInteractive ? urlToClone : templateUrl }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
+  const projectReadme = t('common:learnpack.clone-modal.project-readme', {}, { returnObjects: true });
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
 
@@ -63,7 +64,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
 
   const parseSteps = () => {
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
-    return selectedOs?.steps.filter((step) => step.slug === 'clone').concat(dependenciesSteps);
+    return selectedOs?.steps.filter((step) => step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
   };
 
   const steps = parseSteps();
@@ -156,7 +157,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
               )}
             </Box>
             {cohortSession?.available_as_saas && (
-              <NextChakraLink href="/mentorship/schedule" target="_blank" color={hexColor.blueDefault} textAlign="center">
+              <NextChakraLink marginTop="16px" href="/mentorship/schedule" target="_blank" color={hexColor.blueDefault} textAlign="center">
                 {t('common:learnpack.clone-modal.need-help')}
                 {' '}
                 →

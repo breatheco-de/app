@@ -184,6 +184,10 @@
         "label": "Open the project without VSCode",
         "description": "Use your computer terminal to get inside your recently created folder and start learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```"
       },
+      "project-readme": {
+        "label": "Read the README.md inside the project",
+        "description": "Once you open the project in your editor you will find a README.md file containing more instructions on how to run the project"
+      },
       "os-list": [
         {
           "name": "macos",
