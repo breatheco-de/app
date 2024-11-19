@@ -106,7 +106,7 @@ function Checkout() {
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
-  const [selectedPlanID, setSelectedPlanID] = useState(undefined);
+  const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
 
   const cohorts = cohortsData?.cohorts;
@@ -233,7 +233,7 @@ function Checkout() {
     const autoSelectedPlanByQueryString = checkingData?.plans?.length === 1
       ? checkingData?.plans[0]
       : checkingData?.plans.find(
-        (item) => item?.plan_id === (queryPlanId !== undefined ? queryPlanId : selectedPlanID),
+        (item) => item?.plan_id === (queryPlanId !== undefined ? queryPlanId : userSelectedPlan?.plan_id),
       );
     const autoSelectedPlan = autoSelectedPlanByQueryString?.plan_id
       ? autoSelectedPlanByQueryString
@@ -516,7 +516,7 @@ function Checkout() {
   }, [cohortsData.loading, accessToken, isAuthenticated, router.locale]);
 
   useEffect(() => {
-    if (!selectedPlanID || !cohortPlans) return;
+    if (!userSelectedPlan || !cohortPlans) return;
     setCheckInfoLoader(true);
     handleChecking({ plan: cohortPlans[0]?.plan })
       .then((checkingData) => {
@@ -529,7 +529,7 @@ function Checkout() {
       .catch(() => {
         setCheckInfoLoader(false);
       });
-  }, [selectedPlanID]);
+  }, [userSelectedPlan]);
 
   useEffect(() => {
     if (user?.id && !isLoading) {
@@ -563,6 +563,45 @@ function Checkout() {
     setAllDiscounts(discounts);
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
+
+  const getDiscountValue = (coup) => {
+    if (!coup?.discount_value || !coup?.discount_type) return '';
+    if (coup.discount_type === 'PERCENT_OFF') {
+      return t('discount-value-off', { value: `${coup.discount_value * 100}%` });
+    }
+    if (coup.discount_type === 'FIXED_PRICE') {
+      return t('discount-value-off', { value: `$${coup.discount_value}` });
+    }
+    return '';
+  };
+
+  const renderPlanDetails = () => {
+    if (originalPlan?.selectedPlan?.isFreeTier) {
+      return (
+        <Text size="16px" color="green.400">
+          {originalPlan?.selectedPlan?.description || 'Free plan'}
+        </Text>
+      );
+    }
+
+    if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
+      return (
+        <Text size="16px" color="green.400">
+          {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+        </Text>
+      );
+    }
+
+    if (userSelectedPlan && !isAuthenticated) {
+      return (
+        <Text size="16px" color="green.400">
+          {`$${userSelectedPlan?.price} / ${userSelectedPlan?.title}`}
+        </Text>
+      );
+    }
+
+    return null; // Retorno por defecto si ninguna condición se cumple
+  };
 
   return (
     <Box p={{ base: '0 0', md: '0' }} background={backgroundColor3} position="relative" minHeight={loader.plan ? '727px' : 'auto'}>
@@ -728,15 +767,7 @@ function Checkout() {
                           {originalPlan?.title}
                         </Heading>
                         <Flex justifyContent="space-between" width="full" alignItems="center">
-                          {originalPlan?.selectedPlan?.isFreeTier ? (
-                            <Text size="16px" color="green.400">
-                              {originalPlan?.selectedPlan?.description || 'Free plan'}
-                            </Text>
-                          ) : (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) && (
-                            <Text size="16px" color="green.400">
-                              {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
-                            </Text>
-                          )}
+                          {renderPlanDetails()}
                           {!queryPlanId && originalPlan?.financingOptions.length > 0 && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
@@ -769,7 +800,7 @@ function Checkout() {
                                     {originalPlan.plans.map((option) => (
                                       <MenuItem
                                         key={option.plan_id}
-                                        onClick={() => setSelectedPlanID(option.plan_id)}
+                                        onClick={() => setUserSelectedPlan(option)}
                                         fontSize="md"
                                         color="auto"
                                         background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
@@ -929,9 +960,9 @@ function Checkout() {
                             <Flex direction="row" justifyContent="space-between" w="100%">
                               <Flex gap="10px">
                                 <Text size="lg">{coup?.slug}</Text>
-                                <Box borderRadius="4px" padding="5px" background={hexColor.greenLight2}>
+                                <Box borderRadius="4px" padding="5px" background={getDiscountValue(coup) ? hexColor.greenLight2 : ''}>
                                   <Text color={hexColor.green} fontWeight="700">
-                                    {coup?.discount_value ? t('discount-value-off', { value: `${coup.discount_value * 100}%` }) : ''}
+                                    {getDiscountValue(coup)}
                                   </Text>
                                 </Box>
                               </Flex>
