@@ -138,6 +138,7 @@
   },
   "copied": "Copiado!",
   "no-options-message": "No hay mas opciones",
+  "see-instructions": "Ver instrucciones",
   "taskStatus": {
     "project-approved": "Proyecto aprobado",
     "update-project-delivery": "Actualizar entrega de proyecto",
@@ -185,6 +186,23 @@
           "name": "macos",
           "label": "MacOS",
           "logo": "/static/images/apple.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python",
+              "description": "We recommend installing python",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }, {
+              "name": "node-js",
+              "label": "Install Node JS",
+              "description": "We recommend installing Node JS",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -213,6 +231,7 @@
               "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
+              "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
@@ -225,6 +244,23 @@
           "name": "linux",
           "label": "Linux",
           "logo": "/static/images/linux.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python",
+              "description": "We recommend installing python",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }, {
+              "name": "node-js",
+              "label": "Install Node JS",
+              "description": "We recommend installing Node JS",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -253,6 +289,7 @@
               "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
+              "slug": "clone",
               "label": "Clonar el proyecto en tu computadora",
               "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
@@ -265,6 +302,23 @@
           "name": "windows",
           "label": "Windows",
           "logo": "/static/images/windows.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python",
+              "description": "We recommend installing python",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }, {
+              "name": "node-js",
+              "label": "Install Node JS",
+              "description": "We recommend installing Node JS",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "Go to how to install nvm on MacOS"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -299,6 +353,7 @@
               "source": "https://git-scm.com/downloads/win"
             },
             {
+              "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",

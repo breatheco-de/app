@@ -32,16 +32,41 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   const [expanded, setExpanded] = useState(0);
   const { featuredLight, hexColor, borderColor } = useStyle();
 
+  const templateUrl = currentAsset?.template_url;
+  // const assetDependencies = 'python=3.10,node=16.0';
+  const assetDependencies = currentAsset?.dependencies;
+  const isInteractive = currentAsset?.interactive;
+  // const isInteractive = false;
+
   const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
 
-  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: urlToClone }, { returnObjects: true });
+  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: isInteractive ? urlToClone : templateUrl }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
 
-  const steps = selectedOs?.steps.concat([finalStep]);
+  const formatDependencies = (input) => {
+    if (!input) return [];
+    return input.split(',').map((item) => {
+      // Split each dependency by '=' to get the key-value pair
+      const [dep, version] = item.split('=');
+      // Return an object in the desired format
+      return { [dep]: version };
+    });
+  };
+
+  const dependencies = formatDependencies(assetDependencies);
+  const dependenciesNames = dependencies.flatMap((dep) => Object.keys(dep));
+  const dependenciesSteps = selectedOs?.dependencies.filter((dep) => dependenciesNames.includes(dep.name));
+
+  const parseSteps = () => {
+    if (isInteractive) return selectedOs?.steps.concat([finalStep]);
+    return selectedOs?.steps.filter((step) => step.slug === 'clone').concat(dependenciesSteps);
+  };
+
+  const steps = parseSteps();
 
   const resetSelector = () => {
     setSelectedOs(null);
