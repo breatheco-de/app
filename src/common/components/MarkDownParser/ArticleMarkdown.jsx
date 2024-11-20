@@ -20,7 +20,7 @@ function ArticleMarkdown({
       {!isGuidedExperience && (
         <ContentHeading
           titleRightSide={titleRightSide}
-          callToAction={currentData?.asset_type === 'PROJECT' && (
+          callToAction={currentData?.interactive && (
             <OpenWithLearnpackCTA currentAsset={currentData} />
           )}
           content={frontMatter}
