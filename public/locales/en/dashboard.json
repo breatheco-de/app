@@ -6,6 +6,7 @@
   "moduleMap": "Module map",
   "module": "Module",
   "modules-count": "{{count}} Modules",
+  "path-to-claim": "Path to claim your certificate",
   "hide-content": "Hide content",
   "show-content": "Show content",
   "backToChooseProgram": "Back to choose program",

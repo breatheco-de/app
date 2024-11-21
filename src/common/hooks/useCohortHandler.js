@@ -119,6 +119,17 @@ function useCohortHandler() {
           };
         }));
 
+        parsedCohorts.forEach((cohort) => {
+          // eslint-disable-next-line no-param-reassign
+          cohort.micro_cohorts = [];
+          if (cohort.id === 600) {
+            const microCohort = parsedCohorts.find((c) => c.id === 599);
+            cohort.micro_cohorts.push(microCohort);
+          }
+        });
+        console.log('parsedCohorts');
+        console.log(parsedCohorts);
+
         // find cohort with current slug
         const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
 

@@ -89,6 +89,7 @@ function Dashboard() {
   const { cohortSession, sortedAssignments, taskCohortNull, myCohorts } = state;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
+  const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
 
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
@@ -486,9 +487,23 @@ function Dashboard() {
             </NextChakraLink>
           </Box>
           {isAvailableAsSaas ? (
-            <Box flex="1 1 auto">
+            <Box flex="1 1 auto" pb="20px">
+              <Box display="flex" alignItems="center" gap="10px" mb="20px">
+                <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                <Heading as="h1" size="m">
+                  {hasMicroCohorts ? cohortSession.name : cohortSession.syllabus_version?.name}
+                </Heading>
+              </Box>
               {cohortSession && (
-                <CohortModules cohort={cohortSession} />
+                <Box>
+                  {hasMicroCohorts
+                    ? cohortSession.micro_cohorts.map((microCohort) => (
+                      <CohortModules cohort={microCohort} />
+                    ))
+                    : (
+                      <CohortModules cohort={cohortSession} />
+                    )}
+                </Box>
               )}
             </Box>
           ) : (
