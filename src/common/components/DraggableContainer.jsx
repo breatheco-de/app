@@ -28,7 +28,6 @@ const DraggableContainer = forwardRef(({ children, isDraggable, ...rest }, ref) 
 
   const onMouseMove = (e) => {
     if (!isDown || !isDraggable) return;
-    e.preventDefault();
     const pageX = e.touches ? e.touches[0].pageX : e.pageX;
     const x = pageX - scrollRef.current.offsetLeft;
     const walk = (x - startX) * scrollSpeed;

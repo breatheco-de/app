@@ -15,7 +15,9 @@ import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, type, ...rest }) {
   const [events, setEvents] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0); // Página actual del carrusel
+  const [currentPage, setCurrentPage] = useState(0);
+  const [startX, setStartX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const router = useRouter();
   const { featuredLight, backgroundColor, fontColor } = useStyle();
   const lang = router.locale;
@@ -57,6 +59,52 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
     setCurrentPage(pageIndex);
   };
 
+  const handleMouseDown = (e) => {
+    setStartX(e.clientX);
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const moveX = e.clientX - startX;
+
+    if (moveX > 50 && currentPage > 0) {
+      handlePageChange(currentPage - 1);
+      setIsDragging(false);
+    } else if (moveX < -50 && currentPage < totalPages - 1) {
+      handlePageChange(currentPage + 1);
+      setIsDragging(false);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e) => {
+    setStartX(e.touches[0].clientX);
+    setIsDragging(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+
+    const moveX = e.touches[0].clientX - startX;
+
+    if (moveX > 50 && currentPage > 0) {
+      handlePageChange(currentPage - 1);
+      setIsDragging(false);
+    } else if (moveX < -50 && currentPage < totalPages - 1) {
+      handlePageChange(currentPage + 1);
+      setIsDragging(false);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
@@ -76,7 +124,18 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
             <Icon icon="longArrowRight" width="58px" height="30px" color={fontColor} />
           </Flex>
           <Box maxWidth="1280px" mx="auto" overflow="hidden" paddingTop="10px">
-            <Flex direction="column" alignItems="center">
+            <Flex
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              direction="column"
+              alignItems="center"
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            >
               <Flex width="100%">
                 <Flex
                   transform={`translateX(-${currentPage * (100 / itemsPerPage)}%)`}
@@ -110,13 +169,12 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
                 </Flex>
               </Flex>
 
-              {/* Puntos de navegación */}
               <Flex mt={4} gap="15px">
                 {Array.from({ length: totalPages }).map((_, pageIndex) => (
                   <Box
                     key={_}
-                    width="1rem"
-                    height="1rem"
+                    width="11px"
+                    height="11px"
                     borderRadius="full"
                     bg={pageIndex === currentPage ? 'blue.1000' : 'gray.300'}
                     cursor="pointer"
