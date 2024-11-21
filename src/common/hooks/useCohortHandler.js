@@ -15,7 +15,15 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
+  const {
+    setCohortSession,
+    setTaskCohortNull,
+    setSortedAssignments,
+    setUserCapabilities,
+    setMyCohorts,
+    setMicroCohortsAssinments,
+    state,
+  } = useCohortAction();
   const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
@@ -98,6 +106,75 @@ function useCohortHandler() {
     }
   };
 
+  const getMicroCohortsAssignments = async (microCohorts) => {
+    try {
+      const assignmentsMap = {};
+      const syllabusPromises = microCohorts.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = microCohorts.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const allResults = await Promise.all([
+        ...syllabusPromises,
+        ...tasksPromises,
+      ]);
+      console.log('allResults');
+      console.log(allResults);
+
+      microCohorts.forEach((cohort) => {
+        const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
+
+        const cohortMap = {
+          syllabus: null,
+          tasks: [],
+        };
+
+        cohortResults.forEach((elem) => {
+          const { data } = elem;
+          if ('json' in data) cohortMap.syllabus = data.json.days || data.json.modules;
+          else cohortMap.tasks = data.results;
+        });
+        const cohortModules = [];
+        cohortMap.syllabus?.forEach((assignment) => {
+          const {
+            id, label, description, lessons, replits, assignments, quizzes,
+          } = assignment;
+          if (lessons && replits && assignments && quizzes) {
+            const nestedAssignments = processRelatedAssignments(assignment, cohortMap.tasks);
+            const { content: modules } = nestedAssignments;
+
+            const assignmentsStruct = {
+              id,
+              label,
+              description,
+              modules,
+              exists_activities: modules?.length > 0,
+            };
+            if (modules.length > 0) {
+              const keyIndex = cohortModules.findIndex((x) => x.id === id);
+              if (keyIndex > -1) {
+                cohortModules.splice(keyIndex, 1, assignmentsStruct);
+              } else {
+                cohortModules.push(assignmentsStruct);
+              }
+            }
+          }
+        });
+        assignmentsMap[cohort.slug] = cohortModules;
+      });
+
+      return assignmentsMap;
+    } catch (e) {
+      console.log(e);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-fetching-syllabus'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+
+      return {};
+    }
+  };
+
   const getCohortData = async ({
     cohortSlug,
   }) => {
@@ -119,16 +196,18 @@ function useCohortHandler() {
           };
         }));
 
+        // Delete this section after the backend PR is accepted
         parsedCohorts.forEach((cohort) => {
           // eslint-disable-next-line no-param-reassign
           cohort.micro_cohorts = [];
           if (cohort.id === 600) {
             const microCohort = parsedCohorts.find((c) => c.id === 599);
             cohort.micro_cohorts.push(microCohort);
+
+            const microCohort2 = parsedCohorts.find((c) => c.id === 601);
+            cohort.micro_cohorts.push(microCohort2);
           }
         });
-        console.log('parsedCohorts');
-        console.log(parsedCohorts);
 
         // find cohort with current slug
         const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
@@ -139,8 +218,8 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        console.log('currentCohort');
-        console.log(currentCohort);
+        const microCohortsModules = await getMicroCohortsAssignments(currentCohort.micro_cohorts);
+        setMicroCohortsAssinments(microCohortsModules);
 
         setCohortSession(currentCohort);
         setMyCohorts(parsedCohorts);

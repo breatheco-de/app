@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   Flex,
   Box,
@@ -28,7 +28,9 @@ import Icon from '../../common/components/Icon';
 import Progress from '../../common/components/ProgressBar/Progress';
 import { ProfilesSection } from '../../common/components/SupportSidebar/MentoringConsumables';
 
-function CohortModules({ cohort }) {
+function CohortModules({ cohort, modules }) {
+  console.log('modules');
+  console.log(modules);
   const { t, lang } = useTranslation('dashboard');
   const langDict = {
     en: 'us',
@@ -38,8 +40,6 @@ function CohortModules({ cohort }) {
   const { user } = useAuth();
   const { featuredLight, backgroundColor, hexColor } = useStyle();
   const { cohortSession, sortedAssignments } = useCohortHandler();
-  console.log('sortedAssignments');
-  console.log(sortedAssignments);
 
   const cohortColor = hexColor.blueDefault;
 
@@ -63,9 +63,77 @@ function CohortModules({ cohort }) {
     return acc;
   };
 
+  const modulesProgress = useMemo(() => {
+    if (!modules || !Array.isArray(modules)) return null;
+    const modulesDict = {};
+    modules.forEach((module) => {
+      const assignmentsCount = module.modules.reduce(getModulesProgress, {});
+
+      const typesPerModule = Object.keys(assignmentsCount);
+      const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
+      const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
+      modulesDict[module.id] = {
+        moduleTotalAssignments,
+        moduleDoneAssignments,
+        assignmentsCount,
+      };
+    });
+
+    return modulesDict;
+  }, [modules]);
+
+  const cohortProgress = useMemo(() => {
+    if (!modulesProgress) return null;
+
+    const allModules = Object.values(modulesProgress);
+    const totalAssignments = allModules.reduce((acc, curr) => curr.moduleTotalAssignments + acc, 0);
+    const doneAssignments = allModules.reduce((acc, curr) => curr.moduleDoneAssignments + acc, 0);
+
+    const percentage = Math.floor((doneAssignments * 100) / 100);
+
+    return {
+      totalAssignments,
+      doneAssignments,
+      percentage,
+    };
+  }, [modulesProgress]);
+
+  const getColorVariations = (colorHex) => {
+    const variations = [0.2, 0.3, 0.8, 0.9];
+    const r = parseInt(colorHex.slice(1, 3), 16); // r = 102
+    const g = parseInt(colorHex.slice(3, 5), 16); // g = 51
+    const b = parseInt(colorHex.slice(5, 7), 16); // b = 153
+
+    const [light1, light2, light3, light4] = variations.map((variation) => {
+      const tintR = Math.round(Math.min(255, r + (255 - r) * variation)); // 117
+      const tintG = Math.round(Math.min(255, g + (255 - g) * variation)); // 71
+      const tintB = Math.round(Math.min(255, b + (255 - b) * variation)); // 163
+
+      return `#${
+        [tintR, tintG, tintB]
+          .map((x) => x.toString(16).padStart(2, '0'))
+          .join('')}`;
+    });
+
+    const [dark1, dark2, dark3, dark4] = variations.map((variation) => {
+      const shadeR = Math.round(Math.max(0, r - r * variation)); // 92
+      const shadeG = Math.round(Math.max(0, g - g * variation)); // 46
+      const shadeB = Math.round(Math.max(0, b - b * variation)); // 138
+
+      return `#${
+        [shadeR, shadeG, shadeB]
+          .map((x) => x.toString(16).padStart(2, '0'))
+          .join('')}`;
+    });
+
+    return { light1, light2, light3, light4, dark1, dark2, dark3, dark4 };
+  };
+
+  const colorVariations = getColorVariations(cohortColor);
+
   return (
     <Accordion allowToggle>
-      <AccordionItem borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
+      <AccordionItem background={colorVariations.light4} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
             <AccordionButton _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
@@ -75,9 +143,9 @@ function CohortModules({ cohort }) {
                   <Heading size="18px" fontWeight="400">
                     {cohort.name}
                   </Heading>
-                  <Box padding="5px 7px" borderRadius="27px" background={cohortColor}>
+                  <Box padding="5px 7px" borderRadius="27px" background={colorVariations.light1}>
                     <Text color="white">
-                      {t('modules-count', { count: 10 })}
+                      {t('modules-count', { count: modules?.length })}
                     </Text>
                   </Box>
                 </Box>
@@ -88,25 +156,25 @@ function CohortModules({ cohort }) {
                   <AccordionIcon />
                 </Box>
               </Box>
-              <Box borderRadius="4px" padding="8px" background="#E1F5FF" width="100%">
-                <Text textAlign="left" size="md" mb="5px">
-                  {t('path-to-claim')}
-                </Text>
-                <Progress progressColor="black" percents={50} barHeight="8px" borderRadius="4px" />
-                <Text textAlign="left" mt="5px" size="md">
-                  50%
-                </Text>
-              </Box>
+              {cohortProgress && (
+                <Box borderRadius="4px" padding="8px" background={colorVariations.light3} width="100%">
+                  <Text textAlign="left" size="md" mb="5px">
+                    {t('path-to-claim')}
+                  </Text>
+                  <Progress progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
+                  <Text textAlign="left" mt="5px" size="md">
+                    {`${cohortProgress.percentage}%`}
+                  </Text>
+                </Box>
+              )}
             </AccordionButton>
             <AccordionPanel paddingX="0" display="flex" flexDirection="column" gap="16px">
-              {sortedAssignments.map((module) => {
-                const assignmentsCount = module.modules.reduce(getModulesProgress, {});
-                console.log('assignmentsCount');
-                console.log(assignmentsCount);
+              {modules?.map((module) => {
+                const assignmentsCount = modulesProgress?.[module.id].assignmentsCount;
+                const moduleTotalAssignments = modulesProgress?.[module.id].moduleTotalAssignments;
+                const moduleDoneAssignments = modulesProgress?.[module.id].moduleDoneAssignments;
 
-                const allAssignmenTypes = Object.keys(assignmentsCount);
-                const moduleTotalAssignments = allAssignmenTypes.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
-                const moduleDoneAssignments = allAssignmenTypes.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
+                const typesPerModule = Object.keys(assignmentsCount);
 
                 return (
                   <Box background={backgroundColor} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
@@ -121,10 +189,10 @@ function CohortModules({ cohort }) {
                       </Text>
                     </Box>
                     <Box display="flex" alignItems="center" gap="16px">
-                      {allAssignmenTypes.map((taskType) => {
+                      {typesPerModule.map((taskType) => {
                         const { icon, total, done } = assignmentsCount[taskType];
                         return (
-                          <Box background="#D6F3FF" padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center">
+                          <Box background={colorVariations.light3} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center">
                             <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
                             <Text>
                               {`${done}/`}
@@ -150,4 +218,9 @@ export default CohortModules;
 
 CohortModules.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+};
+
+CohortModules.defaultProps = {
+  modules: null,
 };
