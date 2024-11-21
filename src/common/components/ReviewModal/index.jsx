@@ -201,14 +201,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
-        toast({
-          title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
+        throw new Error(data?.detail);
       }
     } catch (errorMsg) {
       error('Error fetching code revisions:', errorMsg);

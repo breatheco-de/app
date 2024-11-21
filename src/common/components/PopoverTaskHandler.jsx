@@ -231,6 +231,8 @@ function PopoverCustomContent({
     closeSettings();
   };
 
+  console.log(currentAssetData);
+
   return (
     <PopoverContent>
       <PopoverArrow />
