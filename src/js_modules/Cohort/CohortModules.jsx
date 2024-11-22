@@ -109,6 +109,20 @@ function CohortModules({ cohort, modules }) {
     };
   }, [modulesProgress]);
 
+  const updateMicroCohortModules = (tasks) => {
+    const newModules = serializeModulesMap(microCohortsAssignments[cohort.slug].syllabusJson, tasks);
+    const allMicroCohortAssignments = {
+      ...microCohortsAssignments,
+      [cohort.slug]: {
+        ...microCohortsAssignments[cohort.slug],
+        modules: newModules,
+        tasks: [...microCohortsAssignments[cohort.slug].tasks, tasks],
+      },
+    };
+
+    setMicroCohortsAssinments(allMicroCohortAssignments);
+  };
+
   const startCourse = async () => {
     try {
       const firstModule = modules[0];
@@ -120,21 +134,8 @@ function CohortModules({ cohort, modules }) {
         cohort: cohort.id,
       }));
 
-      const customHandler = (tasks) => {
-        const newModules = serializeModulesMap(microCohortsAssignments[cohort.slug].syllabusJson, tasks);
-        const allMicroCohortAssignments = {
-          ...microCohortsAssignments,
-          [cohort.slug]: {
-            ...microCohortsAssignments[cohort.slug],
-            modules: newModules,
-          },
-        };
-
-        setMicroCohortsAssinments(allMicroCohortAssignments);
-      };
-
       setLoadingStartCourse(true);
-      await startDay({ newTasks, customHandler, updateContext: false });
+      await startDay({ newTasks, customHandler: updateMicroCohortModules, updateContext: false });
       setLoadingStartCourse(false);
     } catch (e) {
       console.log(e);
@@ -174,6 +175,14 @@ function CohortModules({ cohort, modules }) {
   };
 
   const colorVariations = getColorVariations(cohortColor);
+
+  const redirectToModule = (module) => {
+    const { isStarted } = modulesProgress[module.id];
+    //start module
+    if (!isStarted) {
+      console.log('hola');
+    }
+  };
 
   return (
     <Accordion allowToggle>
@@ -248,7 +257,7 @@ function CohortModules({ cohort, modules }) {
                   const typesPerModule = Object.keys(assignmentsCount);
 
                   return (
-                    <Box background={backgroundColor} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
+                    <Box onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
                       <Box display="flex" alignItems="center" gap="16px">
                         {moduleTotalAssignments === moduleDoneAssignments ? (
                           <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />

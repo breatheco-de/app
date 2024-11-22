@@ -169,19 +169,21 @@ function useCohortHandler() {
       microCohorts.forEach((cohort) => {
         const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
 
-        const cohortMap = {
-          syllabus: null,
-          tasks: [],
-        };
+        let syllabus = null;
+        let tasks = [];
 
         cohortResults.forEach((elem) => {
           const { data } = elem;
-          if ('json' in data) cohortMap.syllabus = data.json.days || data.json.modules;
-          else cohortMap.tasks = data.results;
+          if ('json' in data) syllabus = data.json.days || data.json.modules;
+          else tasks = data.results;
         });
-        const cohortModules = serializeModulesMap(cohortMap.syllabus, cohortMap.tasks);
+        const cohortModules = serializeModulesMap(syllabus, tasks);
 
-        assignmentsMap[cohort.slug] = { modules: cohortModules, syllabusJson: cohortMap.syllabus };
+        assignmentsMap[cohort.slug] = {
+          modules: cohortModules,
+          syllabusJson: syllabus,
+          tasks,
+        };
       });
 
       return assignmentsMap;
