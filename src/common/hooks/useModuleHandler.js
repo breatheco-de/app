@@ -117,7 +117,7 @@ function useModuleHandler() {
   };
 
   const startDay = async ({
-    newTasks, label, customHandler = () => {},
+    newTasks, label, customHandler = () => {}, updateContext = true,
   }) => {
     try {
       const response = await bc.todo({}).add(newTasks);
@@ -132,11 +132,13 @@ function useModuleHandler() {
           duration: 6000,
           isClosable: true,
         });
-        setTaskTodo([
-          ...taskTodo,
-          ...response.data,
-        ]);
-        customHandler();
+        if (updateContext) {
+          setTaskTodo([
+            ...taskTodo,
+            ...response.data,
+          ]);
+        }
+        customHandler(response.data);
       }
     } catch (err) {
       console.log('error_ADD_TASK 🔴 ', err);

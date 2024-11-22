@@ -106,6 +106,56 @@ function useCohortHandler() {
     }
   };
 
+  const serializeModulesMap = (moduleData, tasks) => {
+    const assignmentsRecopilated = [];
+    moduleData.forEach((assignment) => {
+      const {
+        id, label, description, lessons, replits, assignments, quizzes,
+      } = assignment;
+      if (lessons && replits && assignments && quizzes) {
+        const nestedAssignments = processRelatedAssignments(assignment, tasks);
+
+        // this properties name's reassignment is done to keep compatibility with deprecated functions
+        const {
+          content: modules,
+          filteredContent: filteredModules,
+          filteredContentByPending: filteredModulesByPending,
+        } = nestedAssignments;
+
+        // Data to be sent to [sortedAssignments] = state
+        const assignmentsStruct = {
+          id,
+          label,
+          description,
+          modules,
+          exists_activities: modules?.length > 0,
+          filteredModules,
+          filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
+          duration_in_days: assignment?.duration_in_days || null,
+          teacherInstructions: assignment.teacher_instructions,
+          extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
+          keyConcepts: assignment['key-concepts'],
+        };
+
+        if (modules.length > 0) {
+          // prevent duplicates when a new module has been started (added to sortedAssignments array)
+          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
+          if (keyIndex > -1) {
+            assignmentsRecopilated.splice(keyIndex, 1, {
+              ...assignmentsStruct,
+            });
+          } else {
+            assignmentsRecopilated.push({
+              ...assignmentsStruct,
+            });
+          }
+        }
+      }
+    });
+
+    return assignmentsRecopilated;
+  };
+
   const getMicroCohortsAssignments = async (microCohorts) => {
     try {
       const assignmentsMap = {};
@@ -115,8 +165,6 @@ function useCohortHandler() {
         ...syllabusPromises,
         ...tasksPromises,
       ]);
-      console.log('allResults');
-      console.log(allResults);
 
       microCohorts.forEach((cohort) => {
         const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
@@ -131,33 +179,9 @@ function useCohortHandler() {
           if ('json' in data) cohortMap.syllabus = data.json.days || data.json.modules;
           else cohortMap.tasks = data.results;
         });
-        const cohortModules = [];
-        cohortMap.syllabus?.forEach((assignment) => {
-          const {
-            id, label, description, lessons, replits, assignments, quizzes,
-          } = assignment;
-          if (lessons && replits && assignments && quizzes) {
-            const nestedAssignments = processRelatedAssignments(assignment, cohortMap.tasks);
-            const { content: modules } = nestedAssignments;
+        const cohortModules = serializeModulesMap(cohortMap.syllabus, cohortMap.tasks);
 
-            const assignmentsStruct = {
-              id,
-              label,
-              description,
-              modules,
-              exists_activities: modules?.length > 0,
-            };
-            if (modules.length > 0) {
-              const keyIndex = cohortModules.findIndex((x) => x.id === id);
-              if (keyIndex > -1) {
-                cohortModules.splice(keyIndex, 1, assignmentsStruct);
-              } else {
-                cohortModules.push(assignmentsStruct);
-              }
-            }
-          }
-        });
-        assignmentsMap[cohort.slug] = cohortModules;
+        assignmentsMap[cohort.slug] = { modules: cohortModules, syllabusJson: cohortMap.syllabus };
       });
 
       return assignmentsMap;
@@ -196,16 +220,16 @@ function useCohortHandler() {
           };
         }));
 
-        // Delete this section after the backend PR is accepted
+        // Delete this loop after the backend PR is accepted
         parsedCohorts.forEach((cohort) => {
           // eslint-disable-next-line no-param-reassign
           cohort.micro_cohorts = [];
           if (cohort.id === 600) {
             const microCohort = parsedCohorts.find((c) => c.id === 599);
-            cohort.micro_cohorts.push(microCohort);
+            cohort.micro_cohorts.push({ ...microCohort, color: '#0097CD' });
 
             const microCohort2 = parsedCohorts.find((c) => c.id === 601);
-            cohort.micro_cohorts.push(microCohort2);
+            cohort.micro_cohorts.push({ ...microCohort2, color: '#DD7002' });
           }
         });
 
@@ -243,56 +267,11 @@ function useCohortHandler() {
   // Sort all data fetched in order of taskTodo
   const prepareTasks = () => {
     const moduleData = cohortProgram?.json?.days || cohortProgram?.json?.modules || [];
-    const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
     if (cohortProgram?.json && taskTodo) {
-      moduleData.forEach((assignment) => {
-        const {
-          id, label, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = processRelatedAssignments(assignment, taskTodo);
-
-          // this properties name's reassignment is done to keep compatibility with deprecated functions
-          const {
-            content: modules,
-            filteredContent: filteredModules,
-            filteredContentByPending: filteredModulesByPending,
-          } = nestedAssignments;
-
-          // Data to be sent to [sortedAssignments] = state
-          const assignmentsStruct = {
-            id,
-            label,
-            description,
-            modules,
-            exists_activities: modules?.length > 0,
-            filteredModules,
-            filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
-            duration_in_days: assignment?.duration_in_days || null,
-            teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
-            keyConcepts: assignment['key-concepts'],
-          };
-
-          // prevent duplicates when a new module has been started (added to sortedAssignments array)
-          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-          if (keyIndex > -1) {
-            assignmentsRecopilated.splice(keyIndex, 1, {
-              ...assignmentsStruct,
-            });
-          } else {
-            assignmentsRecopilated.push({
-              ...assignmentsStruct,
-            });
-          }
-        }
-      });
-      const filterNotEmptyModules = assignmentsRecopilated.filter(
-        (l) => l.modules.length > 0,
-      );
-      setSortedAssignments(filterNotEmptyModules);
+      const cohortModules = serializeModulesMap(moduleData, taskTodo);
+      setSortedAssignments(cohortModules);
     }
   };
 
@@ -358,6 +337,8 @@ function useCohortHandler() {
     getTasksWithoutCohort,
     userCapabilities,
     state,
+    setMicroCohortsAssinments,
+    serializeModulesMap,
     ...state,
   };
 }
