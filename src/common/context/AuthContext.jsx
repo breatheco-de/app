@@ -202,6 +202,7 @@ function AuthProvider({ children, pageProps }) {
                 user_id: data.id,
                 email: data.email,
                 is_academy_legacy: data.roles.some((r) => r.academy.id === 6),
+                is_available_as_saas: !data.roles.some((r) => !r.academy.available_as_saas),
                 first_name: data.first_name,
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
