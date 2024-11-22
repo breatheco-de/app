@@ -2,7 +2,7 @@ import { Box, Img } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useStyle from '../hooks/useStyle';
 
-function LoaderScreen({ width, height, objectFit, ...rest }) {
+function LoaderScreen({ width, height, objectFit, background, ...rest }) {
   const { backgroundColor } = useStyle();
 
   return (
@@ -10,7 +10,7 @@ function LoaderScreen({ width, height, objectFit, ...rest }) {
       display="flex"
       alignItems="center"
       position="absolute"
-      background={backgroundColor}
+      background={background || backgroundColor}
       justifyContent="center"
       width="100%"
       height="100%"
@@ -45,11 +45,13 @@ LoaderScreen.propTypes = {
   width: PropTypes.string,
   height: PropTypes.string,
   objectFit: PropTypes.string,
+  background: PropTypes.string,
 };
 LoaderScreen.defaultProps = {
   width: '200px',
   height: '200px',
   objectFit: 'cover',
+  background: undefined,
 };
 
 export default LoaderScreen;

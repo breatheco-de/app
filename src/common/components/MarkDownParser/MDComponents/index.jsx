@@ -13,7 +13,6 @@ import { slugify } from '../../../../utils';
 import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
-import { log } from '../../../../utils/logging';
 
 export function generateId(children) {
   const text = children ? children
@@ -533,16 +532,18 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, include, exclude,
+  children, permission, include, exclude, saas, withbanner,
 }) {
   const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
-  log('md_permissions:', allCapabilities);
+
+  const parsedWithBanner = ['true', 'True', '1'].includes(String(withbanner));
 
   return (
     <OnlyFor
       onlyMember
-      withBanner
+      withBanner={parsedWithBanner}
       capabilities={allCapabilities}
+      saas={saas}
     >
       {children}
     </OnlyFor>
@@ -622,11 +623,15 @@ OnlyForBanner.propTypes = {
   permission: PropTypes.string,
   include: PropTypes.string,
   exclude: PropTypes.string,
+  saas: PropTypes.string,
+  withbanner: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
   include: '',
   exclude: '',
+  saas: '',
+  withbanner: true,
 };
 DOMComponent.propTypes = {
   children: PropTypes.node.isRequired,
