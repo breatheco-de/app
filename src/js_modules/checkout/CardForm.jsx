@@ -42,7 +42,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
   } = useSignup();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, paymentStatus, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
-    card_number: paymentInfo.card_number || 0,
+    card_number: paymentInfo?.card_number || 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
