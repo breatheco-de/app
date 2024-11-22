@@ -79,7 +79,7 @@ function Timeline({
 
   if (variant === 'guided-experience') {
     return (
-      <Box display="flex" flexDirection="column" gap="5px">
+      <Box display="flex" flexDirection="column" gap="5px" flex="1">
         {assignments.length > 0 ? assignments.map((item, index) => {
           const mapIndex = index;
           const muted = item?.slug !== currentAssignment?.slug;
