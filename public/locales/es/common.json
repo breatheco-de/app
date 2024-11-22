@@ -183,7 +183,7 @@
       },
       "project-readme": {
         "label": "Revisa el README.md dentro del proyecto",
-        "description": "Una vez que abras el proyecto en tu editor de codigo, encontraras un archivo README.es.md con más instrucciones sobre como correr el proyecto"
+        "description": "Una vez que abras el proyecto en tu editor de código, encontrarás un archivo README.es.md las instrucciones detalladas sobre como correr el proyecto."
       },
       "os-list": [
         {
@@ -193,18 +193,19 @@
           "dependencies": [
             {
               "name": "python",
-              "label": "Install Python",
-              "description": "We recommend installing python",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
-            }, {
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=wEcTvG0BHQk",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
               "name": "node-js",
-              "label": "Install Node JS",
-              "description": "We recommend installing Node JS",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
@@ -251,18 +252,19 @@
           "dependencies": [
             {
               "name": "python",
-              "label": "Install Python",
-              "description": "We recommend installing python",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
-            }, {
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=88np4KkfDO8",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
               "name": "node-js",
-              "label": "Install Node JS",
-              "description": "We recommend installing Node JS",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=LuaunSg8ppI",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
+              "source-label": "¿Cómo instalar NVM en Linux?"
             }
           ],
           "steps": [
@@ -309,18 +311,19 @@
           "dependencies": [
             {
               "name": "python",
-              "label": "Install Python",
-              "description": "We recommend installing python",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
-            }, {
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=KVdWWsklW6o",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
               "name": "node-js",
-              "label": "Install Node JS",
-              "description": "We recommend installing Node JS",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
-              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
-              "source-label": "Go to how to install nvm on MacOS"
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
+              "source-label": "¿Cómo instalar NVM en Windows?"
             }
           ],
           "steps": [
