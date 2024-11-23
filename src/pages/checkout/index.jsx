@@ -554,12 +554,12 @@ function Checkout() {
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlanCheckoutData };
     const discounts = [];
+    console.log(selectedPlanCheckoutData);
 
     allCoupons.forEach((c) => {
-      pricingData = getPriceWithDiscount(pricingData.price, c);
+      pricingData = getPriceWithDiscount(pricingData.price, c, selectedPlanCheckoutData?.price);
       discounts.push(pricingData);
     });
-
     setAllDiscounts(discounts);
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
@@ -574,6 +574,22 @@ function Checkout() {
     }
     return '';
   };
+
+  const calculateTotalPrice = () => {
+    const months = selectedPlanCheckoutData.how_many_months || 1;
+
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    }
+
+    const firstMonthPrice = processedPrice.price;
+    const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+    return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+  };
+
+  console.log(selectedPlanCheckoutData);
 
   const renderPlanDetails = () => {
     if (originalPlan?.selectedPlan?.isFreeTier) {
@@ -969,7 +985,7 @@ function Checkout() {
                               <Flex gridGap="1rem">
                                 {processedPrice?.originalPrice && (
                                   <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                                    {`$${allDiscounts[index]?.originalPrice?.toFixed(2)}`}
+                                    {`$${allDiscounts[index]?.accumulatedPrice?.toFixed(2)}`}
                                   </Text>
                                 )}
                                 <Text size="18px" color="currentColor" lineHeight="normal">
@@ -1002,9 +1018,14 @@ function Checkout() {
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData.price <= 0
                                 ? selectedPlanCheckoutData.priceText
-                                : `$${(processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2)} ${selectedPlanCheckoutData.currency?.code}`}
+                                : `$${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
                             </Text>
                           </Flex>
+                        )}
+                        {selectedPlanCheckoutData.period === 'FINANCING' && (
+                          <Text fontWeight="300" size="xs" marginTop="10px">
+                            {t('fixed-price-disclaimer')}
+                          </Text>
                         )}
                       </>
                     )}

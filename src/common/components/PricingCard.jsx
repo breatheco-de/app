@@ -139,6 +139,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
     return Math.round(discount * 100) / 100;
   }
 
+  console.log(selectedFinancing);
+
   return (
     <Flex
       maxWidth="410px"
@@ -336,6 +338,11 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   )}
                 </AccordionPanel>
               </AccordionItem>
+              {courseCoupon?.discount_type === 'FIXED_PRICE' && selectedFinancing?.period === 'FINANCING' && (
+                <Text textAlign="center" fontWeight="300" size="xs" marginTop="10px" color="white">
+                  {t('fixed-price-disclaimer')}
+                </Text>
+              )}
             </Accordion>
           )}
         </Box>
