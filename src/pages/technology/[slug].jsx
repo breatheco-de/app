@@ -77,15 +77,18 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   const response = await bc.lesson({ sort_priority: 1 }).techsBySort();
-  const technologiesFetched = response.data;
+  const technologiesFetched = response.data || [];
 
   const techsBySortPriority = technologiesFetched.filter((tech) => {
     if (!tech.lang) return true;
     return tech.lang === locale;
   });
 
+  const workshopResp = await bc.public({ technologies: slug }).events();
+  const workShopsForTech = workshopResp.data || [];
+
   const coursesForTechResponse = await bc.marketing({ technologies: slug }).courses();
-  const coursesForTech = coursesForTechResponse?.data;
+  const coursesForTech = coursesForTechResponse?.data || [];
 
   let marketingInfo = {};
   try {
@@ -109,7 +112,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     assetList = { landingTechnologies: [] };
   }
 
-  const landingTechnology = assetList.landingTechnologies[0] || [];
+  const landingTechnology = assetList.landingTechnologies[0] || {};
 
   const rawTechnologyData = assetList.landingTechnologies.find(
     (tech) => tech.lang === locale && tech.slug === slug,
@@ -121,7 +124,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     (l) => l?.asset_type?.toUpperCase() === 'EXERCISE',
   ).slice(0, 3) || [];
 
-  const { results: otherAssets, count } = (await fetchOtherAssets(locale, 1, slug)).data;
+  const { results: otherAssets = [], count } = (await fetchOtherAssets(locale, 1, slug)).data;
 
   const assetData = [...exercises, ...otherAssets];
 
@@ -147,20 +150,20 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       techsBySortPriority,
       coursesForTech,
       assetData,
+      workShopsForTech,
       video,
       count,
     },
   };
 };
 
-function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, video, coursesForTech }) {
+function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, video, coursesForTech, workShopsForTech }) {
   const { t, lang } = useTranslation('technologies');
   const { isAuthenticated } = useAuth();
   const { fontColor } = useStyle();
   const router = useRouter();
   const toast = useToast();
   const scrollRef = useRef();
-  const [workshops, setWorkshops] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const techsWithIcon = techsBySortPriority?.filter((sortTech) => sortTech.icon_url);
   const techsShown = techsWithIcon?.sort((a, b) => {
@@ -180,26 +183,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     if (!technology?.slug) return;
     router.push(`/${lang}/technology/${technology.slug}`);
   };
-
-  const getWorkshops = async () => {
-    try {
-      const workshopResp = await bc.public().events();
-      const currentWorkshops = workshopResp.data;
-      setWorkshops(currentWorkshops);
-    } catch (err) {
-      toast({
-        position: 'top',
-        title: t('errors.loading-workshops'),
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (assetData?.length > 0) getWorkshops();
-  }, []);
 
   const scrollRight = () => {
     if (scrollRef.current) {
@@ -230,8 +213,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
       handleTechChange(tech);
     }
   };
-
-  console.log(coursesForTech);
+  console.log(workShopsForTech);
 
   return technologyData?.slug && assetData?.length > 0 && technologyData && (
     <Container maxWidth="1280px">
@@ -337,12 +319,12 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           )}
         </GridContainer>
       </Flex>
-      {workshops?.length > 0 && (
+      {workShopsForTech?.length > 0 && (
         <Flex marginTop="50px" flexDirection="column" gap="15px">
           <Box width="100%">
             <MktEventCards
               type="carousel"
-              externalEvents={workshops}
+              externalEvents={workShopsForTech}
               title={t('tech-workshops', { tech: technologyData?.title })}
             />
           </Box>
@@ -381,12 +363,14 @@ LessonByTechnology.propTypes = {
     PropTypes.object,
   ]),
   coursesForTech: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  workShopsForTech: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
 };
 
 LessonByTechnology.defaultProps = {
   video: '',
   assetData: [],
   coursesForTech: [],
+  workShopsForTech: [],
 };
 
 export default LessonByTechnology;
