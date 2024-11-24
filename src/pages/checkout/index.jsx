@@ -578,12 +578,6 @@ function Checkout() {
   const calculateTotalPrice = () => {
     const months = selectedPlanCheckoutData.how_many_months || 1;
 
-    if (processedPrice.discountType === 'FIXED_PRICE') {
-      const firstMonthPrice = processedPrice.price;
-      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
-      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
-    }
-
     const firstMonthPrice = processedPrice.price;
     const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
     return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
