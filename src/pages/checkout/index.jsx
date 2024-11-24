@@ -554,7 +554,6 @@ function Checkout() {
   const processedPrice = useMemo(() => {
     let pricingData = { ...selectedPlanCheckoutData };
     const discounts = [];
-    console.log(selectedPlanCheckoutData);
 
     allCoupons.forEach((c) => {
       pricingData = getPriceWithDiscount(pricingData.price, c, selectedPlanCheckoutData?.price);
@@ -582,8 +581,6 @@ function Checkout() {
     const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
     return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
   };
-
-  console.log(selectedPlanCheckoutData);
 
   const renderPlanDetails = () => {
     if (originalPlan?.selectedPlan?.isFreeTier) {

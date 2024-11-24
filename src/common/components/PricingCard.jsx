@@ -139,8 +139,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
     return Math.round(discount * 100) / 100;
   }
 
-  console.log(selectedFinancing);
-
   return (
     <Flex
       maxWidth="410px"
