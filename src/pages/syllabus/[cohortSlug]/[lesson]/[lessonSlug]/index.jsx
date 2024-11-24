@@ -40,6 +40,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
+import completions from './completion-jobs.json';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -144,11 +145,14 @@ function SyllabusContent() {
     const iframe = 'true';
     const token = userToken;
 
-    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
 
-  const handleStartLearnpack = () => setLearnpackStart(true);
+  const handleStartLearnpack = () => {
+    setLearnpackStart(true);
+    onToggle();
+  };
 
   useEffect(() => {
     setLearnpackStart(false);
@@ -232,6 +236,7 @@ function SyllabusContent() {
         rigo.updateOptions({
           showBubble: false,
           context: aiContext.ai_context,
+          completions,
         });
       }
     } catch (e) {
@@ -722,6 +727,7 @@ function SyllabusContent() {
         rigo.updateOptions({
           showBubble: false,
           target: '#rigo-chat',
+          welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
           highlight: true,
           collapsed: false,
           purposeSlug: '4geekscom-public-agent',
@@ -737,6 +743,12 @@ function SyllabusContent() {
         isClosable: true,
       });
     }
+  };
+
+  const getOverflowY = () => {
+    if (isQuiz) return 'hidden';
+    if (isAvailableAsSaas && !learnpackStart) return 'scroll';
+    return 'auto';
   };
 
   return (
@@ -814,7 +826,7 @@ function SyllabusContent() {
                   color={hexColor.blueDefault}
                   onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'close' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
                 {!learnpackStart
@@ -884,7 +896,7 @@ function SyllabusContent() {
                 ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
-                overflowY={isAvailableAsSaas && !learnpackStart && 'scroll'}
+                overflowY={getOverflowY()}
                 borderRadius="11px 11px 0 0"
                 position="relative"
               >

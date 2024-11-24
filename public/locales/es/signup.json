@@ -24,6 +24,8 @@
   "payment-success": "Pago exitoso",
   "payment-failed": "Pago fallido",
   "discount-applied": "Descuento aplicado",
+  "course-details": "Detalles del curso",
+  "see-financing-opt": "Opciones de financiamiento",
   "one_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "monthly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "quarterly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
@@ -80,7 +82,7 @@
   "no-have-account": "¿No tienes una cuenta?",
   "login-here": "Inicia sesión aquí.",
   "register-here": "Regístrate aquí.",
-  "start-free-course": "Empieza a aprender",
+  "start-free-course": "Empezar a aprender",
   "free": "Gratis",
   "totally_free": "Totalmente gratuito",
   "free_trial": "Prueba gratuita",
@@ -273,13 +275,13 @@
     }],
     "basic-plan": {
       "type": "Vuela solo",
-      "hook-message": "Prueba la experiencia completa del bootcamp de forma gratuita y decide más tarde",
+      "hook-message": "Prueba la experiencia completa a tu propio ritmo de forma gratuita y decide más tarde",
       "title": "Miembro Gratuito",
       "description": "Todo lo que necesitas para comenzar a aprender a programar",
       "button-title": "Comenzar gratis",
       "service_items": {
         "items": [{
-          "label": "1 Taller en vivo"
+          "label": "Talleres en vivo ilimitados"
         },
         {
           "label": "1 Sesión de tutoría individual"
@@ -317,10 +319,10 @@
       "service_items": {
         "title": "Todo en Vuela Solo más...",
         "items": [{
-          "label": "10 Talleres en vivo p/mes"
+          "label": "Talleres en vivo ilimitados"
         },
         {
-          "label": "2 Sesiones de mentoría individuales p/mes"
+          "label": "4 Sesiones de mentoría individuales"
         }]
       },
       "featured_info": [{
