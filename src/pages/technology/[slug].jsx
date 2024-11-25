@@ -213,8 +213,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     }
   };
 
-  console.log(assetData);
-
   return technologyData?.slug && assetData?.length > 0 && (
     <Container maxWidth="1280px">
       <Flex padding="30px 20px" gap={{ base: '10px', md: '80px' }} mt="30px" alignItems="center">
