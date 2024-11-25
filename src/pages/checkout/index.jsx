@@ -577,9 +577,13 @@ function Checkout() {
   const calculateTotalPrice = () => {
     const months = selectedPlanCheckoutData.how_many_months || 1;
 
-    const firstMonthPrice = processedPrice.price;
-    const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
-    return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    }
+
+    return (processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2);
   };
 
   const renderPlanDetails = () => {
@@ -1013,7 +1017,7 @@ function Checkout() {
                             </Text>
                           </Flex>
                         )}
-                        {selectedPlanCheckoutData.period === 'FINANCING' && (
+                        {processedPrice.discountType === 'FIXED_PRICE' && (
                           <Text fontWeight="300" size="xs" marginTop="10px">
                             {t('fixed-price-disclaimer')}
                           </Text>
