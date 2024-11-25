@@ -311,22 +311,20 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           />
         </Box>
       </Flex>
-      <Flex marginTop="20px" flexDirection="column" gap="15px">
-        <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
-          {t('popular-exercises')}
-        </Heading>
-        <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
-          {exercises.length > 0 ? (
+      {exercises.length > 0 && (
+        <Flex marginTop="20px" flexDirection="column" gap="15px">
+          <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
+            {t('popular-exercises')}
+          </Heading>
+          <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
             <ProjectList
               projects={exercises}
               withoutImage
               notFoundMessage={t('common:asset-not-found-in-current-language')}
             />
-          ) : (
-            <Text fontSize="18px">{t('common:asset-not-found-in-current-language')}</Text>
-          )}
-        </GridContainer>
-      </Flex>
+          </GridContainer>
+        </Flex>
+      )}
       {workShopsForTech?.length > 0 && (
         <Flex marginTop="50px" flexDirection="column" gap="15px">
           <Box width="100%">
@@ -337,11 +335,11 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           </Box>
         </Flex>
       )}
-      <Flex marginTop="50px" flexDirection="column" gap="15px">
-        <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
-          {t('tech-materials', { tech: technologyData?.title })}
-        </Heading>
-        {lessonMaterials?.length > 0 ? (
+      {lessonMaterials?.length > 0 && (
+        <Flex marginTop="50px" flexDirection="column" gap="15px">
+          <Heading as="h2" fontSize="38px" fontWeight="700" mb="20px">
+            {t('tech-materials', { tech: technologyData?.title })}
+          </Heading>
           <GridContainer withContainer gridColumn="1 / span 10" maxWidth="100%" padding="0" justifyContent="flex-start" margin="0">
             <ProjectsLoader
               articles={lessonMaterials}
@@ -352,10 +350,8 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
               fetchData={fetchData}
             />
           </GridContainer>
-        ) : (
-          <Text fontSize="18px">{t('common:asset-not-found-in-current-language')}</Text>
-        )}
-      </Flex>
+        </Flex>
+      )}
     </Container>
   );
 }
