@@ -20,6 +20,7 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
   const qsConnector = parseQuerys({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
+    is_public: true,
   }, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
