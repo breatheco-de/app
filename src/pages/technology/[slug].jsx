@@ -76,11 +76,19 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const t = await getT(locale, 'technologies');
   const { slug } = params;
 
+  const langMap = {
+    en: 'us',
+    us: 'us',
+    es: 'es',
+  };
+  const normalizedLocale = langMap[locale] || locale;
+
   const response = await bc.lesson({ sort_priority: 1 }).techsBySort();
   const technologiesFetched = response.data || [];
 
   const techsBySortPriority = technologiesFetched.filter((tech) => {
     if (!tech.lang) return true;
+    if (tech.lang === normalizedLocale) return true;
     return tech.lang === locale;
   });
 
@@ -213,7 +221,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
       handleTechChange(tech);
     }
   };
-  console.log(workShopsForTech);
 
   return technologyData?.slug && assetData?.length > 0 && technologyData && (
     <Container maxWidth="1280px">
@@ -236,6 +243,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                       alt={`${tech.title}`}
                       height={index === 0 ? '60px' : '40px'}
                       width={index === 0 ? '60px' : '40px'}
+                      maxWidth="100%"
                       cursor="pointer"
                       objectFit="contain"
                       margin="0 auto"
@@ -272,14 +280,14 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
           <Flex gap="10px" marginTop="50px" wrap="wrap">
             {coursesAvailable
               && (
-                <Link href={`7${lang}/bootcamp/${coursesForTech[0].slug}`}>
+                <Link href={`/${lang}/bootcamp/${coursesForTech[0].slug}`}>
                   <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none">
                     {`${technologyData?.title} roadmap`}
                     <Icon color="white" icon="longArrowRight" />
                   </Button>
                 </Link>
               )}
-            <Link href={!isAuthenticated ? `${lang}/pricing?plan=${process.env.BASE_PLAN}` : `${lang}/mentorship/schedule`}>
+            <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : `/${lang}/mentorship/schedule`}>
               <Button border={coursesAvailable && '1px'} borderColor={coursesAvailable && 'blue.1000'} color={coursesAvailable ? 'blue.1000' : 'white'} background={coursesAvailable ? 'auto' : 'blue.1000'} _hover="none">
                 {t('request-mentorship')}
               </Button>
@@ -323,7 +331,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
         <Flex marginTop="50px" flexDirection="column" gap="15px">
           <Box width="100%">
             <MktEventCards
-              type="carousel"
               externalEvents={workShopsForTech}
               title={t('tech-workshops', { tech: technologyData?.title })}
             />
