@@ -21,6 +21,7 @@ function FooterTC({ pageProps }) {
   const noFooterRoutes = [
     '/cohort/[cohortSlug]/[slug]/[version]',
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]',
+    '/main-cohort/[mainCohortSlug]/syllabus/[cohortSlug]/[lesson]/[lessonSlug]',
     '/mentorship/schedule',
   ];
 

@@ -77,7 +77,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   } = navbarTR[locale];
   const translationsPropsExists = translations?.length > 0;
 
-  const programSlug = cohortSession?.selectedProgramSlug || '/choose-program';
+  const programSlug = '/choose-program';
 
   const whiteLabelitems = t('white-label-version-items', {
     selectedProgramSlug: '/choose-program',
