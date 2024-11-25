@@ -8,6 +8,7 @@ import {
   useToast,
   Skeleton,
   useColorModeValue,
+  Spinner,
   CircularProgress,
   Accordion,
   AccordionItem,
@@ -28,20 +29,21 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import Progress from '../../common/components/ProgressBar/Progress';
 
-function CohortModules({ cohort, modules }) {
+function CohortModules({ cohort, modules, mainCohort }) {
   const { t, lang } = useTranslation('dashboard');
   const langDict = {
     en: 'us',
     us: 'us',
   };
   const [loadingStartCourse, setLoadingStartCourse] = useState(false);
+  const [loadingModule, setLoadingModule] = useState(null);
   const router = useRouter();
   const { user } = useAuth();
   const { featuredLight, backgroundColor, hexColor } = useStyle();
   const { startDay } = useModuleHandler();
   const { serializeModulesMap, microCohortsAssignments, setMicroCohortsAssinments } = useCohortHandler();
 
-  const cohortColor = cohort.color;
+  const cohortColor = cohort.color || hexColor.blueDefault;
 
   const getModuleLabel = (module) => {
     if (typeof module.label === 'string') return module.label;
@@ -62,11 +64,6 @@ function CohortModules({ cohort, modules }) {
     }
     return acc;
   };
-
-  useEffect(() => {
-    console.log('modules changed!!!');
-    console.log(modules);
-  }, [modules]);
 
   const modulesProgress = useMemo(() => {
     if (!modules || !Array.isArray(modules)) return null;
@@ -110,12 +107,12 @@ function CohortModules({ cohort, modules }) {
   }, [modulesProgress]);
 
   const updateMicroCohortModules = (tasks) => {
-    const newModules = serializeModulesMap(microCohortsAssignments[cohort.slug].syllabusJson, tasks);
+    const cohortModulesUpdated = serializeModulesMap(microCohortsAssignments[cohort.slug].syllabusJson, tasks);
     const allMicroCohortAssignments = {
       ...microCohortsAssignments,
       [cohort.slug]: {
         ...microCohortsAssignments[cohort.slug],
-        modules: newModules,
+        modules: cohortModulesUpdated,
         tasks: [...microCohortsAssignments[cohort.slug].tasks, tasks],
       },
     };
@@ -144,6 +141,7 @@ function CohortModules({ cohort, modules }) {
   };
 
   const getColorVariations = (colorHex) => {
+    if (!colorHex) return {};
     const variations = [0.2, 0.3, 0.5, 0.8, 0.9];
     const r = parseInt(colorHex.slice(1, 3), 16); // r = 102
     const g = parseInt(colorHex.slice(3, 5), 16); // g = 51
@@ -176,11 +174,32 @@ function CohortModules({ cohort, modules }) {
 
   const colorVariations = getColorVariations(cohortColor);
 
-  const redirectToModule = (module) => {
-    const { isStarted } = modulesProgress[module.id];
-    //start module
-    if (!isStarted) {
-      console.log('hola');
+  const redirectToModule = async (module) => {
+    try {
+      const { isStarted } = modulesProgress[module.id];
+      //start module
+      if (!isStarted) {
+        const moduleToUpdate = module?.modules;
+        const newTasks = moduleToUpdate?.map((l) => ({
+          ...l,
+          associated_slug: l.slug,
+          cohort: cohort.id,
+        }));
+
+        setLoadingModule(module.id);
+        await startDay({ newTasks, customHandler: updateMicroCohortModules, updateContext: false });
+        setLoadingModule(null);
+      }
+
+      const moduleFirstAssignment = module?.modules[0];
+
+      let syllabusRoute = `/syllabus/${cohort.slug}/${moduleFirstAssignment.type.toLowerCase()}/${moduleFirstAssignment.slug}`;
+      if (mainCohort) syllabusRoute = `/main-cohort/${mainCohort.slug}/${syllabusRoute}`;
+
+      router.push(syllabusRoute);
+    } catch (e) {
+      console.log(e);
+      setLoadingModule(null);
     }
   };
 
@@ -259,10 +278,16 @@ function CohortModules({ cohort, modules }) {
                   return (
                     <Box onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
                       <Box display="flex" alignItems="center" gap="16px">
-                        {moduleTotalAssignments === moduleDoneAssignments ? (
-                          <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
+                        {loadingModule === module.id ? (
+                          <Spinner color={cohortColor} />
                         ) : (
-                          <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />
+                          <>
+                            {moduleTotalAssignments === moduleDoneAssignments ? (
+                              <Icon icon="verified" width="26px" height="26px" color={hexColor.green} />
+                            ) : (
+                              <CircularProgress color={hexColor.green} size="26px" value={(moduleDoneAssignments * 100) / moduleTotalAssignments} />
+                            )}
+                          </>
                         )}
                         <Text size="md">
                           {getModuleLabel(module)}
@@ -306,8 +331,10 @@ export default CohortModules;
 CohortModules.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  mainCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CohortModules.defaultProps = {
+  mainCohort: null,
   modules: null,
 };

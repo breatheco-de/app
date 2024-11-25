@@ -498,7 +498,12 @@ function Dashboard() {
                 <Box display="flex" flexDirection="column" gap="20px">
                   {hasMicroCohorts
                     ? cohortSession.micro_cohorts.map((microCohort) => (
-                      <CohortModules key={microCohort.slug} cohort={microCohort} modules={microCohortsAssignments[microCohort.slug]?.modules} />
+                      <CohortModules
+                        key={microCohort.slug}
+                        cohort={microCohort}
+                        modules={microCohortsAssignments[microCohort.slug]?.modules}
+                        mainCohort={cohortSession}
+                      />
                     ))
                     : (
                       <CohortModules cohort={cohortSession} modules={sortedAssignments} />
