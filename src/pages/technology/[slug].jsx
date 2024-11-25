@@ -312,7 +312,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 >
                   <Image
                     alt="python image related"
-                    src={marketingInfo?.image ? marketingInfo?.image : '/static/images/coding-notebook.png'}
+                    src={marketingInfo?.image ? marketingInfo?.image : '/static/images/happy-male-with-laptop.png'}
                     objectFit="cover"
                   />
                 </Box>
