@@ -232,6 +232,12 @@ function useCohortHandler() {
 
             const microCohort2 = parsedCohorts.find((c) => c.id === 601);
             cohort.micro_cohorts.push({ ...microCohort2, color: '#DD7002' });
+
+            const microCohort3 = parsedCohorts.find((c) => c.id === 602);
+            cohort.micro_cohorts.push({ ...microCohort3, color: '#06AB52' });
+
+            const microCohort4 = parsedCohorts.find((c) => c.id === 603);
+            cohort.micro_cohorts.push({ ...microCohort4, color: '#C73407' });
           }
         });
 
