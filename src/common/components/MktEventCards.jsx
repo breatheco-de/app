@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Flex, useBreakpointValue } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
@@ -15,7 +15,6 @@ import { parseQuerys } from '../../utils/url';
 
 function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
   const [events, setEvents] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
   const { fontColor } = useStyle();
   const router = useRouter();
   const lang = router.locale;
@@ -49,17 +48,6 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
         });
     }
   }, [externalEvents]);
-
-  const itemsPerPage = useBreakpointValue({ base: 1, sm: 1, md: 2, lg: 3, xl: 4 });
-  const totalPages = Math.ceil(events.length / itemsPerPage);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentPage((prevPage) => (prevPage + 1) % totalPages);
-    }, 10000);
-
-    return () => clearInterval(interval);
-  }, [totalPages, currentPage]);
 
   return events?.length > 0 && (
     <>
