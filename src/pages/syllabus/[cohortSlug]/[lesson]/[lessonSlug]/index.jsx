@@ -235,7 +235,6 @@ function SyllabusContent() {
 
       if (aiContext) {
         const userContext = generateUserContext(user);
-        
         rigo.updateOptions({
           showBubble: false,
           context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${aiContext.ai_context}`,
