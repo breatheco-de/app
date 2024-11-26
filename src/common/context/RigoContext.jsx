@@ -2,7 +2,7 @@
 import React, { createContext, useState } from 'react';
 import Script from 'next/script';
 import PropTypes from 'prop-types';
-import { isWindow, getQueryString } from '../../utils';
+import { isWindow } from '../../utils';
 
 export const RigoContext = createContext({
   rigo: null,
