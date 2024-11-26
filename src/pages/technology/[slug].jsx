@@ -89,6 +89,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
   const marketingInfoExist = Object.keys(marketingInfo).length > 0;
   if (!marketingInfoExist) contentPerPage = 20;
+  else contentPerPage = 10;
 
   const allTechnologies = await import('../../lib/asset-list.json');
   const assetList = {
@@ -97,8 +98,9 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     ) || [],
   };
 
-  const response = await bc.lesson({ sort_priority: 1 }).techsBySort();
+  const response = await bc.lesson({ sort_priority: 1, visibility: 'PUBLIC', is_deprecated: false }).techsBySort();
   const technologiesFetched = response.data || [];
+  console.log(technologiesFetched);
 
   const techsBySortPriority = technologiesFetched.filter((tech) => {
     if (!tech.icon_url) return false;
@@ -183,14 +185,26 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     router.push(`/${lang}/technology/${technology.slug}`);
   };
 
-  const scrollRight = () => {
+  const scrollBy = (amount) => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
-        left: scrollRef.current.scrollLeft + 250,
+        left: scrollRef.current.scrollLeft + amount,
         behavior: 'smooth',
       });
     }
   };
+
+  const handleMouseDown = () => setIsDragging(false);
+  const handleMouseMove = () => setIsDragging(true);
+  const handleMouseUp = (tech) => {
+    if (!isDragging) {
+      handleTechChange(tech);
+    }
+  };
+
+  useEffect(() => {
+    scrollBy(-1000);
+  }, [technologyData]);
 
   useEffect(() => {
     if ((!technologyData?.slug || assetData?.length === 0)) {
@@ -204,14 +218,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
       router.replace('/');
     }
   }, [technologyData?.slug, assetData]);
-
-  const handleMouseDown = () => setIsDragging(false);
-  const handleMouseMove = () => setIsDragging(true);
-  const handleMouseUp = (tech) => {
-    if (!isDragging) {
-      handleTechChange(tech);
-    }
-  };
 
   return technologyData?.slug && assetData?.length > 0 && (
     <Container maxWidth="1280px">
@@ -232,8 +238,8 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                   <>
                     <Image
                       alt={`${tech.title}`}
-                      height={index === 0 ? '60px' : '40px'}
-                      width={index === 0 ? '60px' : '40px'}
+                      height="40px"
+                      width="40px"
                       maxWidth="100%"
                       cursor="pointer"
                       objectFit="contain"
@@ -250,7 +256,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
             ))}
           </Flex>
         </DraggableContainer>
-        <Button onClick={scrollRight} variant="ghost" p="0" minW="auto" _hover="none" _active="none">
+        <Button onClick={() => scrollBy(250)} variant="ghost" p="0" minW="auto" _hover="none" _active="none">
           <Icon icon="arrowRight" color={fontColor} width="20px" height="20px" />
         </Button>
       </Flex>
@@ -274,14 +280,14 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 {coursesAvailable
                   && (
                     <Link href={`/${lang}/bootcamp/${coursesForTech[0].slug}`}>
-                      <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none">
+                      <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none" borderRadius="3px">
                         {`${technologyData?.title} roadmap`}
                         <Icon color="white" icon="longArrowRight" />
                       </Button>
                     </Link>
                   )}
                 <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : `/${lang}/mentorship/schedule`}>
-                  <Button border={coursesAvailable && '1px'} borderColor={coursesAvailable && 'blue.1000'} color={coursesAvailable ? 'blue.1000' : 'white'} background={coursesAvailable ? 'auto' : 'blue.1000'} _hover="none">
+                  <Button border={coursesAvailable && '1px'} borderColor={coursesAvailable && 'blue.1000'} color={coursesAvailable ? 'blue.1000' : 'white'} background={coursesAvailable ? 'auto' : 'blue.1000'} _hover="none" borderRadius="3px">
                     {t('request-mentorship')}
                   </Button>
                 </Link>
@@ -305,12 +311,12 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 />
               ) : (
                 <Box
-                  borderRadius="8px"
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
                 >
                   <Image
+                    borderRadius="8px"
                     alt="python image related"
                     src={marketingInfo?.image ? marketingInfo?.image : '/static/images/happy-male-with-laptop.png'}
                     objectFit="cover"
