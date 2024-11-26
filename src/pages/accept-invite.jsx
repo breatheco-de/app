@@ -4,6 +4,7 @@ import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import LoaderScreen from '../common/components/LoaderScreen';
 import validationSchema from '../common/components/Forms/validationSchemas';
@@ -43,6 +44,7 @@ function AcceptInvite() {
   const { query } = router;
   const { inviteToken } = query;
   const [incorrectUser, setIncorrectUser] = useState(false);
+  const [userNewInvite, setUserNewInvite] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [invite, setInvite] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -78,7 +80,39 @@ function AcceptInvite() {
   useEffect(() => {
     if (!user || !invite) return;
     if (user?.email !== invite?.email) setIncorrectUser(true);
+    if (user?.email === invite?.email) setUserNewInvite(true);
   }, [invite, user]);
+
+  const acceptInvite = async ({ id, cohort }) => {
+    try {
+      setIsLoading(true);
+      const res = await bc.auth().invites().accept(id);
+      const { status } = res;
+      if (status >= 200 && status < 400) {
+        toast({
+          title: t('alert-message:invitation-accepted-cohort', { cohortName: cohort.name }),
+          position: 'top',
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        router.push('choose-program');
+      } else {
+        throw new Error('Invitation error');
+      }
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: t('alert-message:invitation-error'),
+        position: 'top',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const putInvite = async (values, actions) => {
     try {
@@ -143,6 +177,7 @@ function AcceptInvite() {
   //__________________LOGS________________________
   // console.log("soy el user",user)
   // console.log("HOLA", incorrectUser)
+  // console.log(invite);
 
   return (
     <>
@@ -179,7 +214,18 @@ function AcceptInvite() {
             </NextChakraLink>
           </Box>
         )}
-      {invite && inviteToken && !isAccepted && !incorrectUser
+      {user && userNewInvite
+        && (
+          <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt="2rem" mb="5rem" position="relative" gap="1rem" height="75vh">
+            <Heading fontWeight="500">
+              {t('new-invite', { course: invite?.cohort?.name })}
+            </Heading>
+            <Button onClick={() => acceptInvite(invite)}>
+              {t('accept-and-learn')}
+            </Button>
+          </Box>
+        )}
+      {invite && inviteToken && !isAccepted && !incorrectUser && !userNewInvite
         && (
           <Flex alignItems="center" flexDirection="column" width={['90%', '90%', '50%']} m={['40px 20px', '40px 20px', '40px auto']} maxWidth="1366px">
             <Image width={180} objectFit="cover" src={invite?.academy.logo_url} alt={invite?.academy.name} />
