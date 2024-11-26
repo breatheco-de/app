@@ -8,8 +8,8 @@ export const generateUserContext = (user) => {
   if (last_name) ai_context += `The user's last name is ${last_name}. `;
   if (date_joined) ai_context += `The user joined on ${date_joined}. `;
   if (roles) roles.forEach((role) => {
-    ai_context += `The user has the role of ${role.role} in the academy of ${role.academy.name}. `);
-  };
+    ai_context += `The user has the role of ${role.role} in the academy of ${role.academy.name}. `;
+  });
   if (settings) ai_context += `The user has the following settings: Default language: ${settings.lang}.`;
 
   return ai_context;
