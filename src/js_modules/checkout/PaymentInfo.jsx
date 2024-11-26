@@ -336,28 +336,6 @@ function PaymentInfo() {
     handleSubmit(actions, allValues);
   };
 
-  const handleTryAgain = () => {
-    setIsSubmittingPayment(true);
-    handlePayment({}, true)
-      .then((data) => {
-        if (data.status === 'FULFILLED') {
-          setReadyToRefetch(true);
-        }
-        handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:card-error'),
-          description: t('alert-message:card-error-description'),
-          status: 'error',
-          duration: 6000,
-          isClosable: true,
-        });
-        setIsSubmittingPayment(false);
-      });
-  };
-
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 1rem', lg: '0 auto' }} position="relative">
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
@@ -428,7 +406,7 @@ function PaymentInfo() {
                           declinedModalProps,
                           openDeclinedModal,
                           setOpenDeclinedModal,
-                          handleTryAgain,
+                          disableTryAgain: true,
                         }}
                         onSubmit={onSubmitCard}
                       />
