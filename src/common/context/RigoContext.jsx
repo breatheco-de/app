@@ -30,7 +30,6 @@ function RigoProvider({ children }) {
             showBubble: false,
           });
           setIsRigoInitialized(true);
-          }
         }}
       />
       {children}
