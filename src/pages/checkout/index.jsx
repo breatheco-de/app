@@ -146,6 +146,7 @@ function Checkout() {
   const [menuWidth, setMenuWidth] = useState('auto');
   const [isOpenned, setIsOpenned] = useState(false);
   const flexRef = useRef(null);
+  const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
 
   useEffect(() => {
     const updateWidth = () => {
@@ -1017,7 +1018,7 @@ function Checkout() {
                             </Text>
                           </Flex>
                         )}
-                        {processedPrice.discountType === 'FIXED_PRICE' && (
+                        {fixedCouponExist && (
                           <Text fontWeight="300" size="xs" marginTop="10px">
                             {t('fixed-price-disclaimer')}
                           </Text>
