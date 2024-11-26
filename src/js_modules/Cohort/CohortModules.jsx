@@ -37,6 +37,7 @@ function CohortModules({ cohort, modules, mainCohort }) {
   };
   const [loadingStartCourse, setLoadingStartCourse] = useState(false);
   const [loadingModule, setLoadingModule] = useState(null);
+  const [expanded, setExpanded] = useState(null);
   const router = useRouter();
   const { user } = useAuth();
   const { featuredLight, backgroundColor, hexColor } = useStyle();
@@ -204,10 +205,36 @@ function CohortModules({ cohort, modules, mainCohort }) {
     }
   };
 
+  const share = (e) => {
+    e.stopPropagation();
+    alert('howdy!!!');
+  };
+
+  const showCertificate = (e) => {
+    e.stopPropagation();
+    alert('certificate doug!!');
+  };
+
+  const progressBoxStyles = () => {
+    if (!isGraduated) {
+      return {
+        paddingY: '8px',
+        background: colorVariations.light4,
+      };
+    }
+
+    return {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      justifyContent: 'space-between',
+    };
+  };
+
   return (
     <Accordion allowToggle>
       <AccordionItem background={colorVariations.light5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
-        {({ isExpanded }) => (
+        {(isExpanded) => (
           <>
             <AccordionButton cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
               <Box display="flex" justifyContent="space-between" width="100%" gap="10px">
@@ -242,50 +269,65 @@ function CohortModules({ cohort, modules, mainCohort }) {
                   </Box>
                 )}
               </Box>
-              {cohortProgress?.isCohortStarted && (
-                <Box borderRadius="4px" padding="8px" background={colorVariations.light4} width="100%">
-                  <Box display="flex">
-                    {isGraduated && (
-                      <Box borderRadius="4px" padding="8px">
-                        <Icon icon="certificate-2" color={cohortColor} />
-                      </Box>
-                    )}
-                    <Box width="100%">
-                      <Text textAlign="left" size="md" mb="5px">
-                        {t('path-to-claim')}
-                      </Text>
-                      <Box position="relative">
-                        <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
-                        {cohortProgress.percentage !== 100 ? (
-                          <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid white" borderRadius="full" background={colorVariations.light4}>
+              <Box width="100%" display="flex">
+                {isGraduated && (
+                  <Box onClick={showCertificate} display="flex" gap="10px" background={colorVariations.light4} borderRadius="4px" padding="8px">
+                    <Icon
+                      icon="certificate-2"
+                      props={{
+                        color: cohortColor,
+                        color2: colorVariations.light4,
+                      }}
+                    />
+                    <Icon icon="dots" color={cohortColor} />
+                  </Box>
+                )}
+                {cohortProgress?.isCohortStarted && (
+                  <Box borderRadius="4px" paddingX="8px" width="100%" {...progressBoxStyles()}>
+                    <Box display="flex">
+                      <Box width="100%">
+                        <Text textAlign="left" size="md" mb="5px" display={isGraduated && 'none'}>
+                          {t('path-to-claim')}
+                        </Text>
+                        <Box position="relative">
+                          <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
+                          {cohortProgress.percentage !== 100 ? (
+                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid white" borderRadius="full" background={colorVariations.light4}>
+                              <Icon
+                                icon="party-popper-off"
+                                style={{ margin: 'auto' }}
+                                props={{
+                                  color: colorVariations.light5,
+                                  color2: colorVariations.light3,
+                                }}
+                              />
+                            </Box>
+                          ) : (
                             <Icon
-                              icon="party-popper-off"
-                              style={{ margin: 'auto' }}
-                              props={{
-                                color: colorVariations.light5,
-                                color2: colorVariations.light3,
+                              icon="party-popper"
+                              style={{
+                                margin: 'auto',
+                                position: 'absolute',
+                                right: '0',
+                                top: '-25px',
                               }}
                             />
-                          </Box>
-                        ) : (
-                          <Icon
-                            icon="party-popper"
-                            style={{
-                              margin: 'auto',
-                              position: 'absolute',
-                              right: '0',
-                              top: '-25px',
-                            }}
-                          />
-                        )}
+                          )}
+                        </Box>
+                        <Text textAlign="left" mt="5px" size="md" display={isGraduated && 'none'}>
+                          {`${cohortProgress.percentage}%`}
+                        </Text>
                       </Box>
-                      <Text textAlign="left" mt="5px" size="md">
-                        {`${cohortProgress.percentage}%`}
-                      </Text>
                     </Box>
+                    {isGraduated && (
+                      <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                        <Icon icon="share" />
+                        {t('share')}
+                      </Button>
+                    )}
                   </Box>
-                </Box>
-              )}
+                )}
+              </Box>
             </AccordionButton>
             {cohortProgress?.isCohortStarted ? (
               <AccordionPanel paddingX="0" display="flex" flexDirection="column" gap="16px">
