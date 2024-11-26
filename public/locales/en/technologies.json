@@ -5,14 +5,23 @@
     "description": "Unlock the power of {{technology}} programming with deep lessons, exercises, and real projects. Master {{technology}} at 4Geeks.com.",
     "image": "{{domain}}/static/images/image1.png"
   },
+  "landing-technology": {
+    "title": "Practice {{technology}}",
+    "subTitle": "Lessons, exercises, and projects about {{technology}}",
+    "defaultDescription": "This tutorial its part of a bigger group of tutorials about web development."
+  },
+  "errors":{
+    "loading-workshops": "error loading workshops",
+    "no-data": "There are no assets for this technology"
+  },
   "backToLessons": "Back to Lessons",
   "title": "{{technology}}",
   "search": "Search lesson",
   "description": "Browse our list of curated database of projects, exercises, and lessons to learn {{technology}}",
-  "landing-technology": {
-    "title": "Learn {{technology}}",
-    "subTitle": "Lessons, exercises, and projects about {{technology}}"
-  },
+  "tech-materials": "{{tech}} learning materials",
+  "tech-workshops": "{{tech}} workshops",
+  "request-mentorship": "Request a mentorship",
+  "popular-exercises": "Popular exercises",
   "lessons-section": "Lessons section",
   "exercises-section": "Exercises section",
   "projects-section": "Projects section",

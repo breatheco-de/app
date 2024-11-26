@@ -98,7 +98,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
             owner_name: paymentInfo.owner_name || '',
             card_number: paymentInfo.card_number || '',
             exp: paymentInfo.exp || '',
-            cvc: paymentInfo.cvc || '',
+            cvc: '',
           }}
           onSubmit={(values, actions) => onSubmit(values, actions, stateCard)}
           validationSchema={infoValidation}

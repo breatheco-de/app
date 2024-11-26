@@ -15,6 +15,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
+import { generateUserContext } from '../../utils/rigobotContext';
 
 const initialState = {
   isLoading: true,
@@ -202,6 +203,7 @@ function AuthProvider({ children, pageProps }) {
                 user_id: data.id,
                 email: data.email,
                 is_academy_legacy: data.roles.some((r) => r.academy.id === 6),
+                is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
                 first_name: data.first_name,
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
@@ -240,7 +242,10 @@ function AuthProvider({ children, pageProps }) {
   useEffect(() => {
     if (user && isRigoInitialized) {
       const token = getToken();
+      const context = generateUserContext(user);
+
       rigo.updateOptions({
+        context,
         user: {
           token,
           nickname: `${user.first_name} ${user.last_name}`,

@@ -325,6 +325,8 @@ const breathecode = {
       getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
+      techsBySort: () => axios.get(`${url}/technology${qs}`),
+      techMktInfo: (slug) => axios.get(`${url}/technology/${slug}`),
     };
   },
 
@@ -384,7 +386,7 @@ const breathecode = {
       liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
-      applyEvent: (eventId) => axios.post(`${url}/event/${eventId}/checkin${qs}`),
+      applyEvent: (eventId, payload) => axios.post(`${url}/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
     };
   },
