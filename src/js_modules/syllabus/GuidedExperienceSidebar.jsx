@@ -75,7 +75,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
           {cohortSession?.syllabus_version && (
             <Box padding="16px" background={backgroundColor4} display="flex" flexDirection="column" gap="16px">
               <NextChakraLink width="fit-content" variant="ghost" display="flex" gap="10px" href={cohortSession.selectedProgramSlug}>
-                <Icon icon="layout" width="19px" height="20px" />
+                <Icon icon="arrowLeft" width="19px" height="20px" />
                 <Heading display="inline" size="18px" fontWeight="400">
                   {t('back-to-program')}
                 </Heading>
@@ -122,15 +122,12 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 height="fit-content"
                 lineHeight="1.7"
                 isDisabled={moduleLoading}
+                whiteSpace="normal"
               >
                 <Icon icon="arrowLeft" color={hexColor.black} />
                 <span>
                   <Text as="span" color={fontColor2}>
                     {t('back-to-previous')}
-                  </Text>
-                  <br />
-                  <Text as="span" mt="8px" style={{ textWrap: 'wrap' }}>
-                    {languageFix(prevModule.label, lang)}
                   </Text>
                 </span>
               </Button>
@@ -147,6 +144,9 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
           }}
           maxHeight={{ base: '80%', lg: 'none' }}
           padding="15px"
+          flexGrow="1"
+          display="flex"
+          flexDir="column"
         >
           {currentModule && grantSyllabusAccess ? (
             <>
@@ -160,6 +160,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
                 assignments={currentModule.filteredModules}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
+                flex="1"
               />
               <Divider borderColor="#D3DBE9" />
               {nextModule && (
@@ -211,9 +212,9 @@ GuidedExperienceSidebar.propTypes = {
   grantSyllabusAccess: PropTypes.bool.isRequired,
 };
 GuidedExperienceSidebar.defaultProps = {
-  onClickAssignment: () => {},
+  onClickAssignment: () => { },
   isOpen: false,
-  onToggle: () => {},
+  onToggle: () => { },
   currentModuleIndex: null,
 };
 

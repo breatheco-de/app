@@ -1,5 +1,6 @@
 {
   "run": "Run",
+  "preview": "Preview",
   "result": "Result",
   "terminal": "Terminal",
   "loading-output": "The terminal will show the computer output after running your code",

@@ -15,9 +15,9 @@ function TimeString({ string, label, size, textSize }) {
         {string}
       </Heading>
       {label && (
-      <Text size={textSize} fontWeight={700} textTransform="uppercase">
-        {label}
-      </Text>
+        <Text size={textSize} fontWeight={700} textTransform="uppercase">
+          {label}
+        </Text>
       )}
     </Box>
   );
@@ -25,6 +25,7 @@ function TimeString({ string, label, size, textSize }) {
 
 function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
   const [timer, setTimer] = useState({});
+  const [timerInDays, setTimerInDays] = useState({});
   const [loading, setLoading] = useState(true);
   const [justFinished, setJustFinished] = useState(false);
   const { t } = useTranslation('common');
@@ -39,7 +40,7 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
           start: startingAtDate,
           end: now,
         });
-        const { isRemainingToExpire } = calculateDifferenceDays(startingAtDate);
+        const { isRemainingToExpire } = calculateDifferenceDays(startingAt);
 
         if (isRemainingToExpire) {
           setLoading(false);
@@ -50,7 +51,15 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
             minutes: String(intervalDurationObj.minutes).padStart(2, '0'),
             seconds: String(intervalDurationObj.seconds).padStart(2, '0'),
           });
+
+          const totalDays = Math.floor((startingAtDate - now) / (1000 * 60 * 60 * 24));
+          const remainingDays = totalDays < 0 ? 0 : totalDays;
+
+          setTimerInDays({
+            days: String(remainingDays).padStart(2, '0'),
+          });
         }
+
         if (!isRemainingToExpire && !justFinished) {
           onFinish();
           setJustFinished(true);
@@ -64,15 +73,23 @@ function Timer({ startingAt, onFinish, autoRemove, variant, ...rest }) {
     };
   }, [justFinished]);
 
+  const avoidMonths = (autoRemove && timer?.months <= 0) || (autoRemove && Number(timer?.months) === 1 && timer?.days === '00');
+  const avoidMonthsInDays = (autoRemove && timer?.months !== '01') || (autoRemove && timer?.months <= 0) || (autoRemove && timer?.days !== '00') || (autoRemove && timer?.months > 1);
+  const avoidDays = autoRemove && timer?.days <= 0;
+  const avoidHours = (autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 || timer?.hours <= 0;
+  const avoidMinutes = (autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 || timer?.months > 0;
+  const showSeconds = timer?.hours <= 0 && timer?.days <= 0 && timer?.months <= 0;
+
   if (variant === 'text') {
     if (loading) return <Spinner margin="auto" color={rest.color || 'blue.default'} />;
     return (
       <Text {...rest}>
-        {autoRemove && timer?.months <= 0 ? null : `${timer?.months} ${timer?.months === 1 ? t('word-connector.month') : t('word-connector.months')} `}
-        {autoRemove && timer?.days <= 0 ? null : `${timer?.days} ${timer?.days === 1 ? t('word-connector.day') : t('word-connector.days')} `}
-        {(autoRemove && timer?.hours <= 0 && timer?.days <= 0) || timer?.months > 0 ? null : `${timer?.hours} ${timer?.hours === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
-        {(autoRemove && timer?.minutes <= 0 && timer?.hours <= 0 && timer?.days <= 0) || timer?.days > 0 ? null : `${timer.minutes} ${timer?.minutes === 1 ? t('word-connector.minute') : t('word-connector.minutes')} `}
-        {timer?.hours <= 0 && `${timer.seconds} ${t('word-connector.seconds')}`}
+        {avoidMonths ? null : `${timer?.months} ${Number(timer?.months) === 1 ? t('word-connector.month') : t('word-connector.months')} `}
+        {avoidMonthsInDays ? null : (`${timerInDays.days} ${t('word-connector.days')}${timer?.hours !== '00' ? ` ${timer?.hours} ${timer?.hours === '01' ? t('word-connector.hour') : t('word-connector.hours')}` : ''}`)}
+        {avoidDays ? null : `${timer?.days} ${Number(timer?.days) === 1 ? t('word-connector.day') : t('word-connector.days')} `}
+        {avoidHours ? null : `${timer?.hours} ${Number(timer?.hours) === 1 ? t('word-connector.hour') : t('word-connector.hours')} `}
+        {avoidMinutes ? null : `${timer.minutes} ${Number(timer?.minutes) === 1 ? t('word-connector.minute') : t('word-connector.minutes')} `}
+        {showSeconds && `${timer.seconds} ${t('word-connector.seconds')}`}
       </Text>
     );
   }
@@ -157,7 +174,7 @@ Timer.propTypes = {
 };
 Timer.defaultProps = {
   startingAt: null,
-  onFinish: () => {},
+  onFinish: () => { },
   autoRemove: false,
   variant: 'default',
 };

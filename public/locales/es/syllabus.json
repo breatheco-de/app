@@ -8,6 +8,9 @@
   "get-help": "Pide ayuda a Rigobot",
   "connect-rigobot-message": "Debes conectar tu cuenta con Github y Rigobot",
   "connect-rigobot": "Conectar con Rigobot",
+  "rigo-chat": {
+    "welcome-message": "¡Hola {{firstName}}! Veo que estas leyendo la lección {{lessonName}}. ¿Hay algo que pueda hacer para ayudarte?"
+  },
   "contribute": "Contribuye a esta lección",
   "show-menu": "Abrir menú",
   "hide-menu": "Cerrar menú",

@@ -1,13 +1,9 @@
-import { useState, useEffect, useMemo } from 'react';
-import {
-  Box,
-  useColorModeValue,
-  Button,
-} from '@chakra-ui/react';
+import { useState, useEffect } from 'react';
+import { Box, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import { getStorageItem, intervalToHours } from '../../utils';
+import { intervalToHours } from '../../utils';
 import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
@@ -16,29 +12,12 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import { reportDatalayer } from '../../utils/requests';
 
-function ExerciseGuidedExperience({ currentTask, currentAsset }) {
-  const { t, lang } = useTranslation('syllabus');
+function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnpack, iframeURL, learnpackStart, setLearnpackStart }) {
+  const { t } = useTranslation('syllabus');
   const { colorMode } = useStyle();
   const [telemetryReport, setTelemetryReport] = useState([]);
-  const [learnpackStart, setLearnpackStart] = useState(false);
-  const currentThemeValue = useColorModeValue('light', 'dark');
-  const userToken = getStorageItem('accessToken');
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-
-  const handleStartLearnpack = () => setLearnpackStart(true);
-  const buildLearnpackUrl = () => {
-    if (!learnpackDeployUrl) return null;
-
-    const currentLang = lang === 'en' ? 'us' : lang;
-    const theme = currentThemeValue;
-    const iframe = 'true';
-    const token = userToken;
-
-    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
-  };
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
-  const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue]);
 
   useEffect(() => {
     if (isExerciseStated) {
@@ -199,11 +178,19 @@ function ExerciseGuidedExperience({ currentTask, currentAsset }) {
 ExerciseGuidedExperience.propTypes = {
   currentTask: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  iframeURL: PropTypes.string,
+  handleStartLearnpack: PropTypes.func,
+  setLearnpackStart: PropTypes.func,
+  learnpackStart: PropTypes.bool,
 };
 
 ExerciseGuidedExperience.defaultProps = {
   currentTask: null,
   currentAsset: null,
+  iframeURL: null,
+  handleStartLearnpack: null,
+  setLearnpackStart: null,
+  learnpackStart: false,
 };
 
 export default ExerciseGuidedExperience;

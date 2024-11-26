@@ -17,6 +17,7 @@ import getMarkDownContent from '../../../../../common/components/MarkDownParser/
 import MarkDownParser from '../../../../../common/components/MarkDownParser';
 import Text from '../../../../../common/components/Text';
 import useAuth from '../../../../../common/hooks/useAuth';
+import useRigo from '../../../../../common/hooks/useRigo';
 import StickySideBar from '../../../../../common/components/StickySideBar';
 import Icon from '../../../../../common/components/Icon';
 import AlertMessage from '../../../../../common/components/AlertMessage';
@@ -39,6 +40,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
+import completions from './completion-jobs.json';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -47,6 +49,7 @@ function SyllabusContent() {
 
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
+  const { rigo, isRigoInitialized } = useRigo();
   const {
     taskTodo,
     cohortProgram,
@@ -87,7 +90,6 @@ function SyllabusContent() {
   const [fileData, setFileData] = useState(null);
   const [clickedPage, setClickedPage] = useState({});
   const [currentAsset, setCurrentAsset] = useState(null);
-  const [isLoadingRigobot, setIsLoadingRigobot] = useState(false);
   const [grantAccess, setGrantAccess] = useState(false);
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [learnpackStart, setLearnpackStart] = useState(false);
@@ -143,11 +145,14 @@ function SyllabusContent() {
     const iframe = 'true';
     const token = userToken;
 
-    return `${learnpackDeployUrl}#lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
+    return `${learnpackDeployUrl}#language=${currentLang}&lang=${currentLang}&theme=${theme}&iframe=${iframe}&token=${token}`;
   };
   const iframeURL = useMemo(() => buildLearnpackUrl(), [currentThemeValue, currentAsset, lang]);
 
-  const handleStartLearnpack = () => setLearnpackStart(true);
+  const handleStartLearnpack = () => {
+    setLearnpackStart(true);
+    onToggle();
+  };
 
   useEffect(() => {
     setLearnpackStart(false);
@@ -201,17 +206,47 @@ function SyllabusContent() {
     }
   }, [isLoading]);
 
+  const updateOpenedAt = async () => {
+    try {
+      const result = await bc.todo().update({ ...currentTask, opened_at: new Date() });
+      if (result.data) {
+        const updateTasks = taskTodo.map((task) => ({ ...task }));
+        const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
+        updateTasks[index].opened_at = result.data.opened_at;
+        setTaskTodo([...updateTasks]);
+      }
+    } catch (e) {
+      log('update_task_error:', e);
+    }
+  };
+
+  const getAssetContext = async () => {
+    try {
+      let aiContext;
+      const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
+      if (!cachedContext) {
+        const resp = await bc.lesson().getAssetContext(currentAsset.id);
+        if (resp?.status === 200) {
+          aiContext = resp.data;
+          sessionStorage.setItem(`context-${currentAsset.slug}`, JSON.stringify(aiContext));
+        }
+      } else aiContext = cachedContext;
+
+      if (aiContext) {
+        rigo.updateOptions({
+          showBubble: false,
+          context: aiContext.ai_context,
+          completions,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     if (currentTask && !currentTask.opened_at) {
-      bc.todo().update({ ...currentTask, opened_at: new Date() })
-        .then((result) => {
-          if (result.data) {
-            const updateTasks = taskTodo.map((task) => ({ ...task }));
-            const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-            updateTasks[index].opened_at = result.data.opened_at;
-            setTaskTodo([...updateTasks]);
-          }
-        }).catch((e) => log('update_task_error:', e));
+      updateOpenedAt();
     }
   }, [currentTask]);
 
@@ -222,6 +257,12 @@ function SyllabusContent() {
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
+
+  useEffect(() => {
+    if (currentAsset && isRigoInitialized) {
+      getAssetContext();
+    }
+  }, [currentAsset, isRigoInitialized]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
@@ -683,21 +724,14 @@ function SyllabusContent() {
   const openAiChat = async () => {
     try {
       if (isAuthenticatedWithRigobot) {
-        setIsLoadingRigobot(true);
-        const [completionResp, tokenResp] = await Promise.all([
-          bc.todo().postCompletionJob(currentTask.id),
-          bc.auth().temporalToken(),
-        ]);
-
-        const completionId = completionResp.data.id;
-        const temporalToken = tokenResp.data.token;
-
-        const { data } = await bc.rigobot().meToken(temporalToken);
-        const rigobotToken = data.key;
-
-        const aiChat = `https://ai.4geeks.com/?token=${rigobotToken}&purpose=14&completion=${completionId}&action=generate`;
-
-        window.open(aiChat, '_blank');
+        rigo.updateOptions({
+          showBubble: false,
+          target: '#rigo-chat',
+          welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, lessonName: currentAsset?.title }),
+          highlight: true,
+          collapsed: false,
+          purposeSlug: '4geekscom-public-agent',
+        });
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
@@ -708,9 +742,13 @@ function SyllabusContent() {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsLoadingRigobot(false);
     }
+  };
+
+  const getOverflowY = () => {
+    if (isQuiz) return 'hidden';
+    if (isAvailableAsSaas && !learnpackStart) return 'scroll';
+    return 'auto';
   };
 
   return (
@@ -788,65 +826,77 @@ function SyllabusContent() {
                   color={hexColor.blueDefault}
                   onClick={onToggle}
                 >
-                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'arrowRight' : 'list'} />
+                  <Icon style={Open && { transform: 'rotate(180deg)' }} width="12px" height="12px" icon={Open ? 'close' : 'list'} />
                   {t(Open ? 'hide-menu' : 'show-menu')}
                 </Button>
-                <Box display="flex" gridGap="3rem">
-                  {(previousAssignment || !!prevModule) && (
-                    <Button
-                      size="sm"
-                      color="blue.default"
-                      cursor="pointer"
-                      fontSize="12px"
-                      display="flex"
-                      alignItems="center"
-                      gridGap="10px"
-                      fontWeight="500"
-                      borderRadius="4px"
-                      background={backgroundColor}
-                      onClick={prevPage}
-                    >
-                      <Icon icon="arrowLeft2" width="18px" height="10px" />
-                      {t('previous-page')}
-                    </Button>
-                  )}
+                {!learnpackStart
+                  && (
+                    <>
+                      <Box display="flex" gridGap="3rem">
+                        {(previousAssignment || !!prevModule) && (
+                          <Button
+                            size="sm"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="12px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            fontWeight="500"
+                            borderRadius="4px"
+                            background={backgroundColor}
+                            onClick={prevPage}
+                          >
+                            <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            {t('previous-page')}
+                          </Button>
+                        )}
 
-                  {(nextAssignment || !!nextModule) && (
-                    <Button
-                      size="sm"
-                      color="blue.default"
-                      cursor="pointer"
-                      fontSize="12px"
-                      display="flex"
-                      alignItems="center"
-                      gridGap="10px"
-                      fontWeight="500"
-                      borderRadius="4px"
-                      background={backgroundColor}
-                      onClick={nextPage}
-                    >
-                      {t('next-page')}
-                      <Box
-                        as="span"
-                        display="block"
-                        transform="rotate(180deg)"
-                      >
-                        <Icon icon="arrowLeft2" width="18px" height="10px" />
+                        {(nextAssignment || !!nextModule) && (
+                          <Button
+                            size="sm"
+                            color="blue.default"
+                            cursor="pointer"
+                            fontSize="12px"
+                            display="flex"
+                            alignItems="center"
+                            gridGap="10px"
+                            fontWeight="500"
+                            borderRadius="4px"
+                            background={backgroundColor}
+                            onClick={nextPage}
+                          >
+                            {t('next-page')}
+                            <Box
+                              as="span"
+                              display="block"
+                              transform="rotate(180deg)"
+                            >
+                              <Icon icon="arrowLeft2" width="18px" height="10px" />
+                            </Box>
+                          </Button>
+                        )}
                       </Box>
-                    </Button>
+                    </>
                   )}
-                </Box>
               </Box>
             )}
             {isExercise && isAvailableAsSaas && currentAsset?.id ? (
-              <ExerciseGuidedExperience currentTask={currentTask} currentAsset={currentAsset} />
+              <ExerciseGuidedExperience
+                currentTask={currentTask}
+                currentAsset={currentAsset}
+                handleStartLearnpack={handleStartLearnpack}
+                setLearnpackStart={setLearnpackStart}
+                iframeURL={iframeURL}
+                learnpackStart={learnpackStart}
+              />
             ) : (
               <Box
                 id="main-container"
                 ref={mainContainer}
                 className={`horizontal-sroll ${colorMode}`}
                 height={isAvailableAsSaas && '80vh'}
-                overflowY={isAvailableAsSaas && !learnpackStart && 'scroll'}
+                overflowY={getOverflowY()}
                 borderRadius="11px 11px 0 0"
                 position="relative"
               >
@@ -1115,7 +1165,7 @@ function SyllabusContent() {
                         {isAvailableAsSaas && (
                           <Box className="controls-panel" bottom="0" height="110px" padding="20px 0" display="flex" justifyContent={{ base: 'center', lg: 'flex-end' }}>
                             <Box bottom="50" position="fixed" width="fit-content" padding="15px" borderRadius="12px" background={taskBarBackground} justifyContent="center" display="flex" gridGap="20px">
-                              {(isLesson || isProject) && (
+                              {isRigoInitialized && (isLesson || isProject) && (
                                 <Tooltip label={t('get-help')} placement="top">
                                   <Button
                                     display="flex"
@@ -1129,7 +1179,6 @@ function SyllabusContent() {
                                     variant="default"
                                     onClick={openAiChat}
                                     style={{ color: fontColor, textDecoration: 'none' }}
-                                    isLoading={isLoadingRigobot}
                                   >
                                     <Icon style={{ margin: 'auto', display: 'block' }} icon="rigobot-avatar-tiny" width="30px" height="30px" />
                                   </Button>
@@ -1246,7 +1295,7 @@ function SyllabusContent() {
         isOpen={showRigobotModal}
         onClose={() => setShowRigobotModal(false)}
       >
-        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px">
+        <Box display="flex" flexDirection="column" alignItems="center" gridGap="17px" paddingBottom="10px">
           <Avatar src={`${BREATHECODE_HOST}/static/img/avatar-1.png`} border="3px solid" borderColor={hexColor.blueDefault} width="91px" height="91px" borderRadius="50px" />
           <Text
             size="17px"
