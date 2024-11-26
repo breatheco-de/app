@@ -234,7 +234,7 @@ function CohortModules({ cohort, modules, mainCohort }) {
   return (
     <Accordion allowToggle>
       <AccordionItem background={colorVariations.light5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
-        {(isExpanded) => (
+        {({ isExpanded }) => (
           <>
             <AccordionButton cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
               <Box display="flex" justifyContent="space-between" width="100%" gap="10px">

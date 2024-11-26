@@ -84,7 +84,7 @@ function Header() {
             _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
             onClick={() => router.push('/workshops')}
           >
-            <ProfilesSection profiles={mentors} />
+            <ProfilesSection size="40px" profiles={mentors} />
             <Text textAlign="center" color={hexColor.blueDefault}>
               {t('common:schedule-mentoring')}
             </Text>
