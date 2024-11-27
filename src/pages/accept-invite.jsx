@@ -50,38 +50,46 @@ function AcceptInvite() {
   const [isLoading, setIsLoading] = useState(true);
   const [isAccepted, setIsAccepted] = useState(false);
 
-  const getInvite = async () => {
-    if (!inviteToken) {
-      setIsLoading(false);
-      return;
-    }
-    try {
-      const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await resp.json();
-
-      if (data.status_code > 300) throw new Error(data.detail);
-      setInvite(data);
-
-      setIsLoading(false);
-    } catch (e) {
-      setIsAccepted(true);
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    getInvite();
-  }, []);
+    const initialize = async () => {
+      if (!user) return;
+      if (!inviteToken) {
+        setIsLoading(false);
+        return;
+      }
 
-  useEffect(() => {
-    if (!user || !invite) return;
-    if (user?.email !== invite?.email) setIncorrectUser(true);
-    if (user?.email === invite?.email) setUserNewInvite(true);
-  }, [invite, user]);
+      setIsLoading(true);
+
+      try {
+        const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await resp.json();
+
+        if (data.status_code > 300) throw new Error(data.detail);
+
+        setInvite(data);
+
+        if (user.email !== data.email) {
+          setIncorrectUser(true);
+        } else {
+          setUserNewInvite(true);
+        }
+      } catch (error) {
+        setIsAccepted(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initialize();
+  }, [inviteToken, user]);
+
+  // console.log(incorrectUser);
+  // console.log(userNewInvite);
+  // console.log(isAccepted);
+  // console.log(isLoading);
+  // console.log(invite);
 
   const acceptInvite = async ({ id, cohort }) => {
     try {
