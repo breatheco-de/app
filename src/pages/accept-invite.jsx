@@ -4,6 +4,7 @@ import { Form, Formik, Field } from 'formik';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import { BREATHECODE_HOST } from '../utils/variables';
 import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
 import LoaderScreen from '../common/components/LoaderScreen';
@@ -11,7 +12,6 @@ import validationSchema from '../common/components/Forms/validationSchemas';
 import NextChakraLink from '../common/components/NextChakraLink';
 import Text from '../common/components/Text';
 import Heading from '../common/components/Heading';
-import modifyEnv from '../../modifyEnv';
 
 function FormField({ name, label, type = 'text', isReadOnly = false, placeholder }) {
   return (
@@ -36,7 +36,6 @@ function FormField({ name, label, type = 'text', isReadOnly = false, placeholder
 }
 
 function AcceptInvite() {
-  const BREATHECODE_HOST = modifyEnv({ queryString: 'host', env: process.env.BREATHECODE_HOST });
   const toast = useToast();
   const router = useRouter();
   const { t, lang } = useTranslation('accept-invite');
