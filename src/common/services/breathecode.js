@@ -325,6 +325,8 @@ const breathecode = {
       getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
+      techsBySort: () => axios.get(`${url}/technology${qs}`),
+      techMktInfo: (slug) => axios.get(`${url}/technology/${slug}`),
     };
   },
 

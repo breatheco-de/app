@@ -332,6 +332,7 @@ function PaymentInfo() {
       exp_year: expYear,
       cvc: values.cvc,
     };
+
     handleSubmit(actions, allValues);
   };
 
