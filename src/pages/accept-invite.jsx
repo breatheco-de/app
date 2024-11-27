@@ -40,60 +40,49 @@ function AcceptInvite() {
   const toast = useToast();
   const router = useRouter();
   const { t, lang } = useTranslation('accept-invite');
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoading, login } = useAuth();
   const { query } = router;
   const { inviteToken } = query;
   const [incorrectUser, setIncorrectUser] = useState(false);
   const [userNewInvite, setUserNewInvite] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [invite, setInvite] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [pageLoader, setPageLoader] = useState(true);
+  const [isLogging, setIsLogging] = useState(false);
   const [isAccepted, setIsAccepted] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
-      if (!user) return;
       if (!inviteToken) {
-        setIsLoading(false);
+        setPageLoader(false);
         return;
       }
-
-      setIsLoading(true);
 
       try {
         const resp = await fetch(`${BREATHECODE_HOST}/v1/auth/member/invite/${inviteToken}`, {
           headers: { 'Content-Type': 'application/json' },
         });
         const data = await resp.json();
-
         if (data.status_code > 300) throw new Error(data.detail);
+        if (user && user.email !== data.email) setIncorrectUser(true);
+        if (user && user.email === data.email) setUserNewInvite(true);
 
         setInvite(data);
-
-        if (user.email !== data.email) {
-          setIncorrectUser(true);
-        } else {
-          setUserNewInvite(true);
-        }
       } catch (error) {
         setIsAccepted(true);
       } finally {
-        setIsLoading(false);
+        setPageLoader(false);
       }
     };
 
-    initialize();
-  }, [inviteToken, user]);
-
-  // console.log(incorrectUser);
-  // console.log(userNewInvite);
-  // console.log(isAccepted);
-  // console.log(isLoading);
-  // console.log(invite);
+    if (!isLoading) {
+      initialize();
+    }
+  }, [inviteToken, user, isLoading]);
 
   const acceptInvite = async ({ id, cohort }) => {
     try {
-      setIsLoading(true);
+      setPageLoader(true);
       const res = await bc.auth().invites().accept(id);
       const { status } = res;
       if (status >= 200 && status < 400) {
@@ -105,6 +94,7 @@ function AcceptInvite() {
           isClosable: true,
         });
         router.push('choose-program');
+        setPageLoader(false);
       } else {
         throw new Error('Invitation error');
       }
@@ -117,9 +107,36 @@ function AcceptInvite() {
         duration: 5000,
         isClosable: true,
       });
-    } finally {
-      setIsLoading(false);
     }
+  };
+
+  const handleLogin = (values, actions) => {
+    setIsLogging(true);
+    login(values)
+      .then((data) => {
+        actions.setSubmitting(false);
+        if (data.status === 200) {
+          toast({
+            position: 'top',
+            title: t('alert-message:welcome'),
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+        router.push('/choose-program');
+        setIsLogging(true);
+      })
+      .catch(() => {
+        actions.setSubmitting(false);
+        toast({
+          position: 'top',
+          title: t('alert-message:account-not-found'),
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      });
   };
 
   const putInvite = async (values, actions) => {
@@ -153,7 +170,7 @@ function AcceptInvite() {
           isClosable: true,
           position: 'top',
         });
-        router.push('/login');
+        handleLogin(values, actions);
       }
       actions.setSubmitting(false);
     } catch (e) {
@@ -168,7 +185,7 @@ function AcceptInvite() {
     }
   };
 
-  if (isLoading) {
+  if (pageLoader) {
     return (
       <Box
         display="flex"
@@ -182,11 +199,6 @@ function AcceptInvite() {
     );
   }
 
-  //__________________LOGS________________________
-  // console.log("soy el user",user)
-  // console.log("HOLA", incorrectUser)
-  // console.log(invite);
-
   return (
     <>
       {!inviteToken
@@ -195,18 +207,18 @@ function AcceptInvite() {
             <Heading fontWeight="500">
               {t('no-token')}
             </Heading>
-            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault">
+            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault" borderRadius="3px" _hover="none">
               {t('signup:consumables.back-to-dashboard')}
             </NextChakraLink>
           </Box>
         )}
-      {isAccepted
+      {isAccepted && !isLogging
         && (
           <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" mt="2rem" mb="5rem" position="relative" gap="1rem" height="75vh">
             <Heading fontWeight="500">
               {t('already-accepted')}
             </Heading>
-            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault">
+            <NextChakraLink href={isAuthenticated ? '/choose-program' : '/'} variant="buttonDefault" borderRadius="3px" _hover="none">
               {t('signup:consumables.back-to-dashboard')}
             </NextChakraLink>
           </Box>
@@ -217,7 +229,7 @@ function AcceptInvite() {
             <Heading fontWeight="500">
               {t('invalid-user')}
             </Heading>
-            <NextChakraLink href="/choose-program" variant="buttonDefault">
+            <NextChakraLink href="/choose-program" variant="buttonDefault" borderRadius="3px" _hover="none">
               {t('signup:consumables.back-to-dashboard')}
             </NextChakraLink>
           </Box>
@@ -228,12 +240,12 @@ function AcceptInvite() {
             <Heading fontWeight="500">
               {t('new-invite', { course: invite?.cohort?.name })}
             </Heading>
-            <Button onClick={() => acceptInvite(invite)}>
+            <Button background="blue.1000" color="white" onClick={() => acceptInvite(invite)} borderRadius="3px" _hover="none">
               {t('accept-and-learn')}
             </Button>
           </Box>
         )}
-      {invite && inviteToken && !isAccepted && !incorrectUser && !userNewInvite
+      {((invite && inviteToken && !isAccepted && !incorrectUser && !userNewInvite) || (isLogging))
         && (
           <Flex alignItems="center" flexDirection="column" width={['90%', '90%', '50%']} m={['40px 20px', '40px 20px', '40px auto']} maxWidth="1366px">
             <Image width={180} objectFit="cover" src={invite?.academy.logo_url} alt={invite?.academy.name} />
