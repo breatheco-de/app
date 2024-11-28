@@ -167,6 +167,7 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
       fetchProvisioningVendors();
     }
   }, [cohortSession]);
+  console.log(cohortSession);
 
   if (variant === 'small') {
     return (
@@ -182,8 +183,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
               display="flex"
               gap="10px"
               flexDirection={{
-                base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-                md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+                base: 'column',
+                md: 'row',
               }}
             >
               <ButtonsHandler
@@ -221,8 +222,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
           display="flex"
           gap="16px"
           flexDirection={{
-            base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-            md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+            base: 'column',
+            md: 'row',
           }}
         >
           <ButtonsHandler
