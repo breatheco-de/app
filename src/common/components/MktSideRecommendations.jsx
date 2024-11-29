@@ -115,10 +115,10 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
 
       if (coursesData.length > 0) {
         const sortedCourses = coursesGraded.sort((a, b) => {
-          if (b.score !== a.score) {
-            return b.score - a.score;
+          if (b.relatedTechCount !== a.relatedTechCount) {
+            return b.relatedTechCount - a.relatedTechCount;
           }
-          return b.relatedTechCount - a.relatedTechCount;
+          return b.score - a.score;
         });
 
         setRecommendations(sortedCourses.slice(0, coursesLimit));
