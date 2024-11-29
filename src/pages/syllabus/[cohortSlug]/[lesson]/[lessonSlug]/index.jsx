@@ -287,7 +287,6 @@ function SyllabusContent() {
   const showToastAndRedirect = (programSlug) => {
     const querys = parseQuerys({
       plan: programSlug,
-      cohort: cohortSession?.id,
     });
     router.push(`/${lang}/checkout${querys}`);
     toast({

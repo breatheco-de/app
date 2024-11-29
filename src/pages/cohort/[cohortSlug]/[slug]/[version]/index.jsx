@@ -187,7 +187,6 @@ function Dashboard() {
     const showToastAndRedirect = (programSlug) => {
       const querys = parseQuerys({
         plan: programSlug,
-        cohort: cohortSession?.id,
       });
       router.push(`/${lang}/checkout${querys}`);
       toast({
@@ -224,7 +223,7 @@ function Dashboard() {
         return;
       }
 
-      setGrantAccess(false);
+      setGrantAccess(true);
     }
   };
 
