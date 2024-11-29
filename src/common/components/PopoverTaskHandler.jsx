@@ -161,7 +161,7 @@ function PopoverCustomContent({
     if (fileProp.length > 0) {
       Array.from(fileProp).forEach((file) => {
         const { type, name, size } = file;
-        console.log("type", type);
+        console.log('type', type);
         const extensionName = name.split('.').pop();
         const formatExists = formatFileArr.some((l) => String(type).includes(l) || extensionName === l);
         const formatError = !formatExists;
