@@ -18,15 +18,14 @@ export const config = {
 
 async function middleware(req) {
   const url = await req.nextUrl.clone();
-  const { origin, pathname } = url;
+  const { href, origin } = url;
+  const fullPath = href.replace(origin, '');
 
   const aliasAndLessonRedirects = [...aliasRedirects, ...redirectsFromApi];
   const currentProject = aliasAndLessonRedirects.find((item) => {
-    const sourceWithEngPrefix = `/en${item?.source}`;
-    const destinationIsNotEqualToSource = item?.source !== item?.destination && sourceWithEngPrefix !== item?.destination;
+    const destinationIsNotEqualToSource = item?.source !== item?.destination;
 
-    if (url.href.includes(item?.destination)) return false;
-    if (item?.source === pathname && destinationIsNotEqualToSource) return true;
+    if (item?.source === fullPath && destinationIsNotEqualToSource) return true;
     return false;
   });
 
@@ -41,7 +40,7 @@ async function middleware(req) {
   };
 
   if (conditionalResult()) {
-    log(`Middleware: redirecting from ${pathname} → ${currentProject?.destination}`);
+    log(`Middleware: redirecting from ${fullPath} → ${currentProject?.destination}`);
     return NextResponse.redirect(`${origin}${currentProject?.destination || ''}`);
   }
   return NextResponse.next();
