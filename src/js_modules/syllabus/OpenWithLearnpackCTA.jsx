@@ -167,7 +167,6 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
       fetchProvisioningVendors();
     }
   }, [cohortSession]);
-  console.log(cohortSession);
 
   if (variant === 'small') {
     return (
