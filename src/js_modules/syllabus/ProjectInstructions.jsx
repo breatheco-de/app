@@ -184,8 +184,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
               display="flex"
               gap="10px"
               flexDirection={{
-                base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-                md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+                base: 'column',
+                md: 'row',
               }}
             >
               <ButtonsHandler
@@ -226,8 +226,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
           display="flex"
           gap="16px"
           flexDirection={{
-            base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-            md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+            base: 'column',
+            md: 'row',
           }}
           justifyContent={cohortSession.available_as_saas ? 'flex-start' : 'flex-end'}
         >
