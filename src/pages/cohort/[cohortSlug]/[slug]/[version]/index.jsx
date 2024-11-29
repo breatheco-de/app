@@ -232,9 +232,7 @@ function Dashboard() {
     if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       checkNavigationAvailability();
     }
-    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) {
-      setGrantAccess(true);
-    }
+    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   useEffect(() => {

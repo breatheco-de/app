@@ -327,7 +327,7 @@ function SyllabusContent() {
 
       setGrantAccess(true);
     }
-    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false) setGrantAccess(true);
+    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
