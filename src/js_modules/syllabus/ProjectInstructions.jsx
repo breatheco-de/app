@@ -65,14 +65,11 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, variant }) {
+function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant }) {
   const { t } = useTranslation('common');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
-
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -92,7 +89,6 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
     markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
-  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
   const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
@@ -148,6 +144,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const { cohortSession } = state;
   const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
+  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const fetchProvisioningVendors = async () => {
     try {
@@ -167,12 +164,15 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
   const isForOpenLocaly = isInteractive || templateUrl;
+  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+
+  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
   if (variant === 'small') {
     return (
       <>
         <Box mt="10px" background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
-          {!isForOpenLocaly && (
+          {(!isForOpenLocaly || startWithLearnpack) && (
             <Icon icon="learnpack" />
           )}
           <Box>
@@ -194,6 +194,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
                 setShowCloneModal={setShowCloneModal}
                 vendors={vendors}
                 isForOpenLocaly={isForOpenLocaly}
+                startWithLearnpack={startWithLearnpack}
                 variant={variant}
               />
             </Box>
