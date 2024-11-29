@@ -83,6 +83,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
         border="1px solid"
         borderColor={hexColor.borderColor}
         gap="10px"
+        width="100%"
         {...rest}
       >
         <Box

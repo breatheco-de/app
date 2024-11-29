@@ -138,6 +138,7 @@
   },
   "copied": "Copiado!",
   "no-options-message": "No hay mas opciones",
+  "see-instructions": "Ver instrucciones",
   "taskStatus": {
     "project-approved": "Proyecto aprobado",
     "update-project-delivery": "Actualizar entrega de proyecto",
@@ -180,11 +181,33 @@
         "description": "Usa la terminal de la computadora para entrar en la carpeta creada e inicia Learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```",
         "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
+      "project-readme": {
+        "label": "Revisa el README.md dentro del proyecto",
+        "description": "Una vez que abras el proyecto en tu editor de código, encontrarás un archivo README.es.md las instrucciones detalladas sobre como correr el proyecto."
+      },
       "os-list": [
         {
           "name": "macos",
           "label": "MacOS",
           "logo": "/static/images/apple.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=wEcTvG0BHQk",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -213,6 +236,7 @@
               "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
+              "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "En MacOS, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
@@ -225,6 +249,24 @@
           "name": "linux",
           "label": "Linux",
           "logo": "/static/images/linux.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=88np4KkfDO8",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=LuaunSg8ppI",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
+              "source-label": "¿Cómo instalar NVM en Linux?"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -253,6 +295,7 @@
               "source": "https://4geeks.com/es/docs/learnpack/what-is-learnpack-es"
             },
             {
+              "slug": "clone",
               "label": "Clonar el proyecto en tu computadora",
               "description": "En Linux, puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
@@ -265,6 +308,24 @@
           "name": "windows",
           "label": "Windows",
           "logo": "/static/images/windows.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Instala Python en tu ordenador",
+              "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
+              "video": "https://www.youtube.com/watch?v=KVdWWsklW6o",
+              "source": "https://4geeks.com/es/how-to/como-instalar-python",
+              "source-label": "¿Cómo instalar Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
+              "source-label": "¿Cómo instalar NVM en Windows?"
+            }
+          ],
           "steps": [
             {
               "label": "Descarga un editor de código o IDE en tu computadora",
@@ -299,6 +360,7 @@
               "source": "https://git-scm.com/downloads/win"
             },
             {
+              "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
@@ -312,7 +374,7 @@
   },
   "upgrade-plan": {
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
-    "button": "Mejorar plan"
+    "button": "Comprar un plan"
   },
   "asset-type-pronouns" : {
     "lesson": "Esta lección",

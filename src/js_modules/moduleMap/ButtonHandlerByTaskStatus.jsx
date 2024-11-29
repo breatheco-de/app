@@ -117,6 +117,8 @@ export function ButtonHandlerByTaskStatus({
             currentTask={currentTask}
             projectLink={currentTask?.github_url}
             onClose={() => setIsReviewModalOpen(false)}
+            acceptTC={acceptTC}
+            handleAcceptTC={setAcceptTC}
           />
         </>
       );
@@ -205,11 +207,11 @@ ButtonHandlerByTaskStatus.propTypes = {
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
   allowText: false,
-  onClickHandler: () => {},
+  onClickHandler: () => { },
   currentAssetData: {},
   fileData: {},
-  toggleSettings: () => {},
-  handleOpen: () => {},
+  toggleSettings: () => { },
+  handleOpen: () => { },
   onlyPopoverDialog: false,
   isGuidedExperience: false,
 };

@@ -41,6 +41,7 @@ import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
 import completions from './completion-jobs.json';
+import { generateUserContext } from '../../../../../utils/rigobotContext';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -233,9 +234,10 @@ function SyllabusContent() {
       } else aiContext = cachedContext;
 
       if (aiContext) {
+        const userContext = generateUserContext(user);
         rigo.updateOptions({
           showBubble: false,
-          context: aiContext.ai_context,
+          context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${aiContext.ai_context}`,
           completions,
         });
       }

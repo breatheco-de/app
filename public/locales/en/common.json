@@ -141,6 +141,7 @@
   },
   "copied": "Copied!",
   "no-options-message": "No options available",
+  "see-instructions": "See instructions",
   "taskStatus": {
     "project-approved": "Project approved",
     "update-project-delivery": "Update project delivery",
@@ -183,11 +184,33 @@
         "label": "Open the project without VSCode",
         "description": "Use your computer terminal to get inside your recently created folder and start learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```"
       },
+      "project-readme": {
+        "label": "Read the README.md inside the project",
+        "description": "Once you open the project in your editor you will find a README.md file containing more instructions on how to run the project"
+      },
       "os-list": [
         {
           "name": "macos",
           "label": "MacOS",
           "logo": "/static/images/apple.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python in your computer",
+              "description": "You must install Python on your computer to run this project locally. Click on the link below to follow a step-by-step about how to install it.",
+              "video": "https://www.youtube.com/watch?v=nhv82tvFfkM",
+              "source": "https://4geeks.com/how-to/how-to-install-python",
+              "source-label": "How to install Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "How to install NVM on MacOS?"
+            }
+          ],
           "steps": [
             {
               "label": "Download a code editor or IDE on your computer",
@@ -216,6 +239,7 @@
               "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
+              "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
@@ -228,6 +252,24 @@
           "name": "linux",
           "label": "Linux",
           "logo": "/static/images/linux.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python in your computer",
+              "description": "You must install Python on your computer to run this project locally. Click on the link below to follow a step-by-step about how to install it.",
+              "video": "https://www.youtube.com/watch?v=IAco2SSuGms",
+              "source": "https://4geeks.com/how-to/how-to-install-python",
+              "source-label": "How to install Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
+              "source": "https://4geeks.com/how-to/install-nvm-linux",
+              "source-label": "How to install NVM on MacOS?"
+            }
+          ],
           "steps": [
             {
               "label": "Download a code editor or IDE on your computer",
@@ -256,6 +298,7 @@
               "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
+              "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "On Linux, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
@@ -268,6 +311,24 @@
           "name": "windows",
           "label": "Windows",
           "logo": "/static/images/windows.png",
+          "dependencies": [
+            {
+              "name": "python",
+              "label": "Install Python in your computer",
+              "description": "You must install Python on your computer to run this project locally. Click on the link below to follow a step-by-step about how to install it.",
+              "video": "https://www.youtube.com/watch?v=yivyNCtVVDk",
+              "source": "https://4geeks.com/how-to/how-to-install-python",
+              "source-label": "How to install Python?"
+            },
+            {
+              "name": "node-js",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
+              "source": "https://4geeks.com/how-to/nvm-install-windows",
+              "source-label": "How to install NVM on MacOS?"
+            }
+          ],
           "steps": [
             {
               "label": "Download a code editor or IDE on your computer",
@@ -302,6 +363,7 @@
               "source": "https://git-scm.com/downloads/win"
             },
             {
+              "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "You can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
