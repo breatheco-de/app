@@ -2,7 +2,7 @@
 import React, { createContext, useState } from 'react';
 import Script from 'next/script';
 import PropTypes from 'prop-types';
-import { isWindow, getQueryString } from '../../utils';
+import { isWindow } from '../../utils';
 
 export const RigoContext = createContext({
   rigo: null,
@@ -23,19 +23,13 @@ function RigoProvider({ children }) {
       <Script
         src="https://unpkg.com/rigobot-chat-bubble@0.0.59/dist/main.js"
         onLoad={() => {
-          const persistedRigoChat = localStorage.getItem('rigo_chat');
-          const allowRigo = getQueryString('rigo_chat', persistedRigoChat);
-          if (allowRigo && allowRigo.toLowerCase() === 'true') {
-            localStorage.setItem('rigo_chat', 'true');
-            window.rigo.init(process.env.RIGOBOT_HASH, {
-              context: '',
-            });
-            window.rigo.show({
-              collapsed: true,
-              showBubble: false,
-            });
-            setIsRigoInitialized(true);
-          }
+          window.rigo.init(process.env.RIGOBOT_HASH, {
+            context: '',
+          });
+          window.rigo.show({
+            showBubble: false,
+          });
+          setIsRigoInitialized(true);
         }}
       />
       {children}
