@@ -93,11 +93,15 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
 
       const eachTechValue = 1 / techCount;
 
-      const score = courseTechnologies
-        .filter((tech) => technologiesArray.includes(tech)).length * eachTechValue;
+      const techsRelated = courseTechnologies
+        .filter((tech) => technologiesArray.includes(tech));
 
-      coursesGraded.push({ ...course, score });
+      const relatedTechCount = techsRelated.length;
+      const score = relatedTechCount * eachTechValue;
+
+      coursesGraded.push({ ...course, score, relatedTechCount });
     });
+
     return coursesGraded;
   };
 
@@ -110,7 +114,12 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
       const coursesGraded = gradeCourseBasedOnTech(coursesData);
 
       if (coursesData.length > 0) {
-        const sortedCourses = coursesGraded.sort((a, b) => b.score - a.score);
+        const sortedCourses = coursesGraded.sort((a, b) => {
+          if (b.score !== a.score) {
+            return b.score - a.score;
+          }
+          return b.relatedTechCount - a.relatedTechCount;
+        });
 
         setRecommendations(sortedCourses.slice(0, coursesLimit));
       }
