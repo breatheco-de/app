@@ -336,6 +336,10 @@ function PaymentInfo() {
     handleSubmit(actions, allValues);
   };
 
+  const handleTryAgain = () => {
+    setOpenDeclinedModal(false);
+  };
+
   return (
     <Box display="flex" height="100%" flexDirection="column" gridGap="30px" margin={{ base: isPaymentSuccess ? '' : '0 1rem', lg: '0 auto' }} position="relative">
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
@@ -406,7 +410,8 @@ function PaymentInfo() {
                           declinedModalProps,
                           openDeclinedModal,
                           setOpenDeclinedModal,
-                          disableTryAgain: true,
+                          handleTryAgain,
+                          disableClose: true,
                         }}
                         onSubmit={onSubmitCard}
                       />
