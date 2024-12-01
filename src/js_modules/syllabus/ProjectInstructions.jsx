@@ -229,7 +229,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             base: 'column',
             md: 'row',
           }}
-          justifyContent={cohortSession.available_as_saas ? 'flex-start' : 'flex-end'}
         >
           <ButtonsHandler
             currentAsset={currentAsset}
