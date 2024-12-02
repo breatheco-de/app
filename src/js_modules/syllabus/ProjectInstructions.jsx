@@ -235,6 +235,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             handleStartLearnpack={handleStartLearnpack}
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
+            isForOpenLocaly={isForOpenLocaly}
             vendors={vendors}
             variant={variant}
           />
