@@ -31,7 +31,7 @@ function PaymentInfo() {
   const { isAuthenticated } = useAuth();
 
   const {
-    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
+    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
   } = useSignup();
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
@@ -315,6 +315,7 @@ function PaymentInfo() {
         });
     } else {
       setPaymentStatus('error');
+      setPaymentInfo('cvc', '');
       handlePaymentErrors(data, actions);
     }
   };
@@ -337,25 +338,7 @@ function PaymentInfo() {
   };
 
   const handleTryAgain = () => {
-    setIsSubmittingPayment(true);
-    handlePayment({}, true)
-      .then((data) => {
-        if (data.status === 'FULFILLED') {
-          setReadyToRefetch(true);
-        }
-        handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:card-error'),
-          description: t('alert-message:card-error-description'),
-          status: 'error',
-          duration: 6000,
-          isClosable: true,
-        });
-        setIsSubmittingPayment(false);
-      });
+    setOpenDeclinedModal(false);
   };
 
   return (
@@ -429,6 +412,7 @@ function PaymentInfo() {
                           openDeclinedModal,
                           setOpenDeclinedModal,
                           handleTryAgain,
+                          disableClose: true,
                         }}
                         onSubmit={onSubmitCard}
                       />
