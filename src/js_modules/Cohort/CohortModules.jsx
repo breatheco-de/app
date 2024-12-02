@@ -7,7 +7,7 @@ import {
   Button,
   useToast,
   Skeleton,
-  useColorModeValue,
+  useColorMode,
   Spinner,
   CircularProgress,
   Accordion,
@@ -46,14 +46,12 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   const router = useRouter();
   const { user } = useAuth();
   const { featuredLight, backgroundColor, hexColor } = useStyle();
+  const { colorMode } = useColorMode();
   const { startDay } = useModuleHandler();
   const { serializeModulesMap, microCohortsAssignments, setMicroCohortsAssinments } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
   const isGraduated = !!certificate;
-
-  console.log('certificate');
-  console.log(certificate);
 
   const getModuleLabel = (module) => {
     if (typeof module.label === 'string') return module.label;
@@ -152,12 +150,13 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
 
   const getColorVariations = (colorHex) => {
     if (!colorHex) return {};
-    const variations = [0.2, 0.3, 0.5, 0.8, 0.9];
+    const lightRange = [0.2, 0.3, 0.5, 0.8, 0.9];
+    const darkRange = [0.2, 0.3, 0.4, 0.7, 0.8];
     const r = parseInt(colorHex.slice(1, 3), 16); // r = 102
     const g = parseInt(colorHex.slice(3, 5), 16); // g = 51
     const b = parseInt(colorHex.slice(5, 7), 16); // b = 153
 
-    const [light1, light2, light3, light4, light5] = variations.map((variation) => {
+    const [light1, light2, light3, light4, light5] = lightRange.map((variation) => {
       const tintR = Math.round(Math.min(255, r + (255 - r) * variation)); // 117
       const tintG = Math.round(Math.min(255, g + (255 - g) * variation)); // 71
       const tintB = Math.round(Math.min(255, b + (255 - b) * variation)); // 163
@@ -168,7 +167,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
           .join('')}`;
     });
 
-    const [dark1, dark2, dark3, dark4] = variations.map((variation) => {
+    const [dark1, dark2, dark3, dark4, dark5] = darkRange.map((variation) => {
       const shadeR = Math.round(Math.max(0, r - r * variation)); // 92
       const shadeG = Math.round(Math.max(0, g - g * variation)); // 46
       const shadeB = Math.round(Math.max(0, b - b * variation)); // 138
@@ -179,7 +178,14 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
           .join('')}`;
     });
 
-    return { light1, light2, light3, light4, light5, dark1, dark2, dark3, dark4 };
+    return {
+      light: {
+        mode1: light1, mode2: light2, mode3: light3, mode4: light4, mode5: light5,
+      },
+      dark: {
+        mode1: dark1, mode2: dark2, mode3: dark3, mode4: dark4, mode5: dark5,
+      },
+    };
   };
 
   const colorVariations = getColorVariations(cohortColor);
@@ -217,7 +223,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
     if (!isGraduated) {
       return {
         paddingY: '8px',
-        background: colorVariations.light4,
+        background: colorVariations[colorMode].mode4,
       };
     }
 
@@ -246,7 +252,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
 
   return (
     <Accordion allowToggle>
-      <AccordionItem background={colorVariations.light5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
+      <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
             <AccordionButton cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
@@ -266,7 +272,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                         </Text>
                       </Box>
                     )}
-                    <Box padding="5px 7px" borderRadius="27px" background={colorVariations.light1}>
+                    <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
                       <Text color="white">
                         {t('modules-count', { count: modules?.length })}
                       </Text>
@@ -290,7 +296,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                     </Text>
                   </Box>
                 )}
-                <Box padding="5px 7px" borderRadius="27px" background={colorVariations.light1}>
+                <Box padding="5px 7px" borderRadius="27px" background={colorVariations[colorMode].mode1}>
                   <Text color="white">
                     {t('modules-count', { count: modules?.length })}
                   </Text>
@@ -298,12 +304,12 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
               </Box>
               <Box mt={isGraduated && '10px'} width="100%" display="flex">
                 {isGraduated && (
-                  <Box onClick={showCertificate} display="flex" gap="10px" background={colorVariations.light4} borderRadius="4px" padding="8px">
+                  <Box onClick={showCertificate} display="flex" gap="10px" background={colorVariations[colorMode].mode4} borderRadius="4px" padding="8px">
                     <Icon
                       icon="certificate-2"
                       props={{
                         color: cohortColor,
-                        color2: colorVariations.light4,
+                        color2: colorVariations[colorMode].mode4,
                       }}
                     />
                     <Icon icon="dots" color={cohortColor} />
@@ -319,13 +325,13 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                         <Box position="relative">
                           <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
                           {cohortProgress.percentage !== 100 ? (
-                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid white" borderRadius="full" background={colorVariations.light4}>
+                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid white" borderRadius="full" background={colorVariations[colorMode].mode4}>
                               <Icon
                                 icon="party-popper-off"
                                 style={{ margin: 'auto' }}
                                 props={{
-                                  color: colorVariations.light5,
-                                  color2: colorVariations.light3,
+                                  color: colorVariations[colorMode].mode5,
+                                  color2: colorVariations.light.mode3,
                                 }}
                               />
                             </Box>
@@ -410,7 +416,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                         {typesPerModule.map((taskType) => {
                           const { icon, total, done } = assignmentsCount[taskType];
                           return (
-                            <Box background={colorVariations.light4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center">
+                            <Box background={colorVariations[colorMode].mode4} padding="4px 8px" borderRadius="18px" display="flex" gap="5px" alignItems="center">
                               <Icon icon={icon} color={cohortColor} width="13px" height="13px" />
                               <Text>
                                 {`${done}/`}
@@ -426,7 +432,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                 })}
               </AccordionPanel>
             ) : (
-              <Button onClick={startCourse} _hover={{ background: colorVariations.light4, opacity: 0.7 }} background={colorVariations.light4} mt="10px" width="100%" color={cohortColor} isLoading={loadingStartCourse}>
+              <Button onClick={startCourse} _hover={{ background: colorVariations[colorMode].mode4, opacity: 0.7 }} background={colorVariations[colorMode].mode4} mt="10px" width="100%" color={cohortColor} isLoading={loadingStartCourse}>
                 {t('start-course')}
                 {' '}
                 →
