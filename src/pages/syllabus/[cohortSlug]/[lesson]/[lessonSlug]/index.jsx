@@ -774,7 +774,7 @@ function SyllabusContent() {
     const pendingSubtasks = subTasks.filter((task) => task.status === 'PENDING');
 
     if (pendingSubtasks.length === 0) {
-      console.log('No hay subtareas pendientes.');
+      console.log('No pending subtasks.');
       return;
     }
 
@@ -782,7 +782,7 @@ function SyllabusContent() {
     const subtaskElement = document.getElementById(lastPendingSubtask.id);
 
     if (!subtaskElement) {
-      console.log(`No se encontró un elemento en el DOM con el id ${lastPendingSubtask.id}`);
+      console.log(`couldnt fint element in the DOM with id: ${lastPendingSubtask.id}`);
       return;
     }
 
