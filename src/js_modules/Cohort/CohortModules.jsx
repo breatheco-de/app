@@ -1,12 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  Flex,
   Box,
-  Container,
   Button,
-  useToast,
-  Skeleton,
   useColorMode,
   Spinner,
   CircularProgress,
@@ -21,8 +17,6 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
-import bc from '../../common/services/breathecode';
-import useAuth from '../../common/hooks/useAuth';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
@@ -44,8 +38,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   const [loadingModule, setLoadingModule] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const router = useRouter();
-  const { user } = useAuth();
-  const { featuredLight, backgroundColor, hexColor } = useStyle();
+  const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
   const { startDay } = useModuleHandler();
   const { serializeModulesMap, microCohortsAssignments, setMicroCohortsAssinments } = useCohortHandler();
@@ -353,7 +346,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                       </Box>
                     </Box>
                     {isGraduated && (
-                      <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems="center" gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
+                      <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems={{ base: 'baseline', sm: 'center' }} gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
                         <Box display="flex" alignItems="center" gap="5px">
                           <Icon icon="attendance" color={cohortColor} />
                           <Text size="md" textAlign="left">
