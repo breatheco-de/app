@@ -557,7 +557,7 @@ function Checkout() {
     const discounts = [];
 
     allCoupons.forEach((c) => {
-      pricingData = getPriceWithDiscount(pricingData.price, c, selectedPlanCheckoutData?.price);
+      pricingData = getPriceWithDiscount(pricingData.price, c);
       discounts.push(pricingData);
     });
     setAllDiscounts(discounts);
@@ -981,7 +981,7 @@ function Checkout() {
                               <Flex gridGap="1rem">
                                 {processedPrice?.originalPrice && (
                                   <Text size="18px" color="currentColor" textDecoration="line-through" opacity="0.7" lineHeight="normal">
-                                    {`$${allDiscounts[index]?.accumulatedPrice?.toFixed(2)}`}
+                                    {`$${allDiscounts[index]?.originalPrice?.toFixed(2)}`}
                                   </Text>
                                 )}
                                 <Text size="18px" color="currentColor" lineHeight="normal">

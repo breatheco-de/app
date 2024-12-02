@@ -414,7 +414,7 @@ const useSignup = () => {
     return '';
   };
 
-  const getPriceWithDiscount = (price, couponData, originalPrice) => {
+  const getPriceWithDiscount = (price, couponData) => {
     // const price = selectedPlanCheckoutData?.price;
     const discount = couponData?.discount_value;
     const discountType = couponData?.discount_type;
@@ -422,8 +422,7 @@ const useSignup = () => {
       if (discountType === 'PERCENT_OFF' || discountType === 'HAGGLING') {
         const roundedPrice = Math.round(((price - (price * discount)) + Number.EPSILON) * 100) / 100;
         return {
-          originalPrice,
-          accumulatedPrice: price,
+          originalPrice: price,
           price: roundedPrice,
           discount: `${discount * 100}%`,
           discountType,
@@ -432,7 +431,6 @@ const useSignup = () => {
       if (discountType === 'FIXED_PRICE') {
         return {
           originalPrice: price,
-          accumulatedPrice: price,
           price: price - discount,
           discount: `$${discount}`,
           discountType,
