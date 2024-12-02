@@ -7,7 +7,7 @@ import SubtasksPill from './SubtasksPill';
 import StatusPill from './StatusPill';
 import Topbar from './Topbar';
 import TaskCodeRevisions from './TaskCodeRevisions';
-import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
+import ProjectInstructions from './ProjectInstructions';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
@@ -59,7 +59,7 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
               )}
             </Box>
             <Box>
-              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+              <ProjectInstructions variant="small" currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
             </Box>
           </Box>
         </Box>
