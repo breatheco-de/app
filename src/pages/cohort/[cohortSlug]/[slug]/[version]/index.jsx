@@ -71,6 +71,7 @@ function Dashboard() {
   const [showPendingTasks, setShowPendingTasks] = useState(false);
   const [events, setEvents] = useState(null);
   const [liveClasses, setLiveClasses] = useState([]);
+  const [certificates, setCertificates] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { user } = useAuth();
@@ -384,6 +385,13 @@ function Dashboard() {
     prepareTasks();
   }, [cohortProgram, taskTodo, router]);
 
+  useEffect(() => {
+    bc.certificate().get()
+      .then(({ data }) => {
+        setCertificates(data);
+      });
+  }, []);
+
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
@@ -503,10 +511,11 @@ function Dashboard() {
                         cohort={microCohort}
                         modules={microCohortsAssignments[microCohort.slug]?.modules}
                         mainCohort={cohortSession}
+                        certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
                       />
                     ))
                     : (
-                      <CohortModules cohort={cohortSession} modules={sortedAssignments} />
+                      <CohortModules cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
                     )}
                 </Box>
               )}

@@ -19,17 +19,22 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import { format } from 'date-fns';
+import { es, en } from 'date-fns/locale';
 import bc from '../../common/services/breathecode';
 import useAuth from '../../common/hooks/useAuth';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
+import ShareButton from '../../common/components/ShareButton';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import Progress from '../../common/components/ProgressBar/Progress';
 
-function CohortModules({ cohort, modules, mainCohort }) {
+const locales = { es, en };
+
+function CohortModules({ cohort, modules, mainCohort, certificate }) {
   const { t, lang } = useTranslation('dashboard');
   const langDict = {
     en: 'us',
@@ -37,7 +42,7 @@ function CohortModules({ cohort, modules, mainCohort }) {
   };
   const [loadingStartCourse, setLoadingStartCourse] = useState(false);
   const [loadingModule, setLoadingModule] = useState(null);
-  const [expanded, setExpanded] = useState(null);
+  const [shareModal, setShareModal] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
   const { featuredLight, backgroundColor, hexColor } = useStyle();
@@ -45,7 +50,10 @@ function CohortModules({ cohort, modules, mainCohort }) {
   const { serializeModulesMap, microCohortsAssignments, setMicroCohortsAssinments } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
-  const isGraduated = cohort.cohort_user.educational_status === 'GRADUATED';
+  const isGraduated = !!certificate;
+
+  console.log('certificate');
+  console.log(certificate);
 
   const getModuleLabel = (module) => {
     if (typeof module.label === 'string') return module.label;
@@ -205,16 +213,6 @@ function CohortModules({ cohort, modules, mainCohort }) {
     }
   };
 
-  const share = (e) => {
-    e.stopPropagation();
-    alert('howdy!!!');
-  };
-
-  const showCertificate = (e) => {
-    e.stopPropagation();
-    alert('certificate doug!!');
-  };
-
   const progressBoxStyles = () => {
     if (!isGraduated) {
       return {
@@ -231,6 +229,21 @@ function CohortModules({ cohort, modules, mainCohort }) {
     };
   };
 
+  const certfToken = certificate?.preview_url && certificate.preview_url?.split('/')?.pop();
+  const certfLink = certfToken ? `https://certificate.4geeks.com/${certfToken}` : '#';
+  const profession = certificate?.specialty.name;
+  const socials = t('profile:share-certificate.socials', { certfLink, profession }, { returnObjects: true });
+
+  const share = (e) => {
+    e.stopPropagation();
+    setShareModal(true);
+  };
+
+  const showCertificate = (e) => {
+    e.stopPropagation();
+    window.open(certfLink);
+  };
+
   return (
     <Accordion allowToggle>
       <AccordionItem background={colorVariations.light5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
@@ -245,7 +258,7 @@ function CohortModules({ cohort, modules, mainCohort }) {
                       {cohort.name}
                     </Heading>
                   </Box>
-                  <Box display="flex" gap="10px" alignItems="center" justifyContent="space-between" width="100%">
+                  <Box display={{ base: 'none', md: 'flex' }} gap="10px" alignItems="center" justifyContent="space-between" width="100%">
                     {isGraduated && (
                       <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
                         <Text color="white">
@@ -269,7 +282,21 @@ function CohortModules({ cohort, modules, mainCohort }) {
                   </Box>
                 )}
               </Box>
-              <Box width="100%" display="flex">
+              <Box display={{ base: 'flex', md: 'none' }} gap="10px" alignItems="center" justifyContent="space-between" width="100%">
+                {isGraduated && (
+                  <Box padding="5px 7px" borderRadius="27px" background="yellow.default">
+                    <Text color="white">
+                      {t('completed')}
+                    </Text>
+                  </Box>
+                )}
+                <Box padding="5px 7px" borderRadius="27px" background={colorVariations.light1}>
+                  <Text color="white">
+                    {t('modules-count', { count: modules?.length })}
+                  </Text>
+                </Box>
+              </Box>
+              <Box mt={isGraduated && '10px'} width="100%" display="flex">
                 {isGraduated && (
                   <Box onClick={showCertificate} display="flex" gap="10px" background={colorVariations.light4} borderRadius="4px" padding="8px">
                     <Icon
@@ -320,10 +347,33 @@ function CohortModules({ cohort, modules, mainCohort }) {
                       </Box>
                     </Box>
                     {isGraduated && (
-                      <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
-                        <Icon icon="share" />
-                        {t('share')}
-                      </Button>
+                      <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems="center" gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
+                        <Box display="flex" alignItems="center" gap="5px">
+                          <Icon icon="attendance" color={cohortColor} />
+                          <Text size="md" textAlign="left">
+                            {t('issued-on', { date: format(new Date(certificate.issued_at), 'MMMM d y', {
+                              locale: locales[lang],
+                            }) })}
+                          </Text>
+                        </Box>
+                        {shareModal && (
+                          <ShareButton
+                            title={t('profile:share-certificate.title')}
+                            shareText={t('profile:share-certificate.shareText')}
+                            link={certfLink}
+                            socials={socials}
+                            alignItems="center"
+                            gap="5px"
+                            height="40px"
+                            onlyModal
+                            onClose={() => setShareModal(false)}
+                          />
+                        )}
+                        <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                          <Icon icon="share" />
+                          {t('share')}
+                        </Button>
+                      </Box>
                     )}
                   </Box>
                 )}
@@ -356,7 +406,7 @@ function CohortModules({ cohort, modules, mainCohort }) {
                           {getModuleLabel(module)}
                         </Text>
                       </Box>
-                      <Box display="flex" alignItems="center" gap="16px">
+                      <Box display={{ base: 'none', sm: 'flex' }} alignItems="center" gap="16px">
                         {typesPerModule.map((taskType) => {
                           const { icon, total, done } = assignmentsCount[taskType];
                           return (
@@ -395,9 +445,11 @@ CohortModules.propTypes = {
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   mainCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  certificate: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CohortModules.defaultProps = {
   mainCohort: null,
   modules: null,
+  certificate: null,
 };

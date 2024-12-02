@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import {
-  Flex, Box, Container, Button, useToast, Skeleton, useColorModeValue,
+  Flex, Box, Container,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
@@ -68,8 +68,8 @@ function Header() {
   };
 
   return (
-    <Container padding="16px 0" maxWidth="none" background={featuredLight}>
-      <Flex maxWidth="1200px" margin="auto" gap="24px">
+    <Container padding="16px" maxWidth="none" background={featuredLight}>
+      <Flex maxWidth="1200px" margin="auto" gap="24px" wrap={{ base: 'wrap', md: 'nowrap' }}>
         <Box>
           <Heading fontWeight="400" size="xsm" as="h4" textAlign="left" mb="8px">
             {t('hello-user', { name: user?.first_name })}
@@ -78,9 +78,9 @@ function Header() {
             {t('read-to-start-learning')}
           </Heading>
         </Box>
-        <Flex gap="16px">
+        <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
           <Box
-            width="145px"
+            width={{ base: '100%', sm: '145px' }}
             height="102px"
             borderRadius="8px"
             padding="8px"
@@ -100,7 +100,7 @@ function Header() {
           </Box>
 
           <Box
-            width="145px"
+            width={{ base: '100%', sm: '145px' }}
             height="102px"
             borderRadius="8px"
             padding="8px"
@@ -121,7 +121,7 @@ function Header() {
 
           {isRigoInitialized && (
             <Box
-              width="145px"
+              width={{ base: '100%', sm: '145px' }}
               height="102px"
               borderRadius="8px"
               padding="8px"
