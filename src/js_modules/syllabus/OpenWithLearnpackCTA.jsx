@@ -99,7 +99,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
   const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
   const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
-  const isToOpenLocaly = isInteractive || templateUrl;
+  const isToOpenLocaly = cohortSession.available_as_saas && (isInteractive || templateUrl);
 
   if (isExternalExercise) {
     return (
