@@ -34,7 +34,7 @@ function ProjectsLoader({ articles, itemsPerPage, renderItem, searchQuery, optio
   }, [currentPage, articles]);
   const pageCount = Math.ceil(count / itemsPerPage);
 
-  const isSearching = searchQuery.length > 0;
+  const isSearching = searchQuery?.length > 0;
 
   const hasMore = articles.length < count && !isSearching;
 

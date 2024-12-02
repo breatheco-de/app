@@ -42,7 +42,7 @@ const { APPROVED, PENDING, REJECTED } = statusList;
 const inputLimit = 450;
 
 function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalData, defaultStage, fixedStage, onClose, updpateAssignment, currentTask,
-  projectLink, changeStatusAssignment, disableRate, disableLiking, ...rest }) {
+  projectLink, changeStatusAssignment, disableRate, disableLiking, acceptTC, handleAcceptTC, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
   const toast = useToast();
@@ -290,6 +290,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         user_id: user.id,
       },
     });
+
     if (revisionStatusUpperCase[reviewStatus] !== undefined) {
       setLoaders((prevState) => ({
         ...prevState,
@@ -705,6 +706,8 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
                       toggleSettings={toggleSettings}
                       allowText
                       buttonChildren={t('code-review.resubmit-assignment')}
+                      acceptTC={acceptTC}
+                      handleAcceptTC={handleAcceptTC}
                     />
                   </Flex>
                 )}

@@ -33,7 +33,7 @@ export default function Thmbnail() {
   }, [slug]);
 
   const randomImgNumber = Math.floor(Math.random() * 10) + 1;
-  const whiteColor = [1, 3, 5, 6, 7, 8, 10];
+  const whiteColor = [1, 3, 5, 10];
 
   const Div = styled.div`
     background: url("/static/images/thumbnail/${randomImgNumber}.png");

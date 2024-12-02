@@ -90,6 +90,10 @@ function PaymentInfo() {
   };
 
   const startRedirection = async () => {
+    if (!isPaymentSuccess) {
+      setPaymentStatus('idle');
+      return;
+    }
     setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
@@ -241,7 +245,7 @@ function PaymentInfo() {
 
   useEffect(() => {
     if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
-  }, [selectedPlanCheckoutData, isAuthenticated]);
+  }, [isAuthenticated]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
     const silentCode = data?.silent_code;
@@ -324,6 +328,7 @@ function PaymentInfo() {
       exp_year: expYear,
       cvc: values.cvc,
     };
+
     handleSubmit(actions, allValues);
   };
 
@@ -446,7 +451,7 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+          isDisabled={isPaymentSuccess && (!cohortFound || !readyToRedirect)}
           isLoading={isSubmittingPayment || isRedirecting}
           onClick={startRedirection}
         >

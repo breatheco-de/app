@@ -1,7 +1,7 @@
 import {
   Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton, Flex,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { intervalToDuration, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import useTranslation from 'next-translate/useTranslation';
@@ -33,6 +33,7 @@ import ModalToGetAccess, { stageType } from '../../common/components/ModalToGetA
 import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
+import { SessionContext } from '../../common/context/SessionContext';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -140,6 +141,7 @@ export const getStaticProps = async ({ params, locale }) => {
 
 function Page({ eventData, asset }) {
   const { t } = useTranslation('workshops');
+  const { userSession } = useContext(SessionContext);
   const [users, setUsers] = useState([]);
   const [event, setEvent] = useState(eventData);
   const [allUsersJoined, setAllUsersJoined] = useState([]);
@@ -495,6 +497,15 @@ function Page({ eventData, asset }) {
     eventStatus: 'https://schema.org/EventScheduled',
   };
 
+  const utms = {
+    utm_campaign: userSession?.utm_campaign,
+    utm_content: userSession?.utm_content,
+    utm_medium: userSession?.utm_medium,
+    utm_placement: userSession?.utm_placement,
+    utm_source: userSession?.utm_source,
+    utm_term: userSession?.utm_term,
+  };
+
   const handleJoin = () => {
     if (!finishedEvent) {
       if ((readyToJoinEvent && alreadyApplied) || readyToJoinEvent) {
@@ -513,7 +524,7 @@ function Page({ eventData, asset }) {
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
       }
       if (isAuthenticated && !alreadyApplied && !readyToJoinEvent) {
-        bc.events().applyEvent(event?.id)
+        bc.events().applyEvent(event?.id, utms)
           .then((resp) => {
             if (resp !== undefined) {
               setApplied(true);

@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
+import useSignup from '../../../common/store/actions/signupAction';
 import { toCapitalize, unSlugify } from '../../../utils';
 
 function profileHandlers() {
@@ -12,6 +13,7 @@ function profileHandlers() {
   const { reverseFontColor, fontColor, lightColor } = useStyle();
   const toast = useToast();
   const router = useRouter();
+  const { setPaymentStatus } = useSignup();
 
   const getPlanProps = async (slug) => {
     const resp = await bc.payment().getPlanProps(encodeURIComponent(slug));
@@ -94,7 +96,7 @@ function profileHandlers() {
       if (payUnit === 'YEAR') return t('yearly');
       return payUnit;
     },
-    getPlan: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
+    getPlan: ({ slug, onOpenUpgrade = () => { }, disableRedirects = false }) => new Promise((resolve, reject) => {
       bc.payment().getPlan(encodeURIComponent(slug))
         .then(async (res) => {
           const data = res?.data;
@@ -274,7 +276,7 @@ function profileHandlers() {
           });
         });
     }),
-    getPlanOffer: ({ slug, onOpenUpgrade = () => {}, disableRedirects = false, withCurrentPlan = false }) => new Promise((resolve, reject) => {
+    getPlanOffer: ({ slug, onOpenUpgrade = () => { }, disableRedirects = false, withCurrentPlan = false }) => new Promise((resolve, reject) => {
       bc.payment({
         original_plan: slug,
       }).planOffer()
@@ -464,6 +466,12 @@ function profileHandlers() {
           });
         });
     }),
+    reactivatePlan: (planSlug, planStatus) => {
+      if (planStatus === 'CANCELLED') {
+        setPaymentStatus('idle');
+        router.push(`/checkout?plan=${planSlug}`);
+      }
+    },
   };
 }
 
