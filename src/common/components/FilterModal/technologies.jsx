@@ -22,7 +22,7 @@ function TechnologiesSection({
   const [technologySearched, setTechnologySearched] = useState('');
   const { fontColor, hexColor, modal, borderColorStrong } = useStyle();
   const [isMobile] = useMediaQuery('(min-width: 1082px)');
-  const filteredTechnologies = technologyTags.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
+  const filteredTechnologies = technologyTags?.results?.filter((technology) => technology.slug.toLowerCase().includes(technologySearched.toLowerCase()));
 
   return (
     <Flex flexDirection="column" padding="0 0 12px 0" borderBottom={1} borderStyle="solid" borderColor={commonBorderColor}>
@@ -41,7 +41,7 @@ function TechnologiesSection({
         </InputGroup>
 
       </Box>
-      <Collapse className="force-overflow" in={show} startingHeight={technologyTags.length > 4 ? 170 : 38}>
+      <Collapse className="force-overflow" in={show} startingHeight={technologyTags.results.length > 4 ? 170 : 38}>
         <Flex
           flexFlow="row wrap"
           padding="5px"
@@ -104,7 +104,7 @@ TechnologiesSection.propTypes = {
   commonBorderColor: PropTypes.string.isRequired,
   commonTextColor: PropTypes.string.isRequired,
   checkedTechnologies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  technologyTags: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   handleToggle: PropTypes.func.isRequired,
   getCheckboxProps: PropTypes.func.isRequired,
 };
