@@ -31,7 +31,7 @@ function PaymentInfo() {
   const { isAuthenticated } = useAuth();
 
   const {
-    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
+    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
   } = useSignup();
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
@@ -315,6 +315,7 @@ function PaymentInfo() {
         });
     } else {
       setPaymentStatus('error');
+      setPaymentInfo('cvc', '');
       handlePaymentErrors(data, actions);
     }
   };
