@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import SimpleModal from '../../common/components/SimpleModal';
 
 function ModalCardError({
-  openDeclinedModal, isSubmitting, setOpenDeclinedModal, declinedModalProps, handleTryAgain, disableTryAgain,
+  openDeclinedModal, isSubmitting, setOpenDeclinedModal, declinedModalProps, handleTryAgain, disableTryAgain, disableClose,
 }) {
   const { t } = useTranslation('signup');
 
@@ -37,9 +37,11 @@ function ModalCardError({
       </Text>
 
       <Flex gridGap="24px">
-        <Button variant="outline" onClick={() => setOpenDeclinedModal(false)} borderColor="blue.default" color="blue.default">
-          {t('common:close')}
-        </Button>
+        {!disableClose && (
+          <Button variant="outline" onClick={() => setOpenDeclinedModal(false)} borderColor="blue.default" color="blue.default">
+            {t('common:close')}
+          </Button>
+        )}
         {!disableTryAgain && (
           <Button
             isLoading={isSubmitting}
@@ -62,14 +64,16 @@ ModalCardError.propTypes = {
   declinedModalProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   handleTryAgain: PropTypes.func,
   disableTryAgain: PropTypes.bool,
+  disableClose: PropTypes.bool,
 };
 
 ModalCardError.defaultProps = {
   openDeclinedModal: false,
-  setOpenDeclinedModal: () => {},
-  handleTryAgain: () => {},
+  setOpenDeclinedModal: () => { },
+  handleTryAgain: () => { },
   declinedModalProps: {},
   disableTryAgain: false,
+  disableClose: false,
 };
 
 export default ModalCardError;
