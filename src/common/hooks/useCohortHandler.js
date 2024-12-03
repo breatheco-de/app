@@ -202,7 +202,7 @@ function useCohortHandler() {
     }
   };
 
-  const parseCohorts = (elem) => {
+  const parseCohort = (elem) => {
     const { cohort, ...cohort_user } = elem;
     const { syllabus_version } = cohort;
     return {
@@ -227,7 +227,7 @@ function useCohortHandler() {
           if (!data) throw new Error('No data');
           const { cohorts } = data;
 
-          parsedCohorts = cohorts.map(parseCohorts);
+          parsedCohorts = cohorts.map(parseCohort);
 
           currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
         }
@@ -325,6 +325,7 @@ function useCohortHandler() {
 
   return {
     setCohortSession,
+    setMyCohorts,
     setSortedAssignments,
     getCohortAssignments,
     getCohortData,
@@ -337,6 +338,7 @@ function useCohortHandler() {
     state,
     setCohortsAssingments,
     serializeModulesMap,
+    parseCohort,
     ...state,
   };
 }

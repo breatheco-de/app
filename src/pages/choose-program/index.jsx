@@ -50,7 +50,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t, lang } = useTranslation('choose-program');
-  const { setCohortSession } = useCohortHandler();
+  const { setCohortSession, setMyCohorts, parseCohort } = useCohortHandler();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -150,6 +150,7 @@ function chooseProgram() {
 
   useEffect(() => {
     const cohorts = dataQuery?.cohorts;
+    if (cohorts) setMyCohorts(cohorts.map(parseCohort));
     const cohortSubscription = cohorts?.find((item) => item?.cohort?.slug === subscriptionProcess?.slug);
     const members = cohortSubscription?.cohort?.slug ? getMembers(cohortSubscription) : [];
 
@@ -460,6 +461,12 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
+  const isMainCohort = (cohort) => {
+    console.log('cohort');
+    console.log(cohort);
+    return !dataQuery.cohorts.some((elem) => elem.cohort.micro_cohorts.some((micro) => micro.slug === cohort.slug));
+  };
+
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
       <SimpleModal
@@ -613,7 +620,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={dataQuery?.cohorts} setLateModalProps={setLateModalProps} />
+              <ChooseProgram chooseList={dataQuery?.cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (
