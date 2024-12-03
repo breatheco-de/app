@@ -88,8 +88,6 @@ function Dashboard() {
   } = useCohortHandler();
 
   const { cohortSession, sortedAssignments, taskCohortNull, myCohorts, microCohortsAssignments } = state;
-  console.log('sortedAssignments');
-  console.log(sortedAssignments);
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -315,28 +313,33 @@ function Dashboard() {
       });
   }, []);
 
+  const getUserData = async () => {
+    try {
+      setIsLoadingAssigments(true);
+      const cohort = await getCohortData({ cohortSlug });
+      if (cohort) {
+        reportDatalayer({
+          dataLayer: {
+            current_cohort_id: cohort.id,
+            current_cohort_slug: cohort.slug,
+          },
+        });
+      }
+      const { data } = await bc.certificate().get();
+      setCertificates(data);
+      // Fetch cohort assignments (lesson, exercise, project, quiz)
+      await getCohortAssignments({
+        slug, cohort,
+      });
+    } finally {
+      setIsLoadingAssigments(false);
+    }
+  };
+
   // Fetch cohort data with pathName structure
   useEffect(() => {
     if (user) {
-      setIsLoadingAssigments(true);
-      getCohortData({
-        cohortSlug,
-      }).then((cohort) => {
-        if (cohort) {
-          reportDatalayer({
-            dataLayer: {
-              current_cohort_id: cohort.id,
-              current_cohort_slug: cohort.slug,
-            },
-          });
-        }
-        // Fetch cohort assignments (lesson, exercise, project, quiz)
-        getCohortAssignments({
-          slug, cohort,
-        });
-      }).finally(() => {
-        setIsLoadingAssigments(false);
-      });
+      getUserData();
     }
   }, [user]);
 
@@ -386,13 +389,6 @@ function Dashboard() {
   useEffect(() => {
     prepareTasks();
   }, [cohortProgram, taskTodo, router]);
-
-  useEffect(() => {
-    bc.certificate().get()
-      .then(({ data }) => {
-        setCertificates(data);
-      });
-  }, []);
 
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
