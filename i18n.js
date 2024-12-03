@@ -35,7 +35,7 @@ module.exports = {
     '/workshops/[event_slug]': ['workshops', 'signup'],
     '/join/cohort/[id]': ['dashboard', 'signup'],
     '/podcast': ['podcast'],
-    '/accept-invite': ['accept-invite'],
+    '/accept-invite': ['accept-invite', 'signup'],
     '/bootcamp/[course_slug]': ['course', 'dashboard'],
   },
   locales: ['en', 'es'],
