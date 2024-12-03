@@ -96,7 +96,7 @@ function SyllabusContent() {
   const [learnpackStart, setLearnpackStart] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    getCohortAssignments, getCohortData, prepareTasks, state,
+    getCohortAssignments, getCohortData, prepareTasks, state, setCohortSession, setSortedAssignments,
   } = useCohortHandler();
   const { cohortSession, sortedAssignments } = state;
   // const isAvailableAsSaas = false;
@@ -454,6 +454,8 @@ function SyllabusContent() {
     }
     return () => {
       cleanCurrentData();
+      setCohortSession(null);
+      setSortedAssignments([]);
       setUserSession({
         translations: [],
       });

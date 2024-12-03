@@ -30,6 +30,7 @@ function useCohortHandler() {
     cohortSession,
     sortedAssignments,
     userCapabilities,
+    myCohorts,
   } = state;
   const toast = useToast();
   const accessToken = getStorageItem('accessToken');
@@ -201,26 +202,35 @@ function useCohortHandler() {
     }
   };
 
+  const parseCohorts = (elem) => {
+    const { cohort, ...cohort_user } = elem;
+    const { syllabus_version } = cohort;
+    return {
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+      cohort_role: elem.role,
+      cohort_user,
+    };
+  };
+
   const getCohortData = async ({
     cohortSlug,
   }) => {
     try {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
-        const { data } = await bc.admissions().me();
-        if (!data) throw new Error('No data');
-        const { cohorts } = data;
+        // find cohort with current slug
+        let parsedCohorts = myCohorts.map((cohort) => ({ ...cohort }));
+        let currentCohort = myCohorts.find((c) => c.slug === cohortSlug);
+        if (!currentCohort) {
+          const { data } = await bc.admissions().me();
+          if (!data) throw new Error('No data');
+          const { cohorts } = data;
 
-        const parsedCohorts = cohorts.map(((elem) => {
-          const { cohort, ...cohort_user } = elem;
-          const { syllabus_version } = cohort;
-          return {
-            ...cohort,
-            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: elem.role,
-            cohort_user,
-          };
-        }));
+          parsedCohorts = cohorts.map(parseCohorts);
+
+          currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+        }
 
         // Delete this loop after the backend PR is accepted
         parsedCohorts.forEach((cohort) => {
@@ -240,9 +250,6 @@ function useCohortHandler() {
             cohort.micro_cohorts.push({ ...microCohort4, color: '#C73407' });
           }
         });
-
-        // find cohort with current slug
-        const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
 
         if (!currentCohort) {
           if (assetSlug) return handleRedirectToPublicPage();
