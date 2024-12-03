@@ -5,7 +5,7 @@ import {
   SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
-  SET_MICRO_COHORTS_ASSIGNMENTS,
+  SET_COHORTS_ASSIGNMENTS,
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
@@ -60,11 +60,11 @@ const useCohortAction = () => {
     });
   };
 
-  const setMicroCohortsAssinments = (paylaod) => {
+  const setCohortsAssingments = (paylaod) => {
     dispatch({
-      type: SET_MICRO_COHORTS_ASSIGNMENTS,
+      type: SET_COHORTS_ASSIGNMENTS,
       payload: {
-        microCohortsAssignments: paylaod,
+        cohortsAssignments: paylaod,
       },
     });
   };
@@ -76,7 +76,7 @@ const useCohortAction = () => {
     setTaskCohortNull,
     setSortedAssignments,
     setUserCapabilities,
-    setMicroCohortsAssinments,
+    setCohortsAssingments,
   };
 };
 

@@ -21,7 +21,7 @@ function useCohortHandler() {
     setSortedAssignments,
     setUserCapabilities,
     setMyCohorts,
-    setMicroCohortsAssinments,
+    setCohortsAssingments,
     state,
   } = useCohortAction();
   const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
@@ -258,7 +258,7 @@ function useCohortHandler() {
         }
 
         const microCohortsModules = await getMicroCohortsAssignments(currentCohort.micro_cohorts);
-        setMicroCohortsAssinments(microCohortsModules);
+        setCohortsAssingments(microCohortsModules);
 
         setCohortSession(currentCohort);
         setMyCohorts(parsedCohorts);
@@ -352,7 +352,7 @@ function useCohortHandler() {
     getTasksWithoutCohort,
     userCapabilities,
     state,
-    setMicroCohortsAssinments,
+    setCohortsAssingments,
     serializeModulesMap,
     ...state,
   };

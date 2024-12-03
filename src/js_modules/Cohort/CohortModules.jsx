@@ -41,7 +41,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
   const { startDay } = useModuleHandler();
-  const { serializeModulesMap, microCohortsAssignments, setMicroCohortsAssinments } = useCohortHandler();
+  const { serializeModulesMap, cohortsAssignments, setCohortsAssingments } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
   const isGraduated = !!certificate;
@@ -108,17 +108,17 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   }, [modulesProgress]);
 
   const updateMicroCohortModules = (tasks) => {
-    const cohortModulesUpdated = serializeModulesMap(microCohortsAssignments[cohort.slug].syllabusJson, tasks);
+    const cohortModulesUpdated = serializeModulesMap(cohortsAssignments[cohort.slug].syllabusJson, tasks);
     const allMicroCohortAssignments = {
-      ...microCohortsAssignments,
+      ...cohortsAssignments,
       [cohort.slug]: {
-        ...microCohortsAssignments[cohort.slug],
+        ...cohortsAssignments[cohort.slug],
         modules: cohortModulesUpdated,
-        tasks: [...microCohortsAssignments[cohort.slug].tasks, tasks],
+        tasks: [...cohortsAssignments[cohort.slug].tasks, tasks],
       },
     };
 
-    setMicroCohortsAssinments(allMicroCohortAssignments);
+    setCohortsAssingments(allMicroCohortAssignments);
   };
 
   const startCourse = async () => {

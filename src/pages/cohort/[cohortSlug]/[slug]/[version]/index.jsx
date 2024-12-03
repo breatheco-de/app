@@ -87,7 +87,7 @@ function Dashboard() {
     getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts, microCohortsAssignments } = state;
+  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts, cohortsAssignments } = state;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -510,7 +510,7 @@ function Dashboard() {
                           <CohortModules
                             key={microCohort.slug}
                             cohort={microCohort}
-                            modules={microCohortsAssignments[microCohort.slug]?.modules}
+                            modules={cohortsAssignments[microCohort.slug]?.modules}
                             mainCohort={cohortSession}
                             certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
                           />
