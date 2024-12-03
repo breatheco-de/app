@@ -61,6 +61,7 @@ function Header() {
       rigo.updateOptions({
         showBubble: true,
         highlight: true,
+        welcomeMessage: t('rigo-chat.welcome-message', { firstName: user?.first_name, cohortName: cohortSession?.name }),
         collapsed: false,
         purposeSlug: '4geekscom-public-agent',
       });

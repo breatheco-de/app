@@ -5,6 +5,9 @@
   "title": "Tus Programas",
   "welcome-back-user": "Bienvenido, {{name}}",
   "hello-user": "Hola, {{name}}",
+  "rigo-chat": {
+    "welcome-message": "¡Hola {{firstName}}! Veo que estas leyendo haciendo el curso {{cohortName}}. ¿Hay algo que pueda hacer para ayudarte?"
+  },
   "welcome": "Bienvenido",
   "your-active-programs": "Tus programas activos",
   "join-our-community": "Únete a nuestra comunidad",
