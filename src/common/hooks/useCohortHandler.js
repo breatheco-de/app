@@ -232,32 +232,15 @@ function useCohortHandler() {
           currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
         }
 
-        // Delete this loop after the backend PR is accepted
-        parsedCohorts.forEach((cohort) => {
-          // eslint-disable-next-line no-param-reassign
-          cohort.micro_cohorts = [];
-          if (cohort.id === 600) {
-            const microCohort = parsedCohorts.find((c) => c.id === 599);
-            cohort.micro_cohorts.push({ ...microCohort, color: '#0097CD' });
-
-            const microCohort2 = parsedCohorts.find((c) => c.id === 601);
-            cohort.micro_cohorts.push({ ...microCohort2, color: '#DD7002' });
-
-            const microCohort3 = parsedCohorts.find((c) => c.id === 602);
-            cohort.micro_cohorts.push({ ...microCohort3, color: '#06AB52' });
-
-            const microCohort4 = parsedCohorts.find((c) => c.id === 603);
-            cohort.micro_cohorts.push({ ...microCohort4, color: '#C73407' });
-          }
-        });
-
         if (!currentCohort) {
           if (assetSlug) return handleRedirectToPublicPage();
 
           return router.push('/choose-program');
         }
 
-        const microCohortsModules = await getMicroCohortsAssignments(currentCohort.micro_cohorts);
+        const microCohorts = parsedCohorts.filter((cohort) => currentCohort.micro_cohorts.some((elem) => elem.slug === cohort.slug));
+
+        const microCohortsModules = await getMicroCohortsAssignments(microCohorts);
         setCohortsAssingments(microCohortsModules);
 
         setCohortSession(currentCohort);

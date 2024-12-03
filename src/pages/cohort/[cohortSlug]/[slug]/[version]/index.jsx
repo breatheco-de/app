@@ -418,6 +418,15 @@ function Dashboard() {
 
   const mandatoryProjects = getMandatoryProjects();
 
+  const cohortsOrder = cohortSession?.cohorts_order?.split(',');
+
+  const sortMicroCohorts = (a, b) => {
+    if (Array.isArray(cohortsOrder)) {
+      return cohortsOrder.indexOf(a.id.toString()) - cohortsOrder.indexOf(b.id.toString());
+    }
+    return 0;
+  };
+
   return (
     <Container minHeight="93vh" display="flex" flexDirection="column" maxW="none" padding="0">
       {cohortSession && !isAvailableAsSaas && mandatoryProjects && mandatoryProjects.length > 0 && (
@@ -506,15 +515,17 @@ function Dashboard() {
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
                       {hasMicroCohorts
-                        ? cohortSession.micro_cohorts.map((microCohort) => (
-                          <CohortModules
-                            key={microCohort.slug}
-                            cohort={microCohort}
-                            modules={cohortsAssignments[microCohort.slug]?.modules}
-                            mainCohort={cohortSession}
-                            certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
-                          />
-                        ))
+                        ? myCohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
+                          .sort(sortMicroCohorts)
+                          .map((microCohort) => (
+                            <CohortModules
+                              key={microCohort.slug}
+                              cohort={microCohort}
+                              modules={cohortsAssignments[microCohort.slug]?.modules}
+                              mainCohort={cohortSession}
+                              certificate={certificates.find((cert) => cert.cohort.id === microCohort.id)}
+                            />
+                          ))
                         : (
                           <CohortModules cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
                         )}
