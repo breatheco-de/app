@@ -124,6 +124,21 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
+  function calculateCouponOnFinancing(price, discountValue, discountType) {
+    if (typeof price !== 'number' || typeof discountValue !== 'number') {
+      return price || 0;
+    }
+
+    const discountCalculators = {
+      PERCENT_OFF: () => price - (price * discountValue),
+      FIXED_PRICE: () => Math.max(price - discountValue, 0),
+    };
+
+    const discount = (discountCalculators[discountType]?.() || 0);
+
+    return Math.round(discount * 100) / 100;
+  }
+
   return (
     <Flex
       maxWidth="410px"
@@ -315,12 +330,17 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${financing?.price} / ${financing?.title}`}
+                        {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
                       </Button>
                     ),
                   )}
                 </AccordionPanel>
               </AccordionItem>
+              {courseCoupon?.discount_type === 'FIXED_PRICE' && selectedFinancing?.period === 'FINANCING' && (
+                <Text textAlign="center" fontWeight="300" size="xs" marginTop="10px" color="white">
+                  {t('fixed-price-disclaimer')}
+                </Text>
+              )}
             </Accordion>
           )}
         </Box>
