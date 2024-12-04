@@ -383,7 +383,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                             onClose={() => setShareModal(false)}
                           />
                         )}
-                        <Button onClick={reward} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                        <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
                           <Icon icon="share" />
                           {t('share')}
                         </Button>
