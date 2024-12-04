@@ -8,6 +8,7 @@
   "content-not-found2": "The endpoint could not access any content of this {{lesson}}",
   "default-version-not-found": "Default version could not access any content of this {{lesson}}",
   "invalid-cohort-slug": "Invalid cohort slug",
+  "error-fetching-syllabus": "There was a problem while fetching the syllabus data",
   "no-cohort-modules-found": "No cohort modules found, first choose a valid cohort",
   "language-not-found": "Data for language \"{{currentLanguageLabel}}\" not found, showing the english version",
   "task-cant-sync-with-cohort": "Some Tasks cannot sync with current cohort",

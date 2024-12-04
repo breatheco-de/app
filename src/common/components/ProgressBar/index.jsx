@@ -20,7 +20,7 @@ function ProgressBar({
   const { cohortSession } = state;
   const [programsList] = usePersistent('programsList', {});
   const [taskCount, setTaskCount] = useState({});
-  const currentCohortInfo = programsList[cohortSession.slug || {}];
+  const currentCohortInfo = programsList[cohortSession?.slug || {}];
   const { allTasks, percentage } = handlers.handleTasks({ tasks: taskTodo, cohortInfo: currentCohortInfo });
   const percentageLimited = percentage > 100 ? 100 : percentage;
   const taskPercentageLimited = taskCount?.percentage > 100 ? 100 : taskCount?.percentage;

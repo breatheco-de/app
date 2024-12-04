@@ -147,37 +147,36 @@ function PaymentInfo() {
     fetchMyCohorts();
   }, [cohortFound]);
 
-  const joinCohort = (cohort) => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'join_cohort',
-        cohort_id: cohort?.id,
-      },
-    });
-    bc.cohort().join(cohort?.id)
-      .then(async (resp) => {
-        const dataRequested = await resp.json();
-        if (resp.status >= 400) {
-          toast({
-            position: 'top',
-            title: dataRequested?.detail,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-          });
-          setReadyToRefetch(false);
-        }
-        if (dataRequested?.status === 'ACTIVE') {
-          setCohortFound(cohort);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al unirse a la cohorte:', error);
-        setIsSubmittingPayment(false);
-        setTimeout(() => {
-          setReadyToRefetch(false);
-        }, 600);
+  const joinCohort = async (cohort) => {
+    try {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: cohort?.id,
+        },
       });
+      const resp = await bc.cohort().join(cohort?.id);
+      const dataRequested = await resp.json();
+      if (resp.status >= 400) {
+        toast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setReadyToRefetch(false);
+      }
+      if (dataRequested?.status === 'ACTIVE') {
+        setCohortFound(cohort);
+      }
+    } catch (error) {
+      console.error('Error al unirse a la cohorte:', error);
+      setIsSubmittingPayment(false);
+      setTimeout(() => {
+        setReadyToRefetch(false);
+      }, 600);
+    }
   };
 
   useEffect(() => {
@@ -194,7 +193,7 @@ function PaymentInfo() {
     if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
       interval = setInterval(() => {
         getAllMySubscriptions()
-          .then((subscriptions) => {
+          .then(async (subscriptions) => {
             const currentSubscription = subscriptions?.find(
               (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
@@ -202,19 +201,16 @@ function PaymentInfo() {
               (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
             const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
-            const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
+            const foundCohort = cohortsForSubscription?.find(
               (cohort) => cohort?.id === cohortId,
-            ) : {};
+            );
 
             if (isPurchasedPlanFound) {
-              if (findedCohort?.id) {
-                getCohort(findedCohort?.id)
-                  .then((cohort) => {
-                    joinCohort(cohort);
-                  })
-                  .finally(() => {
-                    clearInterval(interval);
-                  });
+              if (foundCohort?.id) {
+                const cohort = await getCohort(foundCohort?.id);
+                joinCohort(cohort);
+
+                clearInterval(interval);
                 setReadyToRefetch(false);
               } else {
                 clearInterval(interval);
