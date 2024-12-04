@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useMemo, useState } from 'react';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -17,6 +17,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
+import { useReward } from 'react-rewards';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
@@ -29,6 +30,13 @@ import Progress from '../../common/components/ProgressBar/Progress';
 const locales = { es, en };
 
 function CohortModules({ cohort, modules, mainCohort, certificate }) {
+  const containerRef = useRef(null);
+  const { reward } = useReward(cohort.slug, 'confetti', {
+    lifetime: 50,
+    zIndex: 100,
+    spread: 50,
+    position: 'absolute',
+  });
   const { t, lang } = useTranslation('dashboard');
   const langDict = {
     en: 'us',
@@ -243,12 +251,19 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
     window.open(certfLink);
   };
 
+  useEffect(() => {
+    if (certificate) {
+      reward();
+    }
+  }, [certificate]);
+
   return (
-    <Accordion allowToggle>
+    <Accordion allowToggle position="relative">
+      <Box id={cohort.slug} position="absolute" left="50%" />
       <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
-            <AccordionButton cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
+            <AccordionButton ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
               <Box display="flex" justifyContent="space-between" width="100%" gap="10px">
                 <Box display="flex" textAlign="left" gap="10px" alignItems="center" width="100%">
                   <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
