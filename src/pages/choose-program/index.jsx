@@ -461,11 +461,7 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
-  const isMainCohort = (cohort) => {
-    console.log('cohort');
-    console.log(cohort);
-    return !dataQuery.cohorts.some((elem) => elem.cohort.micro_cohorts.some((micro) => micro.slug === cohort.slug));
-  };
+  const isMainCohort = ({ cohort }) => !dataQuery.cohorts.some((elem) => elem.cohort.micro_cohorts.some((micro) => micro.slug === cohort.slug));
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
