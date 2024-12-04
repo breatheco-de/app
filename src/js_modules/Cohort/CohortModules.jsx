@@ -258,8 +258,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   }, [certificate]);
 
   return (
-    <Accordion allowToggle position="relative">
-      <Box id={cohort.slug} position="absolute" left="50%" />
+    <Accordion allowToggle>
       <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
@@ -341,15 +340,19 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                               />
                             </Box>
                           ) : (
-                            <Icon
-                              icon="party-popper"
+                            <Box
+                              id={cohort.slug}
                               style={{
                                 margin: 'auto',
                                 position: 'absolute',
                                 right: '0',
                                 top: '-25px',
                               }}
-                            />
+                            >
+                              <Icon
+                                icon="party-popper"
+                              />
+                            </Box>
                           )}
                         </Box>
                         <Text textAlign="left" mt="5px" size="md" display={isGraduated && 'none'}>
@@ -380,7 +383,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                             onClose={() => setShareModal(false)}
                           />
                         )}
-                        <Button onClick={share} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
+                        <Button onClick={reward} width="fit-content" display="flex" alignItems="center" gap="5px" color="white" background={cohortColor} _hover={{ background: cohortColor, opacity: 0.7 }}>
                           <Icon icon="share" />
                           {t('share')}
                         </Button>
