@@ -74,7 +74,7 @@ function Dashboard() {
   const [certificates, setCertificates] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
@@ -325,8 +325,10 @@ function Dashboard() {
           },
         });
       }
-      const { data } = await bc.certificate().get();
-      setCertificates(data);
+      if (certificates.length === 0) {
+        const { data } = await bc.certificate().get();
+        setCertificates(data);
+      }
       // Fetch cohort assignments (lesson, exercise, project, quiz)
       await getCohortAssignments({
         slug, cohort,
@@ -338,10 +340,10 @@ function Dashboard() {
 
   // Fetch cohort data with pathName structure
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       getUserData();
     }
-  }, [user]);
+  }, [isAuthenticated]);
 
   // Students and Teachers data
   useEffect(() => {

@@ -253,7 +253,9 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
 
   useEffect(() => {
     if (certificate) {
-      reward();
+      setTimeout(() => {
+        reward();
+      }, 2000);
     }
   }, [certificate]);
 
