@@ -318,14 +318,11 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                         <Box position="relative">
                           <Progress width="calc(100% - 35px)" progressColor={cohortColor} percents={cohortProgress.percentage} barHeight="8px" borderRadius="4px" />
                           {cohortProgress.percentage !== 100 ? (
-                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid white" borderRadius="full" background={colorVariations[colorMode].mode4}>
+                            <Box position="absolute" right="0" top="-15px" display="flex" flexDirection="column" justifyContent="center" width="40px" height="40px" border="2px solid" borderColor={colorVariations[colorMode].mode5} borderRadius="full" background={colorVariations[colorMode].mode4}>
                               <Icon
-                                icon="party-popper-off"
+                                icon="certificate-small"
                                 style={{ margin: 'auto' }}
-                                props={{
-                                  color: colorVariations[colorMode].mode5,
-                                  color2: colorVariations.light.mode3,
-                                }}
+                                color={colorVariations[colorMode].mode5}
                               />
                             </Box>
                           ) : (
