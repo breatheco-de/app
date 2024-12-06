@@ -40,6 +40,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
+import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 
@@ -283,7 +284,11 @@ function SyllabusContent() {
       });
   }, []);
 
-  const showToast = () => {
+  const showToastAndRedirect = (programSlug) => {
+    const querys = parseQuerys({
+      plan: programSlug,
+    });
+    router.push(`/${lang}/checkout${querys}`);
     toast({
       position: 'top',
       title: t('alert-message:access-denied'),
@@ -297,9 +302,10 @@ function SyllabusContent() {
     if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
       if (!(cohortSubscriptions.length > 0)) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -314,14 +320,13 @@ function SyllabusContent() {
       const todayDate = new Date();
 
       if (todayDate > freeTrialExpDate) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
       setGrantAccess(true);
     }
-    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false) setGrantAccess(true);
+    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   const toggleSettings = () => {
