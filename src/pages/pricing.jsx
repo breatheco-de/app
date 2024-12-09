@@ -177,7 +177,7 @@ function PricingView() {
     });
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}&lang=${lang}`)
       .then(({ data }) => {
-        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic');
+        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'deep-dive-into-python');
         setPublicMktCourses(publicCourses);
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
