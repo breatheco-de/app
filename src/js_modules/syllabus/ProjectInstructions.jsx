@@ -65,18 +65,11 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack }) {
+function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant }) {
   const { t } = useTranslation('common');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
-
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-  const templateUrl = currentAsset?.template_url;
-  // const templateUrl = 'https://google.com';
-  const isInteractive = currentAsset?.interactive;
-  // const isInteractive = false;
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -96,10 +89,8 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
     markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
-  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
   const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
-  const isToOpenLocaly = isInteractive || templateUrl;
 
   if (isExternalExercise) {
     return (
@@ -133,25 +124,27 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
           fontWeight="500"
           background="gray.200"
           color="blue.default"
+          display={!isForOpenLocaly && variant !== 'small' && 'none'}
           onClick={() => {
-            if (isToOpenLocaly) setShowCloneModal(true);
+            if (isForOpenLocaly) setShowCloneModal(true);
             else scrollToMarkdown();
           }}
         >
-          {isToOpenLocaly ? t('learnpack.open-locally') : t('see-instructions')}
+          {isForOpenLocaly ? t('learnpack.open-locally') : t('see-instructions')}
         </Button>
       )}
     </>
   );
 }
 
-function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
+  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
   const fetchProvisioningVendors = async () => {
     try {
@@ -168,11 +161,20 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
     }
   }, [cohortSession]);
 
+  const templateUrl = currentAsset?.template_url;
+  const isInteractive = currentAsset?.interactive;
+  const isForOpenLocaly = isInteractive || templateUrl;
+  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
+
+  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+
   if (variant === 'small') {
     return (
       <>
         <Box mt="10px" background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
-          <Icon icon="learnpack" />
+          {(!isForOpenLocaly || startWithLearnpack) && (
+            <Icon icon="learnpack" />
+          )}
           <Box>
             <Text color="white" size="md">
               {t('learnpack.choose-open')}
@@ -182,8 +184,8 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
               display="flex"
               gap="10px"
               flexDirection={{
-                base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-                md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+                base: 'column',
+                md: 'row',
               }}
             >
               <ButtonsHandler
@@ -191,6 +193,9 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
                 vendors={vendors}
+                isForOpenLocaly={isForOpenLocaly}
+                startWithLearnpack={startWithLearnpack}
+                variant={variant}
               />
             </Box>
           </Box>
@@ -221,15 +226,18 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
           display="flex"
           gap="16px"
           flexDirection={{
-            base: cohortSession.available_as_saas ? 'column' : 'column-reverse',
-            md: cohortSession.available_as_saas ? 'row' : 'row-reverse',
+            base: 'column',
+            md: 'row',
           }}
         >
           <ButtonsHandler
             currentAsset={currentAsset}
             handleStartLearnpack={handleStartLearnpack}
             setShowCloneModal={setShowCloneModal}
+            startWithLearnpack={startWithLearnpack}
+            isForOpenLocaly={isForOpenLocaly}
             vendors={vendors}
+            variant={variant}
           />
         </Box>
       </Box>
@@ -238,12 +246,12 @@ function OpenWithLearnpackCTA({ currentAsset, variant, handleStartLearnpack }) {
   );
 }
 
-OpenWithLearnpackCTA.propTypes = {
+ProjectInstructions.propTypes = {
   variant: PropTypes.string,
   handleStartLearnpack: PropTypes.func.isRequired,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
-OpenWithLearnpackCTA.defaultProps = {
+ProjectInstructions.defaultProps = {
   variant: null,
   currentAsset: null,
 };
@@ -253,4 +261,4 @@ ProvisioningPopover.propTypes = {
   provisioningLinks: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 
-export default OpenWithLearnpackCTA;
+export default ProjectInstructions;

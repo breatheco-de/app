@@ -214,7 +214,7 @@ function SyllabusContent() {
 
   const updateOpenedAt = async () => {
     try {
-      const result = await bc.todo().update({ ...currentTask, opened_at: new Date() });
+      const result = await bc.todo().update({ id: currentTask.id, opened_at: new Date() });
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);

@@ -84,7 +84,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
+    log(`SUCCESS: ${technologies.results.length} Technologies fetched for /how-to`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
   }
@@ -126,7 +126,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
       data: arrHowTos.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags: technologies,
+      technologyTags: technologies.results,
       difficulties,
     },
   };

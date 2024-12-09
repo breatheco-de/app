@@ -22,55 +22,44 @@ const getAliasRedirects = async () => {
   return data;
 };
 
-const redirectByLang = ({ slug, lang, difficulty, assetType }) => {
+const connectorsDict = {
+  EVENT: 'workshops',
+  LESSON: 'lesson',
+  EXERCISE: 'interactive-exercise',
+  PROJECT: 'interactive-coding-tutorial',
+  ARTICLE: 'how-to',
+};
+
+const langsDict = {
+  es: '/es',
+  us: '',
+  en: '',
+};
+
+const redirectByLang = ({ slug, lang, assetType, initLang }) => {
   const assetTypeValue = assetType?.toUpperCase();
-  if (assetTypeValue === 'EVENT') {
+  if (assetTypeValue in connectorsDict) {
+    const connector = connectorsDict[assetTypeValue];
     return {
-      source: `/workshops/${slug}`,
-      destination: `/${lang}/workshops/${slug}`,
+      source: `${initLang ? `/${initLang}` : ''}/${connector}/${slug}`,
+      destination: `${langsDict[lang]}/${connector}/${slug}`,
       ...redirectConfig,
     };
   }
-  if (assetTypeValue === 'LESSON') {
-    return {
-      source: `/lesson/${slug}`,
-      destination: `/${lang}/lesson/${slug}`,
-      ...redirectConfig,
-    };
-  }
-  if (assetTypeValue === 'EXERCISE') {
-    return {
-      source: `/interactive-exercise/${slug}`,
-      destination: `/${lang}/interactive-exercise/${slug}`,
-      ...redirectConfig,
-    };
-  }
-  if (assetTypeValue === 'PROJECT' && difficulty) {
-    return {
-      source: `/interactive-coding-tutorial/${slug}`,
-      destination: `/${lang}/interactive-coding-tutorial/${slug}`,
-      ...redirectConfig,
-    };
-  }
-  if (assetTypeValue === 'ARTICLE') {
-    return {
-      source: `/how-to/${slug}`,
-      destination: `/${lang}/how-to/${slug}`,
-      ...redirectConfig,
-    };
-  }
+
   return null;
 };
 
 const generateAssetRedirect = (pages, type) => {
-  const redirectList = pages.filter((page) => page.lang !== 'us' && page.lang !== 'en' && page.lang !== null)
+  const redirectList = pages.filter((page) => page.lang !== null)
     .map((page) => {
       const { slug, lang, asset_type: assetType } = page;
+      const initLang = ['us', 'en'].includes(lang) ? 'es' : undefined;
 
       const redirect = redirectByLang({
         slug,
         lang,
-        difficulty: assetType?.toUpperCase() === 'PROJECT' ? page?.difficulty?.toLowerCase() : null,
+        initLang,
         assetType: assetType || type,
       });
       return redirect;

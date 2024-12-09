@@ -1,4 +1,10 @@
 {
   "heading": "Has sido invitado a {{name}}, por favor completa la siguiente información para comenzar a aprender",
-  "error": "Algo ha salido mal"
+  "error": "Algo ha salido mal",
+  "no-token": "Debes incluir un token de invitación para ver la invitación",
+  "already-accepted": "La invitacion ya fue aceptada",
+  "new-invite": "Has sido invitado a {{course}}",
+  "invalid-user": "Esta invitacion pertenece a otro usuario",
+  "accept-and-learn": "Acepta y empieza a aprender",
+  "belongs-to-other-user": "Esta invitacion pertenece a otro usuario"
 }

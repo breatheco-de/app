@@ -23,7 +23,8 @@ function useModuleHandler() {
       };
 
       try {
-        await bc.todo({}).update(taskToUpdate);
+        const { cohort, ...taskData } = taskToUpdate;
+        await bc.todo().update(taskData);
         const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
         setTaskTodo([
           ...taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)

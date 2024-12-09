@@ -146,6 +146,7 @@ function Checkout() {
   const [menuWidth, setMenuWidth] = useState('auto');
   const [isOpenned, setIsOpenned] = useState(false);
   const flexRef = useRef(null);
+  const fixedCouponExist = allCoupons.some((coup) => coup.discount_type === 'FIXED_PRICE');
 
   useEffect(() => {
     const updateWidth = () => {
@@ -559,7 +560,6 @@ function Checkout() {
       pricingData = getPriceWithDiscount(pricingData.price, c);
       discounts.push(pricingData);
     });
-
     setAllDiscounts(discounts);
     return pricingData;
   }, [allCoupons, selectedPlanCheckoutData]);
@@ -573,6 +573,18 @@ function Checkout() {
       return t('discount-value-off', { value: `$${coup.discount_value}` });
     }
     return '';
+  };
+
+  const calculateTotalPrice = () => {
+    const months = selectedPlanCheckoutData.how_many_months || 1;
+
+    if (processedPrice.discountType === 'FIXED_PRICE') {
+      const firstMonthPrice = processedPrice.price;
+      const remainingMonthsPrice = processedPrice.originalPrice * (months - 1);
+      return (firstMonthPrice + remainingMonthsPrice).toFixed(2);
+    }
+
+    return (processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2);
   };
 
   const renderPlanDetails = () => {
@@ -1002,9 +1014,14 @@ function Checkout() {
                             <Text size="18px" color="currentColor" lineHeight="normal">
                               {selectedPlanCheckoutData.price <= 0
                                 ? selectedPlanCheckoutData.priceText
-                                : `$${(processedPrice.price * (selectedPlanCheckoutData.how_many_months ? selectedPlanCheckoutData.how_many_months : 1)).toFixed(2)} ${selectedPlanCheckoutData.currency?.code}`}
+                                : `$${calculateTotalPrice()} ${selectedPlanCheckoutData.currency?.code}`}
                             </Text>
                           </Flex>
+                        )}
+                        {fixedCouponExist && (
+                          <Text fontWeight="300" size="xs" marginTop="10px">
+                            {t('fixed-price-disclaimer')}
+                          </Text>
                         )}
                       </>
                     )}
