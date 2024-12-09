@@ -775,6 +775,7 @@ function SyllabusContent() {
     }
 
     subtaskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setOpenNextPageModal(false);
   };
 
   return (
