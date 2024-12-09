@@ -71,10 +71,11 @@ function useModuleHandler() {
         delivered_at: new Date().toISOString(),
       };
 
-      const { cohort, ...taskData } = taskToUpdate;
+      const { cohort: { id }, ...taskData } = taskToUpdate;
+      const updatedTask = { ...taskData, cohort: id };
 
       try {
-        const response = await bc.todo({}).update(taskData);
+        const response = await bc.todo({}).update(updatedTask);
         // verify if form is equal to the response
         if (response.data.github_url === projectUrl) {
           const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
