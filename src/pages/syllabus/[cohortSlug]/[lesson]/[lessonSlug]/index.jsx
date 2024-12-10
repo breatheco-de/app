@@ -253,7 +253,7 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
+    const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
