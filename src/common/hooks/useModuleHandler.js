@@ -71,8 +71,11 @@ function useModuleHandler() {
         delivered_at: new Date().toISOString(),
       };
 
-      const { cohort: { id }, ...taskData } = taskToUpdate;
-      const updatedTask = { ...taskData, cohort: id };
+      const { cohort, ...taskData } = taskToUpdate;
+      const updatedTask = {
+        ...taskData,
+        cohort: typeof cohort === 'object' && cohort !== null ? cohort.id : cohort,
+      };
 
       try {
         const response = await bc.todo({}).update(updatedTask);
@@ -121,7 +124,7 @@ function useModuleHandler() {
   };
 
   const startDay = async ({
-    newTasks, label, customHandler = () => {},
+    newTasks, label, customHandler = () => { },
   }) => {
     try {
       const response = await bc.todo({}).add(newTasks);
