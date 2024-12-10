@@ -5,7 +5,7 @@ import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import SubTasks from './SubTasks';
 import MarkDownParser from './index';
-import OpenWithLearnpackCTA from '../../../js_modules/syllabus/OpenWithLearnpackCTA';
+import ProjectInstructions from '../../../js_modules/syllabus/ProjectInstructions';
 
 function ArticleMarkdown({
   content, withToc, frontMatter, titleRightSide, currentTask, currentData,
@@ -20,8 +20,8 @@ function ArticleMarkdown({
       {!isGuidedExperience && (
         <ContentHeading
           titleRightSide={titleRightSide}
-          callToAction={(currentData?.interactive || currentData?.asset_type === 'PROJECT') && (
-            <OpenWithLearnpackCTA currentAsset={currentData} />
+          callToAction={(currentData?.interactive || currentData?.template_url) && (
+            <ProjectInstructions currentAsset={currentData} />
           )}
           content={frontMatter}
           currentData={currentData}
