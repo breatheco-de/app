@@ -69,7 +69,7 @@ const generateAssetRedirect = (pages, type) => {
 
 const generateAliasRedirects = async (redirects, projects) => {
   const list = projects.map((item) => ({
-    source: `/project/${item.slug}`,
+    source: `${item.lang === 'es' ? '/es' : ''}/project/${item.slug}`,
     type: 'PROJECT-REROUTE',
     destination: `/${item.lang === 'us' ? 'en' : item.lang}/interactive-coding-tutorial/${item.slug}`,
   }));
