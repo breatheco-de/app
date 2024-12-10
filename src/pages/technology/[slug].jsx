@@ -302,7 +302,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
         <>
           <Flex padding={{ base: '30px 0px', md: '30px 20px' }} gap="10px" mt="30px" alignItems="center" position="relative">
             <Button onClick={() => scrollBy(-250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
-              <Icon icon="arrowLeft3" color={fontColor} width="20px" height="20px" />
+              <Icon icon="arrowLeft3" color={fontColor} width="15px" height="15px" />
             </Button>
 
             {!isAtStart && (
@@ -336,7 +336,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                     display="flex"
                     flexDirection="column"
                     alignItems="center"
-                    gap="10px"
+                    gap="5px"
                     onMouseDown={handleMouseDown}
                     onMouseUp={() => handleMouseUp(tech)}
                     cursor="pointer"
@@ -356,8 +356,8 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                           src={tech.icon_url}
                           filter={tech.slug !== technologyData.slug && 'grayscale(100%)'}
                         />
-                        <Box position="relative" paddingBottom="10px">
-                          <Text userSelect="none" textAlign="center" fontSize="md" color={tech.slug === technologyData.slug ? 'blue.1000' : 'gray'}>
+                        <Box position="relative" paddingBottom="3px">
+                          <Text userSelect="none" textAlign="center" fontSize="12px" color={tech.slug === technologyData.slug ? 'blue.1000' : 'gray'}>
                             {tech.title}
                           </Text>
                         </Box>
@@ -369,7 +369,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
             </DraggableContainer>
 
             <Button onClick={() => scrollBy(250)} display={{ base: 'none', md: 'block' }} variant="ghost" p="0" minW="auto" _hover="none" _active="none" paddingBottom="10px">
-              <Icon icon="arrowRight" color={fontColor} width="20px" height="20px" />
+              <Icon icon="arrowRight" color={fontColor} width="15px" height="15px" />
             </Button>
 
             {!isAtEnd && (
