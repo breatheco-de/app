@@ -286,11 +286,7 @@ function QuoteVersion4({ ...props }) {
   );
 }
 export function Quote({ children }) {
-  const [version, setVersion] = useState(2);
-
-  useEffect(() => {
-    setVersion(Math.floor(Math.random() * 4) + 1);
-  }, []);
+  const version = 1;
   if (version === 1 && children.length > 0) {
     return (
       <QuoteVersion1>
