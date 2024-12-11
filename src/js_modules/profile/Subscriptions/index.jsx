@@ -289,6 +289,9 @@ function Subscriptions({ cohorts }) {
             const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
               && subscription?.plans[0]?.financing_options[0];
 
+            console.log(invoice);
+            console.log(subscription);
+
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
                 <Box borderRadius="50%" bg="green.400" padding="12px" position="absolute" top={-7} left={4}>
