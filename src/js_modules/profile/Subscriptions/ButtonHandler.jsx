@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import { Button } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -78,22 +78,17 @@ function ButtonHandler({
       };
     }
 
-    // if (status === 'PAYMENT_ISSUE') {
-    //   return {
-    //     text: t('subscription.reactivate-subscription'),
-    //     style: {
-    //       variant: 'default',
-    //       color: 'white',
-    //       fontWeight: 700,
-    //     },
-    //     isComponent: true,
-    //     component: (
-    //       <Link variant="buttonDefault" justifyContent="center" display="inherit" href={`/checkout?plan=${planSlug}`} textAlign="center" margin="auto 0 0 0">
-    //         {t('subscription.reactivate-subscription')}
-    //       </Link>
-    //     ),
-    //   };
-    // }
+    if (status === 'PAYMENT_ISSUE' && !subscription?.planOffer.slug) {
+      return {
+        text: t('subscription.contact-support'),
+        isComponent: true,
+        component: (
+          <Text userSelect="none" justifyContent="center" fontSize="sm" fontWeight={700} color="blue.1000" display="inherit" margin="auto 0 0 0">
+            {t('subscription.contact-support')}
+          </Text>
+        ),
+      };
+    }
 
     return {
       text: '',
