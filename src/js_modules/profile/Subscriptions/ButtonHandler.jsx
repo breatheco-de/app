@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import { useState } from 'react';
+import Button from '../../../common/components/Button';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import profileHandlers from './handlers';
-import Button from '../../../common/components/Button';
 import { reportDatalayer } from '../../../utils/requests';
 
 function ButtonHandler({
