@@ -778,15 +778,23 @@ function SyllabusContent() {
       return;
     }
 
-    const lastPendingSubtask = pendingSubtasks[0];
-    const subtaskElement = document.getElementById(lastPendingSubtask.id);
+    let highestElement = null;
+    let highestOffsetTop = Infinity;
 
-    if (!subtaskElement) {
-      console.log(`couldnt fint element in the DOM with id: ${lastPendingSubtask.id}`);
+    pendingSubtasks.forEach((task) => {
+      const subtaskElement = document.getElementById(task.id);
+      if (subtaskElement && subtaskElement.offsetTop < highestOffsetTop) {
+        highestOffsetTop = subtaskElement.offsetTop;
+        highestElement = subtaskElement;
+      }
+    });
+
+    if (!highestElement) {
+      console.log('No element found in the DOM.');
       return;
     }
 
-    subtaskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    highestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     setOpenNextPageModal(false);
   };
 

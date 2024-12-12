@@ -341,7 +341,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition += delta;
@@ -354,7 +354,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition -= delta;
@@ -442,6 +442,19 @@ export function MDCheckbox({
   const [isChecked, setIsChecked] = useState(false);
 
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+  const reconstructMarkdown = (contentArray) => contentArray.map((item) => {
+    if (typeof item === 'string') {
+      return item;
+    } if (item?.props?.href) {
+      const text = item.props.children[0];
+      const { href } = item.props;
+      return `[${text}](${href})`;
+    }
+    return '';
+  })
+    .join('');
+
+  const reconstructedMarkdown = reconstructMarkdown(cleanedChildren);
   const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
 
   const renderToStringClient = () => {
@@ -461,7 +474,6 @@ export function MDCheckbox({
   const currentSubTask = subTasks.find((task) => task?.id === slug);
 
   useEffect(() => {
-    // load checked tasks
     const taskChecked = subTasks.some((task) => task?.id === slug && task?.status !== 'PENDING');
     if (taskChecked) {
       setIsChecked(true);
@@ -477,7 +489,7 @@ export function MDCheckbox({
     if (subTasksLoaded) {
       if (
         newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
-      ) { return () => {}; }
+      ) { return () => { }; }
 
       if (currentSubTask) {
         setNewSubTasks((prev) => {
@@ -498,14 +510,14 @@ export function MDCheckbox({
         });
       }
     }
-    return () => {};
+    return () => { };
   }, [subTasksLoaded]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
     const taskProps = {
       id: slug,
-      label: text,
+      label: reconstructedMarkdown,
       status: taskStatus[!isChecked],
     };
     if (subTasks?.length > 0) {
@@ -596,8 +608,8 @@ MDCheckbox.defaultProps = {
   subTasks: [],
   subTasksLoaded: false,
   newSubTasks: [],
-  setNewSubTasks: () => {},
-  updateSubTask: () => {},
+  setNewSubTasks: () => { },
+  updateSubTask: () => { },
 };
 
 // MDText.propTypes = {

@@ -139,7 +139,8 @@ function MarkDownParser({
   const { subTasks, setSubTasks } = useModuleHandler();
 
   const updateSubTask = async (taskProps) => {
-    const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
+    const removeSpaces = (str) => str.replace(/\s+/g, '');
+    const cleanedSubTasks = subTasks.filter((task) => removeSpaces(task.label) !== removeSpaces(taskProps.label));
     if (currentTask?.id) {
       const resp = await bc.todo().subtask().update(
         currentTask?.id,
