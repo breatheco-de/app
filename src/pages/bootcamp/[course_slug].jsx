@@ -14,7 +14,6 @@ import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
-// import rigo from '../../common/services/rigobot';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
@@ -102,6 +101,7 @@ export async function getStaticProps({ locale, locales, params }) {
   };
 }
 
+// TODO: Move this to a separate file, it should be a reusable component
 function CouponTopBar() {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
@@ -565,16 +565,23 @@ function CoursePage({ data }) {
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
-                {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
-                </Heading>
-                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
-                  {data?.course_translation?.title}
-                </Heading>
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
-                </Heading>
+                {
+                  data?.course_translation?.heading ? (
+                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                  ) : (
+                    <>
+                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                        {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
+                      </Heading>
+                      <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                        {data?.course_translation?.title}
+                      </Heading>
+                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                        {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
+                      </Heading>
+                    </>
+                  )
+                }
               </Flex>
             </Flex>
 
