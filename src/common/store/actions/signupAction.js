@@ -425,6 +425,7 @@ const useSignup = () => {
           originalPrice: price,
           price: roundedPrice,
           discount: `${discount * 100}%`,
+          discountType,
         };
       }
       if (discountType === 'FIXED_PRICE') {
@@ -432,6 +433,7 @@ const useSignup = () => {
           originalPrice: price,
           price: price - discount,
           discount: `$${discount}`,
+          discountType,
         };
       }
     }

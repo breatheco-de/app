@@ -85,18 +85,46 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
     setRecommendations([tutorials[0]]);
   };
 
-  const fetchAndSetCourses = async () => {
-    const response = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
-    if (!response.ok) throw new Error(`Failed to fetch courses: ${response.statusText}`);
-    const coursesData = await response.json();
+  const gradeCourseBasedOnTech = (courses) => {
+    const coursesGraded = [];
+    courses.forEach((course) => {
+      const courseTechnologies = course.technologies.split(',');
+      const techCount = courseTechnologies.length;
 
-    if (coursesData.length > 0) {
-      const sortedCourses = coursesData.sort((a, b) => {
-        const aMatches = a.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
-        const bMatches = b.technologies.split(',').filter((tech) => technologiesArray.includes(tech)).length;
-        return bMatches - aMatches;
-      });
-      setRecommendations(sortedCourses.slice(0, coursesLimit));
+      const eachTechValue = 1 / techCount;
+
+      const techsRelated = courseTechnologies
+        .filter((tech) => technologiesArray.includes(tech));
+
+      const relatedTechCount = techsRelated.length;
+      const score = relatedTechCount * eachTechValue;
+
+      coursesGraded.push({ ...course, score, relatedTechCount });
+    });
+
+    return coursesGraded;
+  };
+
+  const fetchAndSetCourses = async () => {
+    try {
+      const response = await fetch(`${BREATHECODE_HOST}${endpoint}${qs}`, { headers });
+      if (!response.ok) throw new Error(`Failed to fetch courses: ${response.statusText}`);
+
+      const coursesData = await response.json();
+      const coursesGraded = gradeCourseBasedOnTech(coursesData);
+
+      if (coursesData.length > 0) {
+        const sortedCourses = coursesGraded.sort((a, b) => {
+          if (b.relatedTechCount !== a.relatedTechCount) {
+            return b.relatedTechCount - a.relatedTechCount;
+          }
+          return b.score - a.score;
+        });
+
+        setRecommendations(sortedCourses.slice(0, coursesLimit));
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 

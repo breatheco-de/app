@@ -8,7 +8,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
@@ -210,7 +210,7 @@ function SyllabusContent() {
 
   const updateOpenedAt = async () => {
     try {
-      const result = await bc.todo().update({ ...currentTask, opened_at: new Date() });
+      const result = await bc.todo().update({ id: currentTask.id, opened_at: new Date() });
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
@@ -254,7 +254,7 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
+    const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
@@ -1380,9 +1380,11 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
-              {t('reached-the-end-of-the-module', { label, nextModuleLabel: nextModule?.label })}
-            </Heading>
+            {label && nextModule.label && (
+              <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                {t('reached-the-end-of-the-module', { label: languageFix(label, lang), nextModuleLabel: languageFix(nextModule.label, lang) })}
+              </Heading>
+            )}
             <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
               <Button
                 variant="outline"

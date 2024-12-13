@@ -68,9 +68,11 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     },
   );
   const technologies = await technologiesResponse.json();
+  console.log('technologies');
+  console.log(technologies);
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    log(`SUCCESS: ${technologies.length} Technologies fetched for /lessons`);
+    log(`SUCCESS: ${technologies.results.length} Technologies fetched for /lessons`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /lessons`);
   }
@@ -111,7 +113,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
       lessons: lessons.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags: technologies,
+      technologyTags: technologies.results,
       difficulties,
     },
   };
