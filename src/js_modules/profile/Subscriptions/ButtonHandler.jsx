@@ -78,7 +78,7 @@ function ButtonHandler({
       };
     }
 
-    if (status === 'PAYMENT_ISSUE' && !subscription?.planOffer.slug) {
+    if ((status === 'PAYMENT_ISSUE' || status === 'ERROR') && !subscription?.planOffer.slug) {
       return {
         text: t('subscription.contact-support'),
         isComponent: true,
