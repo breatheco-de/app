@@ -68,11 +68,17 @@ function useModuleHandler() {
         task_status: taskStatus || toggleStatus,
         github_url: projectUrl,
         revision_status: 'PENDING',
-        delivered_at: new Date(),
+        delivered_at: new Date().toISOString(),
+      };
+
+      const { cohort, ...taskData } = taskToUpdate;
+      const updatedTask = {
+        ...taskData,
+        cohort: typeof cohort === 'object' && cohort !== null ? cohort.id : cohort,
       };
 
       try {
-        const response = await bc.todo({}).update(taskToUpdate);
+        const response = await bc.todo({}).update(updatedTask);
         // verify if form is equal to the response
         if (response.data.github_url === projectUrl) {
           const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
@@ -118,7 +124,7 @@ function useModuleHandler() {
   };
 
   const startDay = async ({
-    newTasks, label, customHandler = () => {},
+    newTasks, label, customHandler = () => { },
   }) => {
     try {
       const response = await bc.todo({}).add(newTasks);
