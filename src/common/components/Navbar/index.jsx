@@ -127,7 +127,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     };
 
     if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') return getAdditionalInfo();
-    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) return true;
+    if (cohortSession && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) return true;
     return false;
   };
 
