@@ -261,19 +261,11 @@ function CoursePage({ data }) {
 
   const getAlternativeTranslation = (slug) => {
     const keys = slug.split('.');
-    let result = data?.course_translation?.landing_variables;
-
-    if (!result) return t(slug);
+    const result = keys.reduce((acc, key) => {
+      return acc && acc[key] !== undefined ? acc[key] : null;
+    }, data?.course_translation?.landing_variables);
   
-    for (const key of keys) {
-      if (result[key] !== undefined) {
-        result = result[key];
-      } else {
-        return t(slug); // Return the value from t() function if the slug doesn't exist in data.landing_variables
-      }
-    }
-  
-    return result;
+    return result !== null ? result : t(slug);
   };
 
   useEffect(() => {
