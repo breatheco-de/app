@@ -522,7 +522,7 @@ function CoursePage({ data }) {
 
   const assetCountByType = {
     lesson: assetCount?.lesson || 0,
-    exercise: assetCount?.exercise * randomMultiplier || 0,
+    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
     project: assetCount?.project || 0,
   };
 
