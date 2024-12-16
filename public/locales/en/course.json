@@ -97,19 +97,16 @@
       {
         "type": "lesson",
         "title": "Readings and videos",
-        "qty": 45,
         "icon": "book"
       },
       {
         "type": "exercise",
         "title": "Interactive Exercises",
-        "qty": 584,
         "icon": "strength"
       },
       {
         "type": "project",
         "title": "Interactive Projects",
-        "qty": 28,
         "icon": "laptop-code"
       },
       {
