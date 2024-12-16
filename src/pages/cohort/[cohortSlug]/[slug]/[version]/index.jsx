@@ -411,12 +411,12 @@ function Dashboard() {
   }));
 
   const modulesExists = sortedAssignments.some(
-    (assignment) => assignment.filteredModules && assignment.filteredModules.length !== 0,
+    (assignment) => assignment.filteredContent && assignment.filteredContent.length !== 0,
   );
 
   const sortedAssignmentsSearched = (searchValue && searchValue.length > 0) ? sortedAssignments.filter((l) => {
-    const { filteredModules } = l;
-    const filtered = filteredModules.filter((module) => {
+    const { filteredContent } = l;
+    const filtered = filteredContent.filter((module) => {
       const { title } = module;
       return title.toLowerCase().includes(searchValue.toLowerCase());
     });
@@ -772,20 +772,20 @@ function Dashboard() {
                         <>
                           {sortedAssignmentsSearched.map((assignment, i) => {
                             const {
-                              label, description, filteredModules, exists_activities: existsActivities, modules, filteredModulesByPending,
+                              label, description, filteredContent, exists_activities: existsActivities, content, filteredContentByPending,
                             } = assignment;
 
                             const filteredModulesSearched = searchValue && searchValue.length > 0
-                              ? filteredModules.filter(
+                              ? filteredContent.filter(
                                 (l) => includesToLowerCase(l.title, searchValue),
                               )
-                              : filteredModules;
+                              : filteredContent;
 
                             const filteredModulesByPendingSearched = searchValue && searchValue.length > 0
-                              ? filteredModulesByPending.filter(
+                              ? filteredContentByPending.filter(
                                 (l) => includesToLowerCase(l.title, searchValue),
                               )
-                              : filteredModulesByPending;
+                              : filteredContentByPending;
 
                             const index = i;
                             return (
@@ -798,10 +798,10 @@ function Dashboard() {
                                 slug={slugify(label)}
                                 searchValue={searchValue}
                                 description={description}
-                                modules={modules}
-                                filteredModules={filteredModulesSearched}
+                                content={content}
+                                filteredContent={filteredModulesSearched}
                                 showPendingTasks={showPendingTasks}
-                                filteredModulesByPending={filteredModulesByPendingSearched}
+                                filteredContentByPending={filteredModulesByPendingSearched}
                               />
                             );
                           })}

@@ -13,8 +13,8 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
 
 function ModuleMap({
-  index, slug, modules, filteredModules,
-  title, description, cohortData, filteredModulesByPending,
+  index, slug, content, filteredContent,
+  title, description, cohortData, filteredContentByPending,
   showPendingTasks, searchValue, existsActivities,
 }) {
   const { t, lang } = useTranslation('dashboard');
@@ -22,11 +22,11 @@ function ModuleMap({
   const { state } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
-  const currentModules = showPendingTasks ? filteredModulesByPending : filteredModules;
+  const currentModules = showPendingTasks ? filteredContentByPending : filteredContent;
   const cohortId = cohortData?.id || cohortData?.cohort_id;
 
   const handleStartDay = () => {
-    const updatedTasks = (modules || [])?.map((l) => ({
+    const updatedTasks = (content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
@@ -47,20 +47,20 @@ function ModuleMap({
   };
 
   const taskCohortNullExistsInModules = taskCohortNull.some((el) => {
-    const task = modules.find((l) => l.slug === el.associated_slug);
+    const task = content.find((l) => l.slug === el.associated_slug);
     return task;
   });
 
   const isAvailableToSync = () => {
     if (!taskCohortNullExistsInModules
-      && filteredModules.length > 0
+      && filteredContent.length > 0
       && searchValue.length === 0
-      && modules.length !== filteredModules.length
+      && content.length !== filteredContent.length
     ) return true;
     return false;
   };
 
-  return ((showPendingTasks && filteredModulesByPending !== null) || (showPendingTasks === false)) && (
+  return ((showPendingTasks && filteredContentByPending !== null) || (showPendingTasks === false)) && (
     <Box
       key={index}
       width="100%"
@@ -78,7 +78,7 @@ function ModuleMap({
           textTransform="uppercase"
           textAlign="right"
         >
-          {t('modules.activitiesLength', { count: filteredModules.length })}
+          {t('modules.activitiesLength', { count: filteredContent.length })}
         </Heading>
       </Box>
       <Text margin="0 0 22px 0px" color={useColorModeValue('#606060', 'white')} size="md">
@@ -88,7 +88,7 @@ function ModuleMap({
       {isAvailableToSync() && (
         <Box display="flex" alignItems="center" justifyContent="space-between" padding="16px 20px" borderRadius="18px" width="100%" background="yellow.light">
           <Text color={useColorModeValue('black', 'black')} size="16px">
-            {t('modules.newActivities.title', { tasksLength: (modules.length - filteredModules.length) })}
+            {t('modules.newActivities.title', { tasksLength: (content.length - filteredContent.length) })}
           </Text>
           <Button
             variant="outline"
@@ -107,7 +107,7 @@ function ModuleMap({
         </Box>
       )}
 
-      {filteredModules.length >= 1
+      {filteredContent.length >= 1
         ? Array.isArray(currentModules) && currentModules.map((module, i) => {
           const cheatedIndex = i;
           return (
@@ -156,23 +156,23 @@ ModuleMap.propTypes = {
   index: PropTypes.number.isRequired,
   title: PropTypes.string,
   slug: PropTypes.string,
-  modules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
-  filteredModules: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  content: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  filteredContent: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   description: PropTypes.string,
   cohortData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
-  filteredModulesByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
+  filteredContentByPending: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))),
   showPendingTasks: PropTypes.bool,
   searchValue: PropTypes.string,
   existsActivities: PropTypes.bool.isRequired,
 };
 ModuleMap.defaultProps = {
-  modules: [],
-  filteredModules: [],
+  content: [],
+  filteredContent: [],
   title: 'HTML/CSS/Bootstrap',
   slug: 'html-css-bootstrap',
   description: '',
   cohortData: {},
-  filteredModulesByPending: [],
+  filteredContentByPending: [],
   showPendingTasks: false,
   searchValue: '',
 };

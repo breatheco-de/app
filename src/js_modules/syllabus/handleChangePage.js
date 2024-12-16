@@ -15,7 +15,7 @@ const handleChangePage = (assignmentProps, {
     }
   } else if (!!(moduleProps)) {
     if (moduleTaskProps?.target !== 'blank') {
-      if (cohortSlug && !!moduleTaskProps && !!moduleProps?.filteredModules[0]) {
+      if (cohortSlug && !!moduleTaskProps && !!moduleProps?.filteredContent[0]) {
         router.push(router.push(`/syllabus/${cohortSlug}/${moduleTaskProps?.type?.toLowerCase()}/${moduleTaskProps?.slug}`));
       } else {
         setOpenNextModuleModal(true);

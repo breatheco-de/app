@@ -96,11 +96,11 @@ function Summary() {
 
   const openSyllabusAndRedirect = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
-    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
-    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+    const firstAssigmentSlug = sortedAssignments[0].content[0].slug;
+    const firstAssigmentType = sortedAssignments[0].content[0].type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
-    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+    const updatedTasks = (sortedAssignments[0].content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,

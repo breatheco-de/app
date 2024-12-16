@@ -141,8 +141,8 @@ function TimelineSidebar({
             )}
             {sortedAssignments.length > 0 && sortedAssignments.map((section) => {
               const currentAssignments = showPendingTasks
-                ? section.filteredModulesByPending
-                : section.filteredModules;
+                ? section.filteredContentByPending
+                : section.filteredContent;
               return (
                 <Box
                   key={`${section.title}-${section.id}`}

@@ -119,9 +119,9 @@ function useCohortHandler() {
 
         // this properties name's reassignment is done to keep compatibility with deprecated functions
         const {
-          content: modules,
-          filteredContent: filteredModules,
-          filteredContentByPending: filteredModulesByPending,
+          content,
+          filteredContent,
+          filteredContentByPending,
         } = nestedAssignments;
 
         // Data to be sent to [sortedAssignments] = state
@@ -129,17 +129,17 @@ function useCohortHandler() {
           id,
           label,
           description,
-          modules,
-          exists_activities: modules?.length > 0,
-          filteredModules,
-          filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
+          content,
+          exists_activities: content?.length > 0,
+          filteredContent,
+          filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
           duration_in_days: assignment?.duration_in_days || null,
           teacherInstructions: assignment.teacher_instructions,
           extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
           keyConcepts: assignment['key-concepts'],
         };
 
-        if (modules.length > 0) {
+        if (content.length > 0) {
           // prevent duplicates when a new module has been started (added to sortedAssignments array)
           const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
           if (keyIndex > -1) {
@@ -281,7 +281,7 @@ function useCohortHandler() {
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
             (assignment) => data.filter(
-              (task) => assignment.modules.some(
+              (task) => assignment.content.some(
                 (module) => task.associated_slug === module.slug,
               ),
             ),
@@ -304,7 +304,7 @@ function useCohortHandler() {
     let lastDoneTaskModule = null;
     sortedAssignments.forEach(
       (module) => {
-        if (module.modules.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
+        if (module.content.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
       },
     );
     return lastDoneTaskModule;
@@ -312,7 +312,7 @@ function useCohortHandler() {
 
   const getMandatoryProjects = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
-      (assignment) => assignment.filteredModules.filter(
+      (module) => module.filteredContent.filter(
         (l) => {
           const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
             && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks

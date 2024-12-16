@@ -114,8 +114,8 @@ function SyllabusContent() {
   const Open = !isOpen;
   const { label, teacherInstructions, keyConcepts } = selectedSyllabus;
 
-  const firstTask = nextModule?.modules[0];
-  const lastPrevTask = prevModule?.modules && prevModule.modules[prevModule.modules.length - 1];
+  const firstTask = nextModule?.content[0];
+  const lastPrevTask = prevModule?.content && prevModule.content[prevModule.content.length - 1];
 
   const cohortSlug = router?.query?.cohortSlug;
   const lesson = router?.query?.lesson;
@@ -129,8 +129,8 @@ function SyllabusContent() {
   const isLesson = lesson === 'read';
 
   const filteredCurrentAssignments = sortedAssignments.map((section) => (showPendingTasks
-    ? section.filteredModulesByPending
-    : section.filteredModules));
+    ? section.filteredContentByPending
+    : section.filteredContent));
 
   const currentModuleIndex = filteredCurrentAssignments.findIndex((s) => s?.some((l) => l.slug === lessonSlug || l.translations?.[language]?.slug === lessonSlug || (currentAsset?.id && l.translations?.[language]?.slug === currentAsset.slug)));
 
@@ -174,7 +174,7 @@ function SyllabusContent() {
   };
 
   const handleStartDay = async (module = null, avoidRedirect = false) => {
-    const moduleToUpdate = module?.modules || nextModule.modules;
+    const moduleToUpdate = module?.content || nextModule.content;
     const updatedTasks = moduleToUpdate?.map((l) => ({
       ...l,
       associated_slug: l.slug,
@@ -252,6 +252,14 @@ function SyllabusContent() {
       updateOpenedAt();
     }
   }, [currentTask]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      setCohortSession(null);
+      setSortedAssignments([]);
+    };
+  }, []);
 
   useEffect(() => {
     const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
@@ -392,7 +400,7 @@ function SyllabusContent() {
   };
 
   useEffect(() => {
-    const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
+    const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
     const englishTaskUrls = {
       en: currTask?.translations?.en,
       us: currTask?.translations?.us,
@@ -459,8 +467,8 @@ function SyllabusContent() {
     }
     return () => {
       cleanCurrentData();
-      setCohortSession(null);
-      setSortedAssignments([]);
+      // setCohortSession(null);
+      // setSortedAssignments([]);
       setUserSession({
         translations: [],
       });
@@ -470,13 +478,13 @@ function SyllabusContent() {
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
     const currModuleIndex = sortedAssignments.findIndex(
-      (l) => l.modules.some((m) => m.slug === lessonSlug),
+      (l) => l.content.some((m) => m.slug === lessonSlug),
     );
     const nextModuleData = sortedAssignments[currModuleIndex + 1];
     const prevModuleData = sortedAssignments[currModuleIndex - 1];
 
     const defaultSyllabus = sortedAssignments.find(
-      (l) => l.modules.find((m) => m.slug === lessonSlug),
+      (l) => l.content.find((m) => m.slug === lessonSlug),
     );
 
     if (defaultSyllabus) {
@@ -567,7 +575,7 @@ function SyllabusContent() {
       }
     } else if (nextModule) {
       if (firstTask.target !== 'blank') {
-        if (cohortSlug && !!firstTask && nextModule?.filteredModules[0]) {
+        if (cohortSlug && !!firstTask && nextModule?.filteredContent[0]) {
           router.push({
             query: {
               ...router.query,

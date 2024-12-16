@@ -41,13 +41,13 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
 
   const openNextModule = async () => {
     try {
-      const nextAssignments = nextModule.filteredModules;
+      const nextAssignments = nextModule.filteredContent;
       if (nextAssignments.length === 0) {
         setModuleLoading(true);
         await handleStartDay(nextModule, true);
         setModuleLoading(false);
       }
-      const assignment = nextModule.modules[0];
+      const assignment = nextModule.content[0];
       onClickAssignment(null, assignment);
     } catch (e) {
       console.log(e);
@@ -56,7 +56,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   };
 
   const openPrevModule = () => {
-    const assignment = prevModule.modules[0];
+    const assignment = prevModule.content[0];
     onClickAssignment(null, assignment);
   };
 
@@ -168,7 +168,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
               )}
               <Timeline
                 variant="guided-experience"
-                assignments={currentModule.filteredModules}
+                assignments={currentModule.filteredContent}
                 technologies={currentModule.technologies || []}
                 onClickAssignment={onClickAssignment}
                 flex="1"

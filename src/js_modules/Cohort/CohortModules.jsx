@@ -79,12 +79,12 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
 
     const modulesDict = {};
     modules.forEach((module) => {
-      const assignmentsCount = module.modules.reduce(getModulesProgress, {});
+      const assignmentsCount = module.content.reduce(getModulesProgress, {});
 
       const typesPerModule = Object.keys(assignmentsCount);
       const moduleTotalAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].total + acc, 0);
       const moduleDoneAssignments = typesPerModule.reduce((acc, curr) => assignmentsCount[curr].done + acc, 0);
-      const isStarted = module.filteredModules.length > 0;
+      const isStarted = module.filteredContent.length > 0;
       modulesDict[module.id] = {
         moduleTotalAssignments,
         moduleDoneAssignments,
@@ -133,7 +133,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
     try {
       const firstModule = modules[0];
 
-      const moduleToUpdate = firstModule?.modules;
+      const moduleToUpdate = firstModule?.content;
       const newTasks = moduleToUpdate?.map((l) => ({
         ...l,
         associated_slug: l.slug,
@@ -196,7 +196,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
       const { isStarted } = modulesProgress[module.id];
       //start module
       if (!isStarted) {
-        const moduleToUpdate = module?.modules;
+        const moduleToUpdate = module?.content;
         const newTasks = moduleToUpdate?.map((l) => ({
           ...l,
           associated_slug: l.slug,
@@ -208,7 +208,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
         setLoadingModule(null);
       }
 
-      const moduleFirstAssignment = module?.modules[0];
+      const moduleFirstAssignment = module?.content[0];
 
       let syllabusRoute = `/syllabus/${cohort.slug}/${moduleFirstAssignment.type.toLowerCase()}/${moduleFirstAssignment.slug}`;
       if (mainCohort) syllabusRoute = `/main-cohort/${mainCohort.slug}/${syllabusRoute}`;
