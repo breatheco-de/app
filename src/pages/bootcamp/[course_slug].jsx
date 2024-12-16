@@ -136,7 +136,6 @@ function CoursePage({ data, syllabus }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
-
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -170,7 +169,7 @@ function CoursePage({ data, syllabus }) {
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
-
+  
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
