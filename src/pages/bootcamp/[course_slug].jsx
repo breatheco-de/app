@@ -633,7 +633,7 @@ function CoursePage({ data }) {
                 : (
 
                   <Text size="16px" color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? getAlternativeTranslation('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
                   </Text>
                 )}
             </Flex>
