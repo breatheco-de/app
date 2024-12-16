@@ -218,7 +218,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             <Text
               size="l"
               color="white"
-              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentTask?.title || currentAsset?.title }) }}
+              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentAsset?.title || currentTask?.title }) }}
             />
           </Box>
         </Box>
