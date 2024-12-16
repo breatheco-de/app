@@ -261,7 +261,10 @@ function CoursePage({ data }) {
 
   const getAlternativeTranslation = (slug) => {
     const keys = slug.split('.');
-    const result = keys.reduce((acc, key) => acc && acc[key] !== undefined ? acc[key] : null, data?.course_translation?.landing_variables);
+    const result = keys.reduce((acc, key) => {
+      if (acc && acc[key] !== undefined) return acc[key];
+      return null;
+    }, data?.course_translation?.landing_variables);
 
     return result !== null ? result : t(slug);
   };
