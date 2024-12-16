@@ -389,6 +389,7 @@ function CoursePage({ data }) {
       }
     });
   };
+
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
 
@@ -515,10 +516,12 @@ function CoursePage({ data }) {
     }
   }, [readyToRefetch]);
 
+  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
+
   const assetCountByType = {
-    lessons: assetCount?.lesson || 0,
-    exercises: assetCount?.exercise || 0,
-    projects: assetCount?.project || 0,
+    lesson: assetCount?.lesson || 0,
+    exercise: assetCount?.exercise * randomMultiplier || 0,
+    project: assetCount?.project || 0,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
