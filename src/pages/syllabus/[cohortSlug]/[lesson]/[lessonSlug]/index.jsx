@@ -769,6 +769,8 @@ function SyllabusContent() {
     let highestElement = null;
     let highestOffsetTop = Infinity;
 
+    console.log('soy los pending subtasks', pendingSubtasks);
+
     pendingSubtasks.forEach((task) => {
       const subtaskElement = document.getElementById(task.id);
       if (subtaskElement && subtaskElement.offsetTop < highestOffsetTop) {

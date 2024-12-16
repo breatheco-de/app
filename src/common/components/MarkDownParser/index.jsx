@@ -141,6 +141,7 @@ function MarkDownParser({
   const updateSubTask = async (taskProps) => {
     const removeSpaces = (str) => str.replace(/\s+/g, '');
     const cleanedSubTasks = subTasks.filter((task) => removeSpaces(task.label) !== removeSpaces(taskProps.label));
+    console.log('soy el cleaned subtask', cleanedSubTasks);
     if (currentTask?.id) {
       const resp = await bc.todo().subtask().update(
         currentTask?.id,
@@ -151,6 +152,7 @@ function MarkDownParser({
       );
       if (resp.status >= 200 && resp.status < 400) {
         const respData = await resp.data;
+        console.log('soy la respuesta de los subtasks al darle click', respData);
         setSubTasks(respData);
       }
     }
@@ -159,6 +161,7 @@ function MarkDownParser({
   const fetchSubtasks = async () => {
     try {
       const { data } = await bc.todo().subtask().get(currentTask?.id);
+      console.log('soy el primer fetch', data);
 
       if (Array.isArray(data)) setSubTasks(data);
       setSubTasksLoaded(true);
@@ -175,8 +178,10 @@ function MarkDownParser({
   }, [currentTask]);
 
   const createSubTasksIfNotExists = async () => {
+    console.log('de casualidad entre en esta funcion HAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!');
     // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
     if (currentTask?.id && newSubTasks.length > 0) {
+      console.log('ejecute esto HAAAAAAAAAAAAAAAAAAAAAAAAAAAAA!');
       const resp = await bc.todo().subtask().update(
         currentTask?.id,
         [
