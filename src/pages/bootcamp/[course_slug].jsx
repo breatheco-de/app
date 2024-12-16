@@ -188,7 +188,7 @@ function CoursePage({ data }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
-  
+
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -215,14 +215,14 @@ function CoursePage({ data }) {
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
-  
+
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
     plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
-  
+
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
@@ -256,17 +256,17 @@ function CoursePage({ data }) {
   };
 
   const featurePrice = getPlanPrice().toLocaleLowerCase();
-  
+
   const getAlternativeTranslation = (slug, options = {}) => {
     const keys = slug.split('.');
     const result = keys.reduce((acc, key) => {
       if (acc && acc[key] !== undefined) return acc[key];
       return null;
     }, data?.course_translation?.landing_variables);
-    
+
     return result !== null ? result : t(slug, {}, options);
   };
-  
+
   const faqList = getAlternativeTranslation('faq', { returnObjects: true }) || [];
   const features = getAlternativeTranslation('features', { returnObjects: true }) || {};
   const featuredBullets = getAlternativeTranslation('featured-bullets', { returnObjects: true }) || [];
