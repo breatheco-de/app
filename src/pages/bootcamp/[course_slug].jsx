@@ -184,13 +184,11 @@ function CoursePage({ data }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
-  const faqList = t('faq', {}, { returnObjects: true }) || [];
-  const features = t('features', {}, { returnObjects: true }) || {};
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
-
+  
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -217,15 +215,14 @@ function CoursePage({ data }) {
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
-
-  const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
+  
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
     plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
-
+  
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
@@ -257,17 +254,22 @@ function CoursePage({ data }) {
     }
     return t('common:enroll');
   };
-  const featurePrice = getPlanPrice().toLocaleLowerCase();
 
-  const getAlternativeTranslation = (slug) => {
+  const featurePrice = getPlanPrice().toLocaleLowerCase();
+  
+  const getAlternativeTranslation = (slug, options = {}) => {
     const keys = slug.split('.');
     const result = keys.reduce((acc, key) => {
       if (acc && acc[key] !== undefined) return acc[key];
       return null;
     }, data?.course_translation?.landing_variables);
-
-    return result !== null ? result : t(slug);
+    
+    return result !== null ? result : t(slug, {}, options);
   };
+  
+  const faqList = getAlternativeTranslation('faq', { returnObjects: true }) || [];
+  const features = getAlternativeTranslation('features', { returnObjects: true }) || {};
+  const featuredBullets = getAlternativeTranslation('featured-bullets', { returnObjects: true }) || [];
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
@@ -536,7 +538,7 @@ function CoursePage({ data }) {
       showBubble: true,
       target: targetId,
       highlight: true,
-      welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+      welcomeMessage: getAlternativeTranslation('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
       purposeSlug: '4geekscom-public-agent',
     });
