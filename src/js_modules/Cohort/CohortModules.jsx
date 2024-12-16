@@ -313,15 +313,18 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
               </Box>
               <Box mt={isGraduated && '10px'} width="100%" display="flex">
                 {isGraduated && (
-                  <Box onClick={showCertificate} display="flex" gap="10px" background={colorVariations[colorMode].mode4} borderRadius="4px" padding="8px">
+                  <Box onClick={showCertificate} display="flex" flexDirection="column" gap="10px" background={colorVariations[colorMode].mode4} borderRadius="4px" padding="8px 16px">
                     <Icon
                       icon="certificate-2"
                       props={{
                         color: cohortColor,
                         color2: colorVariations[colorMode].mode4,
                       }}
+                      onClick={showCertificate}
                     />
-                    <Icon icon="dots" color={cohortColor} />
+                    <Text color={cohortColor}>
+                      {t('open')}
+                    </Text>
                   </Box>
                 )}
                 {cohortProgress?.isCohortStarted && (
@@ -364,6 +367,12 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
                     </Box>
                     {isGraduated && (
                       <Box mt={{ base: '10px', sm: '0' }} display="flex" alignItems={{ base: 'baseline', sm: 'center' }} gap="10px" flexDirection={{ base: 'column-reverse', sm: 'row' }}>
+                        <Box display="flex" alignItems="center" gap="5px">
+                          <Icon icon="clock" width="14px" height="14px" color={cohortColor} />
+                          <Text size="md" textAlign="left">
+                            {t('hours-worked', { hours: cohort.syllabus_version.duration_in_hours })}
+                          </Text>
+                        </Box>
                         <Box display="flex" alignItems="center" gap="5px">
                           <Icon icon="attendance" color={cohortColor} />
                           <Text size="md" textAlign="left">
