@@ -21,6 +21,7 @@ function useCohortHandler() {
     setSortedAssignments,
     setUserCapabilities,
     setMyCohorts,
+    cohortsAssignments,
     setCohortsAssingments,
     state,
   } = useCohortAction();
@@ -157,17 +158,17 @@ function useCohortHandler() {
     return assignmentsRecopilated;
   };
 
-  const getMicroCohortsAssignments = async (microCohorts) => {
+  const getCohortsAssignments = async (cohorts) => {
     try {
       const assignmentsMap = {};
-      const syllabusPromises = microCohorts.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
-      const tasksPromises = microCohorts.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const syllabusPromises = cohorts.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = cohorts.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
       const allResults = await Promise.all([
         ...syllabusPromises,
         ...tasksPromises,
       ]);
 
-      microCohorts.forEach((cohort) => {
+      cohorts.forEach((cohort) => {
         const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
 
         let syllabus = null;
@@ -240,8 +241,8 @@ function useCohortHandler() {
 
         const microCohorts = parsedCohorts.filter((cohort) => currentCohort.micro_cohorts.some((elem) => elem.slug === cohort.slug));
 
-        const microCohortsModules = await getMicroCohortsAssignments(microCohorts);
-        setCohortsAssingments(microCohortsModules);
+        const microCohortsModules = await getCohortsAssignments(microCohorts);
+        setCohortsAssingments({ ...cohortsAssignments, ...microCohortsModules });
 
         setCohortSession(currentCohort);
         setMyCohorts(parsedCohorts);
