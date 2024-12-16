@@ -254,10 +254,29 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
+    const slugPriorities = [
+      currentAsset?.translations?.[lang],
+      currentAsset?.translations?.us,
+      currentAsset?.translations?.en,
+      currentAsset?.translations?.es,
+      lessonSlug,
+    ];
+
     if (taskTodo.length > 0) {
-      setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-        && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
+      let foundTask = null;
+
+      slugPriorities.some((slug) => {
+        if (!slug) return false;
+
+        foundTask = taskTodo.find(
+          (el) => el.task_type === assetTypeValues[lesson]
+            && (el.associated_slug === slug || currentAsset?.aliases?.includes(el.associated_slug)),
+        );
+
+        return !!foundTask;
+      });
+
+      setCurrentTask(foundTask);
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
 
