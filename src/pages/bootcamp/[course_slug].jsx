@@ -169,7 +169,7 @@ function CoursePage({ data, syllabus }) {
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
-  
+
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
