@@ -399,14 +399,13 @@ function SyllabusContent() {
     });
   };
 
+  console.log(currentAsset);
+
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
-    const englishTaskUrls = {
-      en: currTask?.translations?.en,
-      us: currTask?.translations?.us,
-    };
-    const currentLanguageTaskUrl = englishTaskUrls[lang] || currTask?.translations?.[lang]?.slug || lessonSlug;
+    const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
     if (currTask?.target === 'blank') {
+      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`).then(({ data }) => setCurrentAsset(data));
       setCurrentBlankProps(currTask);
     } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
       axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`)
