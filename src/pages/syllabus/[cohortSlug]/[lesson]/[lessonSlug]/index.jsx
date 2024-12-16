@@ -263,18 +263,10 @@ function SyllabusContent() {
     ];
 
     if (taskTodo.length > 0) {
-      let foundTask = null;
-
-      slugPriorities.some((slug) => {
-        if (!slug) return false;
-
-        foundTask = taskTodo.find(
-          (el) => el.task_type === assetTypeValues[lesson]
-            && (el.associated_slug === slug || currentAsset?.aliases?.includes(el.associated_slug)),
-        );
-
-        return !!foundTask;
-      });
+      const foundTask = taskTodo.find((el) => (
+        el.task_type === assetTypeValues[lesson]
+          && slugPriorities.some((slug) => slug && (el.associated_slug === slug || currentAsset?.aliases?.includes(slug)))
+      ));
 
       setCurrentTask(foundTask);
     }
