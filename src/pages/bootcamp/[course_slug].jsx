@@ -259,6 +259,23 @@ function CoursePage({ data }) {
   };
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
+  const getAlternativeTranslation = (slug) => {
+    const keys = slug.split('.');
+    let result = data?.course_translation?.landing_variables;
+
+    if (!result) return t(slug);
+  
+    for (const key of keys) {
+      if (result[key] !== undefined) {
+        result = result[key];
+      } else {
+        return t(slug); // Return the value from t() function if the slug doesn't exist in data.landing_variables
+      }
+    }
+  
+    return result;
+  };
+
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
       const context = document.body.innerText;
@@ -908,11 +925,11 @@ function CoursePage({ data }) {
         <MktTwoColumnSideImage
           mt="6.25rem"
           imageUrl={t('certificate.image')}
-          title={t('certificate.title')}
+          title={getAlternativeTranslation('certificate.title')}
           description={t('certificate.description')}
           informationSize="Medium"
           buttonUrl={t('certificate.button-link')}
-          buttonLabel={t('certificate.button')}
+          buttonLabel={getAlternativeTranslation('certificate.button')}
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -923,13 +940,13 @@ function CoursePage({ data }) {
 
         <MktTwoColumnSideImage
           mt="6.25rem"
-          imageUrl={t('job-section.image')}
-          title={t('job-section.title')}
-          subTitle={t('job-section.subtitle')}
-          description={t('job-section.description')}
+          imageUrl={getAlternativeTranslation('job-section.image')}
+          title={getAlternativeTranslation('job-section.title')}
+          subTitle={getAlternativeTranslation('job-section.subtitle')}
+          description={getAlternativeTranslation('job-section.description')}
           informationSize="Medium"
-          buttonUrl={t('job-section.button-link')}
-          buttonLabel={t('job-section.button')}
+          buttonUrl={getAlternativeTranslation('job-section.button-link')}
+          buttonLabel={getAlternativeTranslation('job-section.button')}
           imagePosition="right"
           textBackgroundColor="#EEF9FE"
           titleColor="#0097CF"
