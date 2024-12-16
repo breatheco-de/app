@@ -8,7 +8,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import { isWindow, assetTypeValues, getExtensionName, getStorageItem } from '../../../../../utils';
+import { isWindow, assetTypeValues, getExtensionName, getStorageItem, languageFix } from '../../../../../utils';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import Heading from '../../../../../common/components/Heading';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
@@ -40,6 +40,7 @@ import useStyle from '../../../../../common/hooks/useStyle';
 import { ORIGIN_HOST, BREATHECODE_HOST } from '../../../../../utils/variables';
 import useSession from '../../../../../common/hooks/useSession';
 import { log } from '../../../../../utils/logging';
+import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 
@@ -253,7 +254,7 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
+    const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
     if (taskTodo.length > 0) {
       setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
         && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
@@ -283,7 +284,11 @@ function SyllabusContent() {
       });
   }, []);
 
-  const showToast = () => {
+  const showToastAndRedirect = (programSlug) => {
+    const querys = parseQuerys({
+      plan: programSlug,
+    });
+    router.push(`/${lang}/checkout${querys}`);
     toast({
       position: 'top',
       title: t('alert-message:access-denied'),
@@ -297,9 +302,10 @@ function SyllabusContent() {
     if (allSubscriptions && cohortSession && cohortSession.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
       if (!(cohortSubscriptions.length > 0)) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -314,8 +320,7 @@ function SyllabusContent() {
       const todayDate = new Date();
 
       if (todayDate > freeTrialExpDate) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -1390,9 +1395,11 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
-              {t('reached-the-end-of-the-module', { label, nextModuleLabel: nextModule?.label })}
-            </Heading>
+            {label && nextModule.label && (
+              <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                {t('reached-the-end-of-the-module', { label: languageFix(label, lang), nextModuleLabel: languageFix(nextModule.label, lang) })}
+              </Heading>
+            )}
             <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-around">
               <Button
                 variant="outline"

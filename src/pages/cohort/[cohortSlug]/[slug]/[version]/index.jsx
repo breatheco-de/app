@@ -40,6 +40,7 @@ import Heading from '../../../../../common/components/Heading';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
+import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../common/services/breathecode';
 import axios from '../../../../../axios';
 
@@ -190,7 +191,11 @@ function Dashboard() {
   };
 
   const checkNavigationAvailability = () => {
-    const showToast = () => {
+    const showToastAndRedirect = (programSlug) => {
+      const querys = parseQuerys({
+        plan: programSlug,
+      });
+      router.push(`/${lang}/checkout${querys}`);
       toast({
         position: 'top',
         title: t('alert-message:access-denied'),
@@ -203,9 +208,10 @@ function Dashboard() {
     if (allSubscriptions) {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
       if (cohortSubscriptions.length === 0) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -220,8 +226,7 @@ function Dashboard() {
       const todayDate = new Date();
 
       if (todayDate > freeTrialExpDate) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 

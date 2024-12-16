@@ -94,7 +94,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
 
   if (isExternalExercise) {
     return (
-      <Button as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
         {t('common:learnpack.start-exercise')}
       </Button>
     );
@@ -105,7 +105,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
       {showProvisioningLinks && (
         <Popover>
           <PopoverTrigger>
-            <Button size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+            <Button cursor="pointer" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
               {t('learnpack.open-in-learnpack-button.text')}
             </Button>
           </PopoverTrigger>
@@ -113,11 +113,12 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
         </Popover>
       )}
       {startWithLearnpack ? (
-        <Button as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
           {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
+          cursor="pointer"
           size="sm"
           padding="4px 8px"
           fontSize="14px"
@@ -217,7 +218,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             <Text
               size="l"
               color="white"
-              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentTask?.title }) }}
+              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentTask?.title || currentAsset?.title }) }}
             />
           </Box>
         </Box>
