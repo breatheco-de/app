@@ -204,7 +204,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 function LessonByTechnology({ assetData, technologyData, techsBySortPriority, count, coursesForTech, workShopsForTech, marketingInfo, isSortPriorityOne, featuredCourseSlug }) {
   const { t, lang } = useTranslation('technologies');
   const { isAuthenticated } = useAuth();
-  const { fontColor } = useStyle();
+  const { fontColor, colorMode } = useStyle();
   const [isDragging, setIsDragging] = useState(false);
   const [isAtEnd, setIsAtEnd] = useState(false);
   const [isAtStart, setIsAtStart] = useState(true);
@@ -314,7 +314,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 bottom="0"
                 width="100px"
                 pointerEvents="none"
-                background="linear-gradient(to right, white, rgba(255, 255, 255, 0))"
+                background={`linear-gradient(to right, ${colorMode}, rgba(255, 255, 255, 0))`}
                 zIndex="2"
               />
             )}
@@ -381,7 +381,7 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                 bottom="0"
                 width="100px"
                 pointerEvents="none"
-                background="linear-gradient(to left, white, rgba(255, 255, 255, 0))"
+                background={`linear-gradient(to left, ${colorMode}, rgba(255, 255, 255, 0))`}
                 zIndex="2"
               />
             )}
