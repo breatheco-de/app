@@ -265,7 +265,7 @@ function SyllabusContent() {
     if (taskTodo.length > 0) {
       const foundTask = taskTodo.find((el) => (
         el.task_type === assetTypeValues[lesson]
-          && slugPriorities.some((slug) => slug && (el.associated_slug === slug || currentAsset?.aliases?.includes(slug)))
+          && (slugPriorities.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
       ));
 
       setCurrentTask(foundTask);
