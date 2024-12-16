@@ -587,13 +587,13 @@ function CoursePage({ data }) {
                   ) : (
                     <>
                       <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                        {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
+                        {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.learning') : getAlternativeTranslation('title-connectors.start')}
                       </Heading>
                       <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
                         {data?.course_translation?.title}
                       </Heading>
                       <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                        {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
+                        {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.own-pace') : getAlternativeTranslation('title-connectors.end')}
                       </Heading>
                     </>
                   )
@@ -639,7 +639,7 @@ function CoursePage({ data }) {
                 : (
 
                   <Text size="16px" color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                    {students.length > limitViewStudents ? getAlternativeTranslation('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
                   </Text>
                 )}
             </Flex>
@@ -677,9 +677,9 @@ function CoursePage({ data }) {
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
-              title={t('join-cohort')}
+              title={getAlternativeTranslation('join-cohort')}
               maxWidth="396px"
-              description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
+              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
               borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
@@ -720,7 +720,7 @@ function CoursePage({ data }) {
                         textTransform="uppercase"
                         onClick={() => joinCohort()}
                       >
-                        {t('join-cohort')}
+                        {getAlternativeTranslation('join-cohort')}
                       </Button>
                     ) : (
                       <>
@@ -734,7 +734,7 @@ function CoursePage({ data }) {
                           }}
                         >
                           {!featuredPlanToEnroll?.isFreeTier
-                            ? `${t('common:enroll-for-connector')} ${featurePrice}`
+                            ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
                         {payableList?.length > 0 && (
@@ -803,14 +803,14 @@ function CoursePage({ data }) {
         <GridContainer maxWidth="1280px" padding="0 10px" gridTemplateColumns="repeat(12, 1fr)" childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} withContainer gridColumn="1 / span 12">
           <Flex flexDirection="column">
             <OneColumnWithIcon
-              title={t('rigobot.title')}
+              title={getAlternativeTranslation('rigobot.title')}
               icon=""
               handleButton={() => tryRigobot('#try-rigobot')}
-              buttonText={t('rigobot.button')}
+              buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
             >
               <Text size="14px" color="currentColor">
-                {t('rigobot.description')}
+                {getAlternativeTranslation('rigobot.description')}
               </Text>
             </OneColumnWithIcon>
           </Flex>
@@ -824,14 +824,14 @@ function CoursePage({ data }) {
           )}
           <Flex flexDirection="column" gridGap="16px">
             <Heading size="24px" lineHeight="normal" textAlign="center">
-              {t('build-connector.what-you-will')}
+              {getAlternativeTranslation('build-connector.what-you-will')}
               {' '}
               <Box as="span" color="blue.default">
-                {t('build-connector.build')}
+                {getAlternativeTranslation('build-connector.build')}
               </Box>
             </Heading>
             <Text size="18px" textAlign="center">
-              {t('build-connector.description')}
+              {getAlternativeTranslation('build-connector.description')}
             </Text>
             <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
               {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
@@ -872,13 +872,13 @@ function CoursePage({ data }) {
               <Flex flexDirection="column" gridGap="4rem">
                 <Flex flexDirection="column" gridGap="1rem">
                   <Heading size="24px" textAlign="center">
-                    {t('why-learn-4geeks-connector.why-learn-with')}
+                    {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
                     <Box as="span" color="blue.default">4Geeks</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
-                    {t('why-learn-4geeks-connector.benefits-connector')}
+                    {getAlternativeTranslation('why-learn-4geeks-connector.benefits-connector')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
@@ -927,11 +927,11 @@ function CoursePage({ data }) {
 
         <MktTwoColumnSideImage
           mt="6.25rem"
-          imageUrl={t('certificate.image')}
+          imageUrl={getAlternativeTranslation('certificate.image')}
           title={getAlternativeTranslation('certificate.title')}
-          description={t('certificate.description')}
+          description={getAlternativeTranslation('certificate.description')}
           informationSize="Medium"
-          buttonUrl={t('certificate.button-link')}
+          buttonUrl={getAlternativeTranslation('certificate.button-link')}
           buttonLabel={getAlternativeTranslation('certificate.button')}
           containerProps={{
             padding: '0px',
@@ -979,8 +979,8 @@ function CoursePage({ data }) {
             gridColumn1="1 / span 7"
             gridColumn2="8 / span 5"
             gridGap="3rem"
-            title={t('show-prices.title')}
-            description={t('show-prices.description')}
+            title={getAlternativeTranslation('show-prices.title')}
+            description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
             cohortId={cohortId}
           />
@@ -988,8 +988,8 @@ function CoursePage({ data }) {
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
           <MktTrustCards
-            title={t('why-learn-with-4geeks.title')}
-            description={t('why-learn-with-4geeks.description')}
+            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
           />
         </GridContainer>
         {/* FAQ section */}
