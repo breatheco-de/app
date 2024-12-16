@@ -169,6 +169,7 @@ function MarkDownParser({
       const resp = await bc.todo().subtask().update(currentTask?.id, [...updateSubtasks]);
       if (resp.status >= 200 && resp.status < 400) {
         const respData = await resp.data;
+        console.log('soy la respuesta de los subtasks al darle click', respData);
         setSubTasks(respData);
       }
     }
