@@ -183,8 +183,6 @@ function CoursePage({ data }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
-  const faqList = t('faq', {}, { returnObjects: true }) || [];
-  const features = t('features', {}, { returnObjects: true }) || {};
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
@@ -217,7 +215,6 @@ function CoursePage({ data }) {
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
 
-  const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
     plan_id: featuredPlanToEnroll?.plan_id,
@@ -256,17 +253,22 @@ function CoursePage({ data }) {
     }
     return t('common:enroll');
   };
+
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
-  const getAlternativeTranslation = (slug) => {
+  const getAlternativeTranslation = (slug, options = {}) => {
     const keys = slug.split('.');
     const result = keys.reduce((acc, key) => {
       if (acc && acc[key] !== undefined) return acc[key];
       return null;
     }, data?.course_translation?.landing_variables);
 
-    return result !== null ? result : t(slug);
+    return result !== null ? result : t(slug, {}, options);
   };
+
+  const faqList = getAlternativeTranslation('faq', { returnObjects: true }) || [];
+  const features = getAlternativeTranslation('features', { returnObjects: true }) || {};
+  const featuredBullets = getAlternativeTranslation('featured-bullets', { returnObjects: true }) || [];
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
@@ -389,6 +391,7 @@ function CoursePage({ data }) {
       }
     });
   };
+
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
 
@@ -515,10 +518,12 @@ function CoursePage({ data }) {
     }
   }, [readyToRefetch]);
 
+  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
+
   const assetCountByType = {
-    lessons: assetCount?.lesson || 0,
-    exercises: assetCount?.exercise || 0,
-    projects: assetCount?.project || 0,
+    lesson: assetCount?.lesson || 0,
+    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
+    project: assetCount?.project || 0,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -532,7 +537,7 @@ function CoursePage({ data }) {
       showBubble: true,
       target: targetId,
       highlight: true,
-      welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+      welcomeMessage: getAlternativeTranslation('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
       purposeSlug: '4geekscom-public-agent',
     });
