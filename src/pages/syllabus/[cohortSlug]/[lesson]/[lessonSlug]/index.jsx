@@ -254,18 +254,14 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const slugPriorities = [
-      currentAsset?.translations?.[lang],
-      currentAsset?.translations?.us,
-      currentAsset?.translations?.en,
-      currentAsset?.translations?.es,
-      lessonSlug,
-    ];
+    const translations = currentAsset?.translations
+      ? Object.values(currentAsset.translations)
+      : [];
 
     if (taskTodo.length > 0) {
       const foundTask = taskTodo.find((el) => (
         el.task_type === assetTypeValues[lesson]
-          && (slugPriorities.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
+        && (translations.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
       ));
 
       setCurrentTask(foundTask);
