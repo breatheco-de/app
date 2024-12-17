@@ -18,7 +18,7 @@ const useSubscriptionsHandler = () => {
       payload: true,
     });
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const subscriptionsDataWithPlanOffer = data?.subscriptions?.length > 0 ? await Promise.all(data?.subscriptions.map(async (s) => {
