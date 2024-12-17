@@ -17,6 +17,11 @@
   "start-course": "Start course",
   "backToChooseProgram": "Back to choose program",
   "progressText": "progress in the program",
+  "students-modal": {
+    "students-course": "Students in this course",
+    "select-student": "Select a student to see their full report",
+    "filter-by-name": "Filter by name"
+  },
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",
   "intro-video-title": "Welcome!",
@@ -209,6 +214,7 @@
     "take-attendancy": "Take attendance",
     "review-attendancy": "Review attendance",
     "assignments": "Assignments",
+    "student-progress": "Student Progress",
     "teacher-tutorial": "Teacher tutorial",
     "no-instructions": ">:warning: No available instruction found for this module"
   },
