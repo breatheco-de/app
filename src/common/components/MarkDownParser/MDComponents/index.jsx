@@ -341,7 +341,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition += delta;
@@ -354,7 +354,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition -= delta;
@@ -436,12 +436,13 @@ export function DOMComponent({ children }) {
 }
 
 export function MDCheckbox({
-  index, children, subTasks, subTasksLoaded, newSubTasks, setNewSubTasks, updateSubTask,
+  index, children, subTasks, newSubTasks, setNewSubTasks, updateSubTask, currentTask,
 }) {
   const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
 
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+
   const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
 
   const renderToStringClient = () => {
@@ -461,7 +462,6 @@ export function MDCheckbox({
   const currentSubTask = subTasks.find((task) => task?.id === slug);
 
   useEffect(() => {
-    // load checked tasks
     const taskChecked = subTasks.some((task) => task?.id === slug && task?.status !== 'PENDING');
     if (taskChecked) {
       setIsChecked(true);
@@ -474,32 +474,30 @@ export function MDCheckbox({
   };
 
   useEffect(() => {
-    if (subTasksLoaded) {
-      if (
-        newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
-      ) { return () => {}; }
+    if (
+      newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
+    ) { return () => { }; }
 
-      if (currentSubTask) {
-        setNewSubTasks((prev) => {
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === currentSubTask.id)) content.push(currentSubTask);
-          return content;
-        });
-      } else {
-        setNewSubTasks((prev) => {
-          const task = {
-            id: slug,
-            status: 'PENDING',
-            label: text,
-          };
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
-          return content;
-        });
-      }
+    if (currentSubTask) {
+      setNewSubTasks((prev) => {
+        const content = [...prev];
+        if (!content.some((subTask) => subTask.id === currentSubTask.id)) content.push(currentSubTask);
+        return content;
+      });
+    } else {
+      setNewSubTasks((prev) => {
+        const task = {
+          id: slug,
+          status: 'PENDING',
+          label: text,
+        };
+        const content = [...prev];
+        if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+        return content;
+      });
     }
-    return () => {};
-  }, [subTasksLoaded]);
+    return () => { };
+  }, [currentTask]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
@@ -586,7 +584,7 @@ MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  subTasksLoaded: PropTypes.bool,
+  currentTask: PropTypes.objectOf(PropTypes.objectOf(PropTypes.any)),
   newSubTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   setNewSubTasks: PropTypes.func,
   updateSubTask: PropTypes.func,
@@ -594,10 +592,10 @@ MDCheckbox.propTypes = {
 MDCheckbox.defaultProps = {
   index: 0,
   subTasks: [],
-  subTasksLoaded: false,
+  currentTask: {},
   newSubTasks: [],
-  setNewSubTasks: () => {},
-  updateSubTask: () => {},
+  setNewSubTasks: () => { },
+  updateSubTask: () => { },
 };
 
 // MDText.propTypes = {
