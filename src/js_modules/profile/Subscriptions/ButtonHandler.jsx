@@ -81,7 +81,7 @@ function ButtonHandler({
         text: t('subscription.contact-support'),
         isComponent: true,
         component: (
-          <Text userSelect="none" justifyContent="center" fontSize="sm" fontWeight={700} color="blue.1000" display="inherit" margin="auto 0 0 0">
+          <Text textAlign="center" userSelect="none" justifyContent="center" fontSize="sm" fontWeight={700} color="blue.1000" display="inherit" margin="auto 0 0 0">
             {t('subscription.contact-support')}
           </Text>
         ),

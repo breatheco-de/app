@@ -29,6 +29,7 @@ function profileHandlers() {
     payment_issue: t('subscription.status.payment_issue'),
     cancelled: t('subscription.status.cancelled'),
     completed: t('subscription.status.completed'),
+    error: t('subscription.status.error'),
   };
   const statusStyles = {
     free_trial: {
@@ -45,6 +46,11 @@ function profileHandlers() {
       background: 'green.light',
     },
     expired: {
+      color: fontColor,
+      background: 'transparent',
+      border: '1px solid',
+    },
+    error: {
       color: fontColor,
       background: 'transparent',
       border: '1px solid',

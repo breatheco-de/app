@@ -99,7 +99,8 @@
       "active": "Active",
       "expired": "Expired",
       "cancelled": "Cancelled",
-      "completed": "Completed"
+      "completed": "Completed",
+      "error": "Error"
     },
     "cancel": "Cancel subscription",
     "upgrade": "Upgrade subscription",

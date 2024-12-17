@@ -88,6 +88,7 @@ function ProgramCard({
   const isExpired = isFreeTrial && freeTrialExpireDateValue < now;
   const isNeverEnding = !endsAt;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
+  const isError = subscriptionStatus === 'ERROR';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
 
   const statusTimeString = (start) => {
@@ -138,6 +139,7 @@ function ProgramCard({
     expired: t('status.expired'),
     cancelled: t('status.cancelled'),
     payment_issue: t('status.payment_issue'),
+    error: t('status.error'),
   };
 
   const onOpenUpgrade = (data) => {
@@ -264,7 +266,7 @@ function ProgramCard({
                     </>
                   ) : (
                     <>
-                      {(!isCancelled || isAvailableAsSaas === false) ? (
+                      {(!isCancelled || isAvailableAsSaas === false) && !isError ? (
                         <Icon icon="crown" width="22px" height="15px" />
                       ) : (
                         <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
@@ -446,7 +448,7 @@ function ProgramCard({
 
                         ) : (
                           <>
-                            {(!isAvailableAsSaas || !isCancelled) && (
+                            {(!isAvailableAsSaas || !isCancelled) && !isError && (
                             <Button
                               borderRadius="3px"
                               width="100%"
