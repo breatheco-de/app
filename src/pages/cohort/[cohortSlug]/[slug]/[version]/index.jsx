@@ -534,7 +534,7 @@ function Dashboard() {
                             />
                           ))
                         : (
-                          <CohortModules cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
+                          <CohortModules openByDefault cohort={cohortSession} modules={sortedAssignments} certificate={certificates.find((cert) => cert.cohort.id === cohortSession.id)} />
                         )}
                     </Box>
                   ) : (

@@ -29,7 +29,7 @@ import Progress from '../../common/components/ProgressBar/Progress';
 
 const locales = { es, en };
 
-function CohortModules({ cohort, modules, mainCohort, certificate }) {
+function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault }) {
   const containerRef = useRef(null);
   const { reward } = useReward(cohort.slug, 'confetti', {
     lifetime: 50,
@@ -260,7 +260,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate }) {
   }, [certificate]);
 
   return (
-    <Accordion allowToggle>
+    <Accordion defaultIndex={openByDefault && 0} allowToggle>
       <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
@@ -471,10 +471,12 @@ CohortModules.propTypes = {
   modules: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   mainCohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   certificate: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  openByDefault: PropTypes.bool,
 };
 
 CohortModules.defaultProps = {
   mainCohort: null,
   modules: null,
   certificate: null,
+  openByDefault: false,
 };
