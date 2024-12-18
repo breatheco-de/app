@@ -4,10 +4,9 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
-  FormControl, FormLabel, Flex, Grid, Avatar,
-  useColorMode, useToast, Select, ModalCloseButton,
+  FormControl, FormLabel, Input, Flex, Grid, Avatar, Spinner,
+  useColorMode, ModalCloseButton,
 } from '@chakra-ui/react';
-import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
 import bc from '../../common/services/breathecode';
 import useStyle from '../../common/hooks/useStyle';
@@ -18,23 +17,22 @@ function StudentsModal({
 }) {
   const { t } = useTranslation('dashboard');
   const { state } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
-  const [currentModule, setCurrentModule] = useState(cohortSession.current_module);
+  const { cohortSession } = state;
   const [students, setStudents] = useState([]);
   const [studentsCount, setStudentsCount] = useState(0);
+  const [filterStudent, setFilterStudent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { colorMode } = useColorMode();
-  // const toast = useToast();
 
-  const { lightColor, borderColor } = useStyle();
+  const { hexColor, lightColor, borderColor } = useStyle();
 
-  const loadStudents = async (append = false) => {
+  const loadStudents = async (offset, append = false, like) => {
     try {
       setIsLoading(true);
-      const { data } = await bc.cohort({ count: studentsCount, limit: 20 }).getStudents(cohortSession.slug);
+      const { data } = await bc.cohort({ offset, limit: 10, like }).getStudents(cohortSession.slug);
 
       const { count, results } = data;
-      setStudentsCount(count);
+      setStudentsCount(parseInt(count, 10));
       if (append) setStudents((prev) => [...prev, ...results]);
       else setStudents(results);
     } catch (e) {
@@ -45,8 +43,19 @@ function StudentsModal({
   };
 
   useEffect(() => {
-    if (cohortSession.cohort_role !== 'STUDENT') loadStudents();
+    if (cohortSession?.cohort_role !== 'STUDENT' && students.length === 0) loadStudents();
   }, [cohortSession]);
+
+  const handleFilterChange = (e) => {
+    setFilterStudent(e.target.value);
+  };
+
+  useEffect(() => {
+    let timeoutId;
+    if (!filterStudent) loadStudents(0, false);
+    else timeoutId = setTimeout(() => loadStudents(0, false, filterStudent), 1000);
+    return () => clearTimeout(timeoutId);
+  }, [filterStudent]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -62,28 +71,13 @@ function StudentsModal({
           </Text>
           <Box display="flex" gridGap="25px" padding="20px 0 0 0">
             <FormControl>
-              <FormLabel htmlFor="current_module" color={lightColor} fontSize="12px">{t('attendance-modal.module')}</FormLabel>
-              {sortedAssignments.length > 0 && (
-                <Select
-                  value={currentModule}
-                  onChange={(e) => {
-                    setCurrentModule(parseInt(e.target.value, 10));
-                  }}
-                  id="module"
-                  placeholder="Select module"
-                >
-                  {sortedAssignments.map((module) => (
-                    <option key={module.id} value={module.id}>
-                      {`#${module.id} - ${module.label}`}
-                    </option>
-                  ))}
-                </Select>
-              )}
+              <FormLabel htmlFor="student-name" color={lightColor} fontSize="12px">{t('dashboard:students-modal.student')}</FormLabel>
+              <Input name="student-name" value={filterStudent} onChange={handleFilterChange} placeholder={t('dashboard:students-modal.filter-by-name')} />
             </FormControl>
           </Box>
-          <Box height="1px" bg={borderColor} marginTop="32px" marginBottom="15px" />
+          <Box height="1px" bg={borderColor} margin="15px 0" />
           <Box>
-            <Grid templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
+            <Grid maxHeight="250px" overflowY="scroll" templateColumns={{ md: 'repeat(4, 4fr)', sm: 'repeat(1, 1fr)' }} gap={6}>
               {students.map(({ user }) => (
                 <Box
                   key={`${user.id}-${user.first_name}`}
@@ -112,10 +106,22 @@ function StudentsModal({
                 </Box>
               ))}
             </Grid>
+            {isLoading && (
+              <Box width="100%" py="10px">
+                <Spinner color={hexColor.blueDefault} display="block" margin="auto" />
+              </Box>
+            )}
           </Box>
-          <Button variant="link" fontSize="13px" fontWeight={400} onClick={() => alert('loading more')}>
-            {t('common:load-more')}
-          </Button>
+          {!isLoading && studentsCount !== students.length && (
+            <Button
+              variant="link"
+              fontSize="13px"
+              fontWeight={400}
+              onClick={() => loadStudents(students.length, true)}
+            >
+              {t('common:load-more')}
+            </Button>
+          )}
         </ModalBody>
         <ModalFooter justifyContent="space-between">
           <Text
