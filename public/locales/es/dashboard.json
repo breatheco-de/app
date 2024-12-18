@@ -20,7 +20,7 @@
   "students-modal": {
     "students-course": "Estudiantes en este curso",
     "select-student": "Selecciona un estudiante para ver el reporte de su progreso",
-    "filter-by-name": "Filtrar por nombre",
+    "filter-by-name": "Filtrar por nombre o email",
     "student": "Estudiante",
     "no-students": "No se encontraron estudiantes"
   },

@@ -20,7 +20,7 @@
   "students-modal": {
     "students-course": "Students in this course",
     "select-student": "Select a student to see their full report",
-    "filter-by-name": "Filter by name",
+    "filter-by-name": "Filter by name or email",
     "student": "Student",
     "no-students": "No students found"
   },
