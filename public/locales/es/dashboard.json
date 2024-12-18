@@ -21,7 +21,8 @@
     "students-course": "Estudiantes en este curso",
     "select-student": "Selecciona un estudiante para ver el reporte de su progreso",
     "filter-by-name": "Filtrar por nombre",
-    "student": "Estudiante"
+    "student": "Estudiante",
+    "no-students": "No se encontraron estudiantes"
   },
   "whiteLabeledText": "Este curso es traído a ti gracias a nuestra alianza con esta universidad.",
   "free-trial-msg": "Actualmente se encuentra en una prueba gratuita, algunas funciones pueden ser limitadas. ¡<a class='black-link' href='{{link}}'>Actualiza tu plan</a> para tener acceso ilimitado!",

@@ -21,7 +21,8 @@
     "students-course": "Students in this course",
     "select-student": "Select a student to see their full report",
     "filter-by-name": "Filter by name",
-    "student": "Student"
+    "student": "Student",
+    "no-students": "No students found"
   },
   "whiteLabeledText": "This course is brought to you thanks to our parnership with this university",
   "free-trial-msg": "You are currently on a free trial, some features might be limited. <a class='black-link' href='{{link}}'>Upgrade your plan</a> to have unlimited access!",

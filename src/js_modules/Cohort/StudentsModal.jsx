@@ -21,7 +21,7 @@ function StudentsModal({
   const [students, setStudents] = useState([]);
   const [studentsCount, setStudentsCount] = useState(0);
   const [filterStudent, setFilterStudent] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { colorMode } = useColorMode();
 
   const { hexColor, lightColor, borderColor } = useStyle();
@@ -106,6 +106,13 @@ function StudentsModal({
                 </Box>
               ))}
             </Grid>
+            {!isLoading && students.length === 0 && (
+              <Box>
+                <Text fontSize="l" fontWeight="700">
+                  {t('dashboard:students-modal.no-students')}
+                </Text>
+              </Box>
+            )}
             {isLoading && (
               <Box width="100%" py="10px">
                 <Spinner color={hexColor.blueDefault} display="block" margin="auto" />
