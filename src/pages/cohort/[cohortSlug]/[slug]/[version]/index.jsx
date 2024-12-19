@@ -39,6 +39,7 @@ import ProgressBar from '../../../../../common/components/ProgressBar';
 import Heading from '../../../../../common/components/Heading';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
+import useRigo from '../../../../../common/hooks/useRigo';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
 import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../common/services/breathecode';
@@ -76,6 +77,7 @@ function Dashboard() {
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
   const { isAuthenticated } = useAuth();
+  const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
@@ -317,6 +319,56 @@ function Dashboard() {
         });
       });
   }, []);
+
+  const countDoneAssignments = (total, assignment) => {
+    if (assignment.task_status === 'DONE') return total + 1;
+    return total;
+  };
+
+  const cohortContextGenerator = (cohort, modules) => {
+    let context = '';
+    const allAssignments = modules.flatMap((module) => module.content);
+
+    const assignmentsDone = allAssignments.reduce(countDoneAssignments, 0);
+    const toalAssignments = modules.reduce((total, module) => total + module.content.length, 0);
+    context = `
+      Duration in hours: ${cohort.syllabus_version?.duration_in_hours}
+      assignments: ${assignmentsDone} done out of ${toalAssignments}
+      modules:
+      ${modules.map(({ label, description }) => `
+        - Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}
+          description: ${typeof description === 'object' ? (description[lang] || description.us) : description}
+      `)}
+    `;
+    return context;
+  };
+
+  useEffect(() => {
+    if (isRigoInitialized && cohortSession && cohortSession.cohort_role === 'STUDENT' && !isLoadingAssigments) {
+      let context = '';
+      if (hasMicroCohorts) {
+        const modulesPerProgram = myCohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug))
+          .map((cohort) => {
+            const cohortContext = cohortContextGenerator(cohort, cohortsAssignments[cohort.slug]?.modules);
+            return `
+            - ${cohort.slug}:
+              ${cohortContext}
+          `;
+          });
+        context = `
+          programs: ${cohortSession.micro_cohorts.map(({ name }) => name).join(', ')}
+          Modules per program:
+            ${modulesPerProgram}
+        `;
+      } else {
+        context = cohortContextGenerator(cohortSession, sortedAssignments);
+      }
+      rigo.updateOptions({
+        showBubble: false,
+        context,
+      });
+    }
+  }, [isRigoInitialized, cohortSession, isLoadingAssigments]);
 
   const getUserData = async () => {
     try {

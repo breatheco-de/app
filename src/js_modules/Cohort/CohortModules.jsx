@@ -255,7 +255,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
     if (certificate) {
       setTimeout(() => {
         reward();
-      }, 2000);
+      }, 1500);
     }
   }, [certificate]);
 
@@ -414,7 +414,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
                   const typesPerModule = Object.keys(assignmentsCount);
 
                   return (
-                    <Box onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
+                    <Box key={getModuleLabel(module)} onClick={() => redirectToModule(module)} background={backgroundColor} cursor="pointer" _hover={{ opacity: 0.7 }} display="flex" alignItems="center" justifyContent="space-between" padding="8px" borderRadius="8px">
                       <Box display="flex" alignItems="center" gap="16px">
                         {loadingModule === module.id ? (
                           <Spinner color={cohortColor} />
