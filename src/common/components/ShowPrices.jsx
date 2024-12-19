@@ -10,7 +10,6 @@ import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
-import useRigo from '../hooks/useRigo';
 import Button from './Button';
 
 function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
