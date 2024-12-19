@@ -43,6 +43,7 @@ import { log } from '../../../../../utils/logging';
 import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
+import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -65,6 +66,7 @@ function SyllabusContent() {
     prevModule,
     setPrevModule,
     setSubTasks,
+    subTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
   const mainContainer = useRef(null);
@@ -104,6 +106,9 @@ function SyllabusContent() {
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
   const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
+
+  const hasSubtasks = subTasks?.length > 0;
+  const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -758,6 +763,32 @@ function SyllabusContent() {
     return 'auto';
   };
 
+  const handleNavigateToLastPendingSubtask = () => {
+    const pendingSubtasks = subTasks.filter((task) => task.status === 'PENDING');
+
+    let highestElement = null;
+    let highestOffsetTop = Infinity;
+
+    const pendingSubtasksPositions = pendingSubtasks.map((task) => task.position);
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const pendingCheckboxes = checkboxes.filter((_, index) => pendingSubtasksPositions.includes(index));
+
+    pendingCheckboxes.forEach((checkbox) => {
+      if (checkbox.offsetTop < highestOffsetTop) {
+        highestOffsetTop = checkbox.offsetTop;
+        highestElement = checkbox;
+      }
+    });
+
+    if (!highestElement) {
+      console.log('No element found in the DOM.');
+      return;
+    }
+
+    highestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setOpenNextPageModal(false);
+  };
+
   return (
     <>
       <Head>
@@ -1329,9 +1360,13 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
-              {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
-            </Heading>
+            <Text fontSize="md" textAlign="center" fontWeight="700" mb="10px">{t('wait-a-sec')}</Text>
+            {!hasPendingSubtasks && (
+              <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
+              </Heading>
+            )}
+            {hasPendingSubtasks && <SubTasks subTasks={subTasks} assetType={currentAsset?.asset_type} marginBottom="30px" />}
             <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
               <Button
                 variant="outline"
@@ -1347,8 +1382,10 @@ function SyllabusContent() {
               <ButtonHandlerByTaskStatus
                 allowText
                 currentTask={currentTask}
+                hasPendingSubtasks={hasPendingSubtasks}
                 sendProject={sendProject}
                 changeStatusAssignment={changeStatusAssignment}
+                togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
                 currentAssetData={currentAsset}
