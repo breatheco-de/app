@@ -15,13 +15,23 @@ function useCohortHandler() {
   const router = useRouter();
   const { user } = useAuth();
   const { t, lang } = useTranslation('dashboard');
-  const { setCohortSession, setTaskCohortNull, setSortedAssignments, setUserCapabilities, setMyCohorts, state } = useCohortAction();
+  const {
+    setCohortSession,
+    setTaskCohortNull,
+    setSortedAssignments,
+    setUserCapabilities,
+    setMyCohorts,
+    cohortsAssignments,
+    setCohortsAssingments,
+    state,
+  } = useCohortAction();
   const { cohortProgram, taskTodo, setCohortProgram, setTaskTodo } = useModuleHandler();
 
   const {
     cohortSession,
     sortedAssignments,
     userCapabilities,
+    myCohorts,
   } = state;
   const toast = useToast();
   const accessToken = getStorageItem('accessToken');
@@ -98,35 +108,141 @@ function useCohortHandler() {
     }
   };
 
+  const serializeModulesMap = (moduleData, tasks) => {
+    const assignmentsRecopilated = [];
+    moduleData.forEach((assignment) => {
+      const {
+        id, label, description, lessons, replits, assignments, quizzes,
+      } = assignment;
+      if (lessons && replits && assignments && quizzes) {
+        const nestedAssignments = processRelatedAssignments(assignment, tasks);
+
+        // this properties name's reassignment is done to keep compatibility with deprecated functions
+        const {
+          content,
+          filteredContent,
+          filteredContentByPending,
+        } = nestedAssignments;
+
+        // Data to be sent to [sortedAssignments] = state
+        const assignmentsStruct = {
+          id,
+          label,
+          description,
+          content,
+          exists_activities: content?.length > 0,
+          filteredContent,
+          filteredContentByPending: content?.length > 0 ? filteredContentByPending : null,
+          duration_in_days: assignment?.duration_in_days || null,
+          teacherInstructions: assignment.teacher_instructions,
+          extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
+          keyConcepts: assignment['key-concepts'],
+        };
+
+        if (content.length > 0) {
+          // prevent duplicates when a new module has been started (added to sortedAssignments array)
+          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
+          if (keyIndex > -1) {
+            assignmentsRecopilated.splice(keyIndex, 1, {
+              ...assignmentsStruct,
+            });
+          } else {
+            assignmentsRecopilated.push({
+              ...assignmentsStruct,
+            });
+          }
+        }
+      }
+    });
+
+    return assignmentsRecopilated;
+  };
+
+  const getCohortsAssignments = async (cohorts) => {
+    try {
+      const assignmentsMap = {};
+      const syllabusPromises = cohorts.map((cohort) => bc.syllabus().get(cohort.academy.id, cohort.syllabus_version.slug, cohort.syllabus_version.version).then((res) => ({ cohort: cohort.id, ...res })));
+      const tasksPromises = cohorts.map((cohort) => bc.todo({ cohort: cohort.id, limit: 1000 }).getTaskByStudent().then((res) => ({ cohort: cohort.id, ...res })));
+      const allResults = await Promise.all([
+        ...syllabusPromises,
+        ...tasksPromises,
+      ]);
+
+      cohorts.forEach((cohort) => {
+        const cohortResults = allResults.filter((elem) => elem.cohort === cohort.id);
+
+        let syllabus = null;
+        let tasks = [];
+
+        cohortResults.forEach((elem) => {
+          const { data } = elem;
+          if ('json' in data) syllabus = data.json.days || data.json.modules;
+          else tasks = data.results;
+        });
+        const cohortModules = serializeModulesMap(syllabus, tasks);
+
+        assignmentsMap[cohort.slug] = {
+          modules: cohortModules,
+          syllabusJson: syllabus,
+          tasks,
+        };
+      });
+
+      return assignmentsMap;
+    } catch (e) {
+      console.log(e);
+      toast({
+        position: 'top',
+        title: t('alert-message:error-fetching-syllabus'),
+        status: 'error',
+        duration: 7000,
+        isClosable: true,
+      });
+
+      return {};
+    }
+  };
+
+  const parseCohort = (elem) => {
+    const { cohort, ...cohort_user } = elem;
+    const { syllabus_version } = cohort;
+    return {
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+      cohort_role: elem.role,
+      cohort_user,
+    };
+  };
+
   const getCohortData = async ({
     cohortSlug,
   }) => {
     try {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
-        const { data } = await bc.admissions().me();
-        if (!data) throw new Error('No data');
-        const { cohorts } = data;
-
-        const parsedCohorts = cohorts.map(((elem) => {
-          const { cohort, ...cohort_user } = elem;
-          const { syllabus_version } = cohort;
-          return {
-            ...cohort,
-            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: elem.role,
-            cohort_user,
-          };
-        }));
-
         // find cohort with current slug
-        const currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+        let parsedCohorts = myCohorts.map((cohort) => ({ ...cohort }));
+        let currentCohort = myCohorts.find((c) => c.slug === cohortSlug);
+        if (!currentCohort) {
+          const { data } = await bc.admissions().me();
+          if (!data) throw new Error('No data');
+          const { cohorts } = data;
+
+          parsedCohorts = cohorts.map(parseCohort);
+
+          currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+        }
 
         if (!currentCohort) {
           if (assetSlug) return handleRedirectToPublicPage();
 
           return router.push('/choose-program');
         }
+
+        const microCohorts = parsedCohorts.filter((cohort) => currentCohort.micro_cohorts.some((elem) => elem.slug === cohort.slug));
+
+        const microCohortsModules = await getCohortsAssignments(microCohorts);
+        setCohortsAssingments({ ...cohortsAssignments, ...microCohortsModules });
 
         setCohortSession(currentCohort);
         setMyCohorts(parsedCohorts);
@@ -150,67 +266,22 @@ function useCohortHandler() {
   // Sort all data fetched in order of taskTodo
   const prepareTasks = () => {
     const moduleData = cohortProgram?.json?.days || cohortProgram?.json?.modules || [];
-    const assignmentsRecopilated = [];
     devLog('json.days:', moduleData);
 
     if (cohortProgram?.json && taskTodo) {
-      moduleData.forEach((assignment) => {
-        const {
-          id, label, description, lessons, replits, assignments, quizzes,
-        } = assignment;
-        if (lessons && replits && assignments && quizzes) {
-          const nestedAssignments = processRelatedAssignments(assignment, taskTodo);
-
-          // this properties name's reassignment is done to keep compatibility with deprecated functions
-          const {
-            content: modules,
-            filteredContent: filteredModules,
-            filteredContentByPending: filteredModulesByPending,
-          } = nestedAssignments;
-
-          // Data to be sent to [sortedAssignments] = state
-          const assignmentsStruct = {
-            id,
-            label,
-            description,
-            modules,
-            exists_activities: modules?.length > 0,
-            filteredModules,
-            filteredModulesByPending: modules?.length > 0 ? filteredModulesByPending : null,
-            duration_in_days: assignment?.duration_in_days || null,
-            teacherInstructions: assignment.teacher_instructions,
-            extendedInstructions: assignment.extended_instructions || `${t('teacher-sidebar.no-instructions')}`,
-            keyConcepts: assignment['key-concepts'],
-          };
-
-          // prevent duplicates when a new module has been started (added to sortedAssignments array)
-          const keyIndex = assignmentsRecopilated.findIndex((x) => x.id === id);
-          if (keyIndex > -1) {
-            assignmentsRecopilated.splice(keyIndex, 1, {
-              ...assignmentsStruct,
-            });
-          } else {
-            assignmentsRecopilated.push({
-              ...assignmentsStruct,
-            });
-          }
-        }
-      });
-      const filterNotEmptyModules = assignmentsRecopilated.filter(
-        (l) => l.modules.length > 0,
-      );
-      setSortedAssignments(filterNotEmptyModules);
+      const cohortModules = serializeModulesMap(moduleData, taskTodo);
+      setSortedAssignments(cohortModules);
     }
   };
 
   const getTasksWithoutCohort = ({ setModalIsOpen }) => {
     // Tasks with cohort null
-    if (router.asPath === cohortSession.selectedProgramSlug) {
+    if (router.asPath === cohortSession?.selectedProgramSlug) {
       bc.todo({ cohort: null }).getTaskByStudent()
         .then(({ data }) => {
           const filteredUnsyncedCohortTasks = sortedAssignments.flatMap(
             (assignment) => data.filter(
-              (task) => assignment.modules.some(
+              (task) => assignment.content.some(
                 (module) => task.associated_slug === module.slug,
               ),
             ),
@@ -233,7 +304,7 @@ function useCohortHandler() {
     let lastDoneTaskModule = null;
     sortedAssignments.forEach(
       (module) => {
-        if (module.modules.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
+        if (module.content.some((task) => task.task_status === 'DONE')) lastDoneTaskModule = module;
       },
     );
     return lastDoneTaskModule;
@@ -241,7 +312,7 @@ function useCohortHandler() {
 
   const getMandatoryProjects = () => {
     const mandatoryProjects = sortedAssignments.flatMap(
-      (assignment) => assignment.filteredModules.filter(
+      (module) => module.filteredContent.filter(
         (l) => {
           const isMandatoryTimeOut = l.task_type === 'PROJECT' && l.task_status === 'PENDING'
             && l.mandatory === true && l.daysDiff >= 14; // exceeds 2 weeks
@@ -255,6 +326,7 @@ function useCohortHandler() {
 
   return {
     setCohortSession,
+    setMyCohorts,
     setSortedAssignments,
     getCohortAssignments,
     getCohortData,
@@ -265,6 +337,10 @@ function useCohortHandler() {
     getTasksWithoutCohort,
     userCapabilities,
     state,
+    setCohortsAssingments,
+    serializeModulesMap,
+    parseCohort,
+    ...state,
   };
 }
 
