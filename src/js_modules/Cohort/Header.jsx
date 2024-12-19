@@ -19,12 +19,35 @@ import { ProfilesSection } from '../../common/components/SupportSidebar/Mentorin
 import { BREATHECODE_HOST } from '../../utils/variables';
 import { getStorageItem } from '../../utils';
 
+// eslint-disable-next-line react/prop-types
+function CustomButton({ children, ...props }) {
+  const { backgroundColor, backgroundColor4 } = useStyle();
+  return (
+    <Box
+      width={{ base: '100%', sm: '145px' }}
+      height="102px"
+      borderRadius="8px"
+      padding="8px"
+      background={backgroundColor}
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-evenly"
+      alignItems="center"
+      cursor="pointer"
+      _hover={{ background: backgroundColor4, transition: 'background 0.3s' }}
+      {...props}
+    >
+      {children}
+    </Box>
+  );
+}
+
 function Header() {
   const { t } = useTranslation('choose-program');
   const router = useRouter();
   const { user, isAuthenticatedWithRigobot, conntectToRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
-  const { featuredLight, backgroundColor, hexColor } = useStyle();
+  const { featuredLight, hexColor } = useStyle();
   const { cohortSession } = useCohortHandler();
   const [mentors, setMentors] = useState([]);
   const [showStudentsModal, setShowStudentsModal] = useState(false);
@@ -86,127 +109,49 @@ function Header() {
           <Flex gap="16px" flexDirection={{ base: 'column', sm: 'row' }} width={{ base: '100%', sm: 'auto' }}>
             {cohortSession.cohort_role === 'STUDENT' ? (
               <>
-                <Box
-                  width={{ base: '100%', sm: '145px' }}
-                  height="102px"
-                  borderRadius="8px"
-                  padding="8px"
-                  background={backgroundColor}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-evenly"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                  onClick={() => router.push('/workshops')}
-                >
+                <CustomButton onClick={() => router.push('/workshops')}>
                   <Icon icon="live-event-opaque" width="42px" height="42px" />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('common:see-workshops')}
                   </Text>
-                </Box>
+                </CustomButton>
 
-                <Box
-                  width={{ base: '100%', sm: '145px' }}
-                  height="102px"
-                  borderRadius="8px"
-                  padding="8px"
-                  background={backgroundColor}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-evenly"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                  onClick={() => router.push('/mentorship/schedule')}
-                >
+                <CustomButton onClick={() => router.push('/mentorship/schedule')}>
                   <ProfilesSection size="40px" profiles={mentors} />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('common:schedule-mentoring')}
                   </Text>
-                </Box>
+                </CustomButton>
 
                 {isRigoInitialized && (
-                  <Box
-                    width={{ base: '100%', sm: '145px' }}
-                    height="102px"
-                    borderRadius="8px"
-                    padding="8px"
-                    background={backgroundColor}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="space-evenly"
-                    alignItems="center"
-                    cursor="pointer"
-                    _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                    onClick={rigobotMessage}
-                  >
+                  <CustomButton onClick={rigobotMessage}>
                     <Icon icon="rigobot-avatar-tiny" width="42px" height="42px" />
                     <Text textAlign="center" color={hexColor.blueDefault}>
                       {getRigobotButtonText()}
                     </Text>
-                  </Box>
+                  </CustomButton>
                 )}
               </>
             ) : (
               <>
-                <Box
-                  width={{ base: '100%', sm: '145px' }}
-                  height="102px"
-                  borderRadius="8px"
-                  padding="8px"
-                  background={backgroundColor}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-evenly"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                  onClick={() => setShowStudentsModal(true)}
-                >
+                <CustomButton onClick={() => setShowStudentsModal(true)}>
                   <Icon icon="support" color={hexColor.blueDefault} width="42px" height="42px" />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('dashboard:teacher-sidebar.student-progress')}
                   </Text>
-                </Box>
-                <Box
-                  width={{ base: '100%', sm: '145px' }}
-                  height="102px"
-                  borderRadius="8px"
-                  padding="8px"
-                  background={backgroundColor}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-evenly"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                  onClick={() => window.open(`/cohort/${cohortSession?.slug}/assignments?academy=${cohortSession?.academy?.id}`, '_blank')}
-                >
+                </CustomButton>
+                <CustomButton onClick={() => window.open(`/cohort/${cohortSession?.slug}/assignments?academy=${cohortSession?.academy?.id}`, '_blank')}>
                   <Icon icon="list" width="42px" height="42px" />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('dashboard:teacher-sidebar.assignments')}
                   </Text>
-                </Box>
-                <Box
-                  width={{ base: '100%', sm: '145px' }}
-                  height="102px"
-                  borderRadius="8px"
-                  padding="8px"
-                  background={backgroundColor}
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="space-evenly"
-                  alignItems="center"
-                  cursor="pointer"
-                  _hover={{ textDecoration: 'underline', textDecorationColor: 'blue.default' }}
-                  onClick={() => window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank')}
-                >
+                </CustomButton>
+                <CustomButton onClick={() => window.open('https://www.notion.so/4geeksacademy/Mentor-training-433451eb9dac4dc680b7c5dae1796519', '_blank')}>
                   <Icon icon="courses" width="42px" height="42px" />
                   <Text textAlign="center" color={hexColor.blueDefault}>
                     {t('dashboard:teacher-sidebar.teacher-tutorial')}
                   </Text>
-                </Box>
+                </CustomButton>
               </>
             )}
           </Flex>

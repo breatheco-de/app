@@ -75,7 +75,7 @@ function Dashboard() {
   const [certificates, setCertificates] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
   const [subscriptionData, setSubscriptionData] = useState(null);
@@ -398,7 +398,7 @@ function Dashboard() {
   }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
-  const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
+  // const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
   const onlyStudentsActive = studentAndTeachers.filter(
     (x) => x.role === 'STUDENT' && x.educational_status === 'ACTIVE',
@@ -512,12 +512,14 @@ function Dashboard() {
             <>
               {isAvailableAsSaas ? (
                 <Box flex="1 1 auto" pb="20px">
-                  <Box display="flex" alignItems="center" gap="10px" mb="20px">
-                    <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
-                    <Heading as="h1" size="m">
-                      {hasMicroCohorts ? cohortSession.name : cohortSession.syllabus_version?.name}
-                    </Heading>
-                  </Box>
+                  {hasMicroCohorts && (
+                    <Box display="flex" alignItems="center" gap="10px" mb="20px">
+                      <Img borderRadius="full" src={cohortSession.syllabus_version?.logo} width="29px" height="29px" />
+                      <Heading as="h1" size="m">
+                        {cohortSession.name}
+                      </Heading>
+                    </Box>
+                  )}
 
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
