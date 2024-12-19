@@ -761,21 +761,17 @@ function SyllabusContent() {
   const handleNavigateToLastPendingSubtask = () => {
     const pendingSubtasks = subTasks.filter((task) => task.status === 'PENDING');
 
-    if (pendingSubtasks.length === 0) {
-      console.log('No pending subtasks.');
-      return;
-    }
-
     let highestElement = null;
     let highestOffsetTop = Infinity;
 
-    console.log('soy los pending subtasks', pendingSubtasks);
+    const pendingSubtasksPositions = pendingSubtasks.map((task) => task.position);
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const pendingCheckboxes = checkboxes.filter((_, index) => pendingSubtasksPositions.includes(index));
 
-    pendingSubtasks.forEach((task) => {
-      const subtaskElement = document.getElementById(task.id);
-      if (subtaskElement && subtaskElement.offsetTop < highestOffsetTop) {
-        highestOffsetTop = subtaskElement.offsetTop;
-        highestElement = subtaskElement;
+    pendingCheckboxes.forEach((checkbox) => {
+      if (checkbox.offsetTop < highestOffsetTop) {
+        highestOffsetTop = checkbox.offsetTop;
+        highestElement = checkbox;
       }
     });
 
