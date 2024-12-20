@@ -449,6 +449,11 @@ function CoursePage({ data, syllabus }) {
   }, [lang, pathname]);
 
   useEffect(() => {
+    console.log('planData');
+    console.log(planData);
+  }, [planData]);
+
+  useEffect(() => {
     if (isAuthenticated) {
       getAllMySubscriptions().then((subscriptions) => {
         const subscriptionRelatedToThisCohort = subscriptions?.length > 0 ? subscriptions?.find((sbs) => {
