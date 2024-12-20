@@ -84,7 +84,6 @@ function ShowPrices({
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
-  const { isRigoInitialized, rigo } = useRigo();
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
 
@@ -133,13 +132,6 @@ function ShowPrices({
   useEffect(() => {
     if (dataList.length === 1) {
       handleSelect(dataList[0]);
-    }
-    if (isRigoInitialized) {
-      const context = document.body.innerText;
-
-      rigo.updateOptions({
-        context,
-      });
     }
   }, []);
 
