@@ -121,7 +121,7 @@
     "how-to-deliver": "How to deliver projects",
     "how-to-deliver-text": "Please submit a Github URL that points to your project as a Github repository. <a class='link' target='blank' href='{{link}}'>How to deliver projects</a>",
     "handler-text": "Deliver assignment",
-    "mandatory-message": "You have {{count}} mandatory projects to complete before graduation.",
+    "mandatory-message": "It looks like you need to complete at least {{count}} open projects before you can earn you certificate",
     "deliver-confirm": "I confirm that this submission is entirely my own work, and I understand the consequences of violating the academy terms and conditions.",
     "see-mandatory-projects": " See mandatory projects",
     "file-upload": "Upload one or more files with no more than 10MB in the following formats: ",

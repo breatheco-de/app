@@ -81,6 +81,11 @@ export async function getStaticProps({ locale, locales, params }) {
     };
   }
 
+  const syllabusSlug = data.syllabus[0]?.slug;
+
+  const respSyll = await axios.get(`${BREATHECODE_HOST}/v1/admissions/syllabus/version?slug=${syllabusSlug}`);
+  const syllabus = respSyll?.data[0];
+
   return {
     props: {
       seo: {
@@ -96,6 +101,7 @@ export async function getStaticProps({ locale, locales, params }) {
         card: 'default',
       },
       data,
+      syllabus,
     },
   };
 }
@@ -159,7 +165,7 @@ function CouponTopBar() {
   );
 }
 
-function CoursePage({ data }) {
+function CoursePage({ data, syllabus }) {
   const { state } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
@@ -271,8 +277,22 @@ function CoursePage({ data }) {
   const featuredBullets = getAlternativeTranslation('featured-bullets', { returnObjects: true }) || [];
 
   useEffect(() => {
-    if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
-      const context = document.body.innerText;
+    if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
+      // const context = document.body.innerText;
+      const plansContext = planData.planList.map((plan) => `
+        - ${plan.title}
+        price: ${plan.priceText}
+        period: ${plan.period_label}
+      `);
+      const syllabusContext = syllabus?.json
+        ? syllabus.json.days
+          .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
+        : '';
+      const context = `
+        description: ${data.course_translation?.description}
+        ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
+        plans: ${plansContext}
+      `;
 
       rigo.updateOptions({
         showBubble: false,
@@ -280,7 +300,7 @@ function CoursePage({ data }) {
         context,
       });
     }
-  }, [isRigoInitialized, lang, initialDataIsFetching]);
+  }, [isRigoInitialized, lang, initialDataIsFetching, planData]);
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -483,6 +503,11 @@ function CoursePage({ data }) {
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
+
+  useEffect(() => {
+    console.log('planData');
+    console.log(planData);
+  }, [planData]);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -1024,10 +1049,12 @@ function CoursePage({ data }) {
 
 CoursePage.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
+  syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CoursePage.defaultProps = {
   data: {},
+  syllabus: null,
 };
 
 export default CoursePage;

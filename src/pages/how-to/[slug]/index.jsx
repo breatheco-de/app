@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
 import Link from '../../../common/components/NextChakraLink';
-import MarkDownParser from '../../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../../common/components/MarkDownParser/ArticleMarkdown';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import Heading from '../../../common/components/Heading';
@@ -265,7 +265,7 @@ export default function HowToSlug({ data, markdown }) {
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             {markdown ? (
-              <MarkDownParser assetData={data} content={markdownData.content} isPublic withToc={data.enable_table_of_content} />
+              <ArticleMarkdown assetData={data} content={markdownData.content} isPublic withToc={data.enable_table_of_content} />
             ) : (
               <MDSkeleton />
             )}
