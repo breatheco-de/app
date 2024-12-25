@@ -285,7 +285,7 @@ function SyllabusContent() {
 
   useEffect(() => {
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
@@ -320,7 +320,7 @@ function SyllabusContent() {
         return;
       }
 
-      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED');
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
       if (expiredCourse) {
         showToastAndRedirect(currentCohortSlug);
         return;
