@@ -88,6 +88,7 @@ function ProgramCard({
   const isNeverEnding = !endsAt;
   const statusActive = subscriptionStatus === 'ACTIVE' || subscriptionStatus === 'FULLY_PAID';
   const isError = subscriptionStatus === 'ERROR';
+  const expiredStatus = subscriptionStatus === 'EXPIRED';
   // const statusActive = subscriptionStatus === 'ACTIVE' || isFreeTrial || subscriptionStatus === 'FULLY_PAID';
 
   const statusTimeString = (start) => {
@@ -265,15 +266,13 @@ function ProgramCard({
                     </>
                   ) : (
                     <>
-                      {(!isCancelled || isAvailableAsSaas === false) && !isError ? (
+                      {(!isCancelled || isAvailableAsSaas === false) && !isError && !expiredStatus ? (
                         <Icon icon="crown" width="22px" height="15px" />
                       ) : (
                         <Box fontSize="12px" display="flex" alignItems="center" background="red.light" color="danger" height="22px" borderRadius="20px" padding="0 10px">
                           {statusLabel[subscriptionStatus.toLowerCase()]}
                         </Box>
                       )}
-                      {/* {!isAvailableAsSaas && (
-                      )} */}
                     </>
                   )}
                 </>
@@ -447,7 +446,7 @@ function ProgramCard({
 
                         ) : (
                           <>
-                            {(!isAvailableAsSaas || !isCancelled) && !isError && (
+                            {(!isAvailableAsSaas || !isCancelled) && !isError && !expiredStatus && (
                             <Button
                               borderRadius="3px"
                               width="100%"
