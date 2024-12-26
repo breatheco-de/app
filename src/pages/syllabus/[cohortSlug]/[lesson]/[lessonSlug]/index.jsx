@@ -405,8 +405,6 @@ function SyllabusContent() {
     });
   };
 
-  console.log(currentAsset);
-
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
