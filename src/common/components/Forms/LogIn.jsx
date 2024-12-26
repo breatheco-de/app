@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
+  FormControl, Stack, Text, Box, Input, FormErrorMessage,
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
@@ -13,6 +13,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
+import Button from '../Button';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
@@ -196,7 +197,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {t('login:forgot-password')}
               </Link>
             </Flex>
-            <Button variant="default" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
+            <Button variant="primary" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
               {t('login:login')}
             </Button>
           </Stack>
