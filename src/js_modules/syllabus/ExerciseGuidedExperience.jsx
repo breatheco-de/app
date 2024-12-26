@@ -18,7 +18,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   const [telemetryReport, setTelemetryReport] = useState([]);
 
   const isExerciseStated = !!currentTask?.assignment_telemetry;
-  console.log(currentTask);
 
   useEffect(() => {
     if (isExerciseStated) {

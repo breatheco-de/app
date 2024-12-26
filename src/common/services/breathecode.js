@@ -322,7 +322,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/asset${qs}`),
-      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}${qs}`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
       techsBySort: () => axios.get(`${url}/technology${qs}`),

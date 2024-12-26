@@ -268,7 +268,6 @@ function SyllabusContent() {
         el.task_type === assetTypeValues[lesson]
         && (translations.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
       ));
-
       setCurrentTask(foundTask);
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
@@ -383,6 +382,7 @@ function SyllabusContent() {
     setCurrentBlankProps(null);
     setSubTasks([]);
   };
+
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
 
@@ -399,71 +399,67 @@ function SyllabusContent() {
     });
   };
 
-  console.log(currentAsset);
-
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (currTask?.target === 'blank') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`).then(({ data }) => setCurrentAsset(data));
-      setCurrentBlankProps(currTask);
-    } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`)
-        .then(({ data }) => {
-          const translations = data?.translations;
-          const exensionName = getExtensionName(data.readme_url);
-          const isIpynb = exensionName === 'ipynb';
-          const currentSlug = translations?.[language] || lessonSlug;
-          const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-          const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
-          const extension = urlPathname ? urlPathname.split('.').pop() : null;
-          // const translatedExtension = language === 'us' ? '' : `.${language}`;
-          const finalPathname = `${pathnameWithoutExtension}.${extension}`;
+    bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
+      const translations = data?.translations;
+      const exensionName = getExtensionName(data.readme_url);
+      const isIpynb = exensionName === 'ipynb';
+      const currentSlug = translations?.[language] || lessonSlug;
+      const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+      const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+      const extension = urlPathname ? urlPathname.split('.').pop() : null;
+      const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-          setReadmeUrlPathname(finalPathname);
-          let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
-          if (isIpynb) {
-            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
-            setCurrentAsset(data);
-          } else {
-            setIpynbHtmlUrl(null);
-            if (currentTranslationSlug === undefined) {
-              currentTranslationSlug = `${lessonSlug}-${language}`;
+      if (currTask?.target === 'blank') {
+        setCurrentAsset(data);
+        return;
+      }
+
+      setReadmeUrlPathname(finalPathname);
+      let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
+      if (isIpynb) {
+        setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
+        setCurrentAsset(data);
+      } else {
+        setIpynbHtmlUrl(null);
+        if (currentTranslationSlug === undefined) {
+          currentTranslationSlug = `${lessonSlug}-${language}`;
+        }
+        Promise.all([
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
+        ])
+          .then(([respMarkdown, respData]) => {
+            const currData = respData.data;
+            const markdownData = respMarkdown.data;
+
+            if (lesson === 'answer') {
+              setQuizSlug(currentTranslationSlug);
+            } else {
+              setQuizSlug(null);
             }
-            Promise.all([
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
-            ])
-              .then(([respMarkdown, respData]) => {
-                const currData = respData.data;
-                const markdownData = respMarkdown.data;
-
-                if (lesson === 'answer') {
-                  setQuizSlug(currentTranslationSlug);
-                } else {
-                  setQuizSlug(null);
-                }
-                if (currData !== undefined && typeof markdownData === 'string') {
-                  // Binary base64 decoding ⇢ UTF-8
-                  const markdown = getMarkDownContent(markdownData);
-                  setReadme(markdown);
-                  setCurrentAsset(currData);
-                }
-              })
-              .catch(() => {
-                setReadme({
-                  content: t('no-traduction-found-description'),
-                });
-                setCurrentAsset({
-                  ...data,
-                  title: t('no-traduction-found'),
-                });
-              });
-          }
-        }).catch(() => {
-          EventIfNotFound();
-        });
-    }
+            if (currData !== undefined && typeof markdownData === 'string') {
+              // Binary base64 decoding ⇢ UTF-8
+              const markdown = getMarkDownContent(markdownData);
+              setReadme(markdown);
+              setCurrentAsset(currData);
+            }
+          })
+          .catch(() => {
+            setReadme({
+              content: t('no-traduction-found-description'),
+            });
+            setCurrentAsset({
+              ...data,
+              title: t('no-traduction-found'),
+            });
+          });
+      }
+    }).catch(() => {
+      EventIfNotFound();
+    });
     return () => {
       cleanCurrentData();
       setUserSession({
