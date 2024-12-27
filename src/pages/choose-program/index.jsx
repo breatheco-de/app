@@ -50,7 +50,7 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t, lang } = useTranslation('choose-program');
-  const { setCohortSession, setMyCohorts, parseCohort } = useCohortHandler();
+  const { setCohortSession, setMyCohorts, myCohorts, parseCohort, getCohortsModules, cohortsAssignments } = useCohortHandler();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -249,8 +249,7 @@ function chooseProgram() {
   const processCohort = async (item) => {
     if (item?.cohort?.slug) {
       const isFinantialStatusLate = item?.finantial_status === 'LATE' || item?.educational_status === 'SUSPENDED';
-      const { academy, syllabus_version: syllabusVersion } = item.cohort;
-      const tasks = await bc.todo({ cohort: item?.cohort?.id }).getTaskByStudent();
+      const { slug } = item.cohort;
       const studentAndTeachers = isFinantialStatusLate ? {} : await bc.cohort({
         role: 'TEACHER,ASSISTANT',
         cohorts: item?.cohort?.slug,
@@ -258,12 +257,12 @@ function chooseProgram() {
       }).getMembers();
       const teacher = studentAndTeachers?.data?.filter((st) => st.role === 'TEACHER') || [];
       const assistant = studentAndTeachers?.data?.filter((st) => st.role === 'ASSISTANT') || [];
-      const syllabus = await bc.syllabus().get(academy.id, syllabusVersion.slug, syllabusVersion.version);
-      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus?.data, taskTodo: tasks?.data, cohortId: item?.cohort?.id });
+      const { tasks, syllabus } = cohortsAssignments[slug];
+      const assignmentData = await handlers.getAssignmentsCount({ data: syllabus, taskTodo: tasks, cohortId: item?.cohort?.id });
 
       setCohortTasks((prev) => ({
         ...prev,
-        [item?.cohort.slug]: {
+        [slug]: {
           ...assignmentData,
           teacher,
           assistant,
@@ -273,10 +272,16 @@ function chooseProgram() {
   };
 
   useEffect(() => {
-    if (dataQuery?.id && dataQuery?.cohorts?.length > 0) {
+    if (myCohorts.length > 0) {
+      getCohortsModules(myCohorts);
+    }
+  }, [myCohorts, isLoading]);
+
+  useEffect(() => {
+    if (dataQuery?.cohorts?.length > 0 && Object.keys(cohortsAssignments).length > 0) {
       dataQuery.cohorts.map(processCohort);
     }
-  }, [dataQuery?.id, isLoading]);
+  }, [dataQuery?.id, isLoading, cohortsAssignments]);
 
   const userID = user?.id;
 
@@ -316,18 +321,17 @@ function chooseProgram() {
   }, []);
 
   useEffect(() => {
-    if (dataQuery?.date_joined) {
-      const cohortUserDaysCalculated = calculateDifferenceDays(dataQuery?.date_joined);
+    if (user?.date_joined) {
+      const cohortUserDaysCalculated = calculateDifferenceDays(user?.date_joined);
       if (cohortUserDaysCalculated?.isRemainingToExpire === false && cohortUserDaysCalculated?.result <= 2) {
         setIsWelcomeModalOpen(true);
       }
     }
-  }, [dataQuery]);
+  }, [user]);
+
   useEffect(() => {
     if (userID !== undefined) {
-      setCohortSession({
-        selectedProgramSlug: '/choose-program',
-      });
+      setCohortSession(null);
     }
   }, [userID]);
 
@@ -372,6 +376,9 @@ function chooseProgram() {
         const { data: refetchData } = await refetch();
 
         setDataQuery(refetchData.data);
+
+        const cohorts = refetchData.data;
+        if (cohorts) setMyCohorts(cohorts.map(parseCohort));
 
         const invList = [...invites];
         invList.splice(invitationIndex, 1);
@@ -642,7 +649,7 @@ function chooseProgram() {
               ))}
             </Box>
           )}
-          {isLoading && dataQuery?.cohorts?.length > 0 && (
+          {isLoading && myCohorts.length > 0 && (
             <Box
               display="grid"
               mt="1rem"
