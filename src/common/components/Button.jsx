@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-function Button({ to, onClick, children, variant = 'inactive', ...rest }) {
+function Button({ to, onClick, children, variant = 'primary', disabled = false, ...rest }) {
   console.log('Variant', variant);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -22,10 +22,11 @@ function Button({ to, onClick, children, variant = 'inactive', ...rest }) {
 
   const variants = {
     primary: {
-      inactive: { background: 'gray.300', color: 'gray.700' },
-      active: { background: 'blue.light', color: 'black' },
-      hover: { background: 'blue.600', color: 'white' },
-      disabled: { background: 'gray.100', color: 'gray.400', cursor: 'not_allowed' },
+      background: '#0097CF',
+      color: 'white',
+      hover: { background: '#02A9EA', color: 'white' },
+      disabled: { background: '#DADADA', color: 'white', cursor: 'not-allowed' },
+      active: { background: '#0084FF', color: 'white' },
     },
   };
 
@@ -36,8 +37,11 @@ function Button({ to, onClick, children, variant = 'inactive', ...rest }) {
       isLoading={isLoading}
       onClick={clickHandler}
       _hover={customStyles.hover}
+      _active={customStyles.active}
+      _disabled={customStyles.disabled}
       backgroundColor={customStyles.background}
       color={customStyles.color}
+      isDisabled={disabled}
       {...rest}
     >
       {children}
@@ -50,11 +54,13 @@ Button.propTypes = {
   onClick: PropTypes.func,
   children: PropTypes.node.isRequired,
   variant: PropTypes.oneOf(['inactive', 'active', 'hover', 'disabled']),
+  disabled: PropTypes.bool,
 };
 Button.defaultProps = {
   to: '',
   onClick: () => {},
-  variant: 'inactive',
+  variant: 'primary',
+  disabled: false,
 };
 
 export default Button;

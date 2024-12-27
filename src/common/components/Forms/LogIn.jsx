@@ -158,6 +158,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     />
                     <InputRightElement width="2.5rem" top="5px" right="10px">
                       <Button
+                        variant="unstyled"
                         background="transparent"
                         width="100%"
                         height="100%"
@@ -197,7 +198,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {t('login:forgot-password')}
               </Link>
             </Flex>
-            <Button variant="primary" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
+            <Button variant="primary" isDisabled={isSubmitting} fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
               {t('login:login')}
             </Button>
           </Stack>
