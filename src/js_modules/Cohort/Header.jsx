@@ -165,7 +165,9 @@ function Header() {
           borderRadius="30px"
         />
       )}
-      <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} />
+      {cohortSession && cohortSession.cohort_role !== 'STUDENT' && (
+        <StudentsModal isOpen={showStudentsModal} onClose={() => setShowStudentsModal(false)} />
+      )}
     </Container>
   );
 }
