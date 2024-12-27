@@ -419,7 +419,7 @@ function decodeBase64(encoded) {
   return decoded;
 }
 
-const languageFix = (text, lan) => text[lan] || text.us || text;
+const languageFix = (text, lan) => text?.[lan] || text?.us || text;
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
