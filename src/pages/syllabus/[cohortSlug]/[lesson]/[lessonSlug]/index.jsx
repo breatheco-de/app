@@ -428,7 +428,7 @@ function SyllabusContent() {
           currentTranslationSlug = `${lessonSlug}-${language}`;
         }
         Promise.all([
-          assetTypeValues[lesson] !== 'QUIZ' && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
           axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
         ])
           .then(([respMarkdown, respData]) => {
@@ -1040,7 +1040,7 @@ function SyllabusContent() {
                           />
                         )}
 
-                        {isQuiz && quizSlug ? (
+                        {isQuiz ? (
                           <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                             <iframe
                               id="iframe"
