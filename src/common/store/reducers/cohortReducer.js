@@ -1,7 +1,6 @@
 import {
   SET_MY_COHORTS,
   SET_COHORT_SESSION,
-  SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
   SET_COHORTS_ASSIGNMENTS,
@@ -11,7 +10,6 @@ const initialState = {
   myCohorts: [],
   cohortSession: null,
   cohortsAssignments: {},
-  sortedAssignments: [],
   taskCohortNull: [],
   userCapabilities: [],
 };
@@ -30,13 +28,6 @@ const cohortHandlerReducer = (state = initialState, action) => {
       return {
         ...state,
         cohortSession,
-      };
-    }
-    case SET_SORTED_ASSIGNMENTS: {
-      const { sortedAssignments } = action.payload;
-      return {
-        ...state,
-        sortedAssignments,
       };
     }
     case SET_TASK_COHORT_NULL: {

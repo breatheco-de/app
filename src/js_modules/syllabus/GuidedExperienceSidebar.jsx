@@ -26,8 +26,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const { mainCohortSlug } = router.query;
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
-  const { state } = useCohortHandler();
-  const { cohortSession, sortedAssignments, myCohorts } = state;
+  const { cohortSession, sortedAssignments, myCohorts } = useCohortHandler();
   const { hexColor, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 

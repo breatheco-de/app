@@ -8,7 +8,6 @@ import { reportDatalayer } from '../../utils/requests';
 import { languageFix } from '../../utils';
 import Text from '../../common/components/Text';
 import Module from './module';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import Icon from '../../common/components/Icon';
 
@@ -18,8 +17,7 @@ function ModuleMap({
   showPendingTasks, searchValue, existsActivities,
 }) {
   const { t, lang } = useTranslation('dashboard');
-  const { startDay } = useModuleHandler();
-  const { state } = useCohortHandler();
+  const { state, startDay } = useCohortHandler();
   const { taskCohortNull } = state;
   const commonBorderColor = useColorModeValue('gray.200', 'gray.900');
   const currentModules = showPendingTasks ? filteredContentByPending : filteredContent;
@@ -42,6 +40,7 @@ function ModuleMap({
       },
     });
     startDay({
+      cohort: cohortData,
       newTasks: updatedTasks,
     });
   };

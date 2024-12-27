@@ -56,6 +56,11 @@ function Feedback({ storyConfig }) {
     setIsOpen(true);
   };
 
+  useEffect(() => {
+    console.log('isOpen');
+    console.log(isOpen);
+  }, [isOpen]);
+
   const getCodeRevisions = async () => {
     try {
       if (isConnectedWithGithub) {

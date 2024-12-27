@@ -17,7 +17,6 @@ import LoaderScreen from '../LoaderScreen';
 import ReviewCodeRevision from './ReviewCodeRevision';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import PopoverTaskHandler from '../PopoverTaskHandler';
-import useModuleHandler from '../../hooks/useModuleHandler';
 import iconDict from '../../utils/iconDict.json';
 import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
@@ -53,8 +52,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     isApprovingOrRejecting: false,
   });
   const [comment, setComment] = useState('');
-  const { updateAssignment } = useModuleHandler();
-  const { state } = useCohortHandler();
+  const { updateAssignment, state } = useCohortHandler();
   const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);

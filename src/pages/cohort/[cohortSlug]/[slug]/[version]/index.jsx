@@ -52,7 +52,6 @@ import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
 import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
@@ -84,13 +83,13 @@ function Dashboard() {
   const [allSubscriptions, setAllSubscriptions] = useState(null);
   const [isAvailableToShowWarningModal, setIsAvailableToShowModalMessage] = useState(false);
   const [showMandatoryModal, setShowMandatoryModal] = useState(false);
-  const { cohortProgram, taskTodo, setTaskTodo } = useModuleHandler();
   const {
-    state, getCohortAssignments, getCohortData, prepareTasks, getDailyModuleData,
-    getMandatoryProjects, getTasksWithoutCohort, setSortedAssignments, getLastDoneTaskModuleData,
+    state, getCohortUserCapabilities, getCohortData, getDailyModuleData,
+    getMandatoryProjects, getTasksWithoutCohort, setCohortSession,
+    cohortProgram, taskTodo, addTasks, sortedAssignments,
   } = useCohortHandler();
 
-  const { cohortSession, sortedAssignments, taskCohortNull, myCohorts, cohortsAssignments } = state;
+  const { cohortSession, taskCohortNull, myCohorts, cohortsAssignments } = state;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -101,7 +100,7 @@ function Dashboard() {
 
   const academyOwner = cohortProgram?.academy_owner;
 
-  const { cohortSlug, slug } = router.query;
+  const { cohortSlug } = router.query;
 
   const prefersReducedMotion = usePrefersReducedMotion();
   const slideLeft = keyframes`
@@ -145,12 +144,9 @@ function Dashboard() {
       id: task.id,
       cohort: cohortSession.id,
     }));
-    await bc.todo({}).updateBulk(tasksToUpdate)
+    await bc.todo().updateBulk(tasksToUpdate)
       .then(({ data }) => {
-        setTaskTodo([
-          ...taskTodo,
-          ...data,
-        ]);
+        addTasks(data, cohortSession);
         setModalIsOpen(false);
       })
       .catch(() => {
@@ -386,9 +382,9 @@ function Dashboard() {
         const { data } = await bc.certificate().get();
         setCertificates(data);
       }
-      // Fetch cohort assignments (lesson, exercise, project, quiz)
-      await getCohortAssignments({
-        slug, cohort,
+
+      await getCohortUserCapabilities({
+        cohort,
       });
     } finally {
       setIsLoadingAssigments(false);
@@ -401,6 +397,13 @@ function Dashboard() {
       getUserData();
     }
   }, [isAuthenticated]);
+
+  // eslint-disable-next-line arrow-body-style
+  useEffect(() => {
+    return () => {
+      setCohortSession(null);
+    };
+  }, []);
 
   // Students and Teachers data
   useEffect(() => {
@@ -443,11 +446,6 @@ function Dashboard() {
   useEffect(() => {
     getTasksWithoutCohort({ setModalIsOpen });
   }, [sortedAssignments]);
-
-  // Sort all data fetched in order of taskTodo
-  useEffect(() => {
-    prepareTasks();
-  }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
   // const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
@@ -540,9 +538,6 @@ function Dashboard() {
               display="flex"
               flexDirection="row"
               alignItems="center"
-              onClick={() => {
-                setSortedAssignments([]);
-              }}
               fontWeight="700"
               gridGap="12px"
               color="#0097CF"
@@ -824,10 +819,10 @@ function Dashboard() {
                     >
                       {sortedAssignments && sortedAssignments.length >= 1 && !isLoadingAssigments && grantAccess ? (
                         <>
-                          {sortedAssignmentsSearched.map((assignment, i) => {
+                          {sortedAssignmentsSearched.map((module, i) => {
                             const {
                               label, description, filteredContent, exists_activities: existsActivities, content, filteredContentByPending,
-                            } = assignment;
+                            } = module;
 
                             const filteredModulesSearched = searchValue && searchValue.length > 0
                               ? filteredContent.filter(

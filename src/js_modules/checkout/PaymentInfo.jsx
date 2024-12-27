@@ -14,7 +14,6 @@ import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
@@ -36,9 +35,7 @@ function PaymentInfo() {
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
-  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
-  const { sortedAssignments } = cohortState;
-  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const { cohortsAssignments, getCohortsModules, startDay, setCohortSession } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -63,11 +60,14 @@ function PaymentInfo() {
 
   const openSyllabusAndRedirect = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
-    const firstAssigmentSlug = sortedAssignments[0].content[0].slug;
-    const firstAssigmentType = sortedAssignments[0].content[0].type.toLowerCase();
+
+    const modules = cohortsAssignments[cohortFound.slug]?.modules;
+
+    const firstAssigmentSlug = modules[0].content[0].slug;
+    const firstAssigmentType = modules[0].content[0].type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
-    const updatedTasks = (sortedAssignments[0].content || [])?.map((l) => ({
+    const updatedTasks = (modules[0].content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
@@ -83,6 +83,7 @@ function PaymentInfo() {
       },
     });
     startDay({
+      cohort: cohortFound,
       newTasks: updatedTasks,
     });
 
@@ -105,7 +106,7 @@ function PaymentInfo() {
       selectedProgramSlug: cohortDashboardLink,
     });
 
-    if (!sortedAssignments.length > 0) {
+    if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);
       return;
     }
@@ -114,23 +115,19 @@ function PaymentInfo() {
   };
 
   useEffect(() => {
-    if (!(sortedAssignments.length > 0)) return undefined;
+    if (!cohortFound || (cohortFound.micro_cohorts.length === 0 && !(cohortFound.slug in cohortsAssignments))) return undefined;
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [sortedAssignments]);
+  }, [cohortsAssignments, cohortFound]);
 
   useEffect(() => {
-    prepareTasks();
-  }, [taskTodo, cohortProgram]);
-
-  useEffect(() => {
-    getCohortAssignments(
-      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
-    );
+    if (cohortFound?.micro_cohorts.length === 0) {
+      getCohortsModules([cohortFound]);
+    }
   }, [updatedUser]);
 
   useEffect(() => {

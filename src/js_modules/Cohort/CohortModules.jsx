@@ -19,7 +19,6 @@ import { format } from 'date-fns';
 import { es, en } from 'date-fns/locale';
 import { useReward } from 'react-rewards';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import ShareButton from '../../common/components/ShareButton';
@@ -48,8 +47,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   const router = useRouter();
   const { backgroundColor, hexColor } = useStyle();
   const { colorMode } = useColorMode();
-  const { startDay } = useModuleHandler();
-  const { serializeModulesMap, cohortsAssignments, setCohortsAssingments } = useCohortHandler();
+  const { serializeModulesMap, startDay, cohortsAssignments, setCohortsAssingments } = useCohortHandler();
 
   const cohortColor = cohort.color || hexColor.blueDefault;
   const isGraduated = !!certificate;
@@ -116,7 +114,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
   }, [modulesProgress]);
 
   const updateMicroCohortModules = (tasks) => {
-    const cohortModulesUpdated = serializeModulesMap(cohortsAssignments[cohort.slug].syllabusJson, tasks);
+    const cohortModulesUpdated = serializeModulesMap(cohortsAssignments[cohort.slug].syllabus.json.days, tasks);
     const allMicroCohortAssignments = {
       ...cohortsAssignments,
       [cohort.slug]: {
@@ -141,7 +139,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
       }));
 
       setLoadingStartCourse(true);
-      await startDay({ newTasks, customHandler: updateMicroCohortModules, updateContext: false });
+      await startDay({ newTasks, cohort });
       setLoadingStartCourse(false);
     } catch (e) {
       console.log(e);
@@ -204,7 +202,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
         }));
 
         setLoadingModule(module.id);
-        await startDay({ newTasks, customHandler: updateMicroCohortModules, updateContext: false });
+        await startDay({ newTasks, cohort });
         setLoadingModule(null);
       }
 

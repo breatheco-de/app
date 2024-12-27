@@ -53,11 +53,6 @@ function SyllabusContent() {
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
   const {
-    taskTodo,
-    cohortProgram,
-    setTaskTodo,
-    startDay,
-    updateAssignment,
     setCurrentTask,
     currentTask,
     nextModule,
@@ -97,9 +92,9 @@ function SyllabusContent() {
   const [learnpackStart, setLearnpackStart] = useState(false);
   const taskIsNotDone = currentTask && currentTask.task_status !== 'DONE';
   const {
-    getCohortAssignments, getCohortData, prepareTasks, state, setCohortSession, setSortedAssignments,
+    getCohortUserCapabilities, getCohortData, cohortSession, sortedAssignments, setCohortSession, taskTodo,
+    updateAssignment, startDay, updateTask,
   } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
   // const isAvailableAsSaas = false;
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
@@ -187,6 +182,7 @@ function SyllabusContent() {
     };
     if (user?.id) {
       await startDay({
+        cohort: cohortSession,
         newTasks: updatedTasks,
         customHandler,
       });
@@ -197,7 +193,7 @@ function SyllabusContent() {
     const cohort = await getCohortData({
       cohortSlug,
     });
-    getCohortAssignments({
+    getCohortUserCapabilities({
       cohort,
     });
   };
@@ -214,8 +210,11 @@ function SyllabusContent() {
       if (result.data) {
         const updateTasks = taskTodo.map((task) => ({ ...task }));
         const index = updateTasks.findIndex((el) => el.task_type === assetTypeValues[lesson] && el.associated_slug === lessonSlug);
-        updateTasks[index].opened_at = result.data.opened_at;
-        setTaskTodo([...updateTasks]);
+        const updatedTask = {
+          ...updateTasks[index],
+          opened_at: result.data.opened_at,
+        };
+        updateTask(updatedTask, cohortSession);
       }
     } catch (e) {
       log('update_task_error:', e);
@@ -257,7 +256,6 @@ function SyllabusContent() {
   useEffect(() => {
     return () => {
       setCohortSession(null);
-      setSortedAssignments([]);
     };
   }, []);
 
@@ -467,8 +465,6 @@ function SyllabusContent() {
     }
     return () => {
       cleanCurrentData();
-      // setCohortSession(null);
-      // setSortedAssignments([]);
       setUserSession({
         translations: [],
       });
@@ -502,10 +498,6 @@ function SyllabusContent() {
       setExtendedInstructions(markdown);
     }
   }, [selectedSyllabus]);
-
-  useEffect(() => {
-    prepareTasks();
-  }, [cohortProgram, taskTodo, router]);
 
   const teacherActions = professionalRoles.includes(cohortSession?.cohort_role)
     ? [

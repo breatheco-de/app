@@ -17,8 +17,7 @@ function TimelineSidebar({
   isOpen, onToggle, isStudent, teacherInstructions,
 }) {
   const { t } = useTranslation('syllabus');
-  const { state } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { cohortSession, sortedAssignments } = useCohortHandler();
   const Open = !isOpen;
   const slide = getSlideProps(Open);
   const {
