@@ -262,7 +262,7 @@ function CohortModules({ cohort, modules, mainCohort, certificate, openByDefault
       <AccordionItem background={colorVariations[colorMode].mode5} borderRadius="8px" padding="16px" border={`1px solid ${cohortColor}`}>
         {({ isExpanded }) => (
           <>
-            <AccordionButton ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
+            <AccordionButton as="div" ref={containerRef} position="relative" cursor={cohortProgress?.isCohortStarted ? 'pointer' : 'auto'} _hover={{ background: 'none' }} padding="0" flexDirection="column" alignItems="flex-start" gap="9px">
               <Box display="flex" justifyContent="space-between" width="100%" gap="10px">
                 <Box display="flex" textAlign="left" gap="10px" alignItems="center" width="100%">
                   <Box display="flex" gap="10px" alignItems="center" minWidth="fit-content">
