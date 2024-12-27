@@ -1046,7 +1046,7 @@ function SyllabusContent() {
                           />
                         )}
 
-                        {isQuiz && quizSlug ? (
+                        {isQuiz ? (
                           <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                             <iframe
                               id="iframe"
