@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button as ChakraButton, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
+import Button from './Button';
 
 export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
   const { t, lang } = useTranslation('signup');
@@ -43,9 +44,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       border: hexColor.lightColor,
       featuredFontColor: featuredCard.blueDark,
       button: {
-        variant: 'default',
-        color: '#fff',
-        background: hexColor.blueDefault,
+        variant: 'primary',
         title: item.button,
       },
     },
@@ -63,10 +62,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       border: hexColor.lightColor,
       featuredFontColor: fontColor,
       button: {
-        variant: 'default',
-        color: 'white',
-        borderColor: 'blue.default',
-        background: 'blue.default',
+        variant: 'primary',
         title: t('pricing.basic-plan.button-title'),
       },
     },
@@ -274,7 +270,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Text>
           ) : (
             <>
-              <Button isLoading={isFetching} margin={isBootcampType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="0 24px">
+              {console.log('button', viewProps.button)}
+              <Button isLoading={isFetching} {...viewProps.button} margin={isBootcampType ? '16px auto auto' : '0 auto'} onClick={handlePlan} display="flex" gridGap="10px" fontSize="17px" width="100%" textAlign="center" padding="0 24px">
                 {!isOriginalPlan && !isBootcampType && (
                   <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />
                 )}
@@ -311,7 +308,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                 <AccordionPanel p={0} border={0}>
                   {item?.optionList.map(
                     (financing, i) => (
-                      <Button
+                      <ChakraButton
                         key={financing?.plan_id}
                         width="100%"
                         borderBottom={i === item.optionList.length - 1 ? '0' : '1px solid'}
@@ -331,7 +328,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                         }}
                       >
                         {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
-                      </Button>
+                      </ChakraButton>
                     ),
                   )}
                 </AccordionPanel>

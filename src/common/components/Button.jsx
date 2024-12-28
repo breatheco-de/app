@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 function Button({ to, onClick, children, variant = 'primary', disabled = false, ...rest }) {
-  console.log('Variant', variant);
+  // console.log('Variant', variant);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const existsHash = to.includes('#');
