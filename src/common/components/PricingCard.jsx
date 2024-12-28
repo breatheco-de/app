@@ -270,7 +270,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Text>
           ) : (
             <>
-              {console.log('button', viewProps.button)}
               <Button isLoading={isFetching} {...viewProps.button} margin={isBootcampType ? '16px auto auto' : '0 auto'} onClick={handlePlan} display="flex" gridGap="10px" fontSize="17px" width="100%" textAlign="center" padding="0 24px">
                 {!isOriginalPlan && !isBootcampType && (
                   <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />

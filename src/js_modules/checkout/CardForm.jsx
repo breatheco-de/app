@@ -4,7 +4,7 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, Divider, Flex, Image, Input, useColorModeValue,
+  Box, Button as ChakraButton, Divider, Flex, Image, Input, useColorModeValue,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import FieldForm from '../../common/components/Forms/FieldForm';
@@ -14,6 +14,7 @@ import useStyle from '../../common/hooks/useStyle';
 import ModalCardError from './ModalCardError';
 import Icon from '../../common/components/Icon';
 import Text from '../../common/components/Text';
+import Button from '../../common/components/Button';
 
 const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   const { t } = useTranslation('signup');
@@ -186,7 +187,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                 <Button
                   type="submit"
                   width="100%"
-                  variant="default"
+                  variant="primary"
                   isLoading={isSubmittingPayment}
                   height="40px"
                   mt="0"
@@ -194,7 +195,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                   {t('common:proceed-to-payment')}
                 </Button>
               ) : (
-                <Button
+                <ChakraButton
                   type="submit"
                   width="100%"
                   variant="outline"
@@ -208,7 +209,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                   mt="0"
                 >
                   {t('common:start-free-trial')}
-                </Button>
+                </ChakraButton>
               )}
             </Form>
           )}

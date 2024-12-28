@@ -1,12 +1,12 @@
 /* eslint-disable react/jsx-no-useless-fragment */
-import { Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import profileHandlers from './handlers';
+import Button from '../../../common/components/Button';
 
 function ButtonHandler({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
+  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions,
 }) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -51,9 +51,6 @@ function ButtonHandler({
         text: t('subscription.upgrade'),
         style: {
           variant: 'outline',
-          color: 'blue.default',
-          borderColor: 'currentColor',
-          fontWeight: 700,
         },
       };
     }
@@ -122,10 +119,10 @@ function ButtonHandler({
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
-          color="blue.default"
-          margin="auto 0 0 0"
+          // variant='outline'
+          // margin="auto 0 0 0"
           {...buttonProps.style}
-          {...restStyles}
+          // {...restStyles}
         >
           {children || buttonProps.text}
         </Button>
