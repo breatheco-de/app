@@ -28,6 +28,22 @@ function Button({ to, onClick, children, variant = 'primary', disabled = false, 
       disabled: { background: '#DADADA', color: 'white', cursor: 'not-allowed' },
       active: { background: '#0084FF', color: 'white' },
     },
+    success: {
+      background: '#25BF6C',
+      color: 'white',
+      hover: { background: '#2CE883', color: 'white' },
+      disabled: { background: '#A9A9A9', color: 'white', cursor: 'not-allowed' },
+      active: { background: '#06AB52', color: 'white' },
+    },
+    outline: {
+      background: '#FFFFFF',
+      color: '#0097CF',
+      borderColor: '#0097CF',
+      hover: { background: '#EEF9FE', color: '#02A9EA', borderColor: '#02A9EA' },
+      disabled: { background: '#F9F9F9', color: '#DADADA', borderColor: '#F9F9F9', cursor: 'not-allowed' },
+      active: { background: '#EEF9FE', color: '#0084FF', borderColor: '#0084FF' },
+    },
+    unstyled: {},
   };
 
   const customStyles = variants[variant] || {};
@@ -41,7 +57,10 @@ function Button({ to, onClick, children, variant = 'primary', disabled = false, 
       _disabled={customStyles.disabled}
       backgroundColor={customStyles.background}
       color={customStyles.color}
+      border={variant === 'outline' ? '1px solid' : undefined}
+      borderColor={customStyles.borderColor}
       isDisabled={disabled}
+      variant={variant === 'unstyled' ? 'unstyled' : undefined}
       {...rest}
     >
       {children}
@@ -53,7 +72,7 @@ Button.propTypes = {
   to: PropTypes.string,
   onClick: PropTypes.func,
   children: PropTypes.node.isRequired,
-  variant: PropTypes.oneOf(['inactive', 'active', 'hover', 'disabled']),
+  variant: PropTypes.oneOf(['primary', 'success', 'outline', 'unstyled']),
   disabled: PropTypes.bool,
 };
 Button.defaultProps = {
