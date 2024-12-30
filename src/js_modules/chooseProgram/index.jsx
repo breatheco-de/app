@@ -28,15 +28,13 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
   const cardColumnSize = 'repeat(auto-fill, minmax(17rem, 1fr))';
 
   const finishedCohorts = handlers.getCohortsFinished(chooseList);
-  const activeCohorts = handlers.getActiveCohorts(chooseList).map((item) => {
-    const cohort = item?.cohort;
+  const activeCohorts = handlers.getActiveCohorts(chooseList).map((cohort) => {
+    const { cohort_user: cohortUser } = cohort;
     const currentCohortProps = programsList[cohort.slug];
     return ({
-      ...item,
-      cohort: {
-        ...cohort,
-        available_as_saas: item?.role === 'TEACHER' ? false : cohort?.available_as_saas,
-      },
+      ...cohort,
+      available_as_saas: cohortUser?.role === 'TEACHER' ? false : cohort.available_as_saas,
+      cohort_user: { ...cohortUser },
       subscription: currentCohortProps?.subscription,
       plan_financing: currentCohortProps?.plan_financing,
       all_subscriptions: currentCohortProps?.all_subscriptions,
@@ -44,11 +42,11 @@ function ChooseProgram({ chooseList, handleChoose, setLateModalProps }) {
     });
   });
 
-  const hasNonSaasCourse = chooseList.some(({ cohort }) => !cohort.available_as_saas);
+  const hasNonSaasCourse = chooseList.some((cohort) => !cohort.available_as_saas);
 
   const marketingCourses = marketingCursesList.filter(
     (item) => !activeCohorts.some(
-      ({ cohort }) => cohort.slug === item?.cohort?.slug,
+      (cohort) => cohort.slug === item?.cohort?.slug,
     ) && item?.course_translation?.title,
   );
 

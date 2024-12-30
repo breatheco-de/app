@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable react/jsx-no-useless-fragment */
 import { Box, Divider, Tag, TagLabel } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -26,7 +27,7 @@ function MainEvent({
   const liveStartsAtDate = new Date(event?.starting_at);
   const liveEndsAtDate = new Date(event?.ended_at || event?.ending_at);
 
-  const isTeacher = cohorts.some(({ cohort, role }) => cohort.slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(role));
+  const isTeacher = cohorts.some(({ slug, cohort_user }) => slug === event.cohort?.slug && ['TEACHER', 'ASSISTANT'].includes(cohort_user.role));
   const joinMessage = () => (isTeacher ? t('start-class') : event?.cohort?.name);
 
   return (

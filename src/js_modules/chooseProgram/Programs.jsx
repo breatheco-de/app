@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { subMinutes } from 'date-fns';
@@ -11,7 +12,7 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
   const { setCohortSession } = useCohortHandler();
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
-  const { cohort, ...cohortUser } = item;
+  const { cohort_user: cohortUser, ...cohort } = item;
   const signInDate = item.created_at;
   const { version, slug } = cohort.syllabus_version;
   const currentCohortProps = programsList[cohort.slug];
@@ -97,8 +98,8 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       // isBought={!isFreeTrial}
       isLoadingPageContent={isLoadingPageContent}
       isLoading={currentCohortProps === undefined}
-      startsIn={item?.cohort?.kickoff_date}
-      endsAt={item?.cohort?.ending_date}
+      startsIn={item?.kickoff_date}
+      endsAt={item?.ending_date}
       signInDate={signInDate}
       icon="coding"
       subscription={subscription || {}}
