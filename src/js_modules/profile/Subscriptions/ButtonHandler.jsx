@@ -6,7 +6,7 @@ import profileHandlers from './handlers';
 import Button from '../../../common/components/Button';
 
 function ButtonHandler({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions,
+  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, variant, disabled,
 }) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -119,9 +119,10 @@ function ButtonHandler({
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
-          // variant='outline'
-          // margin="auto 0 0 0"
+          variant={variant ?? buttonProps.style?.variant}
+          disabled={disabled}
           {...buttonProps.style}
+          // margin="auto 0 0 0"
           // {...restStyles}
         >
           {children || buttonProps.text}
@@ -139,6 +140,8 @@ ButtonHandler.propTypes = {
   restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   children: PropTypes.node,
   allSubscriptions: PropTypes.arrayOf(PropTypes.objectOf([PropTypes.any])),
+  variant: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 ButtonHandler.defaultProps = {
@@ -149,6 +152,8 @@ ButtonHandler.defaultProps = {
   restStyles: {},
   children: null,
   allSubscriptions: [],
+  variant: 'primary',
+  disabled: false,
 };
 
 export default ButtonHandler;
