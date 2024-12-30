@@ -262,19 +262,19 @@ function CoursePage({ data, syllabus }) {
 
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
-  const getAlternativeTranslation = (slug, options = {}) => {
+  const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
     const result = keys.reduce((acc, key) => {
       if (acc && acc[key] !== undefined) return acc[key];
       return null;
     }, data?.course_translation?.landing_variables);
 
-    return result !== null ? result : t(slug, {}, options);
+    return result !== null ? result : t(slug, params, options);
   };
 
-  const faqList = getAlternativeTranslation('faq', { returnObjects: true }) || [];
-  const features = getAlternativeTranslation('features', { returnObjects: true }) || {};
-  const featuredBullets = getAlternativeTranslation('featured-bullets', { returnObjects: true }) || [];
+  const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
+  const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
+  const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
 
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
@@ -503,11 +503,6 @@ function CoursePage({ data, syllabus }) {
   useEffect(() => {
     getInitialData();
   }, [lang, pathname]);
-
-  useEffect(() => {
-    console.log('planData');
-    console.log(planData);
-  }, [planData]);
 
   useEffect(() => {
     if (isAuthenticated) {
