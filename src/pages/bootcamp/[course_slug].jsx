@@ -289,10 +289,12 @@ function CoursePage({ data, syllabus }) {
         ? syllabus.json.days
           .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
         : '';
+
       const context = `
         description: ${data.course_translation?.description}
         ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
         plans: ${plansContext}
+        payment-methods: ${getAlternativeTranslation('rigobot.payment-methods')},
       `;
 
       rigo.updateOptions({
