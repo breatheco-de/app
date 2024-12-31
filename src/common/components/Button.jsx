@@ -3,19 +3,20 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-function Button({ to, onClick, children, variant = 'primary', disabled = false, ...rest }) {
-  // console.log('Variant', variant);
+function Button({ to, onClick, children, variant = 'primary', disabled = false, hasLoading = true, ...rest }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const existsHash = to.includes('#');
   const clickHandler = () => {
-    if (!existsHash) {
+    if (!existsHash && hasLoading) {
       setIsLoading(true);
     }
     if (to) {
       router.push(to);
     } else {
-      setIsLoading(true);
+      if (hasLoading) {
+        setIsLoading(true);
+      }
       onClick();
     }
   };
@@ -42,6 +43,13 @@ function Button({ to, onClick, children, variant = 'primary', disabled = false, 
       hover: { background: '#EEF9FE', color: '#02A9EA', borderColor: '#02A9EA' },
       disabled: { background: '#F9F9F9', color: '#DADADA', borderColor: '#F9F9F9', cursor: 'not-allowed' },
       active: { background: '#EEF9FE', color: '#0084FF', borderColor: '#0084FF' },
+    },
+    ghost: {
+      background: 'transparent',
+      color: '#0097CF',
+      hover: { background: '#FFFFFF', color: '#02A9EA' },
+      disabled: { background: 'transparent', color: '#DADADA', cursor: 'not-allowed' },
+      active: { background: '#EEF9FE', color: '#0084FF' },
     },
     unstyled: {},
   };
@@ -72,14 +80,16 @@ Button.propTypes = {
   to: PropTypes.string,
   onClick: PropTypes.func,
   children: PropTypes.node.isRequired,
-  variant: PropTypes.oneOf(['primary', 'success', 'outline', 'unstyled']),
+  variant: PropTypes.oneOf(['primary', 'success', 'outline', 'ghost', 'unstyled']),
   disabled: PropTypes.bool,
+  hasLoading: PropTypes.bool,
 };
 Button.defaultProps = {
   to: '',
   onClick: () => {},
   variant: 'primary',
   disabled: false,
+  hasLoading: true,
 };
 
 export default Button;
