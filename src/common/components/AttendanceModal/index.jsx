@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import {
-  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
+  Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button as ChakraButton, Box,
   NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
   FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
   useColorMode, useToast, Select, ModalCloseButton,
@@ -15,6 +15,7 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
+import Button from '../Button';
 
 function AttendanceModal({
   title, message, isOpen, onClose, students,
@@ -310,9 +311,9 @@ function AttendanceModal({
               })}
             </Grid>
           </Box>
-          <Button variant="link" fontSize="13px" fontWeight={400} onClick={() => setChecked(students.map((l) => String(l?.user?.id)))}>
+          <ChakraButton variant="link" fontSize="13px" fontWeight={400} onClick={() => setChecked(students.map((l) => String(l?.user?.id)))}>
             {t('common:select-all')}
-          </Button>
+          </ChakraButton>
         </ModalBody>
         <ModalFooter justifyContent="space-between">
           <Text
@@ -328,9 +329,9 @@ function AttendanceModal({
             textTransform="uppercase"
             fontSize="13px"
             isDisabled={checked.length < 1 || isLoading}
-            variant="default"
+            variant="primary"
             onClick={handleAttendance}
-            rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
+            rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'disable' : 'primary'} />}
           >
             {t('attendance-modal.apply-changes')}
           </Button>
@@ -381,12 +382,12 @@ function AttendanceModal({
                 minWidth="173.4px"
                 textTransform="uppercase"
                 fontSize="13px"
-                variant="default"
+                variant="primary"
                 onClick={() => {
                   setOpenAttendanceTakenWarn(false);
                   updateCohortDay();
                 }}
-                rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'black' : 'white'} />}
+                rightIcon={<Icon icon="longArrowRight" width="15px" color={checked.length < 1 ? 'disabled' : 'primary'} />}
               >
                 {t('attendance-modal.apply-changes')}
               </Button>
