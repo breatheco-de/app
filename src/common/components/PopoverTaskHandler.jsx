@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
+import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button as ChakraButton, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
+import Button from './Button';
 
 export function textByTaskStatus(currentTask, isGuidedExperience) {
   const { t } = useTranslation('dashboard');
@@ -243,7 +244,7 @@ function PopoverCustomContent({
               {t('deliverProject.no-delivery-needed')}
             </Text>
 
-            <Button
+            <ChakraButton
               width="fit-content"
               onClick={() => {
                 sendProject({ task: currentTask, taskStatus: 'DONE' });
@@ -253,7 +254,7 @@ function PopoverCustomContent({
               type="submit"
             >
               {t('deliverProject.handler-text')}
-            </Button>
+            </ChakraButton>
           </Box>
         ) : (
           <>
@@ -324,12 +325,11 @@ function PopoverCustomContent({
                       </Text>
                     </Checkbox>
                     <Button
-                      // mt={4}
+                      variant="primary"
                       width="fit-content"
-                      colorScheme="blue"
                       isLoading={isSubmitting}
                       type="submit"
-                      isDisabled={!acceptTC}
+                      disabled={!acceptTC}
                     >
                       {t('deliverProject.handler-text')}
                     </Button>
@@ -438,7 +438,7 @@ function PopoverCustomContent({
                   </>
                 )}
                 <Box display="flex" justifyContent="space-evenly" mb="6px">
-                  <Button
+                  <ChakraButton
                     variant="default"
                     onClick={() => handleUploadFile()}
                     isLoading={isUploading}
@@ -446,10 +446,10 @@ function PopoverCustomContent({
                     textTransform="uppercase"
                   >
                     {t('common:upload')}
-                  </Button>
-                  <Button variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
+                  </ChakraButton>
+                  <ChakraButton variant="link" textTransform="uppercase" onClick={() => handleCloseFile()}>
                     {t('common:cancel')}
-                  </Button>
+                  </ChakraButton>
                 </Box>
               </Box>
             )}
@@ -496,7 +496,7 @@ function PopoverTaskHandler({
       >
         <PopoverTrigger>
           <Tooltip label={textAndIcon.text} placement="top">
-            <Button
+            <ChakraButton
               display="flex"
               isLoading={isLoading}
               isDisabled={isButtonDisabled}
@@ -510,7 +510,7 @@ function PopoverTaskHandler({
               onClick={() => toggleSettings()}
             >
               <Icon {...textAndIcon.icon} />
-            </Button>
+            </ChakraButton>
           </Tooltip>
         </PopoverTrigger>
 
@@ -537,10 +537,12 @@ function PopoverTaskHandler({
     >
 
       <PopoverTrigger>
-        <Button
+        <ChakraButton
           display="flex"
           isLoading={isLoading}
           variant={allowText ? 'default' : 'none'}
+          _hover={{ background: '#02A9EA', color: 'white' }}
+          _active={{ background: '#0084FF', color: 'white' }}
           isDisabled={isButtonDisabled}
           minWidth="26px"
           minHeight="26px"
@@ -566,7 +568,7 @@ function PopoverTaskHandler({
               )}
             </>
           )}
-        </Button>
+        </ChakraButton>
       </PopoverTrigger>
 
       <PopoverCustomContent
