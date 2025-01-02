@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
+  FormControl, Button as ChakraButton, Stack, Text, Box, Input, FormErrorMessage,
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
@@ -13,6 +13,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
+import Button from '../Button';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
@@ -66,7 +67,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       {({ isSubmitting }) => (
         <Form>
           <Stack spacing={6} justifyContent="space-between">
-            <Button
+            <ChakraButton
               as="a"
               href={githubLoginUrl}
               cursor="pointer"
@@ -86,7 +87,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
               <Text fontSize="13px" marginLeft="10px" textTransform="uppercase">
                 {t('login:login-with-github')}
               </Text>
-            </Button>
+            </ChakraButton>
             <Box display="flex" justifyContent="center" width="100%">
               <Box
                 borderBottom="solid 1px"
@@ -157,6 +158,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     />
                     <InputRightElement width="2.5rem" top="5px" right="10px">
                       <Button
+                        variant="unstyled"
                         background="transparent"
                         width="100%"
                         height="100%"
@@ -196,7 +198,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 {t('login:forgot-password')}
               </Link>
             </Flex>
-            <Button variant="default" fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
+            <Button variant="primary" disabled={isSubmitting} fontSize={actionfontSize || 'l'} isLoading={isSubmitting} type="submit">
               {t('login:login')}
             </Button>
           </Stack>

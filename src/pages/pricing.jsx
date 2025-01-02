@@ -1,4 +1,4 @@
-import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
+import { Box, Flex, Container, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
@@ -20,6 +20,7 @@ import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
+import Button from '../common/components/Button';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -471,7 +472,7 @@ function PricingView() {
               {t('decided.description')}
             </Text>
             <Button
-              variant="default"
+              variant="primary"
               onClick={() => {
                 if (isWindow) {
                   const langPath = lang === 'en' ? '' : `/${lang}`;

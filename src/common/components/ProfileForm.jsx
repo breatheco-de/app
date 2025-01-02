@@ -1,6 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Box, Button, FormControl, FormErrorMessage, FormLabel, Input,
+  Box, FormControl, FormErrorMessage, FormLabel, Input,
   Stack, useToast,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
@@ -11,6 +11,7 @@ import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import ConnectGithubRigobot from './ConnectGithubRigobot';
 import useStyle from '../hooks/useStyle';
+import Button from './Button';
 
 function ProfileForm() {
   const { t } = useTranslation('profile');
@@ -186,7 +187,7 @@ function ProfileForm() {
               </Field>
             </Box>
             <ConnectGithubRigobot />
-            <Button variant="default" disabled={!isModified} fontSize="13px" fontWeight="700" letterSpacing="0.05em" textTransform="uppercase" width="fit-content" padding="0 24px" alignSelf="end" isLoading={isSubmitting} type="submit">
+            <Button variant="primary" disabled={!isModified} fontSize="13px" fontWeight="700" letterSpacing="0.05em" textTransform="uppercase" width="fit-content" padding="0 24px" alignSelf="end" isLoading={isSubmitting} type="submit">
               {t('save-changes')}
             </Button>
           </Stack>
