@@ -1,5 +1,5 @@
 import {
-  Box, Button, Input, useToast,
+  Box, Button as ChakraButton, Input, useToast,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -14,6 +14,7 @@ import ChooseDate from './ChooseDate';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { CardSkeleton } from '../../common/components/Skeleton';
+import Button from '../../common/components/Button';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
@@ -45,7 +46,6 @@ function ChooseYourClass({
   const toast = useToast();
   const autoCompleteRef = useRef();
   const inputRef = useRef();
-  const buttonRef = useRef();
   const GOOGLE_KEY = process.env.GOOGLE_GEO_KEY;
   const { isSecondStep } = useSignup();
   const { backgroundColor, backgroundColor3 } = useStyle();
@@ -125,27 +125,29 @@ function ChooseYourClass({
       });
 
       // search button handler
-      buttonRef.current.addEventListener('click', () => {
-        setIsLoading(true);
-        geocode({ address: addressValue })
-          .then((results) => {
-            setCoords({
-              latitude: results.geometry.location.lat(),
-              longitude: results.geometry.location.lng(),
-            });
-          })
-          .catch(() => {
-            toast({
-              position: 'top',
-              title: t('alert-message:google-maps-no-coincidences'),
-              status: 'warning',
-              duration: 5000,
-            });
-          })
-          .finally(() => setIsLoading(false));
-      });
+      // buttonRef.current.addEventListener('click', );
     }
   }, [isSecondStep, gmapStatus]);
+
+  const handleClickButtonDates = () => {
+    setIsLoading(true);
+    geocode({ address: addressValue })
+      .then((results) => {
+        setCoords({
+          latitude: results.geometry.location.lat(),
+          longitude: results.geometry.location.lng(),
+        });
+      })
+      .catch(() => {
+        toast({
+          position: 'top',
+          title: t('alert-message:google-maps-no-coincidences'),
+          status: 'warning',
+          duration: 5000,
+        });
+      })
+      .finally(() => setIsLoading(false));
+  };
 
   return isSecondStep && (
     <Box
@@ -170,18 +172,18 @@ function ChooseYourClass({
           height="50px"
         />
 
-        <Button
+        <ChakraButton
           display={{ base: 'none', md: 'block' }}
           type="button"
           height="50px"
-          ref={buttonRef}
           isLoading={isLoading}
+          onClick={handleClickButtonDates}
           value="Geocode"
           variant="default"
           flexShrink={0}
         >
           {t('search-dates')}
-        </Button>
+        </ChakraButton>
       </Box>
       <Box
         display="flex"
@@ -201,10 +203,9 @@ function ChooseYourClass({
         margin="0 0 0 auto"
         type="button"
         padding="12px 24px"
-        ref={buttonRef}
-        isLoading={isLoading}
+        onClick={handleClickButtonDates}
         value="Geocode"
-        variant="default"
+        variant="primary"
         flexShrink={0}
       >
         {t('search-dates')}
