@@ -144,6 +144,7 @@
   "see-instructions": "See instructions",
   "taskStatus": {
     "project-approved": "Project approved",
+    "pending-subtasks": "Take me there",
     "update-project-delivery": "Update project delivery",
     "send-project": "Send project",
     "mark-as-done": "Mark as done",
