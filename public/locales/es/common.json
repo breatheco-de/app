@@ -148,7 +148,7 @@
   },
   "external":{
     "title": "Este es un ejercicio externo",
-    "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, seras redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
+    "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
   },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",
