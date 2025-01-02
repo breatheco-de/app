@@ -1,12 +1,13 @@
 import { memo } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Button } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import useAuth from '../hooks/useAuth';
 import useCohortHandler from '../hooks/useCohortHandler';
+import Button from './Button';
 
 function Component({ withBanner, children }) {
   const { t } = useTranslation('common');
@@ -23,7 +24,7 @@ function Component({ withBanner, children }) {
           <Box p={{ base: '0', sm: '0 26px 0 0' }} fontSize="18px" fontWeight="700">
             {t('upgrade-plan.title')}
           </Box>
-          <Button variant="default" onClick={() => router.push('/login')} w="fit-content" textTransform="uppercase" fontSize="14px" letterSpacing="0.05em">
+          <Button variant="primary" onClick={() => router.push('/login')} w="fit-content" textTransform="uppercase" fontSize="14px" letterSpacing="0.05em">
             {t('upgrade-plan.button')}
           </Button>
         </Box>
