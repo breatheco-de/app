@@ -147,6 +147,10 @@
     "mark-as-done": "Marcar como hecho",
     "mark-as-not-done": "Marcar como no hecho"
   },
+  "external":{
+    "title": "Este es un ejercicio externo",
+    "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
+  },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",
     "choose-open": "Escoge como quieres abrir este proyecto",
@@ -159,6 +163,7 @@
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
