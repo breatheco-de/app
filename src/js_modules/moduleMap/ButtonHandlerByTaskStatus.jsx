@@ -91,11 +91,15 @@ export function ButtonHandlerByTaskStatus({
             minWidth="26px"
             minHeight="26px"
             height="fit-content"
-            background={allowText ? 'blue.default' : 'none'}
+            color="white"
+            _hover={{ background: '#02A9EA', color: 'white' }}
+            _active={{ background: '#0084FF', color: 'white' }}
+            _disabled={{ background: '#DADADA', color: 'white', cursor: 'not-allowed' }}
+            background={allowText ? '#0097CF' : 'none'}
             lineHeight={allowText ? '15px' : '0'}
             padding={allowText ? '12px 24px' : '0'}
             borderRadius={allowText ? '3px' : '30px'}
-            variant={allowText ? 'default' : 'none'}
+            variant={allowText ? 'white' : 'none'}
             textTransform={allowText ? 'uppercase' : 'none'}
             gridGap={allowText ? '12px' : '0'}
           >
@@ -169,11 +173,15 @@ export function ButtonHandlerByTaskStatus({
       isDisabled={isButtonDisabled}
       minWidth="26px"
       minHeight="26px"
-      background={allowText ? 'blue.default' : 'none'}
+      color="white"
+      background={allowText ? '#0097CF' : 'none'}
       lineHeight={allowText ? '15px' : '0'}
       padding={allowText ? '12px 24px' : '0'}
       borderRadius={allowText ? '3px' : '30px'}
-      variant={allowText ? 'default' : 'none'}
+      variant={allowText ? 'white' : 'none'}
+      _hover={{ background: '#02A9EA', color: 'white' }}
+      _active={{ background: '#0084FF', color: 'white' }}
+      _disabled={{ background: '#DADADA', color: 'white', cursor: 'not-allowed' }}
       textTransform={allowText ? 'uppercase' : 'none'}
       gridGap={allowText ? '12px' : '0'}
     >

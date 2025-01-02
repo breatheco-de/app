@@ -540,14 +540,16 @@ function PopoverTaskHandler({
         <ChakraButton
           display="flex"
           isLoading={isLoading}
-          variant={allowText ? 'default' : 'none'}
+          color="white"
+          variant={allowText ? 'white' : 'none'}
           _hover={{ background: '#02A9EA', color: 'white' }}
           _active={{ background: '#0084FF', color: 'white' }}
+          _disabled={{ background: '#DADADA', color: 'white', cursor: 'not-allowed' }}
           isDisabled={isButtonDisabled}
           minWidth="26px"
           minHeight="26px"
           height="fit-content"
-          background={allowText ? 'blue.default' : 'none'}
+          background={allowText ? '#0097CF' : 'none'}
           lineHeight={allowText ? '15px' : '0'}
           padding={allowText ? '12px 24px' : '0'}
           borderRadius={allowText ? '3px' : '30px'}
