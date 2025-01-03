@@ -156,7 +156,7 @@ function Subscriptions({ cohorts }) {
   const totalMentorshipsAvailable = consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalWorkshopsAvailable = consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
 
-  const existsNoAvailableAsSaas = cohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const existsNoAvailableAsSaas = cohorts.some((c) => c.available_as_saas === false);
 
   return (
     <>
