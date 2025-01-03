@@ -11,6 +11,7 @@ import PopoverTaskHandler, { IconByTaskStatus, textByTaskStatus } from '../../co
 export function ButtonHandlerByTaskStatus({
   onlyPopoverDialog, currentTask, sendProject, changeStatusAssignment, toggleSettings, closeSettings,
   settingsOpen, allowText, onClickHandler, currentAssetData, fileData, handleOpen, isGuidedExperience,
+  hasPendingSubtasks, togglePendingSubtasks,
 }) {
   const { hexColor } = useStyle();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -52,7 +53,7 @@ export function ButtonHandlerByTaskStatus({
     }
   };
 
-  const textAndIcon = textByTaskStatus(currentTask);
+  const textAndIcon = textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtasks);
 
   // PRROJECT CASE
   if (currentTask && currentTask.task_type === 'PROJECT' && currentTask.task_status) {
@@ -121,6 +122,35 @@ export function ButtonHandlerByTaskStatus({
             handleAcceptTC={setAcceptTC}
           />
         </>
+      );
+    }
+    if (hasPendingSubtasks && !taskIsApprovedOrRejected && currentTask.task_status === 'PENDING') {
+      return (
+        <Button
+          isLoading={loaders.isOpeningReviewModal}
+          onClick={togglePendingSubtasks}
+          isDisabled={isButtonDisabled}
+          display="flex"
+          minWidth="26px"
+          minHeight="26px"
+          height="fit-content"
+          background={allowText ? 'blue.default' : 'none'}
+          lineHeight={allowText ? '15px' : '0'}
+          padding={allowText ? '12px 24px' : '0'}
+          borderRadius={allowText ? '3px' : '30px'}
+          variant={allowText ? 'default' : 'none'}
+          textTransform={allowText ? 'uppercase' : 'none'}
+          gridGap={allowText ? '12px' : '0'}
+        >
+          {allowText ? (
+            <>
+              <Icon {...textAndIcon.icon} />
+              {textAndIcon.text}
+            </>
+          ) : (
+            <IconByTaskStatus currentTask={currentTask} noDeliveryFormat={noDeliveryFormat} />
+          )}
+        </Button>
       );
     }
     return (
@@ -194,6 +224,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   sendProject: PropTypes.func.isRequired,
   changeStatusAssignment: PropTypes.func.isRequired,
   toggleSettings: PropTypes.func,
+  togglePendingSubtasks: PropTypes.func,
   closeSettings: PropTypes.func.isRequired,
   settingsOpen: PropTypes.bool.isRequired,
   allowText: PropTypes.bool,
@@ -203,6 +234,7 @@ ButtonHandlerByTaskStatus.propTypes = {
   fileData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   onlyPopoverDialog: PropTypes.bool,
   isGuidedExperience: PropTypes.bool,
+  hasPendingSubtasks: PropTypes.bool,
 };
 ButtonHandlerByTaskStatus.defaultProps = {
   currentTask: null,
@@ -212,6 +244,8 @@ ButtonHandlerByTaskStatus.defaultProps = {
   fileData: {},
   toggleSettings: () => { },
   handleOpen: () => { },
+  togglePendingSubtasks: () => { },
   onlyPopoverDialog: false,
   isGuidedExperience: false,
+  hasPendingSubtasks: undefined,
 };

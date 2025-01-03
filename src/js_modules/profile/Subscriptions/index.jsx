@@ -74,10 +74,10 @@ function Subscriptions({ cohorts }) {
           return mentRes.data.mentorship_services;
         });
 
-        const promiseEvents = data.mentorship_service_sets.map(async (elem) => {
-          const mentRes = await bc.payment().getEventTypeSet(elem.id);
+        const promiseEvents = data.event_type_sets.map(async (elem) => {
+          const evRes = await bc.payment().getEventTypeSet(elem.id);
 
-          return mentRes.data.event_types;
+          return evRes.data.event_types;
         });
         const resMentorships = await Promise.all(promiseMentorship);
         const resWorkshops = await Promise.all(promiseEvents);

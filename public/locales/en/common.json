@@ -144,10 +144,15 @@
   "see-instructions": "See instructions",
   "taskStatus": {
     "project-approved": "Project approved",
+    "pending-subtasks": "Take me there",
     "update-project-delivery": "Update project delivery",
     "send-project": "Send project",
     "mark-as-done": "Mark as done",
     "mark-as-not-done": "Mark as not done"
+  },
+  "external":{
+    "title": "This is an external exercise",
+    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will redirected to a new tab to do it; choose one of the following options to start working on the project:"
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
