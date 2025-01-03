@@ -167,9 +167,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const isForOpenLocaly = isInteractive || templateUrl;
   const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
 
+  const startWithLearnpack = learnpackDeployUrl && cohortSession?.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
-
-  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
   if (variant === 'small') {
     return (

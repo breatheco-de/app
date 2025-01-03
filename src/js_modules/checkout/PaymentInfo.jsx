@@ -14,7 +14,6 @@ import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
 import { getQueryString, getStorageItem } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
 import axiosInstance from '../../axios';
 import { getAllMySubscriptions } from '../../common/handlers/subscriptions';
@@ -36,9 +35,7 @@ function PaymentInfo() {
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
   } = state;
-  const { state: cohortState, setCohortSession, getCohortAssignments, prepareTasks } = useCohortHandler();
-  const { sortedAssignments } = cohortState;
-  const { cohortProgram, taskTodo, startDay } = useModuleHandler();
+  const { cohortsAssignments, getCohortsModules, startDay, setCohortSession } = useCohortHandler();
   const [readyToRedirect, setReadyToRedirect] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [updatedUser, setUpdatedUser] = useState(undefined);
@@ -63,11 +60,14 @@ function PaymentInfo() {
 
   const openSyllabusAndRedirect = () => {
     const langLink = lang !== 'en' ? `/${lang}` : '';
-    const firstAssigmentSlug = sortedAssignments[0].modules[0].slug;
-    const firstAssigmentType = sortedAssignments[0].modules[0].type.toLowerCase();
+
+    const modules = cohortsAssignments[cohortFound.slug]?.modules;
+
+    const firstAssigmentSlug = modules[0].content[0].slug;
+    const firstAssigmentType = modules[0].content[0].type.toLowerCase();
     const syllabusRedirectURL = `${langLink}/syllabus/${cohortFound?.slug}/${firstAssigmentType}/${firstAssigmentSlug}`;
 
-    const updatedTasks = (sortedAssignments[0].modules || [])?.map((l) => ({
+    const updatedTasks = (modules[0].content || [])?.map((l) => ({
       ...l,
       title: l.title,
       associated_slug: l?.slug?.slug || l.slug,
@@ -83,6 +83,7 @@ function PaymentInfo() {
       },
     });
     startDay({
+      cohort: cohortFound,
       newTasks: updatedTasks,
     });
 
@@ -105,7 +106,7 @@ function PaymentInfo() {
       selectedProgramSlug: cohortDashboardLink,
     });
 
-    if (!sortedAssignments.length > 0) {
+    if (cohortFound?.micro_cohorts?.length > 0 || !(cohortFound.slug in cohortsAssignments)) {
       router.push(cohortDashboardLink);
       return;
     }
@@ -114,23 +115,19 @@ function PaymentInfo() {
   };
 
   useEffect(() => {
-    if (!(sortedAssignments.length > 0)) return undefined;
+    if (!cohortFound || (cohortFound.micro_cohorts.length === 0 && !(cohortFound.slug in cohortsAssignments))) return undefined;
 
     const timer = setTimeout(() => {
       setReadyToRedirect(true);
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [sortedAssignments]);
+  }, [cohortsAssignments, cohortFound]);
 
   useEffect(() => {
-    prepareTasks();
-  }, [taskTodo, cohortProgram]);
-
-  useEffect(() => {
-    getCohortAssignments(
-      { slug: cohortFound?.syllabus_version?.slug, cohort: cohortFound, updatedUser },
-    );
+    if (cohortFound?.micro_cohorts.length === 0) {
+      getCohortsModules([cohortFound]);
+    }
   }, [updatedUser]);
 
   useEffect(() => {
@@ -147,37 +144,36 @@ function PaymentInfo() {
     fetchMyCohorts();
   }, [cohortFound]);
 
-  const joinCohort = (cohort) => {
-    reportDatalayer({
-      dataLayer: {
-        event: 'join_cohort',
-        cohort_id: cohort?.id,
-      },
-    });
-    bc.cohort().join(cohort?.id)
-      .then(async (resp) => {
-        const dataRequested = await resp.json();
-        if (resp.status >= 400) {
-          toast({
-            position: 'top',
-            title: dataRequested?.detail,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-          });
-          setReadyToRefetch(false);
-        }
-        if (dataRequested?.status === 'ACTIVE') {
-          setCohortFound(cohort);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al unirse a la cohorte:', error);
-        setIsSubmittingPayment(false);
-        setTimeout(() => {
-          setReadyToRefetch(false);
-        }, 600);
+  const joinCohort = async (cohort) => {
+    try {
+      reportDatalayer({
+        dataLayer: {
+          event: 'join_cohort',
+          cohort_id: cohort?.id,
+        },
       });
+      const resp = await bc.cohort().join(cohort?.id);
+      const dataRequested = await resp.json();
+      if (resp.status >= 400) {
+        toast({
+          position: 'top',
+          title: dataRequested?.detail,
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        setReadyToRefetch(false);
+      }
+      if (dataRequested?.status === 'ACTIVE') {
+        setCohortFound(cohort);
+      }
+    } catch (error) {
+      console.error('Error al unirse a la cohorte:', error);
+      setIsSubmittingPayment(false);
+      setTimeout(() => {
+        setReadyToRefetch(false);
+      }, 600);
+    }
   };
 
   useEffect(() => {
@@ -194,7 +190,7 @@ function PaymentInfo() {
     if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
       interval = setInterval(() => {
         getAllMySubscriptions()
-          .then((subscriptions) => {
+          .then(async (subscriptions) => {
             const currentSubscription = subscriptions?.find(
               (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
@@ -202,19 +198,16 @@ function PaymentInfo() {
               (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
             );
             const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
-            const findedCohort = cohortsForSubscription?.length > 0 ? cohortsForSubscription.find(
+            const foundCohort = cohortsForSubscription?.find(
               (cohort) => cohort?.id === cohortId,
-            ) : {};
+            );
 
             if (isPurchasedPlanFound) {
-              if (findedCohort?.id) {
-                getCohort(findedCohort?.id)
-                  .then((cohort) => {
-                    joinCohort(cohort);
-                  })
-                  .finally(() => {
-                    clearInterval(interval);
-                  });
+              if (foundCohort?.id) {
+                const cohort = await getCohort(foundCohort?.id);
+                joinCohort(cohort);
+
+                clearInterval(interval);
                 setReadyToRefetch(false);
               } else {
                 clearInterval(interval);

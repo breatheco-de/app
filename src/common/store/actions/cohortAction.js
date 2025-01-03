@@ -2,9 +2,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   SET_MY_COHORTS,
   SET_COHORT_SESSION,
-  SET_SORTED_ASSIGNMENTS,
   SET_TASK_COHORT_NULL,
   SET_USER_CAPABILITIES,
+  SET_COHORTS_ASSIGNMENTS,
 } from '../types';
 import { usePersistent } from '../../hooks/usePersistent';
 
@@ -41,15 +41,6 @@ const useCohortAction = () => {
     });
   };
 
-  const setSortedAssignments = (payload) => {
-    dispatch({
-      type: SET_SORTED_ASSIGNMENTS,
-      payload: {
-        sortedAssignments: payload,
-      },
-    });
-  };
-
   const setUserCapabilities = (paylaod) => {
     dispatch({
       type: SET_USER_CAPABILITIES,
@@ -59,13 +50,22 @@ const useCohortAction = () => {
     });
   };
 
+  const setCohortsAssingments = (paylaod) => {
+    dispatch({
+      type: SET_COHORTS_ASSIGNMENTS,
+      payload: {
+        cohortsAssignments: paylaod,
+      },
+    });
+  };
+
   return {
     state,
     setMyCohorts,
     setCohortSession,
     setTaskCohortNull,
-    setSortedAssignments,
     setUserCapabilities,
+    setCohortsAssingments,
   };
 };
 
