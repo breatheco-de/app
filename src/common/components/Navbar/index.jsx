@@ -89,7 +89,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   useEffect(() => {
     if (cohortSession?.available_as_saas) {
       bc.payment({
-        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
       }).subscriptions()
         .then(async ({ data }) => {
           const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
@@ -110,18 +110,17 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
           return false;
         }
 
+        const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+        if (expiredCourse) return false;
+
         const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
-        if (fullyPaidSub) {
-          return true;
-        }
+        if (fullyPaidSub) return true;
 
         const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
         const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
         const todayDate = new Date();
 
-        if (todayDate > freeTrialExpDate) {
-          return false;
-        }
+        if (todayDate > freeTrialExpDate) return false;
         return true;
       }
       return false;
@@ -459,10 +458,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 {getLangName}
                               </Link>
                               {
-                                i < langs.length - 1 && (
-                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                                )
-                              }
+                                  i < langs.length - 1 && (
+                                    <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                                  )
+                                }
                             </Fragment>
                           );
                         })}

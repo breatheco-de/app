@@ -43,6 +43,7 @@ import { log } from '../../../../../utils/logging';
 import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
+import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
@@ -65,6 +66,7 @@ function SyllabusContent() {
     prevModule,
     setPrevModule,
     setSubTasks,
+    subTasks,
   } = useModuleHandler();
   const { setUserSession } = useSession();
   const mainContainer = useRef(null);
@@ -104,6 +106,9 @@ function SyllabusContent() {
   const isAvailableAsSaas = cohortSession?.available_as_saas;
 
   const { featuredLight, fontColor, borderColor, featuredCard, backgroundColor, hexColor, featuredColor, colorMode } = useStyle();
+
+  const hasSubtasks = subTasks?.length > 0;
+  const hasPendingSubtasks = hasSubtasks && subTasks.some((subtask) => subtask.status === 'PENDING');
 
   const professionalRoles = ['TEACHER', 'ASSISTANT', 'REVIEWER'];
   const accessToken = isWindow ? localStorage.getItem('accessToken') : '';
@@ -254,10 +259,16 @@ function SyllabusContent() {
   }, [currentTask]);
 
   useEffect(() => {
-    const assetSlug = currentAsset?.translations[lang] || currentAsset?.translations?.us || currentAsset?.translations?.en || lessonSlug;
+    const translations = currentAsset?.translations
+      ? Object.values(currentAsset.translations)
+      : [];
+
     if (taskTodo.length > 0) {
-      setCurrentTask(taskTodo.find((el) => el.task_type === assetTypeValues[lesson]
-        && (el.associated_slug === assetSlug || currentAsset?.aliases?.includes(el.associated_slug))));
+      const foundTask = taskTodo.find((el) => (
+        el.task_type === assetTypeValues[lesson]
+        && (translations.includes(el.associated_slug) || currentAsset?.aliases?.includes(el.associated_slug))
+      ));
+      setCurrentTask(foundTask);
     }
   }, [taskTodo, lessonSlug, lesson, currentAsset]);
 
@@ -274,7 +285,7 @@ function SyllabusContent() {
 
   useEffect(() => {
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
@@ -305,6 +316,12 @@ function SyllabusContent() {
       const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
 
       if (!(cohortSubscriptions.length > 0)) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      if (expiredCourse) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
@@ -371,6 +388,7 @@ function SyllabusContent() {
     setCurrentBlankProps(null);
     setSubTasks([]);
   };
+
   const onClickAssignment = (e, item) => {
     const link = `/syllabus/${cohortSlug}/${item.type?.toLowerCase()}/${item.slug}`;
 
@@ -389,70 +407,65 @@ function SyllabusContent() {
 
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
-    const englishTaskUrls = {
-      en: currTask?.translations?.en,
-      us: currTask?.translations?.us,
-    };
-    const currentLanguageTaskUrl = englishTaskUrls[lang] || currTask?.translations?.[lang]?.slug || lessonSlug;
-    if (currTask?.target === 'blank') {
-      setCurrentBlankProps(currTask);
-    } else if (currentBlankProps === null || currentBlankProps?.target !== 'blank') {
-      axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentLanguageTaskUrl}?asset_type=${assetTypeValues[lesson]}`)
-        .then(({ data }) => {
-          const translations = data?.translations;
-          const exensionName = getExtensionName(data.readme_url);
-          const isIpynb = exensionName === 'ipynb';
-          const currentSlug = translations?.[language] || lessonSlug;
-          const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-          const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
-          const extension = urlPathname ? urlPathname.split('.').pop() : null;
-          // const translatedExtension = language === 'us' ? '' : `.${language}`;
-          const finalPathname = `${pathnameWithoutExtension}.${extension}`;
+    const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
+    bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
+      const translations = data?.translations;
+      const exensionName = getExtensionName(data.readme_url);
+      const isIpynb = exensionName === 'ipynb';
+      const currentSlug = translations?.[language] || lessonSlug;
+      const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+      const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+      const extension = urlPathname ? urlPathname.split('.').pop() : null;
+      const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-          setReadmeUrlPathname(finalPathname);
-          let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
-          if (isIpynb) {
-            setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
-            setCurrentAsset(data);
-          } else {
-            setIpynbHtmlUrl(null);
-            if (currentTranslationSlug === undefined) {
-              currentTranslationSlug = `${lessonSlug}-${language}`;
+      if (currTask?.target === 'blank') {
+        setCurrentAsset(data);
+        return;
+      }
+
+      setReadmeUrlPathname(finalPathname);
+      let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
+      if (isIpynb) {
+        setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
+        setCurrentAsset(data);
+      } else {
+        setIpynbHtmlUrl(null);
+        if (currentTranslationSlug === undefined) {
+          currentTranslationSlug = `${lessonSlug}-${language}`;
+        }
+        Promise.all([
+          assetTypeValues[lesson] !== 'QUIZ' && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
+        ])
+          .then(([respMarkdown, respData]) => {
+            const currData = respData.data;
+            const markdownData = respMarkdown.data;
+
+            if (lesson === 'answer') {
+              setQuizSlug(currentTranslationSlug);
+            } else {
+              setQuizSlug(null);
             }
-            Promise.all([
-              assetTypeValues[lesson] !== 'QUIZ' && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
-              axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
-            ])
-              .then(([respMarkdown, respData]) => {
-                const currData = respData.data;
-                const markdownData = respMarkdown.data;
-
-                if (lesson === 'answer') {
-                  setQuizSlug(currentTranslationSlug);
-                } else {
-                  setQuizSlug(null);
-                }
-                if (currData !== undefined && typeof markdownData === 'string') {
-                  // Binary base64 decoding ⇢ UTF-8
-                  const markdown = getMarkDownContent(markdownData);
-                  setReadme(markdown);
-                  setCurrentAsset(currData);
-                }
-              })
-              .catch(() => {
-                setReadme({
-                  content: t('no-traduction-found-description'),
-                });
-                setCurrentAsset({
-                  ...data,
-                  title: t('no-traduction-found'),
-                });
-              });
-          }
-        }).catch(() => {
-          EventIfNotFound();
-        });
-    }
+            if (currData !== undefined && typeof markdownData === 'string') {
+              // Binary base64 decoding ⇢ UTF-8
+              const markdown = getMarkDownContent(markdownData);
+              setReadme(markdown);
+              setCurrentAsset(currData);
+            }
+          })
+          .catch(() => {
+            setReadme({
+              content: t('no-traduction-found-description'),
+            });
+            setCurrentAsset({
+              ...data,
+              title: t('no-traduction-found'),
+            });
+          });
+      }
+    }).catch(() => {
+      EventIfNotFound();
+    });
     return () => {
       cleanCurrentData();
       setUserSession({
@@ -756,6 +769,32 @@ function SyllabusContent() {
     if (isQuiz) return 'hidden';
     if (isAvailableAsSaas && !learnpackStart) return 'scroll';
     return 'auto';
+  };
+
+  const handleNavigateToLastPendingSubtask = () => {
+    const pendingSubtasks = subTasks.filter((task) => task.status === 'PENDING');
+
+    let highestElement = null;
+    let highestOffsetTop = Infinity;
+
+    const pendingSubtasksPositions = pendingSubtasks.map((task) => task.position);
+    const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+    const pendingCheckboxes = checkboxes.filter((_, index) => pendingSubtasksPositions.includes(index));
+
+    pendingCheckboxes.forEach((checkbox) => {
+      if (checkbox.offsetTop < highestOffsetTop) {
+        highestOffsetTop = checkbox.offsetTop;
+        highestElement = checkbox;
+      }
+    });
+
+    if (!highestElement) {
+      console.log('No element found in the DOM.');
+      return;
+    }
+
+    highestElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setOpenNextPageModal(false);
   };
 
   return (
@@ -1329,9 +1368,13 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
-              {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
-            </Heading>
+            <Text fontSize="md" textAlign="center" fontWeight="700" mb="10px">{t('wait-a-sec')}</Text>
+            {!hasPendingSubtasks && (
+              <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
+                {t('ask-to-done', { taskType: assetTypeValues[lesson]?.toLowerCase() })}
+              </Heading>
+            )}
+            {hasPendingSubtasks && <SubTasks subTasks={subTasks} assetType={currentAsset?.asset_type} marginBottom="30px" />}
             <Box display="flex" flexDirection={{ base: 'column', sm: 'row' }} gridGap="12px" justifyContent="space-between">
               <Button
                 variant="outline"
@@ -1347,8 +1390,10 @@ function SyllabusContent() {
               <ButtonHandlerByTaskStatus
                 allowText
                 currentTask={currentTask}
+                hasPendingSubtasks={hasPendingSubtasks}
                 sendProject={sendProject}
                 changeStatusAssignment={changeStatusAssignment}
+                togglePendingSubtasks={handleNavigateToLastPendingSubtask}
                 toggleSettings={toggleSettings}
                 closeSettings={closeSettings}
                 currentAssetData={currentAsset}
@@ -1380,7 +1425,7 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            {label && nextModule.label && (
+            {label && nextModule?.label && (
               <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
                 {t('reached-the-end-of-the-module', { label: languageFix(label, lang), nextModuleLabel: languageFix(nextModule.label, lang) })}
               </Heading>

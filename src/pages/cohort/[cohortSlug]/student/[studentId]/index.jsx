@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-curly-brace-presence */
-/* eslint-disable no-unused-vars */
+/* eslint-disable camelcase */
 import { useState, useEffect } from 'react';
 import {
   Box,
@@ -213,16 +212,7 @@ function StudentReport() {
       setIsFetching(true);
       const npsQueryObject = { filter: { user_id: selectedCohortUser.user.id, 'meta.cohort': selectedCohortUser.cohort.id }, grouping_function: { count: ['kind'], avg: ['meta.score'] } };
       const mentorshipsQueryObject = { filter: { user_id: selectedCohortUser.user.id, kind: 'mentorship_session_checkin' }, grouping_function: { count: ['kind'] } };
-      const projectsQueryObject = {
-        filter: {
-          'meta.task_type': 'PROJECT',
-          'meta.revision_status': 'APPROVED',
-          'meta.user_email': selectedCohortUser.user.email,
-          kind: 'assignment_review_status_updated',
-          'meta.cohort': selectedCohortUser.cohort.id,
-        },
-        grouping_function: { count: ['kind'] },
-      };
+
       const eventsQueryObject = {
         filter: {
           user_id: selectedCohortUser.user.id,
@@ -243,25 +233,28 @@ function StudentReport() {
           .getAssignments({ id: selectedCohortUser.cohort.id, academy }),
         bc.admissions().cohort(selectedCohortUser.cohort.slug, academy),
         bc.activity({ query: JSON.stringify(npsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
-        bc.activity({ query: JSON.stringify(projectsQueryObject), by: 'kind', fields: 'kind' }).getActivityReport(academy),
         bc.activity({ query: JSON.stringify(eventsQueryObject), order: 'timestamp' }).getActivityReport(academy),
         bc.activity({ query: JSON.stringify(mentorshipsQueryObject) }).getActivityReport(academy),
       ])
         .then(async (res) => {
-          const currentDaysLog = res[0].data;
-          const durationInDays = res[2].data?.syllabus_version?.duration_in_days;
+          const [resDaysLog, resAssignments, resCohort, resNps, resEvents, resMentorships] = res;
+          const currentDaysLog = resDaysLog.data;
+          const durationInDays = resCohort.data?.syllabus_version?.duration_in_days;
           const days = Array.from(Array(durationInDays).keys()).map((i) => {
             const day = i + 1;
             const dayData = currentDaysLog[day];
             return dayData;
           });
           setAttendance(days);
+
+          const sudentProjects = resAssignments.data.results.filter((elem) => elem.task_type === 'PROJECT');
+
           setStudentAssignments({
-            lessons: res[1].data.results.filter((elem) => elem.task_type === 'LESSON'),
-            projects: res[1].data.results.filter((elem) => elem.task_type === 'PROJECT'),
-            exercises: res[1].data.results.filter((elem) => elem.task_type === 'EXERCISE'),
+            lessons: resAssignments.data.results.filter((elem) => elem.task_type === 'LESSON'),
+            projects: sudentProjects,
+            exercises: resAssignments.data.results.filter((elem) => elem.task_type === 'EXERCISE'),
           });
-          const syllabusInfo = await bc.admissions().syllabus(res[2].data.syllabus_version.slug, res[2].data.syllabus_version.version, academy);
+          const syllabusInfo = await bc.admissions().syllabus(resCohort.data.syllabus_version.slug, resCohort.data.syllabus_version.version, academy);
 
           let projects;
           if (syllabusInfo?.data) {
@@ -277,7 +270,6 @@ function StudentReport() {
               exercises,
             });
           }
-          const [,,, resNps, resProjects, resEvents, resMentorships] = res;
 
           const processedEvents = resEvents.data.reduce((acum, elem) => {
             const index = acum.findIndex((e) => e.meta.event_id === elem.meta.event_id);
@@ -304,7 +296,7 @@ function StudentReport() {
             label: t('analitics.projects-completed'),
             icon: 'bookClosed',
             variationColor: hexColor.blueDefault,
-            value: resProjects.data?.find((obj) => obj.kind === 'assignment_review_status_updated')?.count__kind,
+            value: sudentProjects.filter(({ task_status }) => task_status === 'DONE').length,
             max: projects?.length,
           }, {
             label: t('analitics.percentage-attendance'),

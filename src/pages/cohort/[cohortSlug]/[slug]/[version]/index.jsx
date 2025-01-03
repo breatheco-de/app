@@ -208,6 +208,12 @@ function Dashboard() {
         return;
       }
 
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      if (expiredCourse) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) {
         setGrantAccess(true);
@@ -276,7 +282,7 @@ function Dashboard() {
       });
 
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));

@@ -176,7 +176,7 @@ function PricingView() {
     });
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}&lang=${lang}`)
       .then(({ data }) => {
-        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic');
+        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
         setPublicMktCourses(publicCourses);
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
@@ -336,9 +336,9 @@ function PricingView() {
                         <Text fontSize="auto">{t('see-plans-and-prices')}</Text>
                         <Icon icon="longArrowRight" width="18px" height="18px" color="white" />
                       </Link>
-                      {course?.course_translation?.landing_variables?.length > 0 && (
+                      {course?.course_translation?.landing_variables?.card?.length > 0 && (
                         <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px">
-                          {course?.course_translation?.landing_variables.map((content) => {
+                          {course?.course_translation?.landing_variables?.card?.map((content) => {
                             const isUrlImage = content?.icon?.includes('http');
                             return (
                               <Flex key={content.title} gridGap="10px">
