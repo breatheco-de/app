@@ -15,7 +15,7 @@ import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
 
-export function textByTaskStatus(currentTask, isGuidedExperience) {
+export function textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtask) {
   const { t } = useTranslation('dashboard');
   const { hexColor } = useStyle();
   const taskIsApproved = currentTask?.revision_status === 'APPROVED';
@@ -50,6 +50,16 @@ export function textByTaskStatus(currentTask, isGuidedExperience) {
           width: '20px',
         },
         text: t('common:taskStatus.update-project-delivery'),
+      };
+    }
+    if (currentTask.task_status === 'PENDING' && hasPendingSubtask) {
+      return {
+        icon: {
+          icon: isGuidedExperience ? 'send-2' : 'longArrowRight',
+          color: isGuidedExperience ? hexColor.blueDefault : 'white',
+          width: '20px',
+        },
+        text: t('common:taskStatus.pending-subtasks'),
       };
     }
     return {
