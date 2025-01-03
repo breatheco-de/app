@@ -1,7 +1,7 @@
 import useTranslation from 'next-translate/useTranslation';
 import {
   Box, Button, FormControl, FormErrorMessage, FormLabel, Input,
-  Stack, useToast,
+  Stack,
 } from '@chakra-ui/react';
 import { Field, Form, Formik } from 'formik';
 import { memo, useEffect, useState } from 'react';
@@ -11,11 +11,12 @@ import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import ConnectGithubRigobot from './ConnectGithubRigobot';
 import useStyle from '../hooks/useStyle';
+import useCustomToast from '../hooks/useCustomToast';
 
 function ProfileForm() {
   const { t } = useTranslation('profile');
   const { user, updateProfile } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'profile-update-form' });
   const [userInfo, setUserInfo] = useState(null);
   const [defaultUserInfo, setDefaultUserInfo] = useState(null);
 
@@ -49,12 +50,13 @@ function ProfileForm() {
         actions.setSubmitting(true);
         bc.auth().updateProfile(values)
           .then(({ data }) => {
-            toast({
+            createToast({
               position: 'top',
               title: t('profile:profile-updated'),
               status: 'success',
               duration: 9000,
               isClosable: true,
+              silent: true,
             });
             updateProfile({
               ...user,
@@ -65,13 +67,14 @@ function ProfileForm() {
             });
           })
           .catch(() => {
-            toast({
+            createToast({
               position: 'top',
               title: t('profile:update-failed'),
               // description: err.message,
               status: 'error',
               duration: 9000,
               isClosable: true,
+              silent: true,
             });
           })
           .finally(() => {
