@@ -36,6 +36,7 @@
   "no-content-found": "No content found",
   "no-content-found-description": ">Unfortunately, the content you are looking for is not available at the specified path. We are constantly working on improvements and appreciate your understanding. If you need assistance or have additional questions, please do not hesitate to contact us. We are committed to providing you with the best service. Thank you for your patience and understanding.",
   "previous-page": "Previous",
+  "wait-a-sec": "Hey, wait a second!",
   "ask-to-done": "Would you like to mark this \"{{taskType}}\" as done before moving on?",
   "mark-later": "Mark as done later",
   "blank-page": "This content cannot be visualized inside of <a href='/'>4Geeks.com</a>, please <a href='{{url}}' target='_blank' rel='noopener noreferrer'>Click here</a> to open it on a new window",

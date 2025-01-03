@@ -38,7 +38,8 @@
     "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
     "button": "Try Rigobot for free",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard",
-    "message": "Is there anything you want to know about the {{title}} program?"
+    "message": "Is there anything you want to know about the {{title}} program?",
+    "payment-methods": "- Credit Card. - Contact support for other options"
   },
   "featured-bullets": [
     {
@@ -97,19 +98,16 @@
       {
         "type": "lesson",
         "title": "Readings and videos",
-        "qty": 45,
         "icon": "book"
       },
       {
         "type": "exercise",
         "title": "Interactive Exercises",
-        "qty": 584,
         "icon": "strength"
       },
       {
         "type": "project",
         "title": "Interactive Projects",
-        "qty": 28,
         "icon": "laptop-code"
       },
       {

@@ -25,7 +25,8 @@
     "active": "Activo",
     "expired": "Expirado",
     "cancelled": "Cancelado",
-    "completed": "Completado"
+    "completed": "Completado",
+    "error": "Error"
   },
   "prework-message": "¡Tendrá acceso a esta cohorte tan pronto como comience!",
   "learn-more": "Ver curso",

@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { Box, Checkbox, Link, useColorModeValue, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
@@ -341,7 +342,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition += delta;
@@ -354,7 +355,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition -= delta;
@@ -436,12 +437,15 @@ export function DOMComponent({ children }) {
 }
 
 export function MDCheckbox({
-  index, children, subTasks, subTasksLoaded, newSubTasks, setNewSubTasks, updateSubTask,
+  index, children, subTasks, newSubTasks, setNewSubTasks, updateSubTask, subtaskFirstLoad, currentTask,
 }) {
-  const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
+  const { lang } = useTranslation();
+  const taskStatus = { true: 'DONE', false: 'PENDING' };
+  const childrenData = children[1]?.props?.children || children;
 
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+
   const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
 
   const renderToStringClient = () => {
@@ -458,54 +462,61 @@ export function MDCheckbox({
   const text = renderToStringClient();
 
   const slug = typeof text === 'string' && slugify(text);
-  const currentSubTask = subTasks.find((task) => task?.id === slug);
+  const currentSubTask = subTasks.find((task) => slugify(task?.label) === slug);
 
   useEffect(() => {
-    // load checked tasks
-    const taskChecked = subTasks.some((task) => task?.id === slug && task?.status !== 'PENDING');
-    if (taskChecked) {
-      setIsChecked(true);
-    }
+    const subtaskCheked = subTasks.some((subtask) => subtask?.id === currentSubTask?.id && subtask?.status !== 'PENDING');
+    if (subtaskCheked) setIsChecked(true);
   }, [subTasks]);
 
-  const taskStatus = {
-    true: 'DONE',
-    false: 'PENDING',
-  };
-
   useEffect(() => {
-    if (subTasksLoaded) {
-      if (
-        newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
-      ) { return () => {}; }
+    if (newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)) return;
+    const prevSubtasks = localStorage.getItem(`prevSubtasks_${currentTask?.associated_slug}`);
 
-      if (currentSubTask) {
-        setNewSubTasks((prev) => {
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === currentSubTask.id)) content.push(currentSubTask);
-          return content;
-        });
-      } else {
-        setNewSubTasks((prev) => {
-          const task = {
-            id: slug,
-            status: 'PENDING',
-            label: text,
-          };
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
-          return content;
-        });
+    if (prevSubtasks) {
+      try {
+        const prevParsedSubtasks = JSON.parse(prevSubtasks);
+        if (Array.isArray(prevParsedSubtasks)) {
+          setNewSubTasks((prev) => {
+            const content = [...prev];
+            const prevSubtask = prevParsedSubtasks.find((subtask) => subtask.position === content.length);
+            const task = {
+              id: slug,
+              position: content.length,
+              lang,
+              status: prevSubtask?.status || 'PENDING',
+              label: text,
+            };
+            if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+            return content;
+          });
+        }
+      } catch (error) {
+        console.error('Error al parsear prevSubtasks:', error);
       }
     }
-    return () => {};
-  }, [subTasksLoaded]);
+
+    setNewSubTasks((prev) => {
+      const content = [...prev];
+      const task = {
+        id: slug,
+        position: content.length,
+        lang,
+        status: 'PENDING',
+        label: text,
+      };
+      if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+      return content;
+    });
+  }, [subtaskFirstLoad]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
     const taskProps = {
-      id: slug,
+      id: currentSubTask.id,
       label: text,
+      lang: currentSubTask.lang,
+      position: currentSubTask.position,
       status: taskStatus[!isChecked],
     };
     if (subTasks?.length > 0) {
@@ -586,7 +597,8 @@ MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  subTasksLoaded: PropTypes.bool,
+  currentTask: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  subtaskFirstLoad: PropTypes.bool.isRequired,
   newSubTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   setNewSubTasks: PropTypes.func,
   updateSubTask: PropTypes.func,
@@ -594,10 +606,10 @@ MDCheckbox.propTypes = {
 MDCheckbox.defaultProps = {
   index: 0,
   subTasks: [],
-  subTasksLoaded: false,
   newSubTasks: [],
-  setNewSubTasks: () => {},
-  updateSubTask: () => {},
+  currentTask: {},
+  setNewSubTasks: () => { },
+  updateSubTask: () => { },
 };
 
 // MDText.propTypes = {

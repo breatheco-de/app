@@ -123,7 +123,7 @@
     "free-trial-period": "Prueba gratuita por {{qty}} {{period}}",
     "trial": "Prueba por 1 mes",
     "trial-week": "Prueba por 1 semana",
-    "monthly": "Mensual",
+    "monthly": "Un mes",
     "one-time-payment": "un solo pago",
     "one-time-connector": "Un solo pago de ${{value}} dólares",
     "installments": "Cuotas",

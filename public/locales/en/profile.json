@@ -99,13 +99,16 @@
       "active": "Active",
       "expired": "Expired",
       "cancelled": "Cancelled",
-      "completed": "Completed"
+      "completed": "Completed",
+      "error": "Error"
     },
     "cancel": "Cancel subscription",
     "upgrade": "Upgrade subscription",
     "upgrade-plan": "Upgrade financing plan",
     "payment-up-to-date": "Payments are up to date",
     "reactivate-subscription": "Reactivate subscription",
+    "contact-support": "Chat with support",
+    "manage-subscription": "Manage subscription",
     "duration-cancelled": "Duration: Cancelled",
     "upgrade-modal": {
       "choose_your_plan": "Choose your plan",

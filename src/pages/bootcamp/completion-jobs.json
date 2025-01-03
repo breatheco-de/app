@@ -1,30 +1,5 @@
 [
   {
-    "prompt": "How much is the BootCamp?",
-    "answer": "The BootCamp price is $500, and currently we have a discount of 25% with a resulting price of 375$, and you can pay the BootCamp in 3 or 5 months with no interest.",
-    "DOMTarget": ""
-  },
-  {
-    "prompt": "Is there any discount for the BootCamp?",
-    "answer": "Currently there is a discount of 25% with a resulting price of 375$",
-    "DOMTarget": ""
-  },
-  {
-    "prompt": "Do you have financing plans?",
-    "answer": "Yes, you can pay the BootCamp in 3 or 5 months with no interest.",
-    "DOMTarget": ""
-  },
-  {
-    "prompt": "How long does it take to complete the BootCamp?",
-    "answer": "The BootCamp is self-paced and it should take between 4 and 8 months to complete",
-    "DOMTarget": ""
-  },
-  {
-    "prompt": "What will I be ready for after completing the program?",
-    "answer": "After completing the program you will have all the knowledge and experience to start an entry-level job in the tech industry",
-    "DOMTarget": ""
-  },
-  {
     "prompt": "Will I get a certificate after finishing the program?",
     "answer": "Yes, if you finish the program and all the mandatory tasks have been accepted, then you will get a certificate that will help you a lot to get a job.",
     "DOMTarget": ""
@@ -36,7 +11,7 @@
   },
   {
     "prompt": "Who is helping me if I need help?",
-    "answer": "The program includes 4 one-on-one mentoring sessions with an expert, a chat support where a mentor will help you with your questions, and for instant feedback, you can get help from Rigobot which has been trained to help you, knowing what you've done at 4Geeks and what you are trying to learn, so it's very accurate.",
+    "answer": "It from 2 to 4 (depending on the program) one-on-one mentoring sessions with an expert, a chat support where a mentor will help you with your questions, and for instant feedback, you can get help from Rigobot which has been trained to help you, knowing what you've done at 4Geeks and what you are trying to learn, so it's very accurate.",
     "DOMTarget": ""
   }
 ]

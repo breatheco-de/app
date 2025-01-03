@@ -7,6 +7,8 @@ import remarkGfm from 'remark-gfm';
 import remarkGemoji from 'remark-gemoji';
 import PropTypes from 'prop-types';
 import rehypeRaw from 'rehype-raw';
+import useTranslation from 'next-translate/useTranslation';
+import { md5 } from 'js-md5';
 import {
   Img,
 } from '@chakra-ui/react';
@@ -110,7 +112,7 @@ function MdCallToAction({ assetData }) {
   );
 }
 
-function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }) {
+function ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }) {
   const childrenExists = props?.children?.length >= 0;
   const type = childrenExists && props?.children[0]?.props && props.children[0].props.type;
   const type2 = childrenExists && props?.children[1]?.props && props.children[1]?.props.node?.children[0]?.properties?.type;
@@ -118,11 +120,12 @@ function ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, 
     <MDCheckbox
       className="MDCheckbox"
       {...props}
-      subTasksLoaded={subTasksLoaded}
+      subtaskFirstLoad={subtaskFirstLoad}
       newSubTasks={newSubTasks}
       setNewSubTasks={setNewSubTasks}
       subTasks={subTasks}
       updateSubTask={updateSubTask}
+      currentTask={currentTask}
     />
   ) : (
     <li>{props?.children}</li>
@@ -133,56 +136,37 @@ function MarkDownParser({
   content, currentTask,
   showLineNumbers, showInlineLineNumbers, assetData,
 }) {
-  const [subTasksLoaded, setSubTasksLoaded] = useState(false);
+  const [subtaskFirstLoad, setSubtaskFirstLoad] = useState(false);
   const [newSubTasks, setNewSubTasks] = useState([]);
   const [fileContext, setFileContext] = useState('');
+  const { lang } = useTranslation();
   const { subTasks, setSubTasks } = useModuleHandler();
 
-  const updateSubTask = async (taskProps) => {
-    const cleanedSubTasks = subTasks.filter((task) => task.id !== taskProps.id);
-    if (currentTask?.id) {
-      const resp = await bc.todo().subtask().update(
-        currentTask?.id,
-        [
-          ...cleanedSubTasks,
-          taskProps,
-        ],
-      );
-      if (resp.status >= 200 && resp.status < 400) {
-        const respData = await resp.data;
-        setSubTasks(respData);
-      }
-    }
-  };
-
+  //This function gets the subtasks from the backend (the original ones)
   const fetchSubtasks = async () => {
     try {
       const { data } = await bc.todo().subtask().get(currentTask?.id);
+      const subtasksAlreadyHashed = data.some((task) => task.lang && task.lang === lang);
+      if (!subtasksAlreadyHashed) {
+        setSubtaskFirstLoad(true);
+        return;
+      }
 
-      if (Array.isArray(data)) setSubTasks(data);
-      setSubTasksLoaded(true);
+      setSubTasks(data);
     } catch (e) {
       console.log(e);
     }
   };
 
-  // Prefetch subtasks
-  useEffect(() => {
-    if (currentTask?.id) {
-      fetchSubtasks();
-    }
-  }, [currentTask]);
-
-  const createSubTasksIfNotExists = async () => {
-    // const cleanedSubTasks = subTasks.filter((task) => task.id !== currentTask.id);
+  // this function takes the subtasks from the backend that where edited, hash de id, and save them in the backend
+  const updateSubtasksJSON = async () => {
     if (currentTask?.id && newSubTasks.length > 0) {
-      const resp = await bc.todo().subtask().update(
-        currentTask?.id,
-        [
-          // ...cleanedSubTasks,
-          ...newSubTasks,
-        ],
-      );
+      const updateSubtasks = newSubTasks.map((subtask) => ({
+        ...subtask,
+        id: md5(subtask.id),
+      }));
+
+      const resp = await bc.todo().subtask().update(currentTask?.id, [...updateSubtasks]);
       if (resp.status >= 200 && resp.status < 400) {
         const respData = await resp.data;
         setSubTasks(respData);
@@ -190,16 +174,34 @@ function MarkDownParser({
     }
   };
 
-  // Create subTasks if not exists
-  useEffect(() => {
-    if (subTasksLoaded && subTasks.length === 0) {
-      createSubTasksIfNotExists();
+  // This function updates the JSON in the backend, is only used to change states ("DONE", "PENDING")
+  const updateSubTask = async (checkedSubtask) => {
+    const subtasksWithoutTheChecked = subTasks.filter((task) => task.id !== checkedSubtask.id);
+    if (currentTask?.id) {
+      const resp = await bc.todo().subtask().update(currentTask?.id, [...subtasksWithoutTheChecked, checkedSubtask]);
+      if (resp.status >= 200 && resp.status < 400) {
+        const respData = await resp.data;
+        setSubTasks(respData);
+      }
     }
-  }, [subTasksLoaded, subTasks, newSubTasks]);
+  };
 
-  // const newLineBeforeCloseTag = /<\//gm;
+  useEffect(() => {
+    if (!currentTask?.id) return;
+    fetchSubtasks();
+  }, [currentTask, lang]);
 
-  // const formatedContent = content.replace(newLineBeforeCloseTag, '\n$&');
+  // This useEffect edits the subtasks the first time you enter the task
+  useEffect(() => {
+    if (newSubTasks.length === 0) return;
+    updateSubtasksJSON();
+  }, [subtaskFirstLoad]);
+
+  useEffect(() => {
+    if (subTasks.some((subtask) => subtask.status === 'DONE')) {
+      localStorage.setItem(`prevSubtasks_${currentTask.associated_slug}`, JSON.stringify(subTasks));
+    }
+  }, [lang]);
 
   useEffect(() => {
     // initialize anchorJS when markdown content has mounted to the DOM
@@ -242,7 +244,7 @@ function MarkDownParser({
   return (
     <>
       <ReactMarkdown
-      // gemoji plugin
+        // gemoji plugin
         remarkPlugins={[remarkGfm, remarkGemoji, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         components={{
@@ -269,7 +271,7 @@ function MarkDownParser({
           calltoaction: ({ ...props }) => MdCallToAction({ ...props, assetData }),
           // Component for list of checkbox
           // children[1].props.node.children[0].properties.type
-          li: ({ ...props }) => ListComponent({ subTasksLoaded, newSubTasks, setNewSubTasks, subTasks, updateSubTask, ...props }),
+          li: ({ ...props }) => ListComponent({ subtaskFirstLoad, newSubTasks, setNewSubTasks, subTasks, updateSubTask, currentTask, ...props }),
           quote: Quote,
         }}
       >
