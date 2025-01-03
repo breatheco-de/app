@@ -14,7 +14,6 @@ import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
-// import rigo from '../../common/services/rigobot';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
@@ -82,6 +81,11 @@ export async function getStaticProps({ locale, locales, params }) {
     };
   }
 
+  const syllabusSlug = data.syllabus[0]?.slug;
+
+  const respSyll = await axios.get(`${BREATHECODE_HOST}/v1/admissions/syllabus/version?slug=${syllabusSlug}`);
+  const syllabus = respSyll?.data[0];
+
   return {
     props: {
       seo: {
@@ -97,10 +101,12 @@ export async function getStaticProps({ locale, locales, params }) {
         card: 'default',
       },
       data,
+      syllabus,
     },
   };
 }
 
+// TODO: Move this to a separate file, it should be a reusable component
 function CouponTopBar() {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
@@ -159,7 +165,7 @@ function CouponTopBar() {
   );
 }
 
-function CoursePage({ data }) {
+function CoursePage({ data, syllabus }) {
   const { state } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
@@ -183,8 +189,6 @@ function CoursePage({ data }) {
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
-  const faqList = t('faq', {}, { returnObjects: true }) || [];
-  const features = t('features', {}, { returnObjects: true }) || {};
   const translationsObj = getTranslations(t);
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
@@ -217,7 +221,6 @@ function CoursePage({ data }) {
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
 
-  const featuredBullets = t('featured-bullets', {}, { returnObjects: true }) || [];
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
     plan_id: featuredPlanToEnroll?.plan_id,
@@ -256,11 +259,42 @@ function CoursePage({ data }) {
     }
     return t('common:enroll');
   };
+
   const featurePrice = getPlanPrice().toLocaleLowerCase();
 
+  const getAlternativeTranslation = (slug, params = {}, options = {}) => {
+    const keys = slug.split('.');
+    const result = keys.reduce((acc, key) => {
+      if (acc && acc[key] !== undefined) return acc[key];
+      return null;
+    }, data?.course_translation?.landing_variables);
+
+    return result !== null ? result : t(slug, params, options);
+  };
+
+  const faqList = getAlternativeTranslation('faq', {}, { returnObjects: true }) || [];
+  const features = getAlternativeTranslation('features', {}, { returnObjects: true }) || {};
+  const featuredBullets = getAlternativeTranslation('featured-bullets', {}, { returnObjects: true }) || [];
+
   useEffect(() => {
-    if (isRigoInitialized && data.course_translation && !initialDataIsFetching) {
-      const context = document.body.innerText;
+    if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
+      // const context = document.body.innerText;
+      const plansContext = planData.planList.map((plan) => `
+        - ${plan.title}
+        price: ${plan.priceText}
+        period: ${plan.period_label}
+      `);
+      const syllabusContext = syllabus?.json
+        ? syllabus.json.days
+          .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
+        : '';
+
+      const context = `
+        description: ${data.course_translation?.description}
+        ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
+        plans: ${plansContext}
+        payment-methods: ${getAlternativeTranslation('rigobot.payment-methods')},
+      `;
 
       rigo.updateOptions({
         showBubble: false,
@@ -268,7 +302,7 @@ function CoursePage({ data }) {
         context,
       });
     }
-  }, [isRigoInitialized, lang, initialDataIsFetching]);
+  }, [isRigoInitialized, lang, initialDataIsFetching, planData]);
 
   const getElementTopOffset = (elem) => {
     if (elem && isWindow) {
@@ -379,6 +413,7 @@ function CoursePage({ data }) {
       }
     });
   };
+
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
 
@@ -505,10 +540,12 @@ function CoursePage({ data }) {
     }
   }, [readyToRefetch]);
 
+  const randomMultiplier = Math.floor(Math.random() * 2) + 20;
+
   const assetCountByType = {
-    lessons: assetCount?.lesson || 0,
-    exercises: assetCount?.exercise || 0,
-    projects: assetCount?.project || 0,
+    lesson: assetCount?.lesson || 0,
+    exercise: assetCount?.exercise ? assetCount.exercise * randomMultiplier : 0,
+    project: assetCount?.project || 0,
   };
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
@@ -522,7 +559,7 @@ function CoursePage({ data }) {
       showBubble: true,
       target: targetId,
       highlight: true,
-      welcomeMessage: t('rigobot.message', { title: data?.course_translation?.title }),
+      welcomeMessage: getAlternativeTranslation('rigobot.message', { title: data?.course_translation?.title }),
       collapsed: false,
       purposeSlug: '4geekscom-public-agent',
     });
@@ -564,16 +601,23 @@ function CoursePage({ data }) {
             {/* Title */}
             <Flex flexDirection="column" gridGap="16px">
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
-                {/* <Image src={data?.icon_url} width="54px" height="54px" objectFit="cover" /> */}
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.learning') : t('title-connectors.start')}
-                </Heading>
-                <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
-                  {data?.course_translation?.title}
-                </Heading>
-                <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
-                  {!isVisibilityPublic ? t('title-connectors.own-pace') : t('title-connectors.end')}
-                </Heading>
+                {
+                  data?.course_translation?.heading ? (
+                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                  ) : (
+                    <>
+                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                        {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.learning') : getAlternativeTranslation('title-connectors.start')}
+                      </Heading>
+                      <Heading as="span" color="blue.default" width="100%" size={{ base: '42px', md: '64px' }} lineHeight="1.1" fontFamily="Space Grotesk Variable" fontWeight={700}>
+                        {data?.course_translation?.title}
+                      </Heading>
+                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
+                        {!isVisibilityPublic ? getAlternativeTranslation('title-connectors.own-pace') : getAlternativeTranslation('title-connectors.end')}
+                      </Heading>
+                    </>
+                  )
+                }
               </Flex>
             </Flex>
 
@@ -653,9 +697,9 @@ function CoursePage({ data }) {
           </Flex>
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
-              title={t('join-cohort')}
+              title={getAlternativeTranslation('join-cohort')}
               maxWidth="396px"
-              description={isAuthenticated ? t('join-cohort-description') : t('create-account-text')}
+              description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
               borderColor={data.color || 'green.400'}
               textAlign="center"
               gridGap="11px"
@@ -696,7 +740,7 @@ function CoursePage({ data }) {
                         textTransform="uppercase"
                         onClick={() => joinCohort()}
                       >
-                        {t('join-cohort')}
+                        {getAlternativeTranslation('join-cohort')}
                       </Button>
                     ) : (
                       <>
@@ -710,7 +754,7 @@ function CoursePage({ data }) {
                           }}
                         >
                           {!featuredPlanToEnroll?.isFreeTier
-                            ? `${t('common:enroll-for-connector')} ${featurePrice}`
+                            ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
                         {payableList?.length > 0 && (
@@ -779,14 +823,14 @@ function CoursePage({ data }) {
         <GridContainer maxWidth="1280px" padding="0 10px" gridTemplateColumns="repeat(12, 1fr)" childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} withContainer gridColumn="1 / span 12">
           <Flex flexDirection="column">
             <OneColumnWithIcon
-              title={t('rigobot.title')}
+              title={getAlternativeTranslation('rigobot.title')}
               icon=""
               handleButton={() => tryRigobot('#try-rigobot')}
-              buttonText={t('rigobot.button')}
+              buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
             >
               <Text size="14px" color="currentColor">
-                {t('rigobot.description')}
+                {getAlternativeTranslation('rigobot.description')}
               </Text>
             </OneColumnWithIcon>
           </Flex>
@@ -800,14 +844,14 @@ function CoursePage({ data }) {
           )}
           <Flex flexDirection="column" gridGap="16px">
             <Heading size="24px" lineHeight="normal" textAlign="center">
-              {t('build-connector.what-you-will')}
+              {getAlternativeTranslation('build-connector.what-you-will')}
               {' '}
               <Box as="span" color="blue.default">
-                {t('build-connector.build')}
+                {getAlternativeTranslation('build-connector.build')}
               </Box>
             </Heading>
             <Text size="18px" textAlign="center">
-              {t('build-connector.description')}
+              {getAlternativeTranslation('build-connector.description')}
             </Text>
             <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
               {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
@@ -848,13 +892,13 @@ function CoursePage({ data }) {
               <Flex flexDirection="column" gridGap="4rem">
                 <Flex flexDirection="column" gridGap="1rem">
                   <Heading size="24px" textAlign="center">
-                    {t('why-learn-4geeks-connector.why-learn-with')}
+                    {getAlternativeTranslation('why-learn-4geeks-connector.why-learn-with')}
                     {' '}
                     <Box as="span" color="blue.default">4Geeks</Box>
                     ?
                   </Heading>
                   <Text size="18px" margin={{ base: 'auto', md: '0 8vw' }} textAlign="center" style={{ textWrap: 'balance' }}>
-                    {t('why-learn-4geeks-connector.benefits-connector')}
+                    {getAlternativeTranslation('why-learn-4geeks-connector.benefits-connector')}
                   </Text>
                 </Flex>
                 <Flex gridGap="2rem" flexDirection={{ base: 'column', md: 'row' }}>
@@ -903,12 +947,12 @@ function CoursePage({ data }) {
 
         <MktTwoColumnSideImage
           mt="6.25rem"
-          imageUrl={t('certificate.image')}
-          title={t('certificate.title')}
-          description={t('certificate.description')}
+          imageUrl={getAlternativeTranslation('certificate.image')}
+          title={getAlternativeTranslation('certificate.title')}
+          description={getAlternativeTranslation('certificate.description')}
           informationSize="Medium"
-          buttonUrl={t('certificate.button-link')}
-          buttonLabel={t('certificate.button')}
+          buttonUrl={getAlternativeTranslation('certificate.button-link')}
+          buttonLabel={getAlternativeTranslation('certificate.button')}
           containerProps={{
             padding: '0px',
             marginTop: '0px',
@@ -919,13 +963,13 @@ function CoursePage({ data }) {
 
         <MktTwoColumnSideImage
           mt="6.25rem"
-          imageUrl={t('job-section.image')}
-          title={t('job-section.title')}
-          subTitle={t('job-section.subtitle')}
-          description={t('job-section.description')}
+          imageUrl={getAlternativeTranslation('job-section.image')}
+          title={getAlternativeTranslation('job-section.title')}
+          subTitle={getAlternativeTranslation('job-section.subtitle')}
+          description={getAlternativeTranslation('job-section.description')}
           informationSize="Medium"
-          buttonUrl={t('job-section.button-link')}
-          buttonLabel={t('job-section.button')}
+          buttonUrl={getAlternativeTranslation('job-section.button-link')}
+          buttonLabel={getAlternativeTranslation('job-section.button')}
           imagePosition="right"
           textBackgroundColor="#EEF9FE"
           titleColor="#0097CF"
@@ -955,8 +999,8 @@ function CoursePage({ data }) {
             gridColumn1="1 / span 7"
             gridColumn2="8 / span 5"
             gridGap="3rem"
-            title={t('show-prices.title')}
-            description={t('show-prices.description')}
+            title={getAlternativeTranslation('show-prices.title')}
+            description={getAlternativeTranslation('show-prices.description')}
             plan={data?.plan_slug}
             cohortId={cohortId}
           />
@@ -964,8 +1008,8 @@ function CoursePage({ data }) {
 
         <GridContainer padding="0 10px" maxWidth="1280px" width="100%" mt="6.25rem" withContainer childrenStyle={{ display: 'flex', flexDirection: 'column', gridGap: '100px' }} gridTemplateColumns="repeat(12, 1fr)" gridColumn="1 / 12 span">
           <MktTrustCards
-            title={t('why-learn-with-4geeks.title')}
-            description={t('why-learn-with-4geeks.description')}
+            title={getAlternativeTranslation('why-learn-with-4geeks.title')}
+            description={getAlternativeTranslation('why-learn-with-4geeks.description')}
           />
         </GridContainer>
         {/* FAQ section */}
@@ -1002,10 +1046,12 @@ function CoursePage({ data }) {
 
 CoursePage.propTypes = {
   data: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.array])),
+  syllabus: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 CoursePage.defaultProps = {
   data: {},
+  syllabus: null,
 };
 
 export default CoursePage;
