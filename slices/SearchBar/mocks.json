@@ -3,19 +3,24 @@
 		"__TYPE__": "SharedSliceContent",
 		"variation": "default",
 		"primary": {
-			"id_key": {
+			"heading_top": {
 				"__TYPE__": "FieldContent",
-				"value": "space",
+				"value": "because",
 				"type": "Text"
 			},
-			"endpoint": {
+			"heading_bottom": {
 				"__TYPE__": "FieldContent",
-				"value": "writer",
+				"value": "card",
 				"type": "Text"
 			},
-			"margin": {
+			"subtitle": {
 				"__TYPE__": "FieldContent",
-				"value": "sign",
+				"value": "memory",
+				"type": "Text"
+			},
+			"background": {
+				"__TYPE__": "FieldContent",
+				"value": "poem",
 				"type": "Text"
 			},
 			"is_for_logged_in_users": {
@@ -26,7 +31,16 @@
 		"items": [
 			{
 				"__TYPE__": "GroupItemContent",
-				"value": []
+				"value": [
+					[
+						"popular_searches",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "one",
+							"type": "Text"
+						}
+					]
+				]
 			}
 		]
 	}

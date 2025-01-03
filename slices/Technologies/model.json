@@ -13,23 +13,26 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "endpoint": {
           "type": "Text",
-          "config": {
-            "label": "Endpoint",
-            "placeholder": ""
-          }
+          "config": { "label": "Endpoint", "placeholder": "" }
         },
         "margin": {
           "type": "Text",
           "config": {
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
+          }
+        },
+        "is_for_logged_in_users": {
+          "type": "Boolean",
+          "config": {
+            "label": "Is for logged in users only",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
         }
       },

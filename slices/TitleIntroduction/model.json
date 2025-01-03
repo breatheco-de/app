@@ -113,6 +113,15 @@
         "button_id": {
           "type": "Text",
           "config": { "label": "Button Id", "placeholder": "" }
+        },
+        "is_for_logged_in_users": {
+          "type": "Boolean",
+          "config": {
+            "label": "Is for logged in users only",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
+          }
         }
       },
       "items": {},

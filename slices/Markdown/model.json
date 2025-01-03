@@ -13,24 +13,15 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
+          "config": { "label": "Title", "placeholder": "" }
         },
         "description": {
           "type": "Text",
-          "config": {
-            "label": "Description",
-            "placeholder": ""
-          }
+          "config": { "label": "Description", "placeholder": "" }
         },
         "markdown": {
           "type": "StructuredText",
@@ -59,9 +50,15 @@
         },
         "padding": {
           "type": "Text",
+          "config": { "label": "Padding", "placeholder": "" }
+        },
+        "is_for_logged_in_users": {
+          "type": "Boolean",
           "config": {
-            "label": "Padding",
-            "placeholder": ""
+            "label": "Is for logged in users only",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
         }
       },

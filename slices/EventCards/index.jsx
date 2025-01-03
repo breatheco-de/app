@@ -12,6 +12,8 @@ const EventCards = ({ slice }) => (
     id={slice?.primary?.id_key}
     title={slice?.primary?.title}
     endpoint={slice?.primary?.endpoint}
+    techFilter={slice?.primary?.tech_filtered}
+    searchSensitive={slice?.primary?.search_sensitive}
     margin={slice?.primary?.margin || '40px auto'}
   />
 );

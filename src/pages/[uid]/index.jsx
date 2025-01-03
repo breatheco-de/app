@@ -11,14 +11,24 @@ import { components } from '../../../slices';
 import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import completions from './completion-jobs.json';
+import useAuth from '../../common/hooks/useAuth';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
   const { isRigoInitialized, rigo } = useRigo();
+  const { isAuthenticated } = useAuth();
+
+  const filteredSlices = page.data.slices.filter((slice) => {
+    const isForLoggedInUsers = slice.primary?.is_for_logged_in_users || false;
+    if (isForLoggedInUsers === undefined) return true;
+    return isAuthenticated ? isForLoggedInUsers : !isForLoggedInUsers;
+  });
 
   useEffect(() => {
+    console.log('SOY LOS PRIMEROS SLICES', page.data.slices);
+
     if (!page?.id) {
       window.location.href = '/404';
     }
@@ -26,6 +36,8 @@ function Page({ page }) {
       window.location.href = landingUrl;
     }
   }, []);
+
+  console.log(page.data.slices);
 
   const tryRigobot = () => {
     rigo.updateOptions({
@@ -69,8 +81,8 @@ function Page({ page }) {
           <meta name="google" content="notranslate" />
         </Head>
       )}
-      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>
-        <SliceZone slices={page?.data?.slices} components={components} />
+      <Box className="prismic-body" pt={isAuthenticated ? '0' : '3rem'} px={isAuthenticated ? 0 : { base: '10px', md: '2rem' }}>
+        <SliceZone slices={filteredSlices} components={components} />
       </Box>
     </>
   );

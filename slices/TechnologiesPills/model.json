@@ -13,10 +13,7 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "id",
-            "placeholder": ""
-          }
+          "config": { "label": "id", "placeholder": "" }
         },
         "technologies": {
           "type": "StructuredText",
@@ -29,10 +26,24 @@
         },
         "margin": {
           "type": "Text",
+          "config": { "label": "margin", "placeholder": "" }
+        },
+        "background": {
+          "type": "Text",
+          "config": { "label": "background", "placeholder": "" }
+        },
+        "is_for_logged_in_users": {
+          "type": "Boolean",
           "config": {
-            "label": "margin",
-            "placeholder": ""
+            "label": "Is for logged in users only",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
+        },
+        "padding_top": {
+          "type": "Text",
+          "config": { "label": "padding top", "placeholder": "" }
         }
       },
       "items": {},

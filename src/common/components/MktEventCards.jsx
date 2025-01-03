@@ -7,17 +7,19 @@ import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
 import axios from '../../axios';
-import { sortToNearestTodayDate } from '../../utils';
+import { sortToNearestTodayDate, getQueryString } from '../../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import { parseQuerys } from '../../utils/url';
 
-function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, ...rest }) {
-  const [events, setEvents] = useState([]);
+function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, techFilter, searchSensitive, ...rest }) {
+  const [originalEvents, setOriginalEvents] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const { fontColor } = useStyle();
   const router = useRouter();
   const lang = router.locale;
+  const search = getQueryString('search');
   const qsConnector = parseQuerys({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
@@ -30,27 +32,55 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
   const maxEvents = 10;
 
   useEffect(() => {
-    if (externalEvents) {
-      setEvents(externalEvents);
-    } else {
-      axios.get(`${BREATHECODE_HOST}${endpointDefault}`)
-        .then((res) => {
-          const data = res?.data;
-          if (data && data.length > 0) {
-            const englishLang = lang === 'en' && 'us';
-            const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
-            const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
-            const isMoreThanAnyEvents = existentLiveClasses?.length > maxEvents;
-            const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
+    const fetchEvents = async () => {
+      try {
+        if (externalEvents) {
+          setOriginalEvents(externalEvents);
+          setFilteredEvents(externalEvents);
+          return;
+        }
+        const res = await axios.get(`${BREATHECODE_HOST}${endpointDefault}`);
+        const data = res?.data;
 
-            const eventsFiltered = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
-            setEvents(eventsFiltered);
-          }
-        });
+        if (data && data.length > 0) {
+          const englishLang = lang === 'en' && 'us';
+          const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
+          const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
+          const isMoreThanAnyEvents = existentLiveClasses?.length > maxEvents;
+          const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
+
+          const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
+
+          const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
+          console.log('filtro de', techFilter, eventsFilteredByTech);
+
+          setOriginalEvents(eventsFilteredByTech);
+          setFilteredEvents(eventsFilteredByTech);
+          return;
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, [externalEvents, techFilter]);
+
+  useEffect(() => {
+    if (!searchSensitive || techFilter) return;
+
+    if (!search) {
+      setFilteredEvents(originalEvents);
+      return;
     }
-  }, [externalEvents]);
 
-  return events?.length > 0 && (
+    const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase())
+      || event?.event_type?.technologies?.includes(search.toLowerCase()));
+
+    setFilteredEvents(filteredBySearch);
+  }, [search, searchSensitive, originalEvents]);
+
+  return filteredEvents?.length > 0 && (
     <>
       <GridContainer
         id={id}
@@ -70,7 +100,7 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
         </Flex>
         <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
           <Flex gridGap="20px" width="max-content">
-            {events.map((event) => (
+            {filteredEvents.map((event) => (
               <DynamicContentCard
                 type="workshop"
                 data={event}
@@ -97,6 +127,8 @@ MktEventCards.propTypes = {
   hoursToLimit: PropTypes.number,
   externalEvents: PropTypes.oneOfType([PropTypes.array, PropTypes.any]),
   hideDescription: PropTypes.bool,
+  searchSensitive: PropTypes.bool,
+  techFilter: PropTypes.string,
 };
 
 MktEventCards.defaultProps = {
@@ -107,6 +139,8 @@ MktEventCards.defaultProps = {
   hoursToLimit: 1440,
   externalEvents: null,
   hideDescription: false,
+  searchSensitive: false,
+  techFilter: null,
 };
 
 export default MktEventCards;

@@ -1,34 +1,47 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "fewer",
-        "type": "Text"
-      },
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "pictured",
-        "type": "Text"
-      },
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "value": "carried",
-        "type": "Text"
-      },
-      "margin": {
-        "__TYPE__": "FieldContent",
-        "value": "continent",
-        "type": "Text"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "fewer",
+				"type": "Text"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "pictured",
+				"type": "Text"
+			},
+			"endpoint": {
+				"__TYPE__": "FieldContent",
+				"value": "carried",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "continent",
+				"type": "Text"
+			},
+			"is_for_logged_in_users": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"search_sensitive": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"tech_filtered": {
+				"__TYPE__": "FieldContent",
+				"value": "swam",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]
