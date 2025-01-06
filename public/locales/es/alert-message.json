@@ -8,6 +8,7 @@
   "content-not-found2": "El endpoint no pudo acceder a ningún contenido de esta {{lesson}}",
   "default-version-not-found": "La versión predeterminada no pudo acceder a ningún contenido de este {{lesson}}",
   "invalid-cohort-slug": "Slug de cohorte no válido",
+  "error-fetching-syllabus": "Hubo un problema al mostrar la información del plan de estudios",
   "no-cohort-modules-found": "No se encontraron módulos de cohorte, primero elija una cohorte válida",
   "language-not-found": "No se encontró información para el idioma \"{{currentLanguageLabel}}\", mostrando la versión en inglés",
   "task-cant-sync-with-cohort": "Algunas tareas no se pueden sincronizar con la cohorte actual",

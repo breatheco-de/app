@@ -7,7 +7,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState, memo } from 'react';
-import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
 import { ButtonHandlerByTaskStatus } from './ButtonHandlerByTaskStatus';
@@ -15,16 +14,13 @@ import ModuleComponent from '../../common/components/Module';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
-import { reportDatalayer } from '../../utils/requests';
-// import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
   data, currIndex, isDisabled, onDisabledClick, variant,
 }) {
   const { t, lang } = useTranslation('dashboard');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const { taskTodo, updateAssignment } = useModuleHandler();
-  const { state } = useCohortHandler();
+  const { taskTodo, state, updateAssignment } = useCohortHandler();
   const { cohortSession } = state;
   const [currentAssetData, setCurrentAssetData] = useState(null);
   const [fileData, setFileData] = useState(null);
@@ -135,17 +131,6 @@ function Module({
   const changeStatusAssignment = async (event, task, taskStatus) => {
     if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
-      reportDatalayer({
-        dataLayer: {
-          event: 'assignment_status_updated',
-          task_status: taskStatus,
-          task_id: task.id,
-          task_title: task.title,
-          task_associated_slug: task.associated_slug,
-          task_type: task.task_type,
-          task_revision_status: task.revision_status,
-        },
-      });
       setUpdatedTask({
         ...task,
       });
