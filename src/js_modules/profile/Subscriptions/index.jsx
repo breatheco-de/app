@@ -44,6 +44,7 @@ function Subscriptions({ cohorts }) {
     service_sets: [],
   });
   const [services, setServices] = useState({
+    nonSaasMentorships: [],
     mentorships: [],
     workshops: [],
   });
@@ -156,6 +157,10 @@ function Subscriptions({ cohorts }) {
 
   const detailsConsumableData = {
     mentorships: {
+      icon: 'teacher1',
+      title: t('subscription.your-mentoring-available'),
+    },
+    nonSaasMentorships: {
       icon: 'teacher1',
       title: t('subscription.your-mentoring-available'),
     },
