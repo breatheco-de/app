@@ -6,7 +6,7 @@ import {
   Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, Button, Box,
   NumberInput, NumberInputStepper, NumberDecrementStepper, NumberIncrementStepper, NumberInputField,
   FormControl, FormLabel, Flex, Grid, useCheckbox, useCheckboxGroup, Avatar,
-  useColorMode, useToast, Select, ModalCloseButton,
+  useColorMode, Select, ModalCloseButton,
 } from '@chakra-ui/react';
 import Icon from '../Icon';
 import Text from '../Text';
@@ -15,6 +15,7 @@ import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import useStyle from '../../hooks/useStyle';
 import useCohortHandler from '../../hooks/useCohortHandler';
 import handlers from '../../handlers';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function AttendanceModal({
   title, message, isOpen, onClose, students,
@@ -38,7 +39,7 @@ function AttendanceModal({
   const [openAttendanceTakenWarn, setOpenAttendanceTakenWarn] = useState(false);
   const [attendanceList, setAttendanceList] = useState({});
   const { colorMode } = useColorMode();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'attendance-report-apply-modules ' });
 
   const { lightColor, borderColor } = useStyle();
 
@@ -58,12 +59,13 @@ function AttendanceModal({
         setAttendanceList(data);
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-getting-previous-attendance'),
           status: 'error',
           duration: 9000,
           isClosable: true,
+          silent: false,
         });
       })
       .finally(() => setIsLoading(false));
@@ -121,21 +123,23 @@ function AttendanceModal({
     handlers.saveCohortAttendancy({ cohortSlug: cohortSession.slug, students, checked, currentModule })
       .then((data) => {
         setAttendanceList(data);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:attendancy-reported'),
           status: 'success',
-          duration: 9000,
+          duration: 900,
           isClosable: true,
+          silent: false,
         });
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:attendancy-report-error'),
           status: 'error',
           duration: 9000,
           isClosable: true,
+          silent: false,
         });
       })
       .finally(() => setIsLoading(false));
@@ -156,24 +160,26 @@ function AttendanceModal({
           });
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-updating-day-and-modules'),
             status: 'error',
             duration: 7000,
             isClosable: true,
+            silent: false,
           });
           setOpenWarn(false);
           setIsLoading(false);
         })
         .finally(() => setIsLoading(false));
     } else {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-updating-day-and-modules'),
         status: 'error',
         duration: 7000,
         isClosable: true,
+        silent: false,
       });
       setIsLoading(false);
     }

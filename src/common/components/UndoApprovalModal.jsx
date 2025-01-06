@@ -55,8 +55,8 @@ function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAss
                     position: 'top',
                     title: t('alert-message:review-assignment-updated'),
                     status: 'success',
-                    duration: 5000,
-                    isClosable: true,
+                    duration: null,
+                    isClosable: false,
                   });
                 })
                 .catch((e) => {

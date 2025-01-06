@@ -14,7 +14,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
   useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -22,6 +21,7 @@ import PropTypes from 'prop-types';
 import bc from '../../services/breathecode';
 import useStyle from '../../hooks/useStyle';
 import Icon from '../Icon';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function DeliverModalContent({
   isStudent,
@@ -40,7 +40,7 @@ function DeliverModalContent({
   const { t } = useTranslation('assignments');
   const { modal, borderColor2, featuredColor, hexColor } = useStyle();
   const [openIgnoreTask, setOpenIgnoreTask] = useState(false);
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' review-assignment-task-error' });
   const [copied, setCopied] = useState(false);
   const textAreaRef = useRef(null);
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
@@ -174,12 +174,13 @@ function DeliverModalContent({
                   revision_status: taskIsIgnored ? 'PENDING' : 'IGNORED',
                 })
                   .then(() => {
-                    toast({
+                    createToast({
                       position: 'top',
                       title: t('alert-message:review-assignment-ignored-task'),
                       status: 'success',
                       duration: 5000,
                       isClosable: true,
+                      silent: false,
                     });
                     updpateAssignment({
                       ...currentTask,
@@ -191,12 +192,13 @@ function DeliverModalContent({
                   })
                   .catch((e) => {
                     console.log(e);
-                    toast({
+                    createToast({
                       position: 'top',
                       title: t('alert-message:review-assignment-error'),
                       status: 'error',
                       duration: 5000,
                       isClosable: true,
+                      silent: false,
                     });
                   });
               }}

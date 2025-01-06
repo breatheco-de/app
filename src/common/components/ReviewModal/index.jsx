@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-import { Box, Button, Flex, Link, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Link, Textarea } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import SimpleModal from '../SimpleModal';
@@ -23,6 +23,7 @@ import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
 import { error } from '../../../utils/logging';
 import { reportDatalayer } from '../../../utils/requests';
+import useCustomToast from '../../hooks/useCustomToast';
 
 export const stages = {
   initial: 'initial',
@@ -45,7 +46,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
   projectLink, changeStatusAssignment, disableRate, disableLiking, acceptTC, handleAcceptTC, ...rest }) {
   const { t } = useTranslation('assignments');
   const { isAuthenticated, isAuthenticatedWithRigobot, user } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' review-status-code-revisions' });
   const [selectedText, setSelectedText] = useState('');
   const [loaders, setLoaders] = useState({
     isFetchingCommitFiles: false,
@@ -201,13 +202,14 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
-        toast({
+        createToast({
           title: t('alert-message:something-went-wrong'),
           description: `Cannot get code revisions: ${data?.detail}`,
           status: 'error',
           duration: 5000,
           position: 'top',
-          isClosable: true,
+          isClosable: false,
+          silent: false,
         });
       }
     } catch (errorMsg) {
@@ -303,12 +305,13 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           description: comment,
         })
         .then(() => {
-          toast({
+          createToast({
             position: 'top',
             title: alertStatus[reviewStatus],
             status: 'success',
             duration: 5000,
             isClosable: true,
+            silent: false,
           });
           updpateAssignment({
             ...currentTask,
@@ -322,12 +325,13 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           onClose();
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:review-assignment-error'),
             status: 'error',
             duration: 5000,
             isClosable: true,
+            silent: false,
           });
         })
         .finally(() => {
