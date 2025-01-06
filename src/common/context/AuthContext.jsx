@@ -16,6 +16,7 @@ import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
 import { generateUserContext } from '../../utils/rigobotContext';
+import useCohortAction from '../store/actions/cohortAction';
 
 const initialState = {
   isLoading: true,
@@ -123,6 +124,7 @@ export const AuthContext = createContext({
 
 function AuthProvider({ children, pageProps }) {
   const router = useRouter();
+  const { setMyCohorts } = useCohortAction();
   const { t, lang } = useTranslation('footer');
   const toast = useToast();
   const { rigo, isRigoInitialized } = useRigo();
@@ -371,6 +373,7 @@ function AuthProvider({ children, pageProps }) {
     localStorage.removeItem('showGithubWarning');
     localStorage.removeItem('redirect');
     dispatch({ type: 'LOGOUT' });
+    setMyCohorts([]);
   };
 
   const updateProfile = async (payload) => {
