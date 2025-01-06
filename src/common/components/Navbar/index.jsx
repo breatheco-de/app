@@ -410,10 +410,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 {getLangName}
                               </Link>
                               {
-                                i < langs.length - 1 && (
-                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                                )
-                              }
+                                  i < langs.length - 1 && (
+                                    <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                                  )
+                                }
                             </Fragment>
                           );
                         })}

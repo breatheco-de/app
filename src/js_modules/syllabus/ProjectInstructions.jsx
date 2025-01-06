@@ -167,6 +167,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const isForOpenLocaly = isInteractive || templateUrl;
   const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
 
+  const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
+
   const startWithLearnpack = learnpackDeployUrl && cohortSession?.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
   if (variant === 'small') {
@@ -210,15 +212,18 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
     <>
       <Box background="blue.1100" borderRadius="11px" padding="16px">
         <Box display="flex" gap="16px">
-          <Icon icon="learnpack" width="102px" height="102px" />
+          {!isExternalExercise && <Icon icon="learnpack" width="102px" height="102px" />}
           <Box>
             <Heading size="xsm" mb="15px" color="white">
-              {t('common:learnpack.title')}
+              {!isExternalExercise ? t('common:learnpack.title') : t('common:external.title')}
             </Heading>
             <Text
               size="l"
               color="white"
-              dangerouslySetInnerHTML={{ __html: t('common:learnpack.description', { projectName: currentTask?.title || currentAsset?.title }) }}
+              dangerouslySetInnerHTML={{
+                __html: !isExternalExercise ? t('common:learnpack.description', { projectName: currentAsset?.title || currentTask?.title })
+                  : t('common:external.description', { projectName: currentAsset?.title || currentTask?.title }),
+              }}
             />
           </Box>
         </Box>
