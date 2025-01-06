@@ -27,8 +27,6 @@ function Page({ page }) {
   });
 
   useEffect(() => {
-    console.log('SOY LOS PRIMEROS SLICES', page.data.slices);
-
     if (!page?.id) {
       window.location.href = '/404';
     }
@@ -36,8 +34,6 @@ function Page({ page }) {
       window.location.href = landingUrl;
     }
   }, []);
-
-  console.log(page.data.slices);
 
   const tryRigobot = () => {
     rigo.updateOptions({
