@@ -420,7 +420,6 @@ function SyllabusContent() {
 
       if (currTask?.target === 'blank') {
         setCurrentAsset(data);
-        return;
       }
 
       setReadmeUrlPathname(finalPathname);
@@ -1462,7 +1461,7 @@ function SyllabusContent() {
         title={t('dashboard:modules.target-blank-title')}
         isReadonly
         description={t('dashboard:modules.target-blank-msg', { title: clickedPage?.title || currentBlankProps?.title })}
-        link={inputModalLink}
+        link={`${inputModalLink}?lang=${lang}`}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"

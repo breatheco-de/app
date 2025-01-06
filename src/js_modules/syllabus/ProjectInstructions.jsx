@@ -66,7 +66,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
 }
 
 function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant }) {
-  const { t } = useTranslation('common');
+  const { t, lang } = useTranslation('common');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
@@ -94,7 +94,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
 
   if (isExternalExercise) {
     return (
-      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+      <Button cursor="pointer" as="a" href={`${currentAsset.url}?lang=${lang}`} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
         {t('common:learnpack.start-exercise')}
       </Button>
     );

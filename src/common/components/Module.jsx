@@ -14,7 +14,7 @@ function Module({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
   isDone, rightItemHandler, link, textWithLink, mandatory, onDisabledClick,
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, lang } = useTranslation('dashboard');
   const containerBackground = isDone ? useColorModeValue('featuredLight', 'featuredDark') : useColorModeValue('white', 'primary');
   const commonFontColor = useColorModeValue('gray.600', 'gray.200');
   const [openModal, setOpenModal] = useState(false);
@@ -49,7 +49,7 @@ function Module({
         title={t('modules.target-blank-title')}
         isReadonly
         description={t('modules.target-blank-msg', { title: data.title })}
-        link={data.url}
+        link={`${data.url}?lang=${lang}`}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
