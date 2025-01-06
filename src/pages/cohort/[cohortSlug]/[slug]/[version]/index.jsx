@@ -90,6 +90,8 @@ function Dashboard() {
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
     : [];
 
+  const isSubscriptionFreeTrial = subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists;
+
   const academyOwner = cohortProgram?.academy_owner;
 
   const { cohortSlug, slug } = router.query;
@@ -387,6 +389,10 @@ function Dashboard() {
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
     prepareTasks();
+
+    return () => {
+      setSortedAssignments([]);
+    };
   }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
@@ -417,11 +423,12 @@ function Dashboard() {
 
   return (
     <>
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
+      {getMandatoryProjects() && getMandatoryProjects().length > 0 && !isSubscriptionFreeTrial && (
         <AlertMessage
           full
           type="warning"
           style={{ borderRadius: '0px', justifyContent: 'center' }}
+          onClose={() => console.log('Alerta de proyectos obligatorios cerrada')}
         >
           <Text
             size="l"
@@ -445,15 +452,17 @@ function Dashboard() {
           </Text>
         </AlertMessage>
       )}
-      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+      {isSubscriptionFreeTrial && (
         <AlertMessage
           full
           type="warning"
           style={{ borderRadius: '0px', justifyContent: 'center' }}
+          onClose={() => console.log('Alerta de prueba gratuita cerrada free trial')}
         >
           <Text
             size="l"
             color="black"
+            fontWeight="700"
             dangerouslySetInnerHTML={{
               __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
             }}

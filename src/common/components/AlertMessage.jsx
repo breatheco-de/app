@@ -1,12 +1,13 @@
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import Text from './Text';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 function AlertMessage({
-  message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
+  message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, onClose, ...rest
 }) {
   const { fontColor } = useStyle();
   const alertColors = {
@@ -17,10 +18,23 @@ function AlertMessage({
     info: '#00A0E9',
   };
 
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
+  const handleClose = () => {
+    setVisible(false);
+    if (onClose) onClose();
+  };
+
+  if (!visible) return null;
+
   return (message || children) && (
     <Box
       display="flex"
-      style={style}
+      style={{ ...style, position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase' }}
       flexDirection="row"
       backgroundColor={full ? alertColors[type] : 'transparent'}
       border="2px solid"
@@ -59,6 +73,9 @@ function AlertMessage({
           </Box>
         </>
       )}
+      <button type="button" onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '5px', background: 'none', border: 'none', fontSize: '16px', cursor: 'pointer' }}>
+        X
+      </button>
     </Box>
   );
 }
@@ -75,6 +92,7 @@ AlertMessage.propTypes = {
   children: PropTypes.node,
   withoutIcon: PropTypes.bool,
   iconColor: PropTypes.string,
+  onClose: PropTypes.func,
 };
 
 AlertMessage.defaultProps = {
@@ -89,6 +107,7 @@ AlertMessage.defaultProps = {
   children: null,
   withoutIcon: false,
   iconColor: '',
+  onClose: null,
 };
 
 export default AlertMessage;
