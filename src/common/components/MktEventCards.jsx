@@ -11,11 +11,26 @@ import { sortToNearestTodayDate, getQueryString } from '../../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
+import useAuth from '../hooks/useAuth';
 import { parseQuerys } from '../../utils/url';
 
-function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, hoursToLimit, endpoint, techFilter, searchSensitive, ...rest }) {
+function MktEventCards({
+  isSmall,
+  externalEvents,
+  hideDescription,
+  id,
+  title,
+  hoursToLimit,
+  endpoint,
+  techFilter,
+  searchSensitive,
+  showCheckedInEvents,
+  ...rest
+}) {
   const [originalEvents, setOriginalEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
+  const [checkedInEvents, setCheckedInEvents] = useState([]);
+  const { user } = useAuth();
   const { fontColor } = useStyle();
   const router = useRouter();
   const lang = router.locale;
@@ -30,6 +45,22 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
   const choosenEndpoint = endpoint || '/v1/events/all';
   const endpointDefault = `${choosenEndpoint}${qsConnector}`;
   const maxEvents = 10;
+
+  const fetchCheckedInEvents = async (eventsArray) => {
+    try {
+      const checkedIn = await Promise.all(
+        eventsArray.map(async (event) => {
+          const res = await axios.get(`${BREATHECODE_HOST}/v1/events/event/${event.id}/checkin`);
+          const reservations = res?.data || [];
+          const isUserAttendee = reservations.find((reservation) => reservation?.attendee?.id === user.id);
+          return isUserAttendee ? event : null;
+        }),
+      );
+      setCheckedInEvents(checkedIn.filter(Boolean));
+    } catch (error) {
+      console.error('Error fetching checked-in events:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -52,11 +83,14 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
 
           const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
-          console.log('filtro de', techFilter, eventsFilteredByTech);
+
+          if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
+            fetchCheckedInEvents(eventsFilteredByTech);
+            return;
+          }
 
           setOriginalEvents(eventsFilteredByTech);
           setFilteredEvents(eventsFilteredByTech);
-          return;
         }
       } catch (error) {
         console.error('Error fetching events:', error);
@@ -80,7 +114,9 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
     setFilteredEvents(filteredBySearch);
   }, [search, searchSensitive, originalEvents]);
 
-  return filteredEvents?.length > 0 && (
+  const eventsToDisplay = showCheckedInEvents ? checkedInEvents : filteredEvents;
+
+  return eventsToDisplay?.length > 0 && (
     <>
       <GridContainer
         id={id}
@@ -100,7 +136,7 @@ function MktEventCards({ isSmall, externalEvents, hideDescription, id, title, ho
         </Flex>
         <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
           <Flex gridGap="20px" width="max-content">
-            {filteredEvents.map((event) => (
+            {eventsToDisplay.map((event) => (
               <DynamicContentCard
                 type="workshop"
                 data={event}
@@ -129,6 +165,7 @@ MktEventCards.propTypes = {
   hideDescription: PropTypes.bool,
   searchSensitive: PropTypes.bool,
   techFilter: PropTypes.string,
+  showCheckedInEvents: PropTypes.bool,
 };
 
 MktEventCards.defaultProps = {
@@ -141,6 +178,7 @@ MktEventCards.defaultProps = {
   hideDescription: false,
   searchSensitive: false,
   techFilter: null,
+  showCheckedInEvents: false,
 };
 
 export default MktEventCards;

@@ -32,6 +32,10 @@
           "type": "Text",
           "config": { "label": "background", "placeholder": "" }
         },
+        "padding_top": {
+          "type": "Text",
+          "config": { "label": "padding top", "placeholder": "" }
+        },
         "is_for_logged_in_users": {
           "type": "Boolean",
           "config": {
@@ -40,10 +44,6 @@
             "placeholder_true": "true",
             "default_value": false
           }
-        },
-        "padding_top": {
-          "type": "Text",
-          "config": { "label": "padding top", "placeholder": "" }
         }
       },
       "items": {},

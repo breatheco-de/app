@@ -30,13 +30,11 @@
             "placeholder": "top, right, bottom, left"
           }
         },
-        "is_for_logged_in_users": {
-          "type": "Boolean",
+        "tech_filtered": {
+          "type": "Text",
           "config": {
-            "label": "Is for logged in users only",
-            "placeholder_false": "false",
-            "placeholder_true": "true",
-            "default_value": false
+            "label": "Tech Filtered",
+            "placeholder": "Auto filter the events by a technology"
           }
         },
         "search_sensitive": {
@@ -48,11 +46,22 @@
             "default_value": false
           }
         },
-        "tech_filtered": {
-          "type": "Text",
+        "show_checked_in_events": {
+          "type": "Boolean",
           "config": {
-            "label": "Tech Filtered",
-            "placeholder": "Auto filter the events by a technology"
+            "label": "Show checked in events",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
+          }
+        },
+        "is_for_logged_in_users": {
+          "type": "Boolean",
+          "config": {
+            "label": "Is for logged in users only",
+            "placeholder_false": "false",
+            "placeholder_true": "true",
+            "default_value": false
           }
         }
       },

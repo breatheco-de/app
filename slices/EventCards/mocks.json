@@ -35,6 +35,10 @@
 				"__TYPE__": "FieldContent",
 				"value": "swam",
 				"type": "Text"
+			},
+			"show_checked_in_events": {
+				"__TYPE__": "BooleanContent",
+				"value": true
 			}
 		},
 		"items": [

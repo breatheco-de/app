@@ -14,6 +14,7 @@ const EventCards = ({ slice }) => (
     endpoint={slice?.primary?.endpoint}
     techFilter={slice?.primary?.tech_filtered}
     searchSensitive={slice?.primary?.search_sensitive}
+    showCheckedInEvents={slice?.primary?.show_checked_in_events}
     margin={slice?.primary?.margin || '40px auto'}
   />
 );

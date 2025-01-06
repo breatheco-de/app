@@ -152,15 +152,14 @@ export interface EventCardsSliceDefaultPrimary {
   margin: prismic.KeyTextField;
 
   /**
-   * Is for logged in users only field in *EventCards → Primary*
+   * Tech Filtered field in *EventCards → Primary*
    *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: event_cards.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
+   * - **Field Type**: Text
+   * - **Placeholder**: Auto filter the events by a technology
+   * - **API ID Path**: event_cards.primary.tech_filtered
+   * - **Documentation**: https://prismic.io/docs/field#key-text
    */
-  is_for_logged_in_users: prismic.BooleanField;
+  tech_filtered: prismic.KeyTextField;
 
   /**
    * Search Sensitive field in *EventCards → Primary*
@@ -174,14 +173,26 @@ export interface EventCardsSliceDefaultPrimary {
   search_sensitive: prismic.BooleanField;
 
   /**
-   * Tech Filtered field in *EventCards → Primary*
+   * Show checked in events field in *EventCards → Primary*
    *
-   * - **Field Type**: Text
-   * - **Placeholder**: Auto filter the events by a technology
-   * - **API ID Path**: event_cards.primary.tech_filtered
-   * - **Documentation**: https://prismic.io/docs/field#key-text
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event_cards.primary.show_checked_in_events
+   * - **Documentation**: https://prismic.io/docs/field#boolean
    */
-  tech_filtered: prismic.KeyTextField;
+  show_checked_in_events: prismic.BooleanField;
+
+  /**
+   * Is for logged in users only field in *EventCards → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event_cards.primary.is_for_logged_in_users
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -1375,6 +1386,16 @@ export interface TechnologiesPillsSliceDefaultPrimary {
   background: prismic.KeyTextField;
 
   /**
+   * padding top field in *TechnologiesPills → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: technologies_pills.primary.padding_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding_top: prismic.KeyTextField;
+
+  /**
    * Is for logged in users only field in *TechnologiesPills → Primary*
    *
    * - **Field Type**: Boolean
@@ -1384,16 +1405,6 @@ export interface TechnologiesPillsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#boolean
    */
   is_for_logged_in_users: prismic.BooleanField;
-
-  /**
-   * padding top field in *TechnologiesPills → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: technologies_pills.primary.padding_top
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  padding_top: prismic.KeyTextField;
 }
 
 /**
