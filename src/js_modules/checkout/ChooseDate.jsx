@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { Box, Button, Flex, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
@@ -9,11 +9,12 @@ import useTranslation from 'next-translate/useTranslation';
 import Text from '../../common/components/Text';
 import useSignup from '../../common/store/actions/signupAction';
 import bc from '../../common/services/breathecode';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function ChooseDate({ cohort, ...rest }) {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'no-plan-configuration-info' });
   const { handleChecking, nextStep, setCohortPlans } = useSignup();
   const { t } = useTranslation('signup');
 
@@ -77,12 +78,13 @@ function ChooseDate({ cohort, ...rest }) {
           }).getCohortPlans()
             .then(({ data }) => {
               if (data.length === 0) {
-                toast({
+                createToast({
                   position: 'top',
                   title: t('alert-message:no-plan-configuration'),
                   status: 'info',
                   duration: 6000,
                   isClosable: true,
+                  silent: true,
                 });
               }
               setCohortPlans(data);

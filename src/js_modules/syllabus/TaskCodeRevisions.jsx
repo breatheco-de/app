@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../common/hooks/useAuth';
@@ -11,6 +11,7 @@ import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import { error } from '../../utils/logging';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const inputReviewRateCommentLimit = 100;
 const defaultReviewRateData = {
@@ -24,7 +25,7 @@ function TaskCodeRevisions() {
   const { currentTask } = useModuleHandler();
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
   const { isAuthenticatedWithRigobot } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'something-went-wrong-error-task' });
   const [contextData, setContextData] = useState({
     code_revisions: [],
     revision_content: {},
@@ -80,13 +81,14 @@ function TaskCodeRevisions() {
           code_revisions: codeRevisionsSortedByDate,
         }));
       } else {
-        toast({
+        createToast({
           title: t('alert-message:something-went-wrong'),
           description: `Cannot get code revisions: ${data?.detail}`,
           status: 'error',
           duration: 5000,
           position: 'top',
           isClosable: true,
+          silent: true,
         });
       }
     } catch (errorMsg) {

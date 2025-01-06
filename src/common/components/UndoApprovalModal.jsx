@@ -1,17 +1,18 @@
-import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Button, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import bc from '../services/breathecode';
+import useCustomToast from '../hooks/useCustomToast';
 
 function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAssignment }) {
   const { modal, borderColor2 } = useStyle();
   const [isRequesting, setIsRequesting] = useState(false);
   const labelColor = useColorModeValue('gray.600', 'gray.200');
   const { t } = useTranslation('assignments');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' review-assignment-updated-and-error' });
   const fullName = `${currentTask?.user?.first_name} ${currentTask?.user?.last_name}`;
   const taskIsIgnored = currentTask?.revision_status === 'IGNORED';
 
@@ -51,22 +52,24 @@ function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAss
                   });
                   onSuccess();
                   onClose();
-                  toast({
+                  createToast({
                     position: 'top',
                     title: t('alert-message:review-assignment-updated'),
                     status: 'success',
-                    duration: null,
-                    isClosable: false,
+                    duration: 5000,
+                    isClosable: true,
+                    silent: true,
                   });
                 })
                 .catch((e) => {
                   console.log(e);
-                  toast({
+                  createToast({
                     position: 'top',
                     title: t('alert-message:review-assignment-error'),
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
+                    silent: true,
                   });
                 })
                 .finally(() => setIsRequesting(false));

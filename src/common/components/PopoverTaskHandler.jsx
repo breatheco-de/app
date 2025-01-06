@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, useToast, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
+import { Box, PopoverArrow, Text, Checkbox, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, Button, FormErrorMessage, FormControl, Input, useColorModeValue, Popover, PopoverTrigger, Tooltip, useFormControlStyles } from '@chakra-ui/react';
 import * as Yup from 'yup';
 import { Field, Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import { formatBytes } from '../../utils';
+import useCustomToast from '../hooks/useCustomToast';
 
 export function textByTaskStatus(currentTask, isGuidedExperience, hasPendingSubtask) {
   const { t } = useTranslation('dashboard');
@@ -139,7 +140,7 @@ function PopoverCustomContent({
   const fileInputRef = useRef();
   const fileContainerRef = useRef(null);
   const commonInputActiveColor = useColorModeValue('gray.800', 'gray.350');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'files-uploaded-wrong' });
 
   const deliveryFormatExists = typeof currentAssetData?.delivery_formats === 'string';
   const noDeliveryFormat = deliveryFormatExists && currentAssetData?.delivery_formats.includes('no_delivery');
@@ -217,22 +218,24 @@ function PopoverCustomContent({
         githubUrl: respData?.url,
         taskStatus: 'DONE',
       });
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:files-uploaded'),
         status: 'success',
         duration: 4000,
         isClosable: true,
+        silent: true,
       });
       closeSettings();
     } else {
       setIsUploading(false);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:something-went-wrong-with', { property: 'Files' }),
         status: 'error',
         duration: 4000,
         isClosable: true,
+        silent: true,
       });
     }
   };

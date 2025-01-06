@@ -7,7 +7,6 @@ import {
   Divider,
   useColorModeValue,
   Flex,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -36,6 +35,7 @@ import KPI from '../../../../../common/components/KPI';
 import Link from '../../../../../common/components/NextChakraLink';
 import { isWindow } from '../../../../../utils';
 import axiosInstance from '../../../../../axios';
+import useCustomToast from '../../../../../common/hooks/useCustomToast';
 
 const activitiesTemplate = {
   invite_created: {
@@ -109,7 +109,7 @@ const assetsDictionary = {
 function StudentReport() {
   const { t } = useTranslation('student');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'no-task-url-error' });
   const { query } = router;
   const { cohortSlug, studentId, academy } = query;
   const [selectedCohortUser, setSelectedCohortUser] = useState(null);
@@ -486,12 +486,13 @@ function StudentReport() {
       }
       setCurrentProject({ ...task, status, file });
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:review-url-error'),
         status: 'error',
         duration: 6000,
         isClosable: true,
+        silent: true,
       });
     }
   };
@@ -700,12 +701,13 @@ function StudentReport() {
                     if (isWindow) {
                       if (task.id) window.open(`/cohort/${cohortSlug}/student/${studentId}/assignment/${task.id}?academy=${academy}`);
                       else {
-                        toast({
+                        createToast({
                           position: 'top',
                           title: t('no-task'),
                           status: 'error',
                           duration: 6000,
                           isClosable: true,
+                          silent: true,
                         });
                       }
                     }

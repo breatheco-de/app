@@ -180,7 +180,7 @@ function DeliverModalContent({
                       status: 'success',
                       duration: 5000,
                       isClosable: true,
-                      silent: false,
+                      silent: true,
                     });
                     updpateAssignment({
                       ...currentTask,
@@ -198,7 +198,7 @@ function DeliverModalContent({
                       status: 'error',
                       duration: 5000,
                       isClosable: true,
-                      silent: false,
+                      silent: true,
                     });
                   });
               }}

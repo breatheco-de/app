@@ -5,7 +5,6 @@ import useTranslation from 'next-translate/useTranslation';
 import {
   Box,
   Divider,
-  useToast,
   Button,
   ButtonGroup,
   Popover,
@@ -37,6 +36,7 @@ import Projects from '../../../common/views/Projects';
 import FinalProjects from '../../../common/views/FinalProjects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
 import axiosInstance from '../../../axios';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -106,7 +106,7 @@ function Assignments() {
   const { query } = router;
   const { cohortSlug, academy } = query;
   const { setCohortSession } = useCohortHandler();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'fetching-personal-cohort-projects' });
   const { hexColor, borderColor2 } = useStyle();
   const { contextState, setContextState } = useAssignments();
   const [syllabusData, setSyllabusData] = useState({
@@ -170,12 +170,13 @@ function Assignments() {
         });
       })
       .catch((error) => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-tasks'),
           status: 'error',
           duration: 7000,
           isClosable: true,
+          silent: true,
         });
         console.error('There was an error fetching the tasks', error);
       })
@@ -231,12 +232,13 @@ function Assignments() {
       })
       .catch((err) => {
         console.log(err);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-personal-cohorts'),
           status: 'error',
           duration: 7000,
           isClosable: true,
+          silent: true,
         });
       });
     getDefaultStudent();
@@ -262,12 +264,13 @@ function Assignments() {
         })
         .catch((err) => {
           console.log(err);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-cohorts'),
             status: 'error',
             duration: 7000,
             isClosable: true,
+            silent: true,
           });
         });
     }
@@ -291,12 +294,13 @@ function Assignments() {
         setCurrentStudentCount(res?.data?.count);
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-students'),
           status: 'error',
           duration: 7000,
           isClosable: true,
+          silent: true,
         });
       })
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
@@ -308,12 +312,13 @@ function Assignments() {
       const resp = await bc.assignments().getFinalProjects(selectedCohort?.id);
       setFinalProjects(resp.data);
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-fetching-final-projects'),
         status: 'error',
         duration: 7000,
         isClosable: true,
+        silent: true,
       });
     } finally {
       setLoadStatus({ loading: false, status: 'idle' });
@@ -331,33 +336,36 @@ function Assignments() {
       const resp = await bc.assignments().putFinalProject(selectedCohort?.id, id, payload);
       const data = await resp.json();
       if (resp.status >= 400) {
-        toast({
+        createToast({
           position: 'top',
           title: data.detail,
           status: 'error',
           duration: 7000,
           isClosable: true,
+          silent: true,
         });
       } else {
         const copyFinalProjects = [...finalProjects];
         const updatedIndex = copyFinalProjects.findIndex((elem) => elem.id === id);
         copyFinalProjects[updatedIndex].revision_status = revisionStatus;
         setFinalProjects(copyFinalProjects);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:success-updating-final-projects'),
           status: 'success',
           duration: 7000,
           isClosable: true,
+          silent: true,
         });
       }
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-updating-final-project'),
         status: 'error',
         duration: 7000,
         isClosable: true,
+        silent: true,
       });
     }
   };

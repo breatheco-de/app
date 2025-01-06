@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { Avatar, AvatarGroup, Box, Button, Image, Input, InputGroup, InputRightElement, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Avatar, AvatarGroup, Box, Button, Image, Input, InputGroup, InputRightElement, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import bc from '../../services/breathecode';
 import { AvatarSkeletonWrapped } from '../Skeleton';
 import useOnline from '../../hooks/useOnline';
 import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function ProfilesSection({
   profiles,
@@ -55,7 +56,7 @@ function MentoringFree({
   const { borderColor, lightColor, hexColor } = useStyle();
   const [existsMentors, setExistsMentors] = useState(true);
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'finding-mentors-error' });
   const { slug } = router.query;
 
   useEffect(() => {
@@ -89,13 +90,14 @@ function MentoringFree({
         manageMentorsData(service, res.data);
       }
     } catch (e) {
-      toast({
+      createToast({
         position: 'top',
         title: 'Error',
         description: t('alert-message:error-finding-mentors'),
         status: 'error',
         duration: 7000,
         isClosable: true,
+        silent: true,
       });
     }
   };

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Box, ListItem, UnorderedList, useToast, Button, Image } from '@chakra-ui/react';
+import { Box, ListItem, UnorderedList, Button, Image } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import SimpleModal from '../components/SimpleModal';
@@ -10,6 +10,7 @@ import Heading from '../components/Heading';
 import { toCapitalize, unSlugify } from '../../utils';
 import Icon from '../components/Icon';
 import { generatePlan } from '../handlers/subscriptions';
+import useCustomToast from './useCustomToast';
 
 const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose-program', onClose: onExternalClose = () => {} } = {}) => {
   const { t } = useTranslation(['common']);
@@ -18,7 +19,7 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
   const [isInProcessOfSubscription, setIsInProcessOfSubscription] = useState(false);
   const { handleChecking, handlePayment } = useSignup({ disableRedirectAfterSuccess: true });
   const { modal } = useStyle();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'handling-payment-error' });
   const [isCheckingSuccess, setIsCheckingSuccess] = useState(false);
 
   const handleSubscribeToPlan = ({ slug, accessToken, onSubscribedToPlan = () => {}, disableRedirects = false }) => new Promise((resolve, reject) => {
@@ -50,12 +51,13 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
               .catch((error) => {
                 reject(error);
                 console.error('Error handling payment', error);
-                toast({
+                createToast({
                   position: 'top',
                   title: t('alert-message:payment-error'),
                   status: 'error',
                   duration: 7000,
                   isClosable: true,
+                  silent: true,
                 });
               });
           })

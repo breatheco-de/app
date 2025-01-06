@@ -1,4 +1,4 @@
-import { Button, Flex, useToast, Box, Image } from '@chakra-ui/react';
+import { Button, Flex, Box, Image } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,13 +13,14 @@ import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 import Icon from '../Icon';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
   const { t } = useTranslation('final-project');
   const [students, setStudents] = useState(studentsData);
   const [fileProps, setFileProps] = useState([]);
   const cohortSlug = cohortData?.slug || '';
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'final-project-updating-and-wrong' });
   const cohortAcademy = cohortData?.academy?.id || 4;
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const { fontColor, backgroundColor } = useStyle();
@@ -94,31 +95,37 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
         if (Array.isArray(data)) {
           setFinalProjectData(data[0]);
           refreshFinalProject();
-          toast({
+          createToast({
             position: 'top',
             title: 'Success',
             description: 'Your final project has been updated',
             status: 'success',
-            duration: 5000,
+            duration: null,
+            isClosable: true,
+            silent: true,
           });
         } else {
-          toast({
+          createToast({
             position: 'top',
             title: 'Error',
             description: data.detail || 'Something went wrong updating your final project',
             status: 'error',
             duration: 5000,
+            isClosable: true,
+            silent: true,
           });
         }
         handleClose();
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',
           duration: 5000,
+          isClosable: true,
+          silent: true,
         });
       });
 
@@ -139,31 +146,37 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
       .then((res) => {
         if (res) {
           setFinalProjectData(res.data[0]);
-          toast({
+          createToast({
             position: 'top',
             title: 'Success',
             description: 'Your final project has been sended',
             status: 'success',
             duration: 5000,
+            isClosable: true,
+            silent: true,
           });
           handleClose();
         } else {
-          toast({
+          createToast({
             position: 'top',
             title: 'Error',
             description: 'Something went wrong submiting your final project',
             status: 'error',
             duration: 5000,
+            isClosable: true,
+            silent: true,
           });
         }
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error',
           description: 'Something went wrong submiting your final project',
           status: 'error',
           duration: 5000,
+          isClosable: true,
+          silent: true,
         });
       });
 

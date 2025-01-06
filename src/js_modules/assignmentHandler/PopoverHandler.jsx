@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import {
-  Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger, useToast,
+  Box, Button, Popover, PopoverArrow, PopoverBody, PopoverCloseButton, PopoverContent, PopoverHeader, PopoverTrigger,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -13,6 +13,7 @@ import Text from '../../common/components/Text';
 import Link from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -23,7 +24,7 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
   const [fileData, setFileData] = useState([]);
   const { t } = useTranslation('assignments');
   const { backgroundColor, hexColor } = useStyle();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'current-task-no-files-error' });
 
   const isUrl = assetData?.delivery_formats.includes('url');
   const noDeliveryFormat = assetData?.delivery_formats.includes('no_delivery');
@@ -45,12 +46,13 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
             setFileData(respData);
             setSettingsOpen(true);
           } else {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:current-task-no-files'),
               status: 'error',
               duration: 4000,
               isClosable: true,
+              silent: true,
             });
           }
         } else {

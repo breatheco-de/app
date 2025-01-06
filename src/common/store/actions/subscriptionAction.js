@@ -1,12 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useToast } from '@chakra-ui/react';
 import { CANCEL_SUBSCRIPTION, FETCH_SUBSCRIPTIONS, IS_LOADING } from '../types';
 import bc from '../../services/breathecode';
 import profileHandlers from '../../../js_modules/profile/Subscriptions/handlers';
+import useCustomToast from '../../hooks/useCustomToast';
 
 const useSubscriptionsHandler = () => {
   const state = useSelector((st) => st.subscriptionsReducer);
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'canceling-subscription-error-action' });
   const dispatch = useDispatch();
   const {
     getPlanOffer,
@@ -71,12 +71,13 @@ const useSubscriptionsHandler = () => {
         resolve(data);
       })
       .catch((err) => {
-        toast({
+        createToast({
           position: 'top',
           title: 'Error cancelling subscription',
           status: 'error',
           duration: 5000,
           isClosable: true,
+          silent: true,
         });
         reject(err);
       });

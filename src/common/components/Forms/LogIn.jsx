@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
-  FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
+  FormLabel, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { reportDatalayer } from '../../../utils/requests';
@@ -13,12 +13,13 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
   const [showPSW, setShowPSW] = useState(false);
   const { login } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'welcome-account-not-found' });
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
@@ -40,24 +41,26 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             actions.setSubmitting(false);
             callBack();
             if (data.status === 200) {
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:welcome'),
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
+                silent: true,
               });
             }
           })
           .catch(() => {
             actions.setSubmitting(false);
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:account-not-found'),
               // description: error.message,
               status: 'error',
               duration: 9000,
               isClosable: true,
+              silent: true,
             });
           });
       }}
