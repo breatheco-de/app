@@ -1,5 +1,5 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box,
   Flex,
@@ -44,6 +44,7 @@ function Subscriptions({ cohorts }) {
     service_sets: [],
   });
   const [services, setServices] = useState({
+    nonSaasMentorships: [],
     mentorships: [],
     workshops: [],
   });
@@ -64,6 +65,20 @@ function Subscriptions({ cohorts }) {
 
   const getConsumables = async () => {
     try {
+      const nonSaasCohorts = cohorts.filter(({ available_as_saas }) => !available_as_saas);
+
+      const allServices = {
+        nonSaasMentorships: [],
+        mentorships: [],
+        workshops: [],
+      };
+
+      const cohortsServices = nonSaasCohorts.map(({ academy }) => bc.mentorship({ academy: academy.id }, true).getService());
+      const responseServices = await Promise.all(cohortsServices);
+      const nonSaasServices = responseServices.flatMap(({ data }) => data);
+
+      if (Array.isArray(nonSaasServices)) allServices.nonSaasMentorships = nonSaasServices;
+
       const res = await bc.payment().service().consumable();
       if (res.status === 200) {
         const { data } = res;
@@ -81,11 +96,11 @@ function Subscriptions({ cohorts }) {
         });
         const resMentorships = await Promise.all(promiseMentorship);
         const resWorkshops = await Promise.all(promiseEvents);
-        setServices({
-          mentorships: resMentorships.flat(),
-          workshops: resWorkshops.flat(),
-        });
+        allServices.mentorships = resMentorships.flat();
+        allServices.workshops = resWorkshops.flat();
       }
+
+      setServices(allServices);
       setLoadingServices(false);
     } catch (e) {
       setLoadingServices(false);
@@ -109,7 +124,7 @@ function Subscriptions({ cohorts }) {
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
-    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
       .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   const prioritizeStatus = ['fully_paid', 'active', 'payment_issue', 'expired', 'cancelled', 'error'];
@@ -147,6 +162,10 @@ function Subscriptions({ cohorts }) {
       icon: 'teacher1',
       title: t('subscription.your-mentoring-available'),
     },
+    nonSaasMentorships: {
+      icon: 'teacher1',
+      title: t('subscription.your-mentoring-available'),
+    },
     workshops: {
       icon: 'community',
       title: t('subscription.your-workshop-available'),
@@ -165,59 +184,79 @@ function Subscriptions({ cohorts }) {
           <title>{t('my-subscriptions')}</title>
         </Head>
       )}
-      {!existsNoAvailableAsSaas && (
-        <Box display="flex" flexWrap="wrap" gap="24px">
-          {loadingServices ? (
-            <>
-              <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
-              <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
-            </>
-          ) : (
-            <>
-              <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
-                <Text size="sm" mb="10px" fontWeight="700">
-                  {t('subscription.mentoring-available')}
-                </Text>
-                <Box display="flex" justifyContent="space-between" alignItems="end">
-                  <Box display="flex" gap="10px" alignItems="center">
-                    <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
-                    {totalMentorshipsAvailable >= 0 ? (
-                      <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                        {totalMentorshipsAvailable}
-                      </Heading>
-                    ) : (
-                      <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
-                    )}
-                  </Box>
-                  <Button variant="link" onClick={() => setServicesModal('mentorships')}>
-                    {t('subscription.see-details')}
-                  </Button>
-                </Box>
+      <Box display="flex" flexWrap="wrap" gap="24px">
+        {services.nonSaasMentorships.length > 0 && (
+          <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+            <Text size="sm" mb="10px" fontWeight="700">
+              {t('subscription.bootcamp-mentorships')}
+            </Text>
+            <Box display="flex" justifyContent="space-between" alignItems="end">
+              <Box display="flex" gap="10px" alignItems="center">
+                <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
+                <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                  {services.nonSaasMentorships.length}
+                </Heading>
               </Box>
-              <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
-                <Text size="sm" mb="10px" fontWeight="700">
-                  {t('subscription.workshop-available')}
-                </Text>
-                <Box display="flex" justifyContent="space-between" alignItems="end">
-                  <Box display="flex" gap="10px" alignItems="center">
-                    <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
-                    {totalWorkshopsAvailable >= 0 ? (
-                      <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                        {totalWorkshopsAvailable}
-                      </Heading>
-                    ) : (
-                      <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
-                    )}
+              <Button variant="link" onClick={() => setServicesModal('nonSaasMentorships')}>
+                {t('subscription.see-details')}
+              </Button>
+            </Box>
+          </Box>
+        )}
+        {!existsNoAvailableAsSaas && (
+          <>
+            {loadingServices ? (
+              <>
+                <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+                <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+              </>
+            ) : (
+              <>
+                <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+                  <Text size="sm" mb="10px" fontWeight="700">
+                    {t('subscription.bootcamp-mentorships')}
+                  </Text>
+                  <Box display="flex" justifyContent="space-between" alignItems="end">
+                    <Box display="flex" gap="10px" alignItems="center">
+                      <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
+                      {totalMentorshipsAvailable >= 0 ? (
+                        <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                          {totalMentorshipsAvailable}
+                        </Heading>
+                      ) : (
+                        <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                      )}
+                    </Box>
+                    <Button variant="link" onClick={() => setServicesModal('mentorships')}>
+                      {t('subscription.see-details')}
+                    </Button>
                   </Box>
-                  <Button variant="link" onClick={() => setServicesModal('workshops')}>
-                    {t('subscription.see-details')}
-                  </Button>
                 </Box>
-              </Box>
-            </>
-          )}
-        </Box>
-      )}
+                <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+                  <Text size="sm" mb="10px" fontWeight="700">
+                    {t('subscription.workshop-available')}
+                  </Text>
+                  <Box display="flex" justifyContent="space-between" alignItems="end">
+                    <Box display="flex" gap="10px" alignItems="center">
+                      <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
+                      {totalWorkshopsAvailable >= 0 ? (
+                        <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                          {totalWorkshopsAvailable}
+                        </Heading>
+                      ) : (
+                        <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                      )}
+                    </Box>
+                    <Button variant="link" onClick={() => setServicesModal('workshops')}>
+                      {t('subscription.see-details')}
+                    </Button>
+                  </Box>
+                </Box>
+              </>
+            )}
+          </>
+        )}
+      </Box>
       <Modal isOpen={servicesModal !== null} onClose={closeMentorshipsModal}>
         <ModalOverlay />
         <ModalContent>
