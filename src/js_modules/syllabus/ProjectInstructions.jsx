@@ -124,8 +124,10 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
           padding="4px 8px"
           fontSize="14px"
           fontWeight="500"
-          background="gray.200"
-          color="blue.default"
+          background={variant === 'extra-small' ? 'none' : 'gray.200'}
+          color={variant === 'extra-small' ? 'white' : 'blue.default'}
+          _hover={variant === 'extra-small' && 'none'}
+          _active={variant === 'extra-small' && 'none'}
           display={!isForOpenLocaly && !canSeeInstructions && 'none'}
           onClick={() => {
             if (isForOpenLocaly) setShowCloneModal(true);
