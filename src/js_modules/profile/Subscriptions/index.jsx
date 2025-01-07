@@ -66,6 +66,7 @@ function Subscriptions({ cohorts }) {
   const getConsumables = async () => {
     try {
       const nonSaasCohorts = cohorts.filter(({ available_as_saas }) => !available_as_saas);
+      const academies = [...new Set(nonSaasCohorts.map(({ academy }) => academy.id))];
 
       const allServices = {
         nonSaasMentorships: [],
@@ -73,7 +74,7 @@ function Subscriptions({ cohorts }) {
         workshops: [],
       };
 
-      const cohortsServices = nonSaasCohorts.map(({ academy }) => bc.mentorship({ academy: academy.id }, true).getService());
+      const cohortsServices = academies.map((academy) => bc.mentorship({ academy }, true).getService());
       const responseServices = await Promise.all(cohortsServices);
       const nonSaasServices = responseServices.flatMap(({ data }) => data);
 
