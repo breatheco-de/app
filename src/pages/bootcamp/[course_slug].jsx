@@ -38,6 +38,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
 
 export async function getStaticPaths({ locales }) {
@@ -104,65 +105,6 @@ export async function getStaticProps({ locale, locales, params }) {
       syllabus,
     },
   };
-}
-
-// TODO: Move this to a separate file, it should be a reusable component
-function CouponTopBar() {
-  const { t } = useTranslation('course');
-  const { hexColor } = useStyle();
-  const { getPriceWithDiscount, setSelfAppliedCoupon, state } = useSignup();
-  const { selfAppliedCoupon } = state;
-
-  // Since we are not showing the price after discount, we can give the price as cero
-  const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
-
-  if (!selfAppliedCoupon) return null;
-
-  return (
-    <Box
-      background={hexColor.green}
-      padding="8px 10px"
-    >
-      <Box maxWidth="1280px" margin="auto" display="flex" justifyContent="space-between" alignItems="center">
-        <Flex alignItems="center" gap="10px" flexDirection="row" flexWrap="wrap" grow={1} justifyContent="center">
-          <Text color="#FFF" fontSize="18px" fontFamily="inter">
-            {t('coupon-bar.headline', { discount })}
-          </Text>
-          <Flex gap="10px">
-            <Text color="#FFF" fontSize="17px" fontFamily="inter" fontWeight="900">
-              {t('coupon-bar.ends-in', { time: '' })}
-            </Text>
-            <Timer
-              autoRemove
-              variant="text"
-              startingAt={new Date(selfAppliedCoupon?.expires_at).toISOString()}
-              onFinish={() => setSelfAppliedCoupon(null)}
-              color="white"
-              background="none"
-              fontSize="17px"
-              fontFamily="inter"
-              fontWeight="900"
-            />
-          </Flex>
-        </Flex>
-        <NextChakraLink
-          href="#pricing"
-          variant="default"
-          background="white"
-          padding="8px"
-          color={hexColor.green}
-          borderRadius="3px"
-          fontWeight="bold"
-        >
-          <Text size="auto" style={{ textWrap: 'nowrap' }}>
-            {t('coupon-bar.see-prices')}
-            {' '}
-            →
-          </Text>
-        </NextChakraLink>
-      </Box>
-    </Box>
-  );
 }
 
 function CoursePage({ data, syllabus }) {
