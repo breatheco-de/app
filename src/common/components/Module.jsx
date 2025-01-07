@@ -9,6 +9,7 @@ import Text from './Text';
 import Icon from './Icon';
 // import Link from './NextChakraLink';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import { addQueryToURL } from '../../utils';
 
 function Module({
   onClickHandler, data, containerStyle, leftContentStyle, containerPX, width, currIndex,
@@ -49,7 +50,7 @@ function Module({
         title={t('modules.target-blank-title')}
         isReadonly
         description={t('modules.target-blank-msg', { title: data.title })}
-        link={`${data.url}?lang=${lang}`}
+        link={addQueryToURL(data.url, { lang })}
         handlerText={t('common:open')}
         closeText={t('common:close')}
         closeButtonVariant="outline"
@@ -212,7 +213,7 @@ Module.propTypes = {
   onDisabledClick: PropTypes.func,
 };
 Module.defaultProps = {
-  onClickHandler: () => {},
+  onClickHandler: () => { },
   data: {},
   containerStyle: {},
   leftContentStyle: {},
@@ -224,7 +225,7 @@ Module.defaultProps = {
   isDone: false,
   currIndex: null,
   mandatory: false,
-  onDisabledClick: () => {},
+  onDisabledClick: () => { },
 };
 
 export default Module;

@@ -1,6 +1,7 @@
 /* eslint-disable indent */
 import { addDays, format, isAfter } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { parseQuerys } from './url';
 
 const isWindow = typeof window !== 'undefined';
 
@@ -294,6 +295,14 @@ const getQueryString = (key, def) => {
   return urlParams && (urlParams.get(key) || def);
 };
 
+const addQueryToURL = (url, params = {}) => {
+  const urlObj = new URL(url, window.location.origin);
+  const querys = parseQuerys(params);
+
+  if (Array.from(urlObj.searchParams).length > 0) return `${url}&${querys.slice(1)}`;
+  return `${url}${querys}`;
+};
+
 const createArray = (length) => Array.from({ length }, (_, i) => i);
 const lengthOfString = (string) => (typeof string === 'string' ? string?.replaceAll(/\s/g, '').length : 0);
 
@@ -431,5 +440,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix,
+  removeSessionStorageItem, languageFix, addQueryToURL,
 };
