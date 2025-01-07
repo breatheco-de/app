@@ -174,7 +174,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
 
   if (variant === 'extra-small') {
     return (
-      <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
+      <Box background="blue.default" padding="8px" borderRadius="8px" display={!startWithLearnpack && !isForOpenLocaly ? 'none' : 'flex'} alignItems="center" gap="10px">
         {(!isForOpenLocaly || startWithLearnpack) && (
           <Icon icon="learnpack" />
         )}
