@@ -11,9 +11,9 @@ const bgColors = {
   },
   noSilent: {
     info: { background: '#F9F9F9', color: '#3A3A3A', borderColor: '#DADADA' },
-    warning: { background: '#FFF4DC', color: '#975100', borderColor: '#FFB718' },
-    error: { background: '#FFE3E3', color: '#EB5757', borderColor: '#EB5757' },
-    success: { background: '#DFFFE8', color: '#06AB52', borderColor: '#06AB52' },
+    warning: { background: '#ffefcc', color: '#975100', borderColor: '#FFB718' },
+    error: { background: '#fdd0d0', color: '#EB5757', borderColor: '#EB5757' },
+    success: { background: '#e0ffe8', color: '#00a33d', borderColor: '#00bb2d' },
   },
 };
 
@@ -29,8 +29,11 @@ const useCustomToast = ({
     title = 'Already have an account?',
     status = 'success',
     position = 'top',
-    duration = null,
+    width = '80%',
+    maxWidth = '1200px',
+    duration = 16000,
     description,
+    actions = null,
     isClosable = true,
     silent = false,
   }) => {
@@ -49,13 +52,17 @@ const useCustomToast = ({
           pr={8}
           bg={toastColors.background}
           borderColor={toastColors.borderColor}
-          borderWidth="1px"
-          borderRadius="1px"
+          borderWidth="2px"
+          borderRadius="10px"
           position="relative"
+          width={width}
+          maxWidth={maxWidth}
+          margin="auto"
+          top="20px"
         >
-          <Flex gridGap="10px" mb="6px">
-            <Icon icon={status} width="20px" height="20px" color="currentColor" />
-            <Box fontSize="16px" fontWeight="bold" lineHeight={6}>
+          <Flex gridGap="10px" mb="5px">
+            <Icon icon={status} width="15px" height="15px" color="currentColor" mt="-4px" />
+            <Box fontSize="14px" fontWeight="bold" lineHeight={6} mt="-8px" letterSpacing="1px">
               {title}
             </Box>
             {isClosable && (
@@ -73,11 +80,31 @@ const useCustomToast = ({
                 top={2}
                 right={2}
               >
-                <Icon icon="close" width="10px" height="10px" color="currentColor" />
+                <Icon icon="close" width="10px" height="10px" color="black" />
               </Button>
             )}
           </Flex>
-          {description}
+          <Box textAlign="left" mx="auto" ms="7" fontSize="14px">
+            {description}
+          </Box>
+          {actions?.length > 0 && (
+            <Flex gap="16px" mb="-10px" mt="1px">
+              {actions.map((action) => (
+                <Button
+                  key={action.label}
+                  // borderRadius="4px"
+                  onClick={action.onClick}
+                  background="transparent"
+                  color="black"
+                  _hover={{ background: 'transparent' }}
+                  left={7}
+                  fontSize="14px"
+                >
+                  {action.label}
+                </Button>
+              ))}
+            </Flex>
+          )}
         </Box>
       ),
       duration,

@@ -100,9 +100,9 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
             title: 'Success',
             description: 'Your final project has been updated',
             status: 'success',
-            duration: null,
+            duration: 5000,
             isClosable: true,
-            silent: true,
+            silent: false,
           });
         } else {
           createToast({

@@ -209,7 +209,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           duration: 5000,
           position: 'top',
           isClosable: true,
-          silent: true,
+          silent: false,
         });
       }
     } catch (errorMsg) {

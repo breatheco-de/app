@@ -29,7 +29,7 @@ function LoaderContent({ cohortIsLoading }) {
       cardHeight="120px"
     />
   ) : (
-    <AlertMessage type="info" message={t('no-date-available')} />
+    <AlertMessage type="info" message={t('no-date-available')} full />
   );
 }
 
