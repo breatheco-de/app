@@ -296,6 +296,23 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
     }
   }, [technologyData?.slug, assetData]);
 
+  const showFirstButton = coursesAvailable || assetData.length > 0;
+
+  const getAssetUrl = (asset) => {
+    const langConnector = asset.lang === 'us' ? '' : `/${asset.lang}`;
+
+    const assetType = asset.category.slug === 'how-to' || asset.category.slug === 'como' ? 'how-to' : asset.asset_type;
+
+    const assetsDict = {
+      'how-to': 'how-to',
+      LESSON: 'lesson',
+      EXERCISE: 'interactive-exercise',
+      PROJECT: 'interactive-coding-tutorial',
+    };
+
+    return `${langConnector}/${assetsDict[assetType]}/${asset.slug}`;
+  };
+
   return technologyData?.slug && assetData?.length > 0 && (
     <Container maxWidth="1280px">
       {isSortPriorityOne ? (
@@ -404,17 +421,17 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
                     {marketingInfo.description ? languageFix(marketingInfo.description, lang) : t('landing-technology.defaultDescription')}
                   </Text>
                   <Flex gap="10px" marginTop="50px" wrap="wrap">
-                    {coursesAvailable
+                    {showFirstButton
                       && (
-                        <Link href={`/${lang}/bootcamp/${featuredCourseSlug || coursesForTech[0].slug}`}>
+                        <Link href={coursesAvailable ? `/${lang}/bootcamp/${featuredCourseSlug || coursesForTech[0].slug}` : getAssetUrl(assetData[0])}>
                           <Button background="blue.1000" color="white" alignContent="center" alignItems="center" gap="10px" display="flex" _hover="none" borderRadius="3px">
                             {t('start-learning', { technology: technologyData?.title })}
                             <Icon color="white" icon="longArrowRight" />
                           </Button>
                         </Link>
                       )}
-                    <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : `/${lang}/mentorship/schedule`}>
-                      <Button border={coursesAvailable && '1px'} borderColor={coursesAvailable && 'blue.1000'} color={coursesAvailable ? 'blue.1000' : 'white'} background={coursesAvailable ? 'auto' : 'blue.1000'} _hover="none" borderRadius="3px">
+                    <Link href={!isAuthenticated ? `/${lang}/pricing?plan=${process.env.BASE_PLAN}` : 'https://calendly.com/tgonzalez-o0o/30min-1'}>
+                      <Button border={showFirstButton && '1px'} borderColor={showFirstButton && 'blue.1000'} color={showFirstButton ? 'blue.1000' : 'white'} background={showFirstButton ? 'auto' : 'blue.1000'} _hover="none" borderRadius="3px">
                         {t('request-mentorship', { tech: technologyData?.title })}
                       </Button>
                     </Link>
