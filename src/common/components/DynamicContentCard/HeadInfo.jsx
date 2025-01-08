@@ -28,7 +28,7 @@ const getIntervalDurationTranslation = (date) => {
   return null;
 };
 
-function HeadInfo({ technologies, duration, type, date }) {
+function HeadInfo({ technologies, duration, type, date, publishedAt }) {
   const { t } = useTranslation('common');
   const { backgroundColor, featuredLight, lightColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
@@ -59,17 +59,22 @@ function HeadInfo({ technologies, duration, type, date }) {
         {(Number.isInteger(duration) || date?.text) && (
           <Flex display={existsDuration ? 'flex' : 'none'} alignItems="center" gridGap="4px" background={backgroundColor} borderRadius="18px">
             <Icon icon="clock" width="14px" height="14px" />
-            {intervalDurationText ? (
+            {intervalDurationText && (
               <Text size="12px" fontWeight={700}>
                 {intervalDurationText}
               </Text>
-            ) : duration && (
+            )}
+            {duration && (
               <Text>
                 {t('hrs-average', { number: duration })}
-                {/* {`${duration} min read`} */}
               </Text>
             )}
           </Flex>
+        )}
+        {publishedAt && (
+          <Text color={lightColor}>
+            {publishedAt}
+          </Text>
         )}
         {/* <--------------- Time to start ---------------> */}
         {isWorkshop && (
@@ -101,10 +106,12 @@ HeadInfo.propTypes = {
   duration: PropTypes.number,
   type: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
+  publishedAt: PropTypes.string,
 };
 HeadInfo.defaultProps = {
   technologies: [],
   duration: null,
+  publishedAt: null,
 };
 
 export default HeadInfo;

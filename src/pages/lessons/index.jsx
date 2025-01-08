@@ -68,8 +68,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     },
   );
   const technologies = await technologiesResponse.json();
-  console.log('technologies');
-  console.log(technologies);
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
     log(`SUCCESS: ${technologies.results.length} Technologies fetched for /lessons`);
@@ -119,7 +117,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   };
 };
 
-function Projects({ lessons, technologyTags, difficulties, count }) {
+function Lessons({ lessons, technologyTags, difficulties, count }) {
   const { t, lang } = useTranslation('lesson');
   const { filteredBy, setProjectFilters } = useFilter();
   const { technologies, difficulty, videoTutorials } = filteredBy.projectsOptions;
@@ -282,11 +280,11 @@ function Projects({ lessons, technologyTags, difficulties, count }) {
   );
 }
 
-Projects.propTypes = {
+Lessons.propTypes = {
   technologyTags: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   lessons: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
   difficulties: PropTypes.arrayOf(PropTypes.string).isRequired,
   count: PropTypes.number.isRequired,
 };
 
-export default Projects;
+export default Lessons;
