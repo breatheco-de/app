@@ -73,6 +73,7 @@ function ProfileForm() {
               status: 'error',
               duration: 9000,
               isClosable: true,
+
             });
           })
           .finally(() => {

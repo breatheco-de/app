@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -40,6 +40,7 @@ import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
 import completions from './completion-jobs.json';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -169,7 +170,7 @@ function CoursePage({ data }) {
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
   const { getSelfAppliedCoupon } = useSignup();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-cohort' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -313,7 +314,7 @@ function CoursePage({ data }) {
             setReadyToRefetch(true);
           }
           if (dataRequested?.status_code === 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'info',
@@ -325,7 +326,7 @@ function CoursePage({ data }) {
             }, 600);
           }
           if (dataRequested?.status_code > 400) {
-            toast({
+            createToast({
               position: 'top',
               title: dataRequested?.detail,
               status: 'error',
@@ -368,7 +369,7 @@ function CoursePage({ data }) {
 
         setIsFetching(false);
         if (withAlert) {
-          toast({
+          createToast({
             position: 'top',
             title: t('dashboard:already-have-this-cohort'),
             status: 'info',

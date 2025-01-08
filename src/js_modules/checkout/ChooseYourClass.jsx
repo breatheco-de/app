@@ -1,5 +1,5 @@
 import {
-  Box, Button, Input, useToast,
+  Box, Button, Input,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -14,6 +14,7 @@ import ChooseDate from './ChooseDate';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { CardSkeleton } from '../../common/components/Skeleton';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
@@ -42,7 +43,7 @@ function ChooseYourClass({
   const [isLoading, setIsLoading] = useState(false);
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'cohort-google-maps-class' });
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
@@ -95,7 +96,7 @@ function ChooseYourClass({
         setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:something-went-wrong-fetching-cohorts'),
           description: error.message,
@@ -135,7 +136,7 @@ function ChooseYourClass({
             });
           })
           .catch(() => {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:google-maps-no-coincidences'),
               status: 'warning',

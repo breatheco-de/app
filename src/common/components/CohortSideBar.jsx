@@ -5,7 +5,7 @@ import { memo, useState, useEffect } from 'react';
 // import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import {
   Box, Heading, Divider, Grid, Tabs,
-  TabList, Tab, TabPanels, TabPanel, useToast, AvatarGroup, useMediaQuery, Flex,
+  TabList, Tab, TabPanels, TabPanel, AvatarGroup, useMediaQuery, Flex,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { format, differenceInWeeks } from 'date-fns';
@@ -23,6 +23,7 @@ import useStyle from '../hooks/useStyle';
 import useCohortHandler from '../hooks/useCohortHandler';
 import useProgramList from '../store/actions/programListAction';
 import { isWindow } from '../../utils';
+import useCustomToast from '../hooks/useCustomToast';
 
 function ProfilesSection({
   title, paginationProps, isTeacherVersion, setAlumniGeeksList, profiles, wrapped, teacher, withoutPopover, showButton,
@@ -221,7 +222,7 @@ function CohortSideBar({
 }) {
   const { t } = useTranslation('dashboard');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'cohort-side-bar-fetching-alumni-error' });
   const { slug } = router.query;
   const [alumniGeeksList, setAlumniGeeksList] = useState({});
   const [activeStudentsLoading, setActiveStudentsLoading] = useState(true);
@@ -278,7 +279,7 @@ function CohortSideBar({
             ),
           });
         }).catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-alumni-geeks'),
             status: 'error',

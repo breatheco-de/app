@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {
-  Avatar, Box, Button, Checkbox, useToast,
+  Avatar, Box, Button, Checkbox,
   Spinner,
   InputGroup,
   InputRightElement,
@@ -26,6 +26,7 @@ import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import bc from '../../services/breathecode';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
@@ -63,7 +64,7 @@ function SignupForm({
     state,
   } = useSignup();
   const { dateProps } = state;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'signup-error-warning-email' });
   const router = useRouter();
 
   const { syllabus } = router.query;
@@ -118,7 +119,7 @@ function SignupForm({
       if (data.silent_code === SILENT_CODE.USER_EXISTS) {
         setShowAlreadyMember(true);
       } else if (resp?.status >= 400 && data.silent_code !== SILENT_CODE.USER_EXISTS) {
-        toast({
+        createToast({
           position: 'top',
           title: data?.detail,
           status: 'error',
@@ -177,7 +178,7 @@ function SignupForm({
       }
 
       if (resp.status >= 400 && data?.phone) {
-        toast({
+        createToast({
           position: 'top',
           title: data?.phone[0],
           status: 'warning',
@@ -189,7 +190,7 @@ function SignupForm({
     } catch (e) {
       console.log(e);
       actions.setSubmitting(false);
-      toast({
+      createToast({
         position: 'top',
         title: e.message,
         status: 'error',
@@ -413,7 +414,7 @@ function SignupForm({
               .then((resp) => {
                 const data = resp?.data;
                 if (data === undefined) {
-                  toast({
+                  createToast({
                     position: 'top',
                     status: 'info',
                     title: t('signup:alert-message.email-already-sent'),
@@ -421,7 +422,7 @@ function SignupForm({
                     duration: 6000,
                   });
                 } else {
-                  toast({
+                  createToast({
                     position: 'top',
                     status: 'success',
                     title: t('signup:alert-message.email-sent-to', { email: data?.email }),

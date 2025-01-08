@@ -1,5 +1,4 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -7,11 +6,12 @@ import useStyle from '../../../common/hooks/useStyle';
 import bc from '../../../common/services/breathecode';
 import useSignup from '../../../common/store/actions/signupAction';
 import { toCapitalize, unSlugify } from '../../../utils';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 function profileHandlers() {
   const { t } = useTranslation('profile');
   const { reverseFontColor, fontColor, lightColor } = useStyle();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'getting-plan-offer-error' });
   const router = useRouter();
   const { setPaymentStatus } = useSignup();
 
@@ -261,7 +261,7 @@ function profileHandlers() {
               router.push(`/checkout?plan=${planData?.slug}`);
             }
           } else {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:error-getting-plan'),
               status: 'error',
@@ -273,7 +273,7 @@ function profileHandlers() {
         })
         .catch(() => {
           reject();
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-getting-plan'),
             status: 'error',
@@ -463,7 +463,7 @@ function profileHandlers() {
         })
         .catch(() => {
           reject();
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-getting-offer'),
             status: 'error',
