@@ -3,6 +3,7 @@ import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useRouter } from 'next/router';
 
 import Head from 'next/head';
 import useRigo from '../../common/hooks/useRigo';
@@ -12,19 +13,16 @@ import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import completions from './completion-jobs.json';
 import useAuth from '../../common/hooks/useAuth';
+import WorkshopsLoggedLanding from '../../common/components/WorkshopsLoggedLanding';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
-  const landingUrl = page?.data?.landing_url;
+  const router = useRouter();
   const { isRigoInitialized, rigo } = useRigo();
-  const { isAuthenticated } = useAuth();
-
-  const filteredSlices = page.data.slices.filter((slice) => {
-    const isForLoggedInUsers = slice.primary?.is_for_logged_in_users || false;
-    if (isForLoggedInUsers === undefined) return true;
-    return isAuthenticated ? isForLoggedInUsers : !isForLoggedInUsers;
-  });
+  const { isAuthenticated, isLoading } = useAuth();
+  const landingUrl = page?.data?.landing_url;
+  const loggedInWorkshopsView = isAuthenticated === true && router.query.uid === 'workshops';
 
   useEffect(() => {
     if (!page?.id) {
@@ -77,9 +75,13 @@ function Page({ page }) {
           <meta name="google" content="notranslate" />
         </Head>
       )}
-      <Box className="prismic-body" pt={isAuthenticated ? '0' : '3rem'} px={isAuthenticated ? 0 : { base: '10px', md: '2rem' }}>
-        <SliceZone slices={filteredSlices} components={components} />
-      </Box>
+      {!loggedInWorkshopsView && !isLoading ? (
+        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>
+          <SliceZone slices={page?.data?.slices} components={components} />
+        </Box>
+      ) : (
+        <WorkshopsLoggedLanding />
+      )}
     </>
   );
 }

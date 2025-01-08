@@ -10,7 +10,6 @@ export const components = {
   partners: dynamic(() => import("./Partners")),
   recommended_courses: dynamic(() => import("./RecommendedCourses")),
   road_map: dynamic(() => import("./RoadMap")),
-  search_bar: dynamic(() => import("./SearchBar")),
   show_prices: dynamic(() => import("./ShowPrices")),
   technologies: dynamic(() => import("./Technologies")),
   technologies_pills: dynamic(() => import("./TechnologiesPills")),

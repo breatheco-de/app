@@ -17,10 +17,6 @@
 				"__TYPE__": "FieldContent",
 				"value": "sign",
 				"type": "Text"
-			},
-			"is_for_logged_in_users": {
-				"__TYPE__": "BooleanContent",
-				"value": false
 			}
 		},
 		"items": [

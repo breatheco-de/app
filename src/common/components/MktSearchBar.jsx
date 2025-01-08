@@ -76,26 +76,32 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
             </Flex>
           </form>
           <Box mt={4}>
-            <Text fontSize="sm" color="gray.500" mb={2}>
-              Popular searches:
-            </Text>
-            <Flex gap={2} flexWrap="wrap">
-              {popularSearches.map((term) => (
-                <Button
-                  key={term.popular_searches}
-                  variant="outline"
-                  border="1px solid #DADADA"
-                  fontSize="13px"
-                  height="26px"
-                  padding="5px 7px"
-                  borderRadius="full"
-                  color="gray.500"
-                  onClick={() => handlePopularSearchClick(term.popular_searches)}
-                >
-                  {term.popular_searches}
-                </Button>
-              ))}
-            </Flex>
+            {popularSearches && (
+              <>
+                <Text fontSize="sm" color="gray.500" mb={2}>
+                  Popular searches:
+                  {' '}
+                  {/*TRADUCIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIR*/}
+                </Text>
+                <Flex gap={2} flexWrap="wrap">
+                  {popularSearches.map((term) => (
+                    <Button
+                      key={term}
+                      variant="outline"
+                      border="1px solid #DADADA"
+                      fontSize="13px"
+                      height="26px"
+                      padding="5px 7px"
+                      borderRadius="full"
+                      color="gray.500"
+                      onClick={() => handlePopularSearchClick(term)}
+                    >
+                      {term}
+                    </Button>
+                  ))}
+                </Flex>
+              </>
+            )}
           </Box>
         </Box>
       </Box>

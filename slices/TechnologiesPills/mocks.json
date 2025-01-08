@@ -42,10 +42,6 @@
 				"value": "theory",
 				"type": "Text"
 			},
-			"is_for_logged_in_users": {
-				"__TYPE__": "BooleanContent",
-				"value": true
-			},
 			"padding_top": {
 				"__TYPE__": "FieldContent",
 				"value": "keep",

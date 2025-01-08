@@ -6,7 +6,6 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
-  | SearchBarSlice
   | InfoCardsSlice
   | TrustCardsSlice
   | TitleIntroductionSlice
@@ -162,17 +161,6 @@ export interface EventCardsSliceDefaultPrimary {
   tech_filtered: prismic.KeyTextField;
 
   /**
-   * Search Sensitive field in *EventCards → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: event_cards.primary.search_sensitive
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  search_sensitive: prismic.BooleanField;
-
-  /**
    * Show checked in events field in *EventCards → Primary*
    *
    * - **Field Type**: Boolean
@@ -182,17 +170,6 @@ export interface EventCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#boolean
    */
   show_checked_in_events: prismic.BooleanField;
-
-  /**
-   * Is for logged in users only field in *EventCards → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: event_cards.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -555,17 +532,6 @@ export interface MarkdownSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   padding: prismic.KeyTextField;
-
-  /**
-   * Is for logged in users only field in *Markdown → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: markdown.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -1070,107 +1036,6 @@ export type RoadMapSlice = prismic.SharedSlice<
 >;
 
 /**
- * Primary content in *SearchBar → Primary*
- */
-export interface SearchBarSliceDefaultPrimary {
-  /**
-   * heading top field in *SearchBar → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: search_bar.primary.heading_top
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  heading_top: prismic.KeyTextField;
-
-  /**
-   * heading bottom field in *SearchBar → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: search_bar.primary.heading_bottom
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  heading_bottom: prismic.KeyTextField;
-
-  /**
-   * subtitle field in *SearchBar → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: search_bar.primary.subtitle
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  subtitle: prismic.KeyTextField;
-
-  /**
-   * background field in *SearchBar → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: hex
-   * - **API ID Path**: search_bar.primary.background
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  background: prismic.KeyTextField;
-
-  /**
-   * Is for logged in users only field in *SearchBar → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: search_bar.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
-}
-
-/**
- * Primary content in *SearchBar → Items*
- */
-export interface SearchBarSliceDefaultItem {
-  /**
-   * Popular Searches field in *SearchBar → Items*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: Tecnology pills at the bottom
-   * - **API ID Path**: search_bar.items[].popular_searches
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  popular_searches: prismic.KeyTextField;
-}
-
-/**
- * Default variation for SearchBar Slice
- *
- * - **API ID**: `default`
- * - **Description**: Default
- * - **Documentation**: https://prismic.io/docs/slice
- */
-export type SearchBarSliceDefault = prismic.SharedSliceVariation<
-  "default",
-  Simplify<SearchBarSliceDefaultPrimary>,
-  Simplify<SearchBarSliceDefaultItem>
->;
-
-/**
- * Slice variation for *SearchBar*
- */
-type SearchBarSliceVariation = SearchBarSliceDefault;
-
-/**
- * SearchBar Shared Slice
- *
- * - **API ID**: `search_bar`
- * - **Description**: SearchBar
- * - **Documentation**: https://prismic.io/docs/slice
- */
-export type SearchBarSlice = prismic.SharedSlice<
-  "search_bar",
-  SearchBarSliceVariation
->;
-
-/**
  * Primary content in *ShowPrices → Primary*
  */
 export interface ShowPricesSliceDefaultPrimary {
@@ -1298,17 +1163,6 @@ export interface TechnologiesSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
-
-  /**
-   * Is for logged in users only field in *Technologies → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: technologies.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -1394,17 +1248,6 @@ export interface TechnologiesPillsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   padding_top: prismic.KeyTextField;
-
-  /**
-   * Is for logged in users only field in *TechnologiesPills → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: technologies_pills.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -1658,17 +1501,6 @@ export interface TitleIntroductionSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   button_id: prismic.KeyTextField;
-
-  /**
-   * Is for logged in users only field in *TitleIntroduction → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: title_introduction.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -1991,17 +1823,6 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#select
    */
   fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
-
-  /**
-   * Is for logged in users only field in *TwoColumn → Primary*
-   *
-   * - **Field Type**: Boolean
-   * - **Placeholder**: *None*
-   * - **Default Value**: false
-   * - **API ID Path**: two_column.primary.is_for_logged_in_users
-   * - **Documentation**: https://prismic.io/docs/field#boolean
-   */
-  is_for_logged_in_users: prismic.BooleanField;
 }
 
 /**
@@ -2076,11 +1897,6 @@ declare module "@prismicio/client" {
       RoadMapSliceDefaultPrimary,
       RoadMapSliceVariation,
       RoadMapSliceDefault,
-      SearchBarSlice,
-      SearchBarSliceDefaultPrimary,
-      SearchBarSliceDefaultItem,
-      SearchBarSliceVariation,
-      SearchBarSliceDefault,
       ShowPricesSlice,
       ShowPricesSliceDefaultPrimary,
       ShowPricesSliceVariation,

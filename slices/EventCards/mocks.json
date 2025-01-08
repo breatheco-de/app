@@ -23,14 +23,6 @@
 				"value": "continent",
 				"type": "Text"
 			},
-			"is_for_logged_in_users": {
-				"__TYPE__": "BooleanContent",
-				"value": false
-			},
-			"search_sensitive": {
-				"__TYPE__": "BooleanContent",
-				"value": false
-			},
 			"tech_filtered": {
 				"__TYPE__": "FieldContent",
 				"value": "swam",

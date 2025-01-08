@@ -37,15 +37,6 @@
             "placeholder": "Auto filter the events by a technology"
           }
         },
-        "search_sensitive": {
-          "type": "Boolean",
-          "config": {
-            "label": "Search Sensitive",
-            "placeholder_false": "false",
-            "placeholder_true": "true",
-            "default_value": false
-          }
-        },
         "show_checked_in_events": {
           "type": "Boolean",
           "config": {
@@ -53,15 +44,6 @@
             "default_value": false,
             "placeholder_true": "true",
             "placeholder_false": "false"
-          }
-        },
-        "is_for_logged_in_users": {
-          "type": "Boolean",
-          "config": {
-            "label": "Is for logged in users only",
-            "placeholder_false": "false",
-            "placeholder_true": "true",
-            "default_value": false
           }
         }
       },

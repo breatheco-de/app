@@ -13,11 +13,16 @@
   "in-person": "Evento en persona",
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
   "confirm-attendance": "Si, si asistiré",
-  "deny-attendance" : "No, no asistiré",
-  "denny-access":{
+  "deny-attendance": "No, no asistiré",
+  "denny-access": {
     "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
     "can-join": "pueden entrar"
+  },
+  "intro": {
+    "top-title": "Bienvenido a los talleres",
+    "lower-title": "Aprende en vivo y sumergete en las nuevas tecnologías",
+    "subtitle": "Descubre el futuro del aprendizaje tecnológico con sesiones en vivo. ¡Únete y potencia tus habilidades!"
   },
   "form": {
     "title": "Únete a este evento",
@@ -31,6 +36,7 @@
     "finished-title": "Este evento ha finalizado",
     "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
   },
+  "upcoming-events": "Próximos eventos",
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
   "join-workshop": "Regístrarse al taller",
   "join": "Unirse ahora",
