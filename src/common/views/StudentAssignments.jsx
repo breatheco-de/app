@@ -66,7 +66,6 @@ const StudentsRows = forwardRef(({ currentStudentList, syllabusData, selectedCoh
         status: 'error',
         duration: 6000,
         isClosable: true,
-        silent: true,
       });
     }
   };

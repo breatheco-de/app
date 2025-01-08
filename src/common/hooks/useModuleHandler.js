@@ -37,7 +37,6 @@ function useModuleHandler() {
           status: 'success',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
         closeSettings();
       } catch (error) {
@@ -48,7 +47,6 @@ function useModuleHandler() {
           status: 'error',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
         closeSettings();
       }
@@ -102,7 +100,6 @@ function useModuleHandler() {
             status: 'success',
             duration: 6000,
             isClosable: true,
-            silent: true,
           });
           closeSettings();
         }
@@ -114,7 +111,6 @@ function useModuleHandler() {
           status: 'error',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
         closeSettings();
       }
@@ -136,7 +132,6 @@ function useModuleHandler() {
           status: 'success',
           duration: 6000,
           isClosable: true,
-          silent: true,
         });
         setTaskTodo([
           ...taskTodo,
@@ -152,7 +147,6 @@ function useModuleHandler() {
         status: 'error',
         duration: 6000,
         isClosable: true,
-        silent: true,
       });
     }
   };

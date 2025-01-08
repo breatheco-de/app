@@ -292,7 +292,6 @@ function LessonByTechnology({ assetData, technologyData, techsBySortPriority, co
         status: 'error',
         duration: 5000,
         isClosable: true,
-        silent: true,
       });
       router.replace('/');
     }

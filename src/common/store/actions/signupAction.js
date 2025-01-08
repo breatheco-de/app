@@ -208,7 +208,6 @@ const useSignup = () => {
               status: 'error',
               duration: 7000,
               isClosable: true,
-              silent: true,
             });
           }
           resolve(transactionData);

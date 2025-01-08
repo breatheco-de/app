@@ -113,7 +113,6 @@ function Register({ setIsLoggedFromRegister }) {
                   title: t('signup:alert-message.email-already-sent'),
                   isClosable: true,
                   duration: 6000,
-                  silent: true,
                 });
               } else {
                 createToast({
@@ -122,7 +121,6 @@ function Register({ setIsLoggedFromRegister }) {
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),
                   isClosable: true,
                   duration: 6000,
-                  silent: true,
                 });
               }
             });
@@ -173,7 +171,6 @@ function Register({ setIsLoggedFromRegister }) {
               status: 'error',
               isClosable: true,
               duration: 6000,
-              silent: true,
             });
           }
           setStorageItem('subscriptionId', data?.id);

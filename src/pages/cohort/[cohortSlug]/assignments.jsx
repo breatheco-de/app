@@ -176,7 +176,6 @@ function Assignments() {
           status: 'error',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
         console.error('There was an error fetching the tasks', error);
       })
@@ -238,7 +237,6 @@ function Assignments() {
           status: 'error',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
       });
     getDefaultStudent();
@@ -270,7 +268,6 @@ function Assignments() {
             status: 'error',
             duration: 7000,
             isClosable: true,
-            silent: true,
           });
         });
     }
@@ -300,7 +297,6 @@ function Assignments() {
           status: 'error',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
       })
       .finally(() => setLoadStatus({ loading: false, status: 'idle' }));
@@ -318,7 +314,6 @@ function Assignments() {
         status: 'error',
         duration: 7000,
         isClosable: true,
-        silent: true,
       });
     } finally {
       setLoadStatus({ loading: false, status: 'idle' });
@@ -342,7 +337,6 @@ function Assignments() {
           status: 'error',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
       } else {
         const copyFinalProjects = [...finalProjects];
@@ -355,7 +349,6 @@ function Assignments() {
           status: 'success',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
       }
     } catch (e) {
@@ -365,7 +358,6 @@ function Assignments() {
         status: 'error',
         duration: 7000,
         isClosable: true,
-        silent: true,
       });
     }
   };

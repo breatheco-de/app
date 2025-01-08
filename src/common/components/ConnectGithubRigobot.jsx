@@ -173,7 +173,6 @@ function ConnectGithubRigobot({ ...rest }) {
                         status: 'success',
                         duration: 5000,
                         isClosable: true,
-                        silent: true,
                       });
                     })
                     .catch(() => {
@@ -184,7 +183,6 @@ function ConnectGithubRigobot({ ...rest }) {
                         status: 'error',
                         duration: 5000,
                         isClosable: true,
-                        silent: true,
                       });
                     });
                 }}

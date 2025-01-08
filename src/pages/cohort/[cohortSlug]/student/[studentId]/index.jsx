@@ -492,7 +492,6 @@ function StudentReport() {
         status: 'error',
         duration: 6000,
         isClosable: true,
-        silent: true,
       });
     }
   };
@@ -707,7 +706,6 @@ function StudentReport() {
                           status: 'error',
                           duration: 6000,
                           isClosable: true,
-                          silent: true,
                         });
                       }
                     }

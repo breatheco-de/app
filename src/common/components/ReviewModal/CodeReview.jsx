@@ -172,7 +172,6 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
             status: 'error',
             duration: 5000,
             isClosable: true,
-            silent: true,
           });
         })
         .finally(() => {

@@ -44,7 +44,6 @@ function SupportSidebar({ allCohorts, allSyllabus, services, subscriptions, subs
           status: 'error',
           duration: 9000,
           isClosable: true,
-          silent: true,
         });
       });
     } else {

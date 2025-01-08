@@ -47,7 +47,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 status: 'success',
                 duration: 9000,
                 isClosable: true,
-                silent: true,
               });
             }
           })
@@ -60,7 +59,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
               status: 'error',
               duration: 9000,
               isClosable: true,
-              silent: true,
             });
           });
       }}

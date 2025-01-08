@@ -84,7 +84,6 @@ function ChooseDate({ cohort, ...rest }) {
                   status: 'info',
                   duration: 6000,
                   isClosable: true,
-                  silent: true,
                 });
               }
               setCohortPlans(data);

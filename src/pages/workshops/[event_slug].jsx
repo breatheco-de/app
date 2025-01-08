@@ -536,7 +536,6 @@ function Page({ eventData, asset }) {
                 title: t('alert-message:success-event-reservation'),
                 isClosable: true,
                 duration: 6000,
-                silent: true,
               });
 
               reportDatalayer({
@@ -558,7 +557,6 @@ function Page({ eventData, asset }) {
                 title: t('alert-message:event-access-error'),
                 isClosable: true,
                 duration: 6000,
-                silent: true,
               });
             }
           });

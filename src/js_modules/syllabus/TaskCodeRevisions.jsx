@@ -88,7 +88,6 @@ function TaskCodeRevisions() {
           duration: 5000,
           position: 'top',
           isClosable: true,
-          silent: true,
         });
       }
     } catch (errorMsg) {

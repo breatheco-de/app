@@ -65,7 +65,6 @@ function AttendanceModal({
           status: 'error',
           duration: 9000,
           isClosable: true,
-          silent: true,
         });
       })
       .finally(() => setIsLoading(false));
@@ -129,7 +128,6 @@ function AttendanceModal({
           status: 'success',
           duration: 900,
           isClosable: true,
-          silent: true,
         });
       })
       .catch(() => {
@@ -139,7 +137,6 @@ function AttendanceModal({
           status: 'error',
           duration: 9000,
           isClosable: true,
-          silent: true,
         });
       })
       .finally(() => setIsLoading(false));
@@ -166,7 +163,6 @@ function AttendanceModal({
             status: 'error',
             duration: 7000,
             isClosable: true,
-            silent: true,
           });
           setOpenWarn(false);
           setIsLoading(false);
@@ -179,7 +175,6 @@ function AttendanceModal({
         status: 'error',
         duration: 7000,
         isClosable: true,
-        silent: true,
       });
       setIsLoading(false);
     }

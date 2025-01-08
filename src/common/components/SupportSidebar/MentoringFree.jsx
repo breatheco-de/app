@@ -97,7 +97,6 @@ function MentoringFree({
         status: 'error',
         duration: 7000,
         isClosable: true,
-        silent: true,
       });
     }
   };

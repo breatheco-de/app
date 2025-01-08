@@ -52,7 +52,6 @@ function PopoverHandler({ task, githubUrl, haveGithubDomain }) {
               status: 'error',
               duration: 4000,
               isClosable: true,
-              silent: true,
             });
           }
         } else {

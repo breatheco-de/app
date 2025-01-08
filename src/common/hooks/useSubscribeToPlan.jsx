@@ -57,7 +57,6 @@ const useSubscribeToPlan = ({ enableRedirectOnCTA = false, redirectTo = '/choose
                   status: 'error',
                   duration: 7000,
                   isClosable: true,
-                  silent: true,
                 });
               });
           })

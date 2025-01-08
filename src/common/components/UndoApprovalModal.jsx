@@ -58,7 +58,6 @@ function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAss
                     status: 'success',
                     duration: 5000,
                     isClosable: true,
-                    silent: true,
                   });
                 })
                 .catch((e) => {
@@ -69,7 +68,6 @@ function UndoApprovalModal({ isOpen, currentTask, onSuccess, onClose, updpateAss
                     status: 'error',
                     duration: 5000,
                     isClosable: true,
-                    silent: true,
                   });
                 })
                 .finally(() => setIsRequesting(false));

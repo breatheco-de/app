@@ -69,7 +69,6 @@ function DirectAccessModal({ title, modalIsOpen }) {
         status: 'warning',
         duration: 6000,
         isClosable: true,
-        silent: true,
       });
     }
     actions.setSubmitting(false);

@@ -128,7 +128,6 @@ function Attendance() {
           status: 'error',
           duration: 7000,
           isClosable: true,
-          silent: true,
         });
       });
   }, []);
@@ -152,7 +151,6 @@ function Attendance() {
               status: 'warning',
               duration: 7000,
               isClosable: true,
-              silent: true,
             });
           } else {
             setCurrentDaysLog(daysLog);
@@ -165,7 +163,6 @@ function Attendance() {
             status: 'error',
             duration: 7000,
             isClosable: true,
-            silent: true,
           });
         });
       handlers.getStudents(slug, academyId)
@@ -179,7 +176,6 @@ function Attendance() {
             status: 'error',
             duration: 7000,
             isClosable: true,
-            silent: true,
           });
         })
         .finally(() => setLoadingStudents(false));

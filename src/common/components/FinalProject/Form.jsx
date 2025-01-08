@@ -102,7 +102,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
             status: 'success',
             duration: 5000,
             isClosable: true,
-            silent: false,
           });
         } else {
           createToast({
@@ -112,7 +111,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
             status: 'error',
             duration: 5000,
             isClosable: true,
-            silent: true,
           });
         }
         handleClose();
@@ -125,7 +123,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
           status: 'error',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
       });
 
@@ -153,7 +150,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
             status: 'success',
             duration: 5000,
             isClosable: true,
-            silent: true,
           });
           handleClose();
         } else {
@@ -164,7 +160,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
             status: 'error',
             duration: 5000,
             isClosable: true,
-            silent: true,
           });
         }
       })
@@ -176,7 +171,6 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
           status: 'error',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
       });
 

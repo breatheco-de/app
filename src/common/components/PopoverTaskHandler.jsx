@@ -224,7 +224,6 @@ function PopoverCustomContent({
         status: 'success',
         duration: 4000,
         isClosable: true,
-        silent: true,
       });
       closeSettings();
     } else {
@@ -235,7 +234,6 @@ function PopoverCustomContent({
         status: 'error',
         duration: 4000,
         isClosable: true,
-        silent: true,
       });
     }
   };

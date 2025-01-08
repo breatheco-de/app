@@ -77,7 +77,6 @@ const useSubscriptionsHandler = () => {
           status: 'error',
           duration: 5000,
           isClosable: true,
-          silent: true,
         });
         reject(err);
       });
