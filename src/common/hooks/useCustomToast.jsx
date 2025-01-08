@@ -3,18 +3,10 @@ import { Box, Button, Flex, useToast } from '@chakra-ui/react';
 import Icon from '../components/Icon';
 
 const bgColors = {
-  silent: {
-    info: { background: 'blue.500', color: 'gray.50', borderColor: 'transparent' },
-    warning: { background: 'yellow.500', color: 'gray.50', borderColor: 'transparent' },
-    error: { background: 'red.500', color: 'gray.50', borderColor: 'transparent' },
-    success: { background: 'green.500', color: 'gray.50', borderColor: 'transparent' },
-  },
-  noSilent: {
-    info: { background: '#F9F9F9', color: '#3A3A3A', borderColor: '#DADADA' },
-    warning: { background: '#ffefcc', color: '#975100', borderColor: '#FFB718' },
-    error: { background: '#fdd0d0', color: '#EB5757', borderColor: '#EB5757' },
-    success: { background: '#e0ffe8', color: '#00a33d', borderColor: '#00bb2d' },
-  },
+  info: { background: '#F9F9F9', color: '#3A3A3A', borderColor: '#DADADA' },
+  warning: { background: '#ffefcc', color: '#975100', borderColor: '#FFB718' },
+  error: { background: '#fee8e8', color: '#EB5757', borderColor: '#EB5757' },
+  success: { background: '#e0ffe8', color: '#00a33d', borderColor: '#00bb2d' },
 };
 
 const useCustomToast = ({
@@ -35,11 +27,8 @@ const useCustomToast = ({
     description,
     actions = null,
     isClosable = true,
-    silent = false,
   }) => {
-    const toastColors = bgColors[silent ? 'silent' : 'noSilent'][status];
-
-    console.log('dee', toastColors);
+    const toastColors = bgColors[status];
 
     toastId = toast({
       position,
@@ -91,14 +80,16 @@ const useCustomToast = ({
             <Flex gap="16px" mb="-10px" mt="1px">
               {actions.map((action) => (
                 <Button
+                  as="a"
                   key={action.label}
-                  // borderRadius="4px"
-                  onClick={action.onClick}
+                  href={action.link}
                   background="transparent"
                   color="black"
                   _hover={{ background: 'transparent' }}
                   left={7}
                   fontSize="14px"
+                  textDecoration="underline"
+                  target="_blank"
                 >
                   {action.label}
                 </Button>

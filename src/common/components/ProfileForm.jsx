@@ -56,13 +56,6 @@ function ProfileForm() {
               status: 'success',
               duration: 9000,
               isClosable: true,
-              silent: false,
-              // description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid pariatur, ipsum similique veniam.",
-              // actions: [
-              //   { label: 'Action 1', onClick: () => console.log('Action 1') },
-              //   { label: 'Action 2', onClick: () => console.log('Action 2') },
-              // ],
-              // silent: false,
             });
             updateProfile({
               ...user,
@@ -80,7 +73,6 @@ function ProfileForm() {
               status: 'error',
               duration: 9000,
               isClosable: true,
-              silent: true,
             });
           })
           .finally(() => {
