@@ -35,7 +35,7 @@ function useModuleHandler() {
           position: 'top',
           title: t('alert-message:assignment-updated'),
           status: 'success',
-          duration: 5000,
+          duration: 6000,
           isClosable: true,
         });
         closeSettings();
