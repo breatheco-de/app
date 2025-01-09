@@ -139,7 +139,7 @@ export const getStaticProps = async ({ params, locale }) => {
   });
 };
 
-function Page({ eventData, asset }) {
+function Workshop({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
   const [users, setUsers] = useState([]);
@@ -1129,13 +1129,13 @@ function Page({ eventData, asset }) {
   );
 }
 
-Page.propTypes = {
+Workshop.propTypes = {
   eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-Page.defaultProps = {
+Workshop.defaultProps = {
   eventData: {},
   asset: null,
 };
 
-export default Page;
+export default Workshop;
