@@ -8,7 +8,7 @@ import {
 import { useState, useEffect } from 'react';
 import Heading from '../../common/components/Heading';
 import Signup from '../../common/components/Forms/Signup';
-import { getStorageItem, setStorageItem } from '../../utils';
+import { getStorageItem, setStorageItem, getBrowserInfo } from '../../utils';
 import { BREATHECODE_HOST } from '../../utils/variables';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useStyle from '../../common/hooks/useStyle';
@@ -30,6 +30,7 @@ function ContactInformation({
     reportDatalayer({
       dataLayer: {
         event: 'checkout_contact_info',
+        agent: getBrowserInfo(),
       },
     });
   }, []);

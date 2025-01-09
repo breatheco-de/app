@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import profileHandlers from './handlers';
 import { reportDatalayer } from '../../../utils/requests';
+import { getBrowserInfo } from '../../../utils';
 
 function ButtonHandler({
   subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
@@ -43,6 +44,7 @@ function ButtonHandler({
         dataLayer: {
           event: 'chat_with_support',
           plan: planSlug,
+          agent: getBrowserInfo(),
         },
       });
       return;

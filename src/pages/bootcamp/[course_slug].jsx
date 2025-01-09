@@ -15,7 +15,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
 import Timer from '../../common/components/Timer';
@@ -279,6 +279,7 @@ function CoursePage({ data, syllabus }) {
         dataLayer: {
           event: 'join_cohort',
           cohort_id: cohortId,
+          agent: getBrowserInfo(),
         },
       });
       setIsFetching(true);

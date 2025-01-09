@@ -11,7 +11,7 @@ import { CardSkeleton } from './Skeleton';
 // import modifyEnv from '../../../modifyEnv';
 // import { toCapitalize } from '../../utils';
 import TagCapsule from './TagCapsule';
-import { getBrowserSize, setStorageItem } from '../../utils';
+import { getBrowserSize, setStorageItem, getBrowserInfo } from '../../utils';
 import { ORIGIN_HOST, WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import useStyle from '../hooks/useStyle';
 import useSession from '../hooks/useSession';
@@ -201,6 +201,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                       course_title: recom?.course_translation?.title || recom.title,
                       ad_position: 'top-left',
                       ad_type: 'course',
+                      agent: getBrowserInfo(),
                     },
                   });
                 }}
@@ -263,6 +264,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                           course_title: recom?.course_translation?.title ? recom.course_translation.title : recom.title,
                           ad_position: 'top-left',
                           ad_type: 'course',
+                          agent: getBrowserInfo(),
                         },
                       });
                     }}

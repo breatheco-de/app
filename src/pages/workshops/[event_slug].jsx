@@ -14,7 +14,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -519,6 +519,7 @@ function Page({ eventData, asset }) {
             event_starting_at: unixFormatedDate.starting_at,
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
+            agent: getBrowserInfo(),
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
@@ -547,6 +548,7 @@ function Page({ eventData, asset }) {
                   event_starting_at: unixFormatedDate.starting_at,
                   event_ending_at: unixFormatedDate.ending_at,
                   event_language: event.lang,
+                  agent: getBrowserInfo(),
                 },
               });
             } else {
