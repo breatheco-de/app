@@ -65,7 +65,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
   const { t } = useTranslation('common');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -89,12 +89,12 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
     markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
-  const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
+  const showProvisioningLinks = vendors?.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
   if (isExternalExercise) {
     return (
-      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
         {t('common:learnpack.start-exercise')}
       </Button>
     );
@@ -113,7 +113,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
         </Popover>
       )}
       {startWithLearnpack ? (
-        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
           {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
@@ -130,6 +130,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
             if (isForOpenLocaly) setShowCloneModal(true);
             else scrollToMarkdown();
           }}
+          {...rest}
         >
           {isForOpenLocaly ? t('learnpack.open-locally') : t('see-instructions')}
         </Button>
@@ -138,29 +139,13 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, provisioningVendors }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
-
-  const fetchProvisioningVendors = async () => {
-    try {
-      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
-      setVendors(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (cohortSession) {
-      fetchProvisioningVendors();
-    }
-  }, [cohortSession]);
 
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
@@ -195,7 +180,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
-                vendors={vendors}
+                vendors={provisioningVendors}
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={variant}
@@ -242,7 +227,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             isForOpenLocaly={isForOpenLocaly}
-            vendors={vendors}
+            vendors={provisioningVendors}
             variant={variant}
           />
         </Box>
