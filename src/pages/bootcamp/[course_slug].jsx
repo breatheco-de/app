@@ -108,7 +108,7 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
-  const { state } = useSignup();
+  const { state, getPriceWithDiscount } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
@@ -231,12 +231,17 @@ function CoursePage({ data, syllabus }) {
           .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
         : '';
 
-      const context = `
+      let context = `
         description: ${data.course_translation?.description}
         ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
         plans: ${plansContext}
         payment-methods: ${getAlternativeTranslation('rigobot.payment-methods')},
       `;
+
+      if (selfAppliedCoupon) {
+        const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
+        context += `\n coupon: ${discount} off`;
+      }
 
       rigo.updateOptions({
         showBubble: false,
