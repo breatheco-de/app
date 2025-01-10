@@ -202,7 +202,7 @@ function AuthProvider({ children, pageProps }) {
                 method: 'native',
                 user_id: data.id,
                 email: data.email,
-                is_academy_legacy: data.roles.some((r) => r.academy.id === 6),
+                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(', '),
                 is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
                 first_name: data.first_name,
                 last_name: data.last_name,
