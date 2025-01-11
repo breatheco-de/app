@@ -419,10 +419,10 @@ function SyllabusContent() {
         const extension = urlPathname ? urlPathname.split('.').pop() : null;
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
-        }
+      if (currTask?.target === 'blank') {
+        setCurrentAsset(data);
+        return;
+      }
 
         setReadmeUrlPathname(finalPathname);
         let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
@@ -478,7 +478,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
