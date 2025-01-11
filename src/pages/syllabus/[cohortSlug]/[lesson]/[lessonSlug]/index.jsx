@@ -465,7 +465,7 @@ function SyllabusContent() {
               });
               setCurrentAsset({
                 ...data,
-                title: t('no-traduction-found'),
+                title: data.title || t('no-traduction-found'),
               });
             });
         }
