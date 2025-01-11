@@ -408,80 +408,71 @@ function SyllabusContent() {
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (cohortSession.available_as_saas) {
-      bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
-        const translations = data?.translations;
-        const exensionName = getExtensionName(data.readme_url);
-        const isIpynb = exensionName === 'ipynb';
-        const currentSlug = translations?.[language] || lessonSlug;
-        const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
-        const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
-        const extension = urlPathname ? urlPathname.split('.').pop() : null;
-        const finalPathname = `${pathnameWithoutExtension}.${extension}`;
+    bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
+      const translations = data?.translations;
+      const exensionName = getExtensionName(data.readme_url);
+      const isIpynb = exensionName === 'ipynb';
+      const currentSlug = translations?.[language] || lessonSlug;
+      const urlPathname = data.readme_url ? data.readme_url.split('https://github.com')[1] : null;
+      const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
+      const extension = urlPathname ? urlPathname.split('.').pop() : null;
+      const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
+      if (currTask?.target === 'blank') {
+        setCurrentAsset(data);
+        return;
+      }
+
+      setReadmeUrlPathname(finalPathname);
+      let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
+      if (isIpynb) {
+        setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
+        setCurrentAsset(data);
+      } else {
+        setIpynbHtmlUrl(null);
+        if (currentTranslationSlug === undefined) {
+          currentTranslationSlug = `${lessonSlug}-${language}`;
         }
+        Promise.all([
+          assetTypeValues[lesson] !== 'QUIZ' && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
+        ])
+          .then(([respMarkdown, respData]) => {
+            const currData = respData.data;
+            const markdownData = respMarkdown.data;
 
-        setReadmeUrlPathname(finalPathname);
-        let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
-        if (isIpynb) {
-          setIpynbHtmlUrl(`${BREATHECODE_HOST}/v1/registry/asset/preview/${currentSlug}?plain=true`);
-          setCurrentAsset(data);
-        } else {
-          setIpynbHtmlUrl(null);
-          if (currentTranslationSlug === undefined) {
-            currentTranslationSlug = `${lessonSlug}-${language}`;
-          }
-
-          const avoidReadme = assetTypeValues[lesson] === 'QUIZ' || (cohortSession?.available_as_saas && isExercise);
-
-          const requests = [
-            avoidReadme ? null : axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
-            axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
-          ].filter(Boolean);
-
-          console.log(requests);
-
-          Promise.all(requests)
-            .then(([respMarkdown, respData]) => {
-              const currData = respData.data;
-              const markdownData = respMarkdown.data;
-
-              if (lesson === 'answer') {
-                setQuizSlug(currentTranslationSlug);
-              } else {
-                setQuizSlug(null);
-              }
-              if (currData !== undefined && typeof markdownData === 'string') {
-                // Binary base64 decoding ⇢ UTF-8
-                const markdown = getMarkDownContent(markdownData);
-                setReadme(markdown);
-                setCurrentAsset(currData);
-              }
-            })
-            .catch(() => {
-              setReadme({
-                content: t('no-traduction-found-description'),
-              });
-              setCurrentAsset({
-                ...data,
-                title: data?.title || t('no-traduction-found'),
-              });
+            if (lesson === 'answer') {
+              setQuizSlug(currentTranslationSlug);
+            } else {
+              setQuizSlug(null);
+            }
+            if (currData !== undefined && typeof markdownData === 'string') {
+              // Binary base64 decoding ⇢ UTF-8
+              const markdown = getMarkDownContent(markdownData);
+              setReadme(markdown);
+              setCurrentAsset(currData);
+            }
+          })
+          .catch(() => {
+            setReadme({
+              content: t('no-traduction-found-description'),
             });
-        }
-      }).catch(() => {
-        EventIfNotFound();
-      });
-    }
+            setCurrentAsset({
+              ...data,
+              title: t('no-traduction-found'),
+            });
+          });
+      }
+    }).catch(() => {
+      EventIfNotFound();
+    });
     return () => {
       cleanCurrentData();
       setUserSession({
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
