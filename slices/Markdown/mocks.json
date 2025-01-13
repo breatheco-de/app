@@ -1,54 +1,54 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "left",
-        "type": "Text"
-      },
-      "description": {
-        "__TYPE__": "FieldContent",
-        "value": "chart",
-        "type": "Text"
-      },
-      "markdown": {
-        "__TYPE__": "StructuredTextContent",
-        "value": [
-          {
-            "type": "paragraph",
-            "content": {
-              "text": "Consequat aliqua pariatur ea dolore reprehenderit nostrud aliquip eu magna nulla ea voluptate Lorem et. Officia aliquip occaecat reprehenderit cillum laboris minim est nulla consectetur aliqua Lorem sit tempor. Ad consectetur exercitation nisi id nostrud nulla ipsum ipsum."
-            }
-          }
-        ]
-      },
-      "enable_table_of_content": {
-        "__TYPE__": "BooleanContent",
-        "value": false
-      },
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "should",
-        "type": "Text"
-      },
-      "margin": {
-        "__TYPE__": "FieldContent",
-        "value": "opposite",
-        "type": "Text"
-      },
-      "padding": {
-        "__TYPE__": "FieldContent",
-        "value": "won",
-        "type": "Text"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "left",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "chart",
+				"type": "Text"
+			},
+			"markdown": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Consequat aliqua pariatur ea dolore reprehenderit nostrud aliquip eu magna nulla ea voluptate Lorem et. Officia aliquip occaecat reprehenderit cillum laboris minim est nulla consectetur aliqua Lorem sit tempor. Ad consectetur exercitation nisi id nostrud nulla ipsum ipsum."
+						}
+					}
+				]
+			},
+			"enable_table_of_content": {
+				"__TYPE__": "BooleanContent",
+				"value": false
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "should",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "opposite",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "won",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]
