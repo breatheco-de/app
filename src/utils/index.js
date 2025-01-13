@@ -256,8 +256,7 @@ const calcSVGViewBox = (pathId) => {
 
 const number2DIgits = (number) => number.toString().padStart(2, '0');
 
-const sortToNearestTodayDate = (data, minutes = 30) => {
-  // sort date to the nearest today date and 30minutes after starting time
+const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
   const currentDate = new Date();
   if (data === undefined || data?.length === 0) return [];
 
@@ -272,11 +271,17 @@ const sortToNearestTodayDate = (data, minutes = 30) => {
     const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
     const hasExpired = endingDate < currentDate;
 
+    if (includeExpired) {
+      return isGoingToStartInAnyMin || hasExpired;
+    }
+
     return isGoingToStartInAnyMin && !hasExpired;
   });
-  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
 
-  return sortedDates;
+  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
+  const sortedDatesIncludingExpired = filteredDates.sort((a, b) => new Date(b.starting_at) - new Date(a.starting_at));
+
+  return includeExpired ? sortedDatesIncludingExpired : sortedDates;
 };
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)

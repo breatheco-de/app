@@ -42,6 +42,7 @@ function MktEventCards({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
     is_public: true,
+    past: !!techFilter,
   }, (endpoint && endpoint?.includes('?')));
 
   const hoursLimited = hoursToLimit * 60;
@@ -75,14 +76,15 @@ function MktEventCards({
           setLoading(false);
           return;
         }
+        console.log(endpointDefault);
         const res = await axios.get(`${BREATHECODE_HOST}${endpointDefault}`);
         const data = res?.data;
 
         if (data && data.length > 0) {
           const englishLang = lang === 'en' && 'us';
-          const sortDateToLiveClass = sortToNearestTodayDate(data, hoursLimited);
+          const sortDateToLiveClass = techFilter ? sortToNearestTodayDate(data, hoursLimited, true) : sortToNearestTodayDate(data, hoursLimited);
           const existentLiveClasses = sortDateToLiveClass?.filter((l) => l?.starting_at && (l?.ended_at || l?.ending_at) && l?.slug);
-          const isMoreThanAnyEvents = existentLiveClasses?.length > maxEvents;
+          const isMoreThanAnyEvents = sortDateToLiveClass?.length > maxEvents;
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;

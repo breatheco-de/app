@@ -24,7 +24,7 @@ function WorkshopsLoggedLanding() {
       <MktEventCards margin="50px auto" title={t('events-joined')} showCheckedInEvents />
       <Heading textAlign="center" margin="40px 0">{t('search-your-fav-tech')}</Heading>
       <MktTechnologies />
-      <MktEventCards margin="50px auto" title={t('upcoming-events')} techFilter="Javascript" />
+      <MktEventCards margin="50px auto" techFilter="Javascript" />
       <MktEventCards margin="50px auto" techFilter="Python" />
     </>
   );
