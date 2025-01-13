@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import Icon from './Icon';
 import Heading from './Heading';
 
-function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, ...rest }) {
+function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
   const [search, setSearch] = useState('');
   const router = useRouter();
 
@@ -79,9 +79,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
             {popularSearches && (
               <>
                 <Text fontSize="sm" color="gray.500" mb={2}>
-                  Popular searches:
-                  {' '}
-                  {/*TRADUCIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIR*/}
+                  {popularSearchesTitle}
                 </Text>
                 <Flex gap={2} flexWrap="wrap">
                   {popularSearches.map((term) => (
@@ -116,10 +114,12 @@ MktSearchBar.propTypes = {
   popularSearches: PropTypes.arrayOf(PropTypes.string).isRequired,
   background: PropTypes.string,
   id: PropTypes.string,
+  popularSearchesTitle: PropTypes.string,
 };
 
 MktSearchBar.defaultProps = {
   background: 'auto',
+  popularSearchesTitle: 'Popular searches',
   id: '',
 };
 

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 import useStyle from '../hooks/useStyle';
 import GridContainer from './GridContainer';
 import Heading from './Heading';
@@ -30,6 +31,8 @@ function MktEventCards({
   const [originalEvents, setOriginalEvents] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [checkedInEvents, setCheckedInEvents] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { t } = useTranslation('workshops');
   const { user } = useAuth();
   const { fontColor } = useStyle();
   const router = useRouter();
@@ -64,10 +67,12 @@ function MktEventCards({
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         if (externalEvents) {
           setOriginalEvents(externalEvents);
           setFilteredEvents(externalEvents);
+          setLoading(false);
           return;
         }
         const res = await axios.get(`${BREATHECODE_HOST}${endpointDefault}`);
@@ -90,10 +95,13 @@ function MktEventCards({
           }
 
           setOriginalEvents(eventsFilteredByTech);
+          if (searchSensitive && !search) return;
           setFilteredEvents(eventsFilteredByTech);
         }
       } catch (error) {
         console.error('Error fetching events:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -101,56 +109,128 @@ function MktEventCards({
   }, [externalEvents, techFilter]);
 
   useEffect(() => {
-    if (!searchSensitive || techFilter) return;
+    if (!searchSensitive || techFilter) return undefined;
+
+    if (searchSensitive && !search) {
+      setFilteredEvents([]);
+      setLoading(false);
+      return undefined;
+    }
 
     if (!search) {
       setFilteredEvents(originalEvents);
-      return;
+      return undefined;
     }
 
-    const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase())
-      || event?.event_type?.technologies?.includes(search.toLowerCase()));
+    setLoading(true);
 
-    setFilteredEvents(filteredBySearch);
+    const delay = setTimeout(() => {
+      const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase())
+        || event?.event_type?.technologies?.includes(search.toLowerCase()));
+
+      setFilteredEvents(filteredBySearch);
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(delay);
   }, [search, searchSensitive, originalEvents]);
+
+  const renderTitle = () => {
+    if (searchSensitive && search && loading) return t('searching-for', { search });
+    if (searchSensitive && search && !loading && filteredEvents.length === 0) return t('search-not-found', { search });
+    if (searchSensitive && search && !loading && filteredEvents.length > 0) return t('search-found', { search });
+    if (techFilter) return `${t('tech-event', { tech: techFilter })}`;
+    return title;
+  };
 
   const eventsToDisplay = showCheckedInEvents ? checkedInEvents : filteredEvents;
 
-  return eventsToDisplay?.length > 0 && (
+  return (
     <>
-      <GridContainer
-        id={id}
-        maxWidth="1280px"
-        withContainer
-        padding={{ base: '0 10px', lg: '0' }}
-        px={{ base: '10px', md: '2rem' }}
-        flexDirection={{ base: 'column', lg: 'row' }}
-        gridColumn="1 / span 10"
-        {...rest}
-      >
-        <Flex alignItems="center" gridGap="32px" marginBottom="26px" justifyContent="space-between">
-          <Heading as="h2" fontWeight={700} fontSize="38px">
-            {title}
-          </Heading>
-          <Icon icon="longArrowRight" width="58px" height="30px" color={fontColor} />
-        </Flex>
-        <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
-          <Flex gridGap="20px" width="max-content">
-            {eventsToDisplay.map((event) => (
-              <DynamicContentCard
-                type="workshop"
-                data={event}
-                maxHeight="256px"
-                userSelect="none"
-                transition="transform 0.15s ease-in-out"
-                _hover={{
-                  transform: 'scale(1.03)',
-                }}
-              />
-            ))}
+      {loading ? (
+        <GridContainer
+          id={id}
+          maxWidth="1280px"
+          withContainer
+          padding={{ base: '0 10px', lg: '0' }}
+          px={{ base: '10px', md: '2rem' }}
+          flexDirection={{ base: 'column', lg: 'row' }}
+          gridColumn="1 / span 10"
+          {...rest}
+        >
+          <Flex alignItems="center" gridGap="32px" marginBottom="26px" justifyContent="space-between">
+            <Heading as="h2" fontWeight={700} fontSize="38px">
+              {renderTitle()}
+            </Heading>
+            <Icon icon="longArrowRight" width="58px" height="30px" color={fontColor} />
           </Flex>
-        </DraggableContainer>
-      </GridContainer>
+          <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
+            <Flex gridGap="20px" width="max-content">
+              <Skeleton height="200px" width="370px" borderRadius="10px" />
+              <Skeleton height="200px" width="370px" borderRadius="10px" />
+              <Skeleton height="200px" width="370px" borderRadius="10px" />
+              <Skeleton height="200px" width="370px" borderRadius="10px" />
+            </Flex>
+          </DraggableContainer>
+        </GridContainer>
+      ) : (
+        <>
+          {eventsToDisplay?.length > 0 && (
+            <GridContainer
+              id={id}
+              maxWidth="1280px"
+              withContainer
+              padding={{ base: '0 10px', lg: '0' }}
+              px={{ base: '10px', md: '2rem' }}
+              flexDirection={{ base: 'column', lg: 'row' }}
+              gridColumn="1 / span 10"
+              {...rest}
+            >
+              <Flex alignItems="center" gridGap="32px" marginBottom="26px" justifyContent="space-between">
+                <Heading as="h2" fontWeight={700} fontSize="38px">
+                  {renderTitle()}
+                </Heading>
+                <Icon icon="longArrowRight" width="58px" height="30px" color={fontColor} />
+              </Flex>
+              <DraggableContainer className="hideOverflowX__" position="relative" width="100%" padding="7px 6px">
+                <Flex gridGap="20px" width="max-content">
+                  {eventsToDisplay.map((event) => (
+                    <DynamicContentCard
+                      type="workshop"
+                      data={event}
+                      maxHeight="256px"
+                      userSelect="none"
+                      transition="transform 0.15s ease-in-out"
+                      _hover={{
+                        transform: 'scale(1.03)',
+                      }}
+                    />
+                  ))}
+                </Flex>
+              </DraggableContainer>
+            </GridContainer>
+          )}
+          {eventsToDisplay?.length === 0 && searchSensitive && search?.length > 0 && (
+            <GridContainer
+              id={id}
+              maxWidth="1280px"
+              withContainer
+              padding={{ base: '0 10px', lg: '0' }}
+              px={{ base: '10px', md: '2rem' }}
+              flexDirection={{ base: 'column', lg: 'row' }}
+              gridColumn="1 / span 10"
+              {...rest}
+            >
+              <Flex alignItems="center" gridGap="32px" marginBottom="26px" justifyContent="space-between">
+                <Heading as="h2" fontWeight={700} fontSize="38px">
+                  {renderTitle()}
+                </Heading>
+                <Icon icon="longArrowRight" width="58px" height="30px" color={fontColor} />
+              </Flex>
+            </GridContainer>
+          )}
+        </>
+      )}
     </>
   );
 }

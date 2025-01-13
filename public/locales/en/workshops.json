@@ -36,7 +36,13 @@
     "finished-title": "This event has ended",
     "finished-description": "Keep looking for new learning experiences and keep your passion for knowledge alive!"
   },
+  "search-your-fav-tech": "Search your favourite technology",
   "upcoming-events": "Upcoming events",
+  "events-joined": "Events you have joined",
+  "tech-event": "{{tech}} events",
+  "searching-for": "Searching events with {{search}}",
+  "search-not-found": "{{search}} events not found",
+  "search-found": "Events found with search '{{search}}'",
   "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
   "join-workshop": "Register for this Workshop",
   "join": "Join Now",

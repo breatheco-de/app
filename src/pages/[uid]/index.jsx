@@ -75,12 +75,12 @@ function Page({ page }) {
           <meta name="google" content="notranslate" />
         </Head>
       )}
-      {!loggedInWorkshopsView && !isLoading ? (
+      {loggedInWorkshopsView && !isLoading ? (
+        <WorkshopsLoggedLanding />
+      ) : (
         <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>
           <SliceZone slices={page?.data?.slices} components={components} />
         </Box>
-      ) : (
-        <WorkshopsLoggedLanding />
       )}
     </>
   );
