@@ -13,6 +13,7 @@ import validationSchema from './validationSchemas';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
+import { getBrowserInfo } from '../../../utils';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
@@ -78,6 +79,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     event: 'login',
                     path: '/login',
                     method: 'github',
+                    agent: getBrowserInfo(),
                   },
                 });
               }}
