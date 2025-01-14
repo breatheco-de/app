@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import Icon from './Icon';
 import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 
 function UpgradeExperience({ ...rest }) {
   const { t, lang } = useTranslation('navbar');
@@ -14,6 +15,7 @@ function UpgradeExperience({ ...rest }) {
         event: 'ad_interaction',
         ad_type: 'upgrade_experience',
         ad_position: 'navbar',
+        agent: getBrowserInfo(),
       },
     });
     const langPrefix = lang === 'en' ? '' : `/${lang}`;

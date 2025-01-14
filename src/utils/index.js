@@ -430,6 +430,25 @@ function decodeBase64(encoded) {
 
 const languageFix = (text, lan) => text?.[lan] || text?.us || text;
 
+const getBrowserInfo = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  let browser = 'unknown';
+
+  const match = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*\d+/i) || [];
+  const isIE = /trident/i.test(match[1]);
+  const edgeOrOperaMatch = match[1] === 'chrome' && ua.match(/\b(opr|edg)\/\d+/i);
+
+  if (isIE) {
+    browser = 'web-ie';
+  } else if (edgeOrOperaMatch) {
+    browser = `web-${edgeOrOperaMatch[1] === 'edg' ? 'edge' : 'opera'}`;
+  } else if (match[1]) {
+    browser = `web-${match[1].toLowerCase()}`;
+  }
+
+  return browser;
+};
+
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
   isPlural, getStorageItem, includesToLowerCase, getExtensionName,
@@ -440,5 +459,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix, addQueryToURL,
+  removeSessionStorageItem, languageFix, addQueryToURL, getBrowserInfo,
 };

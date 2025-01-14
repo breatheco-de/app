@@ -21,7 +21,7 @@ import useStyle from '../../hooks/useStyle';
 import useSession from '../../hooks/useSession';
 import { BASE_PLAN, BREATHECODE_HOST } from '../../../utils/variables';
 import { SILENT_CODE } from '../../../lib/types';
-import { getStorageItem, setStorageItem, getQueryString } from '../../../utils';
+import { getStorageItem, setStorageItem, getQueryString, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
@@ -143,6 +143,7 @@ function SignupForm({
             cohort: allValues.cohort,
             conversion_info: userSession,
             conversion_technologies: conversionTechnologies,
+            agent: getBrowserInfo(),
           },
         });
       }

@@ -3,6 +3,7 @@ import { useColorModeValue, Container, Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import useAuth from '../../common/hooks/useAuth';
 import Icon from '../../common/components/Icon';
@@ -194,6 +195,7 @@ function MentorshipSchedule() {
               method: 'native',
               plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
               subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+              agent: getBrowserInfo(),
             },
           });
         });
