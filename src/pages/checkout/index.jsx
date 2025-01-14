@@ -915,7 +915,7 @@ function Checkout() {
                     <Divider borderBottomWidth="2px" />
                     {originalPlan?.accordionList?.length > 0 && (
                       <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
-                        <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[]}>
+                        <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[0]}>
                           <AccordionItem display="flex" gridGap="10px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
                             {({ isExpanded }) => (
                               <>
