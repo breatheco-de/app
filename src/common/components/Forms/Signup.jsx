@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
 import {
-  Avatar, Box, Button, Checkbox, useToast,
+  Avatar, Box, Checkbox, useToast,
   Spinner,
   InputGroup,
   InputRightElement,
@@ -26,6 +26,7 @@ import { reportDatalayer } from '../../../utils/requests';
 import useSignup from '../../store/actions/signupAction';
 import ModalInfo from '../../../js_modules/moduleMap/modalInfo';
 import bc from '../../services/breathecode';
+import Button from '../Button';
 
 function SignupForm({
   planSlug, courseChoosed, showVerifyEmail, subscribeValues, buttonStyles,
@@ -328,7 +329,7 @@ function SignupForm({
               <Button
                 width="100%"
                 type="submit"
-                variant="default"
+                variant="primary"
                 isDisabled={isDisabled}
                 isLoading={isSubmitting}
                 alignSelf="flex-end"

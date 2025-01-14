@@ -4,7 +4,7 @@ import {
   Box,
   Flex,
   Grid,
-  Button,
+  Button as ChakraButton,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -31,6 +31,7 @@ import ButtonHandler from './ButtonHandler';
 import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
+import Button from '../../../common/components/Button';
 
 function Subscriptions({ cohorts }) {
   const { t, lang } = useTranslation('profile');
@@ -189,9 +190,9 @@ function Subscriptions({ cohorts }) {
                       <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
                     )}
                   </Box>
-                  <Button variant="link" onClick={() => setServicesModal('mentorships')}>
+                  <ChakraButton variant="link" onClick={() => setServicesModal('mentorships')}>
                     {t('subscription.see-details')}
-                  </Button>
+                  </ChakraButton>
                 </Box>
               </Box>
               <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
@@ -209,9 +210,9 @@ function Subscriptions({ cohorts }) {
                       <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
                     )}
                   </Box>
-                  <Button variant="link" onClick={() => setServicesModal('workshops')}>
+                  <ChakraButton variant="link" onClick={() => setServicesModal('workshops')}>
                     {t('subscription.see-details')}
-                  </Button>
+                  </ChakraButton>
                 </Box>
               </Box>
             </>
@@ -250,12 +251,8 @@ function Subscriptions({ cohorts }) {
 
           <ModalFooter borderTop={`1px solid ${hexColor.borderColor}`}>
             <Button
-              background={hexColor.blueDefault}
+              variant="primary"
               onClick={closeMentorshipsModal}
-              color="white"
-              _hover={{
-                background: hexColor.blueDefault,
-              }}
             >
               Close
             </Button>

@@ -8,7 +8,7 @@ import profileHandlers from './handlers';
 import { reportDatalayer } from '../../../utils/requests';
 
 function ButtonHandler({
-  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, ...restStyles
+  subscription, onOpenUpgrade, setSubscriptionProps, onOpenCancelSubscription, children, allSubscriptions, variant, disabled,
 }) {
   const { t } = useTranslation('profile');
   const status = subscription?.status;
@@ -74,9 +74,6 @@ function ButtonHandler({
         text: t('subscription.upgrade'),
         style: {
           variant: 'outline',
-          color: 'blue.default',
-          borderColor: 'currentColor',
-          fontWeight: 700,
         },
       };
     }
@@ -140,10 +137,11 @@ function ButtonHandler({
             if (['CANCELLED'].includes(status)) handleReactivatePlan();
             setSubscriptionProps(subscription);
           }}
-          color="blue.default"
-          margin="auto 0 0 0"
+          variant={variant ?? buttonProps.style?.variant}
+          disabled={disabled}
           {...buttonProps.style}
-          {...restStyles}
+          // margin="auto 0 0 0"
+          // {...restStyles}
         >
           {children || buttonProps.text}
         </Button>
@@ -160,6 +158,8 @@ ButtonHandler.propTypes = {
   restStyles: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   children: PropTypes.node,
   allSubscriptions: PropTypes.arrayOf(PropTypes.objectOf([PropTypes.any])),
+  variant: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 ButtonHandler.defaultProps = {
@@ -170,6 +170,8 @@ ButtonHandler.defaultProps = {
   restStyles: {},
   children: null,
   allSubscriptions: [],
+  variant: 'primary',
+  disabled: false,
 };
 
 export default ButtonHandler;

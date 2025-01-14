@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button as ChakraButton, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -40,6 +40,7 @@ import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
+import Button from '../../common/components/Button';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -135,7 +136,6 @@ function CoursePage({ data, syllabus }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
-
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -692,10 +692,8 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
-                          variant="default"
+                          variant="success"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          background="green.400"
-                          color="white"
                           onClick={() => {
                             router.push(`/checkout${enrollQuerys}`);
                           }}
@@ -707,9 +705,7 @@ function CoursePage({ data, syllabus }) {
                         {payableList?.length > 0 && (
                           <Button
                             variant="outline"
-                            color="green.400"
                             isLoading={initialDataIsFetching}
-                            borderColor="currentColor"
                             onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}

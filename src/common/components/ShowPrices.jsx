@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Button,
+  Box,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
+import Button from './Button';
 
 function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
@@ -272,7 +273,7 @@ function ShowPrices({
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
-            variant="default"
+            variant="primary"
             isDisabled={!selectedId}
             onClick={() => {
               if (handleUpgrade === false) {
