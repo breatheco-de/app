@@ -13,7 +13,7 @@ import Text from '../../common/components/Text';
 import AcordionList from '../../common/components/AcordionList';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import LoaderScreen from '../../common/components/LoaderScreen';
-import { formatPrice, getStorageItem } from '../../utils';
+import { formatPrice, getStorageItem, getBrowserInfo } from '../../utils';
 import ModalInfo from '../moduleMap/modalInfo';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import CardForm from './CardForm';
@@ -70,6 +70,7 @@ function ServiceSummary({ service }) {
                   quantity: 1,
                 }],
               },
+              agent: getBrowserInfo(),
             } });
           setPaymentStatus('success');
           setConfirmationOpen(false);
@@ -123,6 +124,7 @@ function ServiceSummary({ service }) {
               quantity: selectedService?.qty,
             }],
           },
+          agent: getBrowserInfo(),
         },
       });
     }
@@ -148,6 +150,7 @@ function ServiceSummary({ service }) {
               },
             ],
           },
+          agent: getBrowserInfo(),
         } });
       setConfirmationOpen(true);
     } else {
@@ -184,6 +187,7 @@ function ServiceSummary({ service }) {
               quantity: item?.qty,
             })),
           },
+          agent: getBrowserInfo(),
         } });
     }
   }, [service]);
