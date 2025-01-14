@@ -67,7 +67,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
 
   useEffect(() => {
     getCourses();
-  }, []);
+  }, [lang]);
 
   if (location?.countryShort === 'ES') return null;
 
