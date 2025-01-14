@@ -435,14 +435,12 @@ function SyllabusContent() {
             currentTranslationSlug = `${lessonSlug}-${language}`;
           }
 
-          const saasExercise = isAvailableAsSaas && isExercise;
+          const avoidReadmeRequest = assetTypeValues[lesson] === 'QUIZ' || (isExercise && isAvailableAsSaas);
 
-          const requests = [
-            assetTypeValues[lesson] !== 'QUIZ' && !saasExercise && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          Promise.all([
+            avoidReadmeRequest ? false : axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
             axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
-          ].filter(Boolean);
-
-          Promise.all(requests)
+          ])
             .then(([respMarkdown, respData]) => {
               const currData = respData.data;
               const markdownData = respMarkdown.data;
@@ -458,6 +456,7 @@ function SyllabusContent() {
                 setReadme(markdown);
                 setCurrentAsset(currData);
               }
+              if (!respMarkdown) setCurrentAsset(currData);
             })
             .catch(() => {
               setReadme({
