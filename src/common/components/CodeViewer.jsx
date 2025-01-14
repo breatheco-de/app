@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   Button,
   Avatar,
@@ -22,10 +22,14 @@ import Editor from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import useSubscriptionsHandler from '../store/actions/subscriptionAction';
+import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
+import { validatePlanExistence } from '../handlers/subscriptions';
+import ModalToGetAccess, { stageType } from './ModalToGetAccess';
 
 const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
 
@@ -70,8 +74,19 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [loadingServices, setLoadingServices] = useState(false);
+  const [consumables, setConsumables] = useState(null);
+  const [showConsumablesModal, setShowConsumablesModal] = useState(false);
+  const [planData, setPlanData] = useState(null);
   const [languages, setLanguages] = useState(languagesData);
   const defaultPlan = process.env.BASE_PLAN || 'basic';
+
+  const { state, fetchSubscriptions } = useSubscriptionsHandler();
+  const { subscriptions } = state;
+
+  const allSubscriptions = (subscriptions?.subscriptions
+    && subscriptions?.plan_financings
+    && [...subscriptions.subscriptions, ...subscriptions.plan_financings]) || [];
 
   const isCodeForPreview = languages.some(({ language }) => language.toLowerCase() === 'html');
   const isNotExecutable = notExecutables.includes(languages[tabIndex]?.language);
@@ -80,6 +95,32 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     event.preventDefault();
     setInitialTouchY(event.touches[0].clientY);
   };
+
+  const getConsumables = async () => {
+    try {
+      const res = await bc.payment().service().consumable();
+      if (res.status === 200) {
+        const { data } = res;
+        const { voids } = data;
+        const aiConsumables = voids.find(({ slug }) => slug === 'ai-compilation');
+
+        console.log('consumables', aiConsumables);
+        setConsumables(aiConsumables);
+      }
+      setLoadingServices(false);
+    } catch (e) {
+      setLoadingServices(false);
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLoadingServices(true);
+      fetchSubscriptions();
+      getConsumables();
+    }
+  }, [isAuthenticated]);
 
   const handleTouchMove = (event) => {
     if (isWindow) {
@@ -130,6 +171,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     setLanguages(updatedLanguages);
   };
 
+  // eslint-disable-next-line consistent-return
   const run = async () => {
     if (isCodeForPreview) showCodePreview();
     else if (isAuthenticated || allowNotLogged) {
@@ -140,6 +182,25 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
+
+        if (!consumables || consumables.balance.unit <= 0) {
+          const planSlug = allSubscriptions[0].plans[0].slug;
+
+          const result = await validatePlanExistence(allSubscriptions, planSlug);
+
+          setPlanData({
+            ...result,
+          });
+
+          setLanguages([
+            ...languages.slice(0, tabIndex),
+            { ...currLanguage, running: false },
+            ...languages.slice(tabIndex + 1),
+          ]);
+
+          return setShowConsumablesModal(true);
+        }
+
         const { code, language, path } = languages[tabIndex];
 
         const rigobotToken = await getRigobotToken();
@@ -234,7 +295,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           />
           {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
             <>
-              {languages[tabIndex]?.running ? (
+              {languages[tabIndex]?.running || loadingServices ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
               ) : (
                 <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
@@ -321,6 +382,14 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           ))}
         </TabPanels>
       </Tabs>
+      <ModalToGetAccess
+        isOpen={showConsumablesModal}
+        stage={stageType.outOfConsumables}
+        externalData={planData}
+        onClose={() => {
+          setShowConsumablesModal(false);
+        }}
+      />
       <ModalInfo
         isOpen={showModal}
         onClose={() => setShowModal(false)}

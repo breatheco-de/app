@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import { Button, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
@@ -9,6 +10,8 @@ import { setStorageItem, slugToTitle } from '../../utils';
 import Heading from './Heading';
 
 function UpgradeForConsumableView({ externalData }) {
+  console.log('externalData');
+  console.log(externalData);
   const { t } = useTranslation('signup');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -23,42 +26,40 @@ function UpgradeForConsumableView({ externalData }) {
   const event = externalData?.event || {};
   const academyService = externalData?.academyService || {};
   const isEventConsumable = event?.event_type?.slug;
+  const type = externalData?.consumableType;
 
-  const coincidencesOfServiceWithOtherSubscriptions = allSubscriptions.length > 0 ? allSubscriptions?.filter(
+  const consumablesDictionary = {
+    workshops: {
+      title: t('consumables.ran-out-of-events'),
+      description: t('consumables.ran-out-of-events-text'),
+      notAvailable: t('consumables.consumable-event-not-available'),
+      purchase: t('consumables.purchase-one-or-more-events'),
+    },
+    mentorships: {
+      title: t('consumables.ran-out-of-mentorships'),
+      description: t('consumables.ran-out-of-mentorships-text'),
+      notAvailable: t('consumables.consumable-mentorship-not-available'),
+      purchase: t('consumables.purchase-one-or-more-sessions'),
+    },
+  };
+
+  const mentorshipSubscriptionMatch = allSubscriptions.length > 0 ? allSubscriptions?.filter(
     (s) => s?.selected_mentorship_service_set?.mentorship_services.some(
       (service) => service.slug === academyService?.slug,
     ),
   ) : [];
-  const mentoryProps = coincidencesOfServiceWithOtherSubscriptions.map(
-    (subscription) => ({
-      mentorship_service_set_slug: subscription?.selected_mentorship_service_set.slug,
-      plan_slug: subscription?.plans?.[0]?.slug,
-    }),
-  );
-  const mentoryPropsToQueryString = {
-    mentorship_service_set: mentoryProps.map((p) => p.mentorship_service_set_slug).join(','),
-    plans: mentoryProps.map((p) => p.plan_slug).join(','),
-    selected_service: mentoryProps?.service?.slug,
-  };
 
-  const findedEventTypeOfPlanCoincidences = allSubscriptions.length > 0 ? allSubscriptions.filter(
+  const suscriptionMentoshipServices = mentorshipSubscriptionMatch.map((subscription) => subscription?.selected_mentorship_service_set.slug).join(',');
+
+  const eventTypeSubscriptionsMatch = allSubscriptions.length > 0 ? allSubscriptions.filter(
     (s) => s.selected_event_type_set?.event_types.some(
       (ev) => ev?.slug === event?.event_type?.slug,
     ),
   ) : [];
-  const eventRelevantProps = findedEventTypeOfPlanCoincidences.map(
-    (subscription) => ({
-      event_type_set_slug: subscription?.selected_event_type_set.slug,
-      plan_slug: subscription?.plans?.[0]?.slug,
-    }),
-  );
-  const eventPropsToQueryString = {
-    event_type_set: eventRelevantProps.map((p) => p.event_type_set_slug).join(','),
-    plans: eventRelevantProps.map((p) => p.plan_slug).join(','),
-  };
+  const subscriptionEventsServices = eventTypeSubscriptionsMatch.map((subscription) => subscription?.selected_event_type_set.slug).join(',');
 
   const alreadySubscribedToAll = hasBasePlan && hasASuggestedPlan;
-  const noExistsConsumablesForUserSubscriptions = isEventConsumable ? findedEventTypeOfPlanCoincidences?.length === 0 : coincidencesOfServiceWithOtherSubscriptions?.length === 0;
+  const noExistsConsumablesForUserSubscriptions = isEventConsumable ? eventTypeSubscriptionsMatch?.length === 0 : mentorshipSubscriptionMatch.length === 0;
 
   const handleGetConsumables = () => {
     setIsValidating(true);
@@ -72,16 +73,16 @@ function UpgradeForConsumableView({ externalData }) {
     }
 
     if (selectedIndex === 1) {
-      if (isEventConsumable && findedEventTypeOfPlanCoincidences?.length > 0) {
+      if (isEventConsumable) {
         setStorageItem('redirected-from', router?.asPath);
         router.push({
-          pathname: `/checkout/event/${eventPropsToQueryString.event_type_set}`,
+          pathname: `/checkout/event/${subscriptionEventsServices}`,
         });
       }
-      if (!isEventConsumable && coincidencesOfServiceWithOtherSubscriptions?.length > 0) {
+      if (!isEventConsumable) {
         setStorageItem('redirected-from', router?.asPath);
         router.push({
-          pathname: `/checkout/mentorship/${mentoryPropsToQueryString.mentorship_service_set}`,
+          pathname: `/checkout/mentorship/${suscriptionMentoshipServices}`,
         });
       }
     }
