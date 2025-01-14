@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
-import { Avatar, Box, useToast } from '@chakra-ui/react';
+import { Avatar, Box } from '@chakra-ui/react';
 import bc from '../services/breathecode';
 import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
@@ -16,6 +16,7 @@ import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
 import { generateUserContext } from '../../utils/rigobotContext';
+import useCustomToast from '../hooks/useCustomToast';
 
 const initialState = {
   isLoading: true,
@@ -124,7 +125,7 @@ export const AuthContext = createContext({
 function AuthProvider({ children, pageProps }) {
   const router = useRouter();
   const { t, lang } = useTranslation('footer');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'auth-context-email-sent' });
   const { rigo, isRigoInitialized } = useRigo();
   const queryCoupon = getQueryString('coupon');
   const [, setCoupon] = usePersistentBySession('coupon', []);
@@ -272,7 +273,7 @@ function AuthProvider({ children, pageProps }) {
         if (responseData?.silent !== true && responseData?.non_field_errors?.length > 0) {
           for (let i = 0; i < responseData.non_field_errors?.length; i += 1) {
             const indexFromOne = i + 1;
-            toast({
+            createToast({
               position: 'top',
               status: 'error',
               title: responseData.non_field_errors[i],
@@ -418,7 +419,7 @@ function AuthProvider({ children, pageProps }) {
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'info',
                   title: t('signup:alert-message.email-already-sent'),
@@ -426,7 +427,7 @@ function AuthProvider({ children, pageProps }) {
                   duration: 6000,
                 });
               } else {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'success',
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),

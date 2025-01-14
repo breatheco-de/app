@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import axios from 'axios';
 import {
   Box, Flex, useDisclosure, Link, Avatar,
-  useColorModeValue, Modal, ModalOverlay, useToast, Tooltip,
+  useColorModeValue, Modal, ModalOverlay, Tooltip,
   ModalContent, ModalCloseButton, ModalBody, Button,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
@@ -44,11 +44,12 @@ import { parseQuerys } from '../../../../../utils/url';
 import completions from './completion-jobs.json';
 import { generateUserContext } from '../../../../../utils/rigobotContext';
 import SubTasks from '../../../../../common/components/MarkDownParser/SubTasks';
+import useCustomToast from '../../../../../common/hooks/useCustomToast';
 
 function SyllabusContent() {
   const { t, lang } = useTranslation('syllabus');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'ai-chat-access-error' });
 
   const { isOpen, onToggle } = useDisclosure();
   const { user, isLoading, isAuthenticatedWithRigobot } = useAuth();
@@ -300,7 +301,7 @@ function SyllabusContent() {
       plan: programSlug,
     });
     router.push(`/${lang}/checkout${querys}`);
-    toast({
+    createToast({
       position: 'top',
       title: t('alert-message:access-denied'),
       status: 'error',
@@ -755,7 +756,7 @@ function SyllabusContent() {
       } else setShowRigobotModal(true);
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:error-ai-chat'),
         status: 'error',

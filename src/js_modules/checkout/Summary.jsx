@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-restricted-globals */
-import { Box, Button, Flex, useColorModeValue, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { Fragment, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
@@ -18,6 +18,7 @@ import axiosInstance from '../../axios';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function Summary() {
   const { t, lang } = useTranslation('signup');
@@ -36,7 +37,7 @@ function Summary() {
   } = useSignup();
   const [hasMounted, setHasMounted] = useState(false);
   const { dateProps, checkoutData, selectedPlanCheckoutData, planProps } = state;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'payment-request-data-detail-error' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [declinedPaymentProps, setDeclinedPaymentProps] = useState({
@@ -187,7 +188,7 @@ function Summary() {
       .then(async (resp) => {
         const dataRequested = await resp.json();
         if (resp.status >= 400) {
-          toast({
+          createToast({
             position: 'top',
             title: dataRequested?.detail,
             status: 'error',
@@ -331,7 +332,7 @@ function Summary() {
         })
         .catch(() => {
           setLoader('plan', false);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:payment-error'),
             status: 'error',

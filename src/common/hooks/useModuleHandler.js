@@ -1,12 +1,12 @@
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useModuleMap from '../store/actions/moduleMapAction';
 import bc from '../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
+import useCustomToast from './useCustomToast';
 
 function useModuleHandler() {
   const { t } = useTranslation('alert-message');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' assignment-update-task' });
   const { setTaskTodo, setCohortProgram, state, setCurrentTask, setSubTasks, setNextModule, setPrevModule } = useModuleMap();
   const { taskTodo } = state;
 
@@ -31,7 +31,7 @@ function useModuleHandler() {
           taskToUpdate, // key item (updated)
           ...taskTodo.slice(keyIndex + 1), // after keyIndex (exclusive)
         ]);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:assignment-updated'),
           status: 'success',
@@ -41,7 +41,7 @@ function useModuleHandler() {
         closeSettings();
       } catch (error) {
         console.log(error);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:assignment-update-error'),
           status: 'error',
@@ -92,7 +92,7 @@ function useModuleHandler() {
               task_revision_status: task.revision_status,
             },
           });
-          toast({
+          createToast({
             position: 'top',
             title: isDelivering
               ? t('alert-message:delivery-success')
@@ -105,7 +105,7 @@ function useModuleHandler() {
         }
       } catch (error) {
         console.log(error);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:delivery-error'),
           status: 'error',
@@ -124,7 +124,7 @@ function useModuleHandler() {
       const response = await bc.todo({}).add(newTasks);
 
       if (response.status < 400) {
-        toast({
+        createToast({
           position: 'top',
           title: label
             ? t('alert-message:module-started', { title: label })
@@ -141,7 +141,7 @@ function useModuleHandler() {
       }
     } catch (err) {
       console.log('error_ADD_TASK 🔴 ', err);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:module-start-error'),
         status: 'error',
