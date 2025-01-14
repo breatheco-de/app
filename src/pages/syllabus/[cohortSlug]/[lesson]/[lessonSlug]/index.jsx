@@ -435,10 +435,10 @@ function SyllabusContent() {
             currentTranslationSlug = `${lessonSlug}-${language}`;
           }
 
-          const avoidReadme = assetTypeValues[lesson] === 'QUIZ' || (isAvailableAsSaas && isExercise);
+          const saasExercise = isAvailableAsSaas && isExercise;
 
           const requests = [
-            !avoidReadme && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+            assetTypeValues[lesson] !== 'QUIZ' && !saasExercise && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
             axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
           ].filter(Boolean);
 
