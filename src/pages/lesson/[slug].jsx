@@ -15,6 +15,7 @@ import GridContainer from '../../common/components/GridContainer';
 import MktRecommendedCourses from '../../common/components/MktRecommendedCourses';
 import MktSideRecommendations from '../../common/components/MktSideRecommendations';
 import IpynbHtmlParser from '../../common/components/IpynbHtmlParser';
+import useAuth from '../../common/hooks/useAuth';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
@@ -169,6 +170,7 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
   const { t } = useTranslation('lesson');
   const markdownData = markdown ? getMarkDownContent(markdown) : '';
   const { fontColor, borderColor, featuredLight } = useStyle();
+  const { isAuthenticated } = useAuth();
 
   const exensionName = getExtensionName(lesson.readme_url);
   const isIpynb = exensionName === 'ipynb' || ipynbHtml?.iframe;
@@ -232,15 +234,15 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
                   paddingX="0"
                 />
               </Box>
-              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} position={{ base: '', md: 'block' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
-                {lesson?.readme_url && (
+              <Box display={isIpynb || (isAuthenticated && lesson?.readme_url) ? { base: 'flex', md: 'block' } : 'none'} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" background={featuredLight} borderRadius="4px" color={fontColor}>
+                {isAuthenticated && lesson?.readme_url && (
                   <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={`${lesson?.readme_url}`} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
                     <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
                     {t('common:edit-on-github')}
                   </Link>
                 )}
 
-                {isIpynb && lesson?.collab_url && lesson?.readme_url && (
+                {isAuthenticated && isIpynb && lesson?.collab_url && lesson?.readme_url && (
                   <Box width={{ base: '1px', md: '100%' }} height={{ base: 'auto', md: '1px' }} background={borderColor} />
                 )}
 

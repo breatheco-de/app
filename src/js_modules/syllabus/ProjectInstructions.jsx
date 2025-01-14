@@ -91,6 +91,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
 
   const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
+  const canSeeInstructions = variant !== 'small' || variant !== 'extra-small';
 
   if (isExternalExercise) {
     return (
@@ -123,9 +124,11 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
           padding="4px 8px"
           fontSize="14px"
           fontWeight="500"
-          background="gray.200"
-          color="blue.default"
-          display={!isForOpenLocaly && variant !== 'small' && 'none'}
+          background={variant === 'extra-small' ? 'none' : 'gray.200'}
+          color={variant === 'extra-small' ? 'white' : 'blue.default'}
+          _hover={variant === 'extra-small' && 'none'}
+          _active={variant === 'extra-small' && 'none'}
+          display={!isForOpenLocaly && !canSeeInstructions && 'none'}
           onClick={() => {
             if (isForOpenLocaly) setShowCloneModal(true);
             else scrollToMarkdown();
@@ -170,6 +173,37 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
 
   const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+
+  if (variant === 'extra-small') {
+    return (
+      <Box background="blue.default" padding="8px" borderRadius="8px" display={!startWithLearnpack && !isForOpenLocaly ? 'none' : 'flex'} alignItems="center" gap="10px">
+        {(!isForOpenLocaly || startWithLearnpack) && (
+          <Icon icon="learnpack" />
+        )}
+        <Box>
+          <Box
+            display="flex"
+            gap="10px"
+            flexDirection={{
+              base: 'column',
+              md: 'row',
+            }}
+          >
+            <ButtonsHandler
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              setShowCloneModal={setShowCloneModal}
+              vendors={vendors}
+              isForOpenLocaly={isForOpenLocaly}
+              startWithLearnpack={startWithLearnpack}
+              variant={variant}
+            />
+          </Box>
+        </Box>
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
+      </Box>
+    );
+  }
 
   if (variant === 'small') {
     return (
