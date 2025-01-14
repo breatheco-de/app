@@ -461,6 +461,26 @@ const useSignup = () => {
     }
   };
 
+  const applyDiscountCouponsToPlans = (pricingList, coupon) => {
+    if (coupon) {
+      return pricingList.map((item) => {
+        const { price } = item;
+        if (price > 0) {
+          const discountOperation = getPriceWithDiscount(price, coupon);
+
+          return {
+            ...item,
+            price: discountOperation.price,
+            priceText: item.priceText.replace(item.price, discountOperation.price),
+            lastPrice: item.priceText,
+          };
+        }
+        return item;
+      });
+    }
+    return pricingList;
+  };
+
   return {
     state,
     isFirstStep,
@@ -492,6 +512,7 @@ const useSignup = () => {
     getPaymentMethods,
     getPriceWithDiscount,
     getSelfAppliedCoupon,
+    applyDiscountCouponsToPlans,
   };
 };
 
