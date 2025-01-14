@@ -134,7 +134,7 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
             else scrollToMarkdown();
           }}
         >
-          {isForOpenLocaly ? t('learnpack.open-locally') : t('see-instructions')}
+          {t('asset-button.project')}
         </Button>
       )}
     </>
