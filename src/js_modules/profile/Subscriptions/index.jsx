@@ -192,12 +192,12 @@ function Subscriptions({ cohorts }) {
               <Box display="flex" justifyContent="space-between" alignItems="end">
                 <Box display="flex" gap="10px" alignItems="center">
                   <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
-                  {totalMentorshipsAvailable >= 0 ? (
+                  {(totalMentorshipsAvailable < 0 || existsNoAvailableAsSaas) ? (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  ) : (
                     <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
                       {totalMentorshipsAvailable}
                     </Heading>
-                  ) : (
-                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
                   )}
                 </Box>
                 <Button variant="link" onClick={() => setServicesModal('mentorships')}>
@@ -252,7 +252,7 @@ function Subscriptions({ cohorts }) {
                         {servicesModal === 'mentorships' && (
                           <>
                             {service.nonSaasAcademy ? (
-                              <Icon icon="infinite" />
+                              <Icon icon="infinite" color={hexColor.fontColor3} />
                             ) : (
                               <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
                                 <Text textAlign="center" size="l" fontWeight="700">
