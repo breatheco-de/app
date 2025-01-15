@@ -169,7 +169,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Box>
               )}
             </Box>
-            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} isStarted={isExerciseStated} />
           </>
         )}
     </Box>
