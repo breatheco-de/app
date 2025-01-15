@@ -40,7 +40,7 @@ function Component({ withBanner, children }) {
 }
 
 function OnlyFor({
-  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort,
+  academy, capabilities, children, onlyMember, onlyTeachers, withBanner, cohort, saas,
 }) {
   const { user } = useAuth();
   const academyNumber = Math.floor(academy);
@@ -64,8 +64,15 @@ function OnlyFor({
     (capability) => userCapabilities.includes(capability),
   ).includes(true);
 
+  const isSaasAllowed = saas !== undefined;
+  const isCohortSaas = currentCohort?.available_as_saas === true;
+
   const haveRequiredCapabilities = () => {
     if (!currentCohort) return false;
+    if (isSaasAllowed) {
+      if (['true', 'True', '1'].includes(String(saas)) && !isCohortSaas) return false;
+      if (['false', 'False', '0'].includes(String(saas)) && isCohortSaas) return false;
+    }
     if (onlyTeachers && isTeacher) {
       if (isCapableRole) return true;
       if (capabilitiesNotExists) return true;
@@ -77,6 +84,7 @@ function OnlyFor({
     if (!onlyMember && !onlyTeachers && isCapableRole) return true;
     if (capabilitiesNotExists && isCapableAcademy) return true;
     if (academy && isCapableAcademy && isCapableRole) return true;
+
     return false;
   };
 
@@ -97,6 +105,7 @@ OnlyFor.propTypes = {
   onlyTeachers: PropTypes.bool,
   cohort: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   withBanner: PropTypes.bool,
+  saas: PropTypes.string,
 };
 
 OnlyFor.defaultProps = {
@@ -106,6 +115,7 @@ OnlyFor.defaultProps = {
   onlyTeachers: false,
   cohort: null,
   withBanner: false,
+  saas: undefined,
 };
 
 Component.propTypes = {

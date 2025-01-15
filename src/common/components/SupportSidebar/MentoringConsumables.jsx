@@ -17,7 +17,7 @@ import AvatarUser from '../../../js_modules/cohortSidebar/avatarUser';
 import Text from '../Text';
 import { AvatarSkeletonWrapped, CardSkeleton } from '../Skeleton';
 import { validatePlanExistence } from '../../handlers/subscriptions';
-import { getStorageItem } from '../../../utils';
+import { getStorageItem, getBrowserInfo } from '../../../utils';
 import { reportDatalayer } from '../../../utils/requests';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 
@@ -153,6 +153,7 @@ function MentoringConsumables({
         path: router.pathname,
         consumables_amount: currentBalance,
         mentorship_service: service?.slug,
+        agent: getBrowserInfo(),
       },
     });
     const relatedConsumable = consumables.find((consumable) => consumable?.mentorship_services?.some((c) => c?.slug === service?.slug));
@@ -293,6 +294,7 @@ function MentoringConsumables({
         mentor_name: `${mentorSelected.user.first_name} ${mentorSelected.user.last_name}`,
         mentor_id: mentorSelected.slug,
         mentor_booking_url: mentorSelected.booking_url,
+        agent: getBrowserInfo(),
       },
     });
   };
@@ -369,6 +371,7 @@ function MentoringConsumables({
                   dataLayer: {
                     event: 'begin_mentorship_session_schedule',
                     path: router.pathname,
+                    agent: getBrowserInfo(),
                   },
                 });
               }}

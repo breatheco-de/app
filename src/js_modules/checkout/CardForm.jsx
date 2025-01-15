@@ -42,7 +42,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
   } = useSignup();
   const { paymentInfo, checkoutData, selectedPlanCheckoutData, paymentStatus, isSubmittingCard, isSubmittingPayment } = state;
   const [stateCard, setStateCard] = useState({
-    card_number: 0,
+    card_number: paymentInfo?.card_number || 0,
     exp_month: 0,
     exp_year: 0,
     cvc: 0,
@@ -95,9 +95,9 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
       <Box display="flex" width={{ base: 'auto', lg: '490px' }} height="auto" flexDirection="column" minWidth={{ base: 'auto', md: '100%' }} background={!isPaymentIdle ? paymentStatusBgColor : backgroundColor} p={{ base: '20px 0', md: '30px 0' }} borderRadius="15px">
         <Formik
           initialValues={{
-            owner_name: '',
-            card_number: '',
-            exp: '',
+            owner_name: paymentInfo.owner_name || '',
+            card_number: paymentInfo.card_number || '',
+            exp: paymentInfo.exp || '',
             cvc: '',
           }}
           onSubmit={(values, actions) => onSubmit(values, actions, stateCard)}

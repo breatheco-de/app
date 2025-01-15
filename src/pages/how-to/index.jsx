@@ -38,6 +38,7 @@ const fetchArticles = async (lang, page, query) => {
   };
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const { host } = query;
   const querys = parseQuerys({
     asset_type: 'LESSON,ARTICLE',
     status: 'PUBLISHED',
@@ -53,7 +54,7 @@ const fetchArticles = async (lang, page, query) => {
     expand: 'technologies',
   });
 
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
+  const resp = await fetch(`${host || process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
   return { resp, data };
 };
@@ -75,8 +76,9 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     console.error(`Error ${resp.status}: fetching How To's list for /how-to`);
   }
 
+  const { host } = query;
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=ARTICLE&limit=1000&lang=${locale}`,
+    `${host || process.env.BREATHECODE_HOST}/v1/registry/technology?type=ARTICLE&limit=1000&lang=${locale}`,
     {
       Accept: 'application/json, text/plain, */*',
     },
@@ -84,7 +86,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   const technologies = await technologiesResponse.json();
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
-    log(`SUCCESS: ${technologies.length} Technologies fetched for /how-to`);
+    log(`SUCCESS: ${technologies.results.length} Technologies fetched for /how-to`);
   } else {
     console.error(`Error ${technologiesResponse.status}: fetching Exercises list for /how-to`);
   }
@@ -126,7 +128,7 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
       data: arrHowTos.map(
         (l) => ({ ...l, difficulty: l.difficulty?.toLowerCase() || null }),
       ),
-      technologyTags: technologies,
+      technologyTags: technologies.results,
       difficulties,
     },
   };

@@ -133,7 +133,7 @@ const breathecode = {
           academy,
         },
       }),
-      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+      publicSyllabus: (slug, version) => breathecode.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
@@ -322,9 +322,11 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/asset${qs}`),
-      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}${qs}`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
+      techsBySort: () => axios.get(`${url}/technology${qs}`),
+      techMktInfo: (slug) => axios.get(`${url}/technology/${slug}`),
     };
   },
 
@@ -384,7 +386,7 @@ const breathecode = {
       liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),
-      applyEvent: (eventId) => axios.post(`${url}/event/${eventId}/checkin${qs}`),
+      applyEvent: (eventId, payload) => axios.post(`${url}/event/${eventId}/checkin${qs}`, payload),
       getUsers: (eventId) => axios.get(`${host}/events/event/${eventId}/checkin${qs}`),
     };
   },

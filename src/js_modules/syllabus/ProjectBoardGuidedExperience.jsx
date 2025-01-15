@@ -3,23 +3,26 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
+import useCohortHandler from '../../common/hooks/useCohortHandler';
 import SubtasksPill from './SubtasksPill';
 import StatusPill from './StatusPill';
 import Topbar from './Topbar';
 import TaskCodeRevisions from './TaskCodeRevisions';
-import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
+import ProjectInstructions from './ProjectInstructions';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
+import bc from '../../common/services/breathecode';
 
-function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
+function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack, provisioningVendors }) {
   const { backgroundColor4, hexColor } = useStyle();
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
+  const includesVideo = currentAsset?.intro_video_url;
   const assetTypeIcons = {
     LESSON: 'book',
     EXERCISE: 'strength',
@@ -44,22 +47,22 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
         flexDirection={{ base: 'column', sm: isDelivered ? 'column' : 'row' }}
       >
         <Box display="flex" flexDirection="column" gap="16px" width="100%">
-          <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
+          <Box display="flex" flexDirection={includesVideo ? 'column' : 'row'} flexWrap={!includesVideo && 'wrap'} justifyContent="space-between" height="100%" gap="20px">
             <Box>
-              <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
+              <Box mb={includesVideo && '16px'} display="flex" gridGap="16px" alignItems="center" height={!includesVideo && '100%'}>
                 <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
                 <Heading style={{ fontWeight: '400' }} size="sm" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
                   {title}
                 </Heading>
               </Box>
-              {currentAsset?.description && (
+              {currentAsset?.description && includesVideo && (
                 <Text style={{ margin: '0px' }} size="l">
                   {currentAsset.description}
                 </Text>
               )}
             </Box>
             <Box>
-              <OpenWithLearnpackCTA variant="small" currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+              <ProjectInstructions variant={includesVideo ? 'small' : 'extra-small'} currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} provisioningVendors={provisioningVendors} />
             </Box>
           </Box>
         </Box>
@@ -89,9 +92,27 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const { hexColor, backgroundColor, featuredLight } = useStyle();
+  const [vendors, setVendors] = useState([]);
+  const { state } = useCohortHandler();
+  const { cohortSession } = state;
 
   // const isDelivered = false;
   const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
+
+  const fetchProvisioningVendors = async () => {
+    try {
+      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
+      setVendors(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (cohortSession) {
+      fetchProvisioningVendors();
+    }
+  }, [cohortSession]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -124,10 +145,9 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
         gap="20px"
         mb={isDelivered && '1.5rem'}
         flexDirection={{ base: 'column', md: 'row' }}
-      // margin={{ base: '0px -10px', md: '0px -2rem' }}
       >
         <Box display="flex" flexDirection="column" gap="20px" width="100%">
-          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} />
+          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} provisioningVendors={vendors} />
           {isDelivered && (
             <Box padding="16px" background={backgroundColor} borderRadius="16px" height="100%">
               <Heading size="18px" mb="16px">
@@ -156,7 +176,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
           <TaskCodeRevisions />
         )}
       </Box>
-      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} />
+      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} handleStartLearnpack={handleStartLearnpack} provisioningVendors={vendors} buttonsHandlerVariant="extra-small" />
     </>
   );
 }
@@ -173,10 +193,12 @@ ProjectHeading.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isDelivered: PropTypes.bool,
   handleStartLearnpack: PropTypes.func.isRequired,
+  provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ProjectHeading.defaultProps = {
   currentAsset: null,
   isDelivered: false,
+  provisioningVendors: [],
 };
 
 export default ProjectBoardGuidedExperience;

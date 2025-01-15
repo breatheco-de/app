@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import getT from 'next-translate/getT';
 import Head from 'next/head';
 import Link from '../../../common/components/NextChakraLink';
-import MarkDownParser from '../../../common/components/MarkDownParser';
+import ArticleMarkdown from '../../../common/components/MarkDownParser/ArticleMarkdown';
 import getMarkDownContent from '../../../common/components/MarkDownParser/markdown';
 import { MDSkeleton } from '../../../common/components/Skeleton';
 import Heading from '../../../common/components/Heading';
@@ -20,6 +20,7 @@ import GridContainer from '../../../common/components/GridContainer';
 import MktSideRecommendations from '../../../common/components/MktSideRecommendations';
 import { cleanObject } from '../../../utils/index';
 import { ORIGIN_HOST, categoriesFor } from '../../../utils/variables';
+import useAuth from '../../../common/hooks/useAuth';
 import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
@@ -151,6 +152,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
 
 export default function HowToSlug({ data, markdown }) {
   const { t, lang } = useTranslation('how-to');
+  const { isAuthenticated } = useAuth();
   const [neverLoaded, setNeverLoaded] = useState(false);
   const title = data?.title || '';
   const author = data?.author || '';
@@ -222,13 +224,14 @@ export default function HowToSlug({ data, markdown }) {
               gap="10px"
               paddingX="0"
             />
-            <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
-              <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
-                <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
-                {t('common:edit-on-github')}
-              </Link>
-
-            </Box>
+            {isAuthenticated && (
+              <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '0 0 1rem 0', md: '0px' }} width={{ base: '100%', md: '172px' }} height="auto" top="0px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor}>
+                <Link display="flex" target="_blank" rel="noopener noreferrer" width="100%" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={data?.readme_url} _hover={{ opacity: 0.7 }} style={{ color: fontColor, textDecoration: 'none' }}>
+                  <Icon icon="pencil" color="#A0AEC0" width="20px" height="20px" />
+                  {t('common:edit-on-github')}
+                </Link>
+              </Box>
+            )}
           </Box>
           {title ? (
             <Heading size="l" as="h1" fontWeight="700">
@@ -265,7 +268,7 @@ export default function HowToSlug({ data, markdown }) {
             className={`markdown-body ${useColorModeValue('light', 'dark')}`}
           >
             {markdown ? (
-              <MarkDownParser assetData={data} content={markdownData.content} isPublic withToc={data.enable_table_of_content} />
+              <ArticleMarkdown assetData={data} content={markdownData.content} isPublic withToc={data.enable_table_of_content} />
             ) : (
               <MDSkeleton />
             )}

@@ -44,6 +44,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
   const { isAuthenticated, isLoading, user, logout } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
+  const [allSubscriptions, setAllSubscriptions] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
   const [userCohorts, setUserCohorts] = useState([]);
   const { state } = useCohortHandler();
@@ -85,9 +86,52 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     selectedProgramSlug: '/choose-program',
   }, { returnObjects: true });
 
-  const items = t('ITEMS', {
-    selectedProgramSlug: selectedProgramSlug || '/choose-program',
-  }, { returnObjects: true });
+  useEffect(() => {
+    if (cohortSession?.available_as_saas) {
+      bc.payment({
+        status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
+      }).subscriptions()
+        .then(async ({ data }) => {
+          const planFinancings = data?.plan_financings?.length > 0 ? data?.plan_financings : [];
+          const subscriptions = data?.subscriptions?.length > 0 ? data?.subscriptions : [];
+
+          setAllSubscriptions([...planFinancings, ...subscriptions]);
+        });
+    }
+  }, [cohortSession]);
+
+  const allowNavigation = () => {
+    const getAdditionalInfo = () => {
+      if (allSubscriptions) {
+        const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
+        const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+
+        if (cohortSubscriptions.length === 0) {
+          return false;
+        }
+
+        const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+        if (expiredCourse) return false;
+
+        const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+        if (fullyPaidSub) return true;
+
+        const freeTrialSub = cohortSubscriptions.find((sub) => sub.status === 'FREE_TRIAL');
+        const freeTrialExpDate = new Date(freeTrialSub?.valid_until);
+        const todayDate = new Date();
+
+        if (todayDate > freeTrialExpDate) return false;
+        return true;
+      }
+      return false;
+    };
+
+    if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') return getAdditionalInfo();
+    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) return true;
+    return false;
+  };
+
+  const items = t('ITEMS', { selectedProgramSlug: allowNavigation() ? selectedProgramSlug : '/choose-program' }, { returnObjects: true });
 
   axios.defaults.headers.common['Accept-Language'] = locale;
 
@@ -165,7 +209,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         setITEMS(
           preFilteredItems
             .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
-            && (item.id !== 'bootcamps' || !isBootcampStudent)),
+              && (item.id !== 'bootcamps' || !isBootcampStudent)),
         );
       } else {
         setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
@@ -414,10 +458,10 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
                                 {getLangName}
                               </Link>
                               {
-                                i < langs.length - 1 && (
-                                  <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
-                                )
-                              }
+                                  i < langs.length - 1 && (
+                                    <Box width="1px" height="100%" background="gray.350" margin="0 6px" />
+                                  )
+                                }
                             </Fragment>
                           );
                         })}

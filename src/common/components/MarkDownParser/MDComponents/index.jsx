@@ -4,6 +4,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { Box, Checkbox, Link, useColorModeValue, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
+import useTranslation from 'next-translate/useTranslation';
 import ReactDOMServer from 'react-dom/server';
 import BeforeAfterSlider from '../../BeforeAfterSlider';
 import Heading from '../../Heading';
@@ -13,7 +14,6 @@ import { slugify } from '../../../../utils';
 import Text from '../../Text';
 import quoteImg from '../../../img/quote.png';
 import whiteQuoteImg from '../../../img/white-quote.png';
-import { log } from '../../../../utils/logging';
 
 export function generateId(children) {
   const text = children ? children
@@ -287,11 +287,7 @@ function QuoteVersion4({ ...props }) {
   );
 }
 export function Quote({ children }) {
-  const [version, setVersion] = useState(2);
-
-  useEffect(() => {
-    setVersion(Math.floor(Math.random() * 4) + 1);
-  }, []);
+  const version = 1;
   if (version === 1 && children.length > 0) {
     return (
       <QuoteVersion1>
@@ -346,7 +342,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition += delta;
@@ -359,7 +355,7 @@ export function BeforeAfter({ before, after }) {
           setDelimerPercentPosition(currentPosition);
         });
       }
-      await doWithDelay(1000, () => {});
+      await doWithDelay(1000, () => { });
       for (let i = 1; i <= PARTS; i += 1) {
         await doWithDelay(timeout, () => {
           currentPosition -= delta;
@@ -441,12 +437,15 @@ export function DOMComponent({ children }) {
 }
 
 export function MDCheckbox({
-  index, children, subTasks, subTasksLoaded, newSubTasks, setNewSubTasks, updateSubTask,
+  index, children, subTasks, newSubTasks, setNewSubTasks, updateSubTask, subtaskFirstLoad, currentTask,
 }) {
-  const childrenData = children[1]?.props?.children || children;
   const [isChecked, setIsChecked] = useState(false);
+  const { lang } = useTranslation();
+  const taskStatus = { true: 'DONE', false: 'PENDING' };
+  const childrenData = children[1]?.props?.children || children;
 
   const cleanedChildren = childrenData.length > 0 && childrenData.filter((l) => l.type !== 'input');
+
   const domElement = <DOMComponent>{cleanedChildren}</DOMComponent>;
 
   const renderToStringClient = () => {
@@ -463,54 +462,61 @@ export function MDCheckbox({
   const text = renderToStringClient();
 
   const slug = typeof text === 'string' && slugify(text);
-  const currentSubTask = subTasks.find((task) => task?.id === slug);
+  const currentSubTask = subTasks.find((task) => slugify(task?.label) === slug);
 
   useEffect(() => {
-    // load checked tasks
-    const taskChecked = subTasks.some((task) => task?.id === slug && task?.status !== 'PENDING');
-    if (taskChecked) {
-      setIsChecked(true);
-    }
+    const subtaskCheked = subTasks.some((subtask) => subtask?.id === currentSubTask?.id && subtask?.status !== 'PENDING');
+    if (subtaskCheked) setIsChecked(true);
   }, [subTasks]);
 
-  const taskStatus = {
-    true: 'DONE',
-    false: 'PENDING',
-  };
-
   useEffect(() => {
-    if (subTasksLoaded) {
-      if (
-        newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)
-      ) { return () => {}; }
+    if (newSubTasks?.length > 0 && newSubTasks.find((l) => l?.id === slug)) return;
+    const prevSubtasks = localStorage.getItem(`prevSubtasks_${currentTask?.associated_slug}`);
 
-      if (currentSubTask) {
-        setNewSubTasks((prev) => {
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === currentSubTask.id)) content.push(currentSubTask);
-          return content;
-        });
-      } else {
-        setNewSubTasks((prev) => {
-          const task = {
-            id: slug,
-            status: 'PENDING',
-            label: text,
-          };
-          const content = [...prev];
-          if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
-          return content;
-        });
+    if (prevSubtasks) {
+      try {
+        const prevParsedSubtasks = JSON.parse(prevSubtasks);
+        if (Array.isArray(prevParsedSubtasks)) {
+          setNewSubTasks((prev) => {
+            const content = [...prev];
+            const prevSubtask = prevParsedSubtasks.find((subtask) => subtask.position === content.length);
+            const task = {
+              id: slug,
+              position: content.length,
+              lang,
+              status: prevSubtask?.status || 'PENDING',
+              label: text,
+            };
+            if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+            return content;
+          });
+        }
+      } catch (error) {
+        console.error('Error al parsear prevSubtasks:', error);
       }
     }
-    return () => {};
-  }, [subTasksLoaded]);
+
+    setNewSubTasks((prev) => {
+      const content = [...prev];
+      const task = {
+        id: slug,
+        position: content.length,
+        lang,
+        status: 'PENDING',
+        label: text,
+      };
+      if (!content.some((subTask) => subTask.id === task.id)) content.push(task);
+      return content;
+    });
+  }, [subtaskFirstLoad]);
 
   const handleChecked = async () => {
     setIsChecked(!isChecked);
     const taskProps = {
-      id: slug,
+      id: currentSubTask.id,
       label: text,
+      lang: currentSubTask.lang,
+      position: currentSubTask.position,
       status: taskStatus[!isChecked],
     };
     if (subTasks?.length > 0) {
@@ -533,16 +539,18 @@ export function MDCheckbox({
 }
 
 export function OnlyForBanner({
-  children, permission, include, exclude,
+  children, permission, include, exclude, saas, withbanner,
 }) {
   const allCapabilities = permission.split(',').concat(include.split(',').concat(exclude.split(',')));
-  log('md_permissions:', allCapabilities);
+
+  const parsedWithBanner = ['true', 'True', '1'].includes(String(withbanner));
 
   return (
     <OnlyFor
       onlyMember
-      withBanner
+      withBanner={parsedWithBanner}
       capabilities={allCapabilities}
+      saas={saas}
     >
       {children}
     </OnlyFor>
@@ -589,7 +597,8 @@ MDCheckbox.propTypes = {
   children: PropTypes.node.isRequired,
   index: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   subTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
-  subTasksLoaded: PropTypes.bool,
+  currentTask: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
+  subtaskFirstLoad: PropTypes.bool.isRequired,
   newSubTasks: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.any)),
   setNewSubTasks: PropTypes.func,
   updateSubTask: PropTypes.func,
@@ -597,10 +606,10 @@ MDCheckbox.propTypes = {
 MDCheckbox.defaultProps = {
   index: 0,
   subTasks: [],
-  subTasksLoaded: false,
   newSubTasks: [],
-  setNewSubTasks: () => {},
-  updateSubTask: () => {},
+  currentTask: {},
+  setNewSubTasks: () => { },
+  updateSubTask: () => { },
 };
 
 // MDText.propTypes = {
@@ -622,11 +631,15 @@ OnlyForBanner.propTypes = {
   permission: PropTypes.string,
   include: PropTypes.string,
   exclude: PropTypes.string,
+  saas: PropTypes.string,
+  withbanner: PropTypes.string,
 };
 OnlyForBanner.defaultProps = {
   permission: '',
   include: '',
   exclude: '',
+  saas: '',
+  withbanner: true,
 };
 DOMComponent.propTypes = {
   children: PropTypes.node.isRequired,

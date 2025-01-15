@@ -9,7 +9,7 @@ import {
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { getStorageItem } from '../../utils';
+import { getStorageItem, getBrowserInfo } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import { reportDatalayer } from '../../utils/requests';
 import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
@@ -64,6 +64,7 @@ const TabletWithForm = React.forwardRef(({
         event: 'open_interactive_exercise',
         user_id: user.id,
         vendor,
+        agent: getBrowserInfo(),
       },
     });
   };

@@ -97,10 +97,10 @@
       "href": "/es/bootcamp/full-stack-development"
     },
     {
-      "title": "Empieza a programar con Python",
+      "title": "Profundiza con Python",
       "icon": "python",
       "text": "Empieza a programar utilizando el lenguaje más popular del mundo, Python. Construye tus primeros proyectos y accede a más de 300 ejercicios para practicar.",
-      "href": "/es/bootcamp/start-coding-using-python"
+      "href": "/es/bootcamp/deep-dive-into-python"
     },
     {
       "title": "Data Science y Machine Learning",

@@ -21,6 +21,7 @@ import {
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
   isValidDate,
+  getBrowserInfo,
 } from '../../../../../utils/index';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -37,6 +38,7 @@ import Heading from '../../../../../common/components/Heading';
 import asPrivate from '../../../../../common/context/PrivateRouteWrapper';
 import useAuth from '../../../../../common/hooks/useAuth';
 import { ModuleMapSkeleton, SimpleSkeleton } from '../../../../../common/components/Skeleton';
+import { parseQuerys } from '../../../../../utils/url';
 import bc from '../../../../../common/services/breathecode';
 import axios from '../../../../../axios';
 
@@ -183,7 +185,11 @@ function Dashboard() {
   };
 
   const checkNavigationAvailability = () => {
-    const showToast = () => {
+    const showToastAndRedirect = (programSlug) => {
+      const querys = parseQuerys({
+        plan: programSlug,
+      });
+      router.push(`/${lang}/checkout${querys}`);
       toast({
         position: 'top',
         title: t('alert-message:access-denied'),
@@ -196,9 +202,16 @@ function Dashboard() {
     if (allSubscriptions) {
       const currentSessionSubs = allSubscriptions?.filter((sub) => sub.academy?.id === cohortSession?.academy?.id);
       const cohortSubscriptions = currentSessionSubs?.filter((sub) => sub.selected_cohort_set?.cohorts.some((cohort) => cohort.id === cohortSession.id));
+      const currentCohortSlug = cohortSubscriptions[0]?.selected_cohort_set?.slug;
+
       if (cohortSubscriptions.length === 0) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      if (expiredCourse) {
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -213,8 +226,7 @@ function Dashboard() {
       const todayDate = new Date();
 
       if (todayDate > freeTrialExpDate) {
-        router.push('/choose-program');
-        showToast();
+        showToastAndRedirect(currentCohortSlug);
         return;
       }
 
@@ -226,7 +238,7 @@ function Dashboard() {
     if (cohortSession?.available_as_saas === true && cohortSession.cohort_role === 'STUDENT') {
       checkNavigationAvailability();
     }
-    if (cohortSession.cohort_role !== 'STUDENT' || cohortSession?.available_as_saas === false) setGrantAccess(true);
+    if (Object.keys(cohortSession).length > 0 && (cohortSession.cohort_role !== 'STUDENT' || cohortSession.available_as_saas === false)) setGrantAccess(true);
   }, [cohortSession, allSubscriptions]);
 
   useEffect(() => {
@@ -271,7 +283,7 @@ function Dashboard() {
       });
 
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
@@ -301,6 +313,7 @@ function Dashboard() {
             method: 'native',
             plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
             subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            agent: getBrowserInfo(),
           },
         });
       });
@@ -318,6 +331,7 @@ function Dashboard() {
             dataLayer: {
               current_cohort_id: cohort.id,
               current_cohort_slug: cohort.slug,
+              agent: getBrowserInfo(),
             },
           });
         }

@@ -3,8 +3,8 @@ import { Box, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import { intervalToHours } from '../../utils';
-import OpenWithLearnpackCTA from './OpenWithLearnpackCTA';
+import { intervalToHours, getBrowserInfo } from '../../utils';
+import ProjectInstructions from './ProjectInstructions';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import KPI from '../../common/components/KPI';
@@ -98,6 +98,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
     dataLayer: {
       event: 'open_learnpack_instructions',
       asset_slug: currentAsset?.slug,
+      agent: getBrowserInfo(),
     },
   });
 
@@ -168,7 +169,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Box>
               )}
             </Box>
-            <OpenWithLearnpackCTA currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
           </>
         )}
     </Box>

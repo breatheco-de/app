@@ -12,7 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem } from '../../utils';
+import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
@@ -31,7 +31,7 @@ function PaymentInfo() {
   const { isAuthenticated } = useAuth();
 
   const {
-    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus,
+    state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
   } = useSignup();
   const {
     checkoutData, selectedPlanCheckoutData, cohortPlans, paymentMethods, loader, isSubmittingPayment, paymentStatus,
@@ -80,6 +80,7 @@ function PaymentInfo() {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
         cohort_id: cohortFound.id,
+        agent: getBrowserInfo(),
       },
     });
     startDay({
@@ -90,6 +91,10 @@ function PaymentInfo() {
   };
 
   const startRedirection = async () => {
+    if (!isPaymentSuccess) {
+      setPaymentStatus('idle');
+      return;
+    }
     setIsRedirecting(true);
     const langLink = lang !== 'en' ? `/${lang}` : '';
     const syllabusVersion = cohortFound?.syllabus_version;
@@ -148,6 +153,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'join_cohort',
         cohort_id: cohort?.id,
+        agent: getBrowserInfo(),
       },
     });
     bc.cohort().join(cohort?.id)
@@ -181,6 +187,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'checkout_payment_info_rendered',
         value: state?.selectedPlanCheckoutData?.price,
+        agent: getBrowserInfo(),
       },
     });
   }, []);
@@ -245,7 +252,7 @@ function PaymentInfo() {
 
   useEffect(() => {
     if (selectedPlanCheckoutData?.owner?.id) getPaymentMethods(selectedPlanCheckoutData.owner.id);
-  }, [selectedPlanCheckoutData, isAuthenticated]);
+  }, [isAuthenticated]);
 
   const handlePaymentErrors = (data, actions = {}, callback = () => { }) => {
     const silentCode = data?.silent_code;
@@ -291,6 +298,7 @@ function PaymentInfo() {
           payment_type: 'Credit card',
           plan: state?.selectedPlanCheckoutData?.plan_slug,
           period_label: state?.selectedPlanCheckoutData?.period_label,
+          agent: getBrowserInfo(),
         },
       });
       await handlePayment({}, true)
@@ -311,6 +319,7 @@ function PaymentInfo() {
         });
     } else {
       setPaymentStatus('error');
+      setPaymentInfo('cvc', '');
       handlePaymentErrors(data, actions);
     }
   };
@@ -328,29 +337,12 @@ function PaymentInfo() {
       exp_year: expYear,
       cvc: values.cvc,
     };
+
     handleSubmit(actions, allValues);
   };
 
   const handleTryAgain = () => {
-    setIsSubmittingPayment(true);
-    handlePayment({}, true)
-      .then((data) => {
-        if (data.status === 'FULFILLED') {
-          setReadyToRefetch(true);
-        }
-        handlePaymentErrors(data, {}, () => setIsSubmittingPayment(false));
-      })
-      .catch(() => {
-        toast({
-          position: 'top',
-          title: t('alert-message:card-error'),
-          description: t('alert-message:card-error-description'),
-          status: 'error',
-          duration: 6000,
-          isClosable: true,
-        });
-        setIsSubmittingPayment(false);
-      });
+    setOpenDeclinedModal(false);
   };
 
   return (
@@ -424,6 +416,7 @@ function PaymentInfo() {
                           openDeclinedModal,
                           setOpenDeclinedModal,
                           handleTryAgain,
+                          disableClose: true,
                         }}
                         onSubmit={onSubmitCard}
                       />
@@ -450,7 +443,7 @@ function PaymentInfo() {
           height="45px"
           variant="default"
           // mt="12px"
-          isDisabled={(isPaymentSuccess && !cohortFound) || !readyToRedirect}
+          isDisabled={isPaymentSuccess && (!cohortFound || !readyToRedirect)}
           isLoading={isSubmittingPayment || isRedirecting}
           onClick={startRedirection}
         >

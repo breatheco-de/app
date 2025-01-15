@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box, useToast } from '@chakra-ui/react';
 import bc from '../services/breathecode';
-import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
+import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
 import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
@@ -15,6 +15,7 @@ import ModalInfo from '../../js_modules/moduleMap/modalInfo';
 import Text from '../components/Text';
 import { SILENT_CODE } from '../../lib/types';
 import { warn } from '../../utils/logging';
+import { generateUserContext } from '../../utils/rigobotContext';
 
 const initialState = {
   isLoading: true,
@@ -202,10 +203,12 @@ function AuthProvider({ children, pageProps }) {
                 user_id: data.id,
                 email: data.email,
                 is_academy_legacy: data.roles.some((r) => r.academy.id === 6),
+                is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
                 first_name: data.first_name,
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
                 language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+                agent: getBrowserInfo(),
               },
             });
             if (data.github) {
@@ -240,7 +243,10 @@ function AuthProvider({ children, pageProps }) {
   useEffect(() => {
     if (user && isRigoInitialized) {
       const token = getToken();
+      const context = generateUserContext(user);
+
       rigo.updateOptions({
+        context,
         user: {
           token,
           nickname: `${user.first_name} ${user.last_name}`,
@@ -308,6 +314,7 @@ function AuthProvider({ children, pageProps }) {
               method: 'native',
               user_id: responseData.user_id,
               email: responseData.email,
+              agent: getBrowserInfo(),
             },
           });
         }

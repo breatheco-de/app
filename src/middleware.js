@@ -17,33 +17,41 @@ export const config = {
 };
 
 async function middleware(req) {
-  const url = await req.nextUrl.clone();
-  const { origin, pathname } = url;
+  const url = req.nextUrl.clone();
+  const { href, origin } = url;
+  let fullPath = href.replace(origin, '');
+
+  const localeMatch = fullPath.match(/^\/(es|en|us)(\/|$)/);
+  const localePrefix = localeMatch ? localeMatch[1] : null;
+
+  if (localePrefix) {
+    fullPath = fullPath.replace(`/${localePrefix}`, '');
+  }
 
   const aliasAndLessonRedirects = [...aliasRedirects, ...redirectsFromApi];
-  const currentProject = aliasAndLessonRedirects.find((item) => {
-    const sourceWithEngPrefix = `/en${item?.source}`;
-    const destinationIsNotEqualToSource = item?.source !== item?.destination && sourceWithEngPrefix !== item?.destination;
 
-    if (url.href.includes(item?.destination)) return false;
-    if (item?.source === pathname && destinationIsNotEqualToSource) return true;
-    return false;
+  const currentProject = aliasAndLessonRedirects.find((item) => {
+    const normalizedSource = item.source.endsWith('/') ? item.source.slice(0, -1) : item.source;
+    const normalizedPath = fullPath.endsWith('/') ? fullPath.slice(0, -1) : fullPath;
+
+    return (
+      normalizedSource === normalizedPath || normalizedSource === `/${localePrefix}${normalizedPath}`
+    ) && item.source !== item.destination;
   });
 
-  const conditionalResult = () => {
-    if (currentProject?.type === 'PROJECT-REROUTE' && currentProject?.source) {
-      return true;
+  // Evitar redirecciones infinitas
+  if (currentProject) {
+    const destinationUrl = `${origin}${currentProject.destination}`;
+    if (destinationUrl === href) {
+      log('Middleware: already on destination URL, skipping redirect.');
+      return NextResponse.next();
     }
-    if (currentProject?.source) {
-      return true;
-    }
-    return false;
-  };
 
-  if (conditionalResult()) {
-    log(`Middleware: redirecting from ${pathname} → ${currentProject?.destination}`);
-    return NextResponse.redirect(`${origin}${currentProject?.destination || ''}`);
+    log(`Middleware: redirecting from ${href} → ${currentProject.destination}`);
+    return NextResponse.redirect(destinationUrl, 301);
   }
+
   return NextResponse.next();
 }
+
 export default middleware;
