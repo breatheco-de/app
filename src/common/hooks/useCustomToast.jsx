@@ -21,8 +21,8 @@ const useCustomToast = ({
     title = 'Already have an account?',
     status = 'success',
     position = 'top',
-    width = '80%',
     maxWidth = '1200px',
+    width = '90%',
     duration = 16000,
     description,
     actions = null,
@@ -36,9 +36,9 @@ const useCustomToast = ({
       render: () => (
         <Box
           color={toastColors.color}
-          py={3}
+          py={8}
           pl={5}
-          pr={8}
+          pr={6}
           bg={toastColors.background}
           borderColor={toastColors.borderColor}
           borderWidth="2px"
@@ -47,9 +47,10 @@ const useCustomToast = ({
           width={width}
           maxWidth={maxWidth}
           margin="auto"
-          top="20px"
+          top="5vh"
+          mt="12px"
         >
-          <Flex gridGap="10px" mb="5px">
+          <Flex gridGap="10px" mt="2px">
             <Icon icon={status} width="15px" height="15px" color="currentColor" mt="-4px" />
             <Box fontSize="14px" fontWeight="bold" lineHeight={6} mt="-8px" letterSpacing="1px">
               {title}
@@ -77,7 +78,7 @@ const useCustomToast = ({
             {description}
           </Box>
           {actions?.length > 0 && (
-            <Flex gap="16px" mb="-10px" mt="1px">
+            <Flex gap="16px" mb="-35px">
               {actions.map((action) => (
                 <Button
                   as="a"
