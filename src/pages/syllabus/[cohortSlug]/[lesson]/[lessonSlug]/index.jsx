@@ -435,7 +435,7 @@ function SyllabusContent() {
           currentTranslationSlug = `${lessonSlug}-${language}`;
         }
         Promise.all([
-          axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
+          assetTypeValues[lesson] !== 'QUIZ' && axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}.md`),
           axios.get(`${BREATHECODE_HOST}/v1/registry/asset/${currentTranslationSlug}?asset_type=${assetTypeValues[lesson]}`),
         ])
           .then(([respMarkdown, respData]) => {
@@ -1047,7 +1047,7 @@ function SyllabusContent() {
                           />
                         )}
 
-                        {isQuiz ? (
+                        {isQuiz && quizSlug ? (
                           <Box background={featuredColor} width="100%" height={isAvailableAsSaas ? '100%' : '100vh'} borderRadius="14px">
                             <iframe
                               id="iframe"
@@ -1426,7 +1426,7 @@ function SyllabusContent() {
         <ModalContent style={{ margin: '3rem 0' }}>
           <ModalCloseButton />
           <ModalBody padding={{ base: '26px 18px', md: '42px 36px' }}>
-            {label && nextModule.label && (
+            {label && nextModule?.label && (
               <Heading size="xsm" fontWeight="700" padding={{ base: '0 1rem 26px 1rem', md: '0 4rem 52px 4rem' }} textAlign="center">
                 {t('reached-the-end-of-the-module', { label: languageFix(label, lang), nextModuleLabel: languageFix(nextModule.label, lang) })}
               </Heading>

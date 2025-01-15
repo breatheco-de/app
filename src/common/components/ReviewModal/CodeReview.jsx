@@ -13,6 +13,7 @@ import '@uiw/react-markdown-preview/markdown.css';
 import Heading from '../Heading';
 import MarkDownParser from '../MarkDownParser';
 import { reportDatalayer } from '../../../utils/requests';
+import { getBrowserInfo } from '../../../utils';
 import useAuth from '../../hooks/useAuth';
 import useCustomToast from '../../hooks/useCustomToast';
 
@@ -142,6 +143,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
           username: commitData?.committer?.github_username,
           commitfile_id: commitData?.id,
         },
+        agent: getBrowserInfo(),
       },
     });
     setCodeReview((prev) => ({
@@ -240,6 +242,7 @@ function CodeReview({ isExternal, onClose, disableRate, isStudent, handleResetFl
         reaction_comment: type === 'skip' ? '' : reviewRateData?.comment,
         repository: revisionContent?.repository,
         user_id: user.id,
+        agent: getBrowserInfo(),
       },
     });
     bc.assignments().rateCodeRevision(revisionContent?.id, argsData[type])

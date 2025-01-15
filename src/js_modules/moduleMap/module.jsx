@@ -15,6 +15,7 @@ import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
 import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 // import { usePersistent } from '../../common/hooks/usePersistent';
 import useCustomToast from '../../common/hooks/useCustomToast';
 
@@ -144,6 +145,7 @@ function Module({
           task_associated_slug: task.associated_slug,
           task_type: task.task_type,
           task_revision_status: task.revision_status,
+          agent: getBrowserInfo(),
         },
       });
       setUpdatedTask({

@@ -10,6 +10,7 @@ import Heading from './Heading';
 import NextChakraLink from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 
 function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl, pillLabel, iconStyles, buttonStyles, descriptionStyles, adType, ...rest }) {
   const { hexColor } = useStyle();
@@ -51,6 +52,7 @@ function CallToActionCard({ title, description, buttonLabel, forwardUrl, iconUrl
               event: 'ad_interaction',
               ad_type: adType,
               ad_position: 'side',
+              agent: getBrowserInfo(),
             },
           });
         }}

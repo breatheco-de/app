@@ -14,7 +14,7 @@ import SimpleModal from '../../common/components/SimpleModal';
 import GridContainer from '../../common/components/GridContainer';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, getStorageItem, isValidDate, getBrowserInfo } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import Icon from '../../common/components/Icon';
 import PublicProfile from '../../common/components/PublicProfile';
@@ -140,7 +140,7 @@ export const getStaticProps = async ({ params, locale }) => {
   });
 };
 
-function Page({ eventData, asset }) {
+function Workshop({ eventData, asset }) {
   const { t } = useTranslation('workshops');
   const { userSession } = useContext(SessionContext);
   const [users, setUsers] = useState([]);
@@ -520,6 +520,7 @@ function Page({ eventData, asset }) {
             event_starting_at: unixFormatedDate.starting_at,
             event_ending_at: unixFormatedDate.ending_at,
             event_language: event.lang,
+            agent: getBrowserInfo(),
           },
         });
         router.push(`${BREATHECODE_HOST}/v1/events/me/event/${event?.id}/join?token=${accessToken}` || '#');
@@ -548,6 +549,7 @@ function Page({ eventData, asset }) {
                   event_starting_at: unixFormatedDate.starting_at,
                   event_ending_at: unixFormatedDate.ending_at,
                   event_language: event.lang,
+                  agent: getBrowserInfo(),
                 },
               });
             } else {
@@ -1130,13 +1132,13 @@ function Page({ eventData, asset }) {
   );
 }
 
-Page.propTypes = {
+Workshop.propTypes = {
   eventData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   asset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
-Page.defaultProps = {
+Workshop.defaultProps = {
   eventData: {},
   asset: null,
 };
 
-export default Page;
+export default Workshop;

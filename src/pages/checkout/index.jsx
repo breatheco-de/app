@@ -32,7 +32,7 @@ import useAuth from '../../common/hooks/useAuth';
 import useSession from '../../common/hooks/useSession';
 import ContactInformation from '../../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../js_modules/checkout/Summary';
 import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
 import useSignup from '../../common/store/actions/signupAction';
@@ -288,6 +288,7 @@ function Checkout() {
         plan: defaultPlan,
         path: '/checkout',
         conversion_info: userSession,
+        agent: getBrowserInfo(),
       },
     });
   }, [router.locale]);

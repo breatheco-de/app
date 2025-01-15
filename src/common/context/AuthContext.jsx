@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import { Avatar, Box } from '@chakra-ui/react';
 import bc from '../services/breathecode';
-import { getQueryString, isWindow, removeStorageItem, removeURLParameter } from '../../utils';
+import { getQueryString, isWindow, removeStorageItem, removeURLParameter, getBrowserInfo } from '../../utils';
 import { reportDatalayer, getPrismicPages } from '../../utils/requests';
 import { getPrismicPagesUrls } from '../../utils/url';
 import { BREATHECODE_HOST, RIGOBOT_HOST } from '../../utils/variables';
@@ -209,6 +209,7 @@ function AuthProvider({ children, pageProps }) {
                 last_name: data.last_name,
                 avatar_url: data.profile?.avatar_url || data.github?.avatar_url,
                 language: data.profile?.settings?.lang === 'us' ? 'en' : data.profile?.settings?.lang,
+                agent: getBrowserInfo(),
               },
             });
             if (data.github) {
@@ -314,6 +315,7 @@ function AuthProvider({ children, pageProps }) {
               method: 'native',
               user_id: responseData.user_id,
               email: responseData.email,
+              agent: getBrowserInfo(),
             },
           });
         }
