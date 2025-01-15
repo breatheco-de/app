@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../common/hooks/useAuth';
@@ -24,7 +24,6 @@ function TaskCodeRevisions() {
   const { currentTask } = useModuleHandler();
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
   const { isAuthenticatedWithRigobot } = useAuth();
-  const toast = useToast();
   const [contextData, setContextData] = useState({
     code_revisions: [],
     revision_content: {},
@@ -80,14 +79,7 @@ function TaskCodeRevisions() {
           code_revisions: codeRevisionsSortedByDate,
         }));
       } else {
-        toast({
-          title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
-          status: 'error',
-          duration: 5000,
-          position: 'top',
-          isClosable: true,
-        });
+        console.err(`Cannot get code revisions: ${data?.detail}`);
       }
     } catch (errorMsg) {
       error('Error fetching code revisions:', errorMsg);
