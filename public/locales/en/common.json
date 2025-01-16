@@ -163,6 +163,7 @@
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
     "start-asset": "Start interactive {{asset_type}}",
+    "continue-working": "Continue working",
     "asset_types": {
       "project": "project",
       "exercise": "exercise"

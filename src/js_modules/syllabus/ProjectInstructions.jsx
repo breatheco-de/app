@@ -68,6 +68,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
   const { t } = useTranslation('common');
   const [vendors, setVendors] = useState([]);
+  const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
@@ -109,6 +110,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
   const canSeeInstructions = variant !== 'small' || variant !== 'extra-small';
 
+  const isExerciseStated = !!currentTask?.assignment_telemetry;
+
   if (isExternalExercise) {
     return (
       <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
@@ -131,7 +134,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
       )}
       {startWithLearnpack ? (
         <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {isExerciseStated ? t('common:learnpack.continue-working') : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
