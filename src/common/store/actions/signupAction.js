@@ -475,7 +475,7 @@ const useSignup = () => {
       };
     });
   };
-
+  
   return {
     state,
     isFirstStep,
