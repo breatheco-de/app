@@ -217,6 +217,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -276,6 +277,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -335,6 +337,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
