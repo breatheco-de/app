@@ -219,6 +219,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -278,6 +279,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -337,6 +339,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
