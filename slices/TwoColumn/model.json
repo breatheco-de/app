@@ -31,6 +31,19 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "custom_title_size": {
+          "type": "Text",
+          "config": { "label": "Custom Title Size", "placeholder": "" }
+        },
+        "fontFamily": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
         "title_color": {
           "type": "Color",
           "config": { "label": "Title Color", "placeholder": "" }
@@ -38,6 +51,18 @@
         "subtitle": {
           "type": "Text",
           "config": { "label": "Subtitle", "placeholder": "" }
+        },
+        "custom_subtitle_size": {
+          "type": "Text",
+          "config": { "label": "Custom Subtitle Size", "placeholder": "" }
+        },
+        "font_family_subtitle": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Subtitle",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
         },
         "subtitle_color": {
           "type": "Color",
@@ -59,6 +84,22 @@
         "image": {
           "type": "Image",
           "config": { "label": "image", "constraint": {}, "thumbnails": [] }
+        },
+        "students_avatars": {
+          "type": "StructuredText",
+          "config": {
+            "label": "Students Avatars",
+            "placeholder": "",
+            "allowTargetBlank": true,
+            "single": "paragraph,preformatted,heading1,heading2,heading3,heading4,heading5,heading6,strong,em,hyperlink,image,embed,list-item,o-list-item,rtl"
+          }
+        },
+        "student_avatar_description": {
+          "type": "Text",
+          "config": {
+            "label": "Students Avatars Descriptions",
+            "placeholder": ""
+          }
         },
         "button_label": {
           "type": "Text",
@@ -90,7 +131,7 @@
           "config": {
             "label": "Button Color",
             "placeholder": "",
-            "options": ["Blue", "White"]
+            "options": ["Blue", "White", "Dark Blue"]
           }
         },
         "background_color": {
@@ -122,15 +163,6 @@
         "grid_gap": {
           "type": "Text",
           "config": { "label": "Grid gap", "placeholder": "" }
-        },
-        "fontFamily": {
-          "type": "Select",
-          "config": {
-            "label": "Font Family",
-            "placeholder": "",
-            "options": ["Lato", "Space Grotesk Variable"],
-            "default_value": "Lato"
-          }
         }
       },
       "items": {},

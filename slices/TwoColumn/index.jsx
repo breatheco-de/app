@@ -29,6 +29,11 @@ function TwoColumn({ slice }) {
       textBackgroundColor={slice?.primary?.text_background_color}
       buttonColor={slice?.primary?.button_color}
       fontFamily={slice?.primary?.fontFamily}
+      fontFamilySubtitle={slice?.primary?.font_family_subtitle}
+      customTitleSize={slice?.primary?.custom_title_size}
+      customSubTitleSize={slice?.primary?.custom_subtitle_size}
+      studentsAvatars={slice?.primary?.students_avatars}
+      studentsAvatarsDescriptions={slice?.primary?.student_avatar_description}
     />
   );
 }

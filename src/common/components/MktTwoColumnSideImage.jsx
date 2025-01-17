@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Box, Flex, Img, useColorModeValue,
+  Box, Flex, Img, useColorModeValue, Image,
 } from '@chakra-ui/react';
 import Heading from './Heading';
 import Text from './Text';
@@ -17,6 +17,7 @@ const SIZES = {
 const BUTTON_COLOR = {
   BLUE: 'Blue',
   WHITE: 'White',
+  DARK_BLUE: 'Dark Blue',
 };
 
 function MktTwoColumnSideImage({
@@ -40,9 +41,14 @@ function MktTwoColumnSideImage({
   imageAlt,
   gridGap,
   fontFamily,
+  fontFamilySubtitle,
   textSideProps,
   imageSideProps,
   containerProps,
+  customTitleSize,
+  customSubTitleSize,
+  studentsAvatars,
+  studentsAvatarsDescriptions,
   ...rest
 }) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -66,6 +72,12 @@ function MktTwoColumnSideImage({
       return {
         color: '#0097CD',
         background: 'white',
+      };
+    }
+    if (buttonColor === BUTTON_COLOR.DARK_BLUE) {
+      return {
+        color: '#FFF',
+        background: '#0084FF',
       };
     }
     return {
@@ -140,11 +152,11 @@ function MktTwoColumnSideImage({
       >
         <Box flex={0.5} height="100%" style={{ direction: 'initial' }} background={sideBackgroundColor} padding={prismicStyles.padding} borderRadius={{ base: '0px', md: '11px' }} {...textSideProps}>
           <Flex color={fontColor} flexDirection="column" gridGap="16px" alignSelf="center">
-            <Heading fontFamily={fontFamily} as="h2" size={prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
+            <Heading fontFamily={fontFamily} as="h2" size={customTitleSize || prismicStyles.titleSize} lineHeight={prismicStyles.titleLineHeight} color={titleColor || 'currentColor'} style={{ textWrap: 'balance' }}>
               {title}
             </Heading>
             {subTitle && (
-              <Heading as="h4" fontSize={prismicStyles.subtitleSize} color={subtitleColor || 'currentColor'}>
+              <Heading fontFamily={fontFamilySubtitle} as="h4" fontSize={customSubTitleSize || prismicStyles.subtitleSize} color={subtitleColor || 'currentColor'}>
                 {subTitle}
               </Heading>
             )}
@@ -163,6 +175,33 @@ function MktTwoColumnSideImage({
               >
                 {description}
               </Text>
+            )}
+            {studentsAvatars.length > 0 && (
+              <Flex alignItems="center" gridGap="16px">
+                <Flex>
+                  {
+                    studentsAvatars.map((avatar, index) => {
+                      const limitViewStudents = 5;
+                      return (
+                        <Image
+                          key={avatar.text}
+                          margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
+                          src={avatar.text}
+                          width="40px"
+                          height="40px"
+                          borderRadius="50%"
+                          objectFit="cover"
+                          alt={`Picture number ${index + 1}`}
+                        />
+                      );
+                    })
+                  }
+                </Flex>
+                <Text size="16px" color="currentColor" fontWeight={400}>
+                  {studentsAvatarsDescriptions}
+                </Text>
+              </Flex>
+
             )}
             {buttonUrl && (
               <Link
@@ -235,6 +274,11 @@ MktTwoColumnSideImage.propTypes = {
   textSideProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   imageSideProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   containerProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  studentsAvatarsDescriptions: PropTypes.string,
+  studentsAvatars: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  fontFamilySubtitle: PropTypes.string,
+  customTitleSize: PropTypes.string,
+  customSubTitleSize: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -261,6 +305,11 @@ MktTwoColumnSideImage.defaultProps = {
   textSideProps: {},
   imageSideProps: {},
   containerProps: {},
+  studentsAvatarsDescriptions: '',
+  studentsAvatars: [],
+  fontFamilySubtitle: 'Lato, Space Grotesk Variable',
+  customTitleSize: null,
+  customSubTitleSize: null,
 };
 
 export default MktTwoColumnSideImage;

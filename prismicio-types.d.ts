@@ -1602,6 +1602,27 @@ export interface TwoColumnSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Custom Title Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.custom_title_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  custom_title_size: prismic.KeyTextField;
+
+  /**
+   * Font Family Title field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: two_column.primary.fontFamily
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+
+  /**
    * Title Color field in *TwoColumn → Primary*
    *
    * - **Field Type**: Color
@@ -1620,6 +1641,26 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   subtitle: prismic.KeyTextField;
+
+  /**
+   * Custom Subtitle Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.custom_subtitle_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  custom_subtitle_size: prismic.KeyTextField;
+
+  /**
+   * Font Family Subtitle field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_family_subtitle
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family_subtitle: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
 
   /**
    * Subtitle Color field in *TwoColumn → Primary*
@@ -1660,6 +1701,26 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#image
    */
   image: prismic.ImageField<never>;
+
+  /**
+   * Students Avatars field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.students_avatars
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  students_avatars: prismic.RichTextField;
+
+  /**
+   * Students Avatars Descriptions field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.student_avatar_description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  student_avatar_description: prismic.KeyTextField;
 
   /**
    * Button label field in *TwoColumn → Primary*
@@ -1720,7 +1781,7 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **API ID Path**: two_column.primary.button_color
    * - **Documentation**: https://prismic.io/docs/field#select
    */
-  button_color: prismic.SelectField<"Blue" | "White">;
+  button_color: prismic.SelectField<"Blue" | "White" | "Dark Blue">;
 
   /**
    * Background color field in *TwoColumn → Primary*
@@ -1771,17 +1832,6 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   grid_gap: prismic.KeyTextField;
-
-  /**
-   * Font Family field in *TwoColumn → Primary*
-   *
-   * - **Field Type**: Select
-   * - **Placeholder**: *None*
-   * - **Default Value**: Lato
-   * - **API ID Path**: two_column.primary.fontFamily
-   * - **Documentation**: https://prismic.io/docs/field#select
-   */
-  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
 }
 
 /**
