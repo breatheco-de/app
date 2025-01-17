@@ -468,10 +468,10 @@ const useSignup = () => {
       if (price < 1) return item;
       const discountOperation = getPriceWithDiscount(price, coupon);
       return {
-          ...item,
-          price: discountOperation.price,
-          priceText: item.priceText.replace(item.price, discountOperation.price),
-          lastPrice: item.priceText,
+        ...item,
+        price: discountOperation.price,
+        priceText: item.priceText.replace(item.price, discountOperation.price),
+        lastPrice: item.priceText,
       };
     });
   };
