@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
 import SubtasksPill from './SubtasksPill';
 import StatusPill from './StatusPill';
 import Topbar from './Topbar';
@@ -15,9 +14,8 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
-import bc from '../../common/services/breathecode';
 
-function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack, provisioningVendors }) {
+function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
   const { backgroundColor4, hexColor } = useStyle();
 
   const title = currentAsset?.title;
@@ -62,7 +60,7 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack, provi
               )}
             </Box>
             <Box>
-              <ProjectInstructions variant={includesVideo ? 'small' : 'extra-small'} currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} provisioningVendors={provisioningVendors} />
+              <ProjectInstructions variant={includesVideo ? 'small' : 'extra-small'} currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
             </Box>
           </Box>
         </Box>
@@ -92,27 +90,9 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
   const headerRef = useRef(null);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const { hexColor, backgroundColor, featuredLight } = useStyle();
-  const [vendors, setVendors] = useState([]);
-  const { state } = useCohortHandler();
-  const { cohortSession } = state;
 
   // const isDelivered = false;
   const isDelivered = currentTask?.task_status === 'DONE' && currentAsset?.delivery_formats !== 'no_delivery';
-
-  const fetchProvisioningVendors = async () => {
-    try {
-      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
-      setVendors(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (cohortSession) {
-      fetchProvisioningVendors();
-    }
-  }, [cohortSession]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -147,7 +127,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
         flexDirection={{ base: 'column', md: 'row' }}
       >
         <Box display="flex" flexDirection="column" gap="20px" width="100%">
-          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} provisioningVendors={vendors} />
+          <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} />
           {isDelivered && (
             <Box padding="16px" background={backgroundColor} borderRadius="16px" height="100%">
               <Heading size="18px" mb="16px">
@@ -176,7 +156,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
           <TaskCodeRevisions />
         )}
       </Box>
-      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} handleStartLearnpack={handleStartLearnpack} provisioningVendors={vendors} buttonsHandlerVariant="extra-small" />
+      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} handleStartLearnpack={handleStartLearnpack} buttonsHandlerVariant="extra-small" />
     </>
   );
 }
@@ -193,12 +173,10 @@ ProjectHeading.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   isDelivered: PropTypes.bool,
   handleStartLearnpack: PropTypes.func.isRequired,
-  provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ProjectHeading.defaultProps = {
   currentAsset: null,
   isDelivered: false,
-  provisioningVendors: [],
 };
 
 export default ProjectBoardGuidedExperience;

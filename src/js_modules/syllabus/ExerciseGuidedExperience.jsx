@@ -53,7 +53,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
 
       const totalHours = workoutSession.reduce((acum, elem) => {
         const startedAt = elem.started_at;
-        const endedAt = elem.ended_at || lastInteractionAt;
+        const endedAt = elem.ended_at || lastInteractionAt || elem.started_at;
 
         const duration = intervalToDuration({
           start: new Date(startedAt),

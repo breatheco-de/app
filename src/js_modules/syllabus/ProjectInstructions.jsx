@@ -65,11 +65,27 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
   const { t } = useTranslation('common');
+  const [vendors, setVendors] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+
+  const fetchProvisioningVendors = async () => {
+    try {
+      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
+      setVendors(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (cohortSession) {
+      fetchProvisioningVendors();
+    }
+  }, [cohortSession]);
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -142,7 +158,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handl
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, provisioningVendors }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -178,7 +194,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
               currentAsset={currentAsset}
               handleStartLearnpack={handleStartLearnpack}
               setShowCloneModal={setShowCloneModal}
-              vendors={provisioningVendors}
               isForOpenLocaly={isForOpenLocaly}
               startWithLearnpack={startWithLearnpack}
               variant={variant}
@@ -214,7 +229,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
-                vendors={provisioningVendors}
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={variant}
@@ -261,7 +275,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             isForOpenLocaly={isForOpenLocaly}
-            vendors={provisioningVendors}
             variant={variant}
           />
         </Box>
