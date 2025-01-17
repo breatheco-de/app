@@ -64,7 +64,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
 
   const parseSteps = () => {
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
-    return selectedOs?.steps.filter((step) => step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
+    return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
   };
 
   const steps = parseSteps();
