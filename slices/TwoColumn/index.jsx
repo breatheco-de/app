@@ -14,6 +14,7 @@ function TwoColumn({ slice }) {
       title={slice?.primary?.title}
       subTitle={slice?.primary?.subtitle}
       slice={slice}
+      descriptionTitle={slice?.primary?.description_title}
       background={slice?.primary?.background_color}
       linkButton={slice?.primary?.link_button}
       buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
@@ -34,6 +35,8 @@ function TwoColumn({ slice }) {
       customSubTitleSize={slice?.primary?.custom_subtitle_size}
       studentsAvatars={slice?.primary?.students_avatars}
       studentsAvatarsDescriptions={slice?.primary?.student_avatar_description}
+      multiDescription={slice?.items}
+      transparent={slice?.primary?.transparent}
     />
   );
 }

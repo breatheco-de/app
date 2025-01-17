@@ -7,6 +7,7 @@ import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
+// import Head from 'next/head';
 
 const SIZES = {
   SMALL: 'Small',
@@ -38,6 +39,7 @@ function MktTwoColumnSideImage({
   border,
   imagePosition,
   slice,
+  descriptionTitle,
   imageAlt,
   gridGap,
   fontFamily,
@@ -49,6 +51,8 @@ function MktTwoColumnSideImage({
   customSubTitleSize,
   studentsAvatars,
   studentsAvatarsDescriptions,
+  multiDescription,
+  transparent,
   ...rest
 }) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -127,10 +131,11 @@ function MktTwoColumnSideImage({
   };
   const prismicStyles = prisimicStyles();
 
+  console.log('********', multiDescription);
   return (
     <Box
       id={id}
-      background={background || backgroundColor}
+      background={transparent ? 'transparent' : background || backgroundColor}
       {...rest}
     >
       <Flex
@@ -160,6 +165,23 @@ function MktTwoColumnSideImage({
                 {subTitle}
               </Heading>
             )}
+            {multiDescription.length > 0 && (
+              <Box
+                display="grid"
+                gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}
+                gap={4}
+              >
+                {multiDescription.map((content) => (
+                  <Box key={content.multi_description_title} p={2}>
+                    <Text fontWeight="bold" size="15px" as="h4">{content.multi_description_title}</Text>
+                    <Text fontFamily={fontFamily} size="15px" as="h5">{content.multi_description_content}</Text>
+                  </Box>
+                ))}
+              </Box>
+            )}
+            <Heading fontSize="20px" as="h4">
+              {descriptionTitle}
+            </Heading>
             {slice?.primary?.description ? (
               <PrismicTextComponent
                 field={slice?.primary?.description}
@@ -172,6 +194,7 @@ function MktTwoColumnSideImage({
                 margin="15px 0"
                 alignItems="center"
                 color={fontColor || fontColor2}
+                fontFamily={fontFamily}
               >
                 {description}
               </Text>
@@ -267,6 +290,7 @@ MktTwoColumnSideImage.propTypes = {
   background: PropTypes.string,
   border: PropTypes.string,
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
+  descriptionTitle: PropTypes.string,
   imageAlt: PropTypes.string,
   id: PropTypes.string,
   gridGap: PropTypes.string,
@@ -279,6 +303,8 @@ MktTwoColumnSideImage.propTypes = {
   fontFamilySubtitle: PropTypes.string,
   customTitleSize: PropTypes.string,
   customSubTitleSize: PropTypes.string,
+  multiDescription: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  transparent: PropTypes.bool,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -298,6 +324,7 @@ MktTwoColumnSideImage.defaultProps = {
   background: null,
   border: null,
   slice: null,
+  descriptionTitle: null,
   imageAlt: '',
   id: '',
   gridGap: '24px',
@@ -310,6 +337,8 @@ MktTwoColumnSideImage.defaultProps = {
   fontFamilySubtitle: 'Lato, Space Grotesk Variable',
   customTitleSize: null,
   customSubTitleSize: null,
+  multiDescription: [],
+  transparent: false,
 };
 
 export default MktTwoColumnSideImage;

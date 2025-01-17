@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | MultipleColumnCardSlice
   | InfoCardsSlice
   | TrustCardsSlice
   | TitleIntroductionSlice
@@ -541,6 +542,86 @@ type MarkdownSliceVariation = MarkdownSliceDefault;
 export type MarkdownSlice = prismic.SharedSlice<
   "markdown",
   MarkdownSliceVariation
+>;
+
+/**
+ * Primary content in *MultipleColumnCard → Primary*
+ */
+export interface MultipleColumnCardSliceDefaultPrimary {
+  /**
+   * Title field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Id key field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.id_key
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  id_key: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *MultipleColumnCard → Items*
+ */
+export interface MultipleColumnCardSliceDefaultItem {
+  /**
+   * Column Title field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].column_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  column_title: prismic.KeyTextField;
+
+  /**
+   * Column Description field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].column_description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  column_description: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for MultipleColumnCard Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MultipleColumnCardSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<MultipleColumnCardSliceDefaultPrimary>,
+  Simplify<MultipleColumnCardSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *MultipleColumnCard*
+ */
+type MultipleColumnCardSliceVariation = MultipleColumnCardSliceDefault;
+
+/**
+ * MultipleColumnCard Shared Slice
+ *
+ * - **API ID**: `multiple_column_card`
+ * - **Description**: MultipleColumnCard
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MultipleColumnCardSlice = prismic.SharedSlice<
+  "multiple_column_card",
+  MultipleColumnCardSliceVariation
 >;
 
 /**
@@ -1673,6 +1754,16 @@ export interface TwoColumnSliceDefaultPrimary {
   subtitle_color: prismic.ColorField;
 
   /**
+   * Description Title field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.description_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_title: prismic.KeyTextField;
+
+  /**
    * Description field in *TwoColumn → Primary*
    *
    * - **Field Type**: Rich Text
@@ -1832,6 +1923,42 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   grid_gap: prismic.KeyTextField;
+
+  /**
+   * Transparent field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: two_column.primary.transparent
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  transparent: prismic.BooleanField;
+}
+
+/**
+ * Primary content in *TwoColumn → Items*
+ */
+export interface TwoColumnSliceDefaultItem {
+  /**
+   * Multi Description Title field in *TwoColumn → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.items[].multi_description_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  multi_description_title: prismic.KeyTextField;
+
+  /**
+   * Multi Description Content field in *TwoColumn → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.items[].multi_description_content
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  multi_description_content: prismic.KeyTextField;
 }
 
 /**
@@ -1844,7 +1971,7 @@ export interface TwoColumnSliceDefaultPrimary {
 export type TwoColumnSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<TwoColumnSliceDefaultPrimary>,
-  never
+  Simplify<TwoColumnSliceDefaultItem>
 >;
 
 /**
@@ -1890,6 +2017,11 @@ declare module "@prismicio/client" {
       MarkdownSliceDefaultPrimary,
       MarkdownSliceVariation,
       MarkdownSliceDefault,
+      MultipleColumnCardSlice,
+      MultipleColumnCardSliceDefaultPrimary,
+      MultipleColumnCardSliceDefaultItem,
+      MultipleColumnCardSliceVariation,
+      MultipleColumnCardSliceDefault,
       OneColumnSlice,
       OneColumnSliceDefaultPrimary,
       OneColumnSliceVariation,
@@ -1932,6 +2064,7 @@ declare module "@prismicio/client" {
       TrustCardsSliceDefault,
       TwoColumnSlice,
       TwoColumnSliceDefaultPrimary,
+      TwoColumnSliceDefaultItem,
       TwoColumnSliceVariation,
       TwoColumnSliceDefault,
     };

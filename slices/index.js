@@ -6,6 +6,7 @@ export const components = {
   event_cards: dynamic(() => import("./EventCards")),
   info_cards: dynamic(() => import("./InfoCards")),
   markdown: dynamic(() => import("./Markdown")),
+  multiple_column_card: dynamic(() => import("./MultipleColumnCard")),
   one_column: dynamic(() => import("./OneColumn")),
   partners: dynamic(() => import("./Partners")),
   recommended_courses: dynamic(() => import("./RecommendedCourses")),

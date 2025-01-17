@@ -1,0 +1,36 @@
+{
+  "id": "multiple_column_card",
+  "type": "SharedSlice",
+  "name": "MultipleColumnCard",
+  "description": "MultipleColumnCard",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        }
+      },
+      "items": {
+        "column_title": {
+          "type": "Text",
+          "config": { "label": "Column Title", "placeholder": "" }
+        },
+        "column_description": {
+          "type": "Text",
+          "config": { "label": "Column Description", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}

@@ -166,12 +166,38 @@
 				"__TYPE__": "FieldContent",
 				"value": "rising",
 				"type": "Text"
+			},
+			"description_title": {
+				"__TYPE__": "FieldContent",
+				"value": "children",
+				"type": "Text"
+			},
+			"transparent": {
+				"__TYPE__": "BooleanContent",
+				"value": true
 			}
 		},
 		"items": [
 			{
 				"__TYPE__": "GroupItemContent",
-				"value": []
+				"value": [
+					[
+						"multi_description_title",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "afternoon",
+							"type": "Text"
+						}
+					],
+					[
+						"multi_description_content",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "snow",
+							"type": "Text"
+						}
+					]
+				]
 			}
 		]
 	}

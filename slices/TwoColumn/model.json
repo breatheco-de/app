@@ -68,6 +68,10 @@
           "type": "Color",
           "config": { "label": "Subtitle Color", "placeholder": "" }
         },
+        "description_title": {
+          "type": "Text",
+          "config": { "label": "Description Title", "placeholder": "" }
+        },
         "description": {
           "type": "StructuredText",
           "config": {
@@ -163,9 +167,27 @@
         "grid_gap": {
           "type": "Text",
           "config": { "label": "Grid gap", "placeholder": "" }
+        },
+        "transparent": {
+          "type": "Boolean",
+          "config": {
+            "label": "Transparent",
+            "default_value": false,
+            "placeholder_true": "true",
+            "placeholder_false": "false"
+          }
         }
       },
-      "items": {},
+      "items": {
+        "multi_description_title": {
+          "type": "Text",
+          "config": { "label": "Multi Description Title", "placeholder": "" }
+        },
+        "multi_description_content": {
+          "type": "Text",
+          "config": { "label": "Multi Description Content", "placeholder": "" }
+        }
+      },
       "imageUrl": "https://images.prismic.io/slice-machine/621a5ec4-0387-4bc5-9860-2dd46cbc07cd_default_ss.png?auto=compress,format"
     }
   ]
