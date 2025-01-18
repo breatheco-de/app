@@ -660,6 +660,17 @@ export interface OneColumnSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * Font Family field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: one_column.primary.font_family
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+
+  /**
    * Title field in *OneColumn → Primary*
    *
    * - **Field Type**: Text
@@ -740,6 +751,36 @@ export interface OneColumnSliceDefaultPrimary {
   button_label: prismic.KeyTextField;
 
   /**
+   * Button Background Color field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_background_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  button_background_color: prismic.ColorField;
+
+  /**
+   * Button Font Color field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_font_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  button_font_color: prismic.ColorField;
+
+  /**
+   * Button Font Size field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  button_font_size: prismic.KeyTextField;
+
+  /**
    * Button url field in *OneColumn → Primary*
    *
    * - **Field Type**: Text
@@ -759,6 +800,16 @@ export interface OneColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#boolean
    */
   link_button: prismic.BooleanField;
+
+  /**
+   * Justify Items field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.justify_items
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  justify_items: prismic.KeyTextField;
 
   /**
    * Font color field in *OneColumn → Primary*

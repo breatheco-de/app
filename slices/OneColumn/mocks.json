@@ -124,6 +124,31 @@
 				"__TYPE__": "FieldContent",
 				"value": "hot",
 				"type": "Text"
+			},
+			"button_background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#87d790",
+				"type": "Color"
+			},
+			"button_font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#eb30de",
+				"type": "Color"
+			},
+			"button_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "whose",
+				"type": "Text"
+			},
+			"justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "begun",
+				"type": "Text"
+			},
+			"font_family": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
 			}
 		},
 		"items": [

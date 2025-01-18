@@ -30,12 +30,17 @@ function OneColumn({ slice }) {
     <MktOneColumnKPI
       id={slice?.primary?.id_key}
       slice={slice}
+      fontFamily={slice?.primary?.font_family}
       title={slice.primary.title}
       subTitle={slice.primary.subtitle}
       paddingMd={slice.primary.paddingMd}
       linkButton={slice.primary.link_button}
       buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
       buttonLabel={slice.primary.button_label}
+      buttonBackgroundColor={slice?.primary?.button_background_color}
+      buttonFontColor={slice?.primary?.button_font_color}
+      buttonFontSize={slice?.primary?.button_font_size}
+      justifyItems={slice?.primary?.justify_items}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}
       titleFontSize={slice?.primary?.title_font_size}

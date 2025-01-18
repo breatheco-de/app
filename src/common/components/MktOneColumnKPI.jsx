@@ -43,13 +43,18 @@ function MktKPI({ kpiTitle, kpiDescription, color }) {
 
 function MktOneColumnKPI({
   id,
+  fontFamily,
   title,
   subTitle,
   description,
   paddingMd,
   buttonUrl,
   buttonLabel,
+  buttonBackgroundColor,
+  buttonFontColor,
+  buttonFontSize,
   linkButton,
+  justifyItems,
   kpiList,
   slice,
   titleFontSize,
@@ -67,7 +72,7 @@ function MktOneColumnKPI({
         gridColumn="2 / span 8"
         background={slice?.primary?.background}
       >
-        <Box display="grid" padding="50px" textAlign="center" justifyItems="center" gridGap="14px" style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px" borderRadius="3px">
+        <Box display="grid" padding="50px" fontFamily={fontFamily} textAlign="center" justifyItems={justifyItems} gridGap="14px" style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px">
           {subTitle && (
             <Heading marginBottom="15px" as="h4" fontSize="14px" color={hexColor.blueDefault}>
               {subTitle}
@@ -80,7 +85,7 @@ function MktOneColumnKPI({
               ))}
             </Box>
           )}
-          <Heading as="h2" size="m" style={{ fontSize: titleFontSize }} color={slice?.primary?.font_color}>
+          <Heading as="h2" size="m" style={{ fontSize: titleFontSize }} color={slice?.primary?.font_color} margin="0 0 2rem 0">
             {title}
           </Heading>
           {slice?.primary?.description ? (
@@ -89,7 +94,7 @@ function MktOneColumnKPI({
               field={slice?.primary?.description}
               fontSize={descriptionFontSize}
               textAlign={descriptionTextAlign}
-              margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
+              // margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
             />
           ) : (
             <Text
@@ -104,12 +109,14 @@ function MktOneColumnKPI({
           {buttonUrl && (
             <Link
               variant={!linkButton && 'buttonDefault'}
-              color={linkButton ? hexColor.blueDefault : '#FFF'}
+              color={linkButton ? '#02A9EA' : buttonFontColor}
               textDecoration={linkButton && 'underline'}
               href={buttonUrl}
-              textAlign="center"
-              display="inline-block"
-              margin="1rem 0 0 0"
+              // justifyItems="left"
+              // display="inline-block"
+              margin="2rem 0 0 0"
+              backgroundColor={buttonBackgroundColor}
+              fontSize={buttonFontSize}
             >
               {buttonLabel}
             </Link>
@@ -121,13 +128,18 @@ function MktOneColumnKPI({
 }
 
 MktOneColumnKPI.propTypes = {
+  fontFamily: PropTypes.string,
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
   paddingMd: PropTypes.string,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
+  buttonBackgroundColor: PropTypes.string,
+  buttonFontColor: PropTypes.string,
+  buttonFontSize: PropTypes.string,
   linkButton: PropTypes.bool,
+  justifyItems: PropTypes.string,
   kpiList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   id: PropTypes.string,
@@ -136,13 +148,18 @@ MktOneColumnKPI.propTypes = {
 };
 
 MktOneColumnKPI.defaultProps = {
+  fontFamily: 'Lato',
   title: null,
   subTitle: null,
   description: null,
   paddingMd: null,
   buttonUrl: null,
   buttonLabel: null,
+  buttonBackgroundColor: null,
+  buttonFontColor: null,
+  buttonFontSize: null,
   linkButton: false,
+  justifyItems: null,
   kpiList: [],
   slice: null,
   id: '',

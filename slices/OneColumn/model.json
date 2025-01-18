@@ -15,6 +15,15 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "font_family": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"],
+            "default_value": "Lato"
+          }
+        },
         "title": {
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
@@ -52,6 +61,18 @@
           "type": "Text",
           "config": { "label": "Button label", "placeholder": "" }
         },
+        "button_background_color": {
+          "type": "Color",
+          "config": { "label": "Button Background Color", "placeholder": "" }
+        },
+        "button_font_color": {
+          "type": "Color",
+          "config": { "label": "Button Font Color", "placeholder": "" }
+        },
+        "button_font_size": {
+          "type": "Text",
+          "config": { "label": "Button Font Size", "placeholder": "" }
+        },
         "button_url": {
           "type": "Text",
           "config": { "label": "Button url", "placeholder": "" }
@@ -64,6 +85,10 @@
             "placeholder_true": "true",
             "default_value": false
           }
+        },
+        "justify_items": {
+          "type": "Text",
+          "config": { "label": "Justify Items", "placeholder": "" }
         },
         "font_color": {
           "type": "Color",
