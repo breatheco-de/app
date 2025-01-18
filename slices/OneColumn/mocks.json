@@ -104,6 +104,26 @@
 				"__TYPE__": "FieldContent",
 				"value": "#000000",
 				"type": "Color"
+			},
+			"title_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "jar",
+				"type": "Text"
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "ice",
+				"type": "Text"
+			},
+			"description_text_align": {
+				"__TYPE__": "FieldContent",
+				"value": "sheep",
+				"type": "Text"
+			},
+			"description_justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "hot",
+				"type": "Text"
 			}
 		},
 		"items": [

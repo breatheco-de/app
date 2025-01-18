@@ -1,0 +1,31 @@
+{
+  "id": "pricing_cards",
+  "type": "SharedSlice",
+  "name": "PricingCards",
+  "description": "PricingCards",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "url": {
+          "type": "Text",
+          "config": { "label": "Url", "placeholder": "" }
+        }
+      },
+      "items": {}
+    }
+  ]
+}

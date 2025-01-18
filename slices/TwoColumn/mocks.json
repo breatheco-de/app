@@ -175,6 +175,11 @@
 			"transparent": {
 				"__TYPE__": "BooleanContent",
 				"value": true
+			},
+			"button_label_size": {
+				"__TYPE__": "FieldContent",
+				"value": "actual",
+				"type": "Text"
 			}
 		},
 		"items": [

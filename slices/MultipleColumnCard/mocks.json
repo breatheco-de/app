@@ -12,6 +12,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "familiar",
 				"type": "Text"
+			},
+			"font_family_title": {
+				"__TYPE__": "FieldContent",
+				"value": "Space Grotesk Variable",
+				"type": "Select"
 			}
 		},
 		"items": [
@@ -32,6 +37,14 @@
 							"__TYPE__": "FieldContent",
 							"value": "class",
 							"type": "Text"
+						}
+					],
+					[
+						"font_family_column",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "Lato",
+							"type": "Select"
 						}
 					]
 				]

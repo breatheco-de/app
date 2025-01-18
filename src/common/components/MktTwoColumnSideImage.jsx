@@ -35,6 +35,7 @@ function MktTwoColumnSideImage({
   linkButton,
   buttonUrl,
   buttonLabel,
+  buttonLabelSize,
   background,
   border,
   imagePosition,
@@ -131,7 +132,6 @@ function MktTwoColumnSideImage({
   };
   const prismicStyles = prisimicStyles();
 
-  console.log('********', multiDescription);
   return (
     <Box
       id={id}
@@ -242,13 +242,14 @@ function MktTwoColumnSideImage({
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
                 textDecoration={linkButton && 'underline'}
-                fontSize="14px"
+                fontSize={buttonLabelSize}
                 margin="8px 0 0 0"
                 href={buttonUrl || '#recommended-courses'}
                 textAlign="center"
                 display="inline-block"
                 width="fit-content"
                 fontFamily="Lato"
+                // fontSize={buttonLabelSize}
               >
                 {buttonLabel}
               </Link>
@@ -287,6 +288,7 @@ MktTwoColumnSideImage.propTypes = {
   linkButton: PropTypes.bool,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
+  buttonLabelSize: PropTypes.string,
   background: PropTypes.string,
   border: PropTypes.string,
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
@@ -321,6 +323,7 @@ MktTwoColumnSideImage.defaultProps = {
   linkButton: false,
   buttonUrl: null,
   buttonLabel: null,
+  buttonLabelSize: null,
   background: null,
   border: null,
   slice: null,

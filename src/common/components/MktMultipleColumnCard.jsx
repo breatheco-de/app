@@ -3,19 +3,17 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-function MktMultipleColumnCard({ id, title, columns, ...rest }) {
+function MktMultipleColumnCard({ id, title, columns, fontFamily, ...rest }) {
   const limitedColumns = columns.slice(0, 5);
   const { navbarBackground } = useStyle();
 
-  console.log('BLLDJLAJSLDKAJLSAJDKL', limitedColumns);
   return (
     <Box textAlign="center" p={4} {...rest}>
       {/* Título principal */}
-      <Text fontSize="2xl" fontWeight="bold" mb={6}>
+      <Text fontSize="25px" fontWeight="bold" mb={6}>
         {title}
       </Text>
 
-      {/* Grid responsivo */}
       <Grid
         templateColumns={{ base: '1fr', md: `repeat(${Math.min(limitedColumns.length, 3)}, 1fr)` }}
         gap={6}
@@ -31,11 +29,16 @@ function MktMultipleColumnCard({ id, title, columns, ...rest }) {
               borderRadius="md"
               boxShadow="sm"
               bg={navbarBackground}
+              textAlign="left"
             >
-              <Text fontWeight="bold" mb={2}>
+              <Text fontWeight="bold" mb={2} size="18px" fontFamily={fontFamily}>
+                {index + 1}
+                .
                 {column.column_title}
               </Text>
-              <Text>{column.column_description}</Text>
+              <Text size="18px" fontFamily={fontFamily}>
+                {column.column_description}
+              </Text>
             </Box>
           );
         })}
@@ -48,6 +51,7 @@ MktMultipleColumnCard.propTypes = {
   title: PropTypes.string,
   columns: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   columnBackground: PropTypes.string,
+  fontFamily: PropTypes.string,
 };
 
 MktMultipleColumnCard.defaultProps = {
@@ -55,7 +59,7 @@ MktMultipleColumnCard.defaultProps = {
   title: null,
   columns: [],
   columnBackground: null,
-
+  fontFamily: 'Lato',
 };
 
 export default MktMultipleColumnCard;

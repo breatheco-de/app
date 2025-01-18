@@ -19,6 +19,14 @@
         "id_key": {
           "type": "Text",
           "config": { "label": "Id key", "placeholder": "" }
+        },
+        "font_family_title": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Title",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
         }
       },
       "items": {
@@ -29,6 +37,14 @@
         "column_description": {
           "type": "Text",
           "config": { "label": "Column Description", "placeholder": "" }
+        },
+        "font_family_column": {
+          "type": "Select",
+          "config": {
+            "label": "Font Family Column",
+            "placeholder": "",
+            "options": ["Lato", "Space Grotesk Variable"]
+          }
         }
       }
     }

@@ -109,6 +109,10 @@
           "type": "Text",
           "config": { "label": "Button label", "placeholder": "" }
         },
+        "button_label_size": {
+          "type": "Text",
+          "config": { "label": "Button Label Size", "placeholder": "" }
+        },
         "button_url": {
           "type": "Text",
           "config": { "label": "Button url", "placeholder": "" }

@@ -52,6 +52,9 @@ function MktOneColumnKPI({
   linkButton,
   kpiList,
   slice,
+  titleFontSize,
+  descriptionFontSize,
+  descriptionTextAlign,
   ...rest
 }) {
   const { fontColor2, hexColor } = useStyle();
@@ -77,13 +80,15 @@ function MktOneColumnKPI({
               ))}
             </Box>
           )}
-          <Heading as="h2" size="m" fontSize="26px" color={slice?.primary?.font_color}>
+          <Heading as="h2" size="m" style={{ fontSize: titleFontSize }} color={slice?.primary?.font_color}>
             {title}
           </Heading>
           {slice?.primary?.description ? (
             <PrismicTextComponent
               color={slice?.primary?.font_color}
               field={slice?.primary?.description}
+              fontSize={descriptionFontSize}
+              textAlign={descriptionTextAlign}
               margin={{ base: '0 20px', md: '0 6% 0 6%', lg: '0 20% 0 20%' }}
             />
           ) : (
@@ -126,6 +131,8 @@ MktOneColumnKPI.propTypes = {
   kpiList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   slice: PropTypes.oneOfType([PropTypes.object, PropTypes.any]),
   id: PropTypes.string,
+  titleFontSize: PropTypes.string,
+  descriptionFontSize: PropTypes.string,
 };
 
 MktOneColumnKPI.defaultProps = {
@@ -139,6 +146,8 @@ MktOneColumnKPI.defaultProps = {
   kpiList: [],
   slice: null,
   id: '',
+  titleFontSize: null,
+  descriptionFontSize: null,
 };
 
 export default MktOneColumnKPI;

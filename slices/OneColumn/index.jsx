@@ -38,6 +38,10 @@ function OneColumn({ slice }) {
       buttonLabel={slice.primary.button_label}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}
+      titleFontSize={slice?.primary?.title_font_size}
+      descriptionFontSize={slice?.primary?.description_font_size}
+      descriptionTextAlign={slice?.primary?.description_text_align}
+      descriptionJustifyItems={slice?.primary?.description_justify_items}
     />
   );
 }

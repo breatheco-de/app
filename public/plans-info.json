@@ -1,0 +1,127 @@
+[
+    {
+      "currency": {
+      "code": "USD",
+      "name": "US Dollar"
+    },
+    "description": "Jumpstart your career with our free JOBSTART package, featuring essential resources for your job search",
+    "featured_info": [
+      "A Free ATS Resume Template to ensure your resume gets noticed by employers.",
+      "A Job Hunting Tracker to keep you organized and on top of your applications.",
+      "A Salary Negotiation Guide to help you secure the compensation you deserve.",
+      "Tips on how to build an Elevator Pitch that makes a lasting impression."
+    ],
+    "how_many_months": null,
+    "isFreeTier": true,
+    "owner": {
+      "id": null,
+      "name": "4Geeks.com",
+      "slug": "4geeks-com"
+    },
+    "period": "ONE_TIME",
+    "period_label": "One payment",
+    "planType": "free",
+    "plan_id": "f-0-1",
+    "plan_slug": "jumpstart-plan",
+    "price": 0,
+    "priceText": "Free",
+    "show": true,
+    "title": "Jumpstart plan",
+    "trial_duration": null,
+    "trial_duration_unit": null,
+    "type": "PAYMENT"
+    },
+    {
+      "currency": {
+        "code": "USD",
+        "name": "US Dollar"
+      },
+      "description": "Take control of your career materials with all the tools and resources you need to succeed.",
+      "featured_info": [
+        "Access to our complete set of tutorials and guides to create your CV, LinkedIn profile, and prepare for interviews.",
+        "Step-by-step video tutorials for creating a standout resume, optimizing your LinkedIn, and acing your interviews.",
+        "No advisory sessions are included, but you can always purchase additional consultation sessions if you need expert guidance."
+      ],
+      "how_many_months": null,
+      "isFreeTier": false,
+      "owner": {
+        "id": null,
+        "name": "4Geeks.com",
+        "slug": "4geeks-com"
+      },
+      "period": "ONE_TIME",
+      "period_label": "One payment",
+      "planType": "basic",
+      "plan_id": "b-50-1",
+      "plan_slug": "basic-plan",
+      "price": 50,
+      "priceText": "$50",
+      "show": true,
+      "title": "Basic plan",
+      "trial_duration": null,
+      "trial_duration_unit": null,
+      "type": "PAYMENT"
+    },
+    {
+      "currency": {
+        "code": "USD",
+        "name": "US Dollar"
+      },
+      "description": "We create everything for you, no stress involved! Get your CV and LinkedIn ready for success.",
+      "featured_info": [
+        "We create your CV and LinkedIn profile for you based on your experience and career goals.",
+        "No meetings required, but an optional session is available to clarify any doubts you may have."
+      ],
+      "how_many_months": null,
+      "isFreeTier": false,
+      "owner": {
+        "id": null,
+        "name": "4Geeks.com",
+        "slug": "4geeks-com"
+      },
+      "period": "ONE_TIME",
+      "period_label": "One payment",
+      "planType": "standard",
+      "plan_id": "s-150-1",
+      "plan_slug": "standard-plan",
+      "price": 150,
+      "priceText": "$150",
+      "show": true,
+      "title": "Standard plan",
+      "trial_duration": null,
+      "trial_duration_unit": null,
+      "type": "PAYMENT"
+    },
+    {
+      "currency": {
+        "code": "USD",
+        "name": "US Dollar"
+      },
+      "description": "Everything you need to succeed, including interviews and personalized coaching!",
+      "featured_info": [
+        "All the benefits of the Standard Plan, including your CV and LinkedIn created by experts.",
+        "Interview Preparation: We\u2019ll help you prepare for interviews with tailored questions and tips.",
+        "Two coaching sessions with an experienced advisor, who will work with you on interview techniques and career advice.",
+        "Additional language support for your resume and LinkedIn."
+      ],
+      "how_many_months": null,
+      "isFreeTier": false,
+      "owner": {
+        "id": null,
+        "name": "4Geeks.com",
+        "slug": "4geeks-com"
+      },
+      "period": "ONE_TIME",
+      "period_label": "One payment",
+      "planType": "premium",
+      "plan_id": "p-250-1",
+      "plan_slug": "premium-plan",
+      "price": 250,
+      "priceText": "$250",
+      "show": true,
+      "title": "Premium plan",
+      "trial_duration": null,
+      "trial_duration_unit": null,
+      "type": "PAYMENT"
+    }
+  ]
