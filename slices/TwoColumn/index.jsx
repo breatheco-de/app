@@ -15,6 +15,7 @@ function TwoColumn({ slice }) {
       subTitle={slice?.primary?.subtitle}
       slice={slice}
       descriptionTitle={slice?.primary?.description_title}
+      descriptionFontSize={slice?.primary?.description_font_size}
       background={slice?.primary?.background_color}
       linkButton={slice?.primary?.link_button}
       buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}

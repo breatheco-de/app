@@ -44,6 +44,7 @@ function MktKPI({ kpiTitle, kpiDescription, color }) {
 function MktOneColumnKPI({
   id,
   fontFamily,
+  borderRadius,
   title,
   subTitle,
   description,
@@ -60,12 +61,13 @@ function MktOneColumnKPI({
   titleFontSize,
   descriptionFontSize,
   descriptionTextAlign,
+  descriptionLineHeight,
   ...rest
 }) {
   const { fontColor2, hexColor } = useStyle();
 
   return (
-    <Box background={slice?.primary?.background} {...rest}>
+    <Box background={slice?.primary?.background} borderRadius={borderRadius} {...rest}>
       <GridContainer
         id={id}
         gridTemplateColumns="repeat(10, 1fr)"
@@ -132,6 +134,7 @@ MktOneColumnKPI.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
+  descriptionLineHeight: PropTypes.string,
   paddingMd: PropTypes.string,
   buttonUrl: PropTypes.string,
   buttonLabel: PropTypes.string,
@@ -152,6 +155,7 @@ MktOneColumnKPI.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
+  descriptionLineHeight: null,
   paddingMd: null,
   buttonUrl: null,
   buttonLabel: null,

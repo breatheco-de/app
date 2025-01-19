@@ -15,6 +15,10 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
         "font_family": {
           "type": "Select",
           "config": {
@@ -56,6 +60,10 @@
         "description_justify_items": {
           "type": "Text",
           "config": { "label": "Description Justify Items", "placeholder": "" }
+        },
+        "description_line_height": {
+          "type": "Text",
+          "config": { "label": "Description Line Height", "placeholder": "" }
         },
         "button_label": {
           "type": "Text",

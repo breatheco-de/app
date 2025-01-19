@@ -33,6 +33,10 @@
         "type": "Text",
         "config": { "label": "Landing url", "placeholder": "" }
       },
+      "padding_bottom": {
+        "type": "Text",
+        "config": { "label": "Padding Bottom", "placeholder": "" }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

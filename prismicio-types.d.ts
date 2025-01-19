@@ -83,6 +83,17 @@ interface PageDocumentData {
   landing_url: prismic.KeyTextField;
 
   /**
+   * Padding Bottom field in *Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page.padding_bottom
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding_bottom: prismic.KeyTextField;
+
+  /**
    * Slice Zone field in *Page*
    *
    * - **Field Type**: Slice Zone
@@ -660,6 +671,16 @@ export interface OneColumnSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * Border Radius field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.border_radius
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  border_radius: prismic.KeyTextField;
+
+  /**
    * Font Family field in *OneColumn → Primary*
    *
    * - **Field Type**: Select
@@ -739,6 +760,16 @@ export interface OneColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   description_justify_items: prismic.KeyTextField;
+
+  /**
+   * Description Line Height field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.description_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_line_height: prismic.KeyTextField;
 
   /**
    * Button label field in *OneColumn → Primary*
@@ -1959,6 +1990,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#color
    */
   description_color: prismic.ColorField;
+
+  /**
+   * Description Font Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.description_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_font_size: prismic.KeyTextField;
 
   /**
    * image field in *TwoColumn → Primary*

@@ -30,6 +30,7 @@ function OneColumn({ slice }) {
     <MktOneColumnKPI
       id={slice?.primary?.id_key}
       slice={slice}
+      borderRadius={slice?.primary?.border_radius}
       fontFamily={slice?.primary?.font_family}
       title={slice.primary.title}
       subTitle={slice.primary.subtitle}
@@ -47,6 +48,7 @@ function OneColumn({ slice }) {
       descriptionFontSize={slice?.primary?.description_font_size}
       descriptionTextAlign={slice?.primary?.description_text_align}
       descriptionJustifyItems={slice?.primary?.description_justify_items}
+      descriptionLineHeight={slice?.primary?.description_line_height}
     />
   );
 }

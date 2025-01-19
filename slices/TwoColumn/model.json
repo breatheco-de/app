@@ -85,6 +85,10 @@
           "type": "Color",
           "config": { "label": "Description Color", "placeholder": "" }
         },
+        "description_font_size": {
+          "type": "Text",
+          "config": { "label": "Description Font Size", "placeholder": "" }
+        },
         "image": {
           "type": "Image",
           "config": { "label": "image", "constraint": {}, "thumbnails": [] }

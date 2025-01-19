@@ -41,6 +41,7 @@ function MktTwoColumnSideImage({
   imagePosition,
   slice,
   descriptionTitle,
+  descriptionFontSize,
   imageAlt,
   gridGap,
   fontFamily,
@@ -186,6 +187,7 @@ function MktTwoColumnSideImage({
               <PrismicTextComponent
                 field={slice?.primary?.description}
                 color={slice?.primary?.description_color || 'currentColor'}
+                fontSize={descriptionFontSize}
               />
             ) : (
               <Text
@@ -283,6 +285,7 @@ MktTwoColumnSideImage.propTypes = {
   title: PropTypes.string,
   subTitle: PropTypes.string,
   description: PropTypes.string,
+  descriptionFontSize: PropTypes.string,
   imagePosition: PropTypes.string,
   imageUrl: PropTypes.string,
   linkButton: PropTypes.bool,
@@ -318,6 +321,7 @@ MktTwoColumnSideImage.defaultProps = {
   title: null,
   subTitle: null,
   description: null,
+  descriptionFontSize: null,
   imagePosition: 'left',
   imageUrl: null,
   linkButton: false,

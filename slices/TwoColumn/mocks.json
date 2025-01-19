@@ -180,6 +180,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "actual",
 				"type": "Text"
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "success",
+				"type": "Text"
 			}
 		},
 		"items": [

@@ -149,6 +149,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "Lato",
 				"type": "Select"
+			},
+			"description_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "field",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "tales",
+				"type": "Text"
 			}
 		},
 		"items": [
