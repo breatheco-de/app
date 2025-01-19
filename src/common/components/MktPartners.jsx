@@ -2,7 +2,7 @@
 // import { useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Box, Img,
+  Box, Img, Text,
 } from '@chakra-ui/react';
 // import { motion, useAnimation } from 'framer-motion';
 import { useRef } from 'react';
@@ -11,13 +11,43 @@ import GridContainer from './GridContainer';
 import useGrabToScroll from '../hooks/useGrabToScroll';
 import { toCapitalize } from '../../utils';
 
-function MktPartners({ id, title, images, ...rest }) {
+function MktPartners({ id, title, titleSize, images, description, imagesContent, ...rest }) {
   const scrollContainerRef = useRef(null);
   const { grabToScroll } = useGrabToScroll({ ref: scrollContainerRef, horizontal: true });
   // const bgColor = useColorModeValue('', 'white');
 
   const cleanImages = images.length > 0 && typeof images[0] === 'string' ? images : images.map((obj) => obj.text);
   const limitedImages = cleanImages.splice(0, 5);
+
+  const imagesContentStyles = {
+    compact: {
+      gridContainer: {
+        px: '0px',
+      },
+      image: {
+        margin: '0px',
+        padding: '34px 41px',
+        'background-color': 'white',
+        height: '139px',
+        width: '172.8px',
+      },
+      boxImages: {
+        gridColumn: '1 / span 12',
+      },
+    },
+    default: {
+      gridContainer: {
+        px: { base: '10px', md: '2rem' },
+      },
+      image: {
+        margin: '0 auto',
+      },
+      boxImages: {
+        gridColumn: '2 / span 8',
+      },
+    },
+  };
+  console.log('here', imagesContentStyles[imagesContent]);
   // const controls = useAnimation();
   // const observer = useRef();
   // const motionRef = useRef(false);
@@ -50,20 +80,36 @@ function MktPartners({ id, title, images, ...rest }) {
       id={id}
       gridTemplateColumns="repeat(10, 1fr)"
       maxWidth="1280px"
-      px={{ base: '10px', md: '2rem' }}
+      {...imagesContentStyles[imagesContent]?.gridContainer}
       {...rest}
     >
       <Box
         display={{ base: 'block', md: 'grid' }}
         gridColumn="2 / span 8"
       >
-        <Heading as="h2" size="sm" textAlign="center" mb="1rem">{title}</Heading>
+        <Heading
+          as="h2"
+          size="sm"
+          textAlign="center"
+          mb="1rem"
+          style={{ fontSize: titleSize }}
+        >
+          {title}
+        </Heading>
+      </Box>
+      <Box
+        textAlign="center"
+        gridColumn="1 / span 12"
+      >
+        <Text fontSize="18px">
+          {description}
+        </Text>
       </Box>
       <Box
         display={{ base: 'block', md: 'grid' }}
-        gridColumn="2 / span 8"
         px={{ base: '10px', md: '0' }}
         width="100%"
+        {...imagesContentStyles[imagesContent]?.boxImages}
       >
         <Box
           ref={scrollContainerRef}
@@ -87,7 +133,6 @@ function MktPartners({ id, title, images, ...rest }) {
                 key={`image-${i}`}
                 src={image}
                 height="76px"
-                margin="0 20px"
                 borderRadius="5px"
                 padding="6px"
                 background="white"
@@ -95,13 +140,13 @@ function MktPartners({ id, title, images, ...rest }) {
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
                 alt={altTitle}
+                {...imagesContentStyles[imagesContent]?.image}
               />
             ) : (
               <Img
                 key={`image-${i}`}
                 src={image}
                 height="76px"
-                margin="0 20px"
                 borderRadius="5px"
                 padding="6px"
                 background="white"
@@ -109,6 +154,7 @@ function MktPartners({ id, title, images, ...rest }) {
                 objectFit="contain"
                 title={toCapitalize(altTitle)}
                 alt={altTitle}
+                {...imagesContentStyles[imagesContent]?.image}
               />
             ));
           })}
@@ -122,12 +168,18 @@ MktPartners.propTypes = {
   title: PropTypes.string,
   images: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   id: PropTypes.string,
+  description: PropTypes.string,
+  imagesContent: PropTypes.string,
+  titleSize: PropTypes.string,
 };
 
 MktPartners.defaultProps = {
   title: null,
   images: [],
   id: '',
+  description: null,
+  imagesContent: 'default',
+  titleSize: '',
 };
 
 export default MktPartners;

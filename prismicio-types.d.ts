@@ -1028,6 +1028,16 @@ export interface PartnersSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Description field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+
+  /**
    * images field in *Partners → Primary*
    *
    * - **Field Type**: Rich Text
@@ -1046,6 +1056,26 @@ export interface PartnersSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Images Content field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.images_content
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  images_content: prismic.KeyTextField;
+
+  /**
+   * Title Size field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.title_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_size: prismic.KeyTextField;
 }
 
 /**
