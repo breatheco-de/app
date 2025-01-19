@@ -73,6 +73,8 @@ function MktOneColumnKPI({
         gridTemplateColumns="repeat(10, 1fr)"
         gridColumn="2 / span 8"
         background={slice?.primary?.background}
+        borderRadius={borderRadius}
+
       >
         <Box display="grid" padding="50px" fontFamily={fontFamily} textAlign="center" justifyItems={justifyItems} gridGap="14px" style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px">
           {subTitle && (
