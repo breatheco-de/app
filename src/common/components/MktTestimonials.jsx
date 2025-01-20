@@ -32,6 +32,10 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         fontWeight: '900',
         lineHeight: '16px',
       },
+      imageStyles: {
+        borderRadius: '50%',
+        margin: '0 auto',
+      },
     },
     v2: {
       textName: {
@@ -43,13 +47,33 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         borderRadius: '8px 8px 0 0',
         fontWeight: 400,
         lineHeight: '21.6px',
+        marginTop: '70px',
       },
       box: {
         width: '306px',
+        position: 'relative',
+        padding: '0px',
+      },
+      imageStyles: {
+        border: '2px solid #00041A',
+        position: 'absolute',
+        borderRadius: '50%',
+        top: '25px',
+        left: 'calc(50% - 35px)',
+      },
+      textDescription: {
+        height: '130px',
+        backgroundColor: '#FFFFFF',
+        borderRadius: '0 0 8px 8px',
+        padding: '0px 8px 0px 8px',
+        width: '306px',
+        fontSize: '12px',
+        textAlign: 'center',
+        lineHeight: '14.4px',
       },
     },
   };
-
+  console.log('**********', styles[version]);
   return (
     <Box
       height={{ md: '270px', base: '320px' }}
@@ -63,8 +87,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       flexShrink="0"
       {...styles[version]?.box}
     >
-      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={{ borderRadius: '50%', margin: '0 auto' }} />
-      {version === 'v2' ? <Image /> : null}
+      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={styles[version]?.imageStyles} />
       <Text
         marginTop="15px"
         size="md"
@@ -86,6 +109,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         lineHeight="14px"
         color={fontColor2}
         title={description}
+        style={styles[version]?.textDescription}
       >
         {`“${truncatedDescription}”`}
       </Text>
@@ -127,6 +151,16 @@ function MktTestimonials({
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
+  const stylesBox = {
+    v2: {
+      titlesStyles: {
+        fontSize: '38px',
+        lineHeight: '45.6px',
+        fontWeight: 400,
+      },
+    },
+  };
+
   return testimonialsArray && (
     <Flex
       flexDirection="column"
@@ -137,7 +171,7 @@ function MktTestimonials({
       {...rest}
     >
       {title && (
-        <Heading textAlign="center" as="h2" size="sm" marginBottom="20px">
+        <Heading textAlign="center" as="h2" size="sm" marginBottom="20px" style={stylesBox[version]?.titlesStyles}>
           {title}
         </Heading>
       )}
