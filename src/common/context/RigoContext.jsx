@@ -21,7 +21,7 @@ function RigoProvider({ children }) {
       }}
     >
       <Script
-        src="https://unpkg.com/rigobot-chat-bubble@0.0.63/dist/main.js"
+        src="https://unpkg.com/rigobot-chat-bubble@0.0.68/dist/main.js"
         onLoad={() => {
           window.rigo.init(process.env.RIGOBOT_HASH, {
             context: '',
