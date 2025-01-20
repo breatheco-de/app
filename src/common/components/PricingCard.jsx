@@ -23,7 +23,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const queryCoupon = getQueryString('coupon');
   const [coupon] = usePersistentBySession('coupon', []);
 
-  const courseCoupon = selfAppliedCoupon?.plan === item.plan_slug && selfAppliedCoupon;
+  const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
 
   const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
@@ -109,7 +109,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       },
     },
   };
-  const viewProps = item.price > 0 ? utilProps.premium : (utilProps?.[item?.planType] || utilProps.basic);
+  const viewProps = item?.price > 0 ? utilProps.premium : (utilProps?.[item?.planType] || utilProps.basic);
   const featuredInfo = item?.featured_info ? item?.featured_info : viewProps.featured_info;
   const isOriginalPlan = item?.planType === 'original';
   const color = viewProps?.color;
@@ -245,7 +245,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                       )}
                     </Flex>
                   )}
-                  {!isFetching && item.discount_text && (
+                  {!isFetching && item?.discount_text && (
                     <Box color={color} fontFamily="Space Grotesk Variable" fontSize="20px" textDecoration="line-through" textAlign="center">
                       {item.discount_text}
                     </Box>

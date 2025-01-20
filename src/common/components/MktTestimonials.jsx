@@ -96,6 +96,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       padding="15px"
       textAlign="center"
       borderColor={hexColor.borderColor}
+      backgroundColor="red"
       flexShrink="0"
       {...styles[version]?.box}
     >
