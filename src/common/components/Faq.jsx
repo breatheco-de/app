@@ -12,13 +12,13 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-function Faq({ items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
+function Faq({ title, items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
   const { hexColor } = useStyle();
 
   return (
     <Box position="relative" background={hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
       <Heading textAlign="center" margin="20px 0" {...headingStyle}>
-        FAQ
+        {title || 'FAQ'}
       </Heading>
       <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2} {...acordionContainerStyle}>
         {items.map((item, i) => (
@@ -45,12 +45,14 @@ Faq.propTypes = {
   headingStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   hideLastBorder: PropTypes.bool,
   highlightColor: PropTypes.string,
+  title: PropTypes.string,
 };
 Faq.defaultProps = {
   acordionContainerStyle: {},
   headingStyle: {},
   hideLastBorder: false,
   highlightColor: '',
+  title: '',
 };
 
 export default Faq;
