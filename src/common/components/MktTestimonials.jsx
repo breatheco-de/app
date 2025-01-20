@@ -15,36 +15,70 @@ import { lengthOfString } from '../../utils';
 import axios from '../../axios';
 import { BREATHECODE_HOST } from '../../utils/variables';
 
-function TestimonialBox({ picture, name, rating, description }) {
+function TestimonialBox({ picture, name, rating, description, version }) {
   const { fontColor2, backgroundColor, hexColor } = useStyle();
   const limit = 160;
   const descriptionLength = lengthOfString(description);
   const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
 
+  const styles = {
+    v1: {
+      box: {
+        background: backgroundColor,
+        border: '1px solid',
+        width: '250px',
+      },
+      textName: {
+        fontWeight: '900',
+        lineHeight: '16px',
+      },
+    },
+    v2: {
+      textName: {
+        height: '62px',
+        fontSize: '18px',
+        backgroundColor: '#CFEEFF',
+        pt: '24px',
+        pb: '16px',
+        borderRadius: '8px 8px 0 0',
+        fontWeight: 400,
+        lineHeight: '21.6px',
+      },
+      box: {
+        width: '306px',
+      },
+    },
+  };
+
   return (
     <Box
-      width="250px"
       height={{ md: '270px', base: '320px' }}
       display="flex"
       justifyContent="space-between"
       flexDirection="column"
-      background={backgroundColor}
       borderRadius="12px"
       padding="15px"
       textAlign="center"
-      border="1px solid"
       borderColor={hexColor.borderColor}
       flexShrink="0"
+      {...styles[version]?.box}
     >
       <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={{ borderRadius: '50%', margin: '0 auto' }} />
-      <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
+      {version === 'v2' ? <Image /> : null}
+      <Text
+        marginTop="15px"
+        size="md"
+        {...styles[version]?.textName}
+      >
         {name}
       </Text>
-      <StarRating
-        rating={rating}
-        margin="6px 0 0 0"
-        justifyContent="center"
-      />
+      {version === 'v1' ? (
+        <StarRating
+          rating={rating}
+          margin="6px 0 0 0"
+          justifyContent="center"
+        />
+      ) : null}
       <Text
         marginTop="10px"
         fontSize="var(--chakra-fontSizes-xs)"
@@ -64,6 +98,7 @@ function MktTestimonials({
   title,
   endpoint,
   testimonials,
+  version = 'v1',
   ...rest
 }) {
   const [testimonialsData, setTestimonialsData] = useState();
@@ -122,6 +157,7 @@ function MktTestimonials({
               name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
               rating={testimonial?.total_rating}
               description={testimonial?.comments}
+              version={version}
             />
           ))}
         </Box>
@@ -131,12 +167,14 @@ function MktTestimonials({
 }
 
 MktTestimonials.propTypes = {
+  version: PropTypes.string,
   title: PropTypes.string,
   endpoint: PropTypes.string,
   testimonials: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MktTestimonials.defaultProps = {
+  version: 'v1',
   title: null,
   endpoint: '',
   testimonials: null,

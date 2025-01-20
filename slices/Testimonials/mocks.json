@@ -1,34 +1,39 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "dead",
-        "type": "Text"
-      },
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "cow",
-        "type": "Text"
-      },
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "value": "girl",
-        "type": "Text"
-      },
-      "margin": {
-        "__TYPE__": "FieldContent",
-        "value": "missing",
-        "type": "Text"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "dead",
+				"type": "Text"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "cow",
+				"type": "Text"
+			},
+			"endpoint": {
+				"__TYPE__": "FieldContent",
+				"value": "girl",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "missing",
+				"type": "Text"
+			},
+			"version": {
+				"__TYPE__": "FieldContent",
+				"value": "vowel",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]

@@ -1573,6 +1573,16 @@ export interface TestimonialsSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * Version field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.primary.version
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  version: prismic.KeyTextField;
+
+  /**
    * Title field in *Testimonials → Primary*
    *
    * - **Field Type**: Text

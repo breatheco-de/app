@@ -47,7 +47,6 @@ function MktPartners({ id, title, titleSize, images, description, imagesContent,
       },
     },
   };
-  console.log('here', imagesContentStyles[imagesContent]);
   // const controls = useAnimation();
   // const observer = useRef();
   // const motionRef = useRef(false);

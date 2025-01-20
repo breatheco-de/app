@@ -13,24 +13,19 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
+        },
+        "version": {
+          "type": "Text",
+          "config": { "label": "Version", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
+          "config": { "label": "Title", "placeholder": "" }
         },
         "endpoint": {
           "type": "Text",
-          "config": {
-            "label": "Endpoint",
-            "placeholder": ""
-          }
+          "config": { "label": "Endpoint", "placeholder": "" }
         },
         "margin": {
           "type": "Text",
