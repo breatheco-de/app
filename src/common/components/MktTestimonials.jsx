@@ -31,6 +31,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       textName: {
         fontWeight: '900',
         lineHeight: '16px',
+        marginTop: '15px',
       },
       imageStyles: {
         borderRadius: '50%',
@@ -47,18 +48,19 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         borderRadius: '8px 8px 0 0',
         fontWeight: 400,
         lineHeight: '21.6px',
-        marginTop: '70px',
+        // marginTop: '70px',
       },
       box: {
         width: '306px',
         position: 'relative',
         padding: '0px',
+        marginTop: '45px',
       },
       imageStyles: {
         border: '2px solid #00041A',
         position: 'absolute',
         borderRadius: '50%',
-        top: '25px',
+        top: '-45px',
         left: 'calc(50% - 35px)',
       },
       imageBrand: {
@@ -68,13 +70,13 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         width: '59px',
         height: '19px',
         position: 'absolute',
-        bottom: '175px',
+        top: '-15px',
         left: '166px',
         padding: '4px',
         backgroundColor: '#EEF9FE',
       },
       textDescription: {
-        height: '130px',
+        height: '197px',
         backgroundColor: '#FFFFFF',
         borderRadius: '0 0 8px 8px',
         padding: '0px 8px 0px 8px',
@@ -105,14 +107,14 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         <Image
           name={`${name}-2`}
           alt={`${name} picture 2`}
-          src={picture}
+          src="https://cdn.worldvectorlogo.com/logos/globant-1.svg"
           width={65}
           height={65}
           style={styles[version]?.imageBrand}
         />
       ) : null }
       <Text
-        marginTop="15px"
+        // marginTop="15px"
         size="md"
         {...styles[version]?.textName}
       >

@@ -195,6 +195,33 @@ export type EventCardsSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Default variation for Faqs Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Record<string, never>,
+  never
+>;
+
+/**
+ * Slice variation for *Faqs*
+ */
+type FaqsSliceVariation = FaqsSliceDefault;
+
+/**
+ * Faqs Shared Slice
+ *
+ * - **API ID**: `faqs`
+ * - **Description**: Faqs
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqsSlice = prismic.SharedSlice<"faqs", FaqsSliceVariation>;
+
+/**
  * Primary content in *InfoCards → Primary*
  */
 export interface InfoCardsSliceDefaultPrimary {
@@ -2277,6 +2304,9 @@ declare module "@prismicio/client" {
       EventCardsSliceDefaultPrimary,
       EventCardsSliceVariation,
       EventCardsSliceDefault,
+      FaqsSlice,
+      FaqsSliceVariation,
+      FaqsSliceDefault,
       InfoCardsSlice,
       InfoCardsSliceDefaultPrimary,
       InfoCardsSliceVariation,
