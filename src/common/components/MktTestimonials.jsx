@@ -61,6 +61,18 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         top: '25px',
         left: 'calc(50% - 35px)',
       },
+      imageBrand: {
+        border: '2px solid none',
+        borderRadius: '16px',
+        margin: '10px auto',
+        width: '59px',
+        height: '19px',
+        position: 'absolute',
+        bottom: '175px',
+        left: '166px',
+        padding: '4px',
+        backgroundColor: '#EEF9FE',
+      },
       textDescription: {
         height: '130px',
         backgroundColor: '#FFFFFF',
@@ -88,6 +100,16 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       {...styles[version]?.box}
     >
       <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={styles[version]?.imageStyles} />
+      {version === 'v2' ? (
+        <Image
+          name={`${name}-2`}
+          alt={`${name} picture 2`}
+          src={picture}
+          width={65}
+          height={65}
+          style={styles[version]?.imageBrand}
+        />
+      ) : null }
       <Text
         marginTop="15px"
         size="md"
