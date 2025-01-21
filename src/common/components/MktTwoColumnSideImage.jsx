@@ -55,6 +55,8 @@ function MktTwoColumnSideImage({
   studentsAvatarsDescriptions,
   multiDescription,
   transparent,
+  marginTop,
+  marginBottom,
   ...rest
 }) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -150,7 +152,8 @@ function MktTwoColumnSideImage({
         padding={{ base: '20px 10px', md: '24px 0px' }}
         px={{ base: '10px', md: '2rem' }}
         gridGap={gridGap}
-        marginTop="20px"
+        marginTop={marginTop}
+        marginBottom={marginBottom}
         style={{
           direction: flexDirection[imagePosition],
         }}
@@ -310,6 +313,8 @@ MktTwoColumnSideImage.propTypes = {
   customSubTitleSize: PropTypes.string,
   multiDescription: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   transparent: PropTypes.bool,
+  marginTop: PropTypes.string,
+  marginBottom: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -346,6 +351,8 @@ MktTwoColumnSideImage.defaultProps = {
   customSubTitleSize: null,
   multiDescription: [],
   transparent: false,
+  marginTop: '',
+  marginBottom: '',
 };
 
 export default MktTwoColumnSideImage;

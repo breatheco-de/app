@@ -44,6 +44,9 @@ function OneColumn({ slice }) {
       justifyItems={slice?.primary?.justify_items}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}
+      marginTop={slice?.primary?.margin_top}
+      marginBottom={slice?.primary?.margin_bottom}
+      maxWidth={slice?.primary?.max_width}
       titleFontSize={slice?.primary?.title_font_size}
       descriptionFontSize={slice?.primary?.description_font_size}
       descriptionTextAlign={slice?.primary?.description_text_align}

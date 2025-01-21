@@ -39,6 +39,8 @@ function TwoColumn({ slice }) {
       studentsAvatarsDescriptions={slice?.primary?.student_avatar_description}
       multiDescription={slice?.items}
       transparent={slice?.primary?.transparent}
+      marginTop={slice?.primary?.margin_top}
+      marginBottom={slice?.primary?.margin_bottom}
     />
   );
 }

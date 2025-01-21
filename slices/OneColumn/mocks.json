@@ -159,6 +159,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "tales",
 				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "safe",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "word",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "kill",
+				"type": "Text"
 			}
 		},
 		"items": [

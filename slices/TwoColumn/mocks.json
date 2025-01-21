@@ -185,6 +185,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "success",
 				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "pie",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "here",
+				"type": "Text"
 			}
 		},
 		"items": [

@@ -7,6 +7,7 @@ import Faq from '../../src/common/components/Faq';
  * @param {FaqsProps}
  */
 function Faqs({ slice }) {
+  console.log("slice", slice)
   return (
     <Faq
       id={slice?.primary?.id_key}
@@ -17,6 +18,8 @@ function Faqs({ slice }) {
       titleColor={slice?.primary?.title_color}
       faqBackgroundColor={slice?.primary?.background_color}
       faqMarginBottom={slice?.primary?.margin_bottom}
+      maxWidth={slice?.primary?.max_width}
+      marginTop={slice?.primary?.margin_top}
       items={slice?.items}
     />
   );

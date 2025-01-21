@@ -62,19 +62,21 @@ function MktOneColumnKPI({
   descriptionFontSize,
   descriptionTextAlign,
   descriptionLineHeight,
+  marginBottom,
+  marginTop,
+  maxWidth,
   ...rest
 }) {
   const { fontColor2, hexColor } = useStyle();
-
   return (
     <Box background={slice?.primary?.background} borderRadius={borderRadius} {...rest}>
+      {/* maxWidth={maxWidth} margin={`${marginTop} auto ${marginBottom} auto`} */}
       <GridContainer
         id={id}
         gridTemplateColumns="repeat(10, 1fr)"
         gridColumn="2 / span 8"
         background={slice?.primary?.background}
         borderRadius={borderRadius}
-
       >
         <Box display="grid" padding="50px" fontFamily={fontFamily} textAlign="center" justifyItems={justifyItems} gridGap="14px" style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px">
           {subTitle && (
@@ -89,7 +91,7 @@ function MktOneColumnKPI({
               ))}
             </Box>
           )}
-          <Heading as="h2" size="m" style={{ fontSize: titleFontSize }} color={slice?.primary?.font_color} margin="0 0 2rem 0">
+          <Heading as="h2" size="m" style={{ fontSize: titleFontSize }} color={slice?.primary?.font_color || null} margin="0 0 2rem 0">
             {title}
           </Heading>
           {slice?.primary?.description ? (
@@ -155,6 +157,9 @@ MktOneColumnKPI.propTypes = {
   id: PropTypes.string,
   titleFontSize: PropTypes.string,
   descriptionFontSize: PropTypes.string,
+  marginBottom: PropTypes.string,
+  marginTop: PropTypes.string,
+  maxWidth: PropTypes.string,
 };
 
 MktOneColumnKPI.defaultProps = {
@@ -176,6 +181,9 @@ MktOneColumnKPI.defaultProps = {
   id: '',
   titleFontSize: null,
   descriptionFontSize: null,
+  marginBottom: '',
+  marginTop: '',
+  maxWidth: '',
 };
 
 export default MktOneColumnKPI;

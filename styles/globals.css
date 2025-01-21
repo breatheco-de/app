@@ -1,6 +1,7 @@
 :root {
   --heading-xxl: clamp(2.625rem, 2.6rem + 3vw, 4.375rem);  /* min 42px ---- max 70px */
   --heading-xl: clamp(2.1875rem, 1.74rem + 1.99vw, 3.125rem); /* min 35px ---- min 50px */
+  --heading-x: clamp(2.125rem, 1.5rem + 2.5vw, 3.125rem); /* min 34px ---- max 50px */
   --heading-l: clamp(1.875rem, 1.45rem + 2.29vw, 2.5rem); /* min 30px ---- max 40px */
   --heading-m: clamp(1.625rem, 1.3rem + 1.8vw, 2rem); /* min 26px ---- max 32px */
   --heading-sm: clamp(1.25rem, 1rem + 1.47vw, 1.625rem); /* min 20px ---- max 26px */

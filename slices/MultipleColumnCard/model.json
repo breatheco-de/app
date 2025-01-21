@@ -27,6 +27,18 @@
             "placeholder": "",
             "options": ["Lato", "Space Grotesk Variable"]
           }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
         }
       },
       "items": {

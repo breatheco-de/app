@@ -17,6 +17,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "Space Grotesk Variable",
 				"type": "Select"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "palace",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "becoming",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "leaving",
+				"type": "Text"
 			}
 		},
 		"items": [

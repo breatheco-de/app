@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-function MktMultipleColumnCard({ id, title, columns, fontFamily, ...rest }) {
+function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, marginTop, maxWidth, ...rest }) {
   const limitedColumns = columns.slice(0, 5);
   const { navbarBackground } = useStyle();
 
   return (
-    <Box textAlign="center" p={4} marginBottom="40px" {...rest}>
+    <Box maxWidth={maxWidth} textAlign="center" p={4} margin={`${marginTop} auto ${marginBottom || '40px'} auto`} {...rest}>
       {/* Título principal */}
       <Text fontSize="34px" fontWeight="bold" mb={6}>
         {title}
@@ -52,6 +52,9 @@ MktMultipleColumnCard.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
   columnBackground: PropTypes.string,
   fontFamily: PropTypes.string,
+  marginBottom: PropTypes.string,
+  marginTop: PropTypes.string,
+  maxWidth: PropTypes.string,
 };
 
 MktMultipleColumnCard.defaultProps = {
@@ -60,6 +63,9 @@ MktMultipleColumnCard.defaultProps = {
   columns: [],
   columnBackground: null,
   fontFamily: 'Lato',
+  marginTop: '',
+  marginBottom: '',
+  maxWidth: '',
 };
 
 export default MktMultipleColumnCard;

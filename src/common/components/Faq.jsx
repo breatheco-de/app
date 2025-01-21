@@ -25,6 +25,8 @@ function Faq({ id,
   titleColor,
   faqBackgroundColor,
   faqMarginBottom,
+  maxWidth,
+  marginTop,
   itemLabelColor,
   labelWeight,
   labelFontSize,
@@ -32,9 +34,10 @@ function Faq({ id,
 
   ...rest }) {
   const { hexColor } = useStyle();
+  console.log('HEADINGSTYLE', headingStyle);
   return (
-    <Box position="relative" marginBottom={faqMarginBottom} background={faqBackgroundColor || hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
-      <Heading textAlign="center" margin="20px 0" {...headingStyle} color={titleColor} fontSize={titleFontSize || headingStyle.fontSize} lineHeight={titleLineHeight} fontWeight={titleFontWeight}>
+    <Box position="relative" maxWidth={maxWidth} margin={`${marginTop} auto ${faqMarginBottom} auto`} background={faqBackgroundColor || hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
+      <Heading textAlign="center" margin="20px 0" {...headingStyle} color={titleColor} lineHeight={titleLineHeight} fontWeight={titleFontWeight}>
         {title || 'FAQ'}
       </Heading>
       <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2} {...acordionContainerStyle}>
@@ -42,7 +45,7 @@ function Faq({ id,
           <AccordionItem key={item.label} borderTop="none" borderBottom={(hideLastBorder && items.length - 1 > i) ? '1px solid #DADADA' : '0px'}>
             <AccordionButton padding="20px 10px 10px 10px" _expanded={{ color: highlightColor }}>
               <Box as="span" flex="1" textAlign="left">
-                <Heading size={labelFontSize || 'sm'} color={itemLabelColor} weight={labelWeight} lineHeight={labelLineHeight}>
+                <Heading as="h4" size={labelFontSize || 'sm'} color={itemLabelColor} fontWeight={labelWeight} lineHeight={labelLineHeight}>
                   {item.label}
                 </Heading>
               </Box>
@@ -70,6 +73,8 @@ Faq.propTypes = {
   titleColor: PropTypes.string,
   faqBackgroundColor: PropTypes.string,
   faqMarginBottom: PropTypes.string,
+  maxWidth: PropTypes.string,
+  marginTop: PropTypes.string,
   itemLabelColor: PropTypes.string,
   labelWeight: PropTypes.string,
   labelFontSize: PropTypes.string,
@@ -88,10 +93,12 @@ Faq.defaultProps = {
   titleColor: '',
   faqBackgroundColor: '',
   faqMarginBottom: '',
-  itemLabelColor: '#01455E',
-  labelWeight: 700,
-  labelFontSize: '24px',
-  labelLineHeight: '28.8px',
+  maxWidth: '',
+  marginTop: '',
+  itemLabelColor: '',
+  labelWeight: '',
+  labelFontSize: '',
+  labelLineHeight: '',
 };
 
 export default Faq;

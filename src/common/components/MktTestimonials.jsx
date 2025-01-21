@@ -88,6 +88,8 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         textAlign: 'center',
         lineHeight: '14.4px',
         marginTop: '0',
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
       },
     },
   };

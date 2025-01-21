@@ -42,6 +42,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "tune",
 				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "universe",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "some",
+				"type": "Text"
 			}
 		},
 		"items": [

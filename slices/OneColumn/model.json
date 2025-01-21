@@ -15,6 +15,18 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
         "border_radius": {
           "type": "Text",
           "config": { "label": "Border Radius", "placeholder": "" }
