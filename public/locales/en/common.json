@@ -164,6 +164,7 @@
     "open-locally": "Open locally on your computer",
     "start-asset": "Start interactive {{asset_type}}",
     "continue-working": "Continue working",
+    "continue-asset": "Continue this {{asset_type}}",
     "asset_types": {
       "project": "project",
       "exercise": "exercise"
@@ -219,6 +220,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -278,6 +280,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -337,6 +340,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",

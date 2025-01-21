@@ -160,6 +160,7 @@
     "open-locally": "Abrir localmente en tu computadora",
     "start-asset": "Empezar {{asset_type}} interactivo",
     "continue-working": "Continúa trabajando",
+    "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
       "exercise": "ejercicio"
@@ -217,6 +218,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -276,6 +278,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -335,6 +338,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",

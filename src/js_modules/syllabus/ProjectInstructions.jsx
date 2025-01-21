@@ -65,7 +65,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
   const [vendors, setVendors] = useState([]);
   const { currentTask } = useModuleHandler();
@@ -134,7 +134,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
       )}
       {startWithLearnpack ? (
         <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {isExerciseStated ? t('common:learnpack.continue-working') : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
@@ -161,7 +162,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -235,6 +236,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={variant}
+                isStarted={isStarted}
               />
             </Box>
           </Box>
@@ -279,6 +281,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             startWithLearnpack={startWithLearnpack}
             isForOpenLocaly={isForOpenLocaly}
             variant={variant}
+            isStarted={isStarted}
           />
         </Box>
       </Box>
@@ -290,11 +293,13 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
 ProjectInstructions.propTypes = {
   variant: PropTypes.string,
   handleStartLearnpack: PropTypes.func.isRequired,
+  isStarted: PropTypes.bool,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 ProjectInstructions.defaultProps = {
   variant: null,
   currentAsset: null,
+  isStarted: false,
 };
 
 ProvisioningPopover.propTypes = {
