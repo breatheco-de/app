@@ -1,34 +1,43 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "fewer",
-        "type": "Text"
-      },
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "pictured",
-        "type": "Text"
-      },
-      "endpoint": {
-        "__TYPE__": "FieldContent",
-        "value": "carried",
-        "type": "Text"
-      },
-      "margin": {
-        "__TYPE__": "FieldContent",
-        "value": "continent",
-        "type": "Text"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "fewer",
+				"type": "Text"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "pictured",
+				"type": "Text"
+			},
+			"endpoint": {
+				"__TYPE__": "FieldContent",
+				"value": "carried",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "continent",
+				"type": "Text"
+			},
+			"tech_filtered": {
+				"__TYPE__": "FieldContent",
+				"value": "swam",
+				"type": "Text"
+			},
+			"show_checked_in_events": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]

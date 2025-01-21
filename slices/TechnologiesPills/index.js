@@ -12,6 +12,8 @@ const TechnologiesPills = ({ slice }) => (
     id={slice?.primary?.id_key}
     technologies={slice?.primary?.technologies}
     margin={slice?.primary?.margin || '15px 0 0 0'}
+    background={slice.primary.background}
+    paddingTop={slice.primary.padding_top}
   />
 );
 

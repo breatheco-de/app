@@ -2,12 +2,12 @@
 import { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Container, Box,
+  Container, Box, useColorModeValue,
 } from '@chakra-ui/react';
 import Text from './Text';
 import CustomTheme from '../../../styles/theme';
 
-function MktTechnologiesPills({ id, technologies, ...rest }) {
+function MktTechnologiesPills({ id, technologies, background, ...rest }) {
   const ref = useRef();
   const [isDown, setIsDown] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -46,12 +46,14 @@ function MktTechnologiesPills({ id, technologies, ...rest }) {
   };
 
   return (
-    <Container maxW="container.xl" px={{ base: '10px', md: '2rem' }} id={id} width="100%" overflowX="hidden" {...rest}>
+    <Container maxW="100%" px={{ base: '10px', md: '2rem' }} id={id} width="100%" overflowX="hidden" background={useColorModeValue(background)} {...rest}>
       <Box
         ref={ref}
         width="100%"
         height="32px"
         display="flex"
+        maxW="container.xl"
+        margin="0 auto"
         gridGap="20px"
         justifyContent="space-between"
         overflowX="hidden"
@@ -90,11 +92,13 @@ function MktTechnologiesPills({ id, technologies, ...rest }) {
 
 MktTechnologiesPills.propTypes = {
   technologies: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  background: PropTypes.string,
   id: PropTypes.string,
 };
 
 MktTechnologiesPills.defaultProps = {
   technologies: [],
+  background: '',
   id: '',
 };
 
