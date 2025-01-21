@@ -22,6 +22,7 @@ import UndoApprovalModal from '../UndoApprovalModal';
 import useAuth from '../../hooks/useAuth';
 import { error } from '../../../utils/logging';
 import { reportDatalayer } from '../../../utils/requests';
+import { getBrowserInfo } from '../../../utils';
 
 export const stages = {
   initial: 'initial',
@@ -149,6 +150,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         action_type: status,
         task_id: currentTask?.id,
         user_id: user.id,
+        agent: getBrowserInfo(),
       },
     });
     setStage(stages.approve_or_reject_code_revision);
@@ -245,6 +247,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
       reportDatalayer({
         dataLayer: {
           ...dataToReport,
+          agent: getBrowserInfo(),
         },
       });
     }
@@ -286,6 +289,7 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         action_type: reviewStatus,
         task_id: currentTask?.id,
         user_id: user.id,
+        agent: getBrowserInfo(),
       },
     });
 

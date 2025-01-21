@@ -82,32 +82,12 @@ function ShowPrices({
   const { t } = useTranslation('profile');
   const { hexColor, fontColor, disabledColor, featuredColor } = useStyle();
   const router = useRouter();
-  const { getPriceWithDiscount, state } = useSignup();
+  const { getPriceWithDiscount, state, applyDiscountCouponsToPlans } = useSignup();
   const { selfAppliedCoupon } = state;
 
-  const applyDiscountCoupons = (pricingList) => {
-    if (selfAppliedCoupon) {
-      return pricingList.map((item) => {
-        const { price } = item;
-        if (price > 0) {
-          const discountOperation = getPriceWithDiscount(price, selfAppliedCoupon);
-
-          return {
-            ...item,
-            price: discountOperation.price,
-            priceText: item.priceText.replace(item.price, discountOperation.price),
-            lastPrice: item.priceText,
-          };
-        }
-        return item;
-      });
-    }
-    return pricingList;
-  };
-
   const tiersTypes = {
-    subscriptions: applyDiscountCoupons(list) || data?.pricing.list || [],
-    finance: applyDiscountCoupons(finance) || data?.pricing.finance || [],
+    subscriptions: applyDiscountCouponsToPlans(list, selfAppliedCoupon) || data?.pricing.list || [],
+    finance: applyDiscountCouponsToPlans(finance, selfAppliedCoupon) || data?.pricing.finance || [],
   };
 
   const allTiers = [...tiersTypes.subscriptions, ...tiersTypes.finance];

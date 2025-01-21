@@ -12,6 +12,7 @@ import Icon from './Icon';
 import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
+import { getBrowserInfo } from '../../utils';
 
 function ShareButton({
   variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask, onClose,
@@ -109,6 +110,7 @@ function ShareButton({
                           method: l.name,
                           content_type: currentTask?.task_type || 'CERTIFICATE',
                           item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                          agent: getBrowserInfo(),
                         },
                       });
                       if (l.target === 'popup') window.open(l.href, 'popup', 'width=600,height=600,scrollbars=no,resizable=no');
@@ -139,6 +141,7 @@ function ShareButton({
                         method: 'copy',
                         content_type: currentTask?.task_type || 'CERTIFICATE',
                         item_id: currentTask?.associated_slug || 'CERTIFICATE',
+                        agent: getBrowserInfo(),
                       },
                     });
                     onCopy();

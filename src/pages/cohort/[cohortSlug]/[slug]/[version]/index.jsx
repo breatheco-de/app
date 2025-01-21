@@ -22,6 +22,7 @@ import {
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
   isValidDate,
+  getBrowserInfo,
 } from '../../../../../utils/index';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -317,6 +318,7 @@ function Dashboard() {
             method: 'native',
             plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
             subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            agent: getBrowserInfo(),
           },
         });
       });
@@ -381,6 +383,7 @@ function Dashboard() {
           dataLayer: {
             current_cohort_id: cohort.id,
             current_cohort_slug: cohort.slug,
+            agent: getBrowserInfo(),
           },
         });
       }

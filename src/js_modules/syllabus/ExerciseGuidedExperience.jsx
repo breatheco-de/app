@@ -3,7 +3,7 @@ import { Box, Button } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
-import { intervalToHours } from '../../utils';
+import { intervalToHours, getBrowserInfo } from '../../utils';
 import ProjectInstructions from './ProjectInstructions';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
@@ -53,7 +53,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
 
       const totalHours = workoutSession.reduce((acum, elem) => {
         const startedAt = elem.started_at;
-        const endedAt = elem.ended_at || lastInteractionAt;
+        const endedAt = elem.ended_at || lastInteractionAt || elem.started_at;
 
         const duration = intervalToDuration({
           start: new Date(startedAt),
@@ -98,6 +98,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
     dataLayer: {
       event: 'open_learnpack_instructions',
       asset_slug: currentAsset?.slug,
+      agent: getBrowserInfo(),
     },
   });
 

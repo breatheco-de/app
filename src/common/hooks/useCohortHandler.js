@@ -5,7 +5,7 @@ import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
-import { getStorageItem } from '../../utils';
+import { getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortAction from '../store/actions/cohortAction';
 import { processRelatedAssignments } from '../handlers/cohorts';
 import { reportDatalayer } from '../../utils/requests';
@@ -377,6 +377,7 @@ function useCohortHandler() {
             task_associated_slug: task.associated_slug,
             task_type: task.task_type,
             task_revision_status: task.revision_status,
+            agent: getBrowserInfo(),
           },
         });
         toast({

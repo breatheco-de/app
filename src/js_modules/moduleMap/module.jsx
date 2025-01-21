@@ -14,6 +14,9 @@ import ModuleComponent from '../../common/components/Module';
 import bc from '../../common/services/breathecode';
 import ShareButton from '../../common/components/ShareButton';
 import Icon from '../../common/components/Icon';
+import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
+// import { usePersistent } from '../../common/hooks/usePersistent';
 
 function Module({
   data, currIndex, isDisabled, onDisabledClick, variant,
@@ -131,6 +134,18 @@ function Module({
   const changeStatusAssignment = async (event, task, taskStatus) => {
     if (currentTask?.slug || currentTask?.associated_slug) {
       event.preventDefault();
+      reportDatalayer({
+        dataLayer: {
+          event: 'assignment_status_updated',
+          task_status: taskStatus,
+          task_id: task.id,
+          task_title: task.title,
+          task_associated_slug: task.associated_slug,
+          task_type: task.task_type,
+          task_revision_status: task.revision_status,
+          agent: getBrowserInfo(),
+        },
+      });
       setUpdatedTask({
         ...task,
       });

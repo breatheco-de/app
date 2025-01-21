@@ -141,7 +141,7 @@
     "how-to-deliver-text": "Envíe una URL de Github que apunte a su proyecto como un repositorio de Github. <a class='link' target='blank' href='{{link}}'>Cómo entregar proyectos</a>",
     "handler-text": "Entregar proyecto",
     "mandatory-message": "Parece que necesitas completar al menos {{count}} proyectos abiertos antes de poder obtener tu certificado.",
-    "deliver-confirm": "Confirmo que esta entrega es completamente mi propio trabajo y entiendo las consecuencias de violar los términos y condiciones de la academia.",
+    "deliver-confirm": "Confirmo que esta entrega es completamente mi propio trabajo y entiendo las consecuencias de violar los términos y condiciones.",
     "see-mandatory-projects": " Ver proyectos obligatorios",
     "file-upload": "Sube uno o más archivos con un máximo de 10 MB en los siguientes formatos: ",
     "error-file-format": "El formato de archivo es incorrecto.",

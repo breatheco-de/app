@@ -145,7 +145,7 @@ function FilterModal({
               title={t('technologies')}
               t={t}
               handleToggle={handleToggle}
-              technologyTags={technologyTags}
+              technologyTags={technologyTags.filter((tech) => tech.sort_priority <= 2)}
               commonTextColor={lightColor}
               getCheckboxProps={getCheckboxProps}
               commonBorderColor={borderColor}
@@ -170,29 +170,35 @@ function FilterModal({
               />
             )}
 
-            <Flex flexDirection="row" justifyContent="space-between">
-              <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
-                {t('only-video-tutorials')}
-              </Text>
+            {/* <------------------- Video tutorials section -------------------> */}
+            {isWindow
+            && !window.location.pathname.includes('/lessons')
+            && !window.location.pathname.includes('/how-to')
+            && (
+              <Flex flexDirection="row" justifyContent="space-between">
+                <Text fontSize="1rem" fontWeight="bold" textTransform="uppercase" color={lightColor} padding="20px 0">
+                  {t('only-video-tutorials')}
+                </Text>
 
-              <Box
-                as="button"
-                margin="20px 0"
-                color="blue.default"
-                cursor="pointer"
-                fontSize="14px"
-              >
                 <Box
-                  as="span"
-                  onClick={() => setWithVideo(!withVideo)}
-                  width="40px"
-                  position="absolute"
-                  height="26px"
-                  zIndex="10"
-                />
-                <Switch size="md" zIndex="0" isChecked={withVideo} />
-              </Box>
-            </Flex>
+                  as="button"
+                  margin="20px 0"
+                  color="blue.default"
+                  cursor="pointer"
+                  fontSize="14px"
+                >
+                  <Box
+                    as="span"
+                    onClick={() => setWithVideo(!withVideo)}
+                    width="40px"
+                    position="absolute"
+                    height="26px"
+                    zIndex="10"
+                  />
+                  <Switch size="md" zIndex="0" isChecked={withVideo} />
+                </Box>
+              </Flex>
+            )}
           </Box>
         </ModalBody>
         <ModalFooter

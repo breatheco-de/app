@@ -4,7 +4,7 @@ import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import bc from '../services/breathecode';
-import { decodeBase64, getStorageItem, unSlugifyCapitalize } from '../../utils';
+import { decodeBase64, getStorageItem, unSlugifyCapitalize, getBrowserInfo } from '../../utils';
 import ReviewModal from './ReviewModal';
 import Icon from './Icon';
 import Text from './Text';
@@ -79,6 +79,7 @@ function Feedback({ storyConfig }) {
           event: 'feedback_list_view',
           feedback_count: codeRevisions.length,
           user_id: user.id,
+          agent: getBrowserInfo(),
         },
       });
     }
