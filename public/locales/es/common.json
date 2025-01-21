@@ -159,6 +159,7 @@
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
     "start-asset": "Empezar {{asset_type}} interactivo",
+    "continue-working": "Continúa trabajando",
     "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
