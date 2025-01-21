@@ -1,17 +1,27 @@
+import PropTypes from 'prop-types';
+import React from 'react';
+import Faq from '../../src/common/components/Faq';
 /**
  * @typedef {import("@prismicio/client").Content.FaqsSlice} FaqsSlice
  * @typedef {import("@prismicio/react").SliceComponentProps<FaqsSlice>} FaqsProps
  * @param {FaqsProps}
  */
-const Faqs = ({ slice }) => {
+function Faqs({ slice }) {
   return (
-    <section
-      data-slice-type={slice.slice_type}
-      data-slice-variation={slice.variation}
-    >
-      Placeholder component for faqs (variation: {slice.variation}) Slices
-    </section>
+    <Faq
+      id={slice?.primary?.id_key}
+      title={slice?.primary?.title}
+      items={slice?.primary?.items}
+    />
   );
+}
+
+Faqs.propTypes = {
+  slice: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+};
+
+Faqs.defaultProps = {
+  slice: {},
 };
 
 export default Faqs;

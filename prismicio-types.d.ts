@@ -6,6 +6,7 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | FaqsSlice
   | PricingCardsSlice
   | MultipleColumnCardSlice
   | InfoCardsSlice
@@ -195,6 +196,56 @@ export type EventCardsSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *Faqs → Primary*
+ */
+export interface FaqsSliceDefaultPrimary {
+  /**
+   * Title field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Id key field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.id_key
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  id_key: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Faqs → Items*
+ */
+export interface FaqsSliceDefaultItem {
+  /**
+   * Label field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Answer field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].answer
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  answer: prismic.KeyTextField;
+}
+
+/**
  * Default variation for Faqs Slice
  *
  * - **API ID**: `default`
@@ -203,8 +254,8 @@ export type EventCardsSlice = prismic.SharedSlice<
  */
 export type FaqsSliceDefault = prismic.SharedSliceVariation<
   "default",
-  Record<string, never>,
-  never
+  Simplify<FaqsSliceDefaultPrimary>,
+  Simplify<FaqsSliceDefaultItem>
 >;
 
 /**
@@ -2305,6 +2356,8 @@ declare module "@prismicio/client" {
       EventCardsSliceVariation,
       EventCardsSliceDefault,
       FaqsSlice,
+      FaqsSliceDefaultPrimary,
+      FaqsSliceDefaultItem,
       FaqsSliceVariation,
       FaqsSliceDefault,
       InfoCardsSlice,

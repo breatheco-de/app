@@ -55,6 +55,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         position: 'relative',
         padding: '0px',
         marginTop: '45px',
+        // height: '253px',
       },
       imageStyles: {
         border: '2px solid #00041A',

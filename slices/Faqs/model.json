@@ -10,7 +10,27 @@
       "docURL": "...",
       "version": "initial",
       "description": "Default",
-      "imageUrl": ""
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        }
+      },
+      "items": {
+        "label": {
+          "type": "Text",
+          "config": { "label": "Label", "placeholder": "" }
+        },
+        "answer": {
+          "type": "Text",
+          "config": { "label": "Answer", "placeholder": "" }
+        }
+      }
     }
   ]
 }

@@ -8,9 +8,9 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, ...rest }) {
   const { navbarBackground } = useStyle();
 
   return (
-    <Box textAlign="center" p={4} {...rest}>
+    <Box textAlign="center" p={4} marginBottom="40px" {...rest}>
       {/* Título principal */}
-      <Text fontSize="25px" fontWeight="bold" mb={6}>
+      <Text fontSize="34px" fontWeight="bold" mb={6}>
         {title}
       </Text>
 

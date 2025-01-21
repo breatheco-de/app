@@ -121,6 +121,11 @@ function MktOneColumnKPI({
               margin="2rem 0 0 0"
               backgroundColor={buttonBackgroundColor}
               fontSize={buttonFontSize}
+              _hover={{
+                backgroundColor: 'white',
+                textDecoration: 'none',
+                color: '#0084FF',
+              }}
             >
               {buttonLabel}
             </Link>

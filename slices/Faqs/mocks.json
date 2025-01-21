@@ -2,7 +2,40 @@
 	{
 		"__TYPE__": "SharedSliceContent",
 		"variation": "default",
-		"primary": {},
-		"items": []
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "did",
+				"type": "Text"
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "mostly",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": [
+					[
+						"label",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "push",
+							"type": "Text"
+						}
+					],
+					[
+						"answer",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "discovery",
+							"type": "Text"
+						}
+					]
+				]
+			}
+		]
 	}
 ]

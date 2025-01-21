@@ -92,6 +92,7 @@ function MktPartners({ id, title, titleSize, images, description, imagesContent,
           textAlign="center"
           mb="1rem"
           style={{ fontSize: titleSize }}
+          mt="80px"
         >
           {title}
         </Heading>

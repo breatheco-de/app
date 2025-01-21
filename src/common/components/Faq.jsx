@@ -12,9 +12,9 @@ import Heading from './Heading';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
 
-function Faq({ title, items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
+function Faq({ id, title, items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
   const { hexColor } = useStyle();
-
+  console.log('//////////////', items);
   return (
     <Box position="relative" background={hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
       <Heading textAlign="center" margin="20px 0" {...headingStyle}>
@@ -46,6 +46,7 @@ Faq.propTypes = {
   hideLastBorder: PropTypes.bool,
   highlightColor: PropTypes.string,
   title: PropTypes.string,
+  id: PropTypes.string,
 };
 Faq.defaultProps = {
   acordionContainerStyle: {},
@@ -53,6 +54,7 @@ Faq.defaultProps = {
   hideLastBorder: false,
   highlightColor: '',
   title: '',
+  id: '',
 };
 
 export default Faq;
