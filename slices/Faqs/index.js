@@ -11,7 +11,7 @@ function Faqs({ slice }) {
     <Faq
       id={slice?.primary?.id_key}
       title={slice?.primary?.title}
-      items={slice?.primary?.items}
+      items={slice?.items}
     />
   );
 }

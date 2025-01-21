@@ -55,6 +55,8 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         position: 'relative',
         padding: '0px',
         marginTop: '45px',
+        justifyContent: 'start',
+        height: 'auto',
         // height: '253px',
       },
       imageStyles: {
@@ -77,14 +79,15 @@ function TestimonialBox({ picture, name, rating, description, version }) {
         backgroundColor: '#EEF9FE',
       },
       textDescription: {
-        height: '197px',
+        // height: '197px',
         backgroundColor: '#FFFFFF',
         borderRadius: '0 0 8px 8px',
-        padding: '0px 8px 0px 8px',
+        padding: '8px',
         width: '306px',
         fontSize: '12px',
         textAlign: 'center',
         lineHeight: '14.4px',
+        marginTop: '0',
       },
     },
   };

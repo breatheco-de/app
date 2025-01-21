@@ -14,14 +14,13 @@ import useStyle from '../hooks/useStyle';
 
 function Faq({ id, title, items, hideLastBorder, headingStyle, highlightColor, acordionContainerStyle, ...rest }) {
   const { hexColor } = useStyle();
-  console.log('//////////////', items);
   return (
     <Box position="relative" background={hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
       <Heading textAlign="center" margin="20px 0" {...headingStyle}>
         {title || 'FAQ'}
       </Heading>
       <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2} {...acordionContainerStyle}>
-        {items.map((item, i) => (
+        {items?.map((item, i) => (
           <AccordionItem key={item.label} borderTop="none" borderBottom={(hideLastBorder && items.length - 1 > i) ? '1px solid #DADADA' : '0px'}>
             <AccordionButton padding="20px 10px 10px 10px" _expanded={{ color: highlightColor }}>
               <Box as="span" flex="1" textAlign="left">
