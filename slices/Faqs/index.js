@@ -11,6 +11,12 @@ function Faqs({ slice }) {
     <Faq
       id={slice?.primary?.id_key}
       title={slice?.primary?.title}
+      titleFontSize={slice?.primary?.title_font_size}
+      titleLineHeight={slice?.primary?.title_line_height}
+      titleFontWeight={slice?.primary?.title_font_weight}
+      titleColor={slice?.primary?.title_color}
+      faqBackgroundColor={slice?.primary?.background_color}
+      faqMarginBottom={slice?.primary?.margin_bottom}
       items={slice?.items}
     />
   );

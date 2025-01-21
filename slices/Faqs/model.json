@@ -16,9 +16,33 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "background_color": {
+          "type": "Text",
+          "config": { "label": "Background Color", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
         "id_key": {
           "type": "Text",
           "config": { "label": "Id key", "placeholder": "" }
+        },
+        "title_font_size": {
+          "type": "Text",
+          "config": { "label": "Title Font Size", "placeholder": "" }
+        },
+        "title_line_height": {
+          "type": "Text",
+          "config": { "label": "Title Line Height", "placeholder": "" }
+        },
+        "title_font_weight": {
+          "type": "Text",
+          "config": { "label": "Title Font Weight", "placeholder": "" }
+        },
+        "title_color": {
+          "type": "Text",
+          "config": { "label": "Title Color", "placeholder": "" }
         }
       },
       "items": {
@@ -29,6 +53,22 @@
         "answer": {
           "type": "Text",
           "config": { "label": "Answer", "placeholder": "" }
+        },
+        "label_color": {
+          "type": "Color",
+          "config": { "label": "Label Color", "placeholder": "" }
+        },
+        "label_weight": {
+          "type": "Text",
+          "config": { "label": "Label Weight", "placeholder": "" }
+        },
+        "label_font_size": {
+          "type": "Text",
+          "config": { "label": "Label Font Size", "placeholder": "" }
+        },
+        "label_line_height": {
+          "type": "Text",
+          "config": { "label": "Label Line Height", "placeholder": "" }
         }
       }
     }

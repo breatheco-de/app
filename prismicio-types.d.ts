@@ -210,6 +210,26 @@ export interface FaqsSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Background Color field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.background_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background_color: prismic.KeyTextField;
+
+  /**
+   * Margin Bottom field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
+
+  /**
    * Id key field in *Faqs → Primary*
    *
    * - **Field Type**: Text
@@ -218,6 +238,46 @@ export interface FaqsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   id_key: prismic.KeyTextField;
+
+  /**
+   * Title Font Size field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_font_size: prismic.KeyTextField;
+
+  /**
+   * Title Line Height field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_line_height: prismic.KeyTextField;
+
+  /**
+   * Title Font Weight field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_font_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_font_weight: prismic.KeyTextField;
+
+  /**
+   * Title Color field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_color: prismic.KeyTextField;
 }
 
 /**
@@ -243,6 +303,46 @@ export interface FaqsSliceDefaultItem {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   answer: prismic.KeyTextField;
+
+  /**
+   * Label Color field in *Faqs → Items*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  label_color: prismic.ColorField;
+
+  /**
+   * Label Weight field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_weight: prismic.KeyTextField;
+
+  /**
+   * Label Font Size field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_font_size: prismic.KeyTextField;
+
+  /**
+   * Label Line Height field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_line_height: prismic.KeyTextField;
 }
 
 /**
