@@ -172,7 +172,7 @@
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
       "title": "Open in the cloud",
-      "description": "We take care of <a class=\"link\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
+      "description": "We take care of <a class=\"link\" target=\"_blank\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
       "type": "dropdown"
     },
     "clone-title": "How to clone a project?",
@@ -425,9 +425,19 @@
   },
   "upgrade": "Upgrade",
   "go-back": "Go back",
+  "go-back-option": "Select other option",
+  "go-back-os": "Select other operating system",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "By entering your data you will unlock the interactive content of \"{{title}}\" and many more",
   "coming-soon": "Coming soon",
+  "option-open-locally": "Open locally on your computer",
+  "option-provisioning-vendors": "Open on the cloud (recommended)",
+  "option-readme": "Readme only",
+  "choose-one-option": "Choose one of these options",
+  "choose-one-description": "You can choose one of the following options to start your project.",
+  "read-me-explanation": "A README is a file that explains simply and clearly what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or contribute to the project.",
+  "read-me-title": "Read the content of the readme",
+  "read-me-button": "Take me to the readme!",
   "validators": {
     "owner_name-required": "Owner name is required",
     "owner_name-min": "Owner name is too short",
