@@ -203,17 +203,17 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
           my_revisions: data.filter((revision) => revision?.reviewer?.username === user?.email),
         }));
       } else {
-        throw new Error(data?.detail);
+        toast({
+          title: t('alert-message:something-went-wrong'),
+          description: `Cannot get code revisions: ${data.Error}`,
+          status: 'error',
+          duration: 5000,
+          position: 'top',
+          isClosable: true,
+        });
       }
     } catch (errorMsg) {
-      toast({
-        title: t('alert-message:something-went-wrong'),
-        description: `Cannot get code revisions: ${errorMsg}`,
-        status: 'error',
-        duration: 5000,
-        position: 'top',
-        isClosable: true,
-      });
+      console.log(errorMsg);
     } finally {
       setLoaders((prevState) => ({
         ...prevState,
