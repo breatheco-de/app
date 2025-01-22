@@ -90,13 +90,14 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     }
   }, [cohortSession]);
 
+  const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
   if (variant === 'extra-small') {
     return (
       <>
-        <Box background="blue.default" padding="8px" borderRadius="8px" display="flex" alignItems="center" gap="10px">
+        <Box background="blue.default" borderRadius="8px" display="flex" alignItems="center" gap="10px">
           {(startWithLearnpack) && (
             <Icon icon="learnpack" />
           )}
@@ -164,7 +165,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
     <>
       <Box background="blue.1100" borderRadius="11px" padding="16px">
         <Box display="flex" gap="16px">
-          {!isExternalExercise && <Icon icon="learnpack" width="102px" height="102px" />}
+          {(!isExternalExercise || !isInteractive) && <Icon icon="learnpack" width="102px" height="102px" />}
           <Box>
             <Heading size="xsm" mb="15px" color="white">
               {!isExternalExercise ? t('common:learnpack.title') : t('common:external.title')}

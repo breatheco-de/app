@@ -232,7 +232,7 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
 }
 
 function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors }) {
-  const { t } = useTranslation('syllabus');
+  const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const { featuredLight, hexColor } = useStyle();
@@ -295,8 +295,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   useEffect(() => {
     const options = [
-      isForOpenLocaly && { key: 'open_locally', label: t('common:option-open-locally') },
       showProvisioningLinks && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
+      isForOpenLocaly && { key: 'open_locally', label: t('common:option-open-locally') },
       onlyReadme && { key: 'readme', label: t('common:option-readme') },
     ].filter(Boolean);
 
@@ -308,7 +308,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     }
 
     setSelectedOption(null);
-  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme]);
+  }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
 
   //__content displayed in the modal__
   const renderOptionContent = () => {
@@ -368,9 +368,20 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                       {availableOptions.map((option) => (
                         <Button
                           key={option.key}
-                          onClick={() => setSelectedOption(option.key)}
-                          marginY="8px"
+                          display="flex"
+                          marginY="auto"
+                          margin="10px auto"
+                          textTransform="uppercase"
                           width="100%"
+                          flexDirection="row"
+                          gridGap="10px"
+                          fontSize="12px"
+                          alignItems="center"
+                          justifyContent="center"
+                          style={{
+                            color: 'currentColor',
+                          }}
+                          onClick={() => setSelectedOption(option.key)}
                         >
                           {option.label}
                           <Icon icon="longArrowRight" marginLeft="8px" />
