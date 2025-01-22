@@ -256,7 +256,17 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
 
-  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: isInteractive ? urlToClone : templateUrl }, { returnObjects: true });
+  function getFinalUrl() {
+    if (isInteractive) {
+      return urlToClone;
+    }
+    if (templateUrl === 'self') {
+      return urlToClone;
+    }
+    return templateUrl;
+  }
+
+  const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: getFinalUrl() }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
   const projectReadme = t('common:learnpack.clone-modal.project-readme', {}, { returnObjects: true });
