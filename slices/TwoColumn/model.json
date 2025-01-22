@@ -23,6 +23,21 @@
             "options": ["Small", "Medium", "Large"]
           }
         },
+        "border_radius": {
+          "type": "Text",
+          "config": { "label": "Border Radius", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "margin": {
+          "type": "Text",
+          "config": {
+            "label": "Margin",
+            "placeholder": "top, right, bottom, left"
+          }
+        },
         "margin_top": {
           "type": "Text",
           "config": { "label": "Margin Top", "placeholder": "" }
@@ -171,13 +186,6 @@
             "label": "Image position",
             "placeholder": "",
             "options": ["left", "right"]
-          }
-        },
-        "margin": {
-          "type": "Text",
-          "config": {
-            "label": "Margin",
-            "placeholder": "top, right, bottom, left"
           }
         },
         "grid_gap": {

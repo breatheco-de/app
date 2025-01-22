@@ -17,6 +17,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "composition",
 				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "nice",
+				"type": "Text"
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "each",
+				"type": "Text"
 			}
 		},
 		"items": []

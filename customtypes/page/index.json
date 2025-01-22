@@ -37,6 +37,19 @@
         "type": "Text",
         "config": { "label": "Padding Bottom", "placeholder": "" }
       },
+      "transparent": {
+        "type": "Boolean",
+        "config": {
+          "label": "Transparent",
+          "default_value": false,
+          "placeholder_true": "true",
+          "placeholder_false": "false"
+        }
+      },
+      "background": {
+        "type": "Color",
+        "config": { "label": "Background", "placeholder": "" }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",

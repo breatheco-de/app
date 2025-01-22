@@ -57,6 +57,9 @@ function MktTwoColumnSideImage({
   transparent,
   marginTop,
   marginBottom,
+  maxWidth,
+  borderRadius,
+  margin,
   ...rest
 }) {
   const { fontColor2, hexColor, backgroundColor } = useStyle();
@@ -134,17 +137,19 @@ function MktTwoColumnSideImage({
     };
   };
   const prismicStyles = prisimicStyles();
-
   return (
     <Box
       id={id}
+      margin={margin || '0 auto'}
+      maxWidth={maxWidth || '1280px'}
+      borderRadius={borderRadius}
       background={transparent ? 'transparent' : background || backgroundColor}
       {...rest}
     >
       <Flex
         flexDirection={{ base: 'column', md: 'row' }}
-        maxWidth="1280px"
-        margin="0 auto"
+        width="100%"
+        margin="0"
         id={id}
         border={border}
         alignItems="center"
@@ -315,6 +320,9 @@ MktTwoColumnSideImage.propTypes = {
   transparent: PropTypes.bool,
   marginTop: PropTypes.string,
   marginBottom: PropTypes.string,
+  maxWidth: PropTypes.string,
+  margin: PropTypes.string,
+  borderRadius: PropTypes.string,
 };
 
 MktTwoColumnSideImage.defaultProps = {
@@ -353,6 +361,9 @@ MktTwoColumnSideImage.defaultProps = {
   transparent: false,
   marginTop: '',
   marginBottom: '',
+  maxWidth: '',
+  margin: '',
+  borderRadius: '',
 };
 
 export default MktTwoColumnSideImage;

@@ -55,6 +55,7 @@ const useStyle = () => {
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
+    blue: useColorModeValue('#DCE9FF', '#2b3340'),
     blueLight: useColorModeValue('#E1F5FF', '#2b3340'),
     yellowDefault: '#FFB718',
     green: '#38A56A',

@@ -27,17 +27,26 @@ function Faq({ id,
   faqMarginBottom,
   maxWidth,
   marginTop,
-  itemLabelColor,
   labelWeight,
   labelFontSize,
   labelLineHeight,
-
+  answerWeight,
+  answerFontSize,
+  answerlineHeight,
+  asElement,
   ...rest }) {
   const { hexColor } = useStyle();
-  console.log('HEADINGSTYLE', headingStyle);
+  const allHeadingStyle = {
+    ...headingStyle,
+    color: hexColor[titleColor],
+    lineHeight: titleLineHeight,
+    fontWeight: titleFontWeight,
+    as: asElement,
+    size: titleFontSize,
+  };
   return (
-    <Box position="relative" maxWidth={maxWidth} margin={`${marginTop} auto ${faqMarginBottom} auto`} background={faqBackgroundColor || hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
-      <Heading textAlign="center" margin="20px 0" {...headingStyle} color={titleColor} lineHeight={titleLineHeight} fontWeight={titleFontWeight}>
+    <Box position="relative" maxWidth={maxWidth} margin={`${marginTop} auto ${faqMarginBottom} auto`} background={hexColor[faqBackgroundColor] || hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
+      <Heading textAlign="center" margin="20px 0" {...allHeadingStyle}>
         {title || 'FAQ'}
       </Heading>
       <Accordion borderRadius="15px" padding="20px" allowMultiple background={hexColor.white2} {...acordionContainerStyle}>
@@ -45,13 +54,13 @@ function Faq({ id,
           <AccordionItem key={item.label} borderTop="none" borderBottom={(hideLastBorder && items.length - 1 > i) ? '1px solid #DADADA' : '0px'}>
             <AccordionButton padding="20px 10px 10px 10px" _expanded={{ color: highlightColor }}>
               <Box as="span" flex="1" textAlign="left">
-                <Heading as="h4" size={labelFontSize || 'sm'} color={itemLabelColor} fontWeight={labelWeight} lineHeight={labelLineHeight}>
+                <Heading as="h4" size={labelFontSize || 'sm'} fontWeight={labelWeight} lineHeight={labelLineHeight}>
                   {item.label}
                 </Heading>
               </Box>
               <AccordionIcon />
             </AccordionButton>
-            <AccordionPanel pb={4} dangerouslySetInnerHTML={{ __html: item.answer }} />
+            <AccordionPanel pb={4} dangerouslySetInnerHTML={{ __html: item.answer }} fontSize={answerFontSize || 'xsm'} lineHeight={answerlineHeight} fontWeight={answerWeight} />
           </AccordionItem>
         ))}
       </Accordion>
@@ -75,10 +84,13 @@ Faq.propTypes = {
   faqMarginBottom: PropTypes.string,
   maxWidth: PropTypes.string,
   marginTop: PropTypes.string,
-  itemLabelColor: PropTypes.string,
   labelWeight: PropTypes.string,
   labelFontSize: PropTypes.string,
   labelLineHeight: PropTypes.string,
+  asElement: PropTypes.string,
+  answerWeight: PropTypes.string,
+  answerFontSize: PropTypes.string,
+  answerlineHeight: PropTypes.string,
 };
 Faq.defaultProps = {
   acordionContainerStyle: {},
@@ -95,10 +107,13 @@ Faq.defaultProps = {
   faqMarginBottom: '',
   maxWidth: '',
   marginTop: '',
-  itemLabelColor: '',
   labelWeight: '',
   labelFontSize: '',
   labelLineHeight: '',
+  asElement: '',
+  answerWeight: '',
+  answerFontSize: '',
+  answerlineHeight: '',
 };
 
 export default Faq;

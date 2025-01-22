@@ -23,6 +23,14 @@
         "url": {
           "type": "Text",
           "config": { "label": "Url", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "margin": {
+          "type": "Text",
+          "config": { "label": "Margin", "placeholder": "" }
         }
       },
       "items": {}

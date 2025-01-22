@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
 import PricingCard from './PricingCard';
 
-function MktPricingCards() {
+function MktPricingCards({ margin, maxWidth }) {
   const [plans, setPlans] = useState([]);
   useEffect(() => {
     fetch('/plans-info.json')
@@ -12,7 +13,7 @@ function MktPricingCards() {
   }, []);
 
   return (
-    <Flex flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin="0 auto">
+    <Flex flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin={margin} maxWidth={maxWidth}>
       {plans?.map((plan) => (
         <PricingCard
           key={plan?.plan_id}
@@ -26,12 +27,13 @@ function MktPricingCards() {
 }
 
 MktPricingCards.propTypes = {
+  margin: PropTypes.string,
+  maxWidth: PropTypes.string,
 };
 
 MktPricingCards.defaultProps = {
-  id: '',
-  title: null,
-  url: '',
+  margin: '',
+  maxWidth: '',
 };
 
 export default MktPricingCards;

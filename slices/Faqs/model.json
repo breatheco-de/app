@@ -51,20 +51,10 @@
         "max_width": {
           "type": "Text",
           "config": { "label": "Max Width", "placeholder": "" }
-        }
-      },
-      "items": {
-        "label": {
-          "type": "Text",
-          "config": { "label": "Label", "placeholder": "" }
         },
-        "answer": {
+        "as_element": {
           "type": "Text",
-          "config": { "label": "Answer", "placeholder": "" }
-        },
-        "label_color": {
-          "type": "Color",
-          "config": { "label": "Label Color", "placeholder": "" }
+          "config": { "label": "As element", "placeholder": "" }
         },
         "label_weight": {
           "type": "Text",
@@ -77,6 +67,28 @@
         "label_line_height": {
           "type": "Text",
           "config": { "label": "Label Line Height", "placeholder": "" }
+        },
+        "answer_weight": {
+          "type": "Text",
+          "config": { "label": "Answer Weight", "placeholder": "" }
+        },
+        "answer_font_size": {
+          "type": "Text",
+          "config": { "label": "Answer Font Size", "placeholder": "" }
+        },
+        "answer_line_height": {
+          "type": "Text",
+          "config": { "label": "Answer Line Height", "placeholder": "" }
+        }
+      },
+      "items": {
+        "label": {
+          "type": "Text",
+          "config": { "label": "Label", "placeholder": "" }
+        },
+        "answer": {
+          "type": "Text",
+          "config": { "label": "Answer", "placeholder": "" }
         }
       }
     }

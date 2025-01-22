@@ -69,7 +69,7 @@ function MktOneColumnKPI({
 }) {
   const { fontColor2, hexColor } = useStyle();
   return (
-    <Box background={slice?.primary?.background} borderRadius={borderRadius} {...rest}>
+    <Box borderRadius={borderRadius} {...rest}>
       {/* maxWidth={maxWidth} margin={`${marginTop} auto ${marginBottom} auto`} */}
       <GridContainer
         id={id}
@@ -77,6 +77,7 @@ function MktOneColumnKPI({
         gridColumn="2 / span 8"
         background={slice?.primary?.background}
         borderRadius={borderRadius}
+        maxWidth={maxWidth}
       >
         <Box display="grid" padding="50px" fontFamily={fontFamily} textAlign="center" justifyItems={justifyItems} gridGap="14px" style={{ direction: 'initial' }} gridColumn="2 / span 8" px="10px">
           {subTitle && (

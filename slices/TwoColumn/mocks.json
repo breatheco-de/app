@@ -195,6 +195,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "here",
 				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "we",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "onto",
+				"type": "Text"
 			}
 		},
 		"items": [

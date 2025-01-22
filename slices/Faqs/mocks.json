@@ -52,6 +52,41 @@
 				"__TYPE__": "FieldContent",
 				"value": "some",
 				"type": "Text"
+			},
+			"as_element": {
+				"__TYPE__": "FieldContent",
+				"value": "city",
+				"type": "Text"
+			},
+			"label_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "remove",
+				"type": "Text"
+			},
+			"label_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "allow",
+				"type": "Text"
+			},
+			"label_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "mother",
+				"type": "Text"
+			},
+			"answer_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "engine",
+				"type": "Text"
+			},
+			"answer_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "rather",
+				"type": "Text"
+			},
+			"answer_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "order",
+				"type": "Text"
 			}
 		},
 		"items": [
@@ -71,38 +106,6 @@
 						{
 							"__TYPE__": "FieldContent",
 							"value": "discovery",
-							"type": "Text"
-						}
-					],
-					[
-						"label_color",
-						{
-							"__TYPE__": "FieldContent",
-							"value": "#4e385c",
-							"type": "Color"
-						}
-					],
-					[
-						"label_weight",
-						{
-							"__TYPE__": "FieldContent",
-							"value": "character",
-							"type": "Text"
-						}
-					],
-					[
-						"label_font_size",
-						{
-							"__TYPE__": "FieldContent",
-							"value": "summer",
-							"type": "Text"
-						}
-					],
-					[
-						"label_line_height",
-						{
-							"__TYPE__": "FieldContent",
-							"value": "valuable",
 							"type": "Text"
 						}
 					]
