@@ -473,27 +473,6 @@ function PricingView() {
           description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
-        {/*
-          <Box marginTop="30px" borderRadius="11px" background={hexColor.featuredColor} padding="24px">
-            <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
-            <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
-            <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-              <Button
-                width={{ base: '100%', sm: 'fit-content' }}
-                variant="outline"
-                textTransform="uppercase"
-                color={hexColor.blueDefault}
-                borderColor={hexColor.blueDefault}
-                onClick={() => reportDatalayer({
-                  dataLayer: {
-                    event: 'open_pricing_chat',
-                  } })}
-              >
-                {t('learning-code.chat')}
-              </Button>
-            </Flex>
-          </Box>
-        */}
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
           <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
             <Heading margin="20px 0" size="sm">

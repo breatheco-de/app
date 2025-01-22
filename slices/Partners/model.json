@@ -13,17 +13,15 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "title",
-            "placeholder": ""
-          }
+          "config": { "label": "title", "placeholder": "" }
+        },
+        "description": {
+          "type": "Text",
+          "config": { "label": "Description", "placeholder": "" }
         },
         "images": {
           "type": "StructuredText",
@@ -40,6 +38,14 @@
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
           }
+        },
+        "images_content": {
+          "type": "Text",
+          "config": { "label": "Images Content", "placeholder": "" }
+        },
+        "title_size": {
+          "type": "Text",
+          "config": { "label": "Title Size", "placeholder": "" }
         }
       },
       "items": {},

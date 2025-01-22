@@ -7,6 +7,7 @@ const useStyle = () => {
   const backgroundColor3 = useColorModeValue('gray.light2', 'gray.800');
   const backgroundColor4 = useColorModeValue('#F4FAFF', 'gray.800');
   const backgroundColor5 = useColorModeValue('#E1F5FF', 'gray.800');
+  const backgroundColor6 = useColorModeValue('#DCE9FF', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
   const borderColor2 = useColorModeValue('gray.200', 'featuredDark');
   const borderColorStrong = useColorModeValue('gray.400', 'gray.500');
@@ -54,6 +55,7 @@ const useStyle = () => {
     white2: useColorModeValue('#ffffff', '#283340'),
     danger: useColorModeValue('#CD0000', '#e26161'),
     blueDefault: '#0097CD',
+    blue: useColorModeValue('#DCE9FF', '#2b3340'),
     blueLight: useColorModeValue('#E1F5FF', '#2b3340'),
     yellowDefault: '#FFB718',
     green: '#38A56A',
@@ -81,6 +83,7 @@ const useStyle = () => {
     backgroundColor3,
     backgroundColor4,
     backgroundColor5,
+    backgroundColor6,
     borderColor,
     borderColor2,
     borderColorStrong,

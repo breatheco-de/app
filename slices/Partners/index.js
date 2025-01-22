@@ -10,7 +10,13 @@ import MktPartners from '../../src/common/components/MktPartners';
  * @param { PartnersProps }
  */
 const Partners = ({ slice }) => (
-  <MktPartners title={slice.primary.title} images={slice.primary.images} />
+  <MktPartners
+    imagesContent={slice?.primary?.images_content || 'default'}
+    title={slice.primary.title}
+    titleSize={slice?.primary?.title_size}
+    images={slice.primary.images}
+    description={slice?.primary?.description}
+  />
 );
 
 export default Partners;

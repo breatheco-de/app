@@ -5,35 +5,30 @@
 		"primary": {
 			"id_key": {
 				"__TYPE__": "FieldContent",
-				"value": "dead",
+				"value": "expect",
 				"type": "Text"
 			},
 			"title": {
 				"__TYPE__": "FieldContent",
-				"value": "cow",
+				"value": "even",
 				"type": "Text"
 			},
-			"endpoint": {
+			"url": {
 				"__TYPE__": "FieldContent",
-				"value": "girl",
+				"value": "composition",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "nice",
 				"type": "Text"
 			},
 			"margin": {
 				"__TYPE__": "FieldContent",
-				"value": "missing",
-				"type": "Text"
-			},
-			"version": {
-				"__TYPE__": "FieldContent",
-				"value": "vowel",
+				"value": "each",
 				"type": "Text"
 			}
 		},
-		"items": [
-			{
-				"__TYPE__": "GroupItemContent",
-				"value": []
-			}
-		]
+		"items": []
 	}
 ]
