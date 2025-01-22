@@ -206,7 +206,14 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         throw new Error(data?.detail);
       }
     } catch (errorMsg) {
-      error('Error fetching code revisions:', errorMsg);
+      toast({
+        title: t('alert-message:something-went-wrong'),
+        description: `Cannot get code revisions: ${errorMsg}`,
+        status: 'error',
+        duration: 5000,
+        position: 'top',
+        isClosable: true,
+      });
     } finally {
       setLoaders((prevState) => ({
         ...prevState,

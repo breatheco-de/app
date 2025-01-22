@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Textarea } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Textarea, useToast } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../common/hooks/useAuth';
@@ -10,7 +10,6 @@ import Icon from '../../common/components/Icon';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import MarkDownParser from '../../common/components/MarkDownParser';
-import { error } from '../../utils/logging';
 
 const inputReviewRateCommentLimit = 100;
 const defaultReviewRateData = {
@@ -29,6 +28,7 @@ function TaskCodeRevisions() {
     revision_content: {},
   });
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
+  const toast = useToast();
 
   const reviewRateStatus = reviewRateData?.status;
   const codeRevisions = contextData?.code_revisions || [];
@@ -82,7 +82,14 @@ function TaskCodeRevisions() {
         console.err(`Cannot get code revisions: ${data?.detail}`);
       }
     } catch (errorMsg) {
-      error('Error fetching code revisions:', errorMsg);
+      toast({
+        title: t('alert-message:something-went-wrong'),
+        description: `Cannot get code revisions: ${errorMsg}`,
+        status: 'error',
+        duration: 5000,
+        position: 'top',
+        isClosable: true,
+      });
     }
   };
 
