@@ -20,8 +20,8 @@ function ArticleMarkdown({
       {!isGuidedExperience && (
         <ContentHeading
           titleRightSide={titleRightSide}
-          callToAction={(currentData?.interactive || currentData?.template_url) && (
-            <ProjectInstructions currentAsset={currentData} />
+          callToAction={(assetType !== 'LESSON' && assetType !== 'ANSWER') && (
+            <ProjectInstructions currentAsset={currentData} marginTop="20px" />
           )}
           content={frontMatter}
           currentData={currentData}

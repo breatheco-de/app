@@ -66,7 +66,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, ...rest }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -163,9 +163,9 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
 
   return (
     <>
-      <Box background="blue.1100" borderRadius="11px" padding="16px">
+      <Box background="blue.1100" borderRadius="11px" padding="16px" {...rest}>
         <Box display="flex" gap="16px">
-          {(!isExternalExercise || !isInteractive) && <Icon icon="learnpack" width="102px" height="102px" />}
+          {(!isExternalExercise && isInteractive) && <Icon icon="learnpack" width="102px" height="102px" />}
           <Box>
             <Heading size="xsm" mb="15px" color="white">
               {!isExternalExercise ? t('common:learnpack.title') : t('common:external.title')}
