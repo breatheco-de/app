@@ -5,14 +5,12 @@ import PricingCard from './PricingCard';
 
 function MktPricingCards({ margin, maxWidth, url }) {
   const [plans, setPlans] = useState([]);
-  console.log('URL', url);
   useEffect(() => {
     if (!url) return;
 
     fetch(`/${url}.json`)
       .then((response) => response.json())
       .then((data) => {
-        console.log('data', data);
         setPlans(data);
       })
       .catch((error) => console.error('Error al cargar el JSON:', error));

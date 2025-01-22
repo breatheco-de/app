@@ -1,69 +1,69 @@
 [
     {
       "planType": "custom",
-      "price": "Free",
-      "type": "Unlimited Experience",
+      "price": "Gratis",
+      "type": "Experiencia Ilimitada",
       "period_label": "",
-      "title": "Jumpstart Plan",
-      "description": "Jumpstart your career with our free JOBSTART package, featuring essential resources for your job search.",
-      "subtitle": "Bootcamp Program",
-      "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+      "title": "Plan Jumpstart",
+      "description": "Impulsa tu carrera con nuestro paquete JOBSTART gratuito, que incluye recursos esenciales para tu búsqueda de empleo.",
+      "subtitle": "Programa de Bootcamp",
+      "sub-description": "Únete a un grupo en un entorno de aula en vivo y recibe soporte ilimitado hasta encontrar un trabajo.",
       "ask": "",
       "button": {
         "background": "#0084FF",
-        "title": "Get Plan"
-      },
+        "title": "Obtener Plan"
+      },    
       "button_link": "https://4geeksacademy.com/programs",
       "featured_info": [
         {
           "service": {
             "slug": "ats-resume",
-            "title": "ATS Resume Template",
+            "title": "Plantilla de currículum ATS",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "A Free ATS Resume Template to ensure your resume gets noticed by employers."
+              "description": "Una plantilla de currículum ATS gratuita para garantizar que los empleadores se fijen en tu currículum"
             }
           ]
         },
         {
           "service": {
             "slug": "job-hunting",
-            "title": "Job Hunting Tracker",
+            "title": "Seguimiento de búsqueda de empleo",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "A Job Hunting Tracker to keep you organized and on top of your applications."
+              "description": "Un rastreador de búsqueda de empleo para mantenerte organizado y al tanto de tus solicitudes"
             }
           ]
         },
         {
           "service": {
             "slug": "salary-negotiation",
-            "title": "Salary Negotiation Guide",
+            "title": "Guía de negociación salarial",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "A Salary Negotiation Guide to help you secure the compensation you deserve."
+              "description": "Una Guía de Negociación Salarial para ayudarte a asegurar la compensación que mereces."
             }
           ]
         },
         {
           "service": {
             "slug": "elevator-pitch",
-            "title": "Elevator Pitch Tips",
+            "title": "Consejos para tu Elevator Pitch",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "Tips on how to build an Elevator Pitch that makes a lasting impression."
+              "description": "Consejos para crear un Elevator Pitch que deje una impresión duradera."
             }
           ]
         }
@@ -72,10 +72,10 @@
         "title_icon": "star",
         "title_color": "#0084FF",
         "title_size": "xl",
-        "title": "Perfect for",
+        "title": "Perfecto para",
         "items": [
           {
-            "label": "Job seekers seeking valuable free resources to enhance their job search and advance their career development.",
+            "label": "Personas en búsqueda de empleo que buscan recursos gratuitos valiosos para mejorar su búsqueda laboral y avanzar en su desarrollo profesional.",
             "icon": null
           }
         ]
@@ -84,55 +84,55 @@
     {
       "planType": "custom",
       "price": "$50",
-      "type": "Unlimited Experience",
+      "type": "Experiencia ilimitada",
       "period_label": "",
-      "title": "Basic Plan",
-      "description": "Take control of your career materials with all the tools and resources you need to succeed.",
-      "subtitle": "Bootcamp Program",
-      "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+      "title": "Plan Básico",
+      "description": "Toma el control de tus materiales profesionales con todas las herramientas y recursos que necesitas para tener éxito.",
+      "subtitle": "Programa de Bootcamp",
+      "sub-description": "Únete a un grupo en un entorno de aula en vivo y recibe soporte ilimitado hasta que consigas un empleo.",
       "ask": "",
       "button": {
         "background": "#0084FF",
-        "title": "Get Plan"
+        "title": "Obtener Plan"
       },
       "button_link": "https://buy.stripe.com/eVafZc3r9aVWgCI9AU",
       "featured_info": [
         {
           "service": {
             "slug": "career-tools",
-            "title": "Career Tools",
+            "title": "Herramientas Profesionales",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "Access to our complete set of tutorials and guides to create your CV, LinkedIn profile, and prepare for interviews."
+              "description": "Acceso a nuestro conjunto completo de tutoriales y guías para crear tu CV, perfil de LinkedIn y prepararte para entrevistas."
             }
           ]
         },
         {
           "service": {
             "slug": "video-tutorials",
-            "title": "Step-by-step Tutorials",
+            "title": "Tutoriales paso a paso",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "Step-by-step video tutorials for creating a standout resume, optimizing your LinkedIn, and acing your interviews."
+              "description": "Tutoriales en video paso a paso para crear un currículum destacado, optimizar tu LinkedIn y triunfar en tus entrevistas."
             }
           ]
         },
         {
           "service": {
             "slug": "advisory-sessions",
-            "title": "Advisory Sessions",
+            "title": "Sesiones de asesoría",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "No advisory sessions are included, but you can always purchase additional consultation sessions if you need expert guidance."
+              "description": "No se incluyen sesiones de asesoría, pero siempre puedes comprar sesiones de consulta adicionales si necesitas orientación experta."
             }
           ]
         }
@@ -141,10 +141,10 @@
         "title_icon": "star",
         "title_color": "#0084FF",
         "title_size": "xl",
-        "title": "Perfect for",
+        "title": "Perfecto para",
         "items": [
           {
-            "label": "Self-starters who want to create their own materials with professional resources and videos.",
+            "label": "Iniciadores que desean crear sus propios materiales con recursos profesionales y videos.",
             "icon": null
           }
         ]
@@ -152,7 +152,7 @@
       "added_features": {
         "items": [
           {
-            "label": "Additional mentorship session",
+            "label":  "Sesión adicional de mentoría",
             "price": "$49"
           }
         ]
@@ -161,18 +161,18 @@
     {
       "planType": "custom",
       "price": "$150",
-      "type": "Unlimited Experience",
+      "type": "Experiencia Ilimitada",
       "period_label": "",
-      "title": "Standard Plan",
-      "description": "We create everything for you, no stress involved! Get your CV and LinkedIn ready for success.",
-      "subtitle": "Bootcamp Program",
-      "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+      "title": "Plan Estandar",
+      "description": "¡Nosotros creamos todo por ti, sin estrés! Prepara tu CV y LinkedIn para el éxito!",
+      "subtitle": "programa de Bootcamp",
+      "sub-description": "Únete a un grupo en un entorno de aula en vivo y recibe soporte ilimitado hasta que consigas un empleo",
       "ask": "",
       "button": {
         "variant": "deafult",
         "color": "#0084FF",
         "background": "white",
-        "title": "Get Plan"
+        "title": "Obtener Plan"
       },
       "button_link": "https://buy.stripe.com/bIYdR43r92pq9ag00j",
       "featured_card": {
@@ -182,26 +182,26 @@
         {
           "service": {
             "slug": "cv-and-linkedin",
-            "title": "CV and LinkedIn",
+            "title": "CV y LinkedIn",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "We create your CV and LinkedIn profile for you based on your experience and career goals."
+              "description": "Creamos tu CV y perfil de LinkedIn basados en tu experiencia y metas profesionales."
             }
           ]
         },
         {
           "service": {
             "slug": "no-meetings-required",
-            "title": "No Meetings Required",
+            "title": "No se requieren reuniones",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "No meetings required, but an optional session is available to clarify any doubts you may have."
+              "description": "No se requieren reuniones, pero está disponible una sesión opcional para aclarar cualquier duda que puedas tener."
             }
           ]
         }
@@ -210,10 +210,10 @@
         "title_icon": "star",
         "title_color": "#0084FF",
         "title_size": "xl",
-        "title": "Perfect for",
+        "title": "Perfecto para",
         "items": [
           {
-            "label": "Individuals seeking a hands-off approach while still receiving professionally crafted documents that help them stand out.",
+            "label": "Individuos que buscan un enfoque sin intervención, pero que aún desean recibir documentos profesionales que los ayuden a destacarse.",
             "icon": null
           }
         ]
@@ -221,11 +221,11 @@
       "added_features": {
         "items": [
           {
-            "label": "Language shift ",
+            "label": "Cambio de idioma",
             "price": "$49"
           },
           {
-            "label": "Additional mentorship session",
+            "label": "Sesión adicional de mentoría",
             "price": "$49"
           }
         ]
@@ -234,55 +234,55 @@
     {
       "planType": "custom",
       "price": "$250",
-      "type": "Unlimited Experience",
+      "type": "Experience Ilimitada",
       "period_label": "",
       "title": "Premium Plan",
-      "description": "Everything you need to succeed, including interviews and personalized coaching!",
-      "subtitle": "Bootcamp Program",
-      "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+      "description": "¡Todo lo que necesitas para tener éxito, incluyendo entrevistas y coaching personalizado!",
+      "subtitle": "Programa de Bootcamp",
+      "sub-description": "Únete a un grupo en un entorno de aula en vivo y recibe soporte ilimitado hasta que consigas un empleo.",
       "ask": "",
       "button": {
         "background": "#0084FF",
-        "title": "Get Plan"
+        "title": "Obtener Plan"
       },
       "button_link": "https://buy.stripe.com/aEU3cqd1JfccfyE4gB",
       "featured_info": [
         {
           "service": {
             "slug": "interview-preparation",
-            "title": "Interview Preparation",
+            "title": "Preparación para entrevistas",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "We'll help you prepare for interviews with tailored questions and tips."
+              "description": "Te ayudaremos a prepararte para las entrevistas con preguntas personalizadas y consejos."
             }
           ]
         },
         {
           "service": {
             "slug": "coaching-sessions",
-            "title": "Coaching Sessions",
+            "title": "Sesiones de Mentoria",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "Two coaching sessions with an experienced advisor, who will work with you on interview techniques and career advice."
+              "description": "Dos sesiones de coaching con un asesor experimentado, que trabajará contigo en técnicas de entrevista y consejos profesionales."
             }
           ]
         },
         {
           "service": {
             "slug": "additional-support",
-            "title": "Additional Support",
+            "title": "Soporte adicional",
             "icon": "verified2",
             "icon_color": "#06AB52"
           },
           "features": [
             {
-              "description": "Additional language support for your resume and LinkedIn."
+              "description": "Soporte adicional de idioma para tu CV y LinkedIn."
             }
           ]
         }
@@ -291,10 +291,10 @@
         "title_icon": "star",
         "title_color": "#0084FF",
         "title_size": "xl",
-        "title": "Perfect for",
+        "title": "Perfecto para",
         "items": [
           {
-            "label": "Job seekers seeking comprehensive support and personalized coaching to secure their next role.",
+            "label": "Personas en búsqueda de empleo que buscan soporte integral y coaching personalizado para asegurar su próximo puesto.",
             "icon": null
           }
         ]
@@ -302,15 +302,15 @@
       "added_features": {
         "items": [
           {
-            "label": "Language shift",
+            "label": "Cambio de idioma",
             "price": "$49"
           },
           {
-            "label": "Additional mentorship session",
+            "label": "Sesión adicional de mentoría",
             "price": "$49"
           },
           {
-            "label": "Additional languages",
+            "label": "Idiomas adicionales",
             "price": "$100"
           }
         ]
