@@ -436,7 +436,7 @@
   "option-readme": "Readme only",
   "choose-one-option": "Choose one of these options",
   "choose-one-description": "You can choose one of the following options to start your project.",
-  "read-me-explanation": "A README is a file that explains simply and clearly what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or contribute to the project.",
+  "read-me-explanation": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
   "read-me-title": "Read the content of the readme",
   "read-me-button": "Take me to the readme!",
   "validators": {

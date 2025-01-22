@@ -434,7 +434,7 @@
   "option-readme": "Readme only",
   "choose-one-option": "Elige una de estas opciones",
   "choose-one-description": "Puedes elegir una de las siguientes opciones para iniciar tu proyecto",
-  "read-me-explanation": "Un README es un archivo que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo, y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto.",
+  "read-me-explanation": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
   "read-me-title": "Lee el contenido del readme",
   "read-me-button": "¡Llevame al readme!",
   "validators": {
