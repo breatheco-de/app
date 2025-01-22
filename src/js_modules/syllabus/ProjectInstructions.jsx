@@ -65,7 +65,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
   const [vendors, setVendors] = useState([]);
   const { state } = useCohortHandler();
@@ -159,7 +159,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handl
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, provisioningVendors, isStarted }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
