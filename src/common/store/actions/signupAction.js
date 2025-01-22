@@ -8,7 +8,7 @@ import {
   NEXT_STEP, PREV_STEP, HANDLE_STEP, SET_DATE_PROPS, SET_CHECKOUT_DATA, SET_PAYMENT_INFO,
   SET_PLAN_DATA, SET_LOADER, SET_PLAN_CHECKOUT_DATA, SET_PLAN_PROPS, SET_COHORT_PLANS, TOGGLE_IF_ENROLLED,
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
-  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON,
+  SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
 import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
 import bc from '../../services/breathecode';
@@ -132,6 +132,10 @@ const useSignup = () => {
   const setSelfAppliedCoupon = (payload) => dispatch({
     type: SET_SELF_APPLIED_COUPON,
     payload,
+  });
+
+  const restartSignup = () => dispatch({
+    type: SET_SIGNUP_INITIAL_STATE,
   });
 
   const handlePayment = (data, disableRedirects = false) => new Promise((resolve, reject) => {
@@ -491,6 +495,7 @@ const useSignup = () => {
     getPaymentMethods,
     getPriceWithDiscount,
     getSelfAppliedCoupon,
+    restartSignup,
   };
 };
 
