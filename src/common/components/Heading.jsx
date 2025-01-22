@@ -22,17 +22,11 @@ function Heading({ children, size, ...rest }) {
 Heading.propTypes = {
   size: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   children: PropTypes.node,
-  color: PropTypes.string,
-  lineHeight: PropTypes.string,
-  fontWeight: PropTypes.string,
 };
 
 Heading.defaultProps = {
   size: 'l',
   children: null,
-  color: '',
-  lineHeight: '',
-  fontWeight: '',
 };
 
 export default Heading;

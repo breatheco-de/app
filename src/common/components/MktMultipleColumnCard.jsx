@@ -24,7 +24,7 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
             <Box
               key={idKey}
               p={4}
-              border="1px solid"
+              border="1px solid none"
               borderColor="gray.200"
               borderRadius="md"
               boxShadow="sm"

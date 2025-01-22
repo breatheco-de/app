@@ -3,14 +3,20 @@ import PropTypes from 'prop-types';
 import { Flex } from '@chakra-ui/react';
 import PricingCard from './PricingCard';
 
-function MktPricingCards({ margin, maxWidth }) {
+function MktPricingCards({ margin, maxWidth, url }) {
   const [plans, setPlans] = useState([]);
+  console.log('URL', url);
   useEffect(() => {
-    fetch('/plans-info.json')
+    if (!url) return;
+
+    fetch(`/${url}.json`)
       .then((response) => response.json())
-      .then((data) => setPlans(data))
+      .then((data) => {
+        console.log('data', data);
+        setPlans(data);
+      })
       .catch((error) => console.error('Error al cargar el JSON:', error));
-  }, []);
+  }, [url]);
 
   return (
     <Flex flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin={margin} maxWidth={maxWidth}>
@@ -29,6 +35,7 @@ function MktPricingCards({ margin, maxWidth }) {
 MktPricingCards.propTypes = {
   margin: PropTypes.string,
   maxWidth: PropTypes.string,
+  url: PropTypes.string.isRequired,
 };
 
 MktPricingCards.defaultProps = {
