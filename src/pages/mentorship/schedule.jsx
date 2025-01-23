@@ -20,11 +20,10 @@ function MentorshipSchedule() {
   const { t } = useTranslation('signup');
   const { fetchSubscriptions } = useSubscriptionsHandler();
   const { service, mentor } = router.query;
-  const { isLoading, user, isAuthenticated } = useAuth();
+  const { isLoading, user, isAuthenticated, cohorts } = useAuth();
   const [mentorshipServices, setMentorshipServices] = useState({ isLoading: true, data: [] });
   const [searchProps, setSearchProps] = useState({ serviceSearch: '', mentorSearch: '' });
   const [mentoryProps, setMentoryProps] = useState({});
-  const [admissions, setAdmissions] = useState({});
   const [consumables, setConsumables] = useState([]);
   const [allMentorsAvailable, setAllMentorsAvailable] = useState([]);
   const [mentorsByService, setMentorsByService] = useState([]);
@@ -56,34 +55,23 @@ function MentorshipSchedule() {
     }
   };
 
-  const getAdmissionsData = async () => {
-    try {
-      const response = await bc.admissions().me();
-      const admissionsFromDB = response.data;
-      setAdmissions(response.data);
-      getServices(admissionsFromDB.roles);
-    } catch (error) {
-      console.error('Error fetching admissions data:', error);
-    }
-  };
-
   useEffect(() => {
     const checkAuthAndFetchData = async () => {
       if (!isLoading && !isAuthenticated) {
         router.push('/login');
       } else if (isAuthenticated) {
-        await getAdmissionsData();
+        await getServices(user.roles);
       }
     };
 
     checkAuthAndFetchData();
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, user]);
 
   const allSyllabus = useMemo(() => {
-    const allCohorts = admissions?.cohorts || [];
-    const syllabus = [...new Set(allCohorts.map(({ cohort }) => cohort.syllabus_version.slug))];
+    const allCohorts = cohorts || [];
+    const syllabus = [...new Set(allCohorts.map((cohort) => cohort.syllabus_version.slug))];
     return syllabus;
-  }, [admissions]);
+  }, [cohorts]);
 
   const getAllMentorsAvailable = async () => {
     const servicesSlugs = mentorshipServices.data.map(({ slug }) => slug);

@@ -155,7 +155,6 @@ function Workshop({ eventData, asset }) {
     isFetching: false,
     data: null,
   });
-  const [myCohorts, setMyCohorts] = useState([]);
   const [assetData, setAssetData] = useState(asset);
   const [isModalConfirmOpen, setIsModalConfirmOpen] = useState(false);
   const [isCheckinModalOpen, setIsCheckinModalOpen] = useState(false);
@@ -171,7 +170,7 @@ function Workshop({ eventData, asset }) {
   const { locale } = router;
   const eventSlug = router?.query?.event_slug;
   const toast = useToast();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
 
@@ -313,18 +312,10 @@ function Workshop({ eventData, asset }) {
       });
   };
 
-  const getMyCurrentCohorts = () => {
-    bc.admissions().me()
-      .then((res) => {
-        setMyCohorts(res.data.cohorts);
-      });
-  };
-
   useEffect(() => {
     if (isAuth) {
       getMySubscriptions();
       getCurrentConsumables();
-      getMyCurrentCohorts();
     }
   }, [isAuth]);
 
@@ -386,7 +377,7 @@ function Workshop({ eventData, asset }) {
   const existsConsumables = typeof currentConsumable?.balance?.unit === 'number' && (currentConsumable?.balance?.unit > 0 || currentConsumable?.balance?.unit === -1);
   const hasFetchedAndNoConsumablesToUse = currentConsumable?.balance?.unit === 0 || (!isRefetching && !currentConsumable?.id && noConsumablesFound) || (!isRefetching && noConsumablesFound && consumableEventList?.length === 0);
 
-  const existsNoAvailableAsSaas = myCohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const existsNoAvailableAsSaas = cohorts.some((c) => c?.available_as_saas === false);
   const isFreeForConsumables = event?.free_for_all || finishedEvent || (event?.free_for_bootcamps === true && existsNoAvailableAsSaas);
 
   useEffect(() => {
