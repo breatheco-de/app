@@ -1,30 +1,44 @@
 import { Box } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
 import Text from './Text';
 import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 import Heading from './Heading';
 
 function AlertMessage({
-  message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, ...rest
+  message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, onClose, ...rest
 }) {
   const { fontColor } = useStyle();
   const alertColors = {
-    soft: '#FFF4DC',
-    warning: '#FFB718',
-    success: '#25BF6C',
-    error: '#dc3545',
-    info: '#00A0E9',
+    soft: { background: '#FFF4DC' },
+    warning: { background: '#ffefcc', borderColor: '#FFB718' },
+    success: { background: '#e0ffe8', borderColor: '#00bb2d' },
+    error: { background: '#fee8e8', borderColor: '#EB5757' },
+    info: { background: '#37c0ff', borderColor: '#DADADA' },
   };
+
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
+  const handleClose = () => {
+    setVisible(false);
+    if (onClose) onClose();
+  };
+
+  if (!visible) return null;
 
   return (message || children) && (
     <Box
       display="flex"
-      style={style}
+      style={{ ...style, position: 'fixed', top: '100px', left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase', borderRadius: '10px', maxWidth: '1200px' }}
       flexDirection="row"
-      backgroundColor={full ? alertColors[type] : 'transparent'}
+      backgroundColor={full ? alertColors[type].background : 'transparent'}
       border="2px solid"
-      borderColor={alertColors[type]}
+      borderColor={alertColors[type].borderColor}
       alignItems="center"
       padding="16px"
       borderRadius="16px"
@@ -32,7 +46,7 @@ function AlertMessage({
       {...rest}
     >
       {!withoutIcon && (
-        <Icon icon={type} secondColor={rest.secondColor} color={iconColor || (full ? '#000' : '')} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
+        <Icon icon={type} secondColor={rest.secondColor} color={iconColor || (full ? alertColors[type]?.background : '')} props={{ full: true }} style={{ minWidth: '18px' }} width="18px" height="18px" />
       )}
       {children && children}
       {!children && (
@@ -59,6 +73,9 @@ function AlertMessage({
           </Box>
         </>
       )}
+      <button type="button" onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '5px', background: 'none', border: 'none', fontSize: '16px', cursor: 'pointer' }}>
+        X
+      </button>
     </Box>
   );
 }
@@ -75,6 +92,7 @@ AlertMessage.propTypes = {
   children: PropTypes.node,
   withoutIcon: PropTypes.bool,
   iconColor: PropTypes.string,
+  onClose: PropTypes.func,
 };
 
 AlertMessage.defaultProps = {
@@ -89,6 +107,7 @@ AlertMessage.defaultProps = {
   children: null,
   withoutIcon: false,
   iconColor: '',
+  onClose: null,
 };
 
 export default AlertMessage;

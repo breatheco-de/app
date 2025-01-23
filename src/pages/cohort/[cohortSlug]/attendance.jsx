@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { format } from 'date-fns';
 import {
-  Avatar, Box, Flex, IconButton, Input, InputGroup, InputRightElement, usePrefersReducedMotion, useToast,
+  Avatar, Box, Flex, IconButton, Input, InputGroup, InputRightElement, usePrefersReducedMotion,
   keyframes,
   Popover,
   PopoverTrigger,
@@ -29,11 +29,12 @@ import handlers from '../../../common/handlers';
 import { DottedTimelineSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import Sparkline from '../../../common/components/Sparkline';
 import KPI from '../../../common/components/KPI';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 function Attendance() {
   const { t } = useTranslation('attendance');
   const router = useRouter();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: ' attendance-list-found-activities' });
   const [allCohorts, setAllCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
   const [showSearch, setShowSearch] = useState(false);
@@ -121,7 +122,7 @@ function Attendance() {
         setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-cohorts'),
           status: 'error',
@@ -144,7 +145,7 @@ function Attendance() {
         .then((daysLog) => {
           if (Object.keys(daysLog).length <= 0) {
             setCurrentDaysLog({});
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:no-attendance-list-found'),
               status: 'warning',
@@ -156,7 +157,7 @@ function Attendance() {
           }
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-activities'),
             status: 'error',
@@ -169,7 +170,7 @@ function Attendance() {
           setCurrentStudentList(students);
         })
         .catch(() => {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-students'),
             status: 'error',

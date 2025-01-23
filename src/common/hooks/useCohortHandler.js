@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import axios from 'axios';
-import { useToast } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
 import useAuth from './useAuth';
@@ -10,6 +9,7 @@ import useModuleHandler from './useModuleHandler';
 import { processRelatedAssignments } from '../handlers/cohorts';
 import bc from '../services/breathecode';
 import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
+import useCustomToast from './useCustomToast';
 
 function useCohortHandler() {
   const router = useRouter();
@@ -23,7 +23,7 @@ function useCohortHandler() {
     sortedAssignments,
     userCapabilities,
   } = state;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'fetching-role-cohort-error' });
   const accessToken = getStorageItem('accessToken');
   const assetSlug = router?.query?.lessonSlug;
   const assetType = router?.query?.lesson;
@@ -73,7 +73,7 @@ function useCohortHandler() {
           setCohortProgram(programData.data);
         } catch (err) {
           console.log(err);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:error-fetching-role', { role: currentAcademy?.role }),
             description: err.message,
@@ -136,7 +136,7 @@ function useCohortHandler() {
       return handleRedirectToPublicPage();
     } catch (error) {
       handleRedirectToPublicPage();
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:invalid-cohort-slug'),
         status: 'error',
