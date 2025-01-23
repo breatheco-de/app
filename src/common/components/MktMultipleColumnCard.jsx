@@ -8,7 +8,7 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
   const { navbarBackground } = useStyle();
 
   return (
-    <Box maxWidth={maxWidth} textAlign="center" p={4} margin={`${marginTop} auto ${marginBottom || '40px'} auto`} {...rest}>
+    <Box maxWidth={maxWidth} textAlign="center" margin={`${marginTop} auto ${marginBottom || '40px'} auto`} {...rest}>
       {/* Título principal */}
       <Text fontSize="34px" fontWeight="bold" mb={6}>
         {title}

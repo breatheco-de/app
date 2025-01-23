@@ -1942,6 +1942,16 @@ export interface TestimonialsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Background Color field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.primary.background_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background_color: prismic.KeyTextField;
 }
 
 /**
@@ -2230,6 +2240,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   id_key: prismic.KeyTextField;
+
+  /**
+   * Padding field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
 
   /**
    * Information Size field in *TwoColumn → Primary*

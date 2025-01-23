@@ -15,6 +15,10 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "Padding", "placeholder": "" }
+        },
         "information_size": {
           "type": "Select",
           "config": {

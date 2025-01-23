@@ -33,6 +33,10 @@
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
           }
+        },
+        "background_color": {
+          "type": "Text",
+          "config": { "label": "Background Color", "placeholder": "" }
         }
       },
       "items": {},

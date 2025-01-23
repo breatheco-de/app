@@ -27,6 +27,11 @@
 				"__TYPE__": "FieldContent",
 				"value": "vowel",
 				"type": "Text"
+			},
+			"background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "southern",
+				"type": "Text"
 			}
 		},
 		"items": [
