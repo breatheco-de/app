@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button, Flex, Image, Link, SkeletonText } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -109,7 +109,7 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
-  const { state, getPriceWithDiscount } = useSignup();
+  const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
@@ -117,8 +117,8 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const { getSelfAppliedCoupon } = useSignup();
-  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-cohort' });
+  // const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -222,10 +222,15 @@ function CoursePage({ data, syllabus }) {
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
       // const context = document.body.innerText;
-      const plansContext = planData.planList.map((plan) => `
+
+      const plans = applyDiscountCouponsToPlans(planData.planList, selfAppliedCoupon);
+      const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
+
+      const plansContext = plans.map((plan) => `
         - ${plan.title}
         price: ${plan.priceText}
         period: ${plan.period_label}
+        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
@@ -240,7 +245,6 @@ function CoursePage({ data, syllabus }) {
       `;
 
       if (selfAppliedCoupon) {
-        const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
         context += `\n coupon: ${discount} off`;
       }
 

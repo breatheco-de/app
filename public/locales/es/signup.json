@@ -12,6 +12,7 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "added-features-title": "+ También puedes agregar",
   "fixed-price-disclaimer":"Los descuentos de precio fijo se aplicarán solo al primer mes cuando se financie por más de un mes. Los descuentos porcentuales se aplicarán a todos los meses.",
   "total": "Total",
   "total-now": "Total ahora",
@@ -25,7 +26,7 @@
   "payment-success": "Pago exitoso",
   "payment-failed": "Pago fallido",
   "discount-applied": "Descuento aplicado",
-  "course-details": "Detalles del curso",
+  "course-details": "Detalles del plan",
   "see-financing-opt": "Opciones de financiamiento",
   "one_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",
   "monthly_payment_description": "Acceso completo a todas las funciones durante la duración del curso.",

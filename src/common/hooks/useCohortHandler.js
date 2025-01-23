@@ -265,6 +265,7 @@ function useCohortHandler() {
     getTasksWithoutCohort,
     userCapabilities,
     state,
+    setMyCohorts,
   };
 }
 

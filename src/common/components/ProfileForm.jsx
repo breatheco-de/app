@@ -26,10 +26,10 @@ function ProfileForm() {
 
   useEffect(() => {
     const userSchema = {
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      phone: user.phone,
+      first_name: user?.first_name,
+      last_name: user?.last_name,
+      email: user?.email,
+      phone: user?.phone,
     };
     setUserInfo(userSchema);
     setDefaultUserInfo(userSchema);

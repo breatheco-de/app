@@ -12,7 +12,7 @@ import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
 import { ButtonsHandler } from './ProjectInstructions';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
-function TopBar({ currentAsset, handleStartLearnpack, provisioningVendors, buttonsHandlerVariant, ...rest }) {
+function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...rest }) {
   const { t } = useTranslation('syllabus');
   const { backgroundColor4, hexColor } = useStyle();
   const [isVisible, setIsVisible] = useState(false);
@@ -87,7 +87,6 @@ function TopBar({ currentAsset, handleStartLearnpack, provisioningVendors, butto
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
-                vendors={provisioningVendors}
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={buttonsHandlerVariant}
@@ -115,12 +114,10 @@ TopBar.propTypes = {
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   handleStartLearnpack: PropTypes.func.isRequired,
   buttonsHandlerVariant: PropTypes.string,
-  provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 TopBar.defaultProps = {
   currentAsset: null,
   buttonsHandlerVariant: 'extra-small',
-  provisioningVendors: [],
 };
 
 export default TopBar;

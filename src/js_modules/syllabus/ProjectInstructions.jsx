@@ -65,11 +65,27 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
+  const [vendors, setVendors] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+
+  const fetchProvisioningVendors = async () => {
+    try {
+      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
+      setVendors(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (cohortSession) {
+      fetchProvisioningVendors();
+    }
+  }, [cohortSession]);
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -115,7 +131,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handl
       )}
       {startWithLearnpack ? (
         <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
-          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
@@ -142,7 +159,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handl
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, provisioningVendors }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -178,7 +195,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
               currentAsset={currentAsset}
               handleStartLearnpack={handleStartLearnpack}
               setShowCloneModal={setShowCloneModal}
-              vendors={provisioningVendors}
               isForOpenLocaly={isForOpenLocaly}
               startWithLearnpack={startWithLearnpack}
               variant={variant}
@@ -214,10 +230,10 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
-                vendors={provisioningVendors}
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={variant}
+                isStarted={isStarted}
               />
             </Box>
           </Box>
@@ -261,8 +277,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             isForOpenLocaly={isForOpenLocaly}
-            vendors={provisioningVendors}
             variant={variant}
+            isStarted={isStarted}
           />
         </Box>
       </Box>
@@ -274,11 +290,13 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, prov
 ProjectInstructions.propTypes = {
   variant: PropTypes.string,
   handleStartLearnpack: PropTypes.func.isRequired,
+  isStarted: PropTypes.bool,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 ProjectInstructions.defaultProps = {
   variant: null,
   currentAsset: null,
+  isStarted: false,
 };
 
 ProvisioningPopover.propTypes = {
