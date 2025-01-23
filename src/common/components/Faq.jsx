@@ -38,11 +38,9 @@ function Faq({ id,
   const { hexColor } = useStyle();
   const allHeadingStyle = {
     ...headingStyle,
-    color: hexColor[titleColor],
     lineHeight: titleLineHeight,
     fontWeight: titleFontWeight,
     as: asElement,
-    size: titleFontSize,
   };
   return (
     <Box position="relative" maxWidth={maxWidth} margin={`${marginTop} auto ${faqMarginBottom} auto`} background={hexColor[faqBackgroundColor] || hexColor.blueLight} padding="15px" borderRadius="10px" {...rest}>
@@ -54,7 +52,7 @@ function Faq({ id,
           <AccordionItem key={item.label} borderTop="none" borderBottom={(hideLastBorder && items.length - 1 > i) ? '1px solid #DADADA' : '0px'}>
             <AccordionButton padding="20px 10px 10px 10px" _expanded={{ color: highlightColor }}>
               <Box as="span" flex="1" textAlign="left">
-                <Heading as="h4" size={labelFontSize || 'sm'} fontWeight={labelWeight} lineHeight={labelLineHeight}>
+                <Heading as="h4" size={labelFontSize || 'sm'} fontWeight={labelWeight} lineHeight={labelLineHeight} color={hexColor[titleColor]}>
                   {item.label}
                 </Heading>
               </Box>
