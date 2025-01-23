@@ -219,37 +219,45 @@
           ],
           "steps": [
             {
+              "slug": "intro",
+              "label": "Introduction",
+              "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-introduction.mp4",
+              "source-label": "",
+              "source": ""
+            },
+            {
               "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
-              "video": "",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-vscode-.mp4",
               "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
-              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-organize-your-files.mp4",
               "source": ""
             },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-nvm.mp4",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "Go to how to install nvm on MacOS"
             },
             {
               "label": "Install LearnPack on your computer",
               "description": "You must install LearnPack to run these exercises interactively on your computer, you should run this command on the terminal: `npm install @learnpack/learnpack -g`. Click the link below to read more about LearnPack",
-              "video": "https://www.youtube.com/watch?v=noKAD-d_z3c",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-install-learnpack.mp4",
               "source": "https://4geeks.com/docs/learnpack/what-is-learnpack"
             },
             {
               "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "On MacOS, you can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
-              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-cloning-a-project.mp4",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
