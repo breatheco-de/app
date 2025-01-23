@@ -15,7 +15,7 @@ import useStyle from '../hooks/useStyle';
 import { getBrowserInfo } from '../../utils';
 
 function ShareButton({
-  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask,
+  variant, title, shareText, message, link, socials, withParty, onlyModal, currentTask, onClose,
 }) {
   const { t } = useTranslation('profile');
   const [party, setParty] = useState(true);
@@ -81,6 +81,7 @@ function ShareButton({
         onClose={() => {
           setIsOpen(false);
           setParty(true);
+          onClose();
         }}
         size="xl"
       >
@@ -213,6 +214,7 @@ ShareButton.propTypes = {
   shareText: PropTypes.string,
   message: PropTypes.string,
   withParty: PropTypes.bool,
+  onClose: PropTypes.func,
 };
 
 ShareButton.defaultProps = {
@@ -224,6 +226,7 @@ ShareButton.defaultProps = {
   shareText: '',
   message: '',
   withParty: false,
+  onClose: () => {},
 };
 
 export default memo(ShareButton);
