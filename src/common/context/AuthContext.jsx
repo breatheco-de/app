@@ -188,8 +188,10 @@ function AuthProvider({ children, pageProps }) {
         });
       } else {
         handleSession(token);
-        bc.auth().me()
-          .then(({ data }) => {
+        try {
+          // only fetch user info if it is null
+          if (!user) {
+            const { data } = await bc.auth().me();
             dispatch({
               type: 'INIT',
               payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
@@ -219,10 +221,10 @@ function AuthProvider({ children, pageProps }) {
             if (!pageProps.disableLangSwitcher && langHelper[router?.locale] !== settingsLang) {
               updateSettingsLang();
             }
-          })
-          .catch(() => {
-            handleSession(null);
-          });
+          }
+        } catch (e) {
+          handleSession(null);
+        }
       }
     } else {
       dispatch({
