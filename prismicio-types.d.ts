@@ -1904,16 +1904,6 @@ export interface TestimonialsSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
-   * Version field in *Testimonials → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: *None*
-   * - **API ID Path**: testimonials.primary.version
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  version: prismic.KeyTextField;
-
-  /**
    * Title field in *Testimonials → Primary*
    *
    * - **Field Type**: Text
@@ -1942,6 +1932,27 @@ export interface TestimonialsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Background Color field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.primary.background_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background_color: prismic.KeyTextField;
+
+  /**
+   * Version field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: v1
+   * - **API ID Path**: testimonials.primary.version
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  version: prismic.SelectField<"v1" | "v2", "filled">;
 }
 
 /**
@@ -2230,6 +2241,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   id_key: prismic.KeyTextField;
+
+  /**
+   * Padding field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
 
   /**
    * Information Size field in *TwoColumn → Primary*

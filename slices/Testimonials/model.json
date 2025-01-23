@@ -15,10 +15,6 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
-        "version": {
-          "type": "Text",
-          "config": { "label": "Version", "placeholder": "" }
-        },
         "title": {
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
@@ -32,6 +28,19 @@
           "config": {
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
+          }
+        },
+        "background_color": {
+          "type": "Text",
+          "config": { "label": "Background Color", "placeholder": "" }
+        },
+        "version": {
+          "type": "Select",
+          "config": {
+            "label": "Version",
+            "placeholder": "",
+            "options": ["v1", "v2"],
+            "default_value": "v1"
           }
         }
       },

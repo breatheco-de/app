@@ -11,14 +11,12 @@ import { components } from '../../../slices';
 import { cleanObject, isDevMode } from '../../utils';
 import { ORIGIN_HOST } from '../../utils/variables';
 import completions from './completion-jobs.json';
-import useStyle from '../../common/hooks/useStyle';
 
 const usedPageId = ['home'];
 
 function Page({ page }) {
   const landingUrl = page?.data?.landing_url;
   const { isRigoInitialized, rigo } = useRigo();
-  const { backgroundColor4 } = useStyle();
 
   useEffect(() => {
     if (!page?.id) {
@@ -71,7 +69,7 @@ function Page({ page }) {
           <meta name="google" content="notranslate" />
         </Head>
       )}
-      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} background={backgroundColor4} pb="5rem">
+      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem">
         <SliceZone slices={page?.data?.slices} components={components} />
       </Box>
     </>

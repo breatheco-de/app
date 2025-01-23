@@ -42,7 +42,8 @@ function TwoColumn({ slice }) {
       transparent={slice?.primary?.transparent}
       marginTop={slice?.primary?.margin_top}
       marginBottom={slice?.primary?.margin_bottom}
-      borderRadius={slice?.primary.border_radius}
+      borderRadius={slice?.primary?.border_radius}
+      padding={slice?.primary?.padding}
     />
   );
 }
