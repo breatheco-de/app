@@ -25,7 +25,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
     v1: {
       box: {
         background: backgroundColor,
-        border: '1px solid',
+        border: '1px solid #dadada',
         width: '250px',
       },
       textName: {
