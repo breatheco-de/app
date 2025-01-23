@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -22,6 +23,7 @@ const initialState = {
   isAuthenticated: false,
   isAuthenticatedWithRigobot: false,
   user: null,
+  cohorts: [],
 };
 
 const langHelper = {
@@ -33,13 +35,14 @@ const langHelper = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user } = action.payload;
+      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user, cohorts } = action.payload;
       return {
         ...state,
         isLoading,
         isAuthenticated,
         isAuthenticatedWithRigobot,
         user,
+        cohorts,
       };
     }
     case 'LOGIN': {
@@ -72,6 +75,12 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         user: action.payload,
+      };
+    }
+    case 'SET_COHORTS': {
+      return {
+        ...state,
+        cohorts: action.payload,
       };
     }
     case 'LOADING': {
@@ -162,6 +171,17 @@ function AuthProvider({ children, pageProps }) {
     window.location.href = inviteUrl;
   };
 
+  const parseCohort = (elem) => {
+    const { cohort, ...cohort_user } = elem;
+    const { syllabus_version } = cohort;
+    return {
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+      cohort_role: elem.role,
+      cohort_user,
+    };
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
@@ -191,10 +211,12 @@ function AuthProvider({ children, pageProps }) {
         try {
           // only fetch user info if it is null
           if (!user) {
-            const { data } = await bc.auth().me();
+            const { data } = await bc.admissions().me();
+            const { cohorts: cohortUsers, ...userData } = data;
+            const cohorts = cohortUsers.map(parseCohort);
             dispatch({
               type: 'INIT',
-              payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
+              payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
             const settingsLang = data?.settings.lang;
 
