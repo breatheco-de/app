@@ -5,7 +5,7 @@ import Text from '../Text';
 import Icon from '../Icon';
 
 function ContentHeading({
-  content, children, callToAction, titleRightSide,
+  content, children, callToAction, titleRightSide, currentData,
 }) {
   const { title, subtitle, assetType } = content;
   const assetTypeIcons = {
@@ -32,10 +32,11 @@ function ContentHeading({
             <Heading size="m" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
               {title}
             </Heading>
+            {!currentData.interactive && callToAction}
           </Box>
           {titleRightSide}
         </Box>
-        {callToAction}
+        {currentData.interactive && callToAction}
         {subtitle && (
           <Text size="l" marginTop="0.5rem">
             {subtitle}
@@ -52,9 +53,11 @@ ContentHeading.propTypes = {
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
   callToAction: PropTypes.node,
   titleRightSide: PropTypes.node,
+  currentData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
 };
 ContentHeading.defaultProps = {
   content: {},
+  currentData: {},
   callToAction: null,
   titleRightSide: null,
 };
