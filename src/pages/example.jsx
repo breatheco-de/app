@@ -47,6 +47,7 @@ export default function Example() {
             setPlanData({
               ...data,
               event: respEvent?.data,
+              consumableType: 'event',
               academyServiceSlug: '',
             });
             setStage(stageType.outOfConsumables);

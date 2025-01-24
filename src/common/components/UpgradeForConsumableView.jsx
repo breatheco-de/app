@@ -10,8 +10,6 @@ import { setStorageItem, slugToTitle } from '../../utils';
 import Heading from './Heading';
 
 function UpgradeForConsumableView({ externalData }) {
-  console.log('externalData');
-  console.log(externalData);
   const { t } = useTranslation('signup');
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -25,41 +23,48 @@ function UpgradeForConsumableView({ externalData }) {
   const allSubscriptions = externalData?.allSubscriptions || [];
   const event = externalData?.event || {};
   const academyService = externalData?.academyService || {};
-  const isEventConsumable = event?.event_type?.slug;
   const type = externalData?.consumableType;
 
   const consumablesDictionary = {
-    workshops: {
+    event: {
       title: t('consumables.ran-out-of-events'),
       description: t('consumables.ran-out-of-events-text'),
+      access: t('consumables.and-get-event-access'),
       notAvailable: t('consumables.consumable-event-not-available'),
       purchase: t('consumables.purchase-one-or-more-events'),
+      subscriptionMatch: allSubscriptions.filter(
+        (s) => s.selected_event_type_set?.event_types.some(
+          (ev) => ev?.slug === event?.event_type?.slug,
+        ),
+      ),
+      getPath: (suscriptions) => `/checkout/event/${suscriptions.map((subscription) => subscription?.selected_event_type_set.slug).join(',')}`,
     },
-    mentorships: {
+    mentorship: {
       title: t('consumables.ran-out-of-mentorships'),
       description: t('consumables.ran-out-of-mentorships-text'),
+      access: t('consumables.and-get-mentorship-access'),
       notAvailable: t('consumables.consumable-mentorship-not-available'),
       purchase: t('consumables.purchase-one-or-more-sessions'),
+      subscriptionMatch: allSubscriptions?.filter(
+        (s) => s?.selected_mentorship_service_set?.mentorship_services.some(
+          (service) => service.slug === academyService?.slug,
+        ),
+      ),
+      getPath: (suscriptions) => `/checkout/mentorship/${suscriptions.map((subscription) => subscription?.selected_mentorship_service_set.slug).join(',')}`,
+    },
+    aiCompilation: {
+      title: t('consumables.ran-out-of-compilations'),
+      description: t('consumables.ran-out-of-compilations-text'),
+      access: t('consumables.and-get-compilations-access'),
+      notAvailable: t('consumables.consumable-compilations-not-available'),
+      purchase: t('consumables.purchase-one-or-more-compilations'),
+      subscriptionMatch: allSubscriptions,
+      getPath: () => '/checkout/compilation/ai-compilation',
     },
   };
 
-  const mentorshipSubscriptionMatch = allSubscriptions.length > 0 ? allSubscriptions?.filter(
-    (s) => s?.selected_mentorship_service_set?.mentorship_services.some(
-      (service) => service.slug === academyService?.slug,
-    ),
-  ) : [];
-
-  const suscriptionMentoshipServices = mentorshipSubscriptionMatch.map((subscription) => subscription?.selected_mentorship_service_set.slug).join(',');
-
-  const eventTypeSubscriptionsMatch = allSubscriptions.length > 0 ? allSubscriptions.filter(
-    (s) => s.selected_event_type_set?.event_types.some(
-      (ev) => ev?.slug === event?.event_type?.slug,
-    ),
-  ) : [];
-  const subscriptionEventsServices = eventTypeSubscriptionsMatch.map((subscription) => subscription?.selected_event_type_set.slug).join(',');
-
   const alreadySubscribedToAll = hasBasePlan && hasASuggestedPlan;
-  const noExistsConsumablesForUserSubscriptions = isEventConsumable ? eventTypeSubscriptionsMatch?.length === 0 : mentorshipSubscriptionMatch.length === 0;
+  const noExistsConsumablesForUserSubscriptions = consumablesDictionary[type]?.subscriptionMatch?.length === 0;
 
   const handleGetConsumables = () => {
     setIsValidating(true);
@@ -73,32 +78,22 @@ function UpgradeForConsumableView({ externalData }) {
     }
 
     if (selectedIndex === 1) {
-      if (isEventConsumable) {
-        setStorageItem('redirected-from', router?.asPath);
-        router.push({
-          pathname: `/checkout/event/${subscriptionEventsServices}`,
-        });
-      }
-      if (!isEventConsumable) {
-        setStorageItem('redirected-from', router?.asPath);
-        router.push({
-          pathname: `/checkout/mentorship/${suscriptionMentoshipServices}`,
-        });
-      }
+      setStorageItem('redirected-from', router?.asPath);
+      const subscriptions = consumablesDictionary[type].subscriptionMatch;
+      const pathname = consumablesDictionary[type].getPath(subscriptions);
+      router.push({
+        pathname,
+      });
     }
   };
 
   return (
     <Flex flexDirection="column" gridGap="16px" padding="15px">
       <Heading size="21px">
-        {isEventConsumable
-          ? t('consumables.ran-out-of-events')
-          : t('consumables.ran-out-of-mentorships')}
+        {consumablesDictionary[type].title}
       </Heading>
       <Text size="14px" fontWeight={700}>
-        {isEventConsumable
-          ? t('consumables.ran-out-of-events-text')
-          : t('consumables.ran-out-of-mentorships-text')}
+        {consumablesDictionary[type].description}
       </Text>
       <Flex flexDirection="column" gridGap="16px">
         {!alreadySubscribedToAll && (basePlan || suggestedPlan) && (
@@ -119,9 +114,7 @@ function UpgradeForConsumableView({ externalData }) {
               {t('upgrade-a-plan')}
             </Text>
             <Text size="12px" fontWeight={400} color="black">
-              {isEventConsumable
-                ? t('consumables.and-get-event-access')
-                : t('consumables.and-get-mentorship-access')}
+              {consumablesDictionary[type].access}
             </Text>
           </Button>
         )}
@@ -132,23 +125,13 @@ function UpgradeForConsumableView({ externalData }) {
               Bundle
             </Text>
             {noExistsConsumablesForUserSubscriptions && (
-              <>
-                {isEventConsumable ? (
-                  <Text size="11px">
-                    {`(${t('consumables.consumable-event-not-available')})`}
-                  </Text>
-                ) : (
-                  <Text size="11px">
-                    {`(${t('consumables.consumable-mentorship-not-available')})`}
-                  </Text>
-                )}
-              </>
+              <Text size="11px">
+                {`(${consumablesDictionary[type].notAvailable})`}
+              </Text>
             )}
           </Flex>
           <Text size="12px" fontWeight={700} textTransform="uppercase" color={fontColor}>
-            {isEventConsumable
-              ? t('consumables.purchase-one-or-more-events')
-              : t('consumables.purchase-one-or-more-sessions')}
+            {consumablesDictionary[type].purchase}
           </Text>
           <Text size="12px" fontWeight={400} color={fontColor}>
             {t('consumables.avoid-monthly-commitment')}

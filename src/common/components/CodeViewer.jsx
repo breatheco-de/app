@@ -190,6 +190,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
 
           setPlanData({
             ...result,
+            consumableType: 'aiCompilation',
           });
 
           setLanguages([
