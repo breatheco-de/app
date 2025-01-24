@@ -952,6 +952,36 @@ export interface OneColumnSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * padding field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
+
+  /**
+   * Grid Column field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.grid_column
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  grid_column: prismic.KeyTextField;
+
+  /**
+   * Width field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  width: prismic.KeyTextField;
+
+  /**
    * Margin Top field in *OneColumn → Primary*
    *
    * - **Field Type**: Text
