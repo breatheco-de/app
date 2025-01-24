@@ -158,7 +158,8 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
-    "start-asset": "Empezar {{asset_type}} interactivo",
+    "start-interactive-asset": "Empezar {{asset_type}} interactivo",
+    "start-asset": "Empezar {{asset_type}}",
     "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
@@ -251,6 +252,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         },
         {
@@ -310,6 +321,16 @@
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
             }
           ]
         },
@@ -377,6 +398,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         }
       ]
@@ -434,9 +465,6 @@
   "option-readme": "Readme only",
   "choose-one-option": "Elige una de estas opciones",
   "choose-one-description": "Puedes elegir una de las siguientes opciones para iniciar tu proyecto",
-  "read-me-explanation": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
-  "read-me-title": "Lee el contenido del readme",
-  "read-me-button": "¡Llevame al readme!",
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
     "owner_name-min": "El nombre del propietario es demasiado corto",

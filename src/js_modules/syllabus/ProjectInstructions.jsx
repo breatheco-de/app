@@ -41,7 +41,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
       {startWithLearnpack ? (
         <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
           {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
-            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+            : t('common:learnpack.start-interactive-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
@@ -59,7 +59,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           }}
           {...rest}
         >
-          {t('asset-button.project')}
+          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       )}
     </>
@@ -94,31 +94,32 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
+  console.log(currentAsset);
+  console.log(vendors);
+
   if (variant === 'extra-small') {
     return (
       <>
-        <Box background="blue.default" borderRadius="8px" display="flex" alignItems="center" gap="10px">
+        <Box
+          background="blue.default"
+          display="inline-flex"
+          gap="10px"
+          borderRadius="8px"
+          flexDirection={{
+            base: 'column',
+            md: 'row',
+          }}
+        >
           {(startWithLearnpack) && (
             <Icon icon="learnpack" />
           )}
-          <Box>
-            <Box
-              display="flex"
-              gap="10px"
-              flexDirection={{
-                base: 'column',
-                md: 'row',
-              }}
-            >
-              <ButtonsHandler
-                currentAsset={currentAsset}
-                handleStartLearnpack={handleStartLearnpack}
-                setShowCloneModal={setShowCloneModal}
-                startWithLearnpack={startWithLearnpack}
-                variant={variant}
-              />
-            </Box>
-          </Box>
+          <ButtonsHandler
+            currentAsset={currentAsset}
+            handleStartLearnpack={handleStartLearnpack}
+            setShowCloneModal={setShowCloneModal}
+            startWithLearnpack={startWithLearnpack}
+            variant={variant}
+          />
         </Box>
         <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
       </>

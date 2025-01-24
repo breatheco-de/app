@@ -37,7 +37,7 @@
     "months": "months",
     "years": "years"
   },
-  "timer":{
+  "timer": {
     "min": "min",
     "mins": "mins",
     "sec": "seg"
@@ -150,9 +150,9 @@
     "mark-as-done": "Mark as done",
     "mark-as-not-done": "Mark as not done"
   },
-  "external":{
+  "external": {
     "title": "This is an external exercise",
-    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will redirected to a new tab to do it; choose one of the following options to start working on the project:"
+    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will be redirected to a new tab to do it; choose one of the following options to start working on the project:"
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
@@ -162,7 +162,8 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
-    "start-asset": "Start interactive {{asset_type}}",
+    "start-interactive-asset": "Start interactive {{asset_type}}",
+    "start-asset": "Start {{asset_type}}",
     "continue-asset": "Continue this {{asset_type}}",
     "asset_types": {
       "project": "project",
@@ -253,6 +254,16 @@
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
+            }
           ]
         },
         {
@@ -312,6 +323,16 @@
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
             }
           ]
         },
@@ -379,6 +400,16 @@
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
+            }
           ]
         }
       ]
@@ -436,9 +467,6 @@
   "option-readme": "Readme only",
   "choose-one-option": "Choose one of these options",
   "choose-one-description": "You can choose one of the following options to start your project.",
-  "read-me-explanation": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
-  "read-me-title": "Read the content of the readme",
-  "read-me-button": "Take me to the readme!",
   "validators": {
     "owner_name-required": "Owner name is required",
     "owner_name-min": "Owner name is too short",

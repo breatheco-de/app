@@ -26,60 +26,6 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
-function OnlyReadmeDisplay({ onClose }) {
-  const { t } = useTranslation('syllabus');
-  const scrollToMarkdown = () => {
-    const markdownBody = document.getElementById('markdown-body');
-    if (!markdownBody) return;
-
-    const threshold = 200;
-    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
-    const targetPosition = markdownBody.getBoundingClientRect().top + currentScrollPosition;
-
-    const scrollDistance = Math.abs(currentScrollPosition - targetPosition);
-
-    if (scrollDistance > threshold) {
-      markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
-    }
-
-    onClose();
-  };
-
-  return (
-    <Box borderRadius="11px" width="100%" height="100%">
-      <Heading size="sm" fontWeight="400">
-        {t('common:read-me-title')}
-      </Heading>
-      <Text
-        mt="16px"
-        size="18px"
-      >
-        {t('common:read-me-explanation')}
-      </Text>
-      <Button
-        as="a"
-        display="flex"
-        marginY="auto"
-        margin="10px 0"
-        textTransform="uppercase"
-        width="100%"
-        flexDirection="row"
-        gridGap="10px"
-        fontSize="12px"
-        alignItems="center"
-        justifyContent="flex-start"
-        style={{
-          color: 'currentColor',
-        }}
-        onClick={scrollToMarkdown}
-      >
-        {t('common:read-me-button')}
-        <Icon color="currentColor" icon="longArrowRight" />
-      </Button>
-    </Box>
-  );
-}
-
 function ProvisioningDisplay({ availableOptions, resetOptionSelector, cohortSessionID, currentAssetURL }) {
   const { t } = useTranslation('syllabus');
   const accessToken = localStorage.getItem('accessToken');
@@ -141,9 +87,26 @@ function ProvisioningDisplay({ availableOptions, resetOptionSelector, cohortSess
   );
 }
 
-function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps }) {
+function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
+
+  const scrollToMarkdown = () => {
+    const markdownBody = document.getElementById('markdown-body');
+    if (!markdownBody) return;
+
+    const threshold = 200;
+    const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
+    const targetPosition = markdownBody.getBoundingClientRect().top + currentScrollPosition;
+
+    const scrollDistance = Math.abs(currentScrollPosition - targetPosition);
+
+    if (scrollDistance > threshold) {
+      markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    onClose();
+  };
 
   return (
     <Box>
@@ -153,7 +116,7 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
       <Text mt="16px" size="18px">
         {t('common:learnpack.clone-modal.description')}
       </Text>
-      {availableOptions.length > 1 && (
+      {availableOptions.length > 1 && !selectedOs && (
         <Button variant="link" textDecoration="none" onClick={resetOptionSelector}>
           ←
           {'  '}
@@ -216,9 +179,15 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
                     showLineNumbers={false}
                   />
                   {step.source && (
-                    <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
-                      {step['source-label'] || t('common:learn-more')}
-                    </NextChakraLink>
+                    <>
+                      {!isOnlyReadme ? (
+                        <NextChakraLink href={step.source} target="_blank" color={hexColor.blueDefault}>
+                          {step['source-label'] || t('common:learn-more')}
+                        </NextChakraLink>
+                      ) : (
+                        <Button background="none" fontSize="14px" variant="link" onClick={scrollToMarkdown}>{step['source-label'] || t('common:learn-more')}</Button>
+                      )}
+                    </>
                   )}
                 </AccordionPanel>
               </AccordionItem>
@@ -287,6 +256,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
   const parseSteps = () => {
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
+    if (onlyReadme) return selectedOs?.readme_steps;
     return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
   };
 
@@ -307,7 +277,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     const options = [
       showProvisioningLinks && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
       isForOpenLocaly && { key: 'open_locally', label: t('common:option-open-locally') },
-      onlyReadme && { key: 'readme', label: t('common:option-readme') },
+      onlyReadme && { key: 'open_locally', label: t('common:option-open-locally') },
     ].filter(Boolean);
 
     setAvailableOptions(options);
@@ -335,6 +305,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
             steps={steps}
             resetOptionSelector={resetOptionSelector}
             availableOptions={availableOptions}
+            onClose={onClose}
+            isOnlyReadme={onlyReadme}
           />
         );
       case 'provisioning_vendors':
@@ -346,20 +318,18 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
             availableOptions={availableOptions}
           />
         );
-      case 'readme':
-        return <OnlyReadmeDisplay assetType={currentAsset?.asset_type} onClose={onClose} />;
       default:
         return null;
     }
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={selectedOption === 'open_locally' ? '5xl' : 'lg'}>
+    <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'open_locally') ? '5xl' : 'lg'}>
       <ModalOverlay />
       <ModalContent padding="16px" overflow="auto">
         <ModalCloseButton />
         <Box display="flex" gap="16px" height="100%" minHeight="100%">
-          <Box width={{ base: '100%', md: selectedOption === 'open_locally' ? '50%' : '100%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+          <Box width={{ base: '100%', md: (selectedOption === 'open_locally') ? '50%' : '100%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
             {selectedOption ? (
               renderOptionContent()
             ) : (
@@ -410,7 +380,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
               </NextChakraLink>
             )}
           </Box>
-          {selectedOption === 'open_locally' && (
+          {(selectedOption === 'open_locally') && (
             <Box width="50%" display={{ base: 'none', md: 'block' }}>
               {selectedOs ? (
                 <ReactPlayerV2
@@ -457,6 +427,8 @@ OpenLocallyDisplay.propTypes = {
   setExpanded: PropTypes.func.isRequired,
   resetOptionSelector: PropTypes.func.isRequired,
   steps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
+  onClose: PropTypes.func.isRequired,
+  isOnlyReadme: PropTypes.bool.isRequired,
 };
 
 ProvisioningDisplay.propTypes = {
@@ -464,10 +436,6 @@ ProvisioningDisplay.propTypes = {
   resetOptionSelector: PropTypes.func.isRequired,
   cohortSessionID: PropTypes.string.isRequired,
   currentAssetURL: PropTypes.string.isRequired,
-};
-
-OnlyReadmeDisplay.propTypes = {
-  onClose: PropTypes.func.isRequired,
 };
 
 export default ModalToCloneProject;
