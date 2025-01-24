@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
+import { Box, Flex, Container, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
@@ -22,6 +22,7 @@ import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
+import Button from '../common/components/Button';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -356,13 +357,23 @@ function PricingView() {
                       </Flex>
                       <Link
                         variant="buttonDefault"
+                        backgroundColor="#0097CF"
                         borderRadius="3px"
                         href={`/${lang}/pricing?course=${course?.slug}`}
                         textAlign="center"
                         width="100%"
                         opacity="0.9"
-                        _hover={{ opacity: 1 }}
-                        _active={{ opacity: 1 }}
+                        _hover={{
+                          background: hexColor?.blue5,
+                        }}
+                        _active={{
+                          background: hexColor?.blue4,
+                        }}
+                        _disabled={{
+                          background: hexColor?.blue6,
+                          cursor: 'not-allowed',
+                        }}
+                        // _active={{ opacity: 1 }}
                         display="flex"
                         justifyContent="center"
                         alignItems="center"

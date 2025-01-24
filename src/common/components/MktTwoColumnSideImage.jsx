@@ -240,16 +240,21 @@ function MktTwoColumnSideImage({
               <Link
                 variant={!linkButton && 'buttonDefault'}
                 color={linkButton ? hexColor?.blueDefault : buttonColors?.color}
-                background={linkButton ? 'transparent' : buttonColors?.background}
+                background={linkButton ? 'transparent' : hexColor?.blue3}
                 border="1px solid"
                 borderColor="transparent"
                 _hover={{
-                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  background: linkButton ? 'transparent' : hexColor?.blue5,
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
                 }}
                 _active={{
-                  background: linkButton ? 'transparent' : buttonColors?.background,
+                  background: linkButton ? 'transparent' : hexColor?.blue4,
                   borderColor: linkButton ? 'transparent' : buttonColors?.color,
+                }}
+                _disabled={{
+                  background: linkButton ? 'transparent' : hexColor?.blue6,
+                  borderColor: linkButton ? 'transparent' : buttonColors?.color,
+                  cursor: 'not-allowed',
                 }}
                 textDecoration={linkButton && 'underline'}
                 fontSize={buttonLabelSize}
