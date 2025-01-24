@@ -15,36 +15,125 @@ import { lengthOfString } from '../../utils';
 import axios from '../../axios';
 import { BREATHECODE_HOST } from '../../utils/variables';
 
-function TestimonialBox({ picture, name, rating, description }) {
-  const { fontColor2, backgroundColor, hexColor } = useStyle();
+function TestimonialBox({ picture, name, rating, description, version }) {
+  const { fontColor2, backgroundColor, backgroundColor2, backgroundColor5, hexColor } = useStyle();
   const limit = 160;
   const descriptionLength = lengthOfString(description);
   const truncatedDescription = descriptionLength > limit ? `${description?.substring(0, limit)}...` : description;
 
+  const styles = {
+    v1: {
+      box: {
+        background: backgroundColor,
+        border: '1px solid',
+        width: '250px',
+      },
+      textName: {
+        fontWeight: '900',
+        lineHeight: '16px',
+        marginTop: '15px',
+      },
+      imageStyles: {
+        borderRadius: '50%',
+        margin: '0 auto',
+      },
+    },
+    v2: {
+      textName: {
+        height: '62px',
+        fontSize: '18px',
+        backgroundColor: backgroundColor5,
+        pt: '24px',
+        pb: '16px',
+        borderRadius: '8px 8px 0 0',
+        fontWeight: 400,
+        lineHeight: '21.6px',
+        // marginTop: '70px',
+      },
+      box: {
+        width: '306px',
+        position: 'relative',
+        padding: '0px',
+        marginTop: '45px',
+        justifyContent: 'start',
+        height: 'auto',
+        // height: '253px',
+      },
+      imageStyles: {
+        border: '2px solid #00041A',
+        position: 'absolute',
+        borderRadius: '50%',
+        top: '-45px',
+        left: 'calc(50% - 35px)',
+      },
+      imageBrand: {
+        border: '2px solid none',
+        borderRadius: '16px',
+        margin: '10px auto',
+        width: '59px',
+        height: '19px',
+        position: 'absolute',
+        top: '-15px',
+        left: '166px',
+        padding: '4px',
+        backgroundColor: '#EEF9FE',
+      },
+      textDescription: {
+        backgroundColor: backgroundColor2,
+        style: {
+          borderRadius: '0 0 8px 8px',
+          padding: '8px',
+          width: '306px',
+          fontSize: '12px',
+          textAlign: 'center',
+          lineHeight: '14.4px',
+          marginTop: '0',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+        },
+      },
+    },
+  };
+
   return (
     <Box
-      width="250px"
       height={{ md: '270px', base: '320px' }}
       display="flex"
       justifyContent="space-between"
       flexDirection="column"
-      background={backgroundColor}
       borderRadius="12px"
       padding="15px"
       textAlign="center"
-      border="1px solid"
       borderColor={hexColor.borderColor}
+      // backgroundColor="red"
       flexShrink="0"
+      {...styles[version]?.box}
     >
-      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={{ borderRadius: '50%', margin: '0 auto' }} />
-      <Text marginTop="15px" lineHeight="16px" fontWeight="900" size="md">
+      <Image name={name} alt={`${name} picture`} src={picture} width={65} height={65} style={styles[version]?.imageStyles} />
+      {version === 'v2' ? (
+        <Image
+          name={`${name}-2`}
+          alt={`${name} picture 2`}
+          src="https://cdn.worldvectorlogo.com/logos/globant-1.svg"
+          width={65}
+          height={65}
+          style={styles[version]?.imageBrand}
+        />
+      ) : null }
+      <Text
+        // marginTop="15px"
+        size="md"
+        {...styles[version]?.textName}
+      >
         {name}
       </Text>
-      <StarRating
-        rating={rating}
-        margin="6px 0 0 0"
-        justifyContent="center"
-      />
+      {version === 'v1' ? (
+        <StarRating
+          rating={rating}
+          margin="6px 0 0 0"
+          justifyContent="center"
+        />
+      ) : null}
       <Text
         marginTop="10px"
         fontSize="var(--chakra-fontSizes-xs)"
@@ -52,8 +141,9 @@ function TestimonialBox({ picture, name, rating, description }) {
         lineHeight="14px"
         color={fontColor2}
         title={description}
+        {...styles[version]?.textDescription}
       >
-        {`“${truncatedDescription}”`}
+        {version === 'v2' ? `“${description}”` : `“${truncatedDescription}”`}
       </Text>
     </Box>
   );
@@ -64,6 +154,7 @@ function MktTestimonials({
   title,
   endpoint,
   testimonials,
+  version = 'v1',
   ...rest
 }) {
   const [testimonialsData, setTestimonialsData] = useState();
@@ -92,6 +183,16 @@ function MktTestimonials({
 
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
+  const stylesBox = {
+    v2: {
+      titlesStyles: {
+        fontSize: '38px',
+        lineHeight: '45.6px',
+        fontWeight: 400,
+      },
+    },
+  };
+
   return testimonialsArray && (
     <Flex
       flexDirection="column"
@@ -102,7 +203,7 @@ function MktTestimonials({
       {...rest}
     >
       {title && (
-        <Heading textAlign="center" as="h2" size="sm" marginBottom="20px">
+        <Heading textAlign="center" as="h2" size="sm" marginBottom="20px" style={stylesBox[version]?.titlesStyles}>
           {title}
         </Heading>
       )}
@@ -122,6 +223,7 @@ function MktTestimonials({
               name={`${testimonial?.author?.first_name} ${testimonial?.author?.last_name}`}
               rating={testimonial?.total_rating}
               description={testimonial?.comments}
+              version={version}
             />
           ))}
         </Box>
@@ -131,12 +233,14 @@ function MktTestimonials({
 }
 
 MktTestimonials.propTypes = {
+  version: PropTypes.string,
   title: PropTypes.string,
   endpoint: PropTypes.string,
   testimonials: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 MktTestimonials.defaultProps = {
+  version: 'v1',
   title: null,
   endpoint: '',
   testimonials: null,

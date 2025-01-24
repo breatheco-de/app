@@ -1,0 +1,96 @@
+{
+  "id": "faqs",
+  "type": "SharedSlice",
+  "name": "Faqs",
+  "description": "Faqs",
+  "variations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "docURL": "...",
+      "version": "initial",
+      "description": "Default",
+      "imageUrl": "",
+      "primary": {
+        "title": {
+          "type": "Text",
+          "config": { "label": "Title", "placeholder": "" }
+        },
+        "background_color": {
+          "type": "Text",
+          "config": { "label": "Background Color", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
+        },
+        "id_key": {
+          "type": "Text",
+          "config": { "label": "Id key", "placeholder": "" }
+        },
+        "title_font_size": {
+          "type": "Text",
+          "config": { "label": "Title Font Size", "placeholder": "" }
+        },
+        "title_line_height": {
+          "type": "Text",
+          "config": { "label": "Title Line Height", "placeholder": "" }
+        },
+        "title_font_weight": {
+          "type": "Text",
+          "config": { "label": "Title Font Weight", "placeholder": "" }
+        },
+        "title_color": {
+          "type": "Text",
+          "config": { "label": "Title Color", "placeholder": "" }
+        },
+        "margin_top": {
+          "type": "Text",
+          "config": { "label": "Margin Top", "placeholder": "" }
+        },
+        "max_width": {
+          "type": "Text",
+          "config": { "label": "Max Width", "placeholder": "" }
+        },
+        "as_element": {
+          "type": "Text",
+          "config": { "label": "As element", "placeholder": "" }
+        },
+        "label_weight": {
+          "type": "Text",
+          "config": { "label": "Label Weight", "placeholder": "" }
+        },
+        "label_font_size": {
+          "type": "Text",
+          "config": { "label": "Label Font Size", "placeholder": "" }
+        },
+        "label_line_height": {
+          "type": "Text",
+          "config": { "label": "Label Line Height", "placeholder": "" }
+        },
+        "answer_weight": {
+          "type": "Text",
+          "config": { "label": "Answer Weight", "placeholder": "" }
+        },
+        "answer_font_size": {
+          "type": "Text",
+          "config": { "label": "Answer Font Size", "placeholder": "" }
+        },
+        "answer_line_height": {
+          "type": "Text",
+          "config": { "label": "Answer Line Height", "placeholder": "" }
+        }
+      },
+      "items": {
+        "label": {
+          "type": "Text",
+          "config": { "label": "Label", "placeholder": "" }
+        },
+        "answer": {
+          "type": "Text",
+          "config": { "label": "Answer", "placeholder": "" }
+        }
+      }
+    }
+  ]
+}

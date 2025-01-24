@@ -15,7 +15,7 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
 import Timer from '../../common/components/Timer';
@@ -108,7 +108,7 @@ export async function getStaticProps({ locale, locales, params }) {
 }
 
 function CoursePage({ data, syllabus }) {
-  const { state } = useSignup();
+  const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
@@ -116,7 +116,6 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  const { getSelfAppliedCoupon } = useSignup();
   const toast = useToast();
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
@@ -221,22 +220,31 @@ function CoursePage({ data, syllabus }) {
   useEffect(() => {
     if (isRigoInitialized && data.course_translation && !initialDataIsFetching && planData?.slug) {
       // const context = document.body.innerText;
-      const plansContext = planData.planList.map((plan) => `
+
+      const plans = applyDiscountCouponsToPlans(planData.planList, selfAppliedCoupon);
+      const { discount } = getPriceWithDiscount(0, selfAppliedCoupon);
+
+      const plansContext = plans.map((plan) => `
         - ${plan.title}
         price: ${plan.priceText}
         period: ${plan.period_label}
+        ${plan.lastPrice ? `original price: ${plan.lastPrice}\n discount: ${discount}\n` : ''}
       `);
       const syllabusContext = syllabus?.json
         ? syllabus.json.days
           .map(({ label, description }) => `- Title: ${typeof label === 'object' ? (label[lang] || label.us) : label}, Description: ${typeof description === 'object' ? (description[lang] || description.us) : description}`)
         : '';
 
-      const context = `
+      let context = `
         description: ${data.course_translation?.description}
         ${syllabusContext ? `Modules: ${syllabusContext}` : ''}
         plans: ${plansContext}
         payment-methods: ${getAlternativeTranslation('rigobot.payment-methods')},
       `;
+
+      if (selfAppliedCoupon) {
+        context += `\n coupon: ${discount} off`;
+      }
 
       rigo.updateOptions({
         showBubble: false,
@@ -279,6 +287,7 @@ function CoursePage({ data, syllabus }) {
         dataLayer: {
           event: 'join_cohort',
           cohort_id: cohortId,
+          agent: getBrowserInfo(),
         },
       });
       setIsFetching(true);

@@ -12,7 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import useStyle from '../../common/hooks/useStyle';
 import useAuth from '../../common/hooks/useAuth';
 import { reportDatalayer } from '../../utils/requests';
-import { getQueryString, getStorageItem } from '../../utils';
+import { getQueryString, getStorageItem, getBrowserInfo } from '../../utils';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../common/hooks/useModuleHandler';
 import { getCohort } from '../../common/handlers/cohorts';
@@ -80,6 +80,7 @@ function PaymentInfo() {
         event: 'open_syllabus_module',
         tasks: updatedTasks,
         cohort_id: cohortFound.id,
+        agent: getBrowserInfo(),
       },
     });
     startDay({
@@ -152,6 +153,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'join_cohort',
         cohort_id: cohort?.id,
+        agent: getBrowserInfo(),
       },
     });
     bc.cohort().join(cohort?.id)
@@ -185,6 +187,7 @@ function PaymentInfo() {
       dataLayer: {
         event: 'checkout_payment_info_rendered',
         value: state?.selectedPlanCheckoutData?.price,
+        agent: getBrowserInfo(),
       },
     });
   }, []);
@@ -295,6 +298,7 @@ function PaymentInfo() {
           payment_type: 'Credit card',
           plan: state?.selectedPlanCheckoutData?.plan_slug,
           period_label: state?.selectedPlanCheckoutData?.period_label,
+          agent: getBrowserInfo(),
         },
       });
       await handlePayment({}, true)
@@ -427,7 +431,7 @@ function PaymentInfo() {
                   allowToggle: true,
                 }}
                 descriptionStyle={{ padding: '10px 0 0 0' }}
-                defaultIndex={paymentMethods.length === 1 && [0]}
+                defaultIndex={paymentMethods?.findIndex((method) => method.is_credit_card)}
               />
             </Flex>
           </>

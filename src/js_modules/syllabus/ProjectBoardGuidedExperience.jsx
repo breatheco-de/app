@@ -20,6 +20,7 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
+  const includesVideo = currentAsset?.intro_video_url;
   const assetTypeIcons = {
     LESSON: 'book',
     EXERCISE: 'strength',
@@ -44,22 +45,22 @@ function ProjectHeading({ currentAsset, isDelivered, handleStartLearnpack }) {
         flexDirection={{ base: 'column', sm: isDelivered ? 'column' : 'row' }}
       >
         <Box display="flex" flexDirection="column" gap="16px" width="100%">
-          <Box display="flex" flexDirection="column" justifyContent="space-between" height="100%" gap="20px">
+          <Box display="flex" flexDirection={includesVideo ? 'column' : 'row'} flexWrap={!includesVideo && 'wrap'} justifyContent="space-between" height="100%" gap="20px">
             <Box>
-              <Box mb="16px" display="flex" gridGap="16px" alignItems="center">
+              <Box mb={includesVideo && '16px'} display="flex" gridGap="16px" alignItems="center" height={!includesVideo && '100%'}>
                 <Icon icon={assetTypeIcons[assetType] || 'book'} height="30px" color={hexColor.blueDefault} width="28px" style={{ margin: 'auto', marginRight: '0.4rem' }} />
                 <Heading style={{ fontWeight: '400' }} size="sm" display="inline-flex" gridGap="10px" margin="0 0 0 0 !important">
                   {title}
                 </Heading>
               </Box>
-              {currentAsset?.description && (
+              {currentAsset?.description && includesVideo && (
                 <Text style={{ margin: '0px' }} size="l">
                   {currentAsset.description}
                 </Text>
               )}
             </Box>
             <Box>
-              <ProjectInstructions variant="small" currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
+              <ProjectInstructions variant={includesVideo ? 'small' : 'extra-small'} currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} />
             </Box>
           </Box>
         </Box>
@@ -124,7 +125,6 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
         gap="20px"
         mb={isDelivered && '1.5rem'}
         flexDirection={{ base: 'column', md: 'row' }}
-      // margin={{ base: '0px -10px', md: '0px -2rem' }}
       >
         <Box display="flex" flexDirection="column" gap="20px" width="100%">
           <ProjectHeading currentAsset={currentAsset} isDelivered={isDelivered} handleStartLearnpack={handleStartLearnpack} />
@@ -156,7 +156,7 @@ function ProjectBoardGuidedExperience({ currentAsset, handleStartLearnpack }) {
           <TaskCodeRevisions />
         )}
       </Box>
-      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} />
+      <Topbar currentAsset={currentAsset} display={isHeaderVisible ? 'none' : 'flex'} handleStartLearnpack={handleStartLearnpack} buttonsHandlerVariant="extra-small" />
     </>
   );
 }

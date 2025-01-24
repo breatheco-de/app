@@ -33,7 +33,7 @@ import useAuth from '../../common/hooks/useAuth';
 import useSession from '../../common/hooks/useSession';
 import ContactInformation from '../../js_modules/checkout/ContactInformation';
 import ChooseYourClass from '../../js_modules/checkout/ChooseYourClass';
-import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem } from '../../utils';
+import { isWindow, getTimeProps, removeURLParameter, getQueryString, getStorageItem, removeStorageItem, slugToTitle, removeSessionStorageItem, getBrowserInfo } from '../../utils';
 import Summary from '../../js_modules/checkout/Summary';
 import PaymentInfo from '../../js_modules/checkout/PaymentInfo';
 import useSignup from '../../common/store/actions/signupAction';
@@ -288,6 +288,7 @@ function Checkout() {
         plan: defaultPlan,
         path: '/checkout',
         conversion_info: userSession,
+        agent: getBrowserInfo(),
       },
     });
   }, [router.locale]);
@@ -914,7 +915,7 @@ function Checkout() {
                     <Divider borderBottomWidth="2px" />
                     {originalPlan?.accordionList?.length > 0 && (
                       <Flex flexDirection="column" gridGap="4px" width="100%" mt="1rem">
-                        <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[]}>
+                        <Accordion display="flex" flexDirection="column" gridGap="16px" containerStyles={{ gridGap: '8px' }} allowToggle defaultIndex={[0]}>
                           <AccordionItem display="flex" gridGap="10px" flexDirection="column" borderColor="blue.default" borderRadius="17px" border="0">
                             {({ isExpanded }) => (
                               <>

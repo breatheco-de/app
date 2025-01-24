@@ -30,7 +30,7 @@
 			},
 			"button_color": {
 				"__TYPE__": "FieldContent",
-				"value": "Blue",
+				"value": "White",
 				"type": "Select"
 			},
 			"title": {
@@ -133,14 +133,101 @@
 			},
 			"fontFamily": {
 				"__TYPE__": "FieldContent",
-				"value": "Lato",
+				"value": "Space Grotesk Variable",
 				"type": "Select"
+			},
+			"custom_title_size": {
+				"__TYPE__": "FieldContent",
+				"value": "gave",
+				"type": "Text"
+			},
+			"custom_subtitle_size": {
+				"__TYPE__": "FieldContent",
+				"value": "steady",
+				"type": "Text"
+			},
+			"font_family_subtitle": {
+				"__TYPE__": "FieldContent",
+				"value": "Space Grotesk Variable",
+				"type": "Select"
+			},
+			"students_avatars": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Consequat enim consequat quis consequat fugiat cupidatat veniam dolor irure ea ad."
+						}
+					}
+				]
+			},
+			"student_avatar_description": {
+				"__TYPE__": "FieldContent",
+				"value": "rising",
+				"type": "Text"
+			},
+			"description_title": {
+				"__TYPE__": "FieldContent",
+				"value": "children",
+				"type": "Text"
+			},
+			"transparent": {
+				"__TYPE__": "BooleanContent",
+				"value": true
+			},
+			"button_label_size": {
+				"__TYPE__": "FieldContent",
+				"value": "actual",
+				"type": "Text"
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "success",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "pie",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "here",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "we",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "onto",
+				"type": "Text"
 			}
 		},
 		"items": [
 			{
 				"__TYPE__": "GroupItemContent",
-				"value": []
+				"value": [
+					[
+						"multi_description_title",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "afternoon",
+							"type": "Text"
+						}
+					],
+					[
+						"multi_description_content",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "snow",
+							"type": "Text"
+						}
+					]
+				]
 			}
 		]
 	}

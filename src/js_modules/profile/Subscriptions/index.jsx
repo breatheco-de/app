@@ -1,5 +1,5 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-unsafe-optional-chaining */
-/* eslint-disable react/jsx-no-useless-fragment */
 import {
   Box,
   Flex,
@@ -64,6 +64,18 @@ function Subscriptions({ cohorts }) {
 
   const getConsumables = async () => {
     try {
+      const nonSaasCohorts = cohorts.filter(({ available_as_saas }) => !available_as_saas);
+      const academies = [...new Set(nonSaasCohorts.map(({ academy }) => academy.id))];
+
+      const allServices = {
+        mentorships: [],
+        workshops: [],
+      };
+
+      const cohortsServices = academies.map((academy) => bc.mentorship({ academy }, true).getService());
+      const responseServices = await Promise.all(cohortsServices);
+      const nonSaasServices = responseServices.flatMap(({ data }) => data).map((elem) => ({ ...elem, nonSaasAcademy: true }));
+
       const res = await bc.payment().service().consumable();
       if (res.status === 200) {
         const { data } = res;
@@ -71,7 +83,7 @@ function Subscriptions({ cohorts }) {
         const promiseMentorship = data.mentorship_service_sets.map(async (elem) => {
           const mentRes = await bc.mentorship().getServiceSet(elem.id);
 
-          return mentRes.data.mentorship_services;
+          return mentRes.data.mentorship_services.map((service) => ({ ...service, unit: elem.balance.unit }));
         });
 
         const promiseEvents = data.event_type_sets.map(async (elem) => {
@@ -81,11 +93,11 @@ function Subscriptions({ cohorts }) {
         });
         const resMentorships = await Promise.all(promiseMentorship);
         const resWorkshops = await Promise.all(promiseEvents);
-        setServices({
-          mentorships: resMentorships.flat(),
-          workshops: resWorkshops.flat(),
-        });
+        allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
+        allServices.workshops = resWorkshops.flat();
       }
+
+      setServices(allServices);
       setLoadingServices(false);
     } catch (e) {
       setLoadingServices(false);
@@ -109,7 +121,7 @@ function Subscriptions({ cohorts }) {
 
   const allSubscriptions = subscriptionData?.subscriptions
     && subscriptionData?.plan_financings
-    && [...subscriptionData?.subscriptions, ...subscriptionData?.plan_financings]
+    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
       .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   const prioritizeStatus = ['fully_paid', 'active', 'payment_issue', 'expired', 'cancelled', 'error'];
@@ -156,7 +168,7 @@ function Subscriptions({ cohorts }) {
   const totalMentorshipsAvailable = consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalWorkshopsAvailable = consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
 
-  const existsNoAvailableAsSaas = cohorts.some((c) => c?.cohort?.available_as_saas === false);
+  const existsNoAvailableAsSaas = cohorts.some((c) => c.available_as_saas === false);
 
   return (
     <>
@@ -165,59 +177,57 @@ function Subscriptions({ cohorts }) {
           <title>{t('my-subscriptions')}</title>
         </Head>
       )}
-      {!existsNoAvailableAsSaas && (
-        <Box display="flex" flexWrap="wrap" gap="24px">
-          {loadingServices ? (
-            <>
-              <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
-              <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
-            </>
-          ) : (
-            <>
-              <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
-                <Text size="sm" mb="10px" fontWeight="700">
-                  {t('subscription.mentoring-available')}
-                </Text>
-                <Box display="flex" justifyContent="space-between" alignItems="end">
-                  <Box display="flex" gap="10px" alignItems="center">
-                    <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
-                    {totalMentorshipsAvailable >= 0 ? (
-                      <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                        {totalMentorshipsAvailable}
-                      </Heading>
-                    ) : (
-                      <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
-                    )}
-                  </Box>
-                  <Button variant="link" onClick={() => setServicesModal('mentorships')}>
-                    {t('subscription.see-details')}
-                  </Button>
+      <Box display="flex" flexWrap="wrap" gap="24px">
+        {loadingServices ? (
+          <>
+            <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+            <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
+          </>
+        ) : (
+          <>
+            <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+              <Text size="sm" mb="10px" fontWeight="700">
+                {t('subscription.mentoring-available')}
+              </Text>
+              <Box display="flex" justifyContent="space-between" alignItems="end">
+                <Box display="flex" gap="10px" alignItems="center">
+                  <Icon icon="teacher1" color={hexColor.blueDefault} width="34px" height="34px" />
+                  {(totalMentorshipsAvailable < 0 || existsNoAvailableAsSaas) ? (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  ) : (
+                    <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                      {totalMentorshipsAvailable}
+                    </Heading>
+                  )}
                 </Box>
+                <Button variant="link" onClick={() => setServicesModal('mentorships')}>
+                  {t('subscription.see-details')}
+                </Button>
               </Box>
-              <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
-                <Text size="sm" mb="10px" fontWeight="700">
-                  {t('subscription.workshop-available')}
-                </Text>
-                <Box display="flex" justifyContent="space-between" alignItems="end">
-                  <Box display="flex" gap="10px" alignItems="center">
-                    <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
-                    {totalWorkshopsAvailable >= 0 ? (
-                      <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
-                        {totalWorkshopsAvailable}
-                      </Heading>
-                    ) : (
-                      <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
-                    )}
-                  </Box>
-                  <Button variant="link" onClick={() => setServicesModal('workshops')}>
-                    {t('subscription.see-details')}
-                  </Button>
+            </Box>
+            <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+              <Text size="sm" mb="10px" fontWeight="700">
+                {t('subscription.workshop-available')}
+              </Text>
+              <Box display="flex" justifyContent="space-between" alignItems="end">
+                <Box display="flex" gap="10px" alignItems="center">
+                  <Icon icon="community" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
+                  {totalWorkshopsAvailable >= 0 ? (
+                    <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                      {totalWorkshopsAvailable}
+                    </Heading>
+                  ) : (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  )}
                 </Box>
+                <Button variant="link" onClick={() => setServicesModal('workshops')}>
+                  {t('subscription.see-details')}
+                </Button>
               </Box>
-            </>
-          )}
-        </Box>
-      )}
+            </Box>
+          </>
+        )}
+      </Box>
       <Modal isOpen={servicesModal !== null} onClose={closeMentorshipsModal}>
         <ModalOverlay />
         <ModalContent>
@@ -231,12 +241,27 @@ function Subscriptions({ cohorts }) {
                 {services[servicesModal].map((service) => {
                   const logo = service.logo_url || service.icon_url;
                   return (
-                    <Box mb="10px" background={hexColor.featuredColor} padding="10px" borderRadius="4px">
-                      <Box display="flex" gap="10px" alignItems="center" mb="5px">
-                        {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
-                        <Heading size="16px">
-                          {service.name}
-                        </Heading>
+                    <Box key={service.slug} mb="10px" background={hexColor.featuredColor} padding="10px" borderRadius="4px">
+                      <Box justifyContent="space-between" display="flex" gap="10px" alignItems="center" mb="5px" width="100%">
+                        <Box display="flex" gap="10px" alignItems="center">
+                          {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
+                          <Heading size="16px">
+                            {service.name}
+                          </Heading>
+                        </Box>
+                        {servicesModal === 'mentorships' && (
+                          <>
+                            {service.nonSaasAcademy ? (
+                              <Icon icon="infinite" color={hexColor.fontColor3} />
+                            ) : (
+                              <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
+                                <Text textAlign="center" size="l" fontWeight="700">
+                                  {service.unit}
+                                </Text>
+                              </Box>
+                            )}
+                          </>
+                        )}
                       </Box>
                       <Text size="md" color={hexColor.fontColor3}>
                         {service.description}
@@ -244,6 +269,11 @@ function Subscriptions({ cohorts }) {
                     </Box>
                   );
                 })}
+                {servicesModal === 'mentorships' && existsNoAvailableAsSaas && (
+                  <Text>
+                    {t('subscription.bootcamp-mentorships')}
+                  </Text>
+                )}
               </ModalBody>
             </>
           )}

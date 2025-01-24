@@ -10,7 +10,7 @@ import {
   PREPARING_FOR_COHORT, SET_SERVICE_PROPS, SET_SELECTED_SERVICE, SET_PAYMENT_METHODS, SET_PAYMENT_STATUS,
   SET_SUBMITTING_CARD, SET_SUBMITTING_PAYMENT, SET_SELF_APPLIED_COUPON, SET_SIGNUP_INITIAL_STATE,
 } from '../types';
-import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps } from '../../../utils';
+import { formatPrice, getDiscountedPrice, getNextDateInMonths, getQueryString, getStorageItem, getTimeProps, getBrowserInfo } from '../../../utils';
 import bc from '../../services/breathecode';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { usePersistent } from '../../hooks/usePersistent';
@@ -193,6 +193,7 @@ const useSignup = () => {
               plan: selectedPlanCheckoutData?.plan_slug,
               period_label: selectedPlanCheckoutData?.period_label,
               items: simplePlans,
+              agent: getBrowserInfo(),
             },
           });
 
@@ -464,6 +465,21 @@ const useSignup = () => {
     }
   };
 
+  const applyDiscountCouponsToPlans = (pricingList, coupon) => {
+    if (!coupon) return pricingList;
+    return pricingList.map((item) => {
+      const { price } = item;
+      if (price < 1) return item;
+      const discountOperation = getPriceWithDiscount(price, coupon);
+      return {
+        ...item,
+        price: discountOperation.price,
+        priceText: item.priceText.replace(item.price, discountOperation.price),
+        lastPrice: item.priceText,
+      };
+    });
+  };
+
   return {
     state,
     isFirstStep,
@@ -496,6 +512,7 @@ const useSignup = () => {
     getPriceWithDiscount,
     getSelfAppliedCoupon,
     restartSignup,
+    applyDiscountCouponsToPlans,
   };
 };
 
