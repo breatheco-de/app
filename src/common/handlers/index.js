@@ -197,6 +197,7 @@ const handlers = {
       'STARTED',
       'ACTIVE',
       'FINAL_PROJECT',
+      'NOT_COMPLETING',
     ].includes(programCohortStage);
 
     const cohortIsAvailable = showCohort && !hasEnded;
