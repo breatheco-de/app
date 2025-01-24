@@ -65,11 +65,27 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
   );
 }
 
-function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
+  const [vendors, setVendors] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+
+  const fetchProvisioningVendors = async () => {
+    try {
+      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
+      setVendors(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (cohortSession) {
+      fetchProvisioningVendors();
+    }
+  }, [cohortSession]);
 
   const accessToken = localStorage.getItem('accessToken');
 
@@ -89,12 +105,13 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
     markdownBody.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
-  const showProvisioningLinks = vendors.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
+  const showProvisioningLinks = vendors?.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
+  const canSeeInstructions = variant !== 'small' || variant !== 'extra-small';
 
   if (isExternalExercise) {
     return (
-      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
+      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
         {t('common:learnpack.start-exercise')}
       </Button>
     );
@@ -113,8 +130,9 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
         </Popover>
       )}
       {startWithLearnpack ? (
-        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default">
-          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+        <Button cursor="pointer" as="a" onClick={handleStartLearnpack} size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
+          {isStarted ? t('common:learnpack.continue-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       ) : (
         <Button
@@ -123,44 +141,31 @@ function ButtonsHandler({ currentAsset, setShowCloneModal, vendors, handleStartL
           padding="4px 8px"
           fontSize="14px"
           fontWeight="500"
-          background="gray.200"
-          color="blue.default"
-          display={!isForOpenLocaly && variant !== 'small' && 'none'}
+          background={variant === 'extra-small' ? 'none' : 'gray.200'}
+          color={variant === 'extra-small' ? 'white' : 'blue.default'}
+          _hover={variant === 'extra-small' && 'none'}
+          _active={variant === 'extra-small' && 'none'}
+          display={!isForOpenLocaly && !canSeeInstructions && 'none'}
           onClick={() => {
             if (isForOpenLocaly) setShowCloneModal(true);
             else scrollToMarkdown();
           }}
+          {...rest}
         >
-          {isForOpenLocaly ? t('learnpack.open-locally') : t('see-instructions')}
+          {t('asset-button.project')}
         </Button>
       )}
     </>
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
-  const [vendors, setVendors] = useState([]);
   const [showCloneModal, setShowCloneModal] = useState(false);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
-
-  const fetchProvisioningVendors = async () => {
-    try {
-      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
-      setVendors(data);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
-  useEffect(() => {
-    if (cohortSession) {
-      fetchProvisioningVendors();
-    }
-  }, [cohortSession]);
 
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
@@ -170,6 +175,36 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
 
   const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+
+  if (variant === 'extra-small') {
+    return (
+      <Box background="blue.default" padding="8px" borderRadius="8px" display={!startWithLearnpack && !isForOpenLocaly ? 'none' : 'flex'} alignItems="center" gap="10px">
+        {(!isForOpenLocaly || startWithLearnpack) && (
+          <Icon icon="learnpack" />
+        )}
+        <Box>
+          <Box
+            display="flex"
+            gap="10px"
+            flexDirection={{
+              base: 'column',
+              md: 'row',
+            }}
+          >
+            <ButtonsHandler
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              setShowCloneModal={setShowCloneModal}
+              isForOpenLocaly={isForOpenLocaly}
+              startWithLearnpack={startWithLearnpack}
+              variant={variant}
+            />
+          </Box>
+        </Box>
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
+      </Box>
+    );
+  }
 
   if (variant === 'small') {
     return (
@@ -195,10 +230,10 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
-                vendors={vendors}
                 isForOpenLocaly={isForOpenLocaly}
                 startWithLearnpack={startWithLearnpack}
                 variant={variant}
+                isStarted={isStarted}
               />
             </Box>
           </Box>
@@ -242,8 +277,8 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             isForOpenLocaly={isForOpenLocaly}
-            vendors={vendors}
             variant={variant}
+            isStarted={isStarted}
           />
         </Box>
       </Box>
@@ -255,11 +290,13 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack }) {
 ProjectInstructions.propTypes = {
   variant: PropTypes.string,
   handleStartLearnpack: PropTypes.func.isRequired,
+  isStarted: PropTypes.bool,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array])),
 };
 ProjectInstructions.defaultProps = {
   variant: null,
   currentAsset: null,
+  isStarted: false,
 };
 
 ProvisioningPopover.propTypes = {

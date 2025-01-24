@@ -1,0 +1,69 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "appropriate",
+				"type": "Text"
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "familiar",
+				"type": "Text"
+			},
+			"font_family_title": {
+				"__TYPE__": "FieldContent",
+				"value": "Space Grotesk Variable",
+				"type": "Select"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "palace",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "becoming",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "leaving",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": [
+					[
+						"column_title",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "wish",
+							"type": "Text"
+						}
+					],
+					[
+						"column_description",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "class",
+							"type": "Text"
+						}
+					],
+					[
+						"font_family_column",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "Lato",
+							"type": "Select"
+						}
+					]
+				]
+			}
+		]
+	}
+]

@@ -13,7 +13,7 @@ import useSession from '../hooks/useSession';
 import { parseQuerys } from '../../utils/url';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
 import { error } from '../../utils/logging';
-import { setStorageItem, unSlugifyCapitalize } from '../../utils';
+import { setStorageItem, unSlugifyCapitalize, getBrowserInfo } from '../../utils';
 import { reportDatalayer } from '../../utils/requests';
 
 const coursesLimit = 2;
@@ -67,7 +67,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
 
   useEffect(() => {
     getCourses();
-  }, []);
+  }, [lang]);
 
   if (location?.countryShort === 'ES') return null;
 
@@ -154,6 +154,7 @@ function MktRecommendedCourses({ id, technologies, background, gridColumn, endpo
                     course_title: course.title,
                     ad_position: 'bottom-center',
                     ad_type: 'course',
+                    agent: getBrowserInfo(),
                   },
                 });
               }}

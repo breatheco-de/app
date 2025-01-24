@@ -163,6 +163,7 @@
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
     "start-asset": "Start interactive {{asset_type}}",
+    "continue-asset": "Continue this {{asset_type}}",
     "asset_types": {
       "project": "project",
       "exercise": "exercise"
@@ -183,7 +184,7 @@
       "select-os": "Select your operating system",
       "agent-vs-code": {
         "label": "Open the project in VS Code",
-        "description": "Make sure you have the <a href=\"https://learnpack.co\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
+        "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
       },
       "agent-os": {
         "label": "Open the project without VSCode",
@@ -218,6 +219,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -277,6 +279,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",
@@ -336,6 +339,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
               "video": "",

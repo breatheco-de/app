@@ -7,7 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
 import AlertMessage from '../../common/components/AlertMessage';
-import { getQueryString, getTimeProps } from '../../utils';
+import { getQueryString, getTimeProps, getBrowserInfo } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
 import ChooseDate from './ChooseDate';
@@ -62,6 +62,7 @@ function ChooseYourClass({
     reportDatalayer({
       dataLayer: {
         event: 'checkout_choose_your_class',
+        agent: getBrowserInfo(),
       },
     });
   }, []);

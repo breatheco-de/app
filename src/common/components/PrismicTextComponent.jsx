@@ -46,12 +46,14 @@ function ListItemComponent({ children, color, ...rest }) {
     </ListItem>
   );
 }
-function Paragraph({ children, color, ...rest }) {
+function Paragraph({ children, color, fontSize = '14px', descriptionTextAlign, descriptionLineHeight, ...rest }) {
   return (
     <Text
-      fontSize="14px"
-      lineHeight="18px"
+      fontSize={fontSize}
+      lineHeight={descriptionLineHeight}
       color={color}
+      textAlign={descriptionTextAlign}
+      letterSpacing="0px"
       {...rest}
     >
       {children}

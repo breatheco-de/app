@@ -1,4 +1,5 @@
-import { Box, Flex, Container, Img, Link, Image } from '@chakra-ui/react';
+/* eslint-disable camelcase */
+import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
@@ -8,8 +9,9 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
-import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import useCohortHandler from '../common/hooks/useCohortHandler';
+import bc from '../common/services/breathecode';
 import PricingCard from '../common/components/PricingCard';
 import useSignup from '../common/store/actions/signupAction';
 import LoaderScreen from '../common/components/LoaderScreen';
@@ -20,7 +22,6 @@ import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../utils/variables';
 import MktTrustCards from '../common/components/MktTrustCards';
 import DraggableContainer from '../common/components/DraggableContainer';
 import Icon from '../common/components/Icon';
-import Button from '../common/components/Button';
 
 const switchTypes = {
   monthly: 'monthly',
@@ -41,6 +42,8 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
+  const { state, setMyCohorts } = useCohortHandler();
+  const { myCohorts } = state;
   const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
@@ -170,6 +173,36 @@ function PricingView() {
     staleTime: Infinity,
   });
 
+  const initializeCohorts = async () => {
+    try {
+      const { data } = await bc.admissions().me();
+      if (!data) throw new Error('No data');
+      const { cohorts } = data;
+
+      const parsedCohorts = cohorts.map(((elem) => {
+        const { cohort, ...cohort_user } = elem;
+        const { syllabus_version } = cohort;
+        return {
+          ...cohort,
+          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+          cohort_role: elem.role,
+          cohort_user,
+        };
+      }));
+      setMyCohorts(parsedCohorts);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    const hasActiveBootcamp = myCohorts.some((cohort) => !cohort.available_as_saas
+      && cohort.ending_date && new Date(cohort.ending_date) > new Date()
+      && cohort.cohort_user.educational_status === 'ACTIVE');
+
+    if (hasActiveBootcamp) router.push('/choose-program');
+  }, [myCohorts]);
+
   useEffect(() => {
     const mktQueryString = parseQuerys({
       featured: true,
@@ -240,6 +273,7 @@ function PricingView() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
+      initializeCohorts();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
 
@@ -439,27 +473,6 @@ function PricingView() {
           description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
-        {/*
-          <Box marginTop="30px" borderRadius="11px" background={hexColor.featuredColor} padding="24px">
-            <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
-            <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
-            <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-              <Button
-                width={{ base: '100%', sm: 'fit-content' }}
-                variant="outline"
-                textTransform="uppercase"
-                color={hexColor.blueDefault}
-                borderColor={hexColor.blueDefault}
-                onClick={() => reportDatalayer({
-                  dataLayer: {
-                    event: 'open_pricing_chat',
-                  } })}
-              >
-                {t('learning-code.chat')}
-              </Button>
-            </Flex>
-          </Box>
-        */}
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
           <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
             <Heading margin="20px 0" size="sm">

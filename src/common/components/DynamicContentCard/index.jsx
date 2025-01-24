@@ -8,7 +8,7 @@ import HeadInfo from './HeadInfo';
 import FeatureIndicator from './FeatureIndicator';
 import { types } from './card-types';
 import useFormatDate from './useFormatDate';
-import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize } from '../../../utils';
+import { adjustNumberBeetwenMinMax, isValidDate, syncInterval, toCapitalize, getBrowserInfo } from '../../../utils';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
@@ -156,6 +156,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
                       asset_title: data?.title,
                       asset_lang: data?.lang,
                       asset_category: data?.category?.slug,
+                      agent: getBrowserInfo(),
                     },
                   });
                 }}

@@ -33,11 +33,31 @@
         "type": "Text",
         "config": { "label": "Landing url", "placeholder": "" }
       },
+      "padding_bottom": {
+        "type": "Text",
+        "config": { "label": "Padding Bottom", "placeholder": "" }
+      },
+      "transparent": {
+        "type": "Boolean",
+        "config": {
+          "label": "Transparent",
+          "default_value": false,
+          "placeholder_true": "true",
+          "placeholder_false": "false"
+        }
+      },
+      "background": {
+        "type": "Color",
+        "config": { "label": "Background", "placeholder": "" }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
         "config": {
           "choices": {
+            "faqs": { "type": "SharedSlice" },
+            "pricing_cards": { "type": "SharedSlice" },
+            "multiple_column_card": { "type": "SharedSlice" },
             "info_cards": { "type": "SharedSlice" },
             "trust_cards": { "type": "SharedSlice" },
             "title_introduction": { "type": "SharedSlice" },
