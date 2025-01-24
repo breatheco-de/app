@@ -1,5 +1,5 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import { Box, Button, Link, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Box, Button as ChakraButton, Link, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -14,6 +14,7 @@ import bc from '../../services/breathecode';
 import FinalProjectForm from './Form';
 import useStyle from '../../hooks/useStyle';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
+import Button from '../Button';
 
 function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const { t } = useTranslation('final-project');
@@ -24,7 +25,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
   const { cohortSession } = state;
 
   const router = useRouter();
-  const { modal, hexColor } = useStyle();
+  const { modal } = useStyle();
   const { finalProjectData, setFinalProjectData } = useFinalProjectProps();
   const storyConfigExists = Object.keys(storyConfig).length > 0;
   const repoUrl = finalProjectData?.repo_url || finalProject?.currentProject?.repo_url;
@@ -132,7 +133,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
           <Box display="flex" flexDirection="column" gridGap="20px" padding="0 24px" mt="2rem">
             {isStudent ? (
               <>
-                <Button
+                <ChakraButton
                   display="flex"
                   height="45px"
                   gridGap="10px"
@@ -149,7 +150,7 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
                   {repoUrl
                     ? t('edit-final-project')
                     : t('add-final-project')}
-                </Button>
+                </ChakraButton>
                 <Box display="flex" flexDirection="column" gridGap="10px" borderColor="white" border="1px solid" padding="10px 22px" borderRadius="4px">
                   <Text size="l" fontWeight={700}>
                     {progressPercent === 100
@@ -176,9 +177,8 @@ function FinalProject({ storyConfig, studentAndTeachers, tasks, isStudent }) {
                 onClick={() => {
                   window.open(`/cohort/${cohortSlug}/assignments?academy=${cohortSession?.academy?.id}&view=2`, '_blank');
                 }}
-                variant="unstyled"
-                background={hexColor.blueDefault}
-                color="white"
+                hasLoading={false}
+                variant="primary"
                 padding="0 27px"
                 whiteSpace="normal"
               >

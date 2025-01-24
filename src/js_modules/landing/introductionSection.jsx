@@ -165,7 +165,7 @@ function IntroductionSection({
         {slice?.primary?.buttontext?.length > 0 && slice?.primary?.buttontext ? (
           <Button
             id={slice.primary.button_id}
-            variant="default"
+            variant="primary"
             width="fit-content"
             minWidth="200px"
             textAlign="center"
