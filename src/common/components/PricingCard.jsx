@@ -46,7 +46,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       featured: item?.featured_card?.color || '',
       border: item?.featured_card?.color || hexColor.lightColor,
       button: {
-        variant: item?.button?.variant || 'default',
+        variant: item?.button?.variant || 'primary',
         color: item?.button?.color || '#fff',
         background: item?.button?.background || hexColor.blueDefault,
         title: item?.button?.title || item?.button,
@@ -63,9 +63,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       featured: '',
       border: hexColor.lightColor,
       button: {
-        variant: 'default',
-        color: '#fff',
-        background: hexColor.blueDefault,
+        variant: 'primary',
         title: item?.button,
       },
     },
@@ -99,11 +97,9 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       featured: courseCoupon ? hexColor.green : hexColor.blueDefault,
       border: isFetching ? hexColor.lightColor : premiumColor(),
       button: {
-        variant: 'default',
-        color: hexColor.black,
-        borderColor: 'white',
-        background: featuredCard.background,
+        variant: 'outlineWhite',
         title: t('pricing.premium-plan.button-title'),
+        icon: 'black',
       },
     },
   };
@@ -293,9 +289,9 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Text>
           ) : (
             <>
-              <Button isLoading={isFetching} margin={isBootcampOrCustomType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="0 24px">
+              <Button isLoading={isFetching} margin={isBootcampOrCustomType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} onClick={handlePlan} display="flex" gridGap="10px" fontSize="17px" width="100%" textAlign="center" padding="0 24px">
                 {!isOriginalPlan && !isBootcampOrCustomType && (
-                  <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />
+                  <Icon icon="graduationCap" color={viewProps.button.icon} width="24px" height="24px" />
                 )}
                 {viewProps.button.title}
               </Button>

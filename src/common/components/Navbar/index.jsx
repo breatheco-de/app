@@ -568,7 +568,25 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
+              <Link
+                variant="buttonDefault"
+                backgroundColor="#0097CF"
+                borderRadius="3px"
+                textAlign="center"
+                width="100%"
+                // opacity="0.9"
+                _hover={{
+                  background: hexColor?.blue5,
+                }}
+                _active={{
+                  background: hexColor?.blue4,
+                }}
+                _disabled={{
+                  background: hexColor?.blue6,
+                  cursor: 'not-allowed',
+                }}
+                href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}
+              >
                 {t('get-started')}
               </Link>
             </Box>

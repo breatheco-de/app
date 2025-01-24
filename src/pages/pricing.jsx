@@ -362,7 +362,7 @@ function PricingView() {
                         href={`/${lang}/pricing?course=${course?.slug}`}
                         textAlign="center"
                         width="100%"
-                        opacity="0.9"
+                        // opacity="0.9"
                         _hover={{
                           background: hexColor?.blue5,
                         }}

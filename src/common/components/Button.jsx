@@ -51,6 +51,12 @@ function Button({ to, onClick, children, variant = 'primary', disabled = false, 
       disabled: { background: 'transparent', color: '#DADADA', cursor: 'not-allowed' },
       active: { background: '#EEF9FE', color: '#0084FF' },
     },
+    outlineWhite: {
+      background: '#FFFFFF',
+      color: '#000000',
+      borderColor: 'transparent',
+      disabled: { background: 'transparent', color: '#DADADA', cursor: 'not-allowed' },
+    },
     unstyled: {},
   };
 
