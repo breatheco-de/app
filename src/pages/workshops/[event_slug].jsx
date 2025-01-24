@@ -341,6 +341,7 @@ function Workshop({ eventData, asset }) {
         setDataToGetAccessModal({
           ...data,
           event,
+          consumableType: 'event',
           academyServiceSlug: '',
         });
         setIsModalToGetAccessOpen(true);
