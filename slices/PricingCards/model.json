@@ -20,6 +20,18 @@
           "type": "Text",
           "config": { "label": "Title", "placeholder": "" }
         },
+        "weight": {
+          "type": "Text",
+          "config": { "label": "Weight", "placeholder": "" }
+        },
+        "line_height": {
+          "type": "Text",
+          "config": { "label": "Line height", "placeholder": "" }
+        },
+        "size": {
+          "type": "Text",
+          "config": { "label": "Size", "placeholder": "" }
+        },
         "url": {
           "type": "Text",
           "config": { "label": "Url", "placeholder": "" }
@@ -31,6 +43,10 @@
         "margin": {
           "type": "Text",
           "config": { "label": "Margin", "placeholder": "" }
+        },
+        "margin_bottom": {
+          "type": "Text",
+          "config": { "label": "Margin Bottom", "placeholder": "" }
         }
       },
       "items": {}

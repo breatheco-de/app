@@ -14,6 +14,8 @@ function MultipleColumnCard({ slice }) {
       marginBottom={slice?.primary?.margin_bottom}
       marginTop={slice?.primary?.margin_top}
       maxWidth={slice?.primary?.max_width}
+      fontWeight={slice?.primary?.font_weight}
+      lineHeight={slice?.primary?.line_height}
       columns={slice.items}
     />
   );

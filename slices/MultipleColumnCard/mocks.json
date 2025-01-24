@@ -32,6 +32,16 @@
 				"__TYPE__": "FieldContent",
 				"value": "leaving",
 				"type": "Text"
+			},
+			"font_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "package",
+				"type": "Text"
+			},
+			"line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "nervous",
+				"type": "Text"
 			}
 		},
 		"items": [

@@ -15,6 +15,10 @@ function PricingCards({ slice }) {
       url={slice?.primary?.url}
       margin={slice?.primary?.margin}
       maxWidth={slice?.primary?.max_width}
+      fontSize={slice?.primary?.size}
+      fontWeight={slice?.primary?.weight}
+      lineHeight={slice?.primary?.line_height}
+      marginBottom={slice?.primary?.margin_bottom}
     />
   );
 }

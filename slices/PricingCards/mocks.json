@@ -27,6 +27,26 @@
 				"__TYPE__": "FieldContent",
 				"value": "each",
 				"type": "Text"
+			},
+			"line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "family",
+				"type": "Text"
+			},
+			"size": {
+				"__TYPE__": "FieldContent",
+				"value": "enough",
+				"type": "Text"
+			},
+			"weight": {
+				"__TYPE__": "FieldContent",
+				"value": "sell",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "front",
+				"type": "Text"
 			}
 		},
 		"items": []
