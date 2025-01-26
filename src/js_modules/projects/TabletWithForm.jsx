@@ -189,7 +189,6 @@ const TabletWithForm = React.forwardRef(({
                     <>
                       {asset.gitpod && (
                       <Button
-                        borderRadius="3px"
                         width="100%"
                         padding="0"
                         whiteSpace="normal"
@@ -203,7 +202,7 @@ const TabletWithForm = React.forwardRef(({
                       </Button>
                       )}
                       <ChakraButton
-                        borderRadius="3px"
+                        borderRadius="4px"
                         width="100%"
                         fontSize="14px"
                         padding="0"
@@ -283,7 +282,6 @@ const TabletWithForm = React.forwardRef(({
           <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
             <GridItem w="100%">
               <Button
-                borderRadius="3px"
                 width="100%"
                 fontSize="14px"
                 padding="0"
@@ -304,7 +302,6 @@ const TabletWithForm = React.forwardRef(({
             </GridItem>
             <GridItem w="100%">
               <Button
-                borderRadius="3px"
                 width="100%"
                 fontSize="14px"
                 padding="0"

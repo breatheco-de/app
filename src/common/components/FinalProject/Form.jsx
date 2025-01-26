@@ -1,4 +1,4 @@
-import { Button, Flex, useToast, Box, Image } from '@chakra-ui/react';
+import { Flex, useToast, Box, Image } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -13,6 +13,7 @@ import useStyle from '../../hooks/useStyle';
 import { isNumber } from '../../../utils';
 import useFinalProjectProps from '../../store/actions/finalProjectAction';
 import Icon from '../Icon';
+import Button from '../Button';
 
 function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues, refreshFinalProject }) {
   const { t } = useTranslation('final-project');
@@ -334,7 +335,7 @@ function FinalProjectForm({ cohortData, studentsData, handleClose, defaultValues
               />
               <Button
                 type="submit"
-                variant="default"
+                variant="primary"
                 isLoading={isSubmitting}
               >
                 {t('common:submit-project')}

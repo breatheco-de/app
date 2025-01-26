@@ -358,7 +358,7 @@ function PricingView() {
                       <Link
                         variant="buttonDefault"
                         backgroundColor="#0097CF"
-                        borderRadius="3px"
+                        borderRadius="4px"
                         href={`/${lang}/pricing?course=${course?.slug}`}
                         textAlign="center"
                         width="100%"

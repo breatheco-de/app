@@ -571,7 +571,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               <Link
                 variant="buttonDefault"
                 backgroundColor="#0097CF"
-                borderRadius="3px"
+                borderRadius="4px"
                 textAlign="center"
                 width="100%"
                 // opacity="0.9"

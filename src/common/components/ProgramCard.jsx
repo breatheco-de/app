@@ -449,7 +449,6 @@ function ProgramCard({
                           <>
                             {(!isAvailableAsSaas || !isCancelled) && !isError && !expiredStatus && (
                             <Button
-                              borderRadius="3px"
                               width="100%"
                               padding="0"
                               whiteSpace="normal"
@@ -517,7 +516,6 @@ function ProgramCard({
                 </Flex>
               )}
               <Button
-                borderRadius="3px"
                 width="100%"
                 padding="0"
                 whiteSpace="normal"
