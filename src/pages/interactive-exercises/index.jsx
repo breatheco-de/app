@@ -37,6 +37,7 @@ const fetchExercises = async (lang, page, query) => {
   };
   const technologies = query.techs !== '' ? query.techs : undefined;
   const video = query.withVideo === 'true' ? query.withVideo : undefined;
+  const { host } = query;
   const querys = parseQuerys({
     asset_type: 'EXERCISE',
     status: 'PUBLISHED',
@@ -50,7 +51,7 @@ const fetchExercises = async (lang, page, query) => {
     like: query?.search,
     expand: 'technologies',
   });
-  const resp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
+  const resp = await fetch(`${host || process.env.BREATHECODE_HOST}/v1/registry/asset${querys}`);
   const data = await resp.json();
   return { resp, data };
 };
@@ -72,8 +73,9 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     console.error(`Error ${resp.status}: fetching Exercises list for /interactive-exercises`);
   }
 
+  const { host } = query;
   const technologiesResponse = await fetch(
-    `${process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000&lang=${locale}`,
+    `${host || process.env.BREATHECODE_HOST}/v1/registry/technology?type=exercise&limit=1000&lang=${locale}`,
     {
       Accept: 'application/json, text/plain, */*',
     },

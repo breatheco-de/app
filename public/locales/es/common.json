@@ -142,10 +142,15 @@
   "see-instructions": "Ver instrucciones",
   "taskStatus": {
     "project-approved": "Proyecto aprobado",
+    "pending-subtasks": "Llévame allí",
     "update-project-delivery": "Actualizar entrega de proyecto",
     "send-project": "Enviar proyecto",
     "mark-as-done": "Marcar como hecho",
     "mark-as-not-done": "Marcar como no hecho"
+  },
+  "external":{
+    "title": "Este es un ejercicio externo",
+    "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
   },
   "learnpack": {
     "title": "Este es un ejercicio interactivo de Learnpack",
@@ -155,10 +160,12 @@
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
     "start-asset": "Empezar {{asset_type}} interactivo",
+    "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
@@ -174,7 +181,7 @@
       "select-os": "Seleccione su sistema operativo",
       "agent-vs-code": {
         "label": "Abrir el proyecto con VSCode",
-        "description": "Asegúrate de tener la <a href=\"https://learnpack.co\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
+        "description": "Asegúrate de tener la <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
         "video": "https://www.youtube.com/watch?v=tyb4WuO5Pdo"
       },
       "agent-os": {
@@ -211,6 +218,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -270,6 +278,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",
@@ -329,6 +338,7 @@
           ],
           "steps": [
             {
+              "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
               "video": "",

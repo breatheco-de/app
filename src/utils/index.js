@@ -340,11 +340,11 @@ function calculateDifferenceDays(date) {
 
 const intervalToHours = (duration) => {
   const hours = duration.years * 24 * 365 // Hours from years (assuming 365 days per year)
-           + duration.months * 24 * 30 // Hours from months (assuming 30 days per month)
-           + duration.days * 24 // Hours from days
-           + duration.hours
-           + duration.minutes / 60 // Convert minutes to hours
-           + duration.seconds / 3600;
+    + duration.months * 24 * 30 // Hours from months (assuming 30 days per month)
+    + duration.days * 24 // Hours from days
+    + duration.hours
+    + duration.minutes / 60 // Convert minutes to hours
+    + duration.seconds / 3600;
   return hours;
 };
 
@@ -424,7 +424,26 @@ function decodeBase64(encoded) {
   return decoded;
 }
 
-const languageFix = (text, lan) => text[lan] || text.us || text;
+const languageFix = (text, lan) => text?.[lan] || text?.us || text;
+
+const getBrowserInfo = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  let browser = 'unknown';
+
+  const match = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*\d+/i) || [];
+  const isIE = /trident/i.test(match[1]);
+  const edgeOrOperaMatch = match[1] === 'chrome' && ua.match(/\b(opr|edg)\/\d+/i);
+
+  if (isIE) {
+    browser = 'web-ie';
+  } else if (edgeOrOperaMatch) {
+    browser = `web-${edgeOrOperaMatch[1] === 'edg' ? 'edge' : 'opera'}`;
+  } else if (match[1]) {
+    browser = `web-${match[1].toLowerCase()}`;
+  }
+
+  return browser;
+};
 
 export {
   isWindow, assetTypeValues, HAVE_SESSION, slugify, unSlugify, unSlugifyCapitalize, location,
@@ -436,5 +455,5 @@ export {
   sortToNearestTodayDate, isNumber, isDateMoreThanAnyDaysAgo, getQueryString, isValidDate,
   createArray, url, lengthOfString, syncInterval, getBrowserSize, calculateDifferenceDays, intervalToHours, capitalizeFirstLetter,
   adjustNumberBeetwenMinMax, getDiscountedPrice, formatPrice, cleanObject, slugToTitle, decodeBase64,
-  removeSessionStorageItem, languageFix,
+  removeSessionStorageItem, languageFix, getBrowserInfo,
 };

@@ -3,6 +3,7 @@ import useTranslation from 'next-translate/useTranslation';
 import useModuleMap from '../store/actions/moduleMapAction';
 import bc from '../services/breathecode';
 import { reportDatalayer } from '../../utils/requests';
+import { getBrowserInfo } from '../../utils';
 
 function useModuleHandler() {
   const { t } = useTranslation('alert-message');
@@ -14,17 +15,17 @@ function useModuleHandler() {
     task, closeSettings, githubUrl, taskStatus,
   }) => {
     // Task case
+    const { cohort, ...taskData } = task;
     const toggleStatus = (task.task_status === undefined || task.task_status === 'PENDING') ? 'DONE' : 'PENDING';
     if (task.task_type && task.task_type !== 'PROJECT') {
       const taskToUpdate = {
-        ...task,
-        id: task.id,
+        ...taskData,
+        id: taskData.id,
         task_status: toggleStatus,
       };
 
       try {
-        const { cohort, ...taskData } = taskToUpdate;
-        await bc.todo().update(taskData);
+        await bc.todo().update(taskToUpdate);
         const keyIndex = taskTodo.findIndex((x) => x.id === task.id);
         setTaskTodo([
           ...taskTodo.slice(0, keyIndex), // before keyIndex (inclusive)
@@ -64,7 +65,7 @@ function useModuleHandler() {
       const isDelivering = projectUrl !== '';
       // const linkIsRemoved = task.task_type === 'PROJECT' && !isDelivering;
       const taskToUpdate = {
-        ...task,
+        ...taskData,
         task_status: taskStatus || toggleStatus,
         github_url: projectUrl,
         revision_status: 'PENDING',
@@ -90,6 +91,7 @@ function useModuleHandler() {
               task_associated_slug: task.associated_slug,
               task_type: task.task_type,
               task_revision_status: task.revision_status,
+              agent: getBrowserInfo(),
             },
           });
           toast({

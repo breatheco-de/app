@@ -133,7 +133,7 @@ const breathecode = {
           academy,
         },
       }),
-      publicSyllabus: (slug) => breathecode.get(`${url}/syllabus/${slug}/version/1${qs}`, {
+      publicSyllabus: (slug, version) => breathecode.get(`${url}/syllabus/${slug}/version/${version || '1'}${qs}`, {
         headers: {
           Authorization: `Token ${BC_ACADEMY_TOKEN}`,
           academy: 4,
@@ -322,7 +322,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       get: () => axios.get(`${url}/asset${qs}`),
-      getAsset: (slug) => axios.get(`${url}/asset/${slug}`),
+      getAsset: (slug) => axios.get(`${url}/asset/${slug}${qs}`),
       getAssetContext: (id) => axios.get(`${url}/asset/${id}/context`),
       techs: () => axios.get(`${url}/academy/technology${qs}`),
       techsBySort: () => axios.get(`${url}/technology${qs}`),

@@ -21,6 +21,7 @@ import {
   calculateDifferenceDays,
   adjustNumberBeetwenMinMax,
   isValidDate,
+  getBrowserInfo,
 } from '../../../../../utils/index';
 import ReactPlayerV2 from '../../../../../common/components/ReactPlayerV2';
 import NextChakraLink from '../../../../../common/components/NextChakraLink';
@@ -208,6 +209,12 @@ function Dashboard() {
         return;
       }
 
+      const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
+      if (expiredCourse) {
+        showToastAndRedirect(currentCohortSlug);
+        return;
+      }
+
       const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) {
         setGrantAccess(true);
@@ -276,7 +283,7 @@ function Dashboard() {
       });
 
     bc.payment({
-      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
+      status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE,EXPIRED,ERROR',
     }).subscriptions()
       .then(async ({ data }) => {
         const currentPlanFinancing = data?.plan_financings?.find((s) => s?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === cohortSlug));
@@ -306,6 +313,7 @@ function Dashboard() {
             method: 'native',
             plan_financings: data?.plan_financings?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
             subscriptions: data?.subscriptions?.filter((s) => s.status === 'ACTIVE').map((s) => s.plans.filter((p) => p.status === 'ACTIVE').map((p) => p.slug).join(',')).join(','),
+            agent: getBrowserInfo(),
           },
         });
       });
@@ -323,6 +331,7 @@ function Dashboard() {
             dataLayer: {
               current_cohort_id: cohort.id,
               current_cohort_slug: cohort.slug,
+              agent: getBrowserInfo(),
             },
           });
         }

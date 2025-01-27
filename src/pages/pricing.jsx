@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
@@ -8,8 +9,9 @@ import Heading from '../common/components/Heading';
 import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
-import bc from '../common/services/breathecode';
 import useAuth from '../common/hooks/useAuth';
+import useCohortHandler from '../common/hooks/useCohortHandler';
+import bc from '../common/services/breathecode';
 import PricingCard from '../common/components/PricingCard';
 import useSignup from '../common/store/actions/signupAction';
 import LoaderScreen from '../common/components/LoaderScreen';
@@ -40,6 +42,8 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
+  const { state, setMyCohorts } = useCohortHandler();
+  const { myCohorts } = state;
   const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
   const { isAuthenticated } = useAuth();
@@ -169,6 +173,36 @@ function PricingView() {
     staleTime: Infinity,
   });
 
+  const initializeCohorts = async () => {
+    try {
+      const { data } = await bc.admissions().me();
+      if (!data) throw new Error('No data');
+      const { cohorts } = data;
+
+      const parsedCohorts = cohorts.map(((elem) => {
+        const { cohort, ...cohort_user } = elem;
+        const { syllabus_version } = cohort;
+        return {
+          ...cohort,
+          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+          cohort_role: elem.role,
+          cohort_user,
+        };
+      }));
+      setMyCohorts(parsedCohorts);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    const hasActiveBootcamp = myCohorts.some((cohort) => !cohort.available_as_saas
+      && cohort.ending_date && new Date(cohort.ending_date) > new Date()
+      && cohort.cohort_user.educational_status === 'ACTIVE');
+
+    if (hasActiveBootcamp) router.push('/choose-program');
+  }, [myCohorts]);
+
   useEffect(() => {
     const mktQueryString = parseQuerys({
       featured: true,
@@ -176,7 +210,7 @@ function PricingView() {
     });
     axios.get(`${BREATHECODE_HOST}/v1/marketing/course${mktQueryString}&lang=${lang}`)
       .then(({ data }) => {
-        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic');
+        const publicCourses = data?.filter((course) => course?.visibility === 'PUBLIC' && course?.plan_slug !== 'basic' && course?.plan_slug !== 'free-trial-deep-dive-into-python');
         setPublicMktCourses(publicCourses);
         const selectedCourseByQueryString = publicCourses.find((course) => course?.slug === courseFormated);
 
@@ -239,6 +273,7 @@ function PricingView() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
+      initializeCohorts();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
 
@@ -336,9 +371,9 @@ function PricingView() {
                         <Text fontSize="auto">{t('see-plans-and-prices')}</Text>
                         <Icon icon="longArrowRight" width="18px" height="18px" color="white" />
                       </Link>
-                      {course?.course_translation?.landing_variables?.length > 0 && (
+                      {course?.course_translation?.landing_variables?.card?.length > 0 && (
                         <Flex flexDirection="column" gridGap="10px" borderRadius="4px" padding="12px">
-                          {course?.course_translation?.landing_variables.map((content) => {
+                          {course?.course_translation?.landing_variables?.card?.map((content) => {
                             const isUrlImage = content?.icon?.includes('http');
                             return (
                               <Flex key={content.title} gridGap="10px">

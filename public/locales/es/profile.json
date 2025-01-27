@@ -72,6 +72,7 @@
   },
   "subscription": {
     "what-you-will-get": "Lo que obtendrás:",
+    "bootcamp-mentorships": "Tienes acceso ilimitado a los servicios de mentoría con este ícono ∞ porque perteneces al bootcamp",
     "mentoring-available": "Sesiones de mentorías disponibles",
     "your-mentoring-available": "Tus servicios de mentorías disponibles",
     "workshop-available": "Sesiones de workshops disponibles",
@@ -99,13 +100,16 @@
       "active": "Activo",
       "expired": "Expirado",
       "cancelled": "Cancelado",
-      "completed": "Completado"
+      "completed": "Completado",
+      "error": "Error"
     },
     "cancel": "Cancelar suscripción",
     "upgrade": "Actualizar suscripción",
     "upgrade-plan": "Actualizar plan de financiación",
     "payment-up-to-date": "Los pagos están al día",
     "reactivate-subscription": "Reactivar suscripción",
+    "manage-subscription": "Administrar suscripción",
+    "contact-support": "Chatea con soporte",
     "duration-cancelled": "Duración: Cancelada",
     "upgrade-modal": {
       "choose_your_plan": "Elige tu plan",

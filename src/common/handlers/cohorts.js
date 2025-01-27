@@ -21,9 +21,10 @@ export const getCohort = (id) => bc.admissions({ id }).cohorts()
 export const getCohortSyllabus = (id) => getCohort(id)
   .then(async (cohortData) => {
     const syllabusSlug = cohortData?.syllabus_version?.slug;
+    const syllabusVersion = cohortData?.syllabus_version?.version;
 
     try {
-      const resp = await bc.admissions().publicSyllabus(syllabusSlug);
+      const resp = await bc.admissions().publicSyllabus(syllabusSlug, syllabusVersion);
       const data = await resp.json();
       return {
         syllabus: data,
@@ -155,6 +156,7 @@ export const processRelatedAssignments = (syllabusData = {}, taskTodo = []) => {
 export const generateCohortSyllabusModules = async (id) => {
   try {
     const cohortAndSyllabus = await getCohortSyllabus(id);
+
     const syllabusData = cohortAndSyllabus?.syllabus;
     const cohortSyllabusList = syllabusData.json?.days || syllabusData.json?.modules;
 
