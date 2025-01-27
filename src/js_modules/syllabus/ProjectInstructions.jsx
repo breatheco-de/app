@@ -94,9 +94,6 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
-  console.log(currentAsset);
-  console.log(vendors);
-
   if (variant === 'extra-small') {
     return (
       <>

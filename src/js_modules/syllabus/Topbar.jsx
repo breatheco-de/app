@@ -7,14 +7,12 @@ import SubtasksPill from './SubtasksPill';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
-import ModalToCloneProject from './ModalToCloneProject';
 import ProjectInstructions from './ProjectInstructions';
 
 function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...rest }) {
   const { t } = useTranslation('syllabus');
   const { backgroundColor4, hexColor } = useStyle();
   const [isVisible, setIsVisible] = useState(false);
-  const [showCloneModal, setShowCloneModal] = useState(false);
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
@@ -87,7 +85,6 @@ function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...
           </Button>
         </Box>
       </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
     </>
   );
 }
