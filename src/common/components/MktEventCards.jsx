@@ -12,6 +12,7 @@ import { sortToNearestTodayDate, getQueryString } from '../../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
+import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import { parseQuerys } from '../../utils/url';
 
@@ -50,17 +51,11 @@ function MktEventCards({
   const endpointDefault = `${choosenEndpoint}${qsConnector}`;
   const maxEvents = 10;
 
-  const fetchCheckedInEvents = async (eventsArray) => {
+  const fetchCheckedInEvents = async () => {
     try {
-      const checkedIn = await Promise.all(
-        eventsArray.map(async (event) => {
-          const res = await axios.get(`${BREATHECODE_HOST}/v1/events/event/${event.id}/checkin`);
-          const reservations = res?.data || [];
-          const isUserAttendee = reservations.find((reservation) => reservation?.attendee?.id === user.id);
-          return isUserAttendee ? event : null;
-        }),
-      );
-      setCheckedInEvents(checkedIn.filter(Boolean));
+      const res = await bc.events({ past: true, upcoming: true }).meCheckin();
+      const userEvents = res?.data || [];
+      setCheckedInEvents(userEvents);
     } catch (error) {
       console.error('Error fetching checked-in events:', error);
     }
@@ -76,7 +71,6 @@ function MktEventCards({
           setLoading(false);
           return;
         }
-        console.log(endpointDefault);
         const res = await axios.get(`${BREATHECODE_HOST}${endpointDefault}`);
         const data = res?.data;
 
@@ -92,7 +86,7 @@ function MktEventCards({
           const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
 
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
-            fetchCheckedInEvents(eventsFilteredByTech);
+            fetchCheckedInEvents();
             return;
           }
 
