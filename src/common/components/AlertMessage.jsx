@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, useBreakpointValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 import Text from './Text';
@@ -10,6 +10,7 @@ function AlertMessage({
   message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, onClose, ...rest
 }) {
   const { fontColor } = useStyle();
+  const alertTop = useBreakpointValue({ sm: '46px', lg: '50px', xl: '60px' });
   const alertColors = {
     soft: { background: '#FFF4DC' },
     warning: { background: '#ffefcc', borderColor: '#FFB718' },
@@ -34,7 +35,7 @@ function AlertMessage({
   return (message || children) && (
     <Box
       display="flex"
-      style={{ ...style, position: 'fixed', top: '100px', left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase', borderRadius: '10px', maxWidth: '1200px' }}
+      style={{ ...style, position: 'fixed', top: alertTop, left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase', borderRadius: '10px', maxWidth: '1200px' }}
       flexDirection="row"
       backgroundColor={full ? alertColors[type].background : 'transparent'}
       border="2px solid"
@@ -43,6 +44,7 @@ function AlertMessage({
       padding="16px"
       borderRadius="16px"
       gridGap="16px"
+      className={`alert-${type}`}
       {...rest}
     >
       {!withoutIcon && (
