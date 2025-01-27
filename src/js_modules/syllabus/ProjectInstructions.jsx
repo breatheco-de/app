@@ -68,6 +68,7 @@ function ProvisioningPopover({ openInLearnpackAction, provisioningLinks }) {
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
   const [vendors, setVendors] = useState([]);
+  const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const openInLearnpackAction = t('learnpack.open-in-learnpack-button', {}, { returnObjects: true });
@@ -108,6 +109,8 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   const showProvisioningLinks = vendors?.length > 0 && currentAsset?.gitpod && !cohortSession.available_as_saas;
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
   const canSeeInstructions = variant !== 'small' || variant !== 'extra-small';
+
+  const isExerciseStated = !!currentTask?.assignment_telemetry;
 
   if (isExternalExercise) {
     return (
