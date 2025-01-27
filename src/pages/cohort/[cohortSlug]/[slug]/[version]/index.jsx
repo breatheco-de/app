@@ -659,7 +659,7 @@ function Dashboard() {
                 background="blue.default"
                 margin="40px 0 auto 0"
                 title={t('saasCohortcallToAction.title')}
-                href={`#${slugify(lastTaskDoneModuleData.label)}`}
+                href={`#${slugify(lastTaskDoneModuleData.label.us)}`}
                 text={languageFix(lastTaskDoneModuleData.description, lang)}
                 buttonText={t('saasCohortcallToAction.buttonText')}
                 width={{ base: '100%', md: 'fit-content' }}
@@ -751,7 +751,7 @@ function Dashboard() {
                         cohortData={cohortSession}
                         index={index}
                         title={label}
-                        slug={slugify(label)}
+                        slug={slugify(label.us)}
                         searchValue={searchValue}
                         description={description}
                         modules={modules}
