@@ -17,7 +17,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
-// import { BREATHECODE_HOST } from '../../utils/variables';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -160,9 +159,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const [selectedOption, setSelectedOption] = useState(null);
   const [availableOptions, setAvailableOptions] = useState([]);
   const [expanded, setExpanded] = useState(0);
-  // const accessToken = localStorage.getItem('accessToken');
 
-  //____determine what type of option is available based on thruthness____
+  //__first step to determine options and modal steps__
   const templateUrl = currentAsset?.template_url;
   const isInteractive = currentAsset?.interactive;
 
@@ -170,9 +168,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const showProvisioningLinks = provisioningVendors?.length > 0 && currentAsset?.gitpod;
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
+  //__info used in steps on open locally options__
   const assetDependencies = currentAsset?.dependencies;
-
-  //__this block of code is for open locally on computer__
   const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
   const repoName = urlToClone.split('/').pop();
 
@@ -186,8 +183,10 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     return templateUrl;
   }
 
-  const localIntroVideo = t('common:learnpack.clone-modal.intro-video');
+  //__this is the video when selecting os open locally__
+  const localIntro = t('common:learnpack.clone-modal.intro', {}, { returnObjects: true });
 
+  //__os availaable and steps lists of each os__
   const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: getFinalUrl() }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
@@ -208,6 +207,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const dependenciesNames = dependencies.flatMap((dep) => Object.keys(dep));
   const dependenciesSteps = selectedOs?.dependencies.filter((dep) => dependenciesNames.includes(dep.name));
 
+  //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
     if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
@@ -222,12 +222,12 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     setExpanded(0);
   };
 
-  //__options to show to the user__
   const resetOptionSelector = () => {
     setSelectedOption(null);
     resetOsSelector();
   };
 
+  //__manage the available options based on asset data obtained before__
   useEffect(() => {
     const options = [
       showProvisioningLinks && { key: 'provisioning_vendors', label: t('common:option-provisioning-vendors') },
@@ -321,12 +321,12 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 />
               ) : (
                 <>
-                  {!selectedOs && selectedOption === 'open_locally' && localIntroVideo ? (
+                  {!selectedOs && selectedOption === 'open_locally' && localIntro.video ? (
                     <ReactPlayerV2
                       className="react-player-border-radius"
                       containerStyle={{ height: '100%' }}
                       iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
-                      url={localIntroVideo}
+                      url={localIntro.video}
                       height="100%"
                     />
                   ) : (

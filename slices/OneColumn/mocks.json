@@ -104,6 +104,91 @@
 				"__TYPE__": "FieldContent",
 				"value": "#000000",
 				"type": "Color"
+			},
+			"title_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "jar",
+				"type": "Text"
+			},
+			"description_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "ice",
+				"type": "Text"
+			},
+			"description_text_align": {
+				"__TYPE__": "FieldContent",
+				"value": "sheep",
+				"type": "Text"
+			},
+			"description_justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "hot",
+				"type": "Text"
+			},
+			"button_background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#87d790",
+				"type": "Color"
+			},
+			"button_font_color": {
+				"__TYPE__": "FieldContent",
+				"value": "#eb30de",
+				"type": "Color"
+			},
+			"button_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "whose",
+				"type": "Text"
+			},
+			"justify_items": {
+				"__TYPE__": "FieldContent",
+				"value": "begun",
+				"type": "Text"
+			},
+			"font_family": {
+				"__TYPE__": "FieldContent",
+				"value": "Lato",
+				"type": "Select"
+			},
+			"description_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "field",
+				"type": "Text"
+			},
+			"border_radius": {
+				"__TYPE__": "FieldContent",
+				"value": "tales",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "safe",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "word",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "kill",
+				"type": "Text"
+			},
+			"width": {
+				"__TYPE__": "FieldContent",
+				"value": "rear",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "half",
+				"type": "Text"
+			},
+			"grid_column": {
+				"__TYPE__": "FieldContent",
+				"value": "reason",
+				"type": "Text"
 			}
 		},
 		"items": [

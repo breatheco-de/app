@@ -1,40 +1,55 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "diameter",
-        "type": "Text"
-      },
-      "title": {
-        "__TYPE__": "FieldContent",
-        "value": "balloon",
-        "type": "Text"
-      },
-      "images": {
-        "__TYPE__": "StructuredTextContent",
-        "value": [
-          {
-            "type": "paragraph",
-            "content": {
-              "text": "Aliquip eu eu cupidatat id. Irure sit nisi ipsum magna proident sint ipsum."
-            }
-          }
-        ]
-      },
-      "margin": {
-        "__TYPE__": "FieldContent",
-        "value": "solve",
-        "type": "Text"
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "diameter",
+				"type": "Text"
+			},
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "balloon",
+				"type": "Text"
+			},
+			"images": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "paragraph",
+						"content": {
+							"text": "Aliquip eu eu cupidatat id. Irure sit nisi ipsum magna proident sint ipsum."
+						}
+					}
+				]
+			},
+			"margin": {
+				"__TYPE__": "FieldContent",
+				"value": "solve",
+				"type": "Text"
+			},
+			"description": {
+				"__TYPE__": "FieldContent",
+				"value": "throw",
+				"type": "Text"
+			},
+			"images_content": {
+				"__TYPE__": "FieldContent",
+				"value": "some",
+				"type": "Text"
+			},
+			"title_size": {
+				"__TYPE__": "FieldContent",
+				"value": "strip",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]

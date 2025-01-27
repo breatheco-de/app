@@ -174,27 +174,27 @@
       "type": "dropdown",
       "steps": [
         {
-          "label": "Identifica el repositorio de Github que necesitas abrir",
-          "description": "El paso más importante es reconocer cuál repositorio necesitas abrir; hay dos opciones:\n\n- Algunos proyectos requieren comenzar desde cero usando plantillas de 4Geeks.\n- Otros proyectos tienen código preescrito; en este caso, necesitas forkar y clonar el repositorio principal antes de abrirlo.\n\nAsegúrate de entender la URL del repositorio que necesitas abrir.",
-          "video": "https://youtu.be/YwozDusaQxs?list=RDYwozDusaQxs",
-          "source": "",
+          "label": "Identifica el repositorio de GitHub",
+          "description": "Decide cuál repositorio necesitas:\n- Usa una plantilla de 4Geeks para empezar desde cero.\n- Forkea y clona un proyecto existente.\n\nAsegúrate de tener la URL correcta.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
-          "label": "¿Es el repositorio una plantilla? (solo para plantillas)",
-          "description": "Una vez que sepas cuál repositorio necesitas abrir, navega a ese repositorio. Si es una plantilla, el proceso será un poco diferente. \n\n- Algunas plantillas están diseñadas para reutilizarse en cada proyecto nuevo. 4Geeks tiene varias plantillas para HTML/CSS, React, Python, etc.\n- Puedes identificar una plantilla porque incluye un botón que dice `Use this template`.\n\nPara usar una plantilla:\n\n1. Haz clic en el botón `Use this template` y selecciona `Create a new repository`.\n2. En la nueva página, selecciona un propietario (si eres parte de 4Geeks, selecciona esa organización para obtener horas gratuitas de Codespaces).\n3. Da un nombre al repositorio, preferentemente `usuario-nombre-del-proyecto`.\n4. Selecciona la opción pública y haz clic en `Create repository from template`.\n5. Una vez creado, haz clic en `Star` para marcarlo como favorito y encontrarlo más fácilmente.",
+          "label": "¿Es una plantilla?",
+          "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Use this template` y selecciona `Create a new repository`.\n2. Elige un propietario (4Geeks para horas gratuitas en Codespaces).\n3. Nómbralo y hazlo público.\n4. Haz clic en `Create repository from template`.\n5. Marca el repositorio como favorito con `Star`.",
           "video": "",
-          "source": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
           "label": "Abre el repositorio",
-          "description": "Existen tres formas de abrir un repositorio, elige una:\n\n1. **Usar una computadora en la nube con Codespaces** (recomendado):\n   - Haz clic en el botón verde `<> Code` y luego en `Create codespace on main`.\n   - Esto abrirá una nueva pestaña con el Codespace listo para trabajar.\n\n2. **Usar una computadora en la nube con Gitpod**.\n\n3. **Trabajar en tu máquina local**.",
+          "description": "Elige cómo abrir el repositorio:\n1. **Codespaces** (recomendado): Haz clic en `<> Code` → `Create codespace on main`.\n2. **Gitpod**: Usa un entorno en la nube.\n3. **Local**: Clónalo en tu máquina.",
           "video": "",
-          "source": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         }
-      ]
+    ]     
     },
     "clone-title": "¿Cómo clonar un proyecto?",
     "clone-modal": {
@@ -202,7 +202,14 @@
       "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
       "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
       "select-os": "Seleccione su sistema operativo",
-      "intro-video": "",
+      "intro": {
+        "slug": "intro",
+        "label": "Introduction",
+        "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+        "video": "",
+        "source-label": "",
+        "source": ""
+      },
       "agent-vs-code": {
         "label": "Abrir el proyecto con VSCode",
         "description": "Asegúrate de tener la <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
