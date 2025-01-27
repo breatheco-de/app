@@ -2,7 +2,7 @@ import {
   useEffect, useState,
 } from 'react';
 import {
-  Box, Flex, Container, useColorModeValue, Skeleton, useToast,
+  Box, Flex, Container, useColorModeValue, Skeleton,
   Checkbox, Input, InputGroup, InputRightElement, IconButton,
   keyframes, usePrefersReducedMotion, Avatar, useColorMode,
   Modal, ModalBody, ModalCloseButton, ModalContent,
@@ -54,10 +54,11 @@ import LiveEvent from '../../../../../common/components/LiveEvent';
 import FinalProject from '../../../../../common/components/FinalProject';
 import useStyle from '../../../../../common/hooks/useStyle';
 import Feedback from '../../../../../common/components/Feedback';
+import useCustomToast from '../../../../../common/hooks/useCustomToast';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'fetching-teachers-students-nsync-cohort' });
   const router = useRouter();
   const { colorMode } = useColorMode();
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -90,6 +91,8 @@ function Dashboard() {
   const mainTechnologies = cohortProgram?.main_technologies
     ? cohortProgram?.main_technologies.split(',').map((el) => el.trim())
     : [];
+
+  const isSubscriptionFreeTrial = subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists;
 
   const academyOwner = cohortProgram?.academy_owner;
 
@@ -147,7 +150,7 @@ function Dashboard() {
       })
       .catch(() => {
         setModalIsOpen(false);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:task-cant-sync-with-cohort'),
           // title: 'Some Tasks cannot synced with current cohort',
@@ -164,7 +167,7 @@ function Dashboard() {
       id: idsParsed,
     }).deleteBulk()
       .then(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:unsynced-tasks-removed'),
           status: 'success',
@@ -174,7 +177,7 @@ function Dashboard() {
         setModalIsOpen(false);
       })
       .catch(() => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:unsynced-tasks-cant-be-removed'),
           status: 'error',
@@ -190,7 +193,7 @@ function Dashboard() {
         plan: programSlug,
       });
       router.push(`/${lang}/checkout${querys}`);
-      toast({
+      createToast({
         position: 'top',
         title: t('alert-message:access-denied'),
         status: 'error',
@@ -372,7 +375,7 @@ function Dashboard() {
         }
       }).catch((err) => {
         console.log(err);
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:error-fetching-students-and-teachers'),
           status: 'error',
@@ -390,6 +393,10 @@ function Dashboard() {
   // Sort all data fetched in order of taskTodo
   useEffect(() => {
     prepareTasks();
+
+    return () => {
+      setSortedAssignments([]);
+    };
   }, [cohortProgram, taskTodo, router]);
 
   const dailyModuleData = getDailyModuleData() || '';
@@ -420,11 +427,12 @@ function Dashboard() {
 
   return (
     <>
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && (
+      {getMandatoryProjects() && getMandatoryProjects().length > 0 && !isSubscriptionFreeTrial && (
         <AlertMessage
           full
           type="warning"
           style={{ borderRadius: '0px', justifyContent: 'center' }}
+          onClose={() => console.log('Alerta de proyectos obligatorios cerrada')}
         >
           <Text
             size="l"
@@ -448,15 +456,17 @@ function Dashboard() {
           </Text>
         </AlertMessage>
       )}
-      {subscriptionData?.id && subscriptionData?.status === 'FREE_TRIAL' && subscriptionData?.planOfferExists && (
+      {isSubscriptionFreeTrial && (
         <AlertMessage
           full
           type="warning"
           style={{ borderRadius: '0px', justifyContent: 'center' }}
+          onClose={() => console.log('Alerta de prueba gratuita cerrada free trial')}
         >
           <Text
             size="l"
             color="black"
+            fontWeight="700"
             dangerouslySetInnerHTML={{
               __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
             }}
