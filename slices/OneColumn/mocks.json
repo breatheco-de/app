@@ -174,6 +174,21 @@
 				"__TYPE__": "FieldContent",
 				"value": "kill",
 				"type": "Text"
+			},
+			"width": {
+				"__TYPE__": "FieldContent",
+				"value": "rear",
+				"type": "Text"
+			},
+			"padding": {
+				"__TYPE__": "FieldContent",
+				"value": "half",
+				"type": "Text"
+			},
+			"grid_column": {
+				"__TYPE__": "FieldContent",
+				"value": "reason",
+				"type": "Text"
 			}
 		},
 		"items": [

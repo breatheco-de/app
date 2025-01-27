@@ -15,6 +15,18 @@
           "type": "Text",
           "config": { "label": "ID Key", "placeholder": "" }
         },
+        "padding": {
+          "type": "Text",
+          "config": { "label": "padding", "placeholder": "" }
+        },
+        "grid_column": {
+          "type": "Text",
+          "config": { "label": "Grid Column", "placeholder": "" }
+        },
+        "width": {
+          "type": "Text",
+          "config": { "label": "Width", "placeholder": "" }
+        },
         "margin_top": {
           "type": "Text",
           "config": { "label": "Margin Top", "placeholder": "" }

@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+// import { SliderFilledTrack } from '@chakra-ui/react';
 import MktOneColumnKPI from '../../src/common/components/MktOneColumnKPI';
 
 /**
@@ -52,6 +53,9 @@ function OneColumn({ slice }) {
       descriptionTextAlign={slice?.primary?.description_text_align}
       descriptionJustifyItems={slice?.primary?.description_justify_items}
       descriptionLineHeight={slice?.primary?.description_line_height}
+      width={slice?.primary?.width}
+      padding={slice?.primary?.padding}
+      gridColumn={slice?.primary?.grid_column}
     />
   );
 }
