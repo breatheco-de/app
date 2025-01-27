@@ -17,7 +17,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
-import { BREATHECODE_HOST } from '../../utils/variables';
+// import { BREATHECODE_HOST } from '../../utils/variables';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -26,68 +26,7 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
-function ProvisioningDisplay({ availableOptions, resetOptionSelector, cohortSessionID, currentAssetURL }) {
-  const { t } = useTranslation('syllabus');
-  const accessToken = localStorage.getItem('accessToken');
-  const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', {}, { returnObjects: true });
-
-  const provisioningLinks = [{
-    title: t('common:learnpack.new-exercise'),
-    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
-    isExternalLink: true,
-  },
-  {
-    title: t('common:learnpack.continue-exercise'),
-    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
-    isExternalLink: true,
-  }];
-  return (
-    <Box borderRadius="11px" width="100%" height="100%">
-      <Heading size="sm" fontWeight="400">
-        {openInLearnpackAction.text}
-      </Heading>
-      <Text
-        mt="16px"
-        size="18px"
-        dangerouslySetInnerHTML={{ __html: openInLearnpackAction?.description }}
-      />
-      {availableOptions.length > 1 && (
-        <Button variant="link" textDecoration="none" onClick={resetOptionSelector}>
-          ←
-          {'  '}
-          {t('common:go-back-option')}
-        </Button>
-      )}
-      {provisioningLinks.map((link) => (
-        <Button
-          key={link.text}
-          as="a"
-          display="flex"
-          href={link.link}
-          target={link.isExternalLink ? '_blank' : '_self'}
-          marginY="auto"
-          margin="10px 0"
-          textTransform="uppercase"
-          width="100%"
-          flexDirection="row"
-          gridGap="10px"
-          fontSize="12px"
-          alignItems="center"
-          justifyContent="flex-start"
-          style={{
-            color: 'currentColor',
-          }}
-        >
-          {link.title}
-          <Icon color="currentColor" icon="longArrowRight" />
-        </Button>
-      ))}
-    </Box>
-
-  );
-}
-
-function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme }) {
+function ModalContentDisplay({ availableOptions, selectedOption, osList, selectedOs, setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
 
@@ -111,11 +50,20 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
   return (
     <Box>
       <Heading size="sm" fontWeight="400">
-        {t('common:learnpack.clone-modal.title')}
+        {selectedOption === 'provisioning_vendors' ? t('common:learnpack.open-in-learnpack-button.title') : t('common:learnpack.clone-modal.title')}
       </Heading>
-      <Text mt="16px" size="18px">
-        {t('common:learnpack.clone-modal.description')}
-      </Text>
+      {selectedOption === 'provisioning_vendors' ? (
+        <Text
+          mt="16px"
+          mb={availableOptions.length === 1 && '16px'}
+          size="18px"
+          dangerouslySetInnerHTML={{ __html: t('common:learnpack.open-in-learnpack-button.description') }}
+        />
+      ) : (
+        <Text mt="16px" size="18px">
+          {t('common:learnpack.clone-modal.description')}
+        </Text>
+      )}
       {availableOptions.length > 1 && !selectedOs && (
         <Button variant="link" textDecoration="none" onClick={resetOptionSelector}>
           ←
@@ -123,7 +71,7 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
           {t('common:go-back-option')}
         </Button>
       )}
-      {!selectedOs && (
+      {!selectedOs && selectedOption !== 'provisioning_vendors' && (
         <Box padding="16px">
           <Text fontFamily="Space Grotesk Variable" fontWeight="500" fontSize="18px">
             {t('common:learnpack.clone-modal.select-os')}
@@ -152,13 +100,15 @@ function OpenLocallyDisplay({ availableOptions, osList, selectedOs, setSelectedO
           </Box>
         </Box>
       )}
-      {selectedOs && (
+      {(selectedOs || selectedOption === 'provisioning_vendors') && (
         <Box>
-          <Button variant="link" textDecoration="none" onClick={resetOsSelector}>
-            ←
-            {'  '}
-            {t('common:go-back-os')}
-          </Button>
+          {selectedOs && (
+            <Button variant="link" textDecoration="none" onClick={resetOsSelector}>
+              ←
+              {'  '}
+              {t('common:go-back-os')}
+            </Button>
+          )}
           <Accordion index={expanded} onChange={(val) => setExpanded(val)} allowToggle display="flex" flexDirection="column" gap="10px">
             {steps.map((step, i) => (
               <AccordionItem display="flex" flexDirection="column" key={step.title} border="1px solid" borderColor={expanded === i ? 'blue.default' : borderColor} borderRadius="8px">
@@ -210,6 +160,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const [selectedOption, setSelectedOption] = useState(null);
   const [availableOptions, setAvailableOptions] = useState([]);
   const [expanded, setExpanded] = useState(0);
+  // const accessToken = localStorage.getItem('accessToken');
 
   //____determine what type of option is available based on thruthness____
   const templateUrl = currentAsset?.template_url;
@@ -235,10 +186,13 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     return templateUrl;
   }
 
+  const localIntroVideo = t('common:learnpack.clone-modal.intro-video');
+
   const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: getFinalUrl() }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
   const projectReadme = t('common:learnpack.clone-modal.project-readme', {}, { returnObjects: true });
+  const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', {}, { returnObjects: true });
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
 
@@ -255,6 +209,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const dependenciesSteps = selectedOs?.dependencies.filter((dep) => dependenciesNames.includes(dep.name));
 
   const parseSteps = () => {
+    if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
     return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
@@ -270,7 +225,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   //__options to show to the user__
   const resetOptionSelector = () => {
     setSelectedOption(null);
-    if (selectedOs) resetOsSelector();
+    resetOsSelector();
   };
 
   useEffect(() => {
@@ -290,87 +245,61 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     setSelectedOption(null);
   }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
 
-  //__content displayed in the modal__
-  const renderOptionContent = () => {
-    switch (selectedOption) {
-      case 'open_locally':
-        return (
-          <OpenLocallyDisplay
-            osList={osList}
-            selectedOs={selectedOs}
-            setSelectedOs={setSelectedOs}
-            resetOsSelector={resetOsSelector}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            steps={steps}
-            resetOptionSelector={resetOptionSelector}
-            availableOptions={availableOptions}
-            onClose={onClose}
-            isOnlyReadme={onlyReadme}
-          />
-        );
-      case 'provisioning_vendors':
-        return (
-          <ProvisioningDisplay
-            cohortSessionID={cohortSession?.id}
-            currentAssetURL={currentAsset?.url}
-            resetOptionSelector={resetOptionSelector}
-            availableOptions={availableOptions}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'open_locally') ? '5xl' : 'lg'}>
+    <Modal isOpen={isOpen} onClose={onClose} size={selectedOption ? '5xl' : 'lg'}>
       <ModalOverlay />
       <ModalContent padding="16px" overflow="auto">
         <ModalCloseButton />
         <Box display="flex" gap="16px" height="100%" minHeight="100%">
-          <Box width={{ base: '100%', md: (selectedOption === 'open_locally') ? '50%' : '100%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+          <Box width={{ base: '100%', md: selectedOption ? '50%' : '100%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
             {selectedOption ? (
-              renderOptionContent()
+              <ModalContentDisplay
+                osList={osList}
+                selectedOs={selectedOs}
+                setSelectedOs={setSelectedOs}
+                resetOsSelector={resetOsSelector}
+                expanded={expanded}
+                setExpanded={setExpanded}
+                steps={steps}
+                resetOptionSelector={resetOptionSelector}
+                availableOptions={availableOptions}
+                onClose={onClose}
+                isOnlyReadme={onlyReadme}
+                selectedOption={selectedOption}
+              />
             ) : (
-              <>
-                {availableOptions.length === 1 ? (
-                  renderOptionContent()
-                ) : (
-                  <Box>
-                    <Heading size="sm" fontWeight="400">
-                      {t('common:choose-one-option')}
-                    </Heading>
-                    <Text mt="16px" size="18px">
-                      {t('common:choose-one-description')}
-                    </Text>
-                    <Box mt="20px">
-                      {availableOptions.map((option) => (
-                        <Button
-                          key={option.key}
-                          display="flex"
-                          marginY="auto"
-                          margin="10px auto"
-                          textTransform="uppercase"
-                          width="100%"
-                          flexDirection="row"
-                          gridGap="10px"
-                          fontSize="12px"
-                          alignItems="center"
-                          justifyContent="center"
-                          style={{
-                            color: 'currentColor',
-                          }}
-                          onClick={() => setSelectedOption(option.key)}
-                        >
-                          {option.label}
-                          <Icon icon="longArrowRight" marginLeft="8px" />
-                        </Button>
-                      ))}
-                    </Box>
-                  </Box>
-                )}
-              </>
+              <Box>
+                <Heading size="sm" fontWeight="400">
+                  {t('common:choose-one-option')}
+                </Heading>
+                <Text mt="16px" size="18px">
+                  {t('common:choose-one-description')}
+                </Text>
+                <Box mt="20px">
+                  {availableOptions.map((option) => (
+                    <Button
+                      key={option.key}
+                      display="flex"
+                      marginY="auto"
+                      margin="10px auto"
+                      textTransform="uppercase"
+                      width="100%"
+                      flexDirection="row"
+                      gridGap="10px"
+                      fontSize="12px"
+                      alignItems="center"
+                      justifyContent="center"
+                      style={{
+                        color: 'currentColor',
+                      }}
+                      onClick={() => setSelectedOption(option.key)}
+                    >
+                      {option.label}
+                      <Icon icon="longArrowRight" marginLeft="8px" />
+                    </Button>
+                  ))}
+                </Box>
+              </Box>
             )}
             {cohortSession?.available_as_saas && (
               <NextChakraLink marginTop="16px" href="/mentorship/schedule" target="_blank" color={hexColor.blueDefault} textAlign="center">
@@ -380,19 +309,29 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
               </NextChakraLink>
             )}
           </Box>
-          {(selectedOption === 'open_locally') && (
+          {selectedOption && (
             <Box width="50%" display={{ base: 'none', md: 'block' }}>
-              {selectedOs ? (
+              {selectedOs || selectedOption === 'provisioning_vendors' ? (
                 <ReactPlayerV2
                   className="react-player-border-radius"
                   containerStyle={{ height: '100%' }}
-                  iframeStyle={{ background: 'none', borderRadius: '11px', height: '100% !important' }}
-                  url={steps && steps[expanded]?.video}
+                  iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
+                  url={steps?.[expanded]?.video || ''}
                   height="100%"
                 />
               ) : (
                 <>
-                  <Box background={featuredLight} borderRadius="11px" width="100%" height="100%" />
+                  {!selectedOs && selectedOption === 'open_locally' && localIntroVideo ? (
+                    <ReactPlayerV2
+                      className="react-player-border-radius"
+                      containerStyle={{ height: '100%' }}
+                      iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
+                      url={localIntroVideo}
+                      height="100%"
+                    />
+                  ) : (
+                    <Box background={featuredLight} borderRadius="11px" width="100%" height="100%" />
+                  )}
                 </>
               )}
             </Box>
@@ -417,7 +356,7 @@ ModalToCloneProject.defaultProps = {
   provisioningVendors: [],
 };
 
-OpenLocallyDisplay.propTypes = {
+ModalContentDisplay.propTypes = {
   osList: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   selectedOs: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   availableOptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
@@ -429,13 +368,7 @@ OpenLocallyDisplay.propTypes = {
   steps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   onClose: PropTypes.func.isRequired,
   isOnlyReadme: PropTypes.bool.isRequired,
-};
-
-ProvisioningDisplay.propTypes = {
-  availableOptions: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
-  resetOptionSelector: PropTypes.func.isRequired,
-  cohortSessionID: PropTypes.string.isRequired,
-  currentAssetURL: PropTypes.string.isRequired,
+  selectedOption: PropTypes.string.isRequired,
 };
 
 export default ModalToCloneProject;

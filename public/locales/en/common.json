@@ -175,7 +175,30 @@
       "text": "Open in the cloud",
       "title": "Open in the cloud",
       "description": "We take care of <a class=\"link\" target=\"_blank\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
-      "type": "dropdown"
+      "type": "dropdown",
+      "steps": [
+        {
+          "label": "Identify the GitHub repository you need to open",
+          "description": "The most critical step is recognizing which repository you need to open; there are two options:\n\n- Some projects require starting from scratch using 4Geeks' templates.\n- Other projects come with pre-written code; in this case, you need to fork and clone the main repository before opening it.\n\nMake sure you understand the URL of the repository you need to open.",
+          "video": "https://youtu.be/YwozDusaQxs?list=RDYwozDusaQxs",
+          "source": "",
+          "source-label": ""
+        },
+        {
+          "label": "Is the repository a template? (only for templates)",
+          "description": "Once you know the exact repository you need to open, navigate to it. If the repository is a template, the process will differ slightly.\n\n- Some repositories are meant to be reused for each new project. 4Geeks provides several templates for HTML/CSS, React, Python, etc.\n- You can recognize a template because it includes a `Use this template` button.\n\nTo use a template:\n\n1. Click the `Use this template` button and select `Create a new repository`.\n2. On the new page, select an owner (if you are part of 4Geeks, select that organization to get free Codespaces hours).\n3. Name your repository, preferably `username-project-name`.\n4. Select the public option and click `Create repository from template`.\n5. Once created, click the `Star` button to mark it as a favorite and find it more easily.",
+          "video": "",
+          "source": "",
+          "source-label": ""
+        },
+        {
+          "label": "Open the repository",
+          "description": "There are three ways to open a repository; choose one:\n\n1. **Using a cloud computer with Codespaces** (recommended):\n   - Click the green `<> Code` button and then select `Create codespace on main`.\n   - This will open a new tab with your Codespace ready for work.\n\n2. **Using a cloud computer with Gitpod**.\n\n3. **Working on your local machine**.",
+          "video": "",
+          "source": "",
+          "source-label": ""
+        }
+      ]
     },
     "clone-title": "How to clone a project?",
     "clone-modal": {
@@ -183,6 +206,7 @@
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
       "select-os": "Select your operating system",
+      "intro-video": "",
       "agent-vs-code": {
         "label": "Open the project in VS Code",
         "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
