@@ -68,7 +68,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
       const roundedHours = Math.round((totalHours + Number.EPSILON) * 100) / 100;
 
       let minutes;
-      if (roundedHours < 1) minutes = Math.round(((totalHours * 60) + Number.EPSILON) * 100) / 100;
+      if (roundedHours < 1) minutes = Math.floor(Math.round(((totalHours * 60) + Number.EPSILON) * 100) / 100);
       setTelemetryReport([{
         label: t('completion-percentage'),
         icon: 'graph-up',
