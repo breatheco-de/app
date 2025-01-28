@@ -210,12 +210,12 @@ function Dashboard() {
       }
 
       const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-      if (expiredCourse) {
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (expiredCourse && !fullyPaidSub) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
-      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) {
         setGrantAccess(true);
         return;
