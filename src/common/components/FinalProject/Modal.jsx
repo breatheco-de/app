@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Box, Flex, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
@@ -6,6 +6,7 @@ import useStyle from '../../hooks/useStyle';
 import Heading from '../Heading';
 import Text from '../Text';
 import FinalProjectForm from './Form';
+import Button from '../Button';
 
 function FinalProjectModal({ isOpen, cohortData, studentsData, closeModal, closeOnOverlayClick }) {
   const { t } = useTranslation('final-project');
@@ -41,7 +42,7 @@ function FinalProjectModal({ isOpen, cohortData, studentsData, closeModal, close
                 ))}
               </Flex>
               <Button
-                variant="default"
+                variant="primary"
                 width="fit-content"
                 margin="auto 0 0 0"
                 padding="0 1.8rem"

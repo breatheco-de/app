@@ -2,7 +2,7 @@
 import {
   Box,
   useColorModeValue,
-  Button,
+  Button as ChakraButton,
   Grid,
   GridItem,
 } from '@chakra-ui/react';
@@ -24,6 +24,7 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import SimpleModal from '../../common/components/SimpleModal';
+import Button from '../../common/components/Button';
 
 const TabletWithForm = React.forwardRef(({
   asset,
@@ -167,7 +168,7 @@ const TabletWithForm = React.forwardRef(({
               <>
                 {asset?.learnpack_deploy_url && !noLearnpackIncluded.includes(asset?.slug)
                   ? (
-                    <Button
+                    <ChakraButton
                       as="a"
                       borderRadius="3px"
                       width="100%"
@@ -182,34 +183,31 @@ const TabletWithForm = React.forwardRef(({
                       target="_blank"
                     >
                       {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${asset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()}
-                    </Button>
+                    </ChakraButton>
                   )
                   : (
                     <>
                       {asset.gitpod && (
                       <Button
-                        borderRadius="3px"
                         width="100%"
                         padding="0"
                         whiteSpace="normal"
-                        variant="default"
-                        color="white"
+                        variant="success"
                         alignItems="center"
                         gridGap="8px"
-                        background={hexColor.greenLight}
                         onClick={() => setShowModal(true)}
                       >
                         <Icon style={{ marginRight: '5px' }} width="22px" height="26px" icon="learnpack" color="currentColor" />
                         <Text fontSize="14px">{t('open-learnpack')}</Text>
                       </Button>
                       )}
-                      <Button
-                        borderRadius="3px"
+                      <ChakraButton
+                        borderRadius="4px"
                         width="100%"
                         fontSize="14px"
                         padding="0"
                         whiteSpace="normal"
-                        variant="otuline"
+                        variant="outline"
                         border="1px solid"
                         textTransform="uppercase"
                         borderColor={hexColor.greenLight}
@@ -220,7 +218,7 @@ const TabletWithForm = React.forwardRef(({
                         }}
                       >
                         {t('clone')}
-                      </Button>
+                      </ChakraButton>
                     </>
                   )}
               </>
@@ -284,17 +282,12 @@ const TabletWithForm = React.forwardRef(({
           <Grid templateColumns="repeat(2, 1fr)" gap={2} marginBottom="15px">
             <GridItem w="100%">
               <Button
-                borderRadius="3px"
                 width="100%"
                 fontSize="14px"
                 padding="0"
-                isDisabled={!assetUrl}
                 whiteSpace="normal"
-                variant="otuline"
-                border="1px solid"
-                borderColor="blue.default"
+                variant="outline"
                 fontWeight="700"
-                color="blue.default"
                 onClick={() => {
                   if (typeof window !== 'undefined') {
                     ReportOpenInProvisioningVendor('gitpod');
@@ -309,17 +302,12 @@ const TabletWithForm = React.forwardRef(({
             </GridItem>
             <GridItem w="100%">
               <Button
-                borderRadius="3px"
                 width="100%"
                 fontSize="14px"
                 padding="0"
-                isDisabled={!assetUrl}
                 whiteSpace="normal"
-                variant="otuline"
-                border="1px solid"
-                borderColor="blue.default"
+                variant="outline"
                 fontWeight="700"
-                color="blue.default"
                 onClick={() => {
                   const url = assetUrl ? assetUrl.replace('https://github.com/', '') : '';
                   if (typeof window !== 'undefined') {
