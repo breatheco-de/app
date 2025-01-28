@@ -34,7 +34,7 @@
     "months": "meses",
     "years": "años"
   },
-  "timer":{
+  "timer": {
     "min": "min",
     "mins": "mins",
     "sec": "seg"
@@ -71,17 +71,17 @@
   "enroll-totally-free": "Entrar totalmente gratis",
   "enroll-for-connector": "Unete por",
   "learn-more": "Aprender más",
-  "more-technologies":"Más tecnologías",
-  "continue-learning":"Continúa aprendiendo sobre:",
+  "more-technologies": "Más tecnologías",
+  "continue-learning": "Continúa aprendiendo sobre:",
   "technologies-and-more": "{{technologies}} y más.",
   "user-id": "ID de usuario",
   "day": "Día",
   "days": "Días",
   "short-seconds": "Seg",
   "interactive": "Interactivo",
-  "beginner": "Principiante", 
-  "easy": "Fácil", 
-  "intermediate": "Intermedio", 
+  "beginner": "Principiante",
+  "easy": "Fácil",
+  "intermediate": "Intermedio",
   "hard": "Dificil",
   "taken-by": "Tomado por",
   "attended": "Asistió",
@@ -124,7 +124,7 @@
   "clear-all": "Limpiar todo",
   "english": "Inglés",
   "spanish": "Español",
-  "remaining":"Restantes",
+  "remaining": "Restantes",
   "show-more": "Mostrar más",
   "show-less": "Mostrar menos",
   "seach-technology": "Buscar tecnología",
@@ -147,7 +147,7 @@
     "mark-as-done": "Marcar como hecho",
     "mark-as-not-done": "Marcar como no hecho"
   },
-  "external":{
+  "external": {
     "title": "Este es un ejercicio externo",
     "description": "<strong>\"{{projectName}}\"</strong> es un ejercicio externo, serás redireccionado a una nueva pestaña para hacerlo; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:"
   },
@@ -158,8 +158,8 @@
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
     "open-locally": "Abrir localmente en tu computadora",
-    "start-asset": "Empezar {{asset_type}} interactivo",
-    "continue-working": "Continúa trabajando",
+    "start-interactive-asset": "Empezar {{asset_type}} interactivo",
+    "start-asset": "Empezar {{asset_type}}",
     "continue-asset": "Continuar este {{asset_type}}",
     "asset_types": {
       "project": "proyecto",
@@ -171,7 +171,30 @@
       "text": "Abrir en la nube",
       "title": "Abrir en la nube",
       "description": "Nosotros nos encargamos de la <a class=\"link\" href=\"/es/aprende-en-un-clic\">configuración e instalación</a> de todas las tecnologías requeridas para realizar este ejercicio.",
-      "type": "dropdown"
+      "type": "dropdown",
+      "steps": [
+        {
+          "label": "Identifica el repositorio de GitHub",
+          "description": "Decide cuál repositorio necesitas:\n- Usa una plantilla de 4Geeks para empezar desde cero.\n- Forkea y clona un proyecto existente.\n\nAsegúrate de tener la URL correcta.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "¿Es una plantilla?",
+          "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Use this template` y selecciona `Create a new repository`.\n2. Elige un propietario (4Geeks para horas gratuitas en Codespaces).\n3. Nómbralo y hazlo público.\n4. Haz clic en `Create repository from template`.\n5. Marca el repositorio como favorito con `Star`.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        },
+        {
+          "label": "Abre el repositorio",
+          "description": "Elige cómo abrir el repositorio:\n1. **Codespaces** (recomendado): Haz clic en `<> Code` → `Create codespace on main`.\n2. **Gitpod**: Usa un entorno en la nube.\n3. **Local**: Clónalo en tu máquina.",
+          "video": "",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
+          "source-label": ""
+        }
+    ]     
     },
     "clone-title": "¿Cómo clonar un proyecto?",
     "clone-modal": {
@@ -179,6 +202,14 @@
       "need-help": "¿Necesitas ayuda? Programa una sesión de tutoría",
       "description": "Este ejercicio se puede descargar y ejecutar localmente en su computadora siguiendo estos pasos:",
       "select-os": "Seleccione su sistema operativo",
+      "intro": {
+        "slug": "intro",
+        "label": "Introduction",
+        "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+        "video": "",
+        "source-label": "",
+        "source": ""
+      },
       "agent-vs-code": {
         "label": "Abrir el proyecto con VSCode",
         "description": "Asegúrate de tener la <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">extensión de LearnPack</a> instalada, abre la carpeta en VSCode y escribr <span class=\"highlight-command\">learnpack start</span> en la terminal de vscode.",
@@ -252,6 +283,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         },
         {
@@ -311,6 +352,16 @@
               "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
             }
           ]
         },
@@ -378,6 +429,16 @@
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Lee el contenido del readme",
+              "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "¡Llevame al readme!"
+            }
           ]
         }
       ]
@@ -387,7 +448,7 @@
     "title": "Lo sentimos, no tiene suficientes privilegios para acceder a este bloque de contenido, regístrese o actualice su plan para acceder al contenido.",
     "button": "Comprar un plan"
   },
-  "asset-type-pronouns" : {
+  "asset-type-pronouns": {
     "lesson": "Esta lección",
     "exercise": "Este ejercicio",
     "project": "Este proyecto",
@@ -425,9 +486,16 @@
   },
   "upgrade": "Mejora",
   "go-back": "Regresar",
+  "go-back-option": "Seleccionar otra opción",
+  "go-back-os": "Seleccionar otro sistema operativo",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "Al ingresar tus datos desbloquearás el contenido interactivo de \"{{title}}\" y muchos más",
   "coming-soon": "Próximamente",
+  "option-open-locally": "Abrir local en tu computadora",
+  "option-provisioning-vendors": "Abrir en la nube (recomendado)",
+  "option-readme": "Readme only",
+  "choose-one-option": "Elige una de estas opciones",
+  "choose-one-description": "Puedes elegir una de las siguientes opciones para iniciar tu proyecto",
   "validators": {
     "owner_name-required": "El nombre del propietario es requerido",
     "owner_name-min": "El nombre del propietario es demasiado corto",
@@ -485,15 +553,17 @@
     "sub-description": "Únete a una cohorte en un ambiente de aula en vivo y obtén soporte ilimitado hasta que encuentres un trabajo.",
     "service_items": {
       "title": "Todo en vivo y con comentarios más...",
-      "items": [{
-        "label": "Talleres en vivo ilimitados"
-      },
-      {
-        "label": "Sesiones de tutoría individuales ilimitadas"
-      },
-      {
-        "label": "Sesiones de tutoría grupal ilimitadas"
-      }]
+      "items": [
+        {
+          "label": "Talleres en vivo ilimitados"
+        },
+        {
+          "label": "Sesiones de tutoría individuales ilimitadas"
+        },
+        {
+          "label": "Sesiones de tutoría grupal ilimitadas"
+        }
+      ]
     },
     "featured_info": [
       {
@@ -502,7 +572,11 @@
           "title": "Clases en vivo",
           "icon": "onlinePeople"
         },
-        "features": [{ "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor." }]
+        "features": [
+          {
+            "description": "Toma parte de un grupo de estudiantes aprendiendo juntos semanalmente en clases en vivo con un profesor."
+          }
+        ]
       },
       {
         "service": {
@@ -510,7 +584,11 @@
           "title": "Career support",
           "icon": "support"
         },
-        "features": [{ "description": "Obtenga comentarios sobre su currículum, LinkedIn y otros perfiles en línea, y acceda a nuestra amplia red de socios de contratación, oportunidades de pasantías y más." }]
+        "features": [
+          {
+            "description": "Obtenga comentarios sobre su currículum, LinkedIn y otros perfiles en línea, y acceda a nuestra amplia red de socios de contratación, oportunidades de pasantías y más."
+          }
+        ]
       },
       {
         "service": {
@@ -518,7 +596,11 @@
           "title": "Garantía de trabajo*",
           "icon": "briefcase"
         },
-        "features": [{ "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones." }]
+        "features": [
+          {
+            "description": "Obtén un trabajo dentro de los 6 meses posteriores a la graduación o recibe tu dinero de vuelta; se aplican condiciones."
+          }
+        ]
       },
       {
         "service": {
@@ -526,7 +608,11 @@
           "title": "Certificados por el Dep. de Educación dee FL, U.S.",
           "icon": "certificate"
         },
-        "features": [{ "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S." }]
+        "features": [
+          {
+            "description": "Nuestros certificados de los bootcamps incluyen una insignia certificada por el Dep. de Educación de FL, U.S."
+          }
+        ]
       },
       {
         "service": {
@@ -534,7 +620,11 @@
           "title": "Acceso a la comunidad premium",
           "icon": "crown"
         },
-        "features": [{ "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios." }]
+        "features": [
+          {
+            "description": "Nuestra comunidad premium te ofrece acceso a espacios de oficina al rededor del mundo, eventos de las empresas asociadas y empleadores, ferias de trabajo, eventos para networking, un canal exclusivo de slack, y más beneficios."
+          }
+        ]
       },
       {
         "service": {
@@ -542,7 +632,11 @@
           "title": "Espacio de oficinas en todo el mundo",
           "icon": "office"
         },
-        "features": [{ "description": "Obtenga acceso a espacios de oficinas en todo el mundo." }]
+        "features": [
+          {
+            "description": "Obtenga acceso a espacios de oficinas en todo el mundo."
+          }
+        ]
       }
     ]
   },
