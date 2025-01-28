@@ -811,6 +811,7 @@ function SyllabusContent() {
       <Flex className="flex-container" minHeight="93vh" background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
         {!isAvailableAsSaas && (
           <StickySideBar
+            top="300px"
             width="auto"
             menu={[
               ...teacherActions,
@@ -1008,7 +1009,7 @@ function SyllabusContent() {
                         )}
 
                         {(!isAvailableAsSaas || ipynbHtmlUrl) && (
-                          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
+                          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0" right="0px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
                             {repoUrl && !isQuiz && !isAvailableAsSaas && (
                               <Link
                                 display="flex"

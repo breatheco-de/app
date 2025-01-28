@@ -37,7 +37,7 @@
     "months": "months",
     "years": "years"
   },
-  "timer":{
+  "timer": {
     "min": "min",
     "mins": "mins",
     "sec": "seg"
@@ -150,9 +150,9 @@
     "mark-as-done": "Mark as done",
     "mark-as-not-done": "Mark as not done"
   },
-  "external":{
+  "external": {
     "title": "This is an external exercise",
-    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will redirected to a new tab to do it; choose one of the following options to start working on the project:"
+    "description": "<strong>\"{{projectName}}\"</strong> is an external exercise you will be redirected to a new tab to do it; choose one of the following options to start working on the project:"
   },
   "learnpack": {
     "title": "This is a Learnpack interactive exercise",
@@ -162,8 +162,8 @@
     "new-exercise": "Start from the beginning",
     "continue-exercise": "Continue from a previous session",
     "open-locally": "Open locally on your computer",
-    "start-asset": "Start interactive {{asset_type}}",
-    "continue-working": "Continue working",
+    "start-interactive-asset": "Start interactive {{asset_type}}",
+    "start-asset": "Start {{asset_type}}",
     "continue-asset": "Continue this {{asset_type}}",
     "asset_types": {
       "project": "project",
@@ -174,8 +174,31 @@
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
       "title": "Open in the cloud",
-      "description": "We take care of <a class=\"link\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
-      "type": "dropdown"
+      "description": "We take care of <a class=\"link\" target=\"_blank\" href=\"https://4geeks.com/click-and-learn\">setup and installations</a> for all the required technologies to run this exercise or project.",
+      "type": "dropdown",
+      "steps": [
+        {
+          "label": "Identify the GitHub repository",
+          "description": "Decide which repository you need:\n- Start from scratch using a 4Geeks template.\n- Fork and clone an existing project.\n\nMake sure you have the correct repository URL.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "Is it a template?",
+          "description": "If the repository is a template:\n1. Click `Use this template` and select `Create a new repository`.\n2. Choose an owner (select 4Geeks if you're a student for free Codespaces hours).\n3. Name your repository (e.g., `username-project-name`) and make it public.\n4. Click `Create repository from template`.\n5. Star the repository to find it easily later.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        },
+        {
+          "label": "Open the repository",
+          "description": "Choose one method:\n1. **Codespaces**: Click `<> Code` → `Create codespace on main` (recommended).\n2. **Gitpod**: Use a cloud environment.\n3. **Local machine**: Clone and work locally.",
+          "video": "",
+          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source-label": ""
+        }
+      ]
     },
     "clone-title": "How to clone a project?",
     "clone-modal": {
@@ -183,6 +206,14 @@
       "need-help": "Need help? Schedule a mentoring session",
       "description": "This exercise can be downloaded and run locally on your computer by following these steps:",
       "select-os": "Select your operating system",
+      "intro": {
+        "slug": "intro",
+        "label": "Introduction",
+        "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
+        "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-introduction.mp4",
+        "source-label": "",
+        "source": ""
+      },
       "agent-vs-code": {
         "label": "Open the project in VS Code",
         "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
@@ -220,14 +251,6 @@
           ],
           "steps": [
             {
-              "slug": "intro",
-              "label": "Introduction",
-              "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
-              "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-introduction.mp4",
-              "source-label": "",
-              "source": ""
-            },
-            {
               "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
@@ -261,6 +284,16 @@
               "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-cloning-a-project.mp4",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
             }
           ]
         },
@@ -321,6 +354,16 @@
               "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
+            }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
             }
           ]
         },
@@ -388,6 +431,16 @@
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
+          ],
+          "readme_steps": [
+            {
+              "slug": "read-readme",
+              "label": "Read the content of the readme",
+              "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
+              "video": "",
+              "source": "#markdown-body",
+              "source-label": "Take me to the readme!"
+            }
           ]
         }
       ]
@@ -435,9 +488,16 @@
   },
   "upgrade": "Upgrade",
   "go-back": "Go back",
+  "go-back-option": "Select other option",
+  "go-back-os": "Select other operating system",
   "modal-tech-title": "{{technology}}",
   "modal-tech-description": "By entering your data you will unlock the interactive content of \"{{title}}\" and many more",
   "coming-soon": "Coming soon",
+  "option-open-locally": "Open locally on your computer",
+  "option-provisioning-vendors": "Open on the cloud (recommended)",
+  "option-readme": "Readme only",
+  "choose-one-option": "Choose one of these options",
+  "choose-one-description": "You can choose one of the following options to start your project.",
   "validators": {
     "owner_name-required": "Owner name is required",
     "owner_name-min": "Owner name is too short",
