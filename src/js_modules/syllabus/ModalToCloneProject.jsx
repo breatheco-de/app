@@ -17,6 +17,7 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import Icon from '../../common/components/Icon';
+import { BREATHECODE_HOST } from '../../utils/variables';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import NextChakraLink from '../../common/components/NextChakraLink';
@@ -25,9 +26,23 @@ import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
-function ModalContentDisplay({ availableOptions, selectedOption, osList, selectedOs, setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme }) {
+function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
+  setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme,
+}) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
+  const accessToken = localStorage.getItem('accessToken');
+
+  const provisioningLinks = [{
+    title: t('common:learnpack.new-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
+    isExternalLink: true,
+  },
+  {
+    title: t('common:learnpack.continue-exercise'),
+    link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
+    isExternalLink: true,
+  }];
 
   const scrollToMarkdown = () => {
     const markdownBody = document.getElementById('markdown-body');
@@ -99,7 +114,7 @@ function ModalContentDisplay({ availableOptions, selectedOption, osList, selecte
           </Box>
         </Box>
       )}
-      {(selectedOs || selectedOption === 'provisioning_vendors') && (
+      {(selectedOs || (selectedOption === 'provisioning_vendors' && !isInteractive)) && (
         <Box>
           {selectedOs && (
             <Button variant="link" textDecoration="none" onClick={resetOsSelector}>
@@ -141,8 +156,35 @@ function ModalContentDisplay({ availableOptions, selectedOption, osList, selecte
                 </AccordionPanel>
               </AccordionItem>
             ))}
-
           </Accordion>
+        </Box>
+      )}
+      {selectedOption === 'provisioning_vendors' && isInteractive && (
+        <Box borderRadius="11px" width="100%" height="100%">
+          {provisioningLinks.map((link) => (
+            <Button
+              key={link.text}
+              as="a"
+              display="flex"
+              href={link.link}
+              target={link.isExternalLink ? '_blank' : '_self'}
+              marginY="auto"
+              margin="10px 0"
+              textTransform="uppercase"
+              width="100%"
+              flexDirection="row"
+              gridGap="10px"
+              fontSize="12px"
+              alignItems="center"
+              justifyContent="flex-start"
+              style={{
+                color: 'currentColor',
+              }}
+            >
+              {link.title}
+              <Icon color="currentColor" icon="longArrowRight" />
+            </Button>
+          ))}
         </Box>
       )}
     </Box>
@@ -246,12 +288,12 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={selectedOption ? '5xl' : 'lg'}>
+    <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'lg' : '5xl'}>
       <ModalOverlay />
       <ModalContent padding="16px" overflow="auto">
-        <ModalCloseButton />
+        <ModalCloseButton zIndex={100} />
         <Box display="flex" gap="16px" height="100%" minHeight="100%">
-          <Box width={{ base: '100%', md: selectedOption ? '50%' : '100%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
+          <Box width={{ base: '100%', md: (selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? '100%' : '50%' }} display="flex" flexDirection="column" justifyContent="space-between" height="100%">
             {selectedOption ? (
               <ModalContentDisplay
                 osList={osList}
@@ -266,6 +308,9 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 onClose={onClose}
                 isOnlyReadme={onlyReadme}
                 selectedOption={selectedOption}
+                isInteractive={isInteractive}
+                currentAssetURL={currentAsset?.url}
+                cohortSessionID={cohortSession.id}
               />
             ) : (
               <Box>
@@ -310,7 +355,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
             )}
           </Box>
           {selectedOption && (
-            <Box width="50%" display={{ base: 'none', md: 'block' }}>
+            <Box width="50%" display={{ base: 'none', md: (selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'none' : 'block' }}>
               {selectedOs || selectedOption === 'provisioning_vendors' ? (
                 <ReactPlayerV2
                   className="react-player-border-radius"
@@ -321,7 +366,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 />
               ) : (
                 <>
-                  {!selectedOs && selectedOption === 'open_locally' && localIntro.video ? (
+                  {!selectedOs && selectedOption === 'open_locally' && localIntro.video && !onlyReadme ? (
                     <ReactPlayerV2
                       className="react-player-border-radius"
                       containerStyle={{ height: '100%' }}
@@ -368,7 +413,10 @@ ModalContentDisplay.propTypes = {
   steps: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
   onClose: PropTypes.func.isRequired,
   isOnlyReadme: PropTypes.bool.isRequired,
+  isInteractive: PropTypes.bool.isRequired,
   selectedOption: PropTypes.string.isRequired,
+  cohortSessionID: PropTypes.string.isRequired,
+  currentAssetURL: PropTypes.string.isRequired,
 };
 
 export default ModalToCloneProject;
