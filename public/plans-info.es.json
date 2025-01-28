@@ -13,7 +13,7 @@
         "background": "#0084FF",
         "title": "Obtener Plan"
       },    
-      "button_link": "https://4geeks.com/es/checkout?plan=jump-start",
+      "button_link": "https://4geeks.com/es/checkout?plan=jump-start&cohort=1130",
       "featured_info": [
         {
           "service": {
@@ -95,7 +95,7 @@
         "background": "#0084FF",
         "title": "Obtener Plan"
       },
-      "button_link": "https://4geeks.com/es/checkout?plan=basic-plan",
+      "button_link": "https://4geeks.com/es/checkout?plan=basic-plan&cohort=1131",
       "featured_info": [
         {
           "service": {
@@ -174,7 +174,7 @@
         "background": "white",
         "title": "Obtener Plan"
       },
-      "button_link": "https://4geeks.com/es/checkout?plan=standard-plan",
+      "button_link": "https://4geeks.com/es/checkout?plan=standard-plan&cohort=1131",
       "featured_card": {
         "color": "#0084FF"
       },
@@ -245,7 +245,7 @@
         "background": "#0084FF",
         "title": "Obtener Plan"
       },
-      "button_link": "https://4geeks.com/es/checkout?plan=premium-plan",
+      "button_link": "https://4geeks.com/es/checkout?plan=premium-plan&cohort=1131",
       "featured_info": [
         {
           "service": {
