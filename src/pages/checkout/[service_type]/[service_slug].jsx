@@ -35,6 +35,9 @@ function ServiceSlug() {
 
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
 
+  const voidServices = ['ai-compilation'];
+  const allowedServiceTypes = ['compilation', 'mentorship', 'event'];
+
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
     if (isWindow && stepIndex >= 2 && isAuthenticated && !isPaymentSuccess) {
@@ -85,7 +88,7 @@ function ServiceSlug() {
 
       const allSubscriptions = [...subscriptions, ...plan_financings];
 
-      if (serviceData || (service_slug === 'ai-compilation' && allSubscriptions.length > 0)) {
+      if (serviceData || (voidServices.includes(service_slug) && allSubscriptions.length > 0)) {
         let service;
         let resp;
         let respData;
@@ -141,6 +144,7 @@ function ServiceSlug() {
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    if (!allowedServiceTypes.includes(service_type)) router.push('/404');
     return () => {
       restartSignup();
     };
