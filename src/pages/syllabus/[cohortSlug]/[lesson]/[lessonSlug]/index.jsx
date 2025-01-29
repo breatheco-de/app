@@ -387,6 +387,7 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
+    setFileData([]);
   };
 
   const onClickAssignment = (e, item) => {
