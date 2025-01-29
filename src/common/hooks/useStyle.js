@@ -40,6 +40,7 @@ const useStyle = () => {
   };
 
   const hexColor = {
+    blue2: useColorModeValue('#01455E', '#ffffff'),
     black: useColorModeValue('#000000', '#ffffff'),
     disabledColor: useColorModeValue('#A4A4A4', '#CACACA'),
     fontColor3: useColorModeValue('#606060', '#EBEBEB'),

@@ -143,10 +143,10 @@ function MktTwoColumnSideImage({
       margin={margin || '0 auto'}
       maxWidth={maxWidth || '1280px'}
       borderRadius={borderRadius}
-      background={transparent ? 'transparent' : background || backgroundColor}
       {...rest}
     >
       <Flex
+        background={transparent ? 'transparent' : background || backgroundColor}
         flexDirection={{ base: 'column', md: 'row' }}
         width="100%"
         margin="0"
@@ -154,8 +154,8 @@ function MktTwoColumnSideImage({
         border={border}
         alignItems="center"
         borderRadius="12px"
-        padding={{ base: '20px 10px', md: '24px 0px' }}
-        px={{ base: '10px', md: '2rem' }}
+        padding={{ base: '20px 10px', md: '24px 20px' }}
+        // px={{ base: '10px', md: '2rem' }}
         gridGap={gridGap}
         marginTop={marginTop}
         marginBottom={marginBottom}

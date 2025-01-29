@@ -25,7 +25,12 @@
 			},
 			"version": {
 				"__TYPE__": "FieldContent",
-				"value": "vowel",
+				"value": "v2",
+				"type": "Select"
+			},
+			"background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "southern",
 				"type": "Text"
 			}
 		},

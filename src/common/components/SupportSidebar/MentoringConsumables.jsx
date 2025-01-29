@@ -69,6 +69,7 @@ function ProfilesSection({
   return (
     <AvatarGroup max={4} justifyContent="center">
       {profiles?.map((c, i) => {
+        if (!c) return null;
         const fullName = `${c.user.first_name} ${c.user.last_name}`;
         const isOnline = usersConnected?.includes(c.user.id);
         return (

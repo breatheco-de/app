@@ -25,7 +25,7 @@ function TestimonialBox({ picture, name, rating, description, version }) {
     v1: {
       box: {
         background: backgroundColor,
-        border: '1px solid',
+        border: '1px solid #dadada',
         width: '250px',
       },
       textName: {
@@ -94,7 +94,6 @@ function TestimonialBox({ picture, name, rating, description, version }) {
       },
     },
   };
-
   return (
     <Box
       height={{ md: '270px', base: '320px' }}
@@ -154,7 +153,7 @@ function MktTestimonials({
   title,
   endpoint,
   testimonials,
-  version = 'v1',
+  version,
   ...rest
 }) {
   const [testimonialsData, setTestimonialsData] = useState();
@@ -180,7 +179,6 @@ function MktTestimonials({
   useEffect(() => {
     getTestimonials();
   }, []);
-
   const testimonialsArray = (testimonialsData?.length > 0 && testimonialsData) || (testimonials?.length > 0 && testimonials);
 
   const stylesBox = {
@@ -240,7 +238,7 @@ MktTestimonials.propTypes = {
 };
 
 MktTestimonials.defaultProps = {
-  version: 'v1',
+  version: null,
   title: null,
   endpoint: '',
   testimonials: null,
