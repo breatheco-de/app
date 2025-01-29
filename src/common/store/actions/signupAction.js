@@ -284,6 +284,12 @@ const useSignup = () => {
     const maxNumItems = Math.floor(maxItems / bundleSize);
     const allItems = [];
 
+    const consumableTypes = {
+      mentorship: 'mentorship sessions',
+      event: 'events',
+      compilation: 'compilations',
+    };
+
     for (let num = 1; num <= maxNumItems; num += 1) {
       const numItems = num * bundleSize;
 
@@ -295,7 +301,7 @@ const useSignup = () => {
         allItems.push({
           id: num,
           slug: `${numItems}-${data?.serviceInfo?.type}`,
-          title: `${numItems} ${data?.serviceInfo?.type === 'mentorship' ? 'mentorship sessions' : 'events'}`,
+          title: `${numItems} ${consumableTypes[data?.serviceInfo?.type]}`,
           qty: numItems,
           pricePerUnit: price.discounted / numItems,
           price: price.original,

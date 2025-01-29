@@ -174,6 +174,7 @@
   "resend": "Reenviar",
   "mentorship-bundle-title": "Paquete de sesiones de tutoría",
   "event-bundle-title": "Paquete de acceso a eventos",
+  "compilation-bundle-title": "Paquete de acceso a compilaciones",
   "upgrade-a-plan": "Mejora un plan",
   "take-me-there": "Comprar plan",
   "consumables": {
@@ -202,12 +203,15 @@
     "you-have-received": "Has recibido",
     "events": "eventos",
     "sessions": "sesiones",
+    "compilations": "compilaciones",
     "back-to-dashboard": "Volver al dashboard",
     "confirm-purchase-connector": "Estás a punto de comprar:",
     "qty-events-to-consume": "{{qty}} eventos para aplicar",
     "qty-mentorship-sessions": "{{qty}} sesiones de tutoría",
+    "qty-compilations-to-consume": "{{qty}} compilaciones",
     "price-event-per-qty": "{{price}} por evento",
     "price-mentorship-per-qty": "{{price}} por mentoría",
+    "price-compilation-per-qty": "{{price}} por compilación",
     "confirm-purchase": "Confirmar compra"
   },
   "select-service-of-plan": {

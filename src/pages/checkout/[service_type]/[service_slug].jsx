@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import bc from '../../../common/services/breathecode';
 import useAuth from '../../../common/hooks/useAuth';
-import { isWindow, getQueryString } from '../../../utils';
+import { isWindow } from '../../../utils';
 import PaymentInfo from '../../../js_modules/checkout/PaymentInfo';
 import useSignup from '../../../common/store/actions/signupAction';
 import axiosInstance from '../../../axios';
@@ -17,83 +17,23 @@ import LoaderScreen from '../../../common/components/LoaderScreen';
 import useStyle from '../../../common/hooks/useStyle';
 import ServiceSummary from '../../../js_modules/checkout/ServiceSummary';
 import SelectServicePlan from '../../../js_modules/checkout/SelectServicePlan';
-import { usePersistentBySession } from '../../../common/hooks/usePersistent';
 
 function ServiceSlug() {
   const router = useRouter();
   const { query } = router;
   const { service_type, service_slug } = query;
   const {
-    state, handleStep, handleServiceToConsume, isThirdStep, isFourthStep, setLoader, setCheckoutData, restartSignup,
+    state, handleStep, handleServiceToConsume, isThirdStep, isFourthStep, setLoader, restartSignup,
   } = useSignup();
   const [readyToSelectService, setReadyToSelectService] = useState(false);
-  const [discountCode, setDiscountCode] = useState('');
-  const [, setDiscountCoupon] = useState({
-    isError: false,
-  });
-  const { stepIndex, checkoutData, selectedPlanCheckoutData, serviceProps, loader } = state;
+  const { stepIndex, selectedPlanCheckoutData, serviceProps, loader } = state;
   const { backgroundColor3, backgroundColor } = useStyle();
 
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { isAuthenticated } = useAuth();
   const toast = useToast();
 
-  const couponQuery = getQueryString('coupon');
-  const [coupon] = usePersistentBySession('coupon', '');
-  const formatedCouponQuery = couponQuery && couponQuery.replace(/[^a-zA-Z0-9-\s]/g, '');
-  const couponString = coupon?.replaceAll('"', '') || '';
-  const couponValue = couponString || formatedCouponQuery;
-
   const isPaymentSuccess = selectedPlanCheckoutData?.payment_success;
-
-  const saveCouponToBag = async (coupons, bagId = '') => {
-    const resp = await bc.payment({
-      coupons,
-    }).applyCoupon(bagId);
-    const couponsList = resp?.data?.coupons;
-    if (couponsList?.length > 0) {
-      setDiscountCoupon({
-        ...couponsList[0],
-        isError: false,
-      });
-      setCheckoutData({
-        ...checkoutData,
-        discountCoupon: couponsList[0],
-      });
-    } else {
-      setDiscountCoupon({
-        isError: true,
-      });
-    }
-  };
-
-  const handleCoupon = async (coupons, actions) => {
-    try {
-      const resp = await bc.payment({
-        coupons: [coupons || discountCode],
-      }).verifyCoupon();
-      if (resp?.data?.length > 0) {
-        const couponsToString = resp?.data.map((item) => item?.slug);
-        saveCouponToBag(couponsToString, checkoutData?.id);
-      } else {
-        setDiscountCoupon({
-          isError: true,
-        });
-      }
-    } finally {
-      if (actions) {
-        actions.setSubmitting(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    // verify if coupon exists
-    if (couponValue && checkoutData?.id) {
-      handleCoupon(couponValue);
-      setDiscountCode(couponValue);
-    }
-  }, [couponValue, checkoutData?.id]);
 
   useEffect(() => {
     // Alert before leave the page if the user is in the payment process
@@ -119,18 +59,15 @@ function ServiceSlug() {
         status: 'ACTIVE,FREE_TRIAL,FULLY_PAID,CANCELLED,PAYMENT_ISSUE',
       }).subscriptions();
 
-      const subscriptionRespData = data;
-      const items = {
-        subscriptions: subscriptionRespData?.subscriptions,
-        plan_financings: subscriptionRespData?.plan_financings,
-      };
-      const subscription = items?.subscriptions?.find(
+      const { subscriptions, plan_financings } = data;
+
+      const subscription = subscriptions?.find(
         (item) => (
           item?.selected_mentorship_service_set?.slug === service_slug
           || item?.selected_event_type_set?.slug === service_slug
         ),
       );
-      const planFinanncing = items?.plan_financings?.find(
+      const planFinanncing = plan_financings?.find(
         (item) => (
           item?.selected_mentorship_service_set?.slug === service_slug
           || item?.selected_event_type_set?.slug === service_slug
@@ -139,15 +76,37 @@ function ServiceSlug() {
 
       const currentSubscription = subscription || planFinanncing;
 
-      const serviceData = currentSubscription?.selected_mentorship_service_set;
+      const serviceTypesFields = {
+        event: 'selected_event_type_set',
+        mentorship: 'selected_mentorship_service_set',
+      };
 
-      if (serviceData) {
-        const resp = await bc.payment({
-          academy: Number(serviceData?.academy?.id),
-          event_type_set: service_type === 'event' ? service_slug : undefined,
-          mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
-        }).service().getAcademyService();
-        const respData = await resp.json();
+      const serviceData = currentSubscription?.[serviceTypesFields[service_type]];
+
+      const allSubscriptions = [...subscriptions, ...plan_financings];
+
+      if (serviceData || (service_slug === 'ai-compilation' && allSubscriptions.length > 0)) {
+        let service;
+        let resp;
+        let respData;
+
+        if (serviceData) {
+          resp = await bc.payment({
+            academy: Number(serviceData?.academy?.id),
+            event_type_set: service_type === 'event' ? service_slug : undefined,
+            mentorship_service_set: service_type === 'mentorship' ? service_slug : undefined,
+          }).service().getAcademyService();
+          respData = await resp.json();
+          // eslint-disable-next-line prefer-destructuring
+          [service] = respData;
+        } else {
+          resp = await bc.payment({
+            academy: allSubscriptions[0].academy.id,
+          }).service().getAcademyServiceBySlug(service_slug);
+          respData = await resp.json();
+          service = respData;
+        }
+
         if (resp.status > 400) {
           toast({
             title: respData.detail,
@@ -156,10 +115,10 @@ function ServiceSlug() {
             position: 'top',
           });
         }
-        if (resp.status < 400 && respData !== undefined && respData.length > 0) {
+        if (resp.status < 400 && respData !== undefined && service) {
           handleStep(2);
           handleServiceToConsume({
-            ...respData[0],
+            ...service,
             serviceInfo: {
               type: service_type,
               ...serviceData,
