@@ -38,8 +38,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset }) {
   const isInteractive = currentAsset?.interactive;
   // const isInteractive = false;
 
-  const urlToClone = currentAsset?.url || currentAsset?.readme_url.split('/blob')?.[0];
-  const repoName = urlToClone.split('/').pop();
+  const urlToClone = currentAsset?.url || currentAsset?.readme_url?.split('/blob')?.[0];
+  const repoName = urlToClone?.split('/').pop();
 
   const osList = t('common:learnpack.clone-modal.os-list', { repoUrl: isInteractive ? urlToClone : templateUrl }, { returnObjects: true });
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
