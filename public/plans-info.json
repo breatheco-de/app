@@ -1,0 +1,319 @@
+[
+  {
+    "planType": "custom",
+    "price": "Free",
+    "type": "Unlimited Experience",
+    "period_label": "",
+    "title": "Jumpstart Plan",
+    "description": "Jumpstart your career with our free JOBSTART package, featuring essential resources for your job search.",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+    "ask": "",
+    "button": {
+      "background": "#0084FF",
+      "title": "Get Plan"
+    },
+    "button_link": "https://4geeks.com/checkout?plan=jump-start",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "ats-resume",
+          "title": "ATS Resume Template",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "A Free ATS Resume Template to ensure your resume gets noticed by employers."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "job-hunting",
+          "title": "Job Hunting Tracker",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "A Job Hunting Tracker to keep you organized and on top of your applications."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "salary-negotiation",
+          "title": "Salary Negotiation Guide",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "A Salary Negotiation Guide to help you secure the compensation you deserve."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "elevator-pitch",
+          "title": "Elevator Pitch Tips",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "Tips on how to build an Elevator Pitch that makes a lasting impression."
+          }
+        ]
+      }
+    ],
+    "service_items": {
+      "title_icon": "star",
+      "title_color": "#0084FF",
+      "title_size": "xl",
+      "title": "Perfect for",
+      "items": [
+        {
+          "label": "Job seekers seeking valuable free resources to enhance their job search and advance their career development.",
+          "icon": null
+        }
+      ]
+    }
+  },
+  {
+    "planType": "custom",
+    "price": "$50",
+    "type": "Unlimited Experience",
+    "period_label": "",
+    "title": "Basic Plan",
+    "description": "Take control of your career materials with all the tools and resources you need to succeed.",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+    "ask": "",
+    "button": {
+      "background": "#0084FF",
+      "title": "Get Plan"
+    },
+    "button_link": "https://4geeks.com/checkout?plan=basic-plan",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "career-tools",
+          "title": "Career Tools",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "Access to our complete set of tutorials and guides to create your CV, LinkedIn profile, and prepare for interviews."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "video-tutorials",
+          "title": "Step-by-step Tutorials",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "Step-by-step video tutorials for creating a standout resume, optimizing your LinkedIn, and acing your interviews."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "advisory-sessions",
+          "title": "Advisory Sessions",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "No advisory sessions are included, but you can always purchase additional consultation sessions if you need expert guidance."
+          }
+        ]
+      }
+    ],
+    "service_items": {
+      "title_icon": "star",
+      "title_color": "#0084FF",
+      "title_size": "xl",
+      "title": "Perfect for",
+      "items": [
+        {
+          "label": "Self-starters who want to create their own materials with professional resources and videos.",
+          "icon": null
+        }
+      ]
+    },
+    "added_features": {
+      "items": [
+        {
+          "label": "Additional mentorship session",
+          "price": "$49"
+        }
+      ]
+    }
+  },
+  {
+    "planType": "custom",
+    "price": "$150",
+    "type": "Unlimited Experience",
+    "period_label": "",
+    "title": "Standard Plan",
+    "description": "We create everything for you, no stress involved! Get your CV and LinkedIn ready for success.",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+    "ask": "",
+    "button": {
+      "variant": "deafult",
+      "color": "#0084FF",
+      "background": "white",
+      "title": "Get Plan"
+    },
+    "button_link": "https://4geeks.com/checkout?plan=standard-plan",
+    "featured_card": {
+      "color": "#0084FF"
+    },
+    "featured_info": [
+      {
+        "service": {
+          "slug": "cv-and-linkedin",
+          "title": "CV and LinkedIn",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "We create your CV and LinkedIn profile for you based on your experience and career goals."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "no-meetings-required",
+          "title": "No Meetings Required",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "No meetings required, but an optional session is available to clarify any doubts you may have."
+          }
+        ]
+      }
+    ],
+    "service_items": {
+      "title_icon": "star",
+      "title_color": "#0084FF",
+      "title_size": "xl",
+      "title": "Perfect for",
+      "items": [
+        {
+          "label": "Individuals seeking a hands-off approach while still receiving professionally crafted documents that help them stand out.",
+          "icon": null
+        }
+      ]
+    },
+    "added_features": {
+      "items": [
+        {
+          "label": "Language shift ",
+          "price": "$49"
+        },
+        {
+          "label": "Additional mentorship session",
+          "price": "$49"
+        }
+      ]
+    }
+  },
+  {
+    "planType": "custom",
+    "price": "$250",
+    "type": "Unlimited Experience",
+    "period_label": "",
+    "title": "Premium Plan",
+    "description": "Everything you need to succeed, including interviews and personalized coaching!",
+    "subtitle": "Bootcamp Program",
+    "sub-description": "Join a cohort in a live classroom environment and unlimited support until you find a job.",
+    "ask": "",
+    "button": {
+      "background": "#0084FF",
+      "title": "Get Plan"
+    },
+    "button_link": "https://4geeks.com/checkout?plan=premium-plan",
+    "featured_info": [
+      {
+        "service": {
+          "slug": "interview-preparation",
+          "title": "Interview Preparation",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "We'll help you prepare for interviews with tailored questions and tips."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "coaching-sessions",
+          "title": "Coaching Sessions",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "Two coaching sessions with an experienced advisor, who will work with you on interview techniques and career advice."
+          }
+        ]
+      },
+      {
+        "service": {
+          "slug": "additional-support",
+          "title": "Additional Support",
+          "icon": "verified2",
+          "icon_color": "#06AB52"
+        },
+        "features": [
+          {
+            "description": "Additional language support for your resume and LinkedIn."
+          }
+        ]
+      }
+    ],
+    "service_items": {
+      "title_icon": "star",
+      "title_color": "#0084FF",
+      "title_size": "xl",
+      "title": "Perfect for",
+      "items": [
+        {
+          "label": "Job seekers seeking comprehensive support and personalized coaching to secure their next role.",
+          "icon": null
+        }
+      ]
+    },
+    "added_features": {
+      "items": [
+        {
+          "label": "Language shift",
+          "price": "$49"
+        },
+        {
+          "label": "Additional mentorship session",
+          "price": "$49"
+        },
+        {
+          "label": "Additional languages",
+          "price": "$100"
+        }
+      ]
+    }
+  }
+]
