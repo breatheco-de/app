@@ -101,6 +101,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           background="blue.default"
           display="inline-flex"
           gap="10px"
+          padding="5px"
           borderRadius="8px"
           flexDirection={{
             base: 'column',
