@@ -74,8 +74,6 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [loadingServices, setLoadingServices] = useState(false);
-  const [consumables, setConsumables] = useState(null);
   const [showConsumablesModal, setShowConsumablesModal] = useState(false);
   const [planData, setPlanData] = useState(null);
   const [languages, setLanguages] = useState(languagesData);
@@ -96,29 +94,9 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     setInitialTouchY(event.touches[0].clientY);
   };
 
-  const getConsumables = async () => {
-    try {
-      const res = await bc.payment().service().consumable();
-      if (res.status === 200) {
-        const { data } = res;
-        const { voids } = data;
-        const aiConsumables = voids.find(({ slug }) => slug === 'ai-compilation');
-
-        console.log('consumables', aiConsumables);
-        setConsumables(aiConsumables);
-      }
-      setLoadingServices(false);
-    } catch (e) {
-      setLoadingServices(false);
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
     if (isAuthenticated) {
-      setLoadingServices(true);
       fetchSubscriptions();
-      getConsumables();
     }
   }, [isAuthenticated]);
 
@@ -182,8 +160,12 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
+        const res = await bc.payment().service().consumable();
+        const { data } = res;
+        const { voids } = data;
+        const aiConsumables = voids.find(({ slug }) => slug === 'ai-compilation');
 
-        if (!consumables || consumables.balance.unit <= 0) {
+        if (!aiConsumables || aiConsumables.balance.unit <= 0) {
           const planSlug = allSubscriptions[0].plans[0].slug;
 
           const result = await validatePlanExistence(allSubscriptions, planSlug);
@@ -296,7 +278,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           />
           {(!isNotExecutable || (languages[tabIndex]?.language === 'css' && isCodeForPreview)) && languages[tabIndex]?.code.trim() !== '' && (
             <>
-              {languages[tabIndex]?.running || loadingServices ? (
+              {languages[tabIndex]?.running ? (
                 <CircularProgress isIndeterminate color={hexColor.blueDefault} size="32px" />
               ) : (
                 <Button _hover={{ bg: '#ffffff29' }} onClick={run} variant="ghost" size="sm" color="white">
