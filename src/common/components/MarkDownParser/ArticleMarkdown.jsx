@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
+import useAuth from '../../hooks/useAuth';
 import useModuleHandler from '../../hooks/useModuleHandler';
+import useSubscriptionsHandler from '../../store/actions/subscriptionAction';
 import Toc from './toc';
 import ContentHeading from './ContentHeading';
 import SubTasks from './SubTasks';
@@ -11,9 +13,18 @@ function ArticleMarkdown({
   content, withToc, frontMatter, titleRightSide, currentTask, currentData,
   showLineNumbers, showInlineLineNumbers, assetData, alerMessage, isGuidedExperience,
 }) {
+  const { isAuthenticated } = useAuth();
   const { subTasks } = useModuleHandler();
 
   const assetType = currentData?.asset_type;
+
+  const { fetchSubscriptions } = useSubscriptionsHandler();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchSubscriptions();
+    }
+  }, [isAuthenticated]);
 
   return (
     <>

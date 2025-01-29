@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
   Button,
   Avatar,
@@ -79,7 +79,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [languages, setLanguages] = useState(languagesData);
   const defaultPlan = process.env.BASE_PLAN || 'basic';
 
-  const { state, fetchSubscriptions } = useSubscriptionsHandler();
+  const { state } = useSubscriptionsHandler();
   const { subscriptions } = state;
 
   const allSubscriptions = (subscriptions?.subscriptions
@@ -93,12 +93,6 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     event.preventDefault();
     setInitialTouchY(event.touches[0].clientY);
   };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchSubscriptions();
-    }
-  }, [isAuthenticated]);
 
   const handleTouchMove = (event) => {
     if (isWindow) {
