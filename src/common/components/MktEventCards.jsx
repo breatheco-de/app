@@ -8,7 +8,7 @@ import GridContainer from './GridContainer';
 import Heading from './Heading';
 import Icon from './Icon';
 import axios from '../../axios';
-import { sortToNearestTodayDate, getQueryString } from '../../utils';
+import { getQueryString, sortToNearestTodayDate } from '../../utils';
 import DraggableContainer from './DraggableContainer';
 import DynamicContentCard from './DynamicContentCard';
 import { WHITE_LABEL_ACADEMY, BREATHECODE_HOST } from '../../utils/variables';
@@ -53,9 +53,10 @@ function MktEventCards({
 
   const fetchCheckedInEvents = async () => {
     try {
-      const res = await bc.events({ past: true, upcoming: true }).meCheckin();
+      const res = await bc.events().meCheckin();
       const userEvents = res?.data || [];
-      setCheckedInEvents(userEvents);
+      const userEventsSorted = sortToNearestTodayDate(userEvents, hoursLimited, true);
+      setCheckedInEvents(userEventsSorted);
     } catch (error) {
       console.error('Error fetching checked-in events:', error);
     }
@@ -121,9 +122,7 @@ function MktEventCards({
     setLoading(true);
 
     const delay = setTimeout(() => {
-      const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase())
-        || event?.event_type?.technologies?.includes(search.toLowerCase()));
-
+      const filteredBySearch = originalEvents.filter((event) => event?.title?.toLowerCase().includes(search.toLowerCase()) || event?.event_type?.technologies?.includes(search.toLowerCase()));
       setFilteredEvents(filteredBySearch);
       setLoading(false);
     }, 1000);
@@ -176,7 +175,6 @@ function MktEventCards({
               id={id}
               maxWidth="1280px"
               withContainer
-              padding={{ base: '0 10px', lg: '0' }}
               px={{ base: '10px', md: '2rem' }}
               flexDirection={{ base: 'column', lg: 'row' }}
               gridColumn="1 / span 10"
@@ -211,7 +209,6 @@ function MktEventCards({
               id={id}
               maxWidth="1280px"
               withContainer
-              padding={{ base: '0 10px', lg: '0' }}
               px={{ base: '10px', md: '2rem' }}
               flexDirection={{ base: 'column', lg: 'row' }}
               gridColumn="1 / span 10"

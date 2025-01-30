@@ -254,32 +254,33 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
         {isWorkshop ? (
           <>
             <Divider mb={isWorkshop ? '0px' : '16px'} />
-            {date?.ended ? (
-              <Text size="17px" padding="10px 0" lineHeight="normal" textAlign="center" fontWeight={700}>
-                {date?.text}
-              </Text>
-            ) : (
-              <Link
-                href={`${languageConnector}/workshops/${data?.slug}`}
-                color="blue.default"
-                fontSize="17px"
-                fontWeight={700}
-                letterSpacing="0.05em"
-                height="40px"
-                display="flex"
-                alignItems="center"
-                width="fit-content"
-                margin="0 auto"
-                gridGap="10px"
-              >
-                {date?.started
-                  ? t('join-workshop')
-                  : t('register-workshop')}
-                {date?.started && (
-                  <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                )}
-              </Link>
-            )}
+            <Link
+              href={`${languageConnector}/workshops/${data?.slug}`}
+              color="blue.default"
+              fontSize="17px"
+              fontWeight={700}
+              letterSpacing="0.05em"
+              height="40px"
+              display="flex"
+              alignItems="center"
+              width="fit-content"
+              margin="0 auto"
+              gridGap="10px"
+            >
+              {date?.ended && (
+                t('watch-recording')
+              )}
+              {date?.started && !date?.ended && (
+                t('join-workshop')
+
+              )}
+              {!date?.started && !date?.ended && (
+                t('register-workshop')
+              )}
+              {date?.started && (
+                <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
+              )}
+            </Link>
           </>
         ) : (
           <>

@@ -42,7 +42,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
 
   return (
     <Box id={id} padding={{ base: '10px 0', md: '60px 80px' }} background={useColorModeValue(background)} {...rest}>
-      <Box width={{ base: 'auto', md: '961px' }} margin="0 auto">
+      <Box width="auto" maxWidth="961px" margin="0 auto">
         <Heading fontSize="38px" fontWeight="bold" mb={2} textAlign="center">
           {headingTop}
           <br />

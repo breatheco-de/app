@@ -257,13 +257,14 @@ const calcSVGViewBox = (pathId) => {
 const number2DIgits = (number) => number.toString().padStart(2, '0');
 
 const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
-  const currentDate = new Date();
-  if (data === undefined || data?.length === 0) return [];
+  if (!data || data.length === 0) return [];
 
+  const currentDate = new Date();
+
+  // Filtramos eventos según la lógica original
   const filteredDates = data.filter((item) => {
-    const endDate = item.ended_at || item.ending_at;
     const startingDate = new Date(item.starting_at);
-    const endingDate = new Date(endDate);
+    const endingDate = new Date(item.ended_at || item.ending_at);
     const timeDiff = startingDate - currentDate;
     const minutesDiff = Math.round(timeDiff / (1000 * 60));
 
@@ -271,17 +272,23 @@ const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
     const isGoingToStartInAnyMin = (minutesDiff >= 0 && minutesDiff <= minutes) || hasStarted;
     const hasExpired = endingDate < currentDate;
 
-    if (includeExpired) {
-      return isGoingToStartInAnyMin || hasExpired;
-    }
-
-    return isGoingToStartInAnyMin && !hasExpired;
+    return includeExpired ? isGoingToStartInAnyMin || hasExpired : isGoingToStartInAnyMin && !hasExpired;
   });
 
-  const sortedDates = filteredDates.sort((a, b) => new Date(a.starting_at) - new Date(b.starting_at));
-  const sortedDatesIncludingExpired = filteredDates.sort((a, b) => new Date(b.starting_at) - new Date(a.starting_at));
+  return filteredDates.sort((a, b) => {
+    const aHasStarted = new Date(a.starting_at) < currentDate;
+    const aHasExpired = new Date(a.ended_at || a.ending_at) < currentDate;
+    const bHasStarted = new Date(b.starting_at) < currentDate;
+    const bHasExpired = new Date(b.ended_at || b.ending_at) < currentDate;
 
-  return includeExpired ? sortedDatesIncludingExpired : sortedDates;
+    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1; // Prioriza eventos en vivo
+    if (!(aHasStarted && !aHasExpired) && bHasStarted && !bHasExpired) return 1;
+
+    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1; // Luego eventos próximos
+    if ((aHasStarted || aHasExpired) && !bHasStarted && !bHasExpired) return 1;
+
+    return new Date(a.starting_at) - new Date(b.starting_at); // Orden cronológico
+  });
 };
 
 const isNumber = (value) => Number.isFinite(Number(value)); // number or string with number (without letters)
