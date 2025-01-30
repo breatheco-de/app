@@ -7,28 +7,15 @@ import SubtasksPill from './SubtasksPill';
 import useStyle from '../../common/hooks/useStyle';
 import Heading from '../../common/components/Heading';
 import Icon from '../../common/components/Icon';
-import ModalToCloneProject from './ModalToCloneProject';
-import noLearnpackAssets from '../../../public/no-learnpack-in-cloud.json';
-import { ButtonsHandler } from './ProjectInstructions';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
+import ProjectInstructions from './ProjectInstructions';
 
 function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...rest }) {
   const { t } = useTranslation('syllabus');
   const { backgroundColor4, hexColor } = useStyle();
   const [isVisible, setIsVisible] = useState(false);
-  const [showCloneModal, setShowCloneModal] = useState(false);
-  const { state } = useCohortHandler();
-  const { cohortSession } = state;
 
   const title = currentAsset?.title;
   const assetType = currentAsset?.asset_type;
-  const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
-
-  const templateUrl = currentAsset?.template_url;
-  const isInteractive = currentAsset?.interactive;
-  const isForOpenLocaly = isInteractive || templateUrl;
-  const learnpackDeployUrl = currentAsset?.learnpack_deploy_url;
-  const startWithLearnpack = learnpackDeployUrl && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
 
   const assetTypeIcons = {
     LESSON: 'book',
@@ -82,22 +69,15 @@ function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...
         </Box>
         <Box display="flex" alignItems="center" gap="5px">
           {currentAsset?.asset_type === 'PROJECT' && (
-            <>
-              <ButtonsHandler
+            <Box display={{ base: 'none', md: 'flex' }} gap="5px">
+              <ProjectInstructions
                 currentAsset={currentAsset}
                 handleStartLearnpack={handleStartLearnpack}
-                setShowCloneModal={setShowCloneModal}
-                isForOpenLocaly={isForOpenLocaly}
-                startWithLearnpack={startWithLearnpack}
                 variant={buttonsHandlerVariant}
-                background="blue.1000"
-                color="white"
-                _hover="none"
-                _active="none"
               />
               <StatusPill />
               <SubtasksPill />
-            </>
+            </Box>
           )}
           <Button visibility={!isVisible && 'hidden'} display="flex" alignItems="center" gap="5px" variant="ghost" color={hexColor.blueDefault} onClick={scrollTop}>
             <Icon icon="arrowLeft2" style={{ transform: 'rotate(90deg)' }} color={hexColor.blueDefault} />
@@ -105,7 +85,6 @@ function TopBar({ currentAsset, handleStartLearnpack, buttonsHandlerVariant, ...
           </Button>
         </Box>
       </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} />
     </>
   );
 }

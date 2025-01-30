@@ -1,6 +1,5 @@
-/* eslint-disable camelcase */
 import {
-  Tab, TabList, TabPanel, TabPanels, Tabs, Box,
+  Tab, TabList, TabPanel, TabPanels, Tabs,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import {
@@ -9,11 +8,9 @@ import {
 import { useRouter } from 'next/router';
 import Heading from '../../common/components/Heading';
 import useAuth from '../../common/hooks/useAuth';
-import useCohortHandler from '../../common/hooks/useCohortHandler';
 import asPrivate from '../../common/context/PrivateRouteWrapper';
 import bc from '../../common/services/breathecode';
 import { cleanQueryStrings } from '../../utils';
-import { ModuleMapSkeleton } from '../../common/components/Skeleton';
 import AlertMessage from '../../common/components/AlertMessage';
 import GridContainer from '../../common/components/GridContainer';
 import Subscriptions from '../../js_modules/profile/Subscriptions';
@@ -23,15 +20,12 @@ import Information from '../../js_modules/profile/Information';
 function Profile() {
   const { t } = useTranslation('profile');
   // const toast = useToast();
-  const { user, isAuthenticated } = useAuth();
+  const { user, cohorts } = useAuth();
   const router = useRouter();
   const { asPath } = router;
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
   const [certificates, setCertificates] = useState([]);
-  const [isLoadingCohorts, setIsLoadingCohorts] = useState(true);
   const [isAvailableToShowModalMessage, setIsAvailableToShowModalMessage] = useState([]);
-  const { state: cohortsState, setMyCohorts } = useCohortHandler();
-  const { myCohorts } = cohortsState;
   const tabListMenu = t('tabList', {}, { returnObjects: true });
 
   const tabPosition = {
@@ -55,40 +49,12 @@ function Profile() {
       });
   }, []);
 
-  const fetchCohorts = async () => {
-    try {
-      const { data } = await bc.admissions().me();
-      if (!data) throw new Error('No data');
-      const { cohorts } = data;
-
-      const parsedCohorts = cohorts.map(((elem) => {
-        const { cohort, ...cohort_user } = elem;
-        const { syllabus_version } = cohort;
-        return {
-          ...cohort,
-          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-          cohort_role: elem.role,
-          cohort_user,
-        };
-      }));
-      setMyCohorts(parsedCohorts);
-
-      const isToShowGithubMessage = cohorts?.some(
-        (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
-      );
-      setIsAvailableToShowModalMessage(isToShowGithubMessage);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setIsLoadingCohorts(false);
-    }
-  };
-
   useEffect(() => {
-    if (isAuthenticated) {
-      fetchCohorts();
-    }
-  }, [isAuthenticated]);
+    const isToShowGithubMessage = cohorts?.some(
+      (l) => l?.educational_status === 'ACTIVE' && l.cohort.available_as_saas === false,
+    );
+    setIsAvailableToShowModalMessage(isToShowGithubMessage);
+  }, [cohorts]);
 
   return (
     <>
@@ -135,23 +101,17 @@ function Profile() {
               </Tab>
             ))}
           </TabList>
-          {!isLoadingCohorts ? (
-            <TabPanels p="0">
-              <TabPanel p="0">
-                <Information />
-              </TabPanel>
-              <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-                <Certificates certificates={certificates} />
-              </TabPanel>
-              <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
-                <Subscriptions cohorts={myCohorts} />
-              </TabPanel>
-            </TabPanels>
-          ) : (
-            <Box width="100%" height="500px" overflow="hidden">
-              <ModuleMapSkeleton />
-            </Box>
-          )}
+          <TabPanels p="0">
+            <TabPanel p="0">
+              <Information />
+            </TabPanel>
+            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+              <Certificates certificates={certificates} />
+            </TabPanel>
+            <TabPanel p="0" display="flex" flexDirection="column" gridGap="18px">
+              <Subscriptions cohorts={cohorts} />
+            </TabPanel>
+          </TabPanels>
         </Tabs>
       </GridContainer>
     </>
