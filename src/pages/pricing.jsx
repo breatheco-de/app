@@ -10,7 +10,6 @@ import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
 import useAuth from '../common/hooks/useAuth';
-import useCohortHandler from '../common/hooks/useCohortHandler';
 import bc from '../common/services/breathecode';
 import PricingCard from '../common/components/PricingCard';
 import useSignup from '../common/store/actions/signupAction';
@@ -42,11 +41,9 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
-  const { state, setMyCohorts } = useCohortHandler();
-  const { myCohorts } = state;
   const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, cohorts } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor, modal } = useStyle();
   const [isFetching, setIsFetching] = useState({
@@ -173,35 +170,13 @@ function PricingView() {
     staleTime: Infinity,
   });
 
-  const initializeCohorts = async () => {
-    try {
-      const { data } = await bc.admissions().me();
-      if (!data) throw new Error('No data');
-      const { cohorts } = data;
-
-      const parsedCohorts = cohorts.map(((elem) => {
-        const { cohort, ...cohort_user } = elem;
-        const { syllabus_version } = cohort;
-        return {
-          ...cohort,
-          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-          cohort_role: elem.role,
-          cohort_user,
-        };
-      }));
-      setMyCohorts(parsedCohorts);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
-    const hasActiveBootcamp = myCohorts.some((cohort) => !cohort.available_as_saas
+    const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
       && cohort.ending_date && new Date(cohort.ending_date) > new Date()
       && cohort.cohort_user.educational_status === 'ACTIVE');
 
     if (hasActiveBootcamp) router.push('/choose-program');
-  }, [myCohorts]);
+  }, [cohorts]);
 
   useEffect(() => {
     const mktQueryString = parseQuerys({
@@ -273,7 +248,6 @@ function PricingView() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
-      initializeCohorts();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
 
@@ -473,27 +447,6 @@ function PricingView() {
           description={t('why-trust-us.description')}
           margin="60px 0 0 0"
         />
-        {/*
-          <Box marginTop="30px" borderRadius="11px" background={hexColor.featuredColor} padding="24px">
-            <Heading marginBottom="10px">{t('learning-code.title')}</Heading>
-            <Heading marginBottom="20px" maxWidth="835px" size="sm">{t('learning-code.description')}</Heading>
-            <Flex gap="10px" alignItems="center" flexDirection={{ base: 'column', sm: 'row' }}>
-              <Button
-                width={{ base: '100%', sm: 'fit-content' }}
-                variant="outline"
-                textTransform="uppercase"
-                color={hexColor.blueDefault}
-                borderColor={hexColor.blueDefault}
-                onClick={() => reportDatalayer({
-                  dataLayer: {
-                    event: 'open_pricing_chat',
-                  } })}
-              >
-                {t('learning-code.chat')}
-              </Button>
-            </Flex>
-          </Box>
-        */}
         <Flex flexDirection={{ base: 'column', sm: 'row' }} marginTop="30px" gap="30px" justifyContent="space-between">
           <Box color="white" width="100%" background="#00041A" padding="15px" borderRadius="10px">
             <Heading margin="20px 0" size="sm">

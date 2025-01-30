@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+// import { SliderFilledTrack } from '@chakra-ui/react';
 import MktOneColumnKPI from '../../src/common/components/MktOneColumnKPI';
 
 /**
@@ -30,14 +31,31 @@ function OneColumn({ slice }) {
     <MktOneColumnKPI
       id={slice?.primary?.id_key}
       slice={slice}
+      borderRadius={slice?.primary?.border_radius}
+      fontFamily={slice?.primary?.font_family}
       title={slice.primary.title}
       subTitle={slice.primary.subtitle}
       paddingMd={slice.primary.paddingMd}
       linkButton={slice.primary.link_button}
       buttonUrl={slice?.primary?.button_url?.url || slice.primary.button_url}
       buttonLabel={slice.primary.button_label}
+      buttonBackgroundColor={slice?.primary?.button_background_color}
+      buttonFontColor={slice?.primary?.button_font_color}
+      buttonFontSize={slice?.primary?.button_font_size}
+      justifyItems={slice?.primary?.justify_items}
       kpiList={items}
       margin={slice?.primary?.margin || '5rem auto'}
+      marginTop={slice?.primary?.margin_top}
+      marginBottom={slice?.primary?.margin_bottom}
+      maxWidth={slice?.primary?.max_width}
+      titleFontSize={slice?.primary?.title_font_size}
+      descriptionFontSize={slice?.primary?.description_font_size}
+      descriptionTextAlign={slice?.primary?.description_text_align}
+      descriptionJustifyItems={slice?.primary?.description_justify_items}
+      descriptionLineHeight={slice?.primary?.description_line_height}
+      width={slice?.primary?.width}
+      padding={slice?.primary?.padding}
+      gridColumn={slice?.primary?.grid_column}
     />
   );
 }

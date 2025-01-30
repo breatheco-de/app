@@ -13,30 +13,34 @@
       "primary": {
         "id_key": {
           "type": "Text",
-          "config": {
-            "label": "ID Key",
-            "placeholder": ""
-          }
+          "config": { "label": "ID Key", "placeholder": "" }
         },
         "title": {
           "type": "Text",
-          "config": {
-            "label": "Title",
-            "placeholder": ""
-          }
+          "config": { "label": "Title", "placeholder": "" }
         },
         "endpoint": {
           "type": "Text",
-          "config": {
-            "label": "Endpoint",
-            "placeholder": ""
-          }
+          "config": { "label": "Endpoint", "placeholder": "" }
         },
         "margin": {
           "type": "Text",
           "config": {
             "label": "Margin",
             "placeholder": "top, right, bottom, left"
+          }
+        },
+        "background_color": {
+          "type": "Text",
+          "config": { "label": "Background Color", "placeholder": "" }
+        },
+        "version": {
+          "type": "Select",
+          "config": {
+            "label": "Version",
+            "placeholder": "",
+            "options": ["v1", "v2"],
+            "default_value": "v1"
           }
         }
       },

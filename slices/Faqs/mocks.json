@@ -1,0 +1,116 @@
+[
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"title": {
+				"__TYPE__": "FieldContent",
+				"value": "did",
+				"type": "Text"
+			},
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "mostly",
+				"type": "Text"
+			},
+			"title_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "white",
+				"type": "Text"
+			},
+			"title_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "decide",
+				"type": "Text"
+			},
+			"title_font_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "aside",
+				"type": "Text"
+			},
+			"title_color": {
+				"__TYPE__": "FieldContent",
+				"value": "foot",
+				"type": "Text"
+			},
+			"background_color": {
+				"__TYPE__": "FieldContent",
+				"value": "whatever",
+				"type": "Text"
+			},
+			"margin_bottom": {
+				"__TYPE__": "FieldContent",
+				"value": "tune",
+				"type": "Text"
+			},
+			"margin_top": {
+				"__TYPE__": "FieldContent",
+				"value": "universe",
+				"type": "Text"
+			},
+			"max_width": {
+				"__TYPE__": "FieldContent",
+				"value": "some",
+				"type": "Text"
+			},
+			"as_element": {
+				"__TYPE__": "FieldContent",
+				"value": "city",
+				"type": "Text"
+			},
+			"label_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "remove",
+				"type": "Text"
+			},
+			"label_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "allow",
+				"type": "Text"
+			},
+			"label_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "mother",
+				"type": "Text"
+			},
+			"answer_weight": {
+				"__TYPE__": "FieldContent",
+				"value": "engine",
+				"type": "Text"
+			},
+			"answer_font_size": {
+				"__TYPE__": "FieldContent",
+				"value": "rather",
+				"type": "Text"
+			},
+			"answer_line_height": {
+				"__TYPE__": "FieldContent",
+				"value": "order",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": [
+					[
+						"label",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "push",
+							"type": "Text"
+						}
+					],
+					[
+						"answer",
+						{
+							"__TYPE__": "FieldContent",
+							"value": "discovery",
+							"type": "Text"
+						}
+					]
+				]
+			}
+		]
+	}
+]
