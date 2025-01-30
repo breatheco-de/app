@@ -179,9 +179,11 @@ function Workshop({ eventData, asset }) {
       statusText: 'not-found',
     }));
     const data = resp?.data;
+    console.log('Data from resp:', data);
     if (data?.asset_slug) {
       const assetResp = await bc.lesson().getAsset(data?.asset_slug);
       setAssetData(assetResp?.data);
+      console.log('Asset Response:', assetResp?.data);
     }
     setEvent(data);
   };
@@ -272,6 +274,20 @@ function Workshop({ eventData, asset }) {
 
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
+  const getWording = () => {
+    console.log('finishedEvent:', finishedEvent);
+    console.log('alreadyApplied:', alreadyApplied);
+    console.log('readyToJoinEvent:', readyToJoinEvent);
+    if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
+      return t('join');
+    } if (!finishedEvent && !alreadyApplied) {
+      return t('reserv-button-text');
+    } if (finishedEvent) {
+      return t('watch-workshop-recording');
+    }
+    return '';
+  };
+
   const handleOnReadyToStart = () => {
     setReadyToJoinEvent(true);
   };
@@ -323,7 +339,7 @@ function Workshop({ eventData, asset }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
+  const buttonEnabled = (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
     setIsFetchingDataForModal(true);
@@ -878,7 +894,7 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
+                          isDisabled={(finishedEvent && !event?.recording_url) || (alreadyApplied || eventNotExists)}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1020,7 +1036,7 @@ function Workshop({ eventData, asset }) {
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                      isDisabled={(finishedEvent) && (alreadyApplied || !readyToJoinEvent || (eventNotExists && !isAuthenticated))}
                       _disabled={{
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1035,15 +1051,15 @@ function Workshop({ eventData, asset }) {
                       }}
                       onClick={() => {
                         if (finishedEvent && event?.recording_url) {
-                          window.open(event.recording_url, '_black');
+                          window.open(event.recording_url, '_blank');
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
                     >
                       {/* {finishedEvent ? t('watch-workshop-recording') : (!finishedEvent && (alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))} */}
                       {/* {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))} */}
-                      {true && t('event-finished')}
-                      {/* {getWordingButton()} */}
+                      {/* {true && t('event-finished')} */}
+                      {getWording()}
                     </Button>
                   ) : (
                     <>
