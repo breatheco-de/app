@@ -1034,12 +1034,16 @@ function Workshop({ eventData, asset }) {
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
                       onClick={() => {
-                        if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                        if (finishedEvent && event?.recording_url) {
+                          window.open(event.recording_url, '_black');
+                        } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
                     >
-                      {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                      {finishedEvent && t('event-finished')}
+                      {/* {finishedEvent ? t('watch-workshop-recording') : (!finishedEvent && (alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))} */}
+                      {/* {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))} */}
+                      {true && t('event-finished')}
+                      {/* {getWordingButton()} */}
                     </Button>
                   ) : (
                     <>
