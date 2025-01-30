@@ -112,7 +112,7 @@ function CoursePage({ data, syllabus }) {
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, user, logout, cohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
@@ -332,37 +332,32 @@ function CoursePage({ data, syllabus }) {
 
   const redirectTocohort = () => {
     const cohort = cohortData?.cohortSyllabus?.cohort;
-    const langLink = lang !== 'en' ? `/${lang}` : '';
-    const syllabusVersion = cohort?.syllabus_version;
-
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+
+    const joinedCohort = cohorts.find(({ slug }) => slug === cohort?.slug);
     setCohortSession({
-      ...cohort,
-      selectedProgramSlug: cohortDashboardLink,
+      ...joinedCohort,
     });
-    router.push(cohortDashboardLink);
+    router.push(joinedCohort.selectedProgramSlug);
   };
+
   const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
-    bc.admissions().me().then((resp) => {
-      const joinedCohortsData = resp?.data;
-      const alreadyHaveThisCohort = joinedCohortsData?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohortId);
+    const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
 
-      if (alreadyHaveThisCohort) {
-        callback();
+    if (alreadyHaveThisCohort) {
+      callback();
 
-        setIsFetching(false);
-        if (withAlert) {
-          toast({
-            position: 'top',
-            title: t('dashboard:already-have-this-cohort'),
-            status: 'info',
-            duration: 5000,
-          });
-        }
-        redirectTocohort();
+      setIsFetching(false);
+      if (withAlert) {
+        toast({
+          position: 'top',
+          title: t('dashboard:already-have-this-cohort'),
+          status: 'info',
+          duration: 5000,
+        });
       }
-    });
+      redirectTocohort();
+    }
   };
 
   const assetCount = cohortData?.modulesInfo?.count;

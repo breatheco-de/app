@@ -6,6 +6,9 @@ import type * as prismicClient from "@prismicio/client";
 type Simplify<T> = { [KeyType in keyof T]: T[KeyType] };
 
 type PageDocumentDataSlicesSlice =
+  | FaqsSlice
+  | PricingCardsSlice
+  | MultipleColumnCardSlice
   | InfoCardsSlice
   | TrustCardsSlice
   | TitleIntroductionSlice
@@ -79,6 +82,40 @@ interface PageDocumentData {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   landing_url: prismic.KeyTextField;
+
+  /**
+   * Padding Bottom field in *Page*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page.padding_bottom
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding_bottom: prismic.KeyTextField;
+
+  /**
+   * Transparent field in *Page*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: page.transparent
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  transparent: prismic.BooleanField;
+
+  /**
+   * Background field in *Page*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page.background
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  background: prismic.ColorField;
 
   /**
    * Slice Zone field in *Page*
@@ -180,6 +217,233 @@ export type EventCardsSlice = prismic.SharedSlice<
   "event_cards",
   EventCardsSliceVariation
 >;
+
+/**
+ * Primary content in *Faqs → Primary*
+ */
+export interface FaqsSliceDefaultPrimary {
+  /**
+   * Title field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Background Color field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.background_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background_color: prismic.KeyTextField;
+
+  /**
+   * Margin Bottom field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
+
+  /**
+   * Id key field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.id_key
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  id_key: prismic.KeyTextField;
+
+  /**
+   * Title Font Size field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_font_size: prismic.KeyTextField;
+
+  /**
+   * Title Line Height field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_line_height: prismic.KeyTextField;
+
+  /**
+   * Title Font Weight field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_font_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_font_weight: prismic.KeyTextField;
+
+  /**
+   * Title Color field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.title_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_color: prismic.KeyTextField;
+
+  /**
+   * Margin Top field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.margin_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_top: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+
+  /**
+   * As element field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.as_element
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  as_element: prismic.KeyTextField;
+
+  /**
+   * Label Weight field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.label_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_weight: prismic.KeyTextField;
+
+  /**
+   * Label Font Size field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.label_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_font_size: prismic.KeyTextField;
+
+  /**
+   * Label Line Height field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.label_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label_line_height: prismic.KeyTextField;
+
+  /**
+   * Answer Weight field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.answer_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  answer_weight: prismic.KeyTextField;
+
+  /**
+   * Answer Font Size field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.answer_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  answer_font_size: prismic.KeyTextField;
+
+  /**
+   * Answer Line Height field in *Faqs → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.primary.answer_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  answer_line_height: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *Faqs → Items*
+ */
+export interface FaqsSliceDefaultItem {
+  /**
+   * Label field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].label
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  label: prismic.KeyTextField;
+
+  /**
+   * Answer field in *Faqs → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: faqs.items[].answer
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  answer: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for Faqs Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<FaqsSliceDefaultPrimary>,
+  Simplify<FaqsSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *Faqs*
+ */
+type FaqsSliceVariation = FaqsSliceDefault;
+
+/**
+ * Faqs Shared Slice
+ *
+ * - **API ID**: `faqs`
+ * - **Description**: Faqs
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type FaqsSlice = prismic.SharedSlice<"faqs", FaqsSliceVariation>;
 
 /**
  * Primary content in *InfoCards → Primary*
@@ -544,6 +808,136 @@ export type MarkdownSlice = prismic.SharedSlice<
 >;
 
 /**
+ * Primary content in *MultipleColumnCard → Primary*
+ */
+export interface MultipleColumnCardSliceDefaultPrimary {
+  /**
+   * Title field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Id key field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.id_key
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  id_key: prismic.KeyTextField;
+
+  /**
+   * Font Family Title field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.font_family_title
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family_title: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
+
+  /**
+   * Margin Bottom field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
+
+  /**
+   * Margin Top field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.margin_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_top: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+}
+
+/**
+ * Primary content in *MultipleColumnCard → Items*
+ */
+export interface MultipleColumnCardSliceDefaultItem {
+  /**
+   * Column Title field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].column_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  column_title: prismic.KeyTextField;
+
+  /**
+   * Column Description field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].column_description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  column_description: prismic.KeyTextField;
+
+  /**
+   * Font Family Column field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].font_family_column
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family_column: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
+}
+
+/**
+ * Default variation for MultipleColumnCard Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MultipleColumnCardSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<MultipleColumnCardSliceDefaultPrimary>,
+  Simplify<MultipleColumnCardSliceDefaultItem>
+>;
+
+/**
+ * Slice variation for *MultipleColumnCard*
+ */
+type MultipleColumnCardSliceVariation = MultipleColumnCardSliceDefault;
+
+/**
+ * MultipleColumnCard Shared Slice
+ *
+ * - **API ID**: `multiple_column_card`
+ * - **Description**: MultipleColumnCard
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type MultipleColumnCardSlice = prismic.SharedSlice<
+  "multiple_column_card",
+  MultipleColumnCardSliceVariation
+>;
+
+/**
  * Primary content in *OneColumn → Primary*
  */
 export interface OneColumnSliceDefaultPrimary {
@@ -558,6 +952,87 @@ export interface OneColumnSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * padding field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
+
+  /**
+   * Grid Column field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.grid_column
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  grid_column: prismic.KeyTextField;
+
+  /**
+   * Width field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  width: prismic.KeyTextField;
+
+  /**
+   * Margin Top field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.margin_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_top: prismic.KeyTextField;
+
+  /**
+   * Margin Bottom field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+
+  /**
+   * Border Radius field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.border_radius
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  border_radius: prismic.KeyTextField;
+
+  /**
+   * Font Family field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: one_column.primary.font_family
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+
+  /**
    * Title field in *OneColumn → Primary*
    *
    * - **Field Type**: Text
@@ -566,6 +1041,16 @@ export interface OneColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   title: prismic.KeyTextField;
+
+  /**
+   * Title Font Size field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.title_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_font_size: prismic.KeyTextField;
 
   /**
    * SubTitle field in *OneColumn → Primary*
@@ -588,6 +1073,46 @@ export interface OneColumnSliceDefaultPrimary {
   description: prismic.RichTextField;
 
   /**
+   * Description Font Size field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.description_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_font_size: prismic.KeyTextField;
+
+  /**
+   * Description Text Align field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.description_text_align
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_text_align: prismic.KeyTextField;
+
+  /**
+   * Description Justify Items field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.description_justify_items
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_justify_items: prismic.KeyTextField;
+
+  /**
+   * Description Line Height field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.description_line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_line_height: prismic.KeyTextField;
+
+  /**
    * Button label field in *OneColumn → Primary*
    *
    * - **Field Type**: Text
@@ -596,6 +1121,36 @@ export interface OneColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   button_label: prismic.KeyTextField;
+
+  /**
+   * Button Background Color field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_background_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  button_background_color: prismic.ColorField;
+
+  /**
+   * Button Font Color field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_font_color
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  button_font_color: prismic.ColorField;
+
+  /**
+   * Button Font Size field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.button_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  button_font_size: prismic.KeyTextField;
 
   /**
    * Button url field in *OneColumn → Primary*
@@ -617,6 +1172,16 @@ export interface OneColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#boolean
    */
   link_button: prismic.BooleanField;
+
+  /**
+   * Justify Items field in *OneColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: one_column.primary.justify_items
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  justify_items: prismic.KeyTextField;
 
   /**
    * Font color field in *OneColumn → Primary*
@@ -804,6 +1369,16 @@ export interface PartnersSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Description field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description: prismic.KeyTextField;
+
+  /**
    * images field in *Partners → Primary*
    *
    * - **Field Type**: Rich Text
@@ -822,6 +1397,26 @@ export interface PartnersSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Images Content field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.images_content
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  images_content: prismic.KeyTextField;
+
+  /**
+   * Title Size field in *Partners → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: partners.primary.title_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title_size: prismic.KeyTextField;
 }
 
 /**
@@ -852,6 +1447,91 @@ type PartnersSliceVariation = PartnersSliceDefault;
 export type PartnersSlice = prismic.SharedSlice<
   "partners",
   PartnersSliceVariation
+>;
+
+/**
+ * Primary content in *PricingCards → Primary*
+ */
+export interface PricingCardsSliceDefaultPrimary {
+  /**
+   * Id key field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.id_key
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  id_key: prismic.KeyTextField;
+
+  /**
+   * Title field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  title: prismic.KeyTextField;
+
+  /**
+   * Url field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.url
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  url: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+
+  /**
+   * Margin field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.margin
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin: prismic.KeyTextField;
+}
+
+/**
+ * Default variation for PricingCards Slice
+ *
+ * - **API ID**: `default`
+ * - **Description**: Default
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type PricingCardsSliceDefault = prismic.SharedSliceVariation<
+  "default",
+  Simplify<PricingCardsSliceDefaultPrimary>,
+  never
+>;
+
+/**
+ * Slice variation for *PricingCards*
+ */
+type PricingCardsSliceVariation = PricingCardsSliceDefault;
+
+/**
+ * PricingCards Shared Slice
+ *
+ * - **API ID**: `pricing_cards`
+ * - **Description**: PricingCards
+ * - **Documentation**: https://prismic.io/docs/slice
+ */
+export type PricingCardsSlice = prismic.SharedSlice<
+  "pricing_cards",
+  PricingCardsSliceVariation
 >;
 
 /**
@@ -1282,6 +1962,27 @@ export interface TestimonialsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Background Color field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: testimonials.primary.background_color
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background_color: prismic.KeyTextField;
+
+  /**
+   * Version field in *Testimonials → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: v1
+   * - **API ID Path**: testimonials.primary.version
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  version: prismic.SelectField<"v1" | "v2", "filled">;
 }
 
 /**
@@ -1572,6 +2273,16 @@ export interface TwoColumnSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * Padding field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.padding
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding: prismic.KeyTextField;
+
+  /**
    * Information Size field in *TwoColumn → Primary*
    *
    * - **Field Type**: Select
@@ -1580,6 +2291,56 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#select
    */
   information_size: prismic.SelectField<"Small" | "Medium" | "Large">;
+
+  /**
+   * Border Radius field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.border_radius
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  border_radius: prismic.KeyTextField;
+
+  /**
+   * Max Width field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.max_width
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  max_width: prismic.KeyTextField;
+
+  /**
+   * Margin field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: top, right, bottom, left
+   * - **API ID Path**: two_column.primary.margin
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin: prismic.KeyTextField;
+
+  /**
+   * Margin Top field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.margin_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_top: prismic.KeyTextField;
+
+  /**
+   * Margin Bottom field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
 
   /**
    * Text Background Color field in *TwoColumn → Primary*
@@ -1602,6 +2363,27 @@ export interface TwoColumnSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Custom Title Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.custom_title_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  custom_title_size: prismic.KeyTextField;
+
+  /**
+   * Font Family Title field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: Lato
+   * - **API ID Path**: two_column.primary.fontFamily
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+
+  /**
    * Title Color field in *TwoColumn → Primary*
    *
    * - **Field Type**: Color
@@ -1622,6 +2404,26 @@ export interface TwoColumnSliceDefaultPrimary {
   subtitle: prismic.KeyTextField;
 
   /**
+   * Custom Subtitle Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.custom_subtitle_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  custom_subtitle_size: prismic.KeyTextField;
+
+  /**
+   * Font Family Subtitle field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.font_family_subtitle
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  font_family_subtitle: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
+
+  /**
    * Subtitle Color field in *TwoColumn → Primary*
    *
    * - **Field Type**: Color
@@ -1630,6 +2432,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#color
    */
   subtitle_color: prismic.ColorField;
+
+  /**
+   * Description Title field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.description_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_title: prismic.KeyTextField;
 
   /**
    * Description field in *TwoColumn → Primary*
@@ -1652,6 +2464,16 @@ export interface TwoColumnSliceDefaultPrimary {
   description_color: prismic.ColorField;
 
   /**
+   * Description Font Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.description_font_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  description_font_size: prismic.KeyTextField;
+
+  /**
    * image field in *TwoColumn → Primary*
    *
    * - **Field Type**: Image
@@ -1662,6 +2484,26 @@ export interface TwoColumnSliceDefaultPrimary {
   image: prismic.ImageField<never>;
 
   /**
+   * Students Avatars field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Rich Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.students_avatars
+   * - **Documentation**: https://prismic.io/docs/field#rich-text-title
+   */
+  students_avatars: prismic.RichTextField;
+
+  /**
+   * Students Avatars Descriptions field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.student_avatar_description
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  student_avatar_description: prismic.KeyTextField;
+
+  /**
    * Button label field in *TwoColumn → Primary*
    *
    * - **Field Type**: Text
@@ -1670,6 +2512,16 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   button_label: prismic.KeyTextField;
+
+  /**
+   * Button Label Size field in *TwoColumn → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.primary.button_label_size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  button_label_size: prismic.KeyTextField;
 
   /**
    * Button url field in *TwoColumn → Primary*
@@ -1720,7 +2572,7 @@ export interface TwoColumnSliceDefaultPrimary {
    * - **API ID Path**: two_column.primary.button_color
    * - **Documentation**: https://prismic.io/docs/field#select
    */
-  button_color: prismic.SelectField<"Blue" | "White">;
+  button_color: prismic.SelectField<"Blue" | "White" | "Dark Blue">;
 
   /**
    * Background color field in *TwoColumn → Primary*
@@ -1753,16 +2605,6 @@ export interface TwoColumnSliceDefaultPrimary {
   image_position: prismic.SelectField<"left" | "right">;
 
   /**
-   * Margin field in *TwoColumn → Primary*
-   *
-   * - **Field Type**: Text
-   * - **Placeholder**: top, right, bottom, left
-   * - **API ID Path**: two_column.primary.margin
-   * - **Documentation**: https://prismic.io/docs/field#key-text
-   */
-  margin: prismic.KeyTextField;
-
-  /**
    * Grid gap field in *TwoColumn → Primary*
    *
    * - **Field Type**: Text
@@ -1773,15 +2615,40 @@ export interface TwoColumnSliceDefaultPrimary {
   grid_gap: prismic.KeyTextField;
 
   /**
-   * Font Family field in *TwoColumn → Primary*
+   * Transparent field in *TwoColumn → Primary*
    *
-   * - **Field Type**: Select
+   * - **Field Type**: Boolean
    * - **Placeholder**: *None*
-   * - **Default Value**: Lato
-   * - **API ID Path**: two_column.primary.fontFamily
-   * - **Documentation**: https://prismic.io/docs/field#select
+   * - **Default Value**: false
+   * - **API ID Path**: two_column.primary.transparent
+   * - **Documentation**: https://prismic.io/docs/field#boolean
    */
-  fontFamily: prismic.SelectField<"Lato" | "Space Grotesk Variable", "filled">;
+  transparent: prismic.BooleanField;
+}
+
+/**
+ * Primary content in *TwoColumn → Items*
+ */
+export interface TwoColumnSliceDefaultItem {
+  /**
+   * Multi Description Title field in *TwoColumn → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.items[].multi_description_title
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  multi_description_title: prismic.KeyTextField;
+
+  /**
+   * Multi Description Content field in *TwoColumn → Items*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: two_column.items[].multi_description_content
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  multi_description_content: prismic.KeyTextField;
 }
 
 /**
@@ -1794,7 +2661,7 @@ export interface TwoColumnSliceDefaultPrimary {
 export type TwoColumnSliceDefault = prismic.SharedSliceVariation<
   "default",
   Simplify<TwoColumnSliceDefaultPrimary>,
-  never
+  Simplify<TwoColumnSliceDefaultItem>
 >;
 
 /**
@@ -1832,6 +2699,11 @@ declare module "@prismicio/client" {
       EventCardsSliceDefaultPrimary,
       EventCardsSliceVariation,
       EventCardsSliceDefault,
+      FaqsSlice,
+      FaqsSliceDefaultPrimary,
+      FaqsSliceDefaultItem,
+      FaqsSliceVariation,
+      FaqsSliceDefault,
       InfoCardsSlice,
       InfoCardsSliceDefaultPrimary,
       InfoCardsSliceVariation,
@@ -1840,6 +2712,11 @@ declare module "@prismicio/client" {
       MarkdownSliceDefaultPrimary,
       MarkdownSliceVariation,
       MarkdownSliceDefault,
+      MultipleColumnCardSlice,
+      MultipleColumnCardSliceDefaultPrimary,
+      MultipleColumnCardSliceDefaultItem,
+      MultipleColumnCardSliceVariation,
+      MultipleColumnCardSliceDefault,
       OneColumnSlice,
       OneColumnSliceDefaultPrimary,
       OneColumnSliceVariation,
@@ -1848,6 +2725,10 @@ declare module "@prismicio/client" {
       PartnersSliceDefaultPrimary,
       PartnersSliceVariation,
       PartnersSliceDefault,
+      PricingCardsSlice,
+      PricingCardsSliceDefaultPrimary,
+      PricingCardsSliceVariation,
+      PricingCardsSliceDefault,
       RecommendedCoursesSlice,
       RecommendedCoursesSliceDefaultPrimary,
       RecommendedCoursesSliceVariation,
@@ -1882,6 +2763,7 @@ declare module "@prismicio/client" {
       TrustCardsSliceDefault,
       TwoColumnSlice,
       TwoColumnSliceDefaultPrimary,
+      TwoColumnSliceDefaultItem,
       TwoColumnSliceVariation,
       TwoColumnSliceDefault,
     };

@@ -215,12 +215,12 @@ function Dashboard() {
       }
 
       const expiredCourse = cohortSubscriptions.find((sub) => sub.status === 'EXPIRED' || sub.status === 'ERROR');
-      if (expiredCourse) {
+      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
+      if (expiredCourse && !fullyPaidSub) {
         showToastAndRedirect(currentCohortSlug);
         return;
       }
 
-      const fullyPaidSub = cohortSubscriptions.find((sub) => sub.status === 'FULLY_PAID' || sub.status === 'ACTIVE');
       if (fullyPaidSub) {
         setGrantAccess(true);
         return;
@@ -926,7 +926,7 @@ function Dashboard() {
                       featureReadMoreUrl={t('common:live-event.readMoreUrl')}
                       mainClasses={liveClasses?.length > 0 ? liveClasses : []}
                       otherEvents={events}
-                      cohorts={cohortSession ? [{ role: cohortSession.cohort_role, cohort: cohortSession }] : []}
+                      cohorts={cohortSession ? [cohortSession] : []}
                     />
                     {cohortSession?.kickoff_date && (
                     <CohortSideBar

@@ -69,7 +69,7 @@ function Page({ page }) {
           <meta name="google" content="notranslate" />
         </Head>
       )}
-      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }}>
+      <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem">
         <SliceZone slices={page?.data?.slices} components={components} />
       </Box>
     </>
