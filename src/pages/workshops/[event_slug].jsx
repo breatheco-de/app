@@ -271,7 +271,7 @@ function Workshop({ eventData, asset }) {
 
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
-
+  // const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
 
   const getWording = () => {
