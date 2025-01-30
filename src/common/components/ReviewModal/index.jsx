@@ -413,7 +413,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
         const respData = await fileResp.data;
         setFileData(respData);
       }
-      if (typeof assetData?.delivery_formats === 'string' && assetData?.delivery_formats.includes('url')) setFileData([]);
       callback();
     }
   };
