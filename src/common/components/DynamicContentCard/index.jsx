@@ -88,6 +88,13 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
     return `/${data.slug}`;
   };
 
+  const workshopActionText = () => {
+    if (date?.ended) return t('watch-recording');
+    if (date?.started && !date?.ended) return t('join-workshop');
+    if (!date?.started && !date?.ended) return t('register-workshop');
+    return '';
+  };
+
   useEffect(() => {
     if (isWorkshop) {
       const formattedDate = getFormatedDate();
@@ -267,16 +274,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
               margin="0 auto"
               gridGap="10px"
             >
-              {date?.ended && (
-                t('watch-recording')
-              )}
-              {date?.started && !date?.ended && (
-                t('join-workshop')
-
-              )}
-              {!date?.started && !date?.ended && (
-                t('register-workshop')
-              )}
+              {workshopActionText()}
               {date?.started && (
                 <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
               )}
