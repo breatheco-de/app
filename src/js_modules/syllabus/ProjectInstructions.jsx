@@ -23,14 +23,14 @@ import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, variant, isStarted, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
   if (isExternalExercise) {
     return (
-      <Button cursor="pointer" as="a" href={currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
+      <Button cursor="pointer" as="a" href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
         {t('common:learnpack.start-exercise')}
       </Button>
     );
@@ -93,6 +93,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
   const startWithLearnpack = currentAsset?.learnpack_deploy_url && cohortSession.available_as_saas && !noLearnpackIncluded.includes(currentAsset.slug);
+  const openWithLearnpackNoSaas = isExternalExercise && currentAsset?.learnpack_deploy_url && !cohortSession.available_as_saas;
 
   if (variant === 'extra-small') {
     return (
@@ -116,6 +117,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             handleStartLearnpack={handleStartLearnpack}
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
+            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
             variant={variant}
           />
         </Box>
@@ -149,6 +151,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
                 handleStartLearnpack={handleStartLearnpack}
                 setShowCloneModal={setShowCloneModal}
                 startWithLearnpack={startWithLearnpack}
+                openWithLearnpackNoSaas={openWithLearnpackNoSaas}
                 variant={variant}
                 isStarted={isStarted}
               />
@@ -193,6 +196,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             handleStartLearnpack={handleStartLearnpack}
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
+            openWithLearnpackNoSaas={openWithLearnpackNoSaas}
             variant={variant}
             isStarted={isStarted}
           />
