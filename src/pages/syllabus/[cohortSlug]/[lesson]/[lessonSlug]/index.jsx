@@ -418,7 +418,7 @@ function SyllabusContent() {
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.content?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (Object.keys(cohortSession).length > 0) {
+    if (cohortSession) {
       bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);

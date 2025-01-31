@@ -76,7 +76,7 @@ function Dashboard() {
   const [certificates, setCertificates] = useState([]);
   const { featuredColor, hexColor, modal } = useStyle();
   const [isLoadingAssigments, setIsLoadingAssigments] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, cohorts } = useAuth();
   const { rigo, isRigoInitialized } = useRigo();
 
   const isBelowTablet = getBrowserSize()?.width < 768;
@@ -90,7 +90,7 @@ function Dashboard() {
     cohortProgram, taskTodo, addTasks, sortedAssignments,
   } = useCohortHandler();
 
-  const { cohortSession, taskCohortNull, myCohorts, cohortsAssignments } = state;
+  const { cohortSession, taskCohortNull, cohortsAssignments } = state;
 
   const isAvailableAsSaas = cohortSession?.available_as_saas;
   const hasMicroCohorts = cohortSession?.micro_cohorts?.length > 0;
@@ -251,7 +251,7 @@ function Dashboard() {
       if (cohortSession.cohort_user.finantial_status === 'LATE' || cohortSession.cohort_user.educational_status === 'SUSPENDED') {
         router.push('/choose-program');
       } else {
-        const isReadyToShowGithubMessage = myCohorts.some(
+        const isReadyToShowGithubMessage = cohorts.some(
           (l) => l.cohort_user.educational_status === 'ACTIVE' && l.available_as_saas === false,
         );
         setIsAvailableToShowModalMessage(isReadyToShowGithubMessage);
@@ -351,7 +351,7 @@ function Dashboard() {
     if (isRigoInitialized && cohortSession && cohortSession.cohort_role === 'STUDENT' && !isLoadingAssigments) {
       let context = '';
       if (hasMicroCohorts) {
-        const modulesPerProgram = myCohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug))
+        const modulesPerProgram = cohorts.filter((cohort) => cohortSession.micro_cohorts.some((microCohort) => microCohort.slug === cohort.slug))
           .map((cohort) => {
             const cohortContext = cohortContextGenerator(cohort, cohortsAssignments[cohort.slug]?.modules);
             return `
@@ -580,7 +580,7 @@ function Dashboard() {
                   {!isLoadingAssigments ? (
                     <Box display="flex" flexDirection="column" gap="20px">
                       {hasMicroCohorts
-                        ? myCohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
+                        ? cohorts.filter((cohort) => cohortSession.micro_cohorts.some((elem) => elem.slug === cohort.slug))
                           .sort(sortMicroCohorts)
                           .map((microCohort) => (
                             <CohortModules

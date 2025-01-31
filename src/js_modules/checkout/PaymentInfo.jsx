@@ -27,7 +27,7 @@ import NextChakraLink from '../../common/components/NextChakraLink';
 
 function PaymentInfo() {
   const { t, lang } = useTranslation('signup');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, reSetUserAndCohorts } = useAuth();
 
   const {
     state, handlePayment, setSelectedPlanCheckoutData, setIsSubmittingCard, setIsSubmittingPayment, getPaymentMethods, setPaymentStatus, setPaymentInfo,
@@ -134,10 +134,9 @@ function PaymentInfo() {
   useEffect(() => {
     const fetchMyCohorts = async () => {
       try {
-        const resp = await bc.admissions().me();
-        const data = resp?.data;
+        const { userData } = await reSetUserAndCohorts();
 
-        setUpdatedUser(data);
+        setUpdatedUser(userData);
       } catch (err) {
         console.error('Error fetching my cohorts:', err);
       }
@@ -191,42 +190,41 @@ function PaymentInfo() {
   useEffect(() => {
     let interval;
     if (readyToRefetch && timeElapsed < 10 && isPaymentSuccess) {
-      interval = setInterval(() => {
-        getAllMySubscriptions()
-          .then(async (subscriptions) => {
-            const currentSubscription = subscriptions?.find(
-              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
-            );
-            const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
-              (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
-            );
-            const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
-            const foundCohort = cohortsForSubscription?.find(
-              (cohort) => cohort?.id === cohortId,
-            );
+      interval = setInterval(async () => {
+        try {
+          const subscriptions = await getAllMySubscriptions();
+          const currentSubscription = subscriptions?.find(
+            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+          );
+          const isPurchasedPlanFound = subscriptions?.length > 0 && subscriptions.some(
+            (subscription) => checkoutData?.plans[0]?.plan_slug === subscription.plans[0]?.slug,
+          );
+          const cohortsForSubscription = currentSubscription?.selected_cohort_set.cohorts;
+          const foundCohort = cohortsForSubscription?.find(
+            (cohort) => cohort?.id === cohortId,
+          );
 
-            if (isPurchasedPlanFound) {
-              if (foundCohort?.id) {
-                const cohort = await getCohort(foundCohort?.id);
-                joinCohort(cohort);
+          if (isPurchasedPlanFound) {
+            if (foundCohort?.id) {
+              const cohort = await getCohort(foundCohort?.id);
+              joinCohort(cohort);
 
-                clearInterval(interval);
-                setReadyToRefetch(false);
+              clearInterval(interval);
+              setReadyToRefetch(false);
+            } else {
+              clearInterval(interval);
+              if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
+                router.push(redirect || redirectedFrom);
+                localStorage.removeItem('redirect');
+                localStorage.removeItem('redirected-from');
               } else {
-                clearInterval(interval);
-                if ((redirect && redirect?.length > 0) || (redirectedFrom && redirectedFrom.length > 0)) {
-                  router.push(redirect || redirectedFrom);
-                  localStorage.removeItem('redirect');
-                  localStorage.removeItem('redirected-from');
-                } else {
-                  router.push('/choose-program');
-                }
+                router.push('/choose-program');
               }
             }
-          })
-          .finally(() => {
-            setTimeElapsed((prevTime) => prevTime + 1);
-          });
+          }
+        } finally {
+          setTimeElapsed((prevTime) => prevTime + 1);
+        }
       }, 2000);
     } else {
       clearInterval(interval);

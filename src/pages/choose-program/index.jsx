@@ -16,7 +16,6 @@ import { reportDatalayer } from '../../utils/requests';
 import Heading from '../../common/components/Heading';
 import { usePersistent } from '../../common/hooks/usePersistent';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
-import useLocalStorageQuery from '../../common/hooks/useLocalStorageQuery';
 import LiveEvent from '../../common/components/LiveEvent';
 import NextChakraLink from '../../common/components/NextChakraLink';
 import useProgramList from '../../common/store/actions/programListAction';
@@ -50,7 +49,8 @@ export const getStaticProps = async ({ locale, locales }) => {
 
 function chooseProgram() {
   const { t, lang } = useTranslation('choose-program');
-  const { setCohortSession, setMyCohorts, myCohorts, parseCohort, getCohortsModules, cohortsAssignments } = useCohortHandler();
+  const { setCohortSession, getCohortsModules, cohortsAssignments } = useCohortHandler();
+  const { user, cohorts, isLoading, reSetUserAndCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const [subscriptionProcess] = usePersistent('subscription-process', null);
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -72,7 +72,6 @@ function chooseProgram() {
     isLoading: true,
     data: [],
   });
-  const { user, updateProfile } = useAuth();
   const toast = useToast();
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
@@ -85,25 +84,6 @@ function chooseProgram() {
     en: 'https://www.youtube.com/embed/ijEp5XHm7qo',
   };
 
-  const fetchAdmissions = async () => {
-    try {
-      const resp = await bc.admissions().me();
-
-      const { cohorts } = resp.data;
-      if (cohorts) setMyCohorts(cohorts.map(parseCohort));
-
-      return resp;
-    } catch (e) {
-      console.log(e);
-      return e;
-    }
-  };
-
-  const options = {
-    cacheTime: 1000 * 60 * 60, // cache 1 hour
-    refetchOnWindowFocus: false,
-  };
-
   const getStudentAndTeachers = async (item) => {
     const users = await bc.cohort({
       role: 'TEACHER,ASSISTANT',
@@ -114,8 +94,6 @@ function chooseProgram() {
     return users || [];
   };
 
-  const { isLoading, refetch } = useLocalStorageQuery('admissions', fetchAdmissions, { ...options });
-
   const getMembers = async (cohortSubscription) => {
     const members = await getStudentAndTeachers(cohortSubscription);
     return members;
@@ -124,13 +102,13 @@ function chooseProgram() {
   const getAllSyllabus = () => {
     const syllabus = [];
 
-    myCohorts.forEach(({ syllabus_version: syllabusVersion }) => {
+    cohorts.forEach(({ syllabus_version: syllabusVersion }) => {
       if (!syllabus.includes(syllabusVersion.slug)) syllabus.push(syllabusVersion.slug);
     });
     return syllabus;
   };
 
-  const allSyllabus = useMemo(getAllSyllabus, [myCohorts]);
+  const allSyllabus = useMemo(getAllSyllabus, [cohorts]);
 
   const getServices = async (userRoles) => {
     if (userRoles?.length > 0) {
@@ -162,11 +140,11 @@ function chooseProgram() {
   useEffect(() => {
     let revalidate;
     if (user) {
-      const cohortSubscription = myCohorts?.find((item) => item?.slug === subscriptionProcess?.slug);
+      const cohortSubscription = cohorts?.find((item) => item?.slug === subscriptionProcess?.slug);
       const members = cohortSubscription ? getMembers(cohortSubscription) : [];
 
       getServices(user.roles);
-      const cohortIsReady = myCohorts?.length > 0 && myCohorts?.some((cohort) => {
+      const cohortIsReady = cohorts?.length > 0 && cohorts?.some((cohort) => {
         // const cohort = item?.cohort;
         const academy = cohort?.academy;
         if (cohort?.id === subscriptionProcess?.id
@@ -175,11 +153,11 @@ function chooseProgram() {
 
         return false;
       });
-      if (myCohorts?.length > 0) {
-        const hasAvailableAsSaas = myCohorts.some((elem) => elem.available_as_saas === true);
-        const cohortsSlugs = myCohorts.map((elem) => elem.slug).join(',');
-        const cohortsAcademies = myCohorts.map((elem) => elem.academy.slug).join(',');
-        const cohortWithFinantialStatusLate = myCohorts.filter((elem) => elem.cohort_user.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
+      if (cohorts?.length > 0) {
+        const hasAvailableAsSaas = cohorts.some((elem) => elem.available_as_saas === true);
+        const cohortsSlugs = cohorts.map((elem) => elem.slug).join(',');
+        const cohortsAcademies = cohorts.map((elem) => elem.academy.slug).join(',');
+        const cohortWithFinantialStatusLate = cohorts.filter((elem) => elem.cohort_user.finantial_status === 'LATE' || elem.educational_status === 'SUSPENDED');
         setLateModalProps({
           isOpen: cohortWithFinantialStatusLate?.length > 0 && !isClosedLateModal,
           data: cohortWithFinantialStatusLate,
@@ -195,11 +173,12 @@ function chooseProgram() {
         });
       }
 
-      revalidate = setTimeout(() => {
-        if (subscriptionProcess?.status === PREPARING_FOR_COHORT) {
+      revalidate = setTimeout(async () => {
+        if (subscriptionProcess?.status === PREPARING_FOR_COHORT && subscriptionProcess?.id) {
           setIsRevalidating(true);
           if (!cohortIsReady && members.length === 0) {
-            refetch();
+            const { cohorts: myCohorts } = await fetchUserAndCohorts();
+            setCohorts(myCohorts);
             console.log('revalidated on:', new Date().toLocaleString());
             setIsRevalidating(false);
           } else {
@@ -212,7 +191,7 @@ function chooseProgram() {
     }
 
     return () => clearTimeout(revalidate);
-  }, [user, myCohorts]);
+  }, [user, cohorts]);
 
   useEffect(() => {
     setSubscriptionLoading(true);
@@ -239,8 +218,8 @@ function chooseProgram() {
   // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
   useEffect(() => {
-    if (subscriptionLoading === false && myCohorts.length > 0 && Object.values(cohortTasks)?.length > 0) {
-      updateProgramList(myCohorts?.reduce((acc, value) => {
+    if (subscriptionLoading === false && cohorts.length > 0 && Object.values(cohortTasks)?.length > 0) {
+      updateProgramList(cohorts?.reduce((acc, value) => {
         acc[value.slug] = {
           ...state[value.slug],
           ...programsList[value.slug],
@@ -258,7 +237,7 @@ function chooseProgram() {
         return acc;
       }, {}));
     }
-  }, [myCohorts, cohortTasks, subscriptionLoading]);
+  }, [cohorts, cohortTasks, subscriptionLoading]);
 
   const processCohort = async (cohort) => {
     if (cohort?.slug) {
@@ -286,16 +265,16 @@ function chooseProgram() {
   };
 
   useEffect(() => {
-    if (myCohorts.length > 0) {
-      getCohortsModules(myCohorts);
+    if (cohorts.length > 0) {
+      getCohortsModules(cohorts);
     }
-  }, [myCohorts, isLoading]);
+  }, [cohorts]);
 
   useEffect(() => {
-    if (myCohorts.length > 0 && Object.keys(cohortsAssignments).length > 0) {
-      myCohorts.map(processCohort);
+    if (cohorts.length > 0 && Object.keys(cohortsAssignments).length > 0) {
+      cohorts.map(processCohort);
     }
-  }, [myCohorts, isLoading, cohortsAssignments]);
+  }, [cohorts, cohortsAssignments]);
 
   const userID = user?.id;
 
@@ -387,7 +366,7 @@ function chooseProgram() {
         const inv = invites[invitationIndex];
         const { name: cohortName } = inv.cohort;
 
-        await refetch();
+        await reSetUserAndCohorts();
 
         const invList = [...invites];
         invList.splice(invitationIndex, 1);
@@ -428,13 +407,7 @@ function chooseProgram() {
       if (status >= 200 && status < 400) {
         const invitationIndex = invites.findIndex((invite) => invite.id === id);
 
-        const [meRefetch] = await Promise.all([
-          bc.auth().me(),
-          refetch(),
-        ]);
-
-        const { data: userData } = meRefetch;
-        updateProfile(userData);
+        await reSetUserAndCohorts();
 
         const invList = [...invites];
         invList.splice(invitationIndex, 1);
@@ -474,7 +447,7 @@ function chooseProgram() {
     return t('invite.singular-word', { invitesLength: invites?.length });
   };
 
-  const isMainCohort = (cohort) => !myCohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
+  const isMainCohort = (cohort) => !cohorts.some((elem) => elem.micro_cohorts.some((micro) => micro.slug === cohort.slug));
 
   return (
     <Flex alignItems="center" flexDirection="row" mt="40px">
@@ -629,7 +602,7 @@ function chooseProgram() {
 
           <Box>
             {!isLoading && (
-              <ChooseProgram chooseList={myCohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
+              <ChooseProgram chooseList={cohorts.filter(isMainCohort)} setLateModalProps={setLateModalProps} />
             )}
           </Box>
           {isRevalidating && (
@@ -655,7 +628,7 @@ function chooseProgram() {
               ))}
             </Box>
           )}
-          {isLoading && myCohorts.length > 0 && (
+          {isLoading && cohorts.length > 0 && (
             <Box
               display="grid"
               mt="1rem"
@@ -687,13 +660,13 @@ function chooseProgram() {
               mainClasses={liveClasses?.length > 0 ? liveClasses : []}
               otherEvents={events}
               margin="0 auto"
-              cohorts={myCohorts}
+              cohorts={cohorts}
             />
           </Box>
           <Box zIndex={10}>
             {!mentorshipServices.isLoading && mentorshipServices?.data?.length > 0 && (
               <SupportSidebar
-                allCohorts={myCohorts}
+                allCohorts={cohorts}
                 allSyllabus={allSyllabus}
                 services={mentorshipServices.data}
                 subscriptions={allSubscriptions}
@@ -702,7 +675,7 @@ function chooseProgram() {
           </Box>
           <Feedback />
 
-          {myCohorts.every((elem) => elem.available_as_saas) && (
+          {cohorts.every((elem) => elem.available_as_saas) && (
             <NextChakraLink
               href={t('whats-app-link')}
               aria-label="4Geeks Academy community"

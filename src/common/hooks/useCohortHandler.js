@@ -14,7 +14,7 @@ import { BREATHECODE_HOST, DOMAIN_NAME } from '../../utils/variables';
 
 function useCohortHandler() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, cohorts: myCohorts, fetchUserAndCohorts, setCohorts } = useAuth();
   const { t, lang } = useTranslation('dashboard');
   const {
     setCohortSession,
@@ -29,7 +29,6 @@ function useCohortHandler() {
     cohortSession,
     userCapabilities,
     cohortsAssignments,
-    myCohorts,
   } = state;
   const toast = useToast();
   const accessToken = getStorageItem('accessToken');
@@ -226,18 +225,14 @@ function useCohortHandler() {
       // Fetch cohort data with pathName structure
       if (cohortSlug && accessToken) {
         // find cohort with current slug
-        let parsedCohorts = myCohorts.map((cohort) => ({ ...cohort }));
         let currentCohort = myCohorts.find((c) => c.slug === cohortSlug);
 
         //we make sure that we have already loaded the data of the cohort and its micro cohorts
         if (!currentCohort || (currentCohort.micro_cohorts.length > 0 && currentCohort.micro_cohorts.every((cohort) => myCohorts.some(({ slug }) => cohort.slug === slug)))) {
-          const { data } = await bc.admissions().me();
-          if (!data) throw new Error('No data');
-          const { cohorts } = data;
+          const { cohorts } = await fetchUserAndCohorts();
+          setCohorts(cohorts);
 
-          parsedCohorts = cohorts.map(parseCohort);
-
-          currentCohort = parsedCohorts.find((c) => c.slug === cohortSlug);
+          currentCohort = cohorts.find((c) => c.slug === cohortSlug);
         }
 
         if (!currentCohort) {
@@ -246,12 +241,11 @@ function useCohortHandler() {
           return router.push('/choose-program');
         }
 
-        const cohorts = currentCohort.micro_cohorts.length > 0 ? parsedCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
+        const cohorts = currentCohort.micro_cohorts.length > 0 ? myCohorts.filter((c) => currentCohort.micro_cohorts.some((elem) => elem.slug === c.slug)) : [currentCohort];
 
         await getCohortsModules(cohorts);
 
         setCohortSession(currentCohort);
-        setMyCohorts(parsedCohorts);
         return currentCohort;
       }
 

@@ -20,13 +20,15 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 import useStyle from '../../common/hooks/useStyle';
+import useAuth from '../../common/hooks/useAuth';
 
 function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentModuleIndex, handleStartDay, grantSyllabusAccess }) {
   const router = useRouter();
+  const { cohorts } = useAuth();
   const { mainCohortSlug } = router.query;
   const { t, lang } = useTranslation('syllabus');
   const [moduleLoading, setModuleLoading] = useState(false);
-  const { cohortSession, sortedAssignments, myCohorts } = useCohortHandler();
+  const { cohortSession, sortedAssignments } = useCohortHandler();
   const { hexColor, backgroundColor, backgroundColor4, fontColor2 } = useStyle();
   const background = useColorModeValue('#E4E8EE', '#283340');
 
@@ -62,7 +64,7 @@ function GuidedExperienceSidebar({ onClickAssignment, isOpen, onToggle, currentM
   const getCohortDashboardUrl = () => {
     if (!mainCohortSlug) return cohortSession.selectedProgramSlug;
 
-    const mainCohort = myCohorts.find(({ slug }) => slug === mainCohortSlug);
+    const mainCohort = cohorts.find(({ slug }) => slug === mainCohortSlug);
 
     return mainCohort.selectedProgramSlug;
   };
