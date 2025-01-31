@@ -31,10 +31,7 @@ import axios from '../../../axios';
 import logoData from '../../../../public/logo.json';
 import { parseQuerys } from '../../../utils/url';
 import useStyle from '../../hooks/useStyle';
-// import UpgradeExperience from '../UpgradeExperience';
 import { getAllMySubscriptions } from '../../handlers/subscriptions';
-import bc from '../../services/breathecode';
-// import UpgradeExperience from '../UpgradeExperience';
 
 function NavbarWithSubNavigation({ translations, pageProps }) {
   const HAVE_SESSION = typeof window !== 'undefined' ? localStorage.getItem('accessToken') !== null : false;
@@ -42,10 +39,9 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   const [haveSession, setHaveSession] = useState(HAVE_SESSION);
   const { userSession, location } = useSession();
   const isUtmMediumAcademy = userSession?.utm_medium === 'academy';
-  const { isAuthenticated, isLoading, user, logout } = useAuth();
+  const { isAuthenticated, isLoading, user, logout, cohorts } = useAuth();
   const [ITEMS, setITEMS] = useState([]);
   const [mktCourses, setMktCourses] = useState([]);
-  const [userCohorts, setUserCohorts] = useState([]);
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -104,13 +100,11 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
   };
 
   const verifyIfHasPaidSubscription = async () => {
-    const respCohorts = await bc.admissions().me();
     const subscriptions = await getAllMySubscriptions();
 
-    const existsCohortWithoutAvailableAsSaas = respCohorts.data?.cohorts?.length > 0 && respCohorts.data.cohorts.some((c) => c?.cohort?.available_as_saas === false);
+    const existsCohortWithoutAvailableAsSaas = cohorts?.length > 0 && cohorts.some((c) => c?.available_as_saas === false);
     const existsPaidSubscription = subscriptions.some((sb) => sb?.invoices?.[0]?.amount > 0);
     setHasPaidSubscription(existsCohortWithoutAvailableAsSaas || existsPaidSubscription);
-    setUserCohorts(respCohorts.data?.cohorts || []);
   };
 
   useEffect(() => {
@@ -157,7 +151,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         (item) => (isUtmMediumAcademy ? item.id !== 'bootcamps' : true) && (item.id === 'bootcamps' ? location?.countryShort !== 'ES' : true),
       );
       if (!isLoading && user?.id) {
-        const isBootcampStudent = userCohorts.some(({ cohort }) => !cohort.available_as_saas);
+        const isBootcampStudent = cohorts.some((cohort) => !cohort.available_as_saas);
         setITEMS(
           preFilteredItems
             .filter((item) => (item.disabled !== true && item.hide_on_auth !== true)
@@ -167,7 +161,7 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
         setITEMS(preFilteredItems.filter((item) => item.disabled !== true));
       }
     }
-  }, [user, userCohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
+  }, [user, cohorts, isLoading, cohortSession, mktCourses, router.locale, location]);
 
   const closeSettings = () => {
     setSettingsOpen(false);
