@@ -15,12 +15,12 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import ReactSelect from '../../../common/components/ReactSelect';
 import Link from '../../../common/components/NextChakraLink';
 import Heading from '../../../common/components/Heading';
 import Text from '../../../common/components/Text';
+import useAuth from '../../../common/hooks/useAuth';
 import useStyle from '../../../common/hooks/useStyle';
 import Icon from '../../../common/components/Icon';
 import DottedTimeline from '../../../common/components/DottedTimeline';
@@ -35,6 +35,7 @@ function Attendance() {
   const { t } = useTranslation('attendance');
   const router = useRouter();
   const { createToast } = useCustomToast({ toastId: ' attendance-list-found-activities' });
+  const { cohorts } = useAuth();
   const [allCohorts, setAllCohorts] = useState([]);
   const [selectedCohort, setSelectedCohort] = useState({});
   const [showSearch, setShowSearch] = useState(false);
@@ -105,32 +106,20 @@ function Attendance() {
     : `${slideLeft} 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both`;
 
   useEffect(() => {
-    bc.admissions().me()
-      .then(({ data }) => {
-        const cohortFiltered = data.cohorts.filter((cohort) => cohort.role !== 'STUDENT');
-        const dataStruct = cohortFiltered.map((l) => ({
-          label: l.cohort.name,
-          slug: l.cohort.slug,
-          value: l.cohort.id,
-          academy: l.cohort.academy.id,
-          syllabus: l.cohort.syllabus_version,
-          durationInDays: l.cohort?.syllabus_version?.duration_in_days,
-        }));
-        setAllCohorts(dataStruct.sort(
-          (a, b) => a.label.localeCompare(b.label),
-        ));
-        setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
-      })
-      .catch(() => {
-        createToast({
-          position: 'top',
-          title: t('alert-message:error-fetching-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
-  }, []);
+    const cohortFiltered = cohorts.filter((cohort) => cohort.cohort_user.role !== 'STUDENT');
+    const dataStruct = cohortFiltered.map((cohort) => ({
+      label: cohort.name,
+      slug: cohort.slug,
+      value: cohort.id,
+      academy: cohort.academy.id,
+      syllabus: cohort.syllabus_version,
+      durationInDays: cohort?.syllabus_version?.duration_in_days,
+    }));
+    setAllCohorts(dataStruct.sort(
+      (a, b) => a.label.localeCompare(b.label),
+    ));
+    setSelectedCohort(dataStruct.find((c) => c.slug === cohortSlug));
+  }, [cohorts]);
 
   useEffect(() => {
     setLoadingStudents(true);
