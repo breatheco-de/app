@@ -280,12 +280,14 @@ function Workshop({ eventData, asset }) {
     console.log('readyToJoinEvent:', readyToJoinEvent);
     if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
       return t('join');
-    } if (!finishedEvent && !alreadyApplied) {
-      return t('reserv-button-text');
-    } if (finishedEvent) {
+    }
+    if (finishedEvent && !event?.recording_url) {
+      return t('workshop-video-soon');
+    }
+    if (finishedEvent && event?.recording_url) {
       return t('watch-workshop-recording');
     }
-    return '';
+    return t('reserv-button-text');
   };
 
   const handleOnReadyToStart = () => {
@@ -339,7 +341,7 @@ function Workshop({ eventData, asset }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const buttonEnabled = (readyToJoinEvent || !alreadyApplied);
+  const buttonEnabled = ((finishedEvent && event?.recording_url) || !finishedEvent) && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
     setIsFetchingDataForModal(true);
@@ -1036,7 +1038,7 @@ function Workshop({ eventData, asset }) {
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={(finishedEvent) && (alreadyApplied || !readyToJoinEvent || (eventNotExists && !isAuthenticated))}
+                      isDisabled={((finishedEvent && !event?.recording_url) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                       _disabled={{
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1050,7 +1052,10 @@ function Workshop({ eventData, asset }) {
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
                       onClick={() => {
+                        console.log('por acá', finishedEvent, event?.recording_url);
                         if (finishedEvent && event?.recording_url) {
+                          // 3. Sumar en la variable buttonEnabled la condición que si no tiene el recording_url (readyToJoinEvent || !alreadyApplied) y si tiene recording_url
+                          // 4. Agregar lo mismo en el disable
                           window.open(event.recording_url, '_blank');
                         } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
