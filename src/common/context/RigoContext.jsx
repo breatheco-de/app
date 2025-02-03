@@ -1,8 +1,9 @@
 /* eslint-disable camelcase */
-import React, { createContext, useState } from 'react';
+import React, { useEffect, createContext, useState } from 'react';
 import Script from 'next/script';
 import PropTypes from 'prop-types';
-import { isWindow } from '../../utils';
+import { reportDatalayer } from '../../utils/requests';
+import { isWindow, getBrowserInfo } from '../../utils';
 
 export const RigoContext = createContext({
   rigo: null,
@@ -11,6 +12,30 @@ export const RigoContext = createContext({
 
 function RigoProvider({ children }) {
   const [isRigoInitialized, setIsRigoInitialized] = useState(false);
+
+  useEffect(() => {
+    if (isRigoInitialized) {
+      window.rigo.on('open_bubble', (data) => {
+        reportDatalayer({
+          dataLayer: {
+            event: 'rigobot_open_bubble',
+            agent: getBrowserInfo(),
+            ...data,
+          },
+        });
+      });
+
+      window.rigo.on('incoming_message', (data) => {
+        reportDatalayer({
+          dataLayer: {
+            event: 'rigobot_incoming_message',
+            agent: getBrowserInfo(),
+            ...data,
+          },
+        });
+      });
+    }
+  }, [isRigoInitialized]);
 
   return (
     <RigoContext.Provider
@@ -21,7 +46,7 @@ function RigoProvider({ children }) {
       }}
     >
       <Script
-        src="https://unpkg.com/rigobot-chat-bubble@0.0.68/dist/main.js"
+        src="https://unpkg.com/rigobot-chat-bubble@0.0.69/dist/main.js"
         onLoad={() => {
           window.rigo.init(process.env.RIGOBOT_HASH, {
             context: '',
