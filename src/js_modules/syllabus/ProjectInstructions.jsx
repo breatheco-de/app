@@ -39,6 +39,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
         padding="4px 8px"
         fontSize="14px"
         fontWeight="500"
+        color="blue.default"
         background={variant !== 'extra-small' ? 'gray.200' : 'blue.default'}
         style={variant === 'extra-small' ? { color: 'white', textDecoration: 'none' } : { textDecoration: 'none' }}
         _hover="none"
