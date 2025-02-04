@@ -590,6 +590,9 @@ function Checkout() {
 
   const renderPlanDetails = () => {
     if (originalPlan?.selectedPlan?.isFreeTier) {
+      const res = bc.payment({ original_plan: originalPlan.slug }).planOffer();
+      const postFreePlanInfo = res.data;
+      console.log('HOLAAAAAAAAAA', postFreePlanInfo);
       return (
         <Text size="16px" color="green.400">
           {originalPlan?.selectedPlan?.description || 'Free plan'}
