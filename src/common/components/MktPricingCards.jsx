@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Flex } from '@chakra-ui/react';
+import { Flex, Heading } from '@chakra-ui/react';
 import PricingCard from './PricingCard';
 
-function MktPricingCards({ margin, maxWidth, url, id }) {
+function MktPricingCards({ margin, maxWidth, url, id, title, fontSize, fontWeight, lineHeight, marginBottom }) {
   const [plans, setPlans] = useState([]);
   useEffect(() => {
     if (!url) return;
@@ -17,16 +17,31 @@ function MktPricingCards({ margin, maxWidth, url, id }) {
   }, [url]);
 
   return (
-    <Flex id={id} flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin={margin} maxWidth={maxWidth}>
-      {plans?.map((plan) => (
-        <PricingCard
-          key={plan?.plan_id}
+    <>
+      <Heading
+        as="h2"
+        size="sm"
+        textAlign="center"
+        mb={marginBottom || '1rem'}
+        // weight={weight}
+        lineHeight={lineHeight}
+        style={{ fontSize, fontWeight }}
+        mt="80px"
+      >
+        {title}
+      </Heading>
+      <Flex id={id} flexWrap={{ base: 'wrap', lg: 'nowrap' }} justifyContent="center" gridGap="24px" margin={margin} maxWidth={maxWidth}>
+        {plans?.map((plan) => (
+          <PricingCard
+            title={title}
+            key={plan?.plan_id}
         //   courseData={selectedCourseData}
-          item={plan}
-          width={{ base: '300px', md: '100%' }}
-        />
-      ))}
-    </Flex>
+            item={plan}
+            width={{ base: '300px', md: '100%' }}
+          />
+        ))}
+      </Flex>
+    </>
   );
 }
 
@@ -35,12 +50,22 @@ MktPricingCards.propTypes = {
   maxWidth: PropTypes.string,
   url: PropTypes.string.isRequired,
   id: PropTypes.string,
+  title: PropTypes.string,
+  fontSize: PropTypes.string,
+  fontWeight: PropTypes.string,
+  lineHeight: PropTypes.string,
+  marginBottom: PropTypes.string,
 };
 
 MktPricingCards.defaultProps = {
   margin: '',
   maxWidth: '',
   id: '',
+  title: '',
+  fontSize: '',
+  fontWeight: '',
+  lineHeight: '',
+  marginBottom: '',
 };
 
 export default MktPricingCards;

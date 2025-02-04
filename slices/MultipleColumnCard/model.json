@@ -20,6 +20,14 @@
           "type": "Text",
           "config": { "label": "Id key", "placeholder": "" }
         },
+        "font_weight": {
+          "type": "Text",
+          "config": { "label": "Font Weight", "placeholder": "" }
+        },
+        "line_height": {
+          "type": "Text",
+          "config": { "label": "Line height", "placeholder": "" }
+        },
         "font_family_title": {
           "type": "Select",
           "config": {

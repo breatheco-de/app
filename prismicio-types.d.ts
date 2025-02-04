@@ -832,6 +832,26 @@ export interface MultipleColumnCardSliceDefaultPrimary {
   id_key: prismic.KeyTextField;
 
   /**
+   * Font Weight field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.font_weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  font_weight: prismic.KeyTextField;
+
+  /**
+   * Line height field in *MultipleColumnCard → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.primary.line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  line_height: prismic.KeyTextField;
+
+  /**
    * Font Family Title field in *MultipleColumnCard → Primary*
    *
    * - **Field Type**: Select
@@ -1474,6 +1494,36 @@ export interface PricingCardsSliceDefaultPrimary {
   title: prismic.KeyTextField;
 
   /**
+   * Weight field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.weight
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  weight: prismic.KeyTextField;
+
+  /**
+   * Line height field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.line_height
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  line_height: prismic.KeyTextField;
+
+  /**
+   * Size field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.size
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  size: prismic.KeyTextField;
+
+  /**
    * Url field in *PricingCards → Primary*
    *
    * - **Field Type**: Text
@@ -1502,6 +1552,16 @@ export interface PricingCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Margin Bottom field in *PricingCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: pricing_cards.primary.margin_bottom
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  margin_bottom: prismic.KeyTextField;
 }
 
 /**
