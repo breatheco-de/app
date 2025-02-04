@@ -259,6 +259,7 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
               "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-organize-your-files.mp4",
