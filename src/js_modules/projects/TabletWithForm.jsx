@@ -74,7 +74,6 @@ const TabletWithForm = React.forwardRef(({
 
     const currentLang = lang === 'en' ? 'us' : lang;
     const theme = currentThemeValue;
-    const iframe = 'true';
     const token = userToken;
 
     return `${asset?.learnpack_deploy_url}#language=${currentLang}&lang=${currentLang}&theme=${theme}&token=${token}`;
