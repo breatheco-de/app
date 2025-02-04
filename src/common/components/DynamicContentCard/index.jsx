@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Avatar, Box, Divider, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
@@ -46,6 +47,8 @@ export const getDifficultyColors = (currDifficulty) => {
 
 function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest }) {
   const { t, lang } = useTranslation('live-event');
+  const router = useRouter();
+  const { query } = router;
   const { featuredColor, borderColor, backgroundColor, fontColor } = useStyle();
   const [date, setDate] = useState({});
   const language = data?.lang;
@@ -59,10 +62,11 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   const isWorkshopStarted = isWorkshop && startedButNotEnded;
   const description = data?.excerpt || data?.description;
   const langConnector = data?.lang === 'us' ? '' : `/${data?.lang}`;
-  const isLesson = getAssetPath(data) === 'lesson';
-  const isExercise = getAssetPath(data) === 'interactive-exercise';
-  const isProject = getAssetPath(data) === 'interactive-coding-tutorial';
-  const isHowTo = getAssetPath(data) === 'how-to';
+  const assetPath = getAssetPath(data);
+  const isLesson = assetPath === 'lesson';
+  const isExercise = assetPath === 'interactive-exercise';
+  const isProject = assetPath === 'interactive-coding-tutorial';
+  const isHowTo = assetPath === 'how-to';
 
   const getFormatedDate = () => {
     const endDate = data?.ended_at || data?.ending_at;
@@ -73,17 +77,9 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   };
 
   const getLink = () => {
-    if (isLesson) {
-      return `${langConnector}/lesson/${data.slug}`;
-    }
-    if (isExercise) {
-      return `${langConnector}/interactive-exercise/${data.slug}`;
-    }
-    if (isProject) {
-      return `${langConnector}/interactive-coding-tutorial/${data.slug}`;
-    }
-    if (isHowTo) {
-      return `${langConnector}/how-to/${data.slug}`;
+    if (isLesson || isExercise || isProject || isHowTo) {
+      const search = query.search ? `?search=${query.search}` : '';
+      return `${langConnector}/${assetPath}/${data.slug}${search}`;
     }
     return `/${data.slug}`;
   };

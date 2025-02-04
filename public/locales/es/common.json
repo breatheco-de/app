@@ -39,6 +39,12 @@
     "mins": "mins",
     "sec": "seg"
   },
+  "back-to-asset": {
+    "lesson": "Regresar a lecciones",
+    "interactive-coding-tutorial": "Volver a Proyectos",
+    "interactive-exercise": "Volver a ejercicios",
+    "how-to": "Volver a Cómo hacerlo"
+  },
   "no-translation-available": "No hay traduccion disponible",
   "read-next": "Leer a continuación",
   "heading": "Bienvenido a",
