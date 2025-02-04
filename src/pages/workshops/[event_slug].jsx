@@ -269,8 +269,21 @@ function Workshop({ eventData, asset }) {
 
   const eventNotExists = !event?.slug;
   const isAuth = isAuthenticated && user?.id;
-
+  const recordingUrl = event?.recording_url;
   const alreadyApplied = users.some((l) => l?.attendee?.id === user?.id) || applied;
+
+  const getWording = () => {
+    if (!finishedEvent && (alreadyApplied || readyToJoinEvent)) {
+      return t('join');
+    }
+    if (finishedEvent && !recordingUrl) {
+      return t('workshop-video-soon');
+    }
+    if (finishedEvent && recordingUrl) {
+      return t('watch-workshop-recording');
+    }
+    return t('reserv-button-text');
+  };
 
   const handleOnReadyToStart = () => {
     setReadyToJoinEvent(true);
@@ -323,7 +336,7 @@ function Workshop({ eventData, asset }) {
   const allUsersJoinedLength = allUsersJoined?.length || 0;
   const spotsRemain = (capacity - allUsersJoinedLength);
 
-  const buttonEnabled = !finishedEvent && (readyToJoinEvent || !alreadyApplied);
+  const buttonEnabled = ((finishedEvent && recordingUrl) || !finishedEvent) && (readyToJoinEvent || !alreadyApplied);
 
   const handleGetMoreEventConsumables = () => {
     setIsFetchingDataForModal(true);
@@ -878,7 +891,7 @@ function Workshop({ eventData, asset }) {
                           background="white"
                           width="100%"
                           display={(alreadyApplied || readyToJoinEvent) && !event?.online_event ? 'none' : 'block'}
-                          isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || eventNotExists)}
+                          isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                           _disabled={{
                             background: buttonEnabled ? '' : 'gray.350',
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -892,12 +905,13 @@ function Workshop({ eventData, asset }) {
                             cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                           }}
                           onClick={() => {
-                            if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                            if (finishedEvent && recordingUrl) {
+                              window.open(recordingUrl, '_blank');
+                            } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                             else handleJoin();
                           }}
                         >
-                          {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                          {finishedEvent && t('event-finished')}
+                          {getWording()}
                         </Button>
                         {readyToJoinEvent && (
                           <Box display="flex" gap="10px" alignItems="center" height="40px" fontWeight="700" color="gray.dark" textTransform="uppercase" background="red.light" borderRadius="4px" padding="10px">
@@ -1020,7 +1034,7 @@ function Workshop({ eventData, asset }) {
                       className={readyToJoinEvent && !finishedEvent ? 'pulse-blue' : ''}
                       background={buttonEnabled ? hexColor.greenLight : 'gray.350'}
                       textTransform={readyToJoinEvent ? 'uppercase' : 'inherit'}
-                      isDisabled={(finishedEvent || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
+                      isDisabled={((finishedEvent && !recordingUrl) || !readyToJoinEvent) && (alreadyApplied || (eventNotExists && !isAuthenticated))}
                       _disabled={{
                         background: buttonEnabled ? '' : 'gray.350',
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
@@ -1034,12 +1048,13 @@ function Workshop({ eventData, asset }) {
                         cursor: buttonEnabled ? 'pointer' : 'not-allowed',
                       }}
                       onClick={() => {
-                        if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
+                        if (finishedEvent && recordingUrl) {
+                          window.open(recordingUrl, '_blank');
+                        } else if (!event?.online_event && (isAuthenticated && !alreadyApplied && !readyToJoinEvent)) setIsModalConfirmOpen(true);
                         else handleJoin();
                       }}
                     >
-                      {!finishedEvent && ((alreadyApplied || readyToJoinEvent) ? t('join') : t('reserv-button-text'))}
-                      {finishedEvent && t('event-finished')}
+                      {getWording()}
                     </Button>
                   ) : (
                     <>

@@ -7,6 +7,8 @@
   "suggest-join-event": "Haga clic a continuación para confirmar su participación y guardar su lugar para este evento",
   "suggest-join-in-person-event": "Este es un evento presencial en vivo, puedes reservar tu lugar aquí",
   "reserv-button-text": "Reservar lugar",
+  "watch-workshop-recording": "Ver grabación del workshop",
+  "workshop-video-soon": "Video del taller pronto",
   "duration-hours": "{{hours}}hr de duración",
   "greetings": "Hola {{name}} 👋",
   "starts-in": "El evento empieza en:",
