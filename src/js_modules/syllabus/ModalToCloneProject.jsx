@@ -362,6 +362,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                   containerStyle={{ height: '100%' }}
                   iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
                   url={steps?.[expanded]?.video || ''}
+                  autoPlay
                   height="100%"
                 />
               ) : (
@@ -372,6 +373,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                       containerStyle={{ height: '100%' }}
                       iframeStyle={{ background: 'none', borderRadius: '11px', height: '100%' }}
                       url={localIntro.video}
+                      autoPlay
                       height="100%"
                     />
                   ) : (
