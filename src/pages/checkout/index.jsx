@@ -105,8 +105,8 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
-  const [suggestedPlan, setSuggestedPlan] = useState(undefined);
-  const [suggestedPlanDiscount, setSuggestedPlanDiscount] = useState(undefined);
+  const [suggestedPlans, setSuggestedPlans] = useState(undefined);
+  const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -276,10 +276,10 @@ function Checkout() {
       if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
         const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
         const suggestedPlanCoupon = data[0];
-        setSuggestedPlanDiscount(suggestedPlanCoupon);
+        setSuggestedPlansDiscount(suggestedPlanCoupon);
       }
 
-      setSuggestedPlan(suggestedPlanInfo[0]?.suggested_plan);
+      setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
       setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
@@ -603,12 +603,12 @@ function Checkout() {
 
   const renderPlanDetails = () => {
     if (originalPlan?.selectedPlan?.isFreeTier) {
-      const financingOptions = suggestedPlan?.financing_options || [];
-      const monthlyPayment = suggestedPlan?.price_per_month;
-      const yearlyPayment = suggestedPlan?.price_per_year;
+      const financingOptions = suggestedPlans?.financing_options || [];
+      const monthlyPayment = suggestedPlans?.price_per_month;
+      const yearlyPayment = suggestedPlans?.price_per_year;
 
-      const discount = suggestedPlanDiscount?.discount_value || 0;
-      const isPercentage = suggestedPlanDiscount?.discount_type === 'PERCENT_OFF';
+      const discount = suggestedPlansDiscounts?.discount_value || 0;
+      const isPercentage = suggestedPlansDiscounts?.discount_type === 'PERCENT_OFF';
 
       let financingText = '';
 
@@ -663,7 +663,7 @@ function Checkout() {
         financingText = t('free_trial_one_week');
       }
 
-      if (suggestedPlanDiscount?.discount_value > 0) {
+      if (suggestedPlansDiscounts?.discount_value > 0) {
         financingText += ` ${t('limited_time_offer')}`;
       }
 
