@@ -12,6 +12,9 @@
     "read-more" :"Lee la ciencia detrás de esto.",
     "read-more-link": "https://4geeks.com/es/mastering-technical-knowledge"
   },
+  "free_trial_one_payment": "Gratis por 1 semana y luego ${{price}} único pago",
+  "free_trial_multiple_payments": "Gratis por 1 semana y luego {{numPayments}} pagos de ${{firstPrice}} o ${{oneTimePrice}} único pago",
+  "free_trial_one_week": "Prueba gratuita por 1 semana",
   "added-features-title": "+ También puedes agregar",
   "fixed-price-disclaimer":"Los descuentos de precio fijo se aplicarán solo al primer mes cuando se financie por más de un mes. Los descuentos porcentuales se aplicarán a todos los meses.",
   "total": "Total",

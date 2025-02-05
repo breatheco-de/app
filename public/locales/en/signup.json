@@ -12,6 +12,9 @@
     "read-more" :"Read the science behind it.",
     "read-more-link": "https://4geeks.com/mastering-technical-knowledge"
   },
+  "free_trial_one_payment": "Free for 1 week and then ${{price}} one time",
+  "free_trial_multiple_payments": "Free for 1 week and then {{numPayments}} payments of ${{firstPrice}} or ${{oneTimePrice}} one time",
+  "free_trial_one_week": "Free trial for 1 week",
   "added-features-title": "+ You can also add",
   "fixed-price-disclaimer":"Fixed price discounts will only be applied to the first month when financed for more than one month. Percentage discounts will be applied to all months.",
   "total": "Total",

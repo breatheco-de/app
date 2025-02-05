@@ -105,6 +105,7 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [suggestedPlan, setSuggestePlan] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -267,6 +268,11 @@ function Checkout() {
       const selectedPlan = processedPlan?.plans?.length > 1
         ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
         : (processedPlan?.plans?.[0] || {});
+
+      const res = await bc.payment({ original_plan: processedPlan.slug }).planOffer();
+      const suggestedPlanInfo = res.data;
+
+      setSuggestePlan(suggestedPlanInfo[0].suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
       setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
@@ -589,13 +595,40 @@ function Checkout() {
   };
 
   const renderPlanDetails = () => {
+    //Checkear lo que ocurre con el free trial en eventos
     if (originalPlan?.selectedPlan?.isFreeTier) {
-      const res = bc.payment({ original_plan: originalPlan.slug }).planOffer();
-      const postFreePlanInfo = res.data;
-      console.log('HOLAAAAAAAAAA', postFreePlanInfo);
+      const financingOptions = suggestedPlan?.financing_options || [];
+
+      const options = financingOptions.map((opt) => ({
+        price: opt.monthly_price,
+        months: opt.how_many_months,
+      }));
+
+      let financingText = '';
+
+      if (options.length > 0) {
+        options.sort((a, b) => a.months - b.months);
+
+        if (options.length === 1) {
+          financingText = t('free_trial_one_payment', { price: options[0].price });
+        }
+
+        if (options.length > 1) {
+          financingText = t('free_trial_multiple_payments', {
+            numPayments: options.length,
+            firstPrice: options[options.length - 1].price,
+            oneTimePrice: options[0].price,
+          });
+        }
+      }
+
+      if (options.length === 0) {
+        financingText = t('free_trial_one_week');
+      }
+
       return (
         <Text size="16px" color="green.400">
-          {originalPlan?.selectedPlan?.description || 'Free plan'}
+          {financingText}
         </Text>
       );
     }
