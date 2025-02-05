@@ -171,6 +171,12 @@ function AuthProvider({ children, pageProps }) {
     window.location.href = inviteUrl;
   };
 
+  useEffect(() => {
+    if (state.isAuthenticated && (router.pathname === '/' || router.pathname === '')) {
+      router.push('/choose-program');
+    }
+  }, [state.isAuthenticated, router.pathname]);
+
   const parseCohort = (elem) => {
     const { cohort, ...cohort_user } = elem;
     const { syllabus_version } = cohort;
