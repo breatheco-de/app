@@ -223,8 +223,8 @@
         "description": "Use your computer terminal to get inside your recently created folder and start learnpack: \n```bash\n$ cd {{repoName}}\n$ learnpack start\n```"
       },
       "project-readme": {
-        "label": "Read the README.md inside the project",
-        "description": "Once you open the project in your editor you will find a README.md file containing more instructions on how to run the project"
+        "label": "Open your code editor and read the README.md inside the project",
+        "description": "Open your code editor. If you're using VSCode, click on <b>\"File\"</b>, then <b>\"Open Folder\"</b> and select the folder where you cloned the project. Click <b>\"Open\"</b>. After that, you'll find a <b>README.es.md</b> file with detailed instructions on how to run the project."
       },
       "os-list": [
         {
@@ -259,8 +259,9 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
-              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example). From here open the terminal to follow the next steps.",
               "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-organize-your-files.mp4",
               "source": ""
             },
@@ -329,8 +330,9 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
-              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example). From here open the terminal to follow the next steps.",
               "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
               "source": ""
             },
@@ -399,8 +401,9 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
-              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
+              "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example). From here open the terminal to follow the next steps.",
               "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
               "source": ""
             },
