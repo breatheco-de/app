@@ -554,6 +554,7 @@ function CoursePage({ data, syllabus }) {
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
+        paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
