@@ -25,7 +25,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
 
-  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
+  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price || item.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
 
   const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
@@ -219,7 +219,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   ) : (
                     <Flex gridGap="8px" alignItems="center">
                       <Box color={color} textAlign="center">
-                        {existsOptionList
+                        {existsOptionList || discountApplied
                           ? (
                             <>
                               {priceProcessed.originalPrice && (

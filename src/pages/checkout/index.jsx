@@ -105,7 +105,8 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
-  const [suggestedPlan, setSuggestePlan] = useState(undefined);
+  const [suggestedPlan, setSuggestedPlan] = useState(undefined);
+  const [suggestedPlanDiscount, setSuggestedPlanDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -269,10 +270,16 @@ function Checkout() {
         ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
         : (processedPlan?.plans?.[0] || {});
 
-      const res = await bc.payment({ original_plan: processedPlan.slug }).planOffer();
+      const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
       const suggestedPlanInfo = res.data;
 
-      setSuggestePlan(suggestedPlanInfo[0].suggested_plan);
+      if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
+        const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
+        const suggestedPlanCoupon = data[0];
+        setSuggestedPlanDiscount(suggestedPlanCoupon);
+      }
+
+      setSuggestedPlan(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
       setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
@@ -595,42 +602,72 @@ function Checkout() {
   };
 
   const renderPlanDetails = () => {
-    //Checkear lo que ocurre con el free trial en eventos
     if (originalPlan?.selectedPlan?.isFreeTier) {
       const financingOptions = suggestedPlan?.financing_options || [];
+      const monthlyPayment = suggestedPlan?.price_per_month;
+      const yearlyPayment = suggestedPlan?.price_per_year;
 
-      const options = financingOptions.map((opt) => ({
-        price: opt.monthly_price,
-        months: opt.how_many_months,
-      }));
+      const discount = suggestedPlanDiscount?.discount_value || 0;
+      const isPercentage = suggestedPlanDiscount?.discount_type === 'PERCENT_OFF';
 
       let financingText = '';
 
-      if (options.length > 0) {
-        options.sort((a, b) => a.months - b.months);
+      if (financingOptions.length > 0) {
+        financingOptions.sort((a, b) => a.months - b.months);
 
-        if (options.length === 1) {
-          financingText = t('free_trial_one_payment', { price: options[0].price });
+        if (financingOptions.length === 1) {
+          let finalPrice = financingOptions[0].monthly_price;
+          if (discount > 0) {
+            finalPrice = isPercentage ? finalPrice * (1 - discount) : finalPrice - discount;
+          }
+
+          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2) });
         }
 
-        if (options.length > 1) {
+        if (financingOptions.length > 1) {
+          let firstPrice = financingOptions[financingOptions.length - 1].monthly_price;
+          let lastPrice = financingOptions[0].monthly_price;
+
+          if (discount > 0) {
+            firstPrice = isPercentage ? firstPrice * (1 - discount) : firstPrice - discount;
+            lastPrice = isPercentage ? lastPrice * (1 - discount) : lastPrice - discount;
+          }
+
           financingText = t('free_trial_multiple_payments', {
-            numPayments: options.length,
-            firstPrice: options[options.length - 1].price,
-            oneTimePrice: options[0].price,
+            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
+            firstPrice: firstPrice.toFixed(2),
+            oneTimePrice: lastPrice.toFixed(2),
           });
         }
       }
 
-      if (options.length === 0) {
+      if (financingOptions.length === 0) {
+        if (monthlyPayment) {
+          let finalMonthlyPrice = monthlyPayment;
+          if (discount > 0) {
+            finalMonthlyPrice = isPercentage ? finalMonthlyPrice * (1 - discount) : finalMonthlyPrice - discount;
+          }
+          financingText = t('free_trial_monthly_payment', { monthlyPrice: finalMonthlyPrice.toFixed(2) });
+        }
+
+        if (yearlyPayment && !monthlyPayment) {
+          let finalYearlyPrice = yearlyPayment;
+          if (discount > 0) {
+            finalYearlyPrice = isPercentage ? finalYearlyPrice * (1 - discount) : finalYearlyPrice - discount;
+          }
+          financingText = t('free_trial_yearly_payment', { yearlyPrice: finalYearlyPrice.toFixed(2) });
+        }
+      }
+
+      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
         financingText = t('free_trial_one_week');
       }
 
-      return (
-        <Text size="16px" color="green.400">
-          {financingText}
-        </Text>
-      );
+      if (suggestedPlanDiscount?.discount_value > 0) {
+        financingText += ` ${t('limited_time_offer')}`;
+      }
+
+      return <Text size="16px" color="green.400">{financingText}</Text>;
     }
 
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
@@ -649,7 +686,7 @@ function Checkout() {
       );
     }
 
-    return null; // Retorno por defecto si ninguna condición se cumple
+    return null;
   };
 
   return (

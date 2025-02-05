@@ -126,7 +126,7 @@ function PricingView() {
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    await getSelfAppliedCoupon(suggestedPlan.slug);
+    await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))
