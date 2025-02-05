@@ -12,7 +12,7 @@ import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
 
-export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, isFetching, relatedSubscription, moneyBack, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
@@ -365,6 +365,13 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Accordion>
           )}
         </Box>
+        {
+          isPayable && moneyBack && (
+            <Text size="14px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal" textAlign="center">
+              {t('common:money-back-guarantee')}
+            </Text>
+          )
+        }
       </Flex>
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">
@@ -471,10 +478,12 @@ PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
+  moneyBack: PropTypes.bool,
   courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
+  moneyBack: false,
   courseData: {},
 };

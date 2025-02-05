@@ -412,6 +412,7 @@ function PricingView() {
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
@@ -424,6 +425,7 @@ function PricingView() {
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
@@ -435,6 +437,7 @@ function PricingView() {
             {bootcampInfo?.type && (
               <PricingCard
                 item={bootcampInfo}
+                moneyBack={false}
                 width={{ base: '300px', md: '100%' }}
                 display="flex"
               />
