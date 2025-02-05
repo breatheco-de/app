@@ -186,8 +186,6 @@ function AuthProvider({ children, pageProps }) {
     const token = getToken();
 
     if (token !== undefined && token !== null) {
-      const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
-      const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
@@ -214,6 +212,10 @@ function AuthProvider({ children, pageProps }) {
             const { data } = await bc.admissions().me();
             const { cohorts: cohortUsers, ...userData } = data;
             const cohorts = cohortUsers.map(parseCohort);
+
+            const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
+            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+
             dispatch({
               type: 'INIT',
               payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
@@ -262,7 +264,7 @@ function AuthProvider({ children, pageProps }) {
       setCoupon(queryCoupon);
     }
     authHandler();
-  }, [router]);
+  }, [router.pathname]);
 
   useEffect(() => {
     if (user && isRigoInitialized) {
