@@ -169,19 +169,37 @@ function CoursePage({ data, syllabus }) {
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
+  const handleCoupon = (priceText) => {
+    if (!selfAppliedCoupon || featuredPlanToEnroll.price === 0) return priceText;
+
+    const currencySymbol = priceText.replace(/[\d.,]/g, '');
+
+    let discountedPrice;
+
+    if (selfAppliedCoupon.discount_type === 'PERCENT_OFF') {
+      discountedPrice = featuredPlanToEnroll.price - (featuredPlanToEnroll.price * selfAppliedCoupon.discount_value);
+    } else {
+      discountedPrice = featuredPlanToEnroll.price - selfAppliedCoupon.discount_value;
+    }
+
+    discountedPrice = Math.floor(discountedPrice * 100) / 100;
+
+    return currencySymbol + discountedPrice;
+  };
+
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
+        return `${t('signup:info.monthly')} ${handleCoupon(featuredPlanToEnroll.priceText)}`;
       }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
       }
       if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
       }
       if (featuredPlanToEnroll?.type === 'TRIAL') {
         return t('common:start-free-trial');
@@ -703,7 +721,7 @@ function CoursePage({ data, syllabus }) {
                             ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
-                        {payableList?.length > 0 && (
+                        {payableList?.length > 1 && (
                           <Button
                             variant="outline"
                             color="green.400"
