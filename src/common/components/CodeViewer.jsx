@@ -392,7 +392,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           router.push('/login');
         }}
         actionHandler={() => {
-          setStorageItem('redirect', router?.asPath);
+          setStorageItem('redirected-from', router?.asPath);
           router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
         handlerText={t('log-in-modal.signup')}
