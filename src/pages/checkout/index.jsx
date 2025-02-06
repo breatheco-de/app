@@ -105,6 +105,8 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [suggestedPlans, setSuggestedPlans] = useState(undefined);
+  const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -267,6 +269,17 @@ function Checkout() {
       const selectedPlan = processedPlan?.plans?.length > 1
         ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
         : (processedPlan?.plans?.[0] || {});
+
+      const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
+      const suggestedPlanInfo = res.data;
+
+      if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
+        const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
+        const suggestedPlanCoupon = data[0];
+        setSuggestedPlansDiscount(suggestedPlanCoupon);
+      }
+
+      setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
       setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
@@ -590,11 +603,72 @@ function Checkout() {
 
   const renderPlanDetails = () => {
     if (originalPlan?.selectedPlan?.isFreeTier) {
-      return (
-        <Text size="16px" color="green.400">
-          {originalPlan?.selectedPlan?.description || 'Free plan'}
-        </Text>
-      );
+      const financingOptions = suggestedPlans?.financing_options || [];
+      const monthlyPayment = suggestedPlans?.price_per_month;
+      const yearlyPayment = suggestedPlans?.price_per_year;
+
+      const discount = suggestedPlansDiscounts?.discount_value || 0;
+      const isPercentage = suggestedPlansDiscounts?.discount_type === 'PERCENT_OFF';
+
+      let financingText = '';
+
+      if (financingOptions.length > 0) {
+        financingOptions.sort((a, b) => a.months - b.months);
+
+        if (financingOptions.length === 1) {
+          let finalPrice = financingOptions[0].monthly_price;
+          if (discount > 0) {
+            finalPrice = isPercentage ? finalPrice * (1 - discount) : finalPrice - discount;
+          }
+
+          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
+        }
+
+        if (financingOptions.length > 1) {
+          let firstPrice = financingOptions[financingOptions.length - 1].monthly_price;
+          let lastPrice = financingOptions[0].monthly_price;
+
+          if (discount > 0) {
+            firstPrice = isPercentage ? firstPrice * (1 - discount) : firstPrice - discount;
+            lastPrice = isPercentage ? lastPrice * (1 - discount) : lastPrice - discount;
+          }
+
+          financingText = t('free_trial_multiple_payments', {
+            description: originalPlan.selectedPlan.description,
+            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
+            firstPrice: firstPrice.toFixed(2),
+            oneTimePrice: lastPrice.toFixed(2),
+          });
+        }
+      }
+
+      if (financingOptions.length === 0) {
+        if (monthlyPayment) {
+          let finalMonthlyPrice = monthlyPayment;
+          if (discount > 0) {
+            finalMonthlyPrice = isPercentage ? finalMonthlyPrice * (1 - discount) : finalMonthlyPrice - discount;
+          }
+          financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
+        }
+
+        if (yearlyPayment && !monthlyPayment) {
+          let finalYearlyPrice = yearlyPayment;
+          if (discount > 0) {
+            finalYearlyPrice = isPercentage ? finalYearlyPrice * (1 - discount) : finalYearlyPrice - discount;
+          }
+          financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
+        }
+      }
+
+      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
+        financingText = originalPlan?.selectedPlan?.description;
+      }
+
+      if (suggestedPlansDiscounts?.discount_value > 0) {
+        financingText += ` ${t('limited_time_offer')}`;
+      }
+
+      return <Text size="16px" color="green.400">{financingText}</Text>;
     }
 
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
@@ -613,7 +687,7 @@ function Checkout() {
       );
     }
 
-    return null; // Retorno por defecto si ninguna condición se cumple
+    return null;
   };
 
   return (
