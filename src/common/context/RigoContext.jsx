@@ -16,7 +16,6 @@ function RigoProvider({ children }) {
   useEffect(() => {
     if (isRigoInitialized) {
       window.rigo.on('open_bubble', (data) => {
-        console.log('EVENT open_bubble');
         reportDatalayer({
           dataLayer: {
             event: 'rigobot_open_bubble',
@@ -27,7 +26,6 @@ function RigoProvider({ children }) {
       });
 
       window.rigo.on('incoming_message', (data) => {
-        console.log('EVENT incoming_message');
         reportDatalayer({
           dataLayer: {
             event: 'rigobot_incoming_message',
@@ -48,7 +46,7 @@ function RigoProvider({ children }) {
       }}
     >
       <Script
-        src="https://unpkg.com/rigo-ai@0.1.4/dist/main.js"
+        src="https://unpkg.com/rigo-ai@0.1.5/dist/main.js"
         onLoad={() => {
           window.rigo.init(process.env.RIGOBOT_HASH, {
             context: '',
