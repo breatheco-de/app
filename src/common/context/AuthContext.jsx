@@ -202,7 +202,7 @@ function AuthProvider({ children, pageProps }) {
         }
         dispatch({
           type: 'INIT',
-          payload: { user: null, isAuthenticated: false, isLoading: false },
+          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [] },
         });
       } else {
         handleSession(token);
@@ -264,7 +264,7 @@ function AuthProvider({ children, pageProps }) {
       setCoupon(queryCoupon);
     }
     authHandler();
-  }, [router.pathname]);
+  }, [router]);
 
   useEffect(() => {
     if (user && isRigoInitialized) {
