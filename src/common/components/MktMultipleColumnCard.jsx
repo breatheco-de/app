@@ -45,12 +45,10 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
                 width={{ base: '158px', md: '288px' }}
                 height={{ base: '162px', md: '281px' }}
                 borderRadius="8px"
-                // padding={{ base: '8px', md: '16px' }}
                 objectFit="cover"
               />
               <Box
                 width={{ md: '288px' }}
-                // height={{ base: '103px' }}
                 minHeight="82px"
                 display="flex"
                 flexDirection="column"
