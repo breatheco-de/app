@@ -621,7 +621,7 @@ function Checkout() {
             finalPrice = isPercentage ? finalPrice * (1 - discount) : finalPrice - discount;
           }
 
-          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2) });
+          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
         }
 
         if (financingOptions.length > 1) {
@@ -634,6 +634,7 @@ function Checkout() {
           }
 
           financingText = t('free_trial_multiple_payments', {
+            description: originalPlan.selectedPlan.description,
             numPayments: financingOptions[financingOptions.length - 1].how_many_months,
             firstPrice: firstPrice.toFixed(2),
             oneTimePrice: lastPrice.toFixed(2),
@@ -647,7 +648,7 @@ function Checkout() {
           if (discount > 0) {
             finalMonthlyPrice = isPercentage ? finalMonthlyPrice * (1 - discount) : finalMonthlyPrice - discount;
           }
-          financingText = t('free_trial_monthly_payment', { monthlyPrice: finalMonthlyPrice.toFixed(2) });
+          financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
         }
 
         if (yearlyPayment && !monthlyPayment) {
@@ -655,12 +656,12 @@ function Checkout() {
           if (discount > 0) {
             finalYearlyPrice = isPercentage ? finalYearlyPrice * (1 - discount) : finalYearlyPrice - discount;
           }
-          financingText = t('free_trial_yearly_payment', { yearlyPrice: finalYearlyPrice.toFixed(2) });
+          financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
         }
       }
 
       if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
-        financingText = t('free_trial_one_week');
+        financingText = originalPlan?.selectedPlan?.description;
       }
 
       if (suggestedPlansDiscounts?.discount_value > 0) {
