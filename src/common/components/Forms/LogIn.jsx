@@ -1,15 +1,18 @@
+/* eslint-disable no-unused-vars */
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
-  Button, FormControl, Stack, Text, Box, Input, FormErrorMessage,
+  Button, FormControl, Stack, Text, Box, Input, FormErrorMessage, Spinner,
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { reportDatalayer } from '../../../utils/requests';
 // import { useRouter } from 'next/router';
 import Icon from '../Icon/index';
+import FieldForm from './FieldForm';
 import validationSchema from './validationSchemas';
+import useValidateUser from './useValidateUser';
 import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
@@ -17,13 +20,20 @@ import { getBrowserInfo } from '../../../utils';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t } = useTranslation('login');
+  const { emailValidation, thriggerValidation } = useValidateUser();
+  const [formProps, setFormProps] = useState({
+    email: '',
+    password: '',
+  });
   const [showPSW, setShowPSW] = useState(false);
+  const [step, setStep] = useState(1);
+
   const { login } = useAuth();
   const toast = useToast();
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
-  const { borderColor } = useStyle();
+  const { hexColor, borderColor } = useStyle();
 
   const githubLoginUrl = (typeof window !== 'undefined')
     ? `${BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
@@ -85,7 +95,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
               }}
             >
               <Icon icon="github" width="18px" height="18px" />
-              <Text fontSize="13px" marginLeft="10px" textTransform="uppercase">
+              <Text as="span" fontSize="13px" marginLeft="10px" textTransform="uppercase">
                 {t('login:login-with-github')}
               </Text>
             </Button>
@@ -106,32 +116,20 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 marginBottom="9px"
               />
             </Box>
-            <Field name="email">
-              {({ field, form }) => (
-                <FormControl isInvalid={form.errors.email && form.touched.email}>
-                  {!hideLabel && (
-                    <FormLabel
-                      margin="0px"
-                      color="gray.default"
-                      fontSize="sm"
-                      float="left"
-                      htmlFor="email"
-                    >
-                      {t('common:email')}
-                    </FormLabel>
-                  )}
-                  <Input
-                    {...field}
-                    type="email"
-                    placeholder={hideLabel ? t('common:email') : 'email@example.co'}
-                    height="50px"
-                    borderColor="gray.default"
-                    borderRadius="3px"
-                  />
-                  <FormErrorMessage>{form.errors.email}</FormErrorMessage>
-                </FormControl>
-              )}
-            </Field>
+            <InputGroup>
+              <FieldForm
+                type="email"
+                name="email"
+                label={t('common:email')}
+                formProps={formProps}
+                setFormProps={setFormProps}
+                handleOnChange={thriggerValidation}
+              />
+              <InputRightElement top="50%" transform="translate(0,-50%)">
+                {emailValidation.loading && <Spinner color={hexColor.blueDefault} />}
+              </InputRightElement>
+            </InputGroup>
+            {emailValidation.error && <Box marginTop="5px !important" color={hexColor.danger}>{emailValidation.error}</Box>}
             <Field name="password">
               {({ field, form }) => (
                 <FormControl isInvalid={form.errors.password && form.touched.password}>

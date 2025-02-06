@@ -52,6 +52,7 @@ const breathecode = {
         }),
       }),
       verifyRigobotConnection: (token) => breathecode.get(`${rigoHostV1}/auth/me/token?breathecode_token=${token}`),
+      verifyEmail: (email) => breathecode.get(`${url}/emailverification/${email}`),
       resendConfirmationEmail: (inviteId) => axios.put(`${url}/invite/resend/${inviteId}`),
       me: () => axios.get(`${url}/user/me`),
       updateProfile: (arg) => axios.put(`${url}/user/me`, { ...arg }),
