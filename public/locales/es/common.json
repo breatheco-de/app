@@ -245,6 +245,14 @@
               "video": "https://www.youtube.com/watch?v=vYn679OksR0",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
               "source-label": "¿Cómo instalar NVM en MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
@@ -257,6 +265,7 @@
               "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
+              "slug": "create-folders",
               "label": "Crea una carpeta donde guardarás estos ejercicios",
               "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
               "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
@@ -315,6 +324,14 @@
               "video": "https://www.youtube.com/watch?v=LuaunSg8ppI",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-linux",
               "source-label": "¿Cómo instalar NVM en Linux?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
@@ -385,6 +402,14 @@
               "video": "https://www.youtube.com/watch?v=nyiJ1PZhBuY",
               "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-windows",
               "source-label": "¿Cómo instalar NVM en Windows?"
+            },
+            {
+              "name": "javascript",
+              "label": "Instala Node.JS en tu ordenador",
+              "description": "Recomendamos instalar NVM para gestionar tus versiones de node.js mucho más fácil localmente. Sigue este enlace para una guía completa sobre cómo instalar en MacOS.",
+              "video": "https://www.youtube.com/watch?v=vYn679OksR0",
+              "source": "https://4geeks.com/es/how-to/como-instalar-nvm-en-mac-os-node-js-y-npm",
+              "source-label": "¿Cómo instalar NVM en MacOS?"
             }
           ],
           "steps": [
@@ -473,6 +498,7 @@
   "junior": "Junior",
   "mid-level": "Mid level",
   "senior": "Senior",
+  "money-back-guarantee": "Obtén un reembolso completo antes de 30 días si no es lo que esperabas",
   "start-free-trial": "Iniciar prueba gratuita",
   "proceed-to-payment": "Proceder al pago",
   "select-cohort": "Selecciona una cohorte",
