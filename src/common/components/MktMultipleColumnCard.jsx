@@ -18,18 +18,16 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
         flexWrap={{ base: 'wrap', lg: 'nowrap' }}
         gap={4}
         justifyItems="center"
-        justifyContent="space-around"
+        justifyContent="space-between"
       >
         {limitedColumns.map((column, index) => {
-          console.log('ACAAAAAAAAA', limitedColumns);
-          console.log('COLUMNIMAGE', column.image.url);
           const idKey = `column-${index}`;
           return (
             <Box
               key={idKey}
               width={{ base: '100%', md: '304px' }}
               maxWidth="1280px"
-              height={{ md: '417px' }}
+              height={{ base: '178px', md: '417px' }}
               borderRadius={{ base: '8px', md: '8px' }}
               padding={{ base: '8px', md: '8px' }}
               gap={{ base: '8px', md: '16px' }}
@@ -47,7 +45,7 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
                 width={{ base: '158px', md: '288px' }}
                 height={{ base: '162px', md: '281px' }}
                 borderRadius="8px"
-                padding="16px"
+                // padding={{ base: '8px', md: '16px' }}
                 objectFit="cover"
               />
               <Box
@@ -66,15 +64,17 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
               >
                 <Text
                   fontWeight="bold"
-                  fontSize="16px"
+                  fontSize="18px"
                   fontFamily={fontFamily}
+                  lineHeight="21.6px"
                 >
                   {`${index + 1}.  `}
                   {column.column_title}
                 </Text>
                 <Text
-                  fontSize="14px"
+                  fontSize={{ base: '14px' }}
                   fontFamily={fontFamily}
+                  lineHeight="21.6px"
                 >
                   {column.column_description}
                 </Text>
