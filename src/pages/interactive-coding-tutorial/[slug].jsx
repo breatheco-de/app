@@ -242,7 +242,7 @@ function ProjectSlug({ project, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
         asset={project}
         videoUrl={project.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}

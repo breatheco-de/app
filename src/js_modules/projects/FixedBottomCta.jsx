@@ -10,7 +10,7 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, ...rest }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isAuthenticated, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
 
@@ -85,12 +85,14 @@ StickyBottomCta.propTypes = {
   onClick: PropTypes.func.isRequired,
   isCtaVisible: PropTypes.bool.isRequired,
   financingAvailable: PropTypes.string,
+  isAuthenticated: PropTypes.bool,
 };
 
 StickyBottomCta.defaultProps = {
   couponApplied: undefined,
   videoUrl: undefined,
   financingAvailable: undefined,
+  isAuthenticated: false,
 };
 
 export default StickyBottomCta;

@@ -210,7 +210,8 @@ function Exercise({ exercise, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
+        isAuthenticated={isAuthenticated}
         asset={exercise}
         videoUrl={exercise.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
