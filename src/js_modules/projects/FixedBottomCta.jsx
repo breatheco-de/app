@@ -16,6 +16,18 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
 
   if (!isCtaVisible) return null;
 
+  const getHeadingForAsset = () => {
+    if (!isAuthenticated && videoUrl) return t('video-instructions');
+    if (isAuthenticated && videoUrl) return t('video-instructions-logged');
+    return t('start-interactive');
+  };
+
+  const getButtonTextForAsset = () => {
+    if (!isAuthenticated) return t('create-account');
+    if (videoUrl) return t('see-instructions');
+    return t('start-interactive-cta');
+  };
+
   return (
     <>
       <Box
@@ -48,10 +60,10 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           {asset && (
             <>
               <Heading size="sm" mt="10px">
-                {videoUrl ? t('video-instructions') : t('start-interactive')}
+                {getHeadingForAsset()}
               </Heading>
               <Button display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                {videoUrl ? t('see-instructions') : t('create-account')}
+                {getButtonTextForAsset()}
               </Button>
             </>
           )}
