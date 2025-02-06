@@ -27,6 +27,8 @@
     "ready-to-join-title": "¡En vivo ahora!",
     "ready-to-join-description": "Este evento está sucediendo ahora mismo. Regístrese ahora para unirse al evento.",
     "ready-to-join-description-logged": "Este evento está sucediendo ahora mismo. Haga clic a continuación para unirse al evento.",
+    "watch-workshop-recording-no-auth-title": "Ve la grabación de este evento",
+    "watch-workshop-recording-no-auth-description": "Inicia sesión para ver la grabación de este evento y poder unirte a los próximos para resolver desafíos técnicos o profesionales en vivo",
     "joined-title": "Este evento comenzará pronto",
     "joined-description": "Ya te registraste para este evento. Podrás unirte una vez que comience.",
     "joined-description-in-person": "Ya te registraste para este evento ¡Te estaremos esperando!",

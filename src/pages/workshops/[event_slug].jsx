@@ -399,6 +399,37 @@ function Workshop({ eventData, asset }) {
   }, [subscriptionsForCurrentEvent]);
 
   const dynamicFormInfo = () => {
+    if (!isAuth) {
+      if (finishedEvent && recordingUrl) {
+        return ({
+          title: t('form.watch-workshop-recording-no-auth-title'),
+          description: t('form.watch-workshop-recording-no-auth-description'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      } if (finishedEvent && !recordingUrl) {
+        return ({
+          title: t('form.finished-title'),
+          description: t('form.watch-workshop-recording-no-auth-description'),
+          childrenDescription: (
+            <Box>
+              <Box mb="10px" display="flex" gridGap="5px" justifyContent="center">
+                <Text color={hexColor.fontColor3} size="14px" fontWeight={700} width="fit-content">
+                  {event?.venue?.street_address}
+                </Text>
+              </Box>
+            </Box>
+          ),
+        });
+      }
+    }
     if (finishedEvent) {
       return ({
         title: t('form.finished-title'),
@@ -983,7 +1014,7 @@ function Workshop({ eventData, asset }) {
               <Box display={{ base: isAuth ? 'none' : 'block', md: 'block' }}>
                 <ShowOnSignUp
                   showVerifyEmail={false}
-                  hideForm={finishedEvent}
+                  hideForm={isAuth}
                   existsConsumables={existsConsumables}
                   hideSwitchUser={!isFreeForConsumables && (noConsumablesFound && !existsConsumables)}
                   isLive={readyToJoinEvent && !finishedEvent}
