@@ -106,6 +106,7 @@ function Checkout() {
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
   const [suggestedPlans, setSuggestedPlans] = useState(undefined);
+  const [discountValues, setDiscountValues] = useState(undefined);
   const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
@@ -193,7 +194,6 @@ function Checkout() {
 
   const handleCoupon = (coupons, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
-
     if (alreadyAppliedCoupon) {
       toast({
         position: 'top',
@@ -272,6 +272,11 @@ function Checkout() {
 
       const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
       const suggestedPlanInfo = res.data;
+
+      if (couponValue) {
+        const { data } = await bc.payment({ coupons: [couponValue], plan: processedPlan?.slug }).verifyCoupon();
+        setDiscountValues(data);
+      }
 
       if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
         const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
@@ -602,13 +607,27 @@ function Checkout() {
   };
 
   const renderPlanDetails = () => {
+    const applyDiscounts = (price, discountList) => {
+      let finalPrice = price;
+      discountList.forEach(({ discount_value, discount_type }) => {
+        if (discount_value > 0) {
+          finalPrice = discount_type === 'PERCENT_OFF'
+            ? finalPrice * (1 - discount_value)
+            : finalPrice - discount_value;
+        }
+      });
+      return finalPrice;
+    };
+
     if (originalPlan?.selectedPlan?.isFreeTier) {
       const financingOptions = suggestedPlans?.financing_options || [];
       const monthlyPayment = suggestedPlans?.price_per_month;
       const yearlyPayment = suggestedPlans?.price_per_year;
 
-      const discount = suggestedPlansDiscounts?.discount_value || 0;
-      const isPercentage = suggestedPlansDiscounts?.discount_type === 'PERCENT_OFF';
+      const discounts = [
+        suggestedPlansDiscounts,
+        discountValues[0],
+      ].filter(Boolean);
 
       let financingText = '';
 
@@ -616,22 +635,13 @@ function Checkout() {
         financingOptions.sort((a, b) => a.months - b.months);
 
         if (financingOptions.length === 1) {
-          let finalPrice = financingOptions[0].monthly_price;
-          if (discount > 0) {
-            finalPrice = isPercentage ? finalPrice * (1 - discount) : finalPrice - discount;
-          }
-
+          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discounts);
           financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
         }
 
         if (financingOptions.length > 1) {
-          let firstPrice = financingOptions[financingOptions.length - 1].monthly_price;
-          let lastPrice = financingOptions[0].monthly_price;
-
-          if (discount > 0) {
-            firstPrice = isPercentage ? firstPrice * (1 - discount) : firstPrice - discount;
-            lastPrice = isPercentage ? lastPrice * (1 - discount) : lastPrice - discount;
-          }
+          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discounts);
+          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discounts);
 
           financingText = t('free_trial_multiple_payments', {
             description: originalPlan.selectedPlan.description,
@@ -644,18 +654,12 @@ function Checkout() {
 
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
-          let finalMonthlyPrice = monthlyPayment;
-          if (discount > 0) {
-            finalMonthlyPrice = isPercentage ? finalMonthlyPrice * (1 - discount) : finalMonthlyPrice - discount;
-          }
+          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discounts);
           financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
         }
 
         if (yearlyPayment && !monthlyPayment) {
-          let finalYearlyPrice = yearlyPayment;
-          if (discount > 0) {
-            finalYearlyPrice = isPercentage ? finalYearlyPrice * (1 - discount) : finalYearlyPrice - discount;
-          }
+          const finalYearlyPrice = applyDiscounts(yearlyPayment, discounts);
           financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
         }
       }
@@ -664,7 +668,7 @@ function Checkout() {
         financingText = originalPlan?.selectedPlan?.description;
       }
 
-      if (suggestedPlansDiscounts?.discount_value > 0) {
+      if (discounts.length > 0) {
         financingText += ` ${t('limited_time_offer')}`;
       }
 
@@ -672,17 +676,22 @@ function Checkout() {
     }
 
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
+      const originalPrice = originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price;
+      const discountedPrice = applyDiscounts(originalPrice, discountValues);
+
       return (
         <Text size="16px" color="green.400">
-          {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+          {`$${discountedPrice.toFixed(2)} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
         </Text>
       );
     }
 
     if (userSelectedPlan && !isAuthenticated) {
+      const discountedPrice = applyDiscounts(userSelectedPlan?.price, discountValues);
+
       return (
         <Text size="16px" color="green.400">
-          {`$${userSelectedPlan?.price} / ${userSelectedPlan?.title}`}
+          {`$${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
         </Text>
       );
     }
