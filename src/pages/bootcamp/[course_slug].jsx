@@ -18,7 +18,6 @@ import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
 import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
-import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
@@ -169,19 +168,37 @@ function CoursePage({ data, syllabus }) {
     cohort: cohortId,
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
+  const handleCoupon = (priceText) => {
+    if (!selfAppliedCoupon || featuredPlanToEnroll.price === 0) return priceText;
+
+    const currencySymbol = priceText.replace(/[\d.,]/g, '');
+
+    let discountedPrice;
+
+    if (selfAppliedCoupon.discount_type === 'PERCENT_OFF') {
+      discountedPrice = featuredPlanToEnroll.price - (featuredPlanToEnroll.price * selfAppliedCoupon.discount_value);
+    } else {
+      discountedPrice = featuredPlanToEnroll.price - selfAppliedCoupon.discount_value;
+    }
+
+    discountedPrice = Math.floor(discountedPrice * 100) / 100;
+
+    return currencySymbol + discountedPrice;
+  };
+
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
+        return `${t('signup:info.monthly')} ${handleCoupon(featuredPlanToEnroll.priceText)}`;
       }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
       }
       if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
+        return `${handleCoupon(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
       }
       if (featuredPlanToEnroll?.type === 'TRIAL') {
         return t('common:start-free-trial');
@@ -436,7 +453,7 @@ function CoursePage({ data, syllabus }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
 
     setCohortData({
       cohortSyllabus,
@@ -536,6 +553,7 @@ function CoursePage({ data, syllabus }) {
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
+        paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
@@ -703,7 +721,7 @@ function CoursePage({ data, syllabus }) {
                             ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
-                        {payableList?.length > 0 && (
+                        {payableList?.length > 1 && (
                           <Button
                             variant="outline"
                             color="green.400"
@@ -714,6 +732,9 @@ function CoursePage({ data, syllabus }) {
                             {t('common:see-financing-options')}
                           </Button>
                         )}
+                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
+                          {getAlternativeTranslation('common:money-back-guarantee')}
+                        </Text>
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}

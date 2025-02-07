@@ -10,9 +10,11 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isAuthenticated, ...rest }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isAuthenticated, paymentOptions, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
+
+  const includesFreeTier = paymentOptions?.some((option) => option.isFreeTier);
 
   if (!isCtaVisible) return null;
 
@@ -78,9 +80,11 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
                   </Button>
                 </>
               )}
-              <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                {t('common:start-free-trial')}
-              </Button>
+              {includesFreeTier && (
+                <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
+                  {t('common:start-free-trial')}
+                </Button>
+              )}
             </>
           )}
         </Box>
@@ -98,6 +102,7 @@ StickyBottomCta.propTypes = {
   isCtaVisible: PropTypes.bool.isRequired,
   financingAvailable: PropTypes.string,
   isAuthenticated: PropTypes.bool,
+  paymentOptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
 };
 
 StickyBottomCta.defaultProps = {

@@ -254,7 +254,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
     if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
-    return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
+    return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone' || step.slug === 'create-folders').concat([...dependenciesSteps, projectReadme]);
   };
 
   const steps = parseSteps();
