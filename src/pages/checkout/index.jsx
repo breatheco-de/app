@@ -273,12 +273,12 @@ function Checkout() {
       const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
       const suggestedPlanInfo = res.data;
 
-      if (couponValue) {
-        const { data } = await bc.payment({ coupons: [couponValue], plan: processedPlan?.slug }).verifyCoupon();
-        setDiscountValues(data);
-      }
+      const couponOnQuery = await getQueryString('coupon');
+      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery], plan: processedPlan?.slug }).verifyCoupon();
+      setDiscountValues(allCouponsApplied);
 
       if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
+        console.log('ejecute el suggested');
         const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
         const suggestedPlanCoupon = data[0];
         setSuggestedPlansDiscount(suggestedPlanCoupon);
@@ -609,7 +609,7 @@ function Checkout() {
   const renderPlanDetails = () => {
     const applyDiscounts = (price, discountList) => {
       let finalPrice = price;
-      discountList.forEach(({ discount_value, discount_type }) => {
+      discountList?.forEach(({ discount_value, discount_type }) => {
         if (discount_value > 0) {
           finalPrice = discount_type === 'PERCENT_OFF'
             ? finalPrice * (1 - discount_value)
@@ -678,6 +678,7 @@ function Checkout() {
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
       const originalPrice = originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price;
       const discountedPrice = applyDiscounts(originalPrice, discountValues);
+      console.log(discountValues);
 
       return (
         <Text size="16px" color="green.400">
