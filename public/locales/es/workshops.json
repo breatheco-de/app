@@ -41,7 +41,7 @@
   "events-joined": "Eventos a los que te has unido",
   "tech-event": "Eventos de {{tech}}",
   "searching-for": "Buscando eventos de '{{search}}'",
-  "search-not-found": "No se encontraron eventos de '{{search}}'",
+  "search-not-found": "No se encontraron eventos de \"{{search}}\"",
   "search-found": "Eventos encontrados de '{{search}}'",
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
   "join-workshop": "Regístrarse al workshop",

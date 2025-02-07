@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Input, Button, Flex, Text, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
@@ -7,6 +7,7 @@ import Heading from './Heading';
 
 function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches, background, popularSearchesTitle, ...rest }) {
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const router = useRouter();
 
   const updateQueryParams = (newParams) => {
@@ -24,10 +25,7 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
   };
 
   const handleInputChange = (e) => {
-    const { value } = e.target;
-    setSearch(value);
-
-    updateQueryParams({ search: value });
+    setSearch(e.target.value);
   };
 
   const handleSearchSubmit = (e) => {
@@ -39,6 +37,22 @@ function MktSearchBar({ id, headingTop, headingBottom, subtitle, popularSearches
     setSearch(term);
     updateQueryParams({ search: term });
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500); // 500ms delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [search]);
+
+  useEffect(() => {
+    if (debouncedSearch !== '') {
+      updateQueryParams({ search: debouncedSearch });
+    }
+  }, [debouncedSearch]);
 
   return (
     <Box id={id} padding={{ base: '10px 0', md: '60px 80px' }} background={useColorModeValue(background)} {...rest}>
