@@ -278,7 +278,6 @@ function Checkout() {
       setDiscountValues(allCouponsApplied);
 
       if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
-        console.log('ejecute el suggested');
         const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
         const suggestedPlanCoupon = data[0];
         setSuggestedPlansDiscount(suggestedPlanCoupon);
