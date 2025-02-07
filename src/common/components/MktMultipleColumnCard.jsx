@@ -49,7 +49,7 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
                 objectFit="cover"
               />
               <Box
-                width={{ md: '288px' }}
+                width="100%"
                 minHeight="82px"
                 display="flex"
                 flexDirection="column"
