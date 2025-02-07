@@ -905,6 +905,27 @@ export interface MultipleColumnCardSliceDefaultItem {
    * - **Documentation**: https://prismic.io/docs/field#select
    */
   font_family_column: prismic.SelectField<"Lato" | "Space Grotesk Variable">;
+
+  /**
+   * Image field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Image
+   * - **Placeholder**: *None*
+   * - **API ID Path**: multiple_column_card.items[].image
+   * - **Documentation**: https://prismic.io/docs/field#image
+   */
+  image: prismic.ImageField<never>;
+
+  /**
+   * Flex Direction field in *MultipleColumnCard → Items*
+   *
+   * - **Field Type**: Select
+   * - **Placeholder**: *None*
+   * - **Default Value**: column
+   * - **API ID Path**: multiple_column_card.items[].flex_direction
+   * - **Documentation**: https://prismic.io/docs/field#select
+   */
+  flex_direction: prismic.SelectField<"column" | "column-reverse", "filled">;
 }
 
 /**

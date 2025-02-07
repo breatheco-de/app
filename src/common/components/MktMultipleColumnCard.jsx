@@ -1,4 +1,4 @@
-import { Box, Grid } from '@chakra-ui/react';
+import { Box, Flex, Image } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import Text from './Text';
 import useStyle from '../hooks/useStyle';
@@ -14,35 +14,73 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
         {title}
       </Text>
 
-      <Grid
-        templateColumns={{ base: '1fr', md: `repeat(${Math.min(limitedColumns.length, 3)}, 1fr)` }}
-        gap={6}
+      <Flex
+        flexWrap={{ base: 'wrap', lg: 'nowrap' }}
+        gap={4}
+        justifyItems="center"
+        justifyContent="space-between"
       >
         {limitedColumns.map((column, index) => {
           const idKey = `column-${index}`;
           return (
             <Box
               key={idKey}
-              p={4}
-              border="1px solid none"
-              borderColor="gray.200"
-              borderRadius="md"
-              boxShadow="sm"
+              width={{ base: '100%', md: '304px' }}
+              maxWidth="1280px"
+              height={{ base: '178px', md: '417px' }}
+              borderRadius={{ base: '8px', md: '8px' }}
+              padding={{ base: '8px', md: '8px' }}
+              gap={{ base: '8px', md: '16px' }}
               bg={navbarBackground}
-              textAlign="left"
+              display="flex"
+              flexDirection={{ base: 'row-reverse', md: column.flex_direction }}
+              justifyContent={{ base: 'center', md: 'space-between' }}
+              boxShadow="sm"
+              overflow="hidden"
+              alignItems={{ base: 'center' }}
             >
-              <Text fontWeight="bold" mb={2} size="18px" fontFamily={fontFamily}>
-                {index + 1}
-                .
-                {column.column_title}
-              </Text>
-              <Text size="18px" fontFamily={fontFamily}>
-                {column.column_description}
-              </Text>
+              <Image
+                src={column.image.url}
+                alt="Column Image"
+                width={{ base: '158px', md: '288px' }}
+                height={{ base: '162px', md: '281px' }}
+                borderRadius="8px"
+                objectFit="cover"
+              />
+              <Box
+                width={{ md: '288px' }}
+                minHeight="82px"
+                display="flex"
+                flexDirection="column"
+                justifyContent={{ base: 'flex-start', md: 'center' }}
+                alignItems="start"
+                alignSelf={{ base: 'baseline' }}
+                padding={{ md: '8px' }}
+                gap={{ base: '8px', md: '8px' }}
+                wordBreak="break-word"
+                textAlign="left"
+              >
+                <Text
+                  fontWeight="bold"
+                  fontSize="18px"
+                  fontFamily={fontFamily}
+                  lineHeight="21.6px"
+                >
+                  {`${index + 1}.  `}
+                  {column.column_title}
+                </Text>
+                <Text
+                  fontSize={{ base: '14px' }}
+                  fontFamily={fontFamily}
+                  lineHeight="21.6px"
+                >
+                  {column.column_description}
+                </Text>
+              </Box>
             </Box>
           );
         })}
-      </Grid>
+      </Flex>
     </Box>
   );
 }
