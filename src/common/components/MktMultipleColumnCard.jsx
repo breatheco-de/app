@@ -16,16 +16,17 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
 
       <Flex
         flexWrap={{ base: 'wrap', lg: 'nowrap' }}
-        gap={4}
+        gap={6}
         justifyItems="center"
         justifyContent="space-between"
+        width="100%"
       >
         {limitedColumns.map((column, index) => {
           const idKey = `column-${index}`;
           return (
             <Box
               key={idKey}
-              width={{ base: '100%', md: '304px' }}
+              width={{ base: '100%', md: '100%' }}
               maxWidth="1280px"
               height={{ base: '178px', md: '417px' }}
               borderRadius={{ base: '8px', md: '8px' }}
