@@ -980,7 +980,7 @@ function CoursePage({ data, syllabus }) {
           />
         </GridContainer>
         {/* FAQ section */}
-        <Box mt="6.25rem" background={hexColor.light}>
+        <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
               <Faq
