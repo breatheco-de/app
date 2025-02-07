@@ -32,6 +32,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const toast = useToast();
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
+  const [invitationSent, setInvitationSent] = useState(false);
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
   const { hexColor, borderColor } = useStyle();
 
@@ -81,6 +82,24 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const sendConfirmationLink = async (email) => {
     try {
       const resp = await bc.auth().resendConfirmationEmail(email);
+      if (resp?.status === 200) {
+        setInvitationSent(true);
+        toast({
+          position: 'top',
+          title: t('invitation-sended'),
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+      } else {
+        toast({
+          position: 'top',
+          title: t('invitation-error'),
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -112,7 +131,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             toast({
               position: 'top',
               title: t('alert-message:account-not-found'),
-              // description: error.message,
               status: 'error',
               duration: 9000,
               isClosable: true,
@@ -201,7 +219,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     </FormControl>
                   )}
                 </Field>
-                {emailValidation.error && (
+                {emailValidation.error && !invitationSent && (
                   <Text marginTop="5px !important" color={hexColor.danger}>
                     {emailValidation.error}
                     {emailValidation.status === 403 && (
@@ -215,9 +233,11 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     )}
                   </Text>
                 )}
-                <Button onClick={() => validateEmail(values.email)} isLoading={emailValidation.loading} isDisabled={errors.email} variant="default" fontSize={actionfontSize || 'l'} type="button">
-                  {t('next')}
-                </Button>
+                {!invitationSent && (
+                  <Button onClick={() => validateEmail(values.email)} isLoading={emailValidation.loading} isDisabled={errors.email} variant="default" fontSize={actionfontSize || 'l'} type="button">
+                    {t('next')}
+                  </Button>
+                )}
               </>
             )}
             {step === 2 && (
