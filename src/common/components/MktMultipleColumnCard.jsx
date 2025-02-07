@@ -43,7 +43,7 @@ function MktMultipleColumnCard({ id, title, columns, fontFamily, marginBottom, m
               <Image
                 src={column.image.url}
                 alt="Column Image"
-                width={{ base: '158px', md: '288px' }}
+                width="100%"
                 height={{ base: '162px', md: '281px' }}
                 borderRadius="8px"
                 objectFit="cover"
