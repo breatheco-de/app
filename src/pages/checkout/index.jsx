@@ -678,7 +678,6 @@ function Checkout() {
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
       const originalPrice = originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price;
       const discountedPrice = applyDiscounts(originalPrice, discountValues);
-      console.log(discountValues);
 
       return (
         <Text size="16px" color="green.400">
