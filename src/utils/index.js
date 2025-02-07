@@ -261,7 +261,6 @@ const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
 
   const currentDate = new Date();
 
-  // Filtramos eventos según la lógica original
   const filteredDates = data.filter((item) => {
     const startingDate = new Date(item.starting_at);
     const endingDate = new Date(item.ended_at || item.ending_at);
@@ -281,13 +280,13 @@ const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
     const bHasStarted = new Date(b.starting_at) < currentDate;
     const bHasExpired = new Date(b.ended_at || b.ending_at) < currentDate;
 
-    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1; // Prioriza eventos en vivo
+    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1; // Prio live events
     if (!(aHasStarted && !aHasExpired) && bHasStarted && !bHasExpired) return 1;
 
-    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1; // Luego eventos próximos
+    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1; // Then upcomming evnets
     if ((aHasStarted || aHasExpired) && !bHasStarted && !bHasExpired) return 1;
 
-    return new Date(a.starting_at) - new Date(b.starting_at); // Orden cronológico
+    return new Date(a.starting_at) - new Date(b.starting_at); // Crono order
   });
 };
 
