@@ -10,13 +10,25 @@ import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, paymentOptions, ...rest }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isAuthenticated, paymentOptions, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
 
   const includesFreeTier = paymentOptions?.some((option) => option.isFreeTier);
 
   if (!isCtaVisible) return null;
+
+  const getHeadingForAsset = () => {
+    if (!isAuthenticated && videoUrl) return t('video-instructions');
+    if (isAuthenticated && videoUrl) return t('video-instructions-logged');
+    return t('start-interactive');
+  };
+
+  const getButtonTextForAsset = () => {
+    if (!isAuthenticated) return t('create-account');
+    if (videoUrl) return t('see-instructions');
+    return t('start-interactive-cta');
+  };
 
   return (
     <>
@@ -50,10 +62,10 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           {asset && (
             <>
               <Heading size="sm" mt="10px">
-                {videoUrl ? t('video-instructions') : t('start-interactive')}
+                {getHeadingForAsset()}
               </Heading>
               <Button display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                {videoUrl ? t('see-instructions') : t('create-account')}
+                {getButtonTextForAsset()}
               </Button>
             </>
           )}
@@ -89,6 +101,7 @@ StickyBottomCta.propTypes = {
   onClick: PropTypes.func.isRequired,
   isCtaVisible: PropTypes.bool.isRequired,
   financingAvailable: PropTypes.string,
+  isAuthenticated: PropTypes.bool,
   paymentOptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
 };
 
@@ -96,6 +109,7 @@ StickyBottomCta.defaultProps = {
   couponApplied: undefined,
   videoUrl: undefined,
   financingAvailable: undefined,
+  isAuthenticated: false,
 };
 
 export default StickyBottomCta;
