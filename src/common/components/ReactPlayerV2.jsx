@@ -7,7 +7,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, ...rest
 }) {
   const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
@@ -110,7 +110,7 @@ function ReactPlayerV2({
                 className={`react-player ${className}`}
                 url={videoUrl}
                 light={existsThumbnail ? <Image src={thumbnail} width="100%" height="100%" /> : withThumbnail}
-                playing={withThumbnail || existsThumbnail}
+                playing={withThumbnail || existsThumbnail || autoPlay}
                 playIcon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background={hexColor.featuredColor} borderRadius="6px" padding="4px" />}
                 controls={controls}
                 width="100%"
@@ -161,6 +161,7 @@ ReactPlayerV2.propTypes = {
   thumbnailStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   withModal: PropTypes.bool,
   title: PropTypes.string,
+  autoPlay: PropTypes.bool,
   closeOnOverlayClick: PropTypes.bool,
 };
 ReactPlayerV2.defaultProps = {
@@ -173,6 +174,7 @@ ReactPlayerV2.defaultProps = {
   containerStyle: {},
   thumbnailStyle: {},
   withModal: false,
+  autoPlay: false,
   title: '',
   closeOnOverlayClick: true,
 };

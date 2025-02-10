@@ -226,6 +226,23 @@ function SyllabusContent() {
     }
   };
 
+  const processAiContext = (aiContext, cohort) => {
+    if (!aiContext) return '';
+
+    let processedContext = aiContext.replace(/<!--\s*hide\s*-->[\s\S]*?<!--\s*endhide\s*-->/g, '');
+
+    processedContext = processedContext.replace(/<onlyfor\s+saas="(true|false)".*?>([\s\S]*?)<\/onlyfor>/gi, (match, saasValue, content) => {
+      const isCohortSaas = cohort?.available_as_saas === true;
+
+      if ((saasValue === 'false' && isCohortSaas) || (saasValue === 'true' && !isCohortSaas)) {
+        return '';
+      }
+      return content;
+    });
+
+    return processedContext;
+  };
+
   const getAssetContext = async () => {
     try {
       let aiContext;
@@ -242,7 +259,7 @@ function SyllabusContent() {
         const userContext = generateUserContext(user);
         rigo.updateOptions({
           showBubble: false,
-          context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${aiContext.ai_context}`,
+          context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${processAiContext(aiContext.ai_context, cohortSession)}`,
           completions,
         });
       }
@@ -393,6 +410,7 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
+    setFileData([]);
   };
 
   const onClickAssignment = (e, item) => {
