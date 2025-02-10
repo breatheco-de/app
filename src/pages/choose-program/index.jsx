@@ -55,12 +55,11 @@ function chooseProgram() {
   const [invites, setInvites] = useState([]);
   const [showInvites, setShowInvites] = useState(false);
   const [events, setEvents] = useState(null);
-  const [subscriptionData, setSubscriptionData] = useState([]);
   const [liveClasses, setLiveClasses] = useState([]);
   const [loadingInvite, setLoadingInvite] = useState(null);
   const { state, programsList, updateProgramList } = useProgramList();
-  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
-  const { fetchSubscriptions } = useSubscriptionsHandler();
+  const { fetchSubscriptions, state: subscriptionsState } = useSubscriptionsHandler();
+  const { isLoading: subscriptionLoading, subscriptions } = subscriptionsState;
   const [cohortTasks, setCohortTasks] = useState({});
   const [isRevalidating, setIsRevalidating] = useState(false);
   const [isWelcomeModalOpen, setIsWelcomeModalOpen] = useState(false);
@@ -194,10 +193,8 @@ function chooseProgram() {
   }, [user, cohorts]);
 
   useEffect(() => {
-    setSubscriptionLoading(true);
     fetchSubscriptions()
       .then((data) => {
-        setSubscriptionData(data);
         reportDatalayer({
           dataLayer: {
             event: 'subscriptions_load',
@@ -207,13 +204,12 @@ function chooseProgram() {
             agent: getBrowserInfo(),
           },
         });
-      })
-      .finally(() => setSubscriptionLoading(false));
+      });
   }, []);
 
   const allSubscriptions = [
-    ...subscriptionData?.subscriptions || [],
-    ...subscriptionData?.plan_financings || [],
+    ...subscriptions?.subscriptions || [],
+    ...subscriptions?.plan_financings || [],
   ];
   // .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
 
@@ -225,10 +221,10 @@ function chooseProgram() {
           ...programsList[value.slug],
           ...cohortTasks[value.slug],
           name: value.name,
-          plan_financing: subscriptionData?.plan_financings?.find(
+          plan_financing: subscriptions?.plan_financings?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
-          subscription: subscriptionData?.subscriptions?.find(
+          subscription: subscriptions?.subscriptions?.find(
             (sub) => sub?.selected_cohort_set?.cohorts.some((cohort) => cohort?.slug === value.slug),
           ) || null,
           all_subscriptions: allSubscriptions,

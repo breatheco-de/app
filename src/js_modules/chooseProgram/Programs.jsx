@@ -5,11 +5,14 @@ import { subMinutes } from 'date-fns';
 import { memo, useState } from 'react';
 import ProgramCard from '../../common/components/ProgramCard';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import useSubscriptionsHandler from '../../common/store/actions/subscriptionAction';
 import axios from '../../axios';
 import useProgramList from '../../common/store/actions/programListAction';
 
 function Programs({ item, onOpenModal, setLateModalProps }) {
   const { setCohortSession } = useCohortHandler();
+  const { state } = useSubscriptionsHandler();
+  const { isLoading } = state;
   const [isLoadingPageContent, setIsLoadingPageContent] = useState(false);
   const { programsList } = useProgramList();
   const { cohort_user: cohortUser, ...cohort } = item;
@@ -97,7 +100,7 @@ function Programs({ item, onOpenModal, setLateModalProps }) {
       // isBought={moduleStarted}
       // isBought={!isFreeTrial}
       isLoadingPageContent={isLoadingPageContent}
-      isLoading={currentCohortProps === undefined}
+      isLoading={currentCohortProps === undefined || isLoading}
       startsIn={item?.kickoff_date}
       endsAt={item?.ending_date}
       signInDate={signInDate}
