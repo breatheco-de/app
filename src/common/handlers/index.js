@@ -168,24 +168,24 @@ const handlers = {
       date: formatedDate,
     };
   },
-  getCohortsFinished: (cohorts) => cohorts.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+  getCohortsFinished: (cohorts) => cohorts.filter((cohort) => {
+    const educationalStatus = cohort.cohort_user.educational_status.toUpperCase();
+    const programCohortStage = cohort.stage.toUpperCase();
 
     const hasEnded = ['ENDED'].includes(programCohortStage);
     const isGraduated = educationalStatus === 'GRADUATED';
 
     const showStudent = ['GRADUATED', 'POSTPONED', 'ACTIVE'].includes(educationalStatus);
     const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
-      && program?.cohort?.is_hidden_on_prework === false
+      && cohort.is_hidden_on_prework === false
       && hasEnded;
 
     return (isGraduated || hasEnded || isNotHiddenOnPrework) && showStudent;
   }),
-  getActiveCohorts: (cohorts) => cohorts.filter((program) => {
-    const educationalStatus = program?.educational_status?.toUpperCase();
-    const programRole = program?.role?.toUpperCase();
-    const programCohortStage = program?.cohort?.stage?.toUpperCase();
+  getActiveCohorts: (cohorts) => cohorts.filter((cohort) => {
+    const educationalStatus = cohort.cohort_user.educational_status?.toUpperCase();
+    const programRole = cohort.cohort_user.role?.toUpperCase();
+    const programCohortStage = cohort.stage.toUpperCase();
     const isGraduated = educationalStatus === 'GRADUATED';
 
     const visibleForTeacher = programRole !== 'STUDENT';
@@ -202,7 +202,7 @@ const handlers = {
 
     const cohortIsAvailable = showCohort && !hasEnded;
     const isNotHiddenOnPrework = programCohortStage === 'PREWORK'
-      && program?.cohort?.is_hidden_on_prework === false
+      && cohort.is_hidden_on_prework === false
       && !hasEnded;
 
     const showStudent = ['ACTIVE', 'NOT_COMPLETING'].includes(educationalStatus) && programRole === 'STUDENT';

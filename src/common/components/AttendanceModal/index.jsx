@@ -20,8 +20,7 @@ function AttendanceModal({
   title, message, isOpen, onClose, students,
 }) {
   const { t } = useTranslation('dashboard');
-  const { state, setCohortSession } = useCohortHandler();
-  const { cohortSession, sortedAssignments } = state;
+  const { setCohortSession, cohortSession, sortedAssignments } = useCohortHandler();
   const [historyLog, setHistoryLog] = useState();
   const [day, setDay] = useState(cohortSession.current_day);
   const [attendanceTaken, setAttendanceTaken] = useState({});
