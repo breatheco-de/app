@@ -33,7 +33,7 @@ const TabletWithForm = React.forwardRef(({
   showSimpleTable,
 }, ref) => {
   const { t, lang } = useTranslation('exercises');
-  const { user } = useAuth();
+  const { user, cohorts } = useAuth();
   const { hexColor, lightColor } = useStyle();
   const [formSended, setFormSended] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -44,6 +44,8 @@ const TabletWithForm = React.forwardRef(({
   const conversionTechnologies = technologies?.map((item) => item?.slug).join(',');
   const assetUrl = asset?.readme_url || asset?.url;
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
+
+  console.log('asdasdasdasdasdasdasdasdasdasds', cohorts, user);
 
   const getTitleMessage = () => {
     if (user) return '';
