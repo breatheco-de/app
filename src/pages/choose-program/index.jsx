@@ -628,7 +628,7 @@ function chooseProgram() {
               ))}
             </Box>
           )}
-          {isLoading && cohorts.length > 0 && (
+          {isLoading && (
             <Box
               display="grid"
               mt="1rem"
