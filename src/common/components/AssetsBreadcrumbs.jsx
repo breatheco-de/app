@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Link from './NextChakraLink';
+import { parseQuerys } from '../../utils/url';
 
 const getDefaultPath = (assetType) => {
   switch (assetType) {
@@ -25,7 +26,8 @@ export default function Breadcrumb() {
 
   const handleGoBack = () => {
     const defaultPath = getDefaultPath(assetType);
-    const search = query.search ? `?search=${query.search}` : '';
+    const { slug, ...queryParams } = query;
+    const search = parseQuerys(queryParams);
     return `${defaultPath}${search}`;
   };
 

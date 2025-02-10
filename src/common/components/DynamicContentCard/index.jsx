@@ -14,6 +14,7 @@ import { BREATHECODE_HOST } from '../../../utils/variables';
 import Icon from '../Icon';
 import Link from '../NextChakraLink';
 import { reportDatalayer } from '../../../utils/requests';
+import { parseQuerys } from '../../../utils/url';
 import Heading from '../Heading';
 
 const getAssetPath = (asset) => {
@@ -78,7 +79,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
 
   const getLink = () => {
     if (isLesson || isExercise || isProject || isHowTo) {
-      const search = query.search ? `?search=${query.search}` : '';
+      const search = parseQuerys(query);
       return `${langConnector}/${assetPath}/${data.slug}${search}`;
     }
     return `/${data.slug}`;
