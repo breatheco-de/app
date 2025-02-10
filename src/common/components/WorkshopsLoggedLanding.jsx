@@ -1,4 +1,5 @@
 import useTranslation from 'next-translate/useTranslation';
+import { useColorModeValue } from '@chakra-ui/react';
 import MktEventCards from './MktEventCards';
 import MktSearchBar from './MktSearchBar';
 import MktTechnologiesPills from './MktTechnologiesPills';
@@ -15,7 +16,7 @@ function WorkshopsLoggedLanding() {
         headingTop={t('intro.top-title')}
         headingBottom={t('intro.lower-title')}
         subtitle={t('intro.subtitle')}
-        background="blue.50"
+        backgroundColor={useColorModeValue('blue.50')}
         popularSearches={['Python', 'HTML', 'Pandas']}
         popularSearchesTitle={t('common:popular-searches')}
       />
