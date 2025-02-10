@@ -15,11 +15,16 @@
   "in-person": "Evento en persona",
   "in-person-confirm": "Este es un evento presencial que se llevará a cabo en {{address}}. ¿Aún quieres confirmar tu asistencia?",
   "confirm-attendance": "Si, si asistiré",
-  "deny-attendance" : "No, no asistiré",
-  "denny-access":{
+  "deny-attendance": "No, no asistiré",
+  "denny-access": {
     "description": "Esto es un evento privado, solo estudiantes con acceso a",
     "button": "No tienes acceso a este evento.",
     "can-join": "pueden entrar"
+  },
+  "intro": {
+    "top-title": "Bienvenido a los Workshops de 4Geeks",
+    "lower-title": "Aprende en vivo y sumergete en las nuevas tecnologías",
+    "subtitle": "Descubre el futuro del aprendizaje tecnológico con sesiones en vivo. ¡Únete y potencia tus habilidades!"
   },
   "form": {
     "title": "Únete a este evento",
@@ -35,8 +40,15 @@
     "finished-title": "Este evento ha finalizado",
     "finished-description": "¡Sigue buscando nuevas experiencias de aprendizaje y mantén viva tu pasión por el conocimiento!"
   },
+  "search-your-fav-tech": "Busca tu teconología favorita",
+  "upcoming-events": "Próximos eventos",
+  "events-joined": "Eventos a los que te has unido",
+  "tech-event": "Eventos de {{tech}}",
+  "searching-for": "Buscando eventos de '{{search}}'",
+  "search-not-found": "No se encontraron eventos de \"{{search}}\"",
+  "search-found": "Eventos encontrados de '{{search}}'",
   "users-registered-count": "{{count}} personas ya se han registrado a este evento. Quedan disponibles {{spot_count}} cupos más.",
-  "join-workshop": "Regístrarse al taller",
+  "join-workshop": "Regístrarse al workshop",
   "join": "Unirse ahora",
   "event-finished": "Evento finalizado",
   "checkin-modal": {
@@ -52,7 +64,7 @@
     "conversation-link": "https://chat.whatsapp.com/K39ELB5TIK63r4INTBd7SG"
   },
   "no-consumables": {
-    "description": "Te has quedado sin talleres, pero no te preocupes, puedes conseguir más con unos pocos clics.",
+    "description": "Te has quedado sin acceso a workshops, pero no te preocupes, puedes conseguir más con unos pocos clics.",
     "link-text": "Aprende más.",
     "link": "",
     "get-more-workshops": "Obten más workshops"
