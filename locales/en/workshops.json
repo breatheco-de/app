@@ -21,6 +21,11 @@
     "button": "You don't have access to this event",
     "can-join": "can join"
   },
+  "intro": {
+    "top-title": "Welcome to 4Geeks Workshops",
+    "lower-title": "Learn live, dive into tech skills",
+    "subtitle": "Discover the future of code technology learning with live sessions! Join now to boost your skills."
+  },
   "form": {
     "title": "Join this event",
     "description": "Sign in to join other coders live solving technical or career challenges.",
@@ -35,6 +40,13 @@
     "finished-title": "This event has ended",
     "finished-description": "Keep looking for new learning experiences and keep your passion for knowledge alive!"
   },
+  "search-your-fav-tech": "Search your favorite technology",
+  "upcoming-events": "Upcoming events",
+  "events-joined": "Events you have joined",
+  "tech-event": "{{tech}} events",
+  "searching-for": "Searching events with {{search}}",
+  "search-not-found": "No events have been found for \"{{search}}\"",
+  "search-found": "Events found with search '{{search}}'",
   "users-registered-count": "{{count}} people are already registered in this event. {{spot_count}} more spots available",
   "join-workshop": "Register for this Workshop",
   "join": "Join Now",

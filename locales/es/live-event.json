@@ -38,5 +38,6 @@
     "day_one": "{{count}} día",
     "day_other": "{{count}} días",
     "students-worked-here": "+{{count}} alumnos trabajaron en este archivo",
+    "watch-recording": "Ver grabación",
     "register-workshop": "Ver más"
 }
