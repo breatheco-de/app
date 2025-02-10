@@ -27,6 +27,7 @@ import RelatedContent from '../../common/components/RelatedContent';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MktEventCards from '../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -261,18 +262,8 @@ function ProjectSlug({ project, markdown }) {
       >
         <Flex display={{ base: 'block', lg: 'flex' }} gridColumn={{ base: '2 / span 10', lg: '2 / span 7' }} height="100%" gridGap="26px">
           <Box width="-webkit-fill-available">
-            <Box display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
-              <Link
-                margin="3rem 0 32px 0"
-                href="/interactive-coding-tutorials"
-                color={useColorModeValue('blue.default', 'blue.300')}
-                display="inline-block"
-                letterSpacing="0.05em"
-                width="fit-content"
-                fontWeight="700"
-              >
-                {`← ${t('projects:backToProjects')}`}
-              </Link>
+            <Box margin="20px 0 10px 0" display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
+              <AssetsBreadcrumbs />
               {isAuthenticated && project?.readme_url && (
                 <Box height="fit-content" width="172px" background={featuredLight} borderRadius="4px">
                   <Link display="flex" target="_blank" rel="noopener noreferrer" gridGap="8px" padding={{ base: '8px 12px', md: '8px' }} background="transparent" href={project.readme_url} textDecoration="none" _hover={{ opacity: 0.7 }} color={fontColor}>
