@@ -89,7 +89,8 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
   };
 
   const workshopActionText = () => {
-    if (date?.ended) return t('watch-recording');
+    if (date?.ended && data.recording_url) return t('watch-recording');
+    if (date?.ended && !data.recording_url) return t('event-details');
     if (date?.started && !date?.ended) return t('join-workshop');
     if (!date?.started && !date?.ended) return t('register-workshop');
     return '';
