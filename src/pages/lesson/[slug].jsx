@@ -21,6 +21,7 @@ import Heading from '../../common/components/Heading';
 import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import RelatedContent from '../../common/components/RelatedContent';
 import MktEventCards from '../../common/components/MktEventCards';
+import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
 
 export const getStaticPaths = async () => {
   const assetList = await import('../../lib/asset-list.json');
@@ -185,26 +186,14 @@ function LessonSlug({ lesson, markdown, ipynbHtml }) {
           />
         </Head>
       )}
-      <GridContainer
-        withContainer
-        maxWidth="1280px"
+      <Box
+        maxWidth="854px"
         height="100%"
-        gridTemplateColumns={{ base: 'repeat(1, 1fr)', md: '0.5fr repeat(12, 1fr) 0.5fr' }}
         margin="3rem auto 0 auto"
-        gridGap="0"
+        padding="0 10px"
       >
-        <Link
-          href="/lessons"
-          color={useColorModeValue('blue.default', 'blue.300')}
-          display="inline-block"
-          letterSpacing="0.05em"
-          fontWeight="700"
-          paddingBottom="10px"
-          width="fit-content"
-        >
-          {`← ${t('backToLessons')}`}
-        </Link>
-      </GridContainer>
+        <AssetsBreadcrumbs />
+      </Box>
       <GridContainer
         maxWidth="1440px"
         margin="28px auto 0 auto"

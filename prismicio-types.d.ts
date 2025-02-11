@@ -186,6 +186,27 @@ export interface EventCardsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * Tech Filtered field in *EventCards → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: Auto filter the events by a technology
+   * - **API ID Path**: event_cards.primary.tech_filtered
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  tech_filtered: prismic.KeyTextField;
+
+  /**
+   * Show checked in events field in *EventCards → Primary*
+   *
+   * - **Field Type**: Boolean
+   * - **Placeholder**: *None*
+   * - **Default Value**: false
+   * - **API ID Path**: event_cards.primary.show_checked_in_events
+   * - **Documentation**: https://prismic.io/docs/field#boolean
+   */
+  show_checked_in_events: prismic.BooleanField;
 }
 
 /**
@@ -1908,6 +1929,26 @@ export interface TechnologiesPillsSliceDefaultPrimary {
    * - **Documentation**: https://prismic.io/docs/field#key-text
    */
   margin: prismic.KeyTextField;
+
+  /**
+   * background field in *TechnologiesPills → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: technologies_pills.primary.background
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  background: prismic.KeyTextField;
+
+  /**
+   * padding top field in *TechnologiesPills → Primary*
+   *
+   * - **Field Type**: Text
+   * - **Placeholder**: *None*
+   * - **API ID Path**: technologies_pills.primary.padding_top
+   * - **Documentation**: https://prismic.io/docs/field#key-text
+   */
+  padding_top: prismic.KeyTextField;
 }
 
 /**
