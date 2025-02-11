@@ -7,6 +7,14 @@
   "login-with-github": "Iniciar sesión con Github",
   "or": "o",
   "forgot-password": "¿Has olvidado tu contraseña?",
+  "welcome": "¡Bienvenido de vuelta {{email}}!",
+  "next": "Siguiente",
+  "not-you": "¿No eres tu?",
+  "email-not-found": "No pudimos encontrar una cuenta con este email",
+  "email-not-validated": "Debes validar tu email primero,",
+  "validation-link": "reenviar link de invitación",
+  "invitation-sended": "¡La invitación fue reenviada! Revisa tu bandeja de entrada",
+  "invitation-error": "Hubo un error enviando la invitación",
   "login": "Ingresar",
   "register": "Registrarse"
 }
