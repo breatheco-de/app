@@ -278,6 +278,7 @@ function MentoringConsumables({
       setDataToGetAccessModal({
         ...data,
         event: '',
+        consumableType: 'mentorship',
         academyService,
       });
       setIsModalToGetAccessOpen(true);

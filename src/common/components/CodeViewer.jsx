@@ -22,10 +22,14 @@ import Editor from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
+import useSubscriptionsHandler from '../store/actions/subscriptionAction';
+import bc from '../services/breathecode';
 import useAuth from '../hooks/useAuth';
 import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
+import { validatePlanExistence } from '../handlers/subscriptions';
+import ModalToGetAccess, { stageType } from './ModalToGetAccess';
 
 const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
 
@@ -70,8 +74,17 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
   const [initialTouchY, setInitialTouchY] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [showConsumablesModal, setShowConsumablesModal] = useState(false);
+  const [planData, setPlanData] = useState(null);
   const [languages, setLanguages] = useState(languagesData);
   const defaultPlan = process.env.BASE_PLAN || 'basic';
+
+  const { state } = useSubscriptionsHandler();
+  const { subscriptions } = state;
+
+  const allSubscriptions = (subscriptions?.subscriptions
+    && subscriptions?.plan_financings
+    && [...subscriptions.subscriptions, ...subscriptions.plan_financings]) || [];
 
   const isCodeForPreview = languages.some(({ language }) => language.toLowerCase() === 'html');
   const isNotExecutable = notExecutables.includes(languages[tabIndex]?.language);
@@ -130,6 +143,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
     setLanguages(updatedLanguages);
   };
 
+  // eslint-disable-next-line consistent-return
   const run = async () => {
     if (isCodeForPreview) showCodePreview();
     else if (isAuthenticated || allowNotLogged) {
@@ -140,6 +154,30 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           currLanguage,
           ...languages.slice(tabIndex + 1),
         ]);
+        const res = await bc.payment().service().consumable();
+        const { data } = res;
+        const { voids } = data;
+        const aiConsumables = voids.find(({ slug }) => slug === 'ai-compilation');
+
+        if (!aiConsumables || aiConsumables.balance.unit <= 0) {
+          const planSlug = allSubscriptions[0].plans[0].slug;
+
+          const result = await validatePlanExistence(allSubscriptions, planSlug);
+
+          setPlanData({
+            ...result,
+            consumableType: 'aiCompilation',
+          });
+
+          setLanguages([
+            ...languages.slice(0, tabIndex),
+            { ...currLanguage, running: false },
+            ...languages.slice(tabIndex + 1),
+          ]);
+
+          return setShowConsumablesModal(true);
+        }
+
         const { code, language, path } = languages[tabIndex];
 
         const rigobotToken = await getRigobotToken();
@@ -321,6 +359,14 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           ))}
         </TabPanels>
       </Tabs>
+      <ModalToGetAccess
+        isOpen={showConsumablesModal}
+        stage={stageType.outOfConsumables}
+        externalData={planData}
+        onClose={() => {
+          setShowConsumablesModal(false);
+        }}
+      />
       <ModalInfo
         isOpen={showModal}
         onClose={() => setShowModal(false)}
@@ -346,7 +392,7 @@ function CodeViewer({ languagesData, allowNotLogged, fileContext, ...rest }) {
           router.push('/login');
         }}
         actionHandler={() => {
-          setStorageItem('redirect', router?.asPath);
+          setStorageItem('redirected-from', router?.asPath);
           router.push(`/checkout?internal_cta_placement=codeviewer&plan=${defaultPlan}`);
         }}
         handlerText={t('log-in-modal.signup')}

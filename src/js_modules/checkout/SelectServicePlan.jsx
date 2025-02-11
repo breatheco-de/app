@@ -17,15 +17,15 @@ function SelectServicePlan() {
   const { t, lang } = useTranslation('signup');
   const router = useRouter();
   const { query } = router;
-  const { mentorship_service_slug, event_service_slug } = query;
+  const { service_type, service_slug, mentorship_service_slug, event_service_slug } = query;
   const { backgroundColor, hexColor, modal } = useStyle();
   const [isLoading, setIsLoading] = useState(true);
   const [subscriptions, setSubscriptions] = useState([]);
   const [selectedService, setSelectedService] = useState({});
 
   // const queryPlans = getQueryString('plans');
-  const queryMentorshipServiceSet = mentorship_service_slug || getQueryString('mentorship_service_set');
-  const queryEventTypeSet = event_service_slug || getQueryString('event_type_set');
+  const queryMentorshipServiceSet = service_type === 'mentorship' ? service_slug : mentorship_service_slug || getQueryString('mentorship_service_set');
+  const queryEventTypeSet = service_type === 'event' ? service_slug : event_service_slug || getQueryString('event_type_set');
   const backgroundItem = useColorModeValue('#F9F9F9', 'gray.800');
 
   // const allQueryPlans = queryPlans.split(',');
