@@ -242,12 +242,15 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             )}
             {step === 2 && (
               <>
-                <Text textAlign="center">
-                  {t('welcome', { email: values.email })}
-                  {'   '}
+                <Text textAlign="left">
                   <Button size="xs" onClick={() => setStep(1)} variant="link">
-                    {t('not-you')}
+                    ←
+                    {'  '}
+                    {t('common:go-back')}
                   </Button>
+                </Text>
+                <Text size="md" textAlign="center">
+                  {t('welcome', { email: values.email })}
                 </Text>
                 <Field name="password">
                   {({ field, form }) => (
