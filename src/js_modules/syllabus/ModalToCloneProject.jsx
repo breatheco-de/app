@@ -33,7 +33,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   const { featuredLight, hexColor, borderColor } = useStyle();
   const accessToken = localStorage.getItem('accessToken');
 
-  const provisioningLinks = [{
+  const provisioningLinks = cohortSessionID ? [{
     title: t('common:learnpack.new-exercise'),
     link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
     isExternalLink: true,
@@ -42,7 +42,13 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
     title: t('common:learnpack.continue-exercise'),
     link: `${BREATHECODE_HOST}/v1/provisioning/me/workspaces?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
     isExternalLink: true,
-  }];
+  }] : [
+    {
+      title: t('common:learnpack.new-exercise'),
+      link: `https://github.com/codespaces/new/?repo=${currentAssetURL}`,
+      isExternalLink: true,
+    },
+  ];
 
   const scrollToMarkdown = () => {
     const markdownBody = document.getElementById('markdown-body');
@@ -191,7 +197,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   );
 }
 
-function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, vendorsFromPublicView }) {
   const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -207,7 +213,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = provisioningVendors?.length > 0 && currentAsset?.gitpod;
+  const showProvisioningLinks = (provisioningVendors?.length > 0 || vendorsFromPublicView?.length > 0) && currentAsset?.gitpod;
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
@@ -394,6 +400,7 @@ ModalToCloneProject.propTypes = {
   onClose: PropTypes.func,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  vendorsFromPublicView: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
 };
 
 ModalToCloneProject.defaultProps = {
@@ -401,6 +408,7 @@ ModalToCloneProject.defaultProps = {
   onClose: () => { },
   currentAsset: null,
   provisioningVendors: [],
+  vendorsFromPublicView: [],
 };
 
 ModalContentDisplay.propTypes = {

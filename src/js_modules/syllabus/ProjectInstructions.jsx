@@ -23,11 +23,36 @@ import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
+  //____USED ONLY ON PUBLIC VIEWS____
+  if (learnpackUrlFromPublicView) {
+    return (
+      <Button
+        cursor="pointer"
+        as="a"
+        href={currentAsset?.learnpack_deploy_url}
+        target="_blank"
+        size="sm"
+        width={variant === 'extra-small' && '100%'}
+        padding="4px 8px"
+        fontSize="14px"
+        fontWeight="bold"
+        background={variant !== 'extra-small' ? 'gray.200' : 'blue.default'}
+        style={variant === 'extra-small' ? { color: 'white', textDecoration: 'none' } : { textDecoration: 'none' }}
+        _hover="none"
+        _active="none"
+        {...rest}
+      >
+        {t('common:learnpack.start-exercise').toUpperCase()}
+      </Button>
+    );
+  }
+
+  //___USED ON PRIVATE VIEWS___
   if (isExternalExercise && !startWithLearnpack) {
     return (
       <Button
@@ -65,6 +90,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           padding="4px 8px"
           fontSize="14px"
           fontWeight="500"
+          width={variant === 'extra-small' && '100%'}
           background={variant === 'extra-small' ? 'none' : 'gray.200'}
           color={variant === 'extra-small' ? 'white' : 'blue.default'}
           _hover={variant === 'extra-small' && 'none'}
@@ -81,7 +107,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, ...rest }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, learnpackUrlFromPublicView, vendorsFromPublicView, ...rest }) {
   const { t } = useTranslation('common');
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
@@ -133,10 +159,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+            learnpackUrlFromPublicView={learnpackUrlFromPublicView}
             variant={variant}
           />
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} vendorsFromPublicView={vendorsFromPublicView} />
       </>
     );
   }
