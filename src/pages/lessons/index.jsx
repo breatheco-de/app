@@ -71,8 +71,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     },
   );
   const technologies = await technologiesResponse.json();
-  console.log('technologies');
-  console.log(technologies);
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
     log(`SUCCESS: ${technologies.results.length} Technologies fetched for /lessons`);
@@ -81,6 +79,10 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   }
 
   for (let i = 0; i < arrLessons.length; i += 1) {
+    // skip esternal lessons
+    if (arrLessons[i].external === true) {
+      continue;
+    }
     // skip repeated lessons
     if (lessons.find((p) => arrLessons[i].slug === p.slug)) {
       continue;

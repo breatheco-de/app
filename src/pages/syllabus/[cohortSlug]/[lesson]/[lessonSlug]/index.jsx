@@ -437,11 +437,6 @@ function SyllabusContent() {
         const extension = urlPathname ? urlPathname.split('.').pop() : null;
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
 
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
-        }
-
         setReadmeUrlPathname(finalPathname);
         let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
         if (isIpynb) {
