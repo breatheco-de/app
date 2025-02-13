@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { SliceZone } from '@prismicio/react';
 import * as prismicH from '@prismicio/helpers';
-import { Box } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 
@@ -22,8 +22,10 @@ function Page({ page }) {
   const { isRigoInitialized, rigo } = useRigo();
   const { isAuthenticated, isLoading } = useAuth();
   const landingUrl = page?.data?.landing_url;
-  const background = page?.data?.background;
+  const background = page?.data?.background || '#F3FAFE';
+  const backgroundDarkMode = page?.data?.background_dark_mode || '#17202A';
   const loggedInWorkshopsView = isAuthenticated === true && router.query.uid === 'workshops';
+  const backgroundByMode = useColorModeValue(background, backgroundDarkMode);
 
   useEffect(() => {
     if (!page?.id) {
@@ -79,7 +81,7 @@ function Page({ page }) {
       {loggedInWorkshopsView && !isLoading ? (
         <WorkshopsLoggedLanding />
       ) : (
-        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={background || '#F3FAFE'}>
+        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={backgroundByMode}>
           <SliceZone slices={page?.data?.slices} components={components} />
         </Box>
       )}
