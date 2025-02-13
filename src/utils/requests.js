@@ -43,7 +43,7 @@ const getPrismicPages = async () => {
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
 
-    console.log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
+    log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
     return data.results;
   } catch (error) {
     console.error('SITEMAP:', error);
