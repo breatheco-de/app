@@ -79,7 +79,7 @@ function Page({ page }) {
       {loggedInWorkshopsView && !isLoading ? (
         <WorkshopsLoggedLanding />
       ) : (
-        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={background}>
+        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={background || '#F3FAFE'}>
           <SliceZone slices={page?.data?.slices} components={components} />
         </Box>
       )}
