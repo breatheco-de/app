@@ -10,7 +10,7 @@ function AlertMessage({
   message, type, iconColor, withoutIcon, style, textStyle, full, textColor, dangerouslySetInnerHTML, title, children, onClose, ...rest
 }) {
   const { fontColor } = useStyle();
-  const alertTop = useBreakpointValue({ sm: '46px', lg: '50px', xl: '60px' });
+  const alertTop = useBreakpointValue({ base: '90px', sm: '86px', lg: '90px', xl: '100px' });
   const alertColors = {
     soft: { background: '#FFF4DC' },
     warning: { background: '#ffefcc', borderColor: '#FFB718' },
@@ -35,7 +35,7 @@ function AlertMessage({
   return (message || children) && (
     <Box
       display="flex"
-      style={{ ...style, position: 'fixed', top: alertTop, left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase', borderRadius: '10px', maxWidth: '1200px' }}
+      style={{ ...style, position: 'fixed', top: alertTop, left: '50%', transform: 'translateX(-50%)', zIndex: 999, width: '90%', textTransform: 'uppercase', borderRadius: '10px', maxWidth: '1200px', minHeight: '64px' }}
       flexDirection="row"
       backgroundColor={full ? alertColors[type].background : 'transparent'}
       border="2px solid"
@@ -44,6 +44,7 @@ function AlertMessage({
       padding="16px"
       borderRadius="16px"
       gridGap="16px"
+      duration="16000"
       className={`alert-${type}`}
       {...rest}
     >
@@ -75,7 +76,7 @@ function AlertMessage({
           </Box>
         </>
       )}
-      <button type="button" onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '5px', background: 'none', border: 'none', fontSize: '16px', cursor: 'pointer' }}>
+      <button type="button" onClick={handleClose} style={{ position: 'absolute', right: '10px', top: '5px', background: 'none', border: 'none', fontSize: '16px', cursor: 'pointer', color: 'black' }}>
         X
       </button>
     </Box>

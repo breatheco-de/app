@@ -47,7 +47,7 @@ const useCustomToast = ({
           width={width}
           maxWidth={maxWidth}
           margin="auto"
-          top="5vh"
+          top="6vh"
           mt="12px"
         >
           <Flex gridGap="10px" mt="2px">
