@@ -12,7 +12,6 @@ import { log } from './logging';
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
-const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
 
 const mapDifficulty = (difficulty) => {
   const difficultyStr = difficulty?.toLowerCase();
@@ -32,16 +31,22 @@ const reportDatalayer = (payload) => {
 
 const getPrismicPages = async () => {
   try {
+    // Obtiene el ref más reciente de Prismic
+    const masterRefResponse = await fetch(`${PRISMIC_API}`);
+    const masterRefData = await masterRefResponse.json();
+    const PRISMIC_REF = masterRefData?.refs?.[0]?.ref;
+
+    if (!PRISMIC_REF) {
+      throw new Error('SITEMAP: No PRISMIC_REF found');
+    }
+
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
-    log(`\n${data?.results?.length} pages fetched from Prismic\n`);
-    if (response.status > 400 && response.statusText !== 'OK') {
-      throw new Error('SITEMAP: Error fetching Prismic pages');
-    } else {
-      return data.results;
-    }
-  } catch (msg) {
-    console.error('SITEMAP:', msg);
+
+    log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
+    return data.results;
+  } catch (error) {
+    console.error('SITEMAP:', error);
     return [];
   }
 };
