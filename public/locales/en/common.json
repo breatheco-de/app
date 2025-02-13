@@ -42,6 +42,12 @@
     "mins": "mins",
     "sec": "seg"
   },
+  "back-to-asset": {
+    "lesson": "Back to Lessons",
+    "interactive-coding-tutorial": "Back to Projects",
+    "interactive-exercise": "Back to Exercises",
+    "how-to": "Back to How to's"
+  },
   "no-translation-available": "No translation available",
   "read-next": "Read next",
   "heading": "Welcome to",
@@ -96,6 +102,7 @@
   "email": "Email",
   "confirm-email": "Confirm email",
   "phone": "Phone",
+  "popular-searches": "Popular searches",
   "password": "Password",
   "confirm-password": "Confirm password",
   "difficulty": "Difficulty",

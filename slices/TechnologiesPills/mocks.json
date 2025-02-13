@@ -1,48 +1,58 @@
 [
-  {
-    "__TYPE__": "SharedSliceContent",
-    "variation": "default",
-    "primary": {
-      "id_key": {
-        "__TYPE__": "FieldContent",
-        "value": "worry",
-        "type": "Text"
-      },
-      "technologies": {
-        "__TYPE__": "StructuredTextContent",
-        "value": [
-          {
-            "type": "list-item",
-            "content": {
-              "text": "Javascript",
-              "spans": []
-            },
-            "direction": "ltr"
-          },
-          {
-            "type": "list-item",
-            "content": {
-              "text": "Python",
-              "spans": []
-            },
-            "direction": "ltr"
-          },
-          {
-            "type": "list-item",
-            "content": {
-              "text": "Django",
-              "spans": []
-            },
-            "direction": "ltr"
-          }
-        ]
-      }
-    },
-    "items": [
-      {
-        "__TYPE__": "GroupItemContent",
-        "value": []
-      }
-    ]
-  }
+	{
+		"__TYPE__": "SharedSliceContent",
+		"variation": "default",
+		"primary": {
+			"id_key": {
+				"__TYPE__": "FieldContent",
+				"value": "worry",
+				"type": "Text"
+			},
+			"technologies": {
+				"__TYPE__": "StructuredTextContent",
+				"value": [
+					{
+						"type": "list-item",
+						"content": {
+							"text": "Javascript",
+							"spans": []
+						},
+						"direction": "ltr"
+					},
+					{
+						"type": "list-item",
+						"content": {
+							"text": "Python",
+							"spans": []
+						},
+						"direction": "ltr"
+					},
+					{
+						"type": "list-item",
+						"content": {
+							"text": "Django",
+							"spans": []
+						},
+						"direction": "ltr"
+					}
+				]
+			},
+			"background": {
+				"__TYPE__": "FieldContent",
+				"value": "theory",
+				"type": "Text"
+			},
+			"padding_top": {
+				"__TYPE__": "FieldContent",
+				"value": "keep",
+				"type": "Text"
+			}
+		},
+		"items": [
+			{
+				"__TYPE__": "GroupItemContent",
+				"value": []
+			}
+		]
+	}
 ]
