@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { useState, useRef } from 'react';
-import { diffWords } from 'diff';
 import {
   Button,
   Avatar,
@@ -19,7 +18,7 @@ import {
 import { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
-import Editor from '@monaco-editor/react';
+import Editor, { DiffEditor } from '@monaco-editor/react';
 import { setStorageItem, getStorageItem, isWindow } from '../../utils';
 import { RIGOBOT_HOST, BREATHECODE_HOST } from '../../utils/variables';
 import ModalInfo from '../../js_modules/moduleMap/modalInfo';
@@ -62,30 +61,28 @@ export const languagesNames = {
 };
 
 function CodeDiff({ languages }) {
-  const { t } = useTranslation();
   const [code1, code2] = [languages[0]?.code, languages[1]?.code];
 
-  const getDiffs = (firstCode, secondCode) => {
-    const diffs = diffWords(firstCode || '', secondCode || '');
-    return diffs.map((part) => (
-      <span
-        key={part}
-        style={{
-          // eslint-disable-next-line no-nested-ternary
-          backgroundColor: part.added ? 'green' : part.removed ? 'red' : 'transparent',
-          textDecoration: part.removed ? 'line-through' : 'none',
-        }}
-      >
-        {part.value}
-      </span>
-    ));
+  const handleEditorDidMount = (editor, monaco) => {
+    monaco.editor.defineTheme('my-theme', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [],
+      colors: {
+        'editor.background': '#00041A',
+        'diffEditor.insertedTextBackground': languages[0].color || '#1f2823',
+        'diffEditor.removedTextBackground': languages[1].color || '#6b0b00',
+        'diffEditor.insertedLineBackground': languages[0].color || '#394829',
+        'diffEditor.removedLineBackground': languages[1].color || '#410b00',
+      },
+    });
   };
 
   return (
     <>
       <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} width="100%" height="100%" gap="10px">
         <Tabs position="relative" variant="unstyled" flexGrow={1}>
-          <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background={languages[0]?.color || '#00041A'} display="flex" justifyContent="space-between">
+          <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
             <TabList width="fit-content">
               <Tab color="blue.500">{languages[0]?.label || 'Code 1'}</Tab>
             </TabList>
@@ -98,11 +95,13 @@ function CodeDiff({ languages }) {
           </Box>
           <TabPanels>
             <TabPanel padding="0">
-              <Editor
+              <DiffEditor
                 theme="my-theme"
-                value={code1}
-                defaultLanguage={languages[0]?.language}
-                height="290px"
+                height="300px"
+                originalLanguage={languages[0]?.language}
+                modifiedLanguage={languages[1]?.language}
+                original={code1}
+                modified={code2}
                 options={{
                   scrollBeyondLastLine: false,
                   borderRadius: '4px',
@@ -114,73 +113,12 @@ function CodeDiff({ languages }) {
                   },
                   cursorStyle: 'line',
                 }}
-              />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-        <Tabs position="relative" variant="unstyled" flexGrow={1}>
-          <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background={languages[1]?.color || '#00041A'} display="flex" justifyContent="space-between">
-            <TabList width="fit-content">
-              <Tab color="blue.500">{languages[0]?.label || 'Code 2'}</Tab>
-            </TabList>
-            <TabIndicator
-              mt="30px"
-              height="2px"
-              bg="blue.500"
-              borderRadius="1px"
-            />
-          </Box>
-          <TabPanels>
-            <TabPanel padding="0">
-              <Editor
-                theme="my-theme"
-                value={code2}
-                defaultLanguage={languages[1]?.language}
-                height="290px"
-                options={{
-                  scrollBeyondLastLine: false,
-                  borderRadius: '4px',
-                  scrollbar: {
-                    alwaysConsumeMouseWheel: false,
-                  },
-                  minimap: {
-                    enabled: false,
-                  },
-                  cursorStyle: 'line',
-                }}
+                onMount={handleEditorDidMount}
               />
             </TabPanel>
           </TabPanels>
         </Tabs>
       </Box>
-      <Tabs position="relative" variant="unstyled" flexGrow={1} marginTop="10px">
-        <Box borderRadius="4px 4px 0 0" alignItems="center" padding="0 6px" background="#00041A" display="flex" justifyContent="space-between">
-          <TabList width="fit-content">
-            <Tab color="blue.500">{t('differences')}</Tab>
-          </TabList>
-          <TabIndicator
-            mt="30px"
-            height="2px"
-            bg="blue.500"
-            borderRadius="1px"
-          />
-        </Box>
-        <TabPanels>
-          <TabPanel padding="0">
-            <Box
-              padding="10px"
-              background="#00041A"
-              color="white"
-              fontFamily="monospace"
-              whiteSpace="pre-wrap"
-              height="100%"
-              overflowY="auto"
-            >
-              {getDiffs(code1, code2)}
-            </Box>
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
     </>
   );
 }
