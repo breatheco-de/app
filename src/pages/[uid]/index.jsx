@@ -22,6 +22,7 @@ function Page({ page }) {
   const { isRigoInitialized, rigo } = useRigo();
   const { isAuthenticated, isLoading } = useAuth();
   const landingUrl = page?.data?.landing_url;
+  const background = page?.data?.background;
   const loggedInWorkshopsView = isAuthenticated === true && router.query.uid === 'workshops';
 
   useEffect(() => {
@@ -78,7 +79,7 @@ function Page({ page }) {
       {loggedInWorkshopsView && !isLoading ? (
         <WorkshopsLoggedLanding />
       ) : (
-        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem">
+        <Box className="prismic-body" pt="3rem" px={{ base: '10px', md: '2rem' }} pb="5rem" background={background}>
           <SliceZone slices={page?.data?.slices} components={components} />
         </Box>
       )}
