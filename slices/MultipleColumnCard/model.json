@@ -57,6 +57,19 @@
             "placeholder": "",
             "options": ["Lato", "Space Grotesk Variable"]
           }
+        },
+        "image": {
+          "type": "Image",
+          "config": { "label": "Image", "constraint": {}, "thumbnails": [] }
+        },
+        "flex_direction": {
+          "type": "Select",
+          "config": {
+            "label": "Flex Direction",
+            "placeholder": "",
+            "options": ["column", "column-reverse"],
+            "default_value": "column"
+          }
         }
       }
     }

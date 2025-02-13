@@ -28,9 +28,24 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
-  if (isExternalExercise) {
+  if (isExternalExercise && !startWithLearnpack) {
     return (
-      <Button cursor="pointer" as="a" href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : currentAsset.url} target="_blank" size="sm" padding="4px 8px" fontSize="14px" fontWeight="500" background="gray.200" color="blue.default" {...rest}>
+      <Button
+        cursor="pointer"
+        as="a"
+        href={openWithLearnpackNoSaas ? currentAsset?.learnpack_deploy_url : currentAsset.url}
+        target="_blank"
+        size="sm"
+        padding="4px 8px"
+        fontSize="14px"
+        fontWeight="500"
+        color="blue.default"
+        background={variant !== 'extra-small' ? 'gray.200' : 'blue.default'}
+        style={variant === 'extra-small' ? { color: 'white', textDecoration: 'none' } : { textDecoration: 'none' }}
+        _hover="none"
+        _active="none"
+        {...rest}
+      >
         {t('common:learnpack.start-exercise')}
       </Button>
     );
@@ -176,7 +191,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
               size="l"
               color="white"
               dangerouslySetInnerHTML={{
-                __html: !isExternalExercise ? t('common:learnpack.description', { projectName: currentAsset?.title || currentTask?.title })
+                __html: (!isExternalExercise || startWithLearnpack) ? t('common:learnpack.description', { projectName: currentAsset?.title || currentTask?.title })
                   : t('common:external.description', { projectName: currentAsset?.title || currentTask?.title }),
               }}
             />

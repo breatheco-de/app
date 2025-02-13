@@ -172,6 +172,12 @@ function AuthProvider({ children, pageProps }) {
     window.location.href = inviteUrl;
   };
 
+  useEffect(() => {
+    if (state.isAuthenticated && (router.pathname === '/' || router.pathname === '')) {
+      router.push('/choose-program');
+    }
+  }, [state.isAuthenticated, router.pathname]);
+
   const parseCohort = (elem) => {
     const { cohort, ...cohort_user } = elem;
     const { syllabus_version } = cohort;
@@ -187,8 +193,6 @@ function AuthProvider({ children, pageProps }) {
     const token = getToken();
 
     if (token !== undefined && token !== null) {
-      const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
-      const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
@@ -205,7 +209,7 @@ function AuthProvider({ children, pageProps }) {
         }
         dispatch({
           type: 'INIT',
-          payload: { user: null, isAuthenticated: false, isLoading: false },
+          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [] },
         });
       } else {
         handleSession(token);
@@ -215,6 +219,10 @@ function AuthProvider({ children, pageProps }) {
             const { data } = await bc.admissions().me();
             const { cohorts: cohortUsers, ...userData } = data;
             const cohorts = cohortUsers.map(parseCohort);
+
+            const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
+            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+
             dispatch({
               type: 'INIT',
               payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
@@ -227,7 +235,7 @@ function AuthProvider({ children, pageProps }) {
                 method: 'native',
                 user_id: data.id,
                 email: data.email,
-                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(', '),
+                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(','),
                 is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
                 first_name: data.first_name,
                 last_name: data.last_name,

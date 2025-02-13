@@ -42,6 +42,12 @@
     "mins": "mins",
     "sec": "seg"
   },
+  "back-to-asset": {
+    "lesson": "Back to Lessons",
+    "interactive-coding-tutorial": "Back to Projects",
+    "interactive-exercise": "Back to Exercises",
+    "how-to": "Back to How to's"
+  },
   "no-translation-available": "No translation available",
   "read-next": "Read next",
   "heading": "Welcome to",
@@ -96,6 +102,7 @@
   "email": "Email",
   "confirm-email": "Confirm email",
   "phone": "Phone",
+  "popular-searches": "Popular searches",
   "password": "Password",
   "confirm-password": "Confirm password",
   "difficulty": "Difficulty",
@@ -247,6 +254,14 @@
               "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
+              "source-label": "How to install NVM on MacOS?"
             }
           ],
           "steps": [
@@ -259,6 +274,7 @@
               "source": "https://code.visualstudio.com/download"
             },
             {
+              "slug": "create-folders",
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
               "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-organize-your-files.mp4",
@@ -316,6 +332,14 @@
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=z6Tta9ZbbGg",
               "source": "https://4geeks.com/how-to/install-nvm-linux",
+              "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
             }
           ],
@@ -386,6 +410,14 @@
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
               "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
+              "source-label": "How to install NVM on MacOS?"
+            },
+            {
+              "name": "javascript",
+              "label": "Install Node JS in your computer",
+              "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
+              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
             }
           ],
@@ -475,6 +507,7 @@
   "junior": "Junior",
   "mid-level": "Mid level",
   "senior": "Senior",
+  "money-back-guarantee": "Get a full refund within 30 days if it's not what you expected",
   "start-free-trial": "Start free trial",
   "proceed-to-payment": "Proceed to payment",
   "select-cohort": "Select a cohort",
