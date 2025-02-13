@@ -118,6 +118,17 @@ interface PageDocumentData {
   background: prismic.ColorField;
 
   /**
+   * Background Dark Mode field in *Page*
+   *
+   * - **Field Type**: Color
+   * - **Placeholder**: *None*
+   * - **API ID Path**: page.background_dark_mode
+   * - **Tab**: Main
+   * - **Documentation**: https://prismic.io/docs/field#color
+   */
+  background_dark_mode: prismic.ColorField;
+
+  /**
    * Slice Zone field in *Page*
    *
    * - **Field Type**: Slice Zone
