@@ -414,7 +414,16 @@ function SyllabusContent() {
     cleanCurrentData();
   };
 
-  const EventIfNotFound = () => {
+  const EventIfNotFound = (task) => {
+    if (task.target === 'blank' && task.task_type === 'LESSON') {
+      setReadme({
+        content: t('external-read', { link: task.url }),
+      });
+      setCurrentAsset({
+        title: task?.title || t('no-content-found'),
+      });
+      return;
+    }
     setReadme({
       content: t('no-content-found-description'),
     });
@@ -482,7 +491,7 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound();
+        EventIfNotFound(currTask);
       });
     }
     return () => {
@@ -491,7 +500,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug, cohortSession, sortedAssignments]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);

@@ -79,10 +79,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
   }
 
   for (let i = 0; i < arrLessons.length; i += 1) {
-    // skip esternal lessons
-    if (arrLessons[i].external === true) {
-      continue;
-    }
     // skip repeated lessons
     if (lessons.find((p) => arrLessons[i].slug === p.slug)) {
       continue;
