@@ -72,8 +72,8 @@ function CodeDiff({ languages }) {
         'editor.background': '#00041A',
         'diffEditor.insertedTextBackground': languages[0].color || '#1f2823',
         'diffEditor.removedTextBackground': languages[1].color || '#6b0b00',
-        'diffEditor.insertedLineBackground': languages[0].color || '#394829',
-        'diffEditor.removedLineBackground': languages[1].color || '#410b00',
+        'diffEditor.insertedLineBackground': '#00041A',
+        'diffEditor.removedLineBackground': '#00041A',
       },
     });
   };
