@@ -274,7 +274,7 @@ function Checkout() {
       const suggestedPlanInfo = res.data;
 
       const couponOnQuery = await getQueryString('coupon');
-      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery], plan: processedPlan?.slug }).verifyCoupon();
+      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: processedPlan?.slug }).verifyCoupon();
       setDiscountValues(allCouponsApplied);
 
       if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
