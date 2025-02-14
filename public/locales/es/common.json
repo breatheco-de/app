@@ -172,8 +172,14 @@
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "dependencies":{
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
+    "install-specific-version": "Instala {{name}} con la versión {{version}} en tu ordenador",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
       "title": "Abrir en la nube",
