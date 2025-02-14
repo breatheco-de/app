@@ -213,7 +213,7 @@
         "slug": "intro",
         "label": "Introduction",
         "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
-        "video": "",
+        "video": "https://www.youtube.com/watch?v=AcC3XnW0GiI",
         "source-label": "",
         "source": ""
       },
@@ -229,6 +229,7 @@
       },
       "project-readme": {
         "label": "Revisa el README.md dentro del proyecto",
+        "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
         "description": "Una vez que abras el proyecto en tu editor de código, encontrarás un archivo README.es.md las instrucciones detalladas sobre como correr el proyecto."
       },
       "os-list": [
@@ -398,7 +399,7 @@
               "name": "python",
               "label": "Instala Python en tu ordenador",
               "description": "Para correr este proyecto, es necesario que tengas python instalado en tu ordenador, sigue las instrucciones en el siguiente link para instalar Python",
-              "video": "https://www.youtube.com/watch?v=KVdWWsklW6o",
+              "video": "https://www.youtube.com/watch?v=BJA1nLBeT70",
               "source": "https://4geeks.com/es/how-to/como-instalar-python",
               "source-label": "¿Cómo instalar Python?"
             },
@@ -424,14 +425,14 @@
               "slug": "download-ide",
               "label": "Descarga un editor de código o IDE en tu computadora",
               "description": "Te recomendamos descargar VSCode ya que se integra perfectamente con la mayoría de nuestros tutoriales interactivos, sin embargo, puedes usar el que más te guste. Sigue el link de abajo para descargarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=5VOejVAyMQU",
               "source": "https://code.visualstudio.com/download",
               "source-label": "Ir a la pagina de descarga de VSCode"
             },
             {
               "label": "Crea una carpeta donde guardarás estos ejercicios",
               "description": "Si ya creaste una carpeta para algún ejercicio anterior de 4Geeks, te recomendamos usar esa. Sino, crea una carpeta donde más te guste (En la carpeta Documents por ejemplo), y abre esta carpeta nueva en VSCode. Desde aquí abre la terminal para poder seguir con los siguientes pasos.",
-              "video": "https://www.youtube.com/watch?v=gXVI3PxFajU",
+              "video": "https://www.youtube.com/watch?v=ZSBqoMIeGho",
               "source": ""
             },
             {
@@ -450,14 +451,14 @@
             {
               "label": "Instala GIT en tu computadora",
               "description": "Debes instalar GIT para poder clonar el repositorio de GitHub localmente. Para esto sigue los pasos del siguiente link.",
-              "video": "https://www.youtube.com/watch?v=zyrhDewSa2c",
+              "video": "https://www.youtube.com/watch?v=kcLuJ0WxGkg",
               "source": "https://git-scm.com/downloads/win"
             },
             {
               "slug": "clone",
               "label": "Clona el proyecto en tu computadora",
               "description": "Puedes clonar el proyecto en tu computadora simplemente corriendo este comando en la terminal: `git clone {{repoUrl}}`. Chequea el siguiente link para una explicación más completa.",
-              "video": "https://www.youtube.com/watch?v=rAnn6vtLm90",
+              "video": "https://www.youtube.com/watch?v=etk4EDtsNX4",
               "source": "https://4geeks.com/es/how-to/como-clonar-un-repositorio-de-github",
               "source-label": "Ir a cómo cloner un repositorio de GitHub"
             }
@@ -467,7 +468,7 @@
               "slug": "read-readme",
               "label": "Lee el contenido del readme",
               "description": "Un README es un archivo estándar que explica de forma simple y clara de qué trata un proyecto. Imagina que es una pequeña guía que te dice qué hace, cómo usarlo y qué necesitas para hacerlo funcionar. Es como una carta de bienvenida para cualquiera que quiera entender o colaborar en el proyecto. Queremos que te acostumbres a leerlos, ya que son esenciales en casi todos los proyectos de la industria, todos los profesionales ya tienen el hábito de revisarlo.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=xNPsmUOyres",
               "source": "#markdown-body",
               "source-label": "¡Llevame al readme!"
             }
