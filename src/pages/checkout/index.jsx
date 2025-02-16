@@ -107,7 +107,7 @@ function Checkout() {
   const [couponError, setCouponError] = useState(false);
   const [suggestedPlans, setSuggestedPlans] = useState(undefined);
   const [discountValues, setDiscountValues] = useState(undefined);
-  const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
+  // const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -276,12 +276,6 @@ function Checkout() {
       const couponOnQuery = await getQueryString('coupon');
       const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: suggestedPlanInfo[0]?.suggested_plan.slug || processedPlan?.slug }).verifyCoupon();
       setDiscountValues(allCouponsApplied);
-
-      if (suggestedPlanInfo.length > 0 && suggestedPlanInfo[0]?.suggested_plan.slug) {
-        const { data } = await bc.payment({ plan: suggestedPlanInfo[0].suggested_plan.slug }).verifyCoupon();
-        const suggestedPlanCoupon = data[0];
-        setSuggestedPlansDiscount(suggestedPlanCoupon);
-      }
 
       setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
@@ -623,24 +617,19 @@ function Checkout() {
       const monthlyPayment = suggestedPlans?.price_per_month;
       const yearlyPayment = suggestedPlans?.price_per_year;
 
-      const discounts = [
-        suggestedPlansDiscounts,
-        discountValues[0],
-      ].filter(Boolean);
-
       let financingText = '';
 
       if (financingOptions.length > 0) {
         financingOptions.sort((a, b) => a.months - b.months);
 
         if (financingOptions.length === 1) {
-          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discounts);
+          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
           financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
         }
 
         if (financingOptions.length > 1) {
-          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discounts);
-          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discounts);
+          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discountValues);
+          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
 
           financingText = t('free_trial_multiple_payments', {
             description: originalPlan.selectedPlan.description,
@@ -653,12 +642,12 @@ function Checkout() {
 
       if (financingOptions.length === 0) {
         if (monthlyPayment) {
-          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discounts);
+          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
           financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
         }
 
         if (yearlyPayment && !monthlyPayment) {
-          const finalYearlyPrice = applyDiscounts(yearlyPayment, discounts);
+          const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
           financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
         }
       }
@@ -667,7 +656,7 @@ function Checkout() {
         financingText = originalPlan?.selectedPlan?.description;
       }
 
-      if (discounts.length > 0) {
+      if (discountValues.length > 0) {
         financingText += ` ${t('limited_time_offer')}`;
       }
 
