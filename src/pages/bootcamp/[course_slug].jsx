@@ -728,6 +728,9 @@ function CoursePage({ data, syllabus }) {
                             color="green.400"
                             isLoading={initialDataIsFetching}
                             borderColor="currentColor"
+                            width="100%"
+                            whiteSpace="normal"
+                            wordWrap="break-word"
                             onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}
