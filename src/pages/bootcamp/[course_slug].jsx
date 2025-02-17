@@ -713,9 +713,10 @@ function CoursePage({ data, syllabus }) {
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
                           background="green.400"
                           color="white"
-                          onClick={() => {
-                            router.push(`/checkout${enrollQuerys}`);
-                          }}
+                          width="100%"
+                          whiteSpace="normal"
+                          wordWrap="break-word"
+                          onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
                           {!featuredPlanToEnroll?.isFreeTier
                             ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
@@ -727,6 +728,9 @@ function CoursePage({ data, syllabus }) {
                             color="green.400"
                             isLoading={initialDataIsFetching}
                             borderColor="currentColor"
+                            width="100%"
+                            whiteSpace="normal"
+                            wordWrap="break-word"
                             onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}
