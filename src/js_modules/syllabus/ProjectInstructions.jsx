@@ -22,6 +22,7 @@ import Heading from '../../common/components/Heading';
 import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
+import useAuth from '../../common/hooks/useAuth';
 
 export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
   const { t } = useTranslation('common');
@@ -52,7 +53,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
     );
   }
 
-  //___USED ON PRIVATE VIEWS___
+  //___USED ON PRIVATE VIEWS NO SAAS___
   if (isExternalExercise && !startWithLearnpack) {
     return (
       <Button
@@ -76,6 +77,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
     );
   }
 
+  //___USED ON PRIVATE VIEWS SAAS___
   return (
     <>
       {startWithLearnpack ? (
@@ -107,8 +109,9 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, learnpackUrlFromPublicView, vendorsFromPublicView, ...rest }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
   const { t } = useTranslation('common');
+  const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -116,20 +119,47 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
-  const fetchProvisioningVendors = async () => {
+  console.log(currentAsset);
+  console.log(vendors);
+
+  const fetchProvisioningVendors = async (academyId) => {
     try {
-      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
-      setVendors(data);
+      const { data } = await bc.provisioning().academyVendors(academyId);
+      return data;
     } catch (e) {
       console.log(e);
+      return [];
     }
   };
 
   useEffect(() => {
-    if (cohortSession) {
-      fetchProvisioningVendors();
+    if (cohortSession && !publicView) {
+      const fetchedVendors = fetchProvisioningVendors(cohortSession.academy.id);
+      setVendors(fetchedVendors);
+      return;
     }
-  }, [cohortSession]);
+    const fetchSequentially = async () => {
+      let found = false;
+
+      await cohorts.reduce(async (previousPromise, cohort) => {
+        await previousPromise;
+
+        if (found || vendors.length > 0) return;
+
+        if (cohort.academy?.id) {
+          const data = await fetchProvisioningVendors(cohort.academy.id);
+          if (data.length > 0) {
+            setVendors(data);
+            found = true;
+          }
+        }
+      }, Promise.resolve());
+    };
+
+    if (vendors.length === 0) {
+      fetchSequentially();
+    }
+  }, [cohortSession, cohorts]);
 
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
@@ -159,11 +189,11 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             openWithLearnpackNoSaas={openWithLearnpackNoSaas}
-            learnpackUrlFromPublicView={learnpackUrlFromPublicView}
+            learnpackUrlFromPublicView={publicViewLearnpack}
             variant={variant}
           />
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} vendorsFromPublicView={vendorsFromPublicView} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
       </>
     );
   }
@@ -200,7 +230,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             </Box>
           </Box>
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
       </>
     );
   }
@@ -244,7 +274,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           />
         </Box>
       </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
     </>
   );
 }

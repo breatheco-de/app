@@ -27,13 +27,13 @@ import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
 
 function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
-  setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme,
+  setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme, publicView,
 }) {
   const { t } = useTranslation('syllabus');
   const { featuredLight, hexColor, borderColor } = useStyle();
   const accessToken = localStorage.getItem('accessToken');
 
-  const provisioningLinks = cohortSessionID ? [{
+  const provisioningLinks = !publicView ? [{
     title: t('common:learnpack.new-exercise'),
     link: `${BREATHECODE_HOST}/v1/provisioning/me/container/new?token=${accessToken}&cohort=${cohortSessionID}&repo=${currentAssetURL}`,
     isExternalLink: true,
@@ -197,7 +197,7 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
   );
 }
 
-function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, vendorsFromPublicView }) {
+function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendors, publicView }) {
   const { t, lang } = useTranslation('syllabus');
   const { state } = useCohortHandler();
   const { cohortSession } = state;
@@ -213,7 +213,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const isInteractive = currentAsset?.interactive;
 
   const isForOpenLocaly = isInteractive || templateUrl;
-  const showProvisioningLinks = (provisioningVendors?.length > 0 || vendorsFromPublicView?.length > 0) && currentAsset?.gitpod;
+  const showProvisioningLinks = (provisioningVendors?.length > 0) && currentAsset?.gitpod;
   const onlyReadme = !isForOpenLocaly && !showProvisioningLinks;
 
   //__info used in steps on open locally options__
@@ -317,6 +317,7 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
                 isInteractive={isInteractive}
                 currentAssetURL={currentAsset?.url}
                 cohortSessionID={cohortSession.id}
+                publicView={publicView}
               />
             ) : (
               <Box>
@@ -400,7 +401,7 @@ ModalToCloneProject.propTypes = {
   onClose: PropTypes.func,
   currentAsset: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
   provisioningVendors: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
-  vendorsFromPublicView: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+  publicView: PropTypes.bool,
 };
 
 ModalToCloneProject.defaultProps = {
@@ -408,7 +409,7 @@ ModalToCloneProject.defaultProps = {
   onClose: () => { },
   currentAsset: null,
   provisioningVendors: [],
-  vendorsFromPublicView: [],
+  publicView: false,
 };
 
 ModalContentDisplay.propTypes = {
@@ -427,6 +428,7 @@ ModalContentDisplay.propTypes = {
   selectedOption: PropTypes.string.isRequired,
   cohortSessionID: PropTypes.string.isRequired,
   currentAssetURL: PropTypes.string.isRequired,
+  publicView: PropTypes.bool.isRequired,
 };
 
 export default ModalToCloneProject;

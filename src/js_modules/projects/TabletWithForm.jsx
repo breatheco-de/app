@@ -3,7 +3,7 @@ import {
   Box,
   useColorModeValue,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { getStorageItem } from '../../utils';
@@ -18,7 +18,6 @@ import ShowOnSignUp from '../../common/components/ShowOnSignup';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import ProjectInstructions from '../syllabus/ProjectInstructions';
-import bc from '../../common/services/breathecode';
 
 const TabletWithForm = React.forwardRef(({
   asset,
@@ -28,11 +27,10 @@ const TabletWithForm = React.forwardRef(({
   showSimpleTable,
 }, ref) => {
   const { t, lang } = useTranslation('exercises');
-  const { user, cohorts } = useAuth();
+  const { user } = useAuth();
   const { hexColor, lightColor } = useStyle();
   const [formSended, setFormSended] = useState(false);
   const [showCloneModal, setShowCloneModal] = useState(false);
-  const [vendors, setVendors] = useState([]);
   const currentThemeValue = useColorModeValue('light', 'dark');
   const userToken = getStorageItem('accessToken');
   const textColor = commonTextColor || lightColor;
@@ -48,17 +46,8 @@ const TabletWithForm = React.forwardRef(({
 
     return `${asset?.learnpack_deploy_url}#language=${currentLang}&lang=${currentLang}&theme=${theme}&token=${token}`;
   };
-  const publicLearnpackUrl = buildLearnpackUrl();
 
-  const fetchProvisioningVendors = async (academyId) => {
-    try {
-      const { data } = await bc.provisioning().academyVendors(academyId);
-      return data;
-    } catch (e) {
-      console.log(e);
-      return [];
-    }
-  };
+  const publicLearnpackUrl = buildLearnpackUrl();
 
   const getTitleMessage = () => {
     if (user) return '';
@@ -73,30 +62,6 @@ const TabletWithForm = React.forwardRef(({
     if (asset.solution_url) return t('access-solution');
     return t('similar-projects');
   };
-
-  useEffect(() => {
-    const fetchSequentially = async () => {
-      let found = false;
-
-      await cohorts.reduce(async (previousPromise, cohort) => {
-        await previousPromise;
-
-        if (found || vendors.length > 0) return;
-
-        if (cohort.academy?.id) {
-          const data = await fetchProvisioningVendors(cohort.academy.id);
-          if (data.length > 0) {
-            setVendors(data);
-            found = true;
-          }
-        }
-      }, Promise.resolve());
-    };
-
-    if (vendors.length === 0) {
-      fetchSequentially();
-    }
-  }, [cohorts]);
 
   return (
     <>
@@ -181,7 +146,7 @@ const TabletWithForm = React.forwardRef(({
                 </Text>
               </>
             )}
-            <ProjectInstructions currentAsset={asset} variant="extra-small" learnpackUrlFromPublicView={publicLearnpackUrl} vendorsFromPublicView={vendors} />
+            <ProjectInstructions currentAsset={asset} variant="extra-small" publicViewLearnpack={publicLearnpackUrl} publicView />
           </>
         </ShowOnSignUp>
         <ModalToCloneProject currentAsset={asset} isOpen={showCloneModal} onClose={setShowCloneModal} />
