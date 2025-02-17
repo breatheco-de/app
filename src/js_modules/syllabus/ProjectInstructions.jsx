@@ -24,7 +24,7 @@ import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
 import useAuth from '../../common/hooks/useAuth';
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
   const { t } = useTranslation('common');
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
@@ -102,7 +102,9 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           }}
           {...rest}
         >
-          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {publicView
+            ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       )}
     </>
@@ -191,6 +193,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             openWithLearnpackNoSaas={openWithLearnpackNoSaas}
             learnpackUrlFromPublicView={publicViewLearnpack}
             variant={variant}
+            publicView={publicView}
           />
         </Box>
         <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
