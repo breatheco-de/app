@@ -27,7 +27,7 @@ import useStyle from '../hooks/useStyle';
 import Text from './Text';
 import Icon from './Icon';
 
-const notExecutables = ['css', 'shell', 'windows', 'mac', 'linux'];
+const notExecutables = ['css', 'shell', 'windows', 'macos', 'mac', 'linux'];
 
 export const languagesLabels = {
   jsx: 'JS',
