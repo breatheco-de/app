@@ -172,8 +172,15 @@
       "project": "proyecto",
       "exercise": "ejercicio"
     },
+    "dependencies":{
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Empezar ejercicio",
     "recommended": "Recomendado",
+    "install-specific-version": "Instala {{name}} con la versión {{version}} en tu ordenador",
+    "banner-description": "Es crucial instalar la versión especificada, de lo contrario, el proyecto puede no ejecutarse correctamente. Instala la versión {{version}}.",
     "open-in-learnpack-button": {
       "text": "Abrir en la nube",
       "title": "Abrir en la nube",
