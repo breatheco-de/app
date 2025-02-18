@@ -135,32 +135,37 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   };
 
   useEffect(() => {
-    if (cohortSession && !publicView) {
-      const fetchedVendors = fetchProvisioningVendors(cohortSession.academy.id);
-      setVendors(fetchedVendors);
-      return;
-    }
-    const fetchSequentially = async () => {
-      let found = false;
+    const fetchVendors = async () => {
+      if (cohortSession && !publicView) {
+        const fetchedVendors = await fetchProvisioningVendors(cohortSession.academy.id);
+        setVendors(fetchedVendors);
+        return;
+      }
 
-      await cohorts.reduce(async (previousPromise, cohort) => {
-        await previousPromise;
+      const fetchSequentially = async () => {
+        let found = false;
 
-        if (found || vendors.length > 0) return;
+        await cohorts.reduce(async (previousPromise, cohort) => {
+          await previousPromise;
 
-        if (cohort.academy?.id) {
-          const data = await fetchProvisioningVendors(cohort.academy.id);
-          if (data.length > 0) {
-            setVendors(data);
-            found = true;
+          if (found || vendors.length > 0) return;
+
+          if (cohort.academy?.id) {
+            const data = await fetchProvisioningVendors(cohort.academy.id);
+            if (data.length > 0) {
+              setVendors(data);
+              found = true;
+            }
           }
-        }
-      }, Promise.resolve());
+        }, Promise.resolve());
+      };
+
+      if (vendors.length === 0) {
+        fetchSequentially();
+      }
     };
 
-    if (vendors.length === 0) {
-      fetchSequentially();
-    }
+    fetchVendors();
   }, [cohortSession, cohorts]);
 
   const isInteractive = currentAsset?.interactive;
