@@ -11,7 +11,6 @@ function ChangeCardPage() {
 //   const { id } = router.query;
 //   const { user } = useAuth();
   const toast = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
   //   const { state, fetchSubscriptions } = useSubscriptionsHandler();
@@ -21,7 +20,6 @@ function ChangeCardPage() {
   }, []);
 
   const handleCardSubmit = async (values) => {
-    setIsSubmitting(true);
     try {
       const response = await bc.payment().addCard(values);
       if (response.ok) {
@@ -31,8 +29,6 @@ function ChangeCardPage() {
       }
     } catch (err) {
       toast({ title: 'Failed to update card', status: 'error' });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -51,7 +47,7 @@ function ChangeCardPage() {
       >
         <Text fontSize="xl" fontWeight="bold" mb={4}>Change Payment Card Information</Text>
         {!isSuccess ? (
-          <CardForm onSubmit={handleCardSubmit} isSubmitting={isSubmitting} />
+          <CardForm onSubmit={handleCardSubmit} />
         ) : (
           <Box>
             <Text fontSize="lg" fontWeight="bold" color="green.500">Payment method updated successfully!</Text>
