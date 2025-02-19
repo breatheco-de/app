@@ -216,7 +216,7 @@ const getCacheItem = async (key) => {
     const item = await kv.get(key);
     return item;
   } catch (e) {
-    console.log(`Failed to fetch ${key} from vercel cache`);
+    console.log(`Failed to fetch ${key} from vercel cache: ${e}`);
     return null;
   }
 };
@@ -230,7 +230,7 @@ const setCacheItem = async (key, value) => {
     console.log(`Setting up ${key} on cache`);
     await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
   } catch (e) {
-    console.log(`Failed to set ${key} on cache`);
+    console.log(`Failed to set ${key} on cache: ${e}`);
   }
 };
 
