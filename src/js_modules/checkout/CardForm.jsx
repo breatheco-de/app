@@ -34,7 +34,7 @@ const CustomDateInput = forwardRef(({ value, onClick, ...rest }, ref) => {
   );
 });
 
-function CardForm({ onSubmit, modalCardErrorProps }) {
+function CardForm({ onSubmit, modalCardErrorProps, buttonText }) {
   const { t } = useTranslation('signup');
 
   const {
@@ -157,8 +157,11 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                           value = value.slice(0, 1);
                         }
                         value = value.substring(0, 5);
+                        const monthValue = value.split('/')[0];
+                        const yearValue = value.split('/')[1];
 
                         setPaymentInfo('exp', value);
+                        setStateCard({ ...stateCard, exp_month: monthValue, exp_year: yearValue });
                       }}
                       pattern="[0-9]*"
                       label={t('expiration-date')}
@@ -176,6 +179,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                       e.target.value = newValue.slice(0, 4);
 
                       setPaymentInfo('cvc', e.target.value);
+                      setStateCard({ ...stateCard, cvc: e.target.value });
                     }}
                     pattern="[0-9]*"
                     label={t('cvc')}
@@ -191,7 +195,7 @@ function CardForm({ onSubmit, modalCardErrorProps }) {
                   height="40px"
                   mt="0"
                 >
-                  {t('common:proceed-to-payment')}
+                  {buttonText || t('common:proceed-to-payment')}
                 </Button>
               ) : (
                 <Button
@@ -241,15 +245,17 @@ CustomDateInput.propTypes = {
 };
 CustomDateInput.defaultProps = {
   value: '',
-  onClick: () => {},
+  onClick: () => { },
 };
 
 CardForm.propTypes = {
   onSubmit: PropTypes.func,
   modalCardErrorProps: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])),
+  buttonText: PropTypes.string,
 };
 CardForm.defaultProps = {
-  onSubmit: () => {},
+  onSubmit: () => { },
+  buttonText: '',
   modalCardErrorProps: {},
 };
 
