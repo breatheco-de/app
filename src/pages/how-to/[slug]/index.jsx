@@ -25,6 +25,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -66,13 +67,27 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    if (!data.readme?.decoded) {
+    let markdown = await getCacheItem(slug);
+    if (!markdown) {
+      console.log(`${slug} not found on cache`);
+
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+
+      markdown = await markdownResp.text();
+      await setCacheItem(slug, markdown);
+    }
+
+    if (!data || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = data.readme.decoded;
 
     const {
       title, description, translations, preview,
@@ -181,6 +196,7 @@ export default function HowToSlug({ data, markdown }) {
         <Head>
           <script
             type="application/ld+json"
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: JSON.stringify(data.structuredData) }}
           />
         </Head>
