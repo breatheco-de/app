@@ -661,9 +661,6 @@ function CoursePage({ data, syllabus }) {
                     {data?.course_translation?.short_description}
                   </Text>
                 )}
-                <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                  {data?.course_translation?.description}
-                </Text>
               </Flex>
             </Flex>
           </Flex>
