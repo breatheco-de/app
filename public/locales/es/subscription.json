@@ -1,5 +1,7 @@
 {
     "change-card-info":"Cambio de información de tarjeta",
     "change-card-info-action": "Cambiar información de tarjeta",
-    "payment-success": "Información de pago cambiada exitosamente!"
+    "payment-success": "Información de pago cambiada exitosamente!",
+    "card decline": "Fallo al actualizar la tarjeta",
+    "no-sub-owner": "Necesitas ser el dueño de esta subscription para entrar a esta pagina"
 }

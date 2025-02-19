@@ -38,7 +38,7 @@ function ChangeCardPage() {
 
       toast({
         position: 'top',
-        title: 'Failed to update card',
+        title: t('card decline'),
         description: err.message,
         status: 'error',
         duration: 7000,
@@ -82,13 +82,13 @@ function ChangeCardPage() {
     if (!hasCheckedSubscription.current) return;
 
     if (state.subscriptions.length === 0) {
-      redirect('You need to be the owner of this subscription to access this page');
+      redirect(t('no-sub-owner'));
       return;
     }
 
     const subscription = checkUserSubscription(state.subscriptions);
     if (!subscription) {
-      redirect('You need to be the owner of this subscription to access this page');
+      redirect(t('no-sub-owner'));
       return;
     }
 
