@@ -31,6 +31,7 @@ import SupplementaryMaterial from '../../../common/components/SupplementaryMater
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
 import Icon from '../../../common/components/Icon';
 import useStyle from '../../../common/hooks/useStyle';
+import { getCacheItem, setCacheItem } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -55,6 +56,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const staticImage = t('seo.image', { domain: ORIGIN_HOST });
 
   try {
+    let markdown;
     const assetList = await import('../../../lib/asset-list.json')
       .then((res) => res.default)
       .catch(() => []);
@@ -74,12 +76,26 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    markdown = await getCacheItem(slug);
+    if (!markdown) {
+      console.log(`${slug} not found on cache`);
+      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
+
+      if (markdownResp?.status >= 400) {
+        return {
+          notFound: true,
+        };
+      }
+      markdown = await markdownResp.text();
+
+      await setCacheItem(slug, markdown);
+    }
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-    const markdown = result.readme.decoded;
 
     const {
       title, translations, description, preview,
@@ -206,6 +222,7 @@ function Exercise({ exercise, markdown }) {
         <Head>
           <script
             type="application/ld+json"
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{ __html: JSON.stringify(exercise.structuredData) }}
           />
         </Head>

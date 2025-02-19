@@ -28,33 +28,20 @@ export default async function handler(req, res) {
       const type = getAssetType(asset);
       if (!type) return res.status(200).json({ message: `Asset type not superted for ${asset.slug}` });
 
-      const exensionName = getExtensionName(asset.readme_url);
       let markdown = '';
-      let ipynbHtml = '';
-      if (exensionName !== 'ipynb') {
-        const resp = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.md`);
-        if (resp.status >= 400) {
-          return {
-            notFound: true,
-          };
-        }
-        markdown = await resp.text();
-      } else {
-        const ipynbIframe = `${BREATHECODE_HOST}/v1/registry/asset/preview/${assetSlug}`;
-        const ipynbHtmlUrl = `${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.html`;
-        const resp = await bc.get(ipynbHtmlUrl);
 
-        ipynbHtml = {
-          html: await resp.text(),
-          iframe: ipynbIframe,
-          statusText: resp.statusText,
-          status: resp.status,
+      const exensionName = getExtensionName(asset.readme_url);
+      const extension = exensionName !== 'ipynb' ? 'md' : 'html';
+      const endpoint = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.${extension}`;
+      const resp = await fetch(endpoint);
+      if (resp.status >= 400) {
+        return {
+          notFound: true,
         };
       }
-      asset.markdown = markdown;
-      asset.ipynbHtml = ipynbHtml;
+      markdown = await resp.text();
 
-      await setCacheItem(assetSlug, asset);
+      await setCacheItem(assetSlug, markdown);
 
       res.status(200).json({ message: `${asset.slug} updated` });
     } catch (e) {
