@@ -40,6 +40,10 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
     ? `${BREATHECODE_HOST}/v1/auth/github?url=${curUrl}`
     : '#';
 
+  const googleLoginUrl = (typeof window !== 'undefined')
+    ? `${BREATHECODE_HOST}/v1/auth/google?url=${curUrl}`
+    : '#';
+
   const validateEmail = async (email) => {
     try {
       setEmailValidation({
@@ -144,6 +148,28 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
           <Stack spacing={4} justifyContent="space-between">
             {step === 1 && (
               <>
+                <Button
+                  as="a"
+                  href={googleLoginUrl}
+                  cursor="pointer"
+                  variant="outline"
+                  weight="700"
+                  onClick={() => {
+                    reportDatalayer({
+                      dataLayer: {
+                        event: 'login',
+                        path: '/login',
+                        method: 'google',
+                        agent: getBrowserInfo(),
+                      },
+                    });
+                  }}
+                >
+                  <Icon icon="google-collab" width="18px" height="18px" />
+                  <Text as="span" size="md" marginLeft="10px" textTransform="uppercase">
+                    {t('login-with-google')}
+                  </Text>
+                </Button>
                 <Button
                   as="a"
                   href={githubLoginUrl}

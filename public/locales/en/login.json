@@ -5,6 +5,7 @@
     "keywords": ["login to 4Geeks", "login", "register", "create account"]
   },
   "login-with-github": "Log in with Github",
+  "login-with-google": "Log in with Google",
   "or": "or",
   "password": "Password",
   "confirm-password": "Confirm Password",
