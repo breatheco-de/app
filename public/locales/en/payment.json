@@ -3,5 +3,6 @@
     "change-card-info-action": "Change card information",
     "payment-success": "Payment method updated successfully!",
     "card decline": "Failed to update card",
-    "no-sub-owner": "You need to be the owner of this subscription to access this page"
+    "no-sub-owner": "You need to be the owner of this subscription to access this page",
+    "go-to-user-subs": "Go to my subscriptions"
 }
