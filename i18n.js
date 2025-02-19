@@ -24,6 +24,7 @@ module.exports = {
     '/interactive-exercise/[slug]': ['exercises', 'workshops'],
     '/choose-program': ['choose-program', 'dashboard', 'profile', 'assignments'],
     '/syllabus/[cohortSlug]/[lesson]/[lessonSlug]': ['syllabus', 'dashboard', 'projects', 'assignments'],
+    '/subscription/[subId]': ['subscription'],
     '/survey/[surveyId]': ['survey'],
     '/mentorship': ['mentorship'],
     '/mentorship/schedule': ['mentorship', 'dashboard', 'signup', 'common'],

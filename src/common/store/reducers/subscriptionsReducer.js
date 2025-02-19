@@ -4,7 +4,7 @@ import {
 
 const initialState = {
   subscriptions: [],
-  isLoading: true, // This should be well tested, I don't think it should be the solution
+  isLoading: false,
 };
 
 const subscriptionsReducer = (state = initialState, action) => {
