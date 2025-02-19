@@ -717,6 +717,7 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
+                          id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
                           background="green.400"
