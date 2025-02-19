@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
@@ -213,7 +213,11 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
 const getCacheItem = async (key) => {
   try {
     console.log(`Fetching ${key} from cache`);
-    const item = await kv.get(key);
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    const item = await redis.get(key);
     return item;
   } catch (e) {
     console.log(`Failed to fetch ${key} from vercel cache: ${e}`);
@@ -228,7 +232,11 @@ const getCacheItem = async (key) => {
 const setCacheItem = async (key, value) => {
   try {
     console.log(`Setting up ${key} on cache`);
-    await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    await redis.set(key, value, { ex: 604800 }); //Set expire time to one week
   } catch (e) {
     console.log(`Failed to set ${key} on cache: ${e}`);
   }
