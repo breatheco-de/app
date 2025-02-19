@@ -79,6 +79,7 @@
   "enroll": "Enroll now",
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
+  "start-tutorial": "Start tutorial",
   "learn-more": "Learn more",
   "more-technologies": "More technologies",
   "continue-learning": "Continue learning about:",
@@ -176,8 +177,15 @@
       "project": "project",
       "exercise": "exercise"
     },
+    "dependencies":{
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
+    "install-specific-version": "Install {{name}} with version {{version}} in your computer",
+    "banner-description": "It's crucial to install the version specified, otherwise the project may not run correctly. Install version {{version}}",
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
       "title": "Open in the cloud",

@@ -50,6 +50,10 @@
         "type": "Color",
         "config": { "label": "Background", "placeholder": "" }
       },
+      "background_dark_mode": {
+        "type": "Color",
+        "config": { "label": "Background Dark Mode", "placeholder": "" }
+      },
       "slices": {
         "type": "Slices",
         "fieldset": "Slice Zone",
