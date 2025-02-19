@@ -25,7 +25,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
-import { getCacheItem, setCacheItem } from '../../../utils/requests';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -67,21 +67,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    let markdown = await getCacheItem(slug);
-    if (!markdown) {
-      console.log(`${slug} not found on cache`);
-
-      const markdownResp = await fetch(`${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.md`);
-
-      if (markdownResp?.status >= 400) {
-        return {
-          notFound: true,
-        };
-      }
-
-      markdown = await markdownResp.text();
-      await setCacheItem(slug, markdown);
-    }
+    const markdown = await getMarkdownFromCache(slug, data);
 
     if (!data || !markdown) {
       return {

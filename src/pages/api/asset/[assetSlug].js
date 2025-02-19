@@ -17,16 +17,16 @@ const getAssetType = (asset) => {
 
 export default async function handler(req, res) {
   if (req.method === 'PUT') {
+    const { assetSlug } = req.query;
     try {
       // const asset = req.body;
-      const { assetSlug } = req.query;
 
       const response = await bc.get(`${BREATHECODE_HOST}/v1/registry/asset/${assetSlug}`);
       const asset = await response.json();
 
       if (!asset || response.status >= 400) return res.status(404).json({ message: `Asset not found for ${assetSlug}` });
       const type = getAssetType(asset);
-      if (!type) return res.status(200).json({ message: `Asset type not superted for ${asset.slug}` });
+      if (!type) return res.status(400).json({ message: `Asset type not superted for ${asset.slug}` });
 
       let markdown = '';
 
@@ -35,9 +35,7 @@ export default async function handler(req, res) {
       const endpoint = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${assetSlug}.${extension}`;
       const resp = await fetch(endpoint);
       if (resp.status >= 400) {
-        return {
-          notFound: true,
-        };
+        return res.status(400).json({ message: `Failed updating ${asset.slug}` });
       }
       markdown = await resp.text();
 
@@ -46,6 +44,7 @@ export default async function handler(req, res) {
       res.status(200).json({ message: `${asset.slug} updated` });
     } catch (e) {
       console.log(e);
+      return res.status(400).json({ message: `Failed updating ${assetSlug}` });
     }
   }
 }

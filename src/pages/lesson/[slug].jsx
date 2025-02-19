@@ -22,7 +22,7 @@ import { ORIGIN_HOST, excludeCagetoriesFor } from '../../utils/variables';
 import RelatedContent from '../../common/components/RelatedContent';
 import MktEventCards from '../../common/components/MktEventCards';
 import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
-import { getCacheItem, setCacheItem } from '../../utils/requests';
+import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async () => {
   const assetList = await import('../../lib/asset-list.json');
@@ -48,7 +48,6 @@ export const getStaticProps = async ({ params, locale, locales }) => {
   const { slug } = params;
 
   try {
-    let markdown = '';
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
     const assetList = await import('../../lib/asset-list.json')
       .then((res) => res.default)
@@ -60,24 +59,7 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       en: 'en',
     };
 
-    markdown = await getCacheItem(slug);
-
-    if (!markdown) {
-      console.log(`${slug} not found on cache`);
-
-      const exensionName = getExtensionName(lesson.readme_url);
-      const extension = exensionName !== 'ipynb' ? 'md' : 'html';
-      const endpoint = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.${extension}`;
-
-      const resp = await fetch(endpoint);
-      if (resp.status >= 400) {
-        return {
-          notFound: true,
-        };
-      }
-      markdown = await resp.text();
-      await setCacheItem(slug, markdown);
-    }
+    const markdown = await getMarkdownFromCache(slug, lesson);
 
     const isCurrenLang = locale === engPrefix[lesson?.lang] || locale === lesson?.lang;
     if (!['ARTICLE', 'LESSON'].includes(lesson?.asset_type) || !isCurrenLang) {
