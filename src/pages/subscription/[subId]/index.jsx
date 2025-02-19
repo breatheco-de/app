@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
-import { Box, Text, useToast } from '@chakra-ui/react';
+import { Box, Text, useToast, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import useAuth from '../../../common/hooks/useAuth';
 import bc from '../../../common/services/breathecode';
@@ -8,6 +8,7 @@ import CardForm from '../../../js_modules/checkout/CardForm';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import useSubscriptionsHandler from '../../../common/store/actions/subscriptionAction';
 import LoaderScreen from '../../../common/components/LoaderScreen';
+import Icon from '../../../common/components/Icon';
 
 function ChangeCardPage() {
   const router = useRouter();
@@ -129,8 +130,22 @@ function ChangeCardPage() {
             {!isSuccess ? (
               <CardForm onSubmit={handleCardSubmit} buttonText={t('change-card-info-action')} />
             ) : (
-              <Box>
-                <Text fontSize="lg" fontWeight="bold" color="green.500">{t('payment-success')}</Text>
+              <Box
+                display="flex"
+                width={{ base: 'auto', lg: '490px' }}
+                height="auto"
+                flexDirection="column"
+                minWidth={{ base: 'auto', md: '100%' }}
+                background="green.light"
+                p={{ base: '20px 0', md: '30px 0' }}
+                borderRadius="15px"
+              >
+                <Flex flexDirection="column" gridGap="24px" borderRadius="3px" alignItems="center" padding="16px 8px">
+                  <Icon icon="feedback-like" width="60px" height="60px" />
+                  <Text size="14px" fontWeight={700} textAlign="center" color="black">
+                    {t('payment-success')}
+                  </Text>
+                </Flex>
               </Box>
             )}
           </Box>
