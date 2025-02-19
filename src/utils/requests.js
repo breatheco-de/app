@@ -8,6 +8,7 @@ import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
 import { log } from './logging';
+import { getExtensionName } from './index';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
@@ -242,6 +243,30 @@ const setCacheItem = async (key, value) => {
   }
 };
 
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The data of the asset
+ */
+const getMarkdownFromCache = async (slug, asset) => {
+  let markdown = await getCacheItem(slug);
+
+  if (!markdown) {
+    console.log(`${slug} not found on cache`);
+
+    const exensionName = getExtensionName(asset.readme_url);
+    const extension = exensionName !== 'ipynb' ? 'md' : 'html';
+    const endpoint = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.${extension}`;
+
+    const resp = await fetch(endpoint);
+    if (resp.status >= 400) {
+      throw new Error(`Error fetching markdown for ${slug}`);
+    }
+    markdown = await resp.text();
+    await setCacheItem(slug, markdown);
+  }
+  return markdown;
+};
+
 // mover a carpeta sitemap-generator
 const getLandingTechnologies = async (assets) => {
   try {
@@ -312,6 +337,7 @@ export {
   reportDatalayer,
   getCacheItem,
   setCacheItem,
+  getMarkdownFromCache,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,
