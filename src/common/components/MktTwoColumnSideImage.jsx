@@ -1,3 +1,4 @@
+import { useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box, Flex, Img, useColorModeValue, Image,
@@ -7,6 +8,7 @@ import Text from './Text';
 import Link from './NextChakraLink';
 import useStyle from '../hooks/useStyle';
 import PrismicTextComponent from './PrismicTextComponent';
+import ReactPlayerV2 from './ReactPlayerV2';
 // import Head from 'next/head';
 
 const SIZES = {
@@ -32,6 +34,7 @@ function MktTwoColumnSideImage({
   subTitle,
   description,
   imageUrl,
+  videoUrl,
   linkButton,
   buttonUrl,
   buttonLabel,
@@ -62,6 +65,9 @@ function MktTwoColumnSideImage({
   margin,
   ...rest
 }) {
+  const videoRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldShowThumbnail, setShouldShowThumbnail] = useState(true);
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
     right: 'ltr',
@@ -136,6 +142,32 @@ function MktTwoColumnSideImage({
       padding: '24px 14px',
     };
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => {
+            setIsVisible(true);
+            setShouldShowThumbnail(false);
+          }, 300);
+        } else {
+          setIsVisible(false);
+        }
+      },
+      {
+        root: null,
+        threshold: 0.3,
+      },
+    );
+
+    if (videoRef.current) observer.observe(videoRef.current);
+
+    return () => {
+      if (videoRef.current) observer.unobserve(videoRef.current);
+    };
+  }, []);
+
   const prismicStyles = prisimicStyles();
   return (
     <Box
@@ -259,25 +291,39 @@ function MktTwoColumnSideImage({
                 display="inline-block"
                 width="fit-content"
                 fontFamily="Lato"
-                // fontSize={buttonLabelSize}
+              // fontSize={buttonLabelSize}
               >
                 {buttonLabel}
               </Link>
             )}
           </Flex>
         </Box>
-        <Box flex={0.5} style={{ direction: 'initial' }}>
-          <Img
-            boxSize="100%"
-            margin="0 auto"
-            objectFit="contain"
-            src={imageUrl}
-            alt={imageAlt}
-            title={imageAlt}
-            borderRadius="3px"
-            width={imageProps?.width}
-            {...imageSideProps}
-          />
+        <Box flex={0.5} style={{ direction: 'initial' }} ref={videoRef}>
+          {videoUrl ? (
+            <ReactPlayerV2
+              url={videoUrl}
+              borderRadius="20px"
+              controls={false}
+              loop
+              thumbnail={shouldShowThumbnail ? imageUrl : false}
+              autoPlay={isVisible}
+              iframeStyle={{
+                background: 'transparent',
+              }}
+            />
+          ) : (
+            <Img
+              boxSize="100%"
+              margin="0 auto"
+              objectFit="contain"
+              src={imageUrl}
+              alt={imageAlt}
+              title={imageAlt}
+              borderRadius="3px"
+              width={imageProps?.width}
+              {...imageSideProps}
+            />
+          )}
         </Box>
       </Flex>
     </Box>
@@ -295,6 +341,7 @@ MktTwoColumnSideImage.propTypes = {
   description: PropTypes.string,
   descriptionFontSize: PropTypes.string,
   imagePosition: PropTypes.string,
+  videoUrl: PropTypes.string,
   imageUrl: PropTypes.string,
   linkButton: PropTypes.bool,
   buttonUrl: PropTypes.string,
@@ -337,6 +384,7 @@ MktTwoColumnSideImage.defaultProps = {
   descriptionFontSize: null,
   imagePosition: 'left',
   imageUrl: null,
+  videoUrl: null,
   linkButton: false,
   buttonUrl: null,
   buttonLabel: null,

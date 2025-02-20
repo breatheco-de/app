@@ -105,6 +105,9 @@ function Checkout() {
   const [discountCode, setDiscountCode] = useState('');
   const [discountCoupon, setDiscountCoupon] = useState(null);
   const [couponError, setCouponError] = useState(false);
+  const [suggestedPlans, setSuggestedPlans] = useState(undefined);
+  const [discountValues, setDiscountValues] = useState(undefined);
+  // const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -191,7 +194,6 @@ function Checkout() {
 
   const handleCoupon = (coupons, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
-
     if (alreadyAppliedCoupon) {
       toast({
         position: 'top',
@@ -267,6 +269,15 @@ function Checkout() {
       const selectedPlan = processedPlan?.plans?.length > 1
         ? processedPlan?.plans?.find((item) => item?.plan_id === queryPlanId)
         : (processedPlan?.plans?.[0] || {});
+
+      const res = await bc.payment({ original_plan: processedPlan?.slug }).planOffer();
+      const suggestedPlanInfo = res.data;
+
+      const couponOnQuery = await getQueryString('coupon');
+      const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: suggestedPlanInfo[0]?.suggested_plan.slug || processedPlan?.slug }).verifyCoupon();
+      setDiscountValues(allCouponsApplied);
+
+      setSuggestedPlans(suggestedPlanInfo[0]?.suggested_plan);
       setSelectedPlanCheckoutData(selectedPlan);
       setOriginalPlan({ ...processedPlan, selectedPlan, accordionList });
     })
@@ -589,31 +600,91 @@ function Checkout() {
   };
 
   const renderPlanDetails = () => {
+    const applyDiscounts = (price, discountList) => {
+      let finalPrice = price;
+      discountList?.forEach(({ discount_value, discount_type }) => {
+        if (discount_value > 0) {
+          finalPrice = discount_type === 'PERCENT_OFF'
+            ? finalPrice * (1 - discount_value)
+            : finalPrice - discount_value;
+        }
+      });
+      return finalPrice;
+    };
+
     if (originalPlan?.selectedPlan?.isFreeTier) {
-      return (
-        <Text size="16px" color="green.400">
-          {originalPlan?.selectedPlan?.description || 'Free plan'}
-        </Text>
-      );
+      const financingOptions = suggestedPlans?.financing_options || [];
+      const monthlyPayment = suggestedPlans?.price_per_month;
+      const yearlyPayment = suggestedPlans?.price_per_year;
+
+      let financingText = '';
+
+      if (financingOptions.length > 0) {
+        financingOptions.sort((a, b) => a.months - b.months);
+
+        if (financingOptions.length === 1) {
+          const finalPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
+          financingText = t('free_trial_one_payment', { price: finalPrice.toFixed(2), description: originalPlan.selectedPlan.description });
+        }
+
+        if (financingOptions.length > 1) {
+          const firstPrice = applyDiscounts(financingOptions[financingOptions.length - 1].monthly_price, discountValues);
+          const lastPrice = applyDiscounts(financingOptions[0].monthly_price, discountValues);
+
+          financingText = t('free_trial_multiple_payments', {
+            description: originalPlan.selectedPlan.description,
+            numPayments: financingOptions[financingOptions.length - 1].how_many_months,
+            firstPrice: firstPrice.toFixed(2),
+            oneTimePrice: lastPrice.toFixed(2),
+          });
+        }
+      }
+
+      if (financingOptions.length === 0) {
+        if (monthlyPayment) {
+          const finalMonthlyPrice = applyDiscounts(monthlyPayment, discountValues);
+          financingText = t('free_trial_monthly_payment', { description: originalPlan.selectedPlan.description, monthlyPrice: finalMonthlyPrice.toFixed(2) });
+        }
+
+        if (yearlyPayment && !monthlyPayment) {
+          const finalYearlyPrice = applyDiscounts(yearlyPayment, discountValues);
+          financingText = t('free_trial_yearly_payment', { description: originalPlan.selectedPlan.description, yearlyPrice: finalYearlyPrice.toFixed(2) });
+        }
+      }
+
+      if (financingOptions.length === 0 && !monthlyPayment && !yearlyPayment) {
+        financingText = originalPlan?.selectedPlan?.description;
+      }
+
+      if (discountValues.length > 0) {
+        financingText += ` ${t('limited_time_offer')}`;
+      }
+
+      return <Text size="16px" color="green.400">{financingText}</Text>;
     }
 
     if (originalPlan?.selectedPlan?.price > 0 || selectedPlanCheckoutData?.price > 0) {
+      const originalPrice = originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price;
+      const discountedPrice = applyDiscounts(originalPrice, discountValues);
+
       return (
         <Text size="16px" color="green.400">
-          {`$${originalPlan?.selectedPlan?.price || selectedPlanCheckoutData?.price} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
+          {`$${discountedPrice.toFixed(2)} / ${originalPlan?.selectedPlan?.title || selectedPlanCheckoutData?.title}`}
         </Text>
       );
     }
 
     if (userSelectedPlan && !isAuthenticated) {
+      const discountedPrice = applyDiscounts(userSelectedPlan?.price, discountValues);
+
       return (
         <Text size="16px" color="green.400">
-          {`$${userSelectedPlan?.price} / ${userSelectedPlan?.title}`}
+          {`$${discountedPrice.toFixed(2)} / ${userSelectedPlan?.title}`}
         </Text>
       );
     }
 
-    return null; // Retorno por defecto si ninguna condición se cumple
+    return null;
   };
 
   return (
@@ -837,6 +908,9 @@ function Checkout() {
                             </Flex>
                           )}
                         </Flex>
+                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
+                          {t('common:money-back-guarantee')}
+                        </Text>
                       </Flex>
                     </Flex>
                     {showPriceInformation && (

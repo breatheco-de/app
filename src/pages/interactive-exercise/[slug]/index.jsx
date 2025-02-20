@@ -28,8 +28,10 @@ import { ORIGIN_HOST } from '../../../utils/variables';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../../common/components/SupplementaryMaterial';
+import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
 import Icon from '../../../common/components/Icon';
 import useStyle from '../../../common/hooks/useStyle';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -73,12 +75,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-    const markdown = result.readme.decoded;
 
     const {
       title, translations, description, preview,
@@ -210,7 +213,8 @@ function Exercise({ exercise, markdown }) {
         </Head>
       )}
       <FixedBottomCta
-        isCtaVisible={isCtaVisible && !isAuthenticated}
+        isCtaVisible={isCtaVisible}
+        isAuthenticated={isAuthenticated}
         asset={exercise}
         videoUrl={exercise.intro_video_url}
         onClick={() => tabletWithFormRef.current?.scrollIntoView()}
@@ -234,7 +238,8 @@ function Exercise({ exercise, markdown }) {
           <Flex flexDirection="column" gridColumn={{ base: '2 / span 6', lg: '2 / span 7' }}>
             <Box display={{ base: 'block', md: 'flex' }} justifyContent="space-between" alignItems="center">
               <Box>
-                <Link
+                <AssetsBreadcrumbs />
+                {/* <Link
                   href="/interactive-exercises"
                   color={useColorModeValue('blue.default', 'blue.300')}
                   display="inline-block"
@@ -244,7 +249,7 @@ function Exercise({ exercise, markdown }) {
                   width="fit-content"
                 >
                   {`← ${t('exercises:backToExercises')}`}
-                </Link>
+                </Link> */}
                 <TagCapsule
                   isLink
                   variant="rounded"

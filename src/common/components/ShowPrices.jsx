@@ -34,9 +34,9 @@ function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
         {!item?.isFreeTier && (
-        <Box fontSize="18px" fontWeight="700">
-          {item?.title}
-        </Box>
+          <Box fontSize="18px" fontWeight="700">
+            {item?.title}
+          </Box>
         )}
         <Text
           size="md"
@@ -51,11 +51,11 @@ function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
           {item?.priceText || item?.price}
         </Heading>
         {item?.lastPrice && (
-        <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
-          <s>
-            {item?.lastPrice}
-          </s>
-        </Text>
+          <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
+            <s>
+              {item?.lastPrice}
+            </s>
+          </Text>
         )}
       </Box>
     </Box>
@@ -249,6 +249,9 @@ function ShowPrices({
             ))}
           </Box>
         )}
+        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
+          {t('common:money-back-guarantee')}
+        </Text>
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
@@ -293,7 +296,7 @@ ShowPrices.defaultProps = {
   notReady: null,
   list: null,
   finance: null,
-  onSelect: () => {},
+  onSelect: () => { },
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,

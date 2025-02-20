@@ -71,8 +71,6 @@ export const getServerSideProps = async ({ locale, locales, query }) => {
     },
   );
   const technologies = await technologiesResponse.json();
-  console.log('technologies');
-  console.log(technologies);
 
   if (technologiesResponse.status >= 200 && technologiesResponse.status < 400) {
     log(`SUCCESS: ${technologies.results.length} Technologies fetched for /lessons`);
