@@ -254,10 +254,12 @@ const useSignup = () => {
           setCheckoutData({
             ...data,
             ...finalData,
+            id: data.id,
           });
           resolve({
             ...data,
             ...finalData,
+            id: data.id,
           });
         }
         if (response.status >= 400) {

@@ -96,7 +96,7 @@ function Footer({ pageProps }) {
                       email,
                       token,
                       location: '4geeks-com',
-                      tags: 'newsletter',
+                      automations: 'newsletter',
                       utm_url: window?.location?.href,
                     })
                       .then((success) => {

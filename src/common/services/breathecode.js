@@ -389,6 +389,7 @@ const breathecode = {
     const qs = parseQuerys(query);
     return {
       // get: () => axios.get(`${url}/event${qs}`),
+      meCheckin: () => axios.get(`${url}/event/checkin${qs}`),
       liveClass: () => axios.get(`${url}/event/liveclass${qs}`),
       joinLiveClass: (liveClassHash) => axios.get(`${url}/event/liveclass/join/${liveClassHash}${qs}`),
       joinLiveClass2: (liveClassHash) => axios.get(`${host}/me/event/liveclass/join/${liveClassHash}${qs}`),

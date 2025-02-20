@@ -25,6 +25,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MarkDownParser from '../../common/components/MarkDownParser';
 import useStyle from '../../common/hooks/useStyle';
 import useCohortHandler from '../../common/hooks/useCohortHandler';
+import CustomBanner from '../../common/components/CustomBanner';
 
 function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID, currentAssetURL, selectedOption, osList, selectedOs,
   setSelectedOs, resetOsSelector, resetOptionSelector, expanded, setExpanded, steps, onClose, isOnlyReadme,
@@ -153,6 +154,9 @@ function ModalContentDisplay({ availableOptions, isInteractive, cohortSessionID,
                       )}
                     </>
                   )}
+                  {step.version && (
+                    <CustomBanner status="warning" isClosable={false} title="Important" content={t('common:learnpack.banner-description', { version: step.version })} marginTop="10px" />
+                  )}
                 </AccordionPanel>
               </AccordionItem>
             ))}
@@ -248,13 +252,23 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const dependencies = formatDependencies(assetDependencies);
   const dependenciesNames = dependencies.flatMap((dep) => Object.keys(dep));
   const dependenciesSteps = selectedOs?.dependencies.filter((dep) => dependenciesNames.includes(dep.name));
+  const dependenciesStepsWithVersions = dependenciesSteps?.map((dep) => {
+    const dependencyVersion = dependencies.find((depen) => Object.keys(depen)[0] === dep.name)?.[dep.name];
+    return {
+      ...dep,
+      label: dependencyVersion && dependencyVersion !== 'unknown'
+        ? t('common:learnpack.install-specific-version', { name: t(`common:learnpack.dependencies.${dep.name}`), version: dependencyVersion })
+        : dep.label,
+      version: dependencyVersion && dependencyVersion !== 'unknown' ? dependencyVersion : false,
+    };
+  });
 
   //__based on selected option and data previously obtained, get the steps__
   const parseSteps = () => {
     if (showProvisioningLinks && selectedOption === 'provisioning_vendors') return openInLearnpackAction.steps;
     if (isInteractive) return selectedOs?.steps.concat([finalStep]);
     if (onlyReadme) return selectedOs?.readme_steps;
-    return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone').concat([...dependenciesSteps, projectReadme]);
+    return selectedOs?.steps.filter((step) => step.slug === 'download-ide' || step.slug === 'clone' || step.slug === 'create-folders').concat([...dependenciesStepsWithVersions, projectReadme]);
   };
 
   const steps = parseSteps();

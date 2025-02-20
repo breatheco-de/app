@@ -97,6 +97,7 @@ function PricingView() {
     }
     return [];
   };
+
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
@@ -110,6 +111,7 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
+    console.log('todos los planes', allPlansList);
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
@@ -119,6 +121,7 @@ function PricingView() {
     }
     return allPlansList;
   };
+
   const handleFetchPlan = async () => {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
@@ -126,7 +129,7 @@ function PricingView() {
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    await getSelfAppliedCoupon(suggestedPlan.slug);
+    await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))
@@ -271,6 +274,8 @@ function PricingView() {
   const existentOptions = switcherInfo.filter((l) => l.exists);
   const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
 
+  console.log(paymentOptions);
+
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">
       {isFetching.courses && (
@@ -412,6 +417,7 @@ function PricingView() {
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
@@ -424,6 +430,7 @@ function PricingView() {
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
@@ -435,6 +442,7 @@ function PricingView() {
             {bootcampInfo?.type && (
               <PricingCard
                 item={bootcampInfo}
+                moneyBack={false}
                 width={{ base: '300px', md: '100%' }}
                 display="flex"
               />

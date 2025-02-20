@@ -15,10 +15,9 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
-import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
@@ -38,6 +37,7 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
 
@@ -109,9 +109,11 @@ export async function getStaticProps({ locale, locales, params }) {
 
 function CoursePage({ data, syllabus }) {
   const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
+  const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
+  const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
@@ -167,21 +169,41 @@ function CoursePage({ data, syllabus }) {
     plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
+    coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
+
+  const handleCoupons = (priceText) => {
+    if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
+
+    const currencySymbol = priceText.replace(/[\d.,]/g, '');
+    let discountedPrice = featuredPlanToEnroll.price;
+
+    allDiscounts.forEach((discount) => {
+      if (discount.discount_type === 'PERCENT_OFF') {
+        discountedPrice -= (discountedPrice * discount.discount_value);
+      } else {
+        discountedPrice -= discount.discount_value;
+      }
+    });
+
+    discountedPrice = Math.floor(discountedPrice * 100) / 100;
+
+    return currencySymbol + discountedPrice;
+  };
 
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
+        return `${t('signup:info.monthly')} ${handleCoupons(featuredPlanToEnroll.priceText)}`;
       }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
+        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
+        return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
       }
       if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
+        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
       }
       if (featuredPlanToEnroll?.type === 'TRIAL') {
         return t('common:start-free-trial');
@@ -436,7 +458,10 @@ function CoursePage({ data, syllabus }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
+    const couponOnQuery = await getQueryString('coupon');
+    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
+    setAllDiscounts(allCouponsApplied);
 
     setCohortData({
       cohortSyllabus,
@@ -536,6 +561,7 @@ function CoursePage({ data, syllabus }) {
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
+        paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
@@ -691,29 +717,37 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
+                          id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
                           background="green.400"
                           color="white"
-                          onClick={() => {
-                            router.push(`/checkout${enrollQuerys}`);
-                          }}
+                          width="100%"
+                          whiteSpace="normal"
+                          wordWrap="break-word"
+                          onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
                           {!featuredPlanToEnroll?.isFreeTier
                             ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
                             : capitalizeFirstLetter(featurePrice)}
                         </Button>
-                        {payableList?.length > 0 && (
+                        {payableList?.length > 1 && (
                           <Button
                             variant="outline"
                             color="green.400"
                             isLoading={initialDataIsFetching}
                             borderColor="currentColor"
+                            width="100%"
+                            whiteSpace="normal"
+                            wordWrap="break-word"
                             onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}
                           </Button>
                         )}
+                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
+                          {getAlternativeTranslation('common:money-back-guarantee')}
+                        </Text>
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
@@ -869,6 +903,7 @@ function CoursePage({ data, syllabus }) {
                 background="transparent"
                 imagePosition="right"
                 imageUrl="/static/images/github-repo-preview.png"
+                videoUrl="https://storage.googleapis.com/breathecode/videos/landing-pages/learnpack-demo.mp4"
                 title={features?.['what-is-learnpack']?.title}
                 description={features?.['what-is-learnpack']?.description}
                 informationSize="Medium"
@@ -963,6 +998,7 @@ function CoursePage({ data, syllabus }) {
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
               <Faq
+                width="100%"
                 gridColumn="1 / span 12"
                 background="transparent"
                 headingStyle={{

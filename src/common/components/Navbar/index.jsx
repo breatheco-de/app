@@ -151,6 +151,18 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
     )}`,
   };
 
+  const handleGetStartedButton = (e) => {
+    e.preventDefault();
+
+    const enrollButton = document.getElementById('bootcamp-enroll-button');
+
+    if (enrollButton) {
+      enrollButton.click();
+    } else {
+      window.location.href = `/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`;
+    }
+  };
+
   const verifyIfHasPaidSubscription = async () => {
     const respCohorts = await bc.admissions().me();
     const subscriptions = await getAllMySubscriptions();
@@ -568,9 +580,12 @@ function NavbarWithSubNavigation({ translations, pageProps }) {
               >
                 {t('login')}
               </NextChakraLink>
-              <Link variant="buttonDefault" href={`/${locale}/pricing${parseQuerys({ internal_cta_placement: 'navbar-get-started' }, false)}`}>
+              <Button
+                variant="default"
+                onClick={handleGetStartedButton}
+              >
                 {t('get-started')}
-              </Link>
+              </Button>
             </Box>
           )}
         </Stack>
