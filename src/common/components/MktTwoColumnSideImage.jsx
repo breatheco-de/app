@@ -153,7 +153,7 @@ function MktTwoColumnSideImage({
       } else {
         setIsVisible(false);
       }
-    }, { threshold: 0.6 });
+    }, { threshold: 0.2 });
 
     if (videoRef.current) observer.observe(videoRef.current);
 
@@ -292,7 +292,7 @@ function MktTwoColumnSideImage({
             )}
           </Flex>
         </Box>
-        <Box flex={0.5} style={{ direction: 'initial' }} ref={videoRef}>
+        <Box flex={0.5} minHeight="200px" style={{ direction: 'initial' }} ref={videoRef}>
           {videoUrl ? (
             <ReactPlayerV2
               key={isVisible ? 'visible' : 'hidden'}
@@ -302,12 +302,12 @@ function MktTwoColumnSideImage({
               loop
               autoFullScreen={false}
               muted
+              volume={0}
+              width="100%"
+              height="100%"
               pictureInPicture={false}
               thumbnail={shouldShowThumbnail ? imageUrl : undefined}
               autoPlay={isVisible}
-              iframeStyle={{
-                background: 'transparent',
-              }}
             />
           ) : (
             <Img
