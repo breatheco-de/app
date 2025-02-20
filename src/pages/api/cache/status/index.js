@@ -16,19 +16,16 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-function subtractSeconds(seconds) {
+function subtractSeconds(date) {
   // Get the current date and time
-  const currentDate = new Date();
-
-  // Subtract the specified number of seconds
-  currentDate.setSeconds(currentDate.getSeconds() - (604800 - seconds));
+  const updatedAt = new Date(date);
 
   // Format the date as day/month/year hour:minutes
-  const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}/`
-      + `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}/`
-      + `${currentDate.getFullYear()} `
-      + `${currentDate.getHours().toString().padStart(2, '0')}:`
-      + `${currentDate.getMinutes().toString().padStart(2, '0')}`;
+  const formattedDate = `${updatedAt.getDate().toString().padStart(2, '0')}/`
+      + `${(updatedAt.getMonth() + 1).toString().padStart(2, '0')}/`
+      + `${updatedAt.getFullYear()} `
+      + `${updatedAt.getHours().toString().padStart(2, '0')}:`
+      + `${updatedAt.getMinutes().toString().padStart(2, '0')}`;
 
   // Return the formatted date
   return formattedDate;
@@ -37,32 +34,8 @@ function subtractSeconds(seconds) {
 // Vercel serverless function
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { slug } = req.query;
     try {
-      // Function to get all keys and TTLs
-      const getRedisKeysWithTTL = async () => {
-        const keyTTLMap = {};
-        let cursor = 0;
-        // eslint-disable-next-line no-await-in-loop
-        const result = await redis.scan(cursor, { match: slug, count: 100 });
-        const [nextCursor, keys] = result;
-        cursor = nextCursor;
-
-        keys.forEach(async (key) => {
-          const ttl = await redis.ttl(key);
-          keyTTLMap[key] = ttl;
-        });
-
-        await Promise.all(keys.map(async (key) => {
-          const ttl = await redis.ttl(key);
-          keyTTLMap[key] = ttl;
-        }));
-
-        return keyTTLMap;
-      };
-
-      // Get the keys and TTLs
-      const keysWithTTL = await getRedisKeysWithTTL();
+      const jsonStatus = await redis.get('jsonStatus');
 
       // Generate HTML content
       let html = `
@@ -71,7 +44,7 @@ export default async function handler(req, res) {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Redis Keys and Updated date</title>
+        <title>Redis Keys and TTLs</title>
         <style>
           body { font-family: Arial, sans-serif; padding: 20px; }
           table { border-collapse: collapse; width: 100%; max-width: 800px; }
@@ -82,7 +55,7 @@ export default async function handler(req, res) {
         </style>
       </head>
       <body>
-        <h1>Redis Keys and Updated date</h1>
+        <h1>Assets and Date Updated</h1>
         <table>
           <tr>
             <th>Key</th>
@@ -90,24 +63,15 @@ export default async function handler(req, res) {
           </tr>
     `;
 
-      // Add rows for each key and TTL
-      const entries = Object.entries(keysWithTTL);
-      entries.forEach((pair) => {
-        const [key, ttl] = pair;
-
-        let ttlDisplay;
-        if (ttl === -1) {
-          ttlDisplay = 'No expiry';
-        } else if (ttl === -2) {
-          ttlDisplay = 'Key does not exist';
-        } else {
-          ttlDisplay = ttl;
-        }
+      const entries = Object.entries(jsonStatus || {});
+      const sortedByDate = entries.sort((a, b) => b[1] - a[1]);
+      sortedByDate.forEach((pair) => {
+        const [key, date] = pair;
 
         html += `
           <tr>
             <td>${escapeHtml(key)}</td>
-            <td>${subtractSeconds(escapeHtml(String(ttlDisplay)))}</td>
+            <td>${subtractSeconds(escapeHtml(date))}</td>
           </tr>
         `;
       });
