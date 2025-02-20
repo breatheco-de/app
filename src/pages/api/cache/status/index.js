@@ -32,6 +32,7 @@ function subtractSeconds(date) {
 }
 
 // Vercel serverless function
+// Vercel serverless function
 export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
@@ -52,32 +53,71 @@ export default async function handler(req, res) {
           th { background-color: #f2f2f2; }
           tr:nth-child(even) { background-color: #f9f9f9; }
           tr:hover { background-color: #f5f5f5; }
+          .search-container { margin-bottom: 20px; }
+          #searchInput { padding: 8px; width: 200px; }
+          .hidden { display: none; }
         </style>
       </head>
       <body>
         <h1>Assets and Date Updated</h1>
-        <table>
+        <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Search keys..." onkeyup="searchTable()">
+        </div>
+        <table id="dataTable">
           <tr>
             <th>Key</th>
             <th>Updated At</th>
+            <th>Time Ago</th>
           </tr>
     `;
 
       const entries = Object.entries(jsonStatus || {});
-      const sortedByDate = entries.sort((a, b) => b[1] - a[1]);
+      // Sort by timestamp (most recent first) - assuming dates are in timestamp format
+      const sortedByDate = entries.sort((a, b) => Number(b[1]) - Number(a[1]));
+      
       sortedByDate.forEach((pair) => {
-        const [key, date] = pair;
+        const [key, timestamp] = pair;
+        const updatedAt = new Date(Number(timestamp) * 1000); // Convert to milliseconds if timestamp is in seconds
+        const timeAgo = getTimeAgo(Number(timestamp));
 
         html += `
           <tr>
             <td>${escapeHtml(key)}</td>
-            <td>${subtractSeconds(escapeHtml(date))}</td>
+            <td>${updatedAt.toLocaleString()}</td>
+            <td>${timeAgo}</td>
           </tr>
         `;
       });
 
       html += `
         </table>
+        <script>
+          function searchTable() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('dataTable');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+              const td = tr[i].getElementsByTagName('td')[0];
+              if (td) {
+                const txtValue = td.textContent || td.innerText;
+                tr[i].classList.toggle('hidden', txtValue.toLowerCase().indexOf(filter) === -1);
+              }
+            }
+          }
+
+          function getTimeAgo(timestamp) {
+            const now = new Date();
+            const secondsPast = (now.getTime() - (timestamp * 1000)) / 1000;
+            
+            if (secondsPast < 60) return Math.round(secondsPast) + ' seconds ago';
+            if (secondsPast < 3600) return Math.round(secondsPast / 60) + ' minutes ago';
+            if (secondsPast < 86400) return Math.round(secondsPast / 3600) + ' hours ago';
+            if (secondsPast < 604800) return Math.round(secondsPast / 86400) + ' days ago';
+            return Math.round(secondsPast / 604800) + ' weeks ago';
+          }
+        </script>
       </body>
       </html>
     `;
