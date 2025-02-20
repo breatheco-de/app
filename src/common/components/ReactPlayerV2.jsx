@@ -7,7 +7,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, ...rest
 }) {
   const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
@@ -67,7 +67,7 @@ function ReactPlayerV2({
           >
             <IconButton
               aria-label="Play video"
-              icon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background="darkTheme" borderRadius="6px" padding="4px" />}
+              icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
             />
           </Flex>
 
@@ -111,7 +111,7 @@ function ReactPlayerV2({
                 url={videoUrl}
                 light={existsThumbnail ? <Image src={thumbnail} width="100%" height="100%" /> : withThumbnail}
                 playing={withThumbnail || existsThumbnail || autoPlay}
-                playIcon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background={hexColor.featuredColor} borderRadius="6px" padding="4px" />}
+                playIcon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" position="absolute" />}
                 controls={controls}
                 width="100%"
                 fallback={<Skeleton width={iframeStyle.width || '100%'} height={iframeStyle.height || '100%'} />}
@@ -120,6 +120,7 @@ function ReactPlayerV2({
                   background: 'black',
                   ...iframeStyle,
                 }}
+                loop={loop}
                 {...rest}
               />
             </Box>
@@ -163,6 +164,7 @@ ReactPlayerV2.propTypes = {
   title: PropTypes.string,
   autoPlay: PropTypes.bool,
   closeOnOverlayClick: PropTypes.bool,
+  loop: PropTypes.bool,
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -177,6 +179,7 @@ ReactPlayerV2.defaultProps = {
   autoPlay: false,
   title: '',
   closeOnOverlayClick: true,
+  loop: false,
 };
 
 export default ReactPlayerV2;

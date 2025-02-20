@@ -716,6 +716,7 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
+                          id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
                           background="green.400"
@@ -901,6 +902,7 @@ function CoursePage({ data, syllabus }) {
                 background="transparent"
                 imagePosition="right"
                 imageUrl="/static/images/github-repo-preview.png"
+                videoUrl="https://storage.googleapis.com/breathecode/videos/landing-pages/learnpack-demo.mp4"
                 title={features?.['what-is-learnpack']?.title}
                 description={features?.['what-is-learnpack']?.description}
                 informationSize="Medium"

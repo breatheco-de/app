@@ -230,6 +230,27 @@ const getCacheItem = async (key) => {
  * @param {String} key The key of the value in redis
  * @param {Object} value The value to be stored in the cache
  */
+const updateJsonStatus = async (key) => {
+  try {
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    const date = new Date().toISOString();
+    let item = await redis.get('jsonStatus');
+    if (!item) item = {};
+
+    item[key] = date;
+    await redis.set('jsonStatus', item);
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The value to be stored in the cache
+ */
 const setCacheItem = async (key, value) => {
   try {
     console.log(`Setting up ${key} on cache`);
@@ -238,6 +259,7 @@ const setCacheItem = async (key, value) => {
       url: process.env.KV_REST_API_URL,
     });
     await redis.set(key, value, { ex: 604800 }); //Set expire time to one week
+    await updateJsonStatus(key);
   } catch (e) {
     console.log(`Failed to set ${key} on cache: ${e}`);
   }
