@@ -1037,8 +1037,8 @@ function CoursePage({ data, syllabus }) {
             url={getAlternativeTranslation('rigobot.video_url')}
             width="100%"
             height="100%"
-            autoPlay={true}
             iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+            autoPlay
           />
         </Box>
       </SimpleModal>
