@@ -1,5 +1,6 @@
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Flex, Text } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import useTranslation from 'next-translate/useTranslation';
 import Heading from './Heading';
 import Icon from './Icon';
 
@@ -7,6 +8,8 @@ function AcordionList({
   defaultIndex, allowMultiple, list, color, iconColor, paddingButton, titleStyle,
   highlightColor, containerStyles, unstyled, descriptionStyle, leftIcon, expanderText, ...rest
 }) {
+  const { t } = useTranslation();
+
   return list?.length > 0 && (
     <Accordion defaultIndex={defaultIndex} allowMultiple={allowMultiple} display="flex" flexDirection="column" gridGap="16px" {...containerStyles}>
       {list?.map((item, i) => (
@@ -32,20 +35,34 @@ function AcordionList({
               <AccordionPanel padding="0 17px 17px" fontSize="14px" {...descriptionStyle}>
                 {item?.description}
               </AccordionPanel>
-              {/*esto es lo que hay que cambiar en lo que tomas me diga donde encontrar esa info*/}
-              <Flex gap="10px" padding="0 18px 18px 18px" alignItems="center">
-                <Icon icon="certificate" color="#0097CD" width="16px" height="16px" />
-                <Text fontSize="12px">Course Certificate</Text>
-
-                <Icon icon="book" color="#0097CD" width="16px" height="16px" />
-                <Text fontSize="12px">4 Readings</Text>
-
-                <Icon icon="strength" color="#0097CD" width="16px" height="16px" />
-                <Text fontSize="12px">1 Exercise</Text>
-
-                <Icon icon="clock" color="#0097CD" width="16px" height="16px" />
-                <Text fontSize="12px">18 Hours</Text>
-              </Flex>
+              {(item?.readings > 0 || item?.exercises > 0 || item?.time || item?.certificate) && (
+                <Flex gap="15px" padding="0 18px 18px 18px" alignItems="center">
+                  {item?.certificate && (
+                    <Flex gap="2px">
+                      <Icon icon="certificate" color="#0097CD" width="16px" height="16px" />
+                      <Text fontSize="12px">{t('course:course-certificate')}</Text>
+                    </Flex>
+                  )}
+                  {item?.readings > 0 && (
+                    <Flex gap="2px">
+                      <Icon icon="book" color="#0097CD" width="16px" height="16px" />
+                      <Text fontSize="12px">{t('course:course-readings', { count: item?.readings })}</Text>
+                    </Flex>
+                  )}
+                  {item?.exercises > 0 && (
+                    <Flex gap="2px">
+                      <Icon icon="strength" color="#0097CD" width="16px" height="16px" />
+                      <Text fontSize="12px">{t('course:course-exercises', { count: item?.readings })}</Text>
+                    </Flex>
+                  )}
+                  {item?.time && (
+                    <Flex gap="2px">
+                      <Icon icon="clock" color="#0097CD" width="16px" height="16px" />
+                      <Text fontSize="12px">{item.time}</Text>
+                    </Flex>
+                  )}
+                </Flex>
+              )}
             </>
           )}
         </AccordionItem>
