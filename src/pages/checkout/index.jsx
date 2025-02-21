@@ -907,9 +907,14 @@ function Checkout() {
                             </Flex>
                           )}
                         </Flex>
-                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                          {t('common:money-back-guarantee')}
-                        </Text>
+                        {!originalPlan?.isTrial && (
+                          <Flex alignItems="center" marginTop="5px" gap="5px">
+                            <Icon icon="shield" width="23px" />
+                            <Text fontSize="13px" fontWeight="medium" paddingTop="2px" color="green.400" lineHeight="normal">
+                              {t('common:money-back-guarantee-short')}
+                            </Text>
+                          </Flex>
+                        )}
                       </Flex>
                     </Flex>
                     <Divider borderBottomWidth="2px" />
