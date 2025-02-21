@@ -310,6 +310,7 @@ function MktTwoColumnSideImage({
               iframeStyle={{
                 background: 'transparent',
               }}
+              height="auto"
             />
           ) : (
             <Img
