@@ -661,7 +661,7 @@ function CoursePage({ data, syllabus }) {
               {reviewsForCurrentCourse && (
                 <Rating variant="inline" totalRatings="1356" rating={4.5} link="#rating-commnets" />
               )}
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
