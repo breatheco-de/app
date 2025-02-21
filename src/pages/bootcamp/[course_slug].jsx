@@ -543,6 +543,7 @@ function CoursePage({ data, syllabus }) {
       selectedIndex: 0,
     });
   };
+  console.log(assignmentList);
 
   return (
     <>
