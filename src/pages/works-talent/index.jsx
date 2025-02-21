@@ -66,7 +66,7 @@ function Talentcard() {
         <Flex justify="space-between" align="center" mb={4} ml={3} my={3} margin="0px" paddingLeft="20px">
           <Link href="/" _hover={{ textDecoration: 'none' }}>
             <Text color="#0097CF" fontWeight="700" fontSize="17px" lineHeight="20.4px" letterSpacing="0%">
-              ← Atrás
+              ← Volver
             </Text>
           </Link>
         </Flex>

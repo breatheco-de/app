@@ -1,0 +1,10 @@
+{
+    "pagination": {
+        "Go-back": "Go back",
+        "Next": "Next"
+    },
+    "showing-results-for": "Showing results for",
+    "search": "Search",
+    "filters": "Filters",
+    "see-profile": "See profile"
+}
