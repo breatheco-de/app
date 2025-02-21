@@ -49,10 +49,10 @@ function ShareButton({
 
   const defaultSocial = [
     {
-      name: 'twitter',
-      label: 'Twitter',
-      href: 'https://www.twitter.com',
-      color: '#1DA1F2',
+      name: 'x',
+      label: 'X',
+      href: 'https://www.x.com',
+      color: '#040404',
     },
     {
       name: 'facebook',
