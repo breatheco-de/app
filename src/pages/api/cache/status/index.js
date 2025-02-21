@@ -1,4 +1,5 @@
 import { Redis } from '@upstash/redis';
+import { formatDistance } from 'date-fns';
 
 // Initialize Redis client with Upstash credentials
 const redis = new Redis({
@@ -16,7 +17,7 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
-function subtractSeconds(date) {
+function formatDate(date) {
   // Get the current date and time
   const updatedAt = new Date(date);
 
@@ -72,13 +73,13 @@ export default async function handler(req, res) {
     `;
 
       const entries = Object.entries(jsonStatus || {});
-      // Sort by timestamp (most recent first) - assuming dates are in timestamp format
-      const sortedByDate = entries.sort((a, b) => Number(b[1]) - Number(a[1]));
-      
+      // Sort by date (most recent first)
+      const sortedByDate = entries.sort((a, b) => b[1] - a[1]);
+
       sortedByDate.forEach((pair) => {
-        const [key, timestamp] = pair;
-        const updatedAt = new Date(Number(timestamp) * 1000); // Convert to milliseconds if timestamp is in seconds
-        const timeAgo = getTimeAgo(Number(timestamp));
+        const [key, date] = pair;
+        const updatedAt = formatDate(date);
+        const timeAgo = formatDistance(new Date(date), new Date(), { addSuffix: true });
 
         html += `
           <tr>
