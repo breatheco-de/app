@@ -32,8 +32,31 @@ import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 
+// function SubscriptionCard(subscription) {
+//   const status = subscription?.status?.toLowerCase();
+//   const invoice = subscription?.invoices[0];
+//   const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
+//   const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
+//   const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
+//   const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
+//   const nextPaymentDate = {
+//     en: format(new Date(subscription?.next_payment_at), 'MMM do'),
+//     es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
+//   };
+//   const expirationDate = new Date(subscription?.plan_expires_at);
+//   const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
+//     && subscription?.plans[0]?.financing_options[0];
+//   return (
+//     <></>
+//   );
+// }
+
 function Subscriptions({ cohorts }) {
   const { t, lang } = useTranslation('profile');
+  const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
+  const { statusStyles, statusLabel, getLocaleDate, payUnitString } = profileHandlers();
+  const { borderColor2, hexColor, backgroundColor3, fontColor, featuredLight } = useStyle();
+  const { blueDefault } = hexColor;
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
@@ -49,11 +72,8 @@ function Subscriptions({ cohorts }) {
   });
   const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
-  const { state, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
   const [offerProps, setOfferProps] = useState({});
-
-  const subscriptionDataState = state?.subscriptions;
-  const isLoading = state?.isLoading;
+  const memberships = state?.subscriptions;
 
   const onOpenCancelSubscription = () => setCancelModalIsOpen(true);
 
@@ -110,47 +130,33 @@ function Subscriptions({ cohorts }) {
     getConsumables();
   }, []);
 
-  const {
-    statusStyles, statusLabel, getLocaleDate, payUnitString,
-  } = profileHandlers();
-  const { borderColor2, hexColor, backgroundColor3, fontColor, featuredLight } = useStyle();
-
-  const { blueDefault } = hexColor;
-
-  const subscriptionData = subscriptionDataState;
-
-  const allSubscriptions = subscriptionData?.subscriptions
-    && subscriptionData?.plan_financings
-    && [...subscriptionData.subscriptions, ...subscriptionData.plan_financings]
-      .filter((subscription) => subscription?.plans?.[0]?.slug !== undefined);
-
+  const membershipsArray = [...memberships?.subscriptions, ...memberships?.plan_financings].filter((membership) => membership?.plans?.[0]?.slug !== undefined);
   const prioritizeStatus = ['fully_paid', 'active', 'payment_issue', 'expired', 'cancelled', 'error'];
 
-  const subscriptionsFilter = allSubscriptions?.length > 0 ? allSubscriptions
-    .filter((subscription) => {
-      const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-      const suggestedPlan = (subscription?.planOffer?.slug === undefined && subscription?.planOffer?.status)
-        || allSubscriptions.find((sub) => sub?.plans?.[0]?.slug === subscription?.planOffer?.slug);
+  const membershipsFilter = membershipsArray?.length > 0 ? membershipsArray
+    .filter((membership) => {
+      const isFreeTrial = membership?.status?.toLowerCase() === 'free_trial';
+      const membershipAlreadyInList = membershipsArray.find((mem) => mem?.plans?.[0]?.slug === membership?.planOffer?.slug);
+      const suggestedPlan = (!membership?.planOffer?.slug && membership?.planOffer?.status) || membershipAlreadyInList;
 
-      // Ignore free_trial subscription if plan_offer already exists in list
-      if (isFreeTrial && suggestedPlan !== undefined) return false;
+      if (isFreeTrial && suggestedPlan) return false;
       return true;
-    }).reduce((acc, subscription) => {
-      const planSlug = subscription?.plans?.[0]?.slug;
+    }).reduce((acc, membership) => {
+      console.log(membership);
+      const planSlug = membership?.plans?.[0]?.slug;
 
       if (!planSlug) return acc;
 
       if (!acc[planSlug]
-        || prioritizeStatus.indexOf(subscription?.status?.toLowerCase())
+        || prioritizeStatus.indexOf(membership?.status?.toLowerCase())
         < prioritizeStatus.indexOf(acc[planSlug]?.status?.toLowerCase())) {
-        acc[planSlug] = subscription;
+        acc[planSlug] = membership;
       }
 
       return acc;
-    }, {})
-    : [];
+    }, {}) : [];
 
-  const subscriptionFiltered = Object.values(subscriptionsFilter);
+  const subscriptionFiltered = Object.values(membershipsFilter);
 
   const closeMentorshipsModal = () => setServicesModal(null);
 
@@ -162,6 +168,10 @@ function Subscriptions({ cohorts }) {
     workshops: {
       icon: 'community',
       title: t('subscription.your-workshop-available'),
+    },
+    rigobot: {
+      icon: 'rigobot-avatar',
+      title: t('subscription.rigo-available'),
     },
   };
 
@@ -316,6 +326,7 @@ function Subscriptions({ cohorts }) {
               en: format(new Date(subscription?.next_payment_at), 'MMM do'),
               es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
             };
+            // const expirationDate = new Date(subscription?.plan_expires_at);
             const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
               && subscription?.plans[0]?.financing_options[0];
 
