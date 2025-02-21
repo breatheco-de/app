@@ -78,7 +78,7 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ..
             <Text fontSize="24px">{`${rating} ${t('course-rating')} ${totalReviews > 0 && `- ${totalReviews} ${t('comments')}`}`}</Text>
           </Flex>
           <SimpleGrid
-            columns={{ base: 1, md: 2, lg: 3 }} // 1 columna en móviles, 2 en tablets, 3 en desktop
+            columns={{ base: 1, md: 2, lg: 3 }}
             spacing="16px"
             marginTop="22px"
           >
