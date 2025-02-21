@@ -67,7 +67,6 @@ function MktTwoColumnSideImage({
 }) {
   const videoRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [shouldShowThumbnail, setShouldShowThumbnail] = useState(true);
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
     right: 'ltr',
@@ -148,7 +147,6 @@ function MktTwoColumnSideImage({
       if (entry.isIntersecting) {
         requestAnimationFrame(() => {
           setIsVisible(true);
-          setShouldShowThumbnail(false);
         });
       } else {
         setIsVisible(false);
@@ -295,7 +293,6 @@ function MktTwoColumnSideImage({
         <Box flex={0.5} minHeight="200px" style={{ direction: 'initial' }} ref={videoRef}>
           {videoUrl ? (
             <ReactPlayerV2
-              key={isVisible ? 'visible' : 'hidden'}
               url={videoUrl}
               borderRadius="20px"
               controls={false}
@@ -306,8 +303,19 @@ function MktTwoColumnSideImage({
               width="100%"
               height="100%"
               pictureInPicture={false}
-              thumbnail={shouldShowThumbnail ? imageUrl : undefined}
               autoPlay={isVisible}
+              iframeStyle={{
+                background: 'transparent',
+              }}
+              playerConfig={{
+                file: {
+                  attributes: {
+                    playsInline: true,
+                    disablePictureInPicture: true,
+                    controlsList: 'nodownload',
+                  },
+                },
+              }}
             />
           ) : (
             <Img
