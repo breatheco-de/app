@@ -41,6 +41,54 @@
     "message": "Is there anything you want to know about the {{title}} program?",
     "payment-methods": "- Credit Card. - Contact support for other options"
   },
+  "reviews": {
+    "full-stack-development": [
+      {
+        "name": "John Doe",
+        "avatar": "https://example.com/avatar1.jpg",
+        "rating": 5,
+        "date": "2 days ago",
+        "review": "This course provided me with a solid understanding of web development concepts. Highly recommended for beginners!"
+      },
+      {
+        "name": "Emily Johnson",
+        "avatar": "https://example.com/avatar2.jpg",
+        "rating": 4,
+        "date": "1 week ago",
+        "review": "Great course with practical examples. I wish there were more advanced topics covered."
+      },
+      {
+        "name": "Michael Brown",
+        "avatar": "https://example.com/avatar3.jpg",
+        "rating": 5,
+        "date": "3 weeks ago",
+        "review": "Amazing content and structure. I landed my first developer job thanks to this course!"
+      }
+    ],
+    "deep-dive-into-python": [
+      {
+        "name": "Sophia Lee",
+        "avatar": "https://example.com/avatar4.jpg",
+        "rating": 5,
+        "date": "5 days ago",
+        "review": "In-depth explanations and clear examples. Perfect for those looking to master Python."
+      },
+      {
+        "name": "James Smith",
+        "avatar": "https://example.com/avatar5.jpg",
+        "rating": 4,
+        "date": "2 weeks ago",
+        "review": "Good coverage of Python basics, but could use more real-world applications."
+      },
+      {
+        "name": "Olivia Davis",
+        "avatar": "https://example.com/avatar6.jpg",
+        "rating": 5,
+        "date": "1 month ago",
+        "review": "This course helped me transition from a beginner to an intermediate Python developer."
+      }
+    ]
+  },
   "featured-bullets": [
     {
       "title": "Get help from our internally trained AI as you learn to code."

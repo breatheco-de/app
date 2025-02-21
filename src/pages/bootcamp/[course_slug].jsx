@@ -40,6 +40,7 @@ import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
+import Rating from '../../common/components/Rating';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -163,6 +164,9 @@ function CoursePage({ data, syllabus }) {
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
+
+  const reviewsData = t('course:reviews', {}, { returnObjects: true });
+  const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
 
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
@@ -652,6 +656,9 @@ function CoursePage({ data, syllabus }) {
                 ))}
               </Flex>
 
+              {reviewsForCurrentCourse && (
+                <Rating variant="inline" totalRatings="1356" rating={4.5} link="#rating-commnets" />
+              )}
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
 
               {/* Course description */}
@@ -1009,6 +1016,18 @@ function CoursePage({ data, syllabus }) {
             description={getAlternativeTranslation('why-learn-with-4geeks.description')}
           />
         </GridContainer>
+        {reviewsForCurrentCourse && (
+          <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
+            <Rating
+              totalRatings="1356"
+              totalReviews="1234"
+              rating={4.5}
+              id="rating-commnets"
+              marginTop="40px"
+              reviews={reviewsForCurrentCourse}
+            />
+          </GridContainer>
+        )}
         {/* FAQ section */}
         <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
