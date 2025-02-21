@@ -65,11 +65,11 @@ function CustomCarousel({ assignmentList }) {
           gridGap="16px"
           alignItems="stretch"
         >
-          <Box flex="1" minWidth="250px" maxWidth="400px" height="250px">
+          <Box flex="1" minWidth="250px" maxWidth="400px" height="250px" bg="black" display="flex" justifyContent="center" alignItems="center" alignSelf="center" borderRadius="10px">
             <Image
               src={assignmentList[currentSlide].preview}
               alt={assignmentList[currentSlide].title}
-              objectFit="cover"
+              objectFit={/\.gif(\?|$)/i.test(assignmentList[currentSlide].preview) ? 'contain' : 'cover'}
               borderRadius="10px"
               width="100%"
               height="100%"
