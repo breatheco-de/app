@@ -67,7 +67,6 @@ function MktTwoColumnSideImage({
 }) {
   const videoRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [shouldShowThumbnail, setShouldShowThumbnail] = useState(true);
   const { fontColor2, hexColor, backgroundColor } = useStyle();
   const flexDirection = {
     right: 'ltr',
@@ -144,22 +143,15 @@ function MktTwoColumnSideImage({
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            setIsVisible(true);
-            setShouldShowThumbnail(false);
-          }, 300);
-        } else {
-          setIsVisible(false);
-        }
-      },
-      {
-        root: null,
-        threshold: 0.3,
-      },
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        requestAnimationFrame(() => {
+          setIsVisible(true);
+        });
+      } else {
+        setIsVisible(false);
+      }
+    }, { threshold: 0.2 });
 
     if (videoRef.current) observer.observe(videoRef.current);
 
@@ -298,19 +290,32 @@ function MktTwoColumnSideImage({
             )}
           </Flex>
         </Box>
-        <Box flex={0.5} style={{ direction: 'initial' }} ref={videoRef}>
+        <Box flex={0.5} minHeight="200px" style={{ direction: 'initial' }} ref={videoRef}>
           {videoUrl ? (
             <ReactPlayerV2
               url={videoUrl}
               borderRadius="20px"
               controls={false}
               loop
-              thumbnail={shouldShowThumbnail ? imageUrl : false}
+              autoFullScreen={false}
+              muted
+              volume={0}
+              width="100%"
+              height="auto"
+              pictureInPicture={false}
               autoPlay={isVisible}
               iframeStyle={{
                 background: 'transparent',
               }}
-              height="auto"
+              playerConfig={{
+                file: {
+                  attributes: {
+                    playsInline: true,
+                    disablePictureInPicture: true,
+                    controlsList: 'nodownload',
+                  },
+                },
+              }}
             />
           ) : (
             <Img
