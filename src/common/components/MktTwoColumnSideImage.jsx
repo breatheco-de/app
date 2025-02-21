@@ -144,22 +144,16 @@ function MktTwoColumnSideImage({
   };
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => {
-            setIsVisible(true);
-            setShouldShowThumbnail(false);
-          }, 300);
-        } else {
-          setIsVisible(false);
-        }
-      },
-      {
-        root: null,
-        threshold: 0.3,
-      },
-    );
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        requestAnimationFrame(() => {
+          setIsVisible(true);
+          setShouldShowThumbnail(false);
+        });
+      } else {
+        setIsVisible(false);
+      }
+    }, { threshold: 0.6 });
 
     if (videoRef.current) observer.observe(videoRef.current);
 
@@ -301,11 +295,15 @@ function MktTwoColumnSideImage({
         <Box flex={0.5} style={{ direction: 'initial' }} ref={videoRef}>
           {videoUrl ? (
             <ReactPlayerV2
+              key={isVisible ? 'visible' : 'hidden'}
               url={videoUrl}
               borderRadius="20px"
               controls={false}
               loop
-              thumbnail={shouldShowThumbnail ? imageUrl : false}
+              autoFullScreen={false}
+              muted
+              pictureInPicture={false}
+              thumbnail={shouldShowThumbnail ? imageUrl : undefined}
               autoPlay={isVisible}
               iframeStyle={{
                 background: 'transparent',

@@ -716,19 +716,35 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
+                          height="auto"
                           id="bootcamp-enroll-button"
                           variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          background="green.400"
+                          background="green.500"
+                          display="flex"
+                          flexDirection="column"
                           color="white"
                           width="100%"
                           whiteSpace="normal"
                           wordWrap="break-word"
+                          padding="10px"
                           onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
-                          {!featuredPlanToEnroll?.isFreeTier
-                            ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                            : capitalizeFirstLetter(featurePrice)}
+                          <Flex flexDirection="column" alignItems="center">
+                            <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
+                              {!featuredPlanToEnroll?.isFreeTier
+                                ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
+                                : capitalizeFirstLetter(featurePrice)}
+                            </Text>
+                            {!featuredPlanToEnroll?.isFreeTier && (
+                              <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
+                                <Icon icon="shield" color="#ffffff" width="23px" />
+                                <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
+                                  {t('common:money-back-guarantee-short')}
+                                </Text>
+                              </Flex>
+                            )}
+                          </Flex>
                         </Button>
                         {payableList?.length > 1 && (
                           <Button
