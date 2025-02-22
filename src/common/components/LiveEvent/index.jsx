@@ -415,16 +415,18 @@ function LiveEvent({
               flexDirection="column"
               marginLeft="10px"
             >
-              <Text
-                fontSize="md"
-                lineHeight="18px"
-                fontWeight="900"
-                color={textColor}
-                marginBottom="5px"
-                marginTop="0"
-              >
-                {t('live-class')}
-              </Text>
+              {cohorts.length > 0 ? (
+                <Text
+                  fontSize="md"
+                  lineHeight="18px"
+                  fontWeight="900"
+                  color={textColor}
+                  marginBottom="5px"
+                  marginTop="0"
+                >
+                  {cohorts[0].cohort.name}
+                </Text>
+              ) : null}
               <Text
                 fontSize="12px"
                 lineHeight="18px"
