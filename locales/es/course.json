@@ -9,6 +9,18 @@
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "free-course": "Curso Gratis",
+  "students-course-images":{
+    "deep-dive-into-python":[
+      "https://randomuser.me/api/portraits/men/12.jpg",
+      "https://randomuser.me/api/portraits/women/25.jpg",
+      "https://randomuser.me/api/portraits/men/17.jpg"
+    ],
+    "full-stack-development":[
+      "https://randomuser.me/api/portraits/men/23.jpg",
+      "https://randomuser.me/api/portraits/women/15.jpg",
+      "https://randomuser.me/api/portraits/men/27.jpg"
+    ]
+  },
   "coupon-bar": {
     "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
     "ends-in": "Termina en {{time}}",
