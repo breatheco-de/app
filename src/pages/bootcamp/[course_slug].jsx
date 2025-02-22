@@ -646,7 +646,7 @@ function CoursePage({ data, syllabus }) {
                 : (
 
                   <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                    {students.length < limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
