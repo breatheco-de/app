@@ -577,7 +577,9 @@ function CoursePage({ data, syllabus }) {
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {
                   data?.course_translation?.heading ? (
-                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                    <>
+                      <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                    </>
                   ) : (
                     <>
                       <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
@@ -604,7 +606,7 @@ function CoursePage({ data, syllabus }) {
                       quantity={3}
                       max={3}
                       margin="0 -21px 0 0 !important"
-                      size="40px"
+                      size={{ base: '30px', md: '40px' }}
                     />
                   )
                   : students.slice(0, limitViewStudents).map((student, index) => {
@@ -619,8 +621,8 @@ function CoursePage({ data, syllabus }) {
                         key={student.user?.profile?.full_name}
                         margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
                         src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
-                        width="40px"
-                        height="40px"
+                        width={{ base: '30px', md: '40px' }}
+                        height={{ base: '30px', md: '40px' }}
                         borderRadius="50%"
                         objectFit="cover"
                         alt={`Picture of ${student?.user?.first_name}`}
@@ -632,7 +634,7 @@ function CoursePage({ data, syllabus }) {
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
 
-                  <Text size="16px" color="currentColor" fontWeight={400}>
+                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
                     {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
                   </Text>
                 )}
@@ -644,7 +646,7 @@ function CoursePage({ data, syllabus }) {
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
-                      size="16px"
+                      size={{ base: '14', md: '16px' }}
                       fontWeight={400}
                       color="currentColor"
                       lineHeight="normal"
