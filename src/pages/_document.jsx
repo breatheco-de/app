@@ -3,6 +3,7 @@ import * as React from 'react';
 import { ColorModeScript } from '@chakra-ui/react';
 import createEmotionServer from '@emotion/server/create-instance';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import emotionCache from '../lib/emotion-cache';
 
 const { extractCritical } = createEmotionServer(emotionCache);
@@ -43,6 +44,7 @@ export default class CustomDocument extends Document {
           <ColorModeScript />
           <Main />
           <NextScript />
+          <SpeedInsights />
         </body>
       </Html>
     );
