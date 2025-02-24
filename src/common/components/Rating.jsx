@@ -6,7 +6,7 @@ import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 
 function CommentCard({ review, ...rest }) {
-  const { navbarBackground, fontColor, borderColor, lightColor } = useStyle();
+  const { backgroundColor, fontColor, borderColor, lightColor } = useStyle();
   const roundedRating = Math.round(review.rating) || 0;
 
   return (
@@ -16,7 +16,7 @@ function CommentCard({ review, ...rest }) {
       borderColor={borderColor}
       borderRadius="md"
       p="16px"
-      bg={navbarBackground}
+      bg={backgroundColor}
       gap="10px"
       {...rest}
     >
