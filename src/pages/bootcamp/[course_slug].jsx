@@ -41,6 +41,7 @@ import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
 import SimpleModal from '../../common/components/SimpleModal';
+import CustomCarousel from '../../common/components/CustomCarousel';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -861,32 +862,9 @@ function CoursePage({ data, syllabus }) {
             <Text size="18px" textAlign="center">
               {getAlternativeTranslation('build-connector.description')}
             </Text>
-            <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
-              {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
-                const taskTranslations = lang === 'en' ? item?.translations?.us : (item?.translations?.[lang] || {});
-                const pathConnector = {
-                  project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
-                  exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
-                };
-                const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
-
-                return (
-                  <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
-                    <Flex alignItems="center" justifyContent="space-between">
-                      {item?.technologies?.length > 0 && (
-                        <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
-                      )}
-                    </Flex>
-                    <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
-                      {(lang === 'en' && item?.translations?.us?.title)
-                        || item?.translations?.[lang]?.title
-                        || item?.title}
-                      <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
-                    </Link>
-                  </Flex>
-                );
-              })}
-            </Flex>
+            {assignmentList?.length > 0 && (
+              <CustomCarousel assignmentList={assignmentList} />
+            )}
           </Flex>
         </GridContainer>
         {/* Features section */}
