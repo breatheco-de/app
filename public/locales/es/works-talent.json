@@ -1,10 +1,13 @@
 {
     "pagination": {
-        "Go back": "Volver",
+        "go-back": "Atrás",
         "Next": "Siguiente"
+    },
+    "card-student": {
+        "description": "Apasionado por la resolución de problemas basada en datos, con un gran interés en la colaboración en iniciativas ecológicas y en construir una carrera en Ciencia de Datos.",
+        "link": "Ver perfil"
     },
     "showing-results-for": "Mostrando resultados para",
     "search": "Buscar",
-    "filters": "Filtro",
-    "see-profile": "Ver perfil"
+    "filters": "Filtro"
 }

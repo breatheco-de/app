@@ -23,8 +23,10 @@ import {
   ArrowForwardIcon,
   HamburgerIcon,
 } from '@chakra-ui/icons';
+import useTranslation from 'next-translate/useTranslation';
 
 function Talentcard() {
+  const { t } = useTranslation('works-talent');
   const roleTags = [
     { nameTag: 'Fullstack Developer', colorTag: '#0097CF', bgTag: '#EEF9FE' },
     { nameTag: 'Python', colorTag: '#0097CF', bgTag: '#EEF9FE' },
@@ -66,7 +68,7 @@ function Talentcard() {
         <Flex justify="space-between" align="center" mb={4} ml={3} my={3} margin="0px" paddingLeft="20px">
           <Link href="/" _hover={{ textDecoration: 'none' }}>
             <Text color="#0097CF" fontWeight="700" fontSize="17px" lineHeight="20.4px" letterSpacing="0%">
-              ← Volver
+              {`← ${t('works-talent:pagination.go-back')}`}
             </Text>
           </Link>
         </Flex>
@@ -92,7 +94,7 @@ function Talentcard() {
 
         <Flex justify="space-between" align="center" mt={4} w="100%">
           <Text mt={2} fontSize="sm" color="gray.600" fontWeight={400}>
-            Mostrando resultados por
+            {`${t('works-talent:showing-results-for')}`}
           </Text>
           {/* Filter Button */}
           <Button
@@ -102,7 +104,7 @@ function Talentcard() {
             colorScheme="blue"
             bg="#0097CF"
           >
-            Filters
+            {`${t('works-talent:filters')}`}
           </Button>
         </Flex>
 
@@ -191,9 +193,7 @@ function Talentcard() {
                   letterSpacing="0%"
                   padding="8px 8px 8px 8px"
                 >
-                  Passionate about data-drive problem-solving, with a keen
-                  interest in collaboration on eco-friendly iniciatives and
-                  building a career as a Data Science.
+                  {`${t('works-talent:card-student.description')}`}
                 </Text>
                 <Flex justify="center">
                   <Link href="/profile" _hover={{ textDecoration: 'none' }}>
@@ -206,7 +206,7 @@ function Talentcard() {
                       letterSpacing="0%"
                       fontFamily="Lato"
                     >
-                      Ver Perfil
+                      {`${t('works-talent:card-student.link')}`}
                     </Text>
                   </Link>
                 </Flex>

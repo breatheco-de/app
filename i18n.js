@@ -39,7 +39,7 @@ module.exports = {
     '/podcast': ['podcast'],
     '/accept-invite': ['accept-invite', 'signup'],
     '/bootcamp/[course_slug]': ['course', 'dashboard'],
-    '/works-talent': ['talent-card'],
+    '/works-talent': ['works-talent'],
   },
   locales: ['en', 'es'],
   defaultLocale: 'en',
