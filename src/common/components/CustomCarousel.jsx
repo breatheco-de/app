@@ -5,7 +5,7 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function CustomCarousel({ assignmentList }) {
-  const { borderColorStrong, navbarBackground, lightColor, fontColor } = useStyle();
+  const { borderColorStrong, backgroundColor, lightColor, fontColor } = useStyle();
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = assignmentList?.length;
   const slideInterval = useRef(null);
@@ -72,7 +72,7 @@ function CustomCarousel({ assignmentList }) {
           borderColor={borderColorStrong}
           borderRadius="10px"
           overflow="hidden"
-          bg={navbarBackground}
+          bg={backgroundColor}
           p="16px"
           gridGap="16px"
           alignItems="stretch"
