@@ -1,5 +1,3 @@
-// import { useRouter } from 'next/router';
-// import PropTypes from 'prop-types';
 import React from 'react';
 
 import Masonry from 'react-masonry-css';
@@ -42,6 +40,7 @@ function Talentcard() {
 
   const breakpointColumnsObj = {
     default: 3,
+    1280: 3,
     1100: 3,
     768: 2,
     500: 1,
@@ -146,7 +145,6 @@ function Talentcard() {
                 overflow="hidden"
                 bg="white"
                 className="masonry-brick"
-                // width="100%"
                 border="1px solid #DADADA"
               >
                 <Image
@@ -178,19 +176,18 @@ function Talentcard() {
                     bg={randomTag.bg}
                     px={3}
                     borderRadius="full"
+                    textAlign="center"
                   >
                     {randomTag.name}
                   </Tag>
                 </Flex>
                 <Divider borderColor="gray.300" />
                 <Text
-                  fontSize="md"
-                  color="gray.600"
+                  fontSize="14px"
                   my={2}
                   fontFamily="Lato"
                   fontWeight={400}
                   lineHeight="16.8px"
-                  letterSpacing="0%"
                   padding="8px 8px 8px 8px"
                 >
                   {`${t('works-talent:card-student.description')}`}
