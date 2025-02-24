@@ -76,7 +76,7 @@ function Talentcard() {
         </Flex>
       </Box>
 
-      <Box bg={hexColor.backgroundColor} p={10} borderRadius="13px" margin={10} padding={6} gap={6}>
+      <Box bg={hexColor.backgroundColor} p={10} borderRadius="13px" margin={4} padding={6} gap={6}>
         {/* Search Bar */}
         <InputGroup size="lg">
           <InputLeftElement pointerEvents="none">
