@@ -7,7 +7,8 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, pictureInPicture, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig,
+  ...rest
 }) {
   const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
@@ -114,6 +115,7 @@ function ReactPlayerV2({
                 playIcon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" position="absolute" />}
                 controls={controls}
                 width="100%"
+                volume={volume}
                 muted={muted}
                 pip={pictureInPicture}
                 playsinline={autoFullScreen}
@@ -124,6 +126,7 @@ function ReactPlayerV2({
                   background: 'black',
                   ...iframeStyle,
                 }}
+                config={playerConfig}
                 {...rest}
               />
             </Box>
@@ -171,6 +174,8 @@ ReactPlayerV2.propTypes = {
   autoFullScreen: PropTypes.bool,
   muted: PropTypes.bool,
   pictureInPicture: PropTypes.bool,
+  volume: PropTypes.number,
+  playerConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -188,7 +193,9 @@ ReactPlayerV2.defaultProps = {
   loop: false,
   autoFullScreen: false,
   muted: false,
+  volume: null,
   pictureInPicture: false,
+  playerConfig: {},
 };
 
 export default ReactPlayerV2;

@@ -40,6 +40,7 @@ import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
+import SimpleModal from '../../common/components/SimpleModal';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -130,6 +131,7 @@ function CoursePage({ data, syllabus }) {
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const translationsObj = getTranslations(t);
@@ -384,6 +386,7 @@ function CoursePage({ data, syllabus }) {
 
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
+  const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
@@ -544,6 +547,25 @@ function CoursePage({ data, syllabus }) {
     });
   };
 
+  const adjustFontSizeForMobile = (html) => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return html?.replace(/font-size:\s*\d+px;?/gi, 'font-size: 36px;');
+    }
+    return html;
+  };
+
+  const imageSource = Array.isArray(studentsImages) && studentsImages.length > 0
+    ? studentsImages.slice(0, limitViewStudents)
+    : students.slice(0, limitViewStudents).map((student) => {
+      const existsAvatar = student.user.profile?.avatar_url;
+      const avatarNumber = adjustNumberBeetwenMinMax({
+        number: student.user?.id,
+        min: 1,
+        max: 20,
+      });
+      return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
+    });
+
   return (
     <>
       {cleanedStructuredData?.name && (
@@ -575,7 +597,9 @@ function CoursePage({ data, syllabus }) {
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {
                   data?.course_translation?.heading ? (
-                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                    <>
+                      <Heading as="span" size={{ base: '33px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: adjustFontSizeForMobile(data?.course_translation?.heading) }} />
+                    </>
                   ) : (
                     <>
                       <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
@@ -596,42 +620,33 @@ function CoursePage({ data, syllabus }) {
             {/* Students count */}
             <Flex alignItems="center" gridGap="16px">
               <Flex>
-                {initialDataIsFetching
-                  ? (
-                    <AvatarSkeletonWrapped
-                      quantity={3}
-                      max={3}
-                      margin="0 -21px 0 0 !important"
-                      size="40px"
+                {initialDataIsFetching ? (
+                  <AvatarSkeletonWrapped
+                    quantity={3}
+                    max={3}
+                    margin="0 -21px 0 0 !important"
+                    size={{ base: '30px', md: '40px' }}
+                  />
+                ) : (
+                  imageSource.map((imageUrl, index) => (
+                    <Image
+                      margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
+                      src={imageUrl}
+                      width={{ base: '30px', md: '40px' }}
+                      height={{ base: '30px', md: '40px' }}
+                      borderRadius="50%"
+                      objectFit="cover"
+                      alt={`Student image ${index + 1}`}
                     />
-                  )
-                  : students.slice(0, limitViewStudents).map((student, index) => {
-                    const existsAvatar = student.user.profile?.avatar_url;
-                    const avatarNumber = adjustNumberBeetwenMinMax({
-                      number: student.user?.id,
-                      min: 1,
-                      max: 20,
-                    });
-                    return (
-                      <Image
-                        key={student.user?.profile?.full_name}
-                        margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
-                        src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
-                        width="40px"
-                        height="40px"
-                        borderRadius="50%"
-                        objectFit="cover"
-                        alt={`Picture of ${student?.user?.first_name}`}
-                      />
-                    );
-                  })}
+                  ))
+                )}
               </Flex>
               {initialDataIsFetching
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
 
-                  <Text size="16px" color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
+                    {students.length < limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
@@ -642,7 +657,7 @@ function CoursePage({ data, syllabus }) {
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
-                      size="16px"
+                      size={{ base: '14', md: '16px' }}
                       fontWeight={400}
                       color="currentColor"
                       lineHeight="normal"
@@ -652,7 +667,7 @@ function CoursePage({ data, syllabus }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -661,9 +676,6 @@ function CoursePage({ data, syllabus }) {
                     {data?.course_translation?.short_description}
                   </Text>
                 )}
-                <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                  {data?.course_translation?.description}
-                </Text>
               </Flex>
             </Flex>
           </Flex>
@@ -821,7 +833,7 @@ function CoursePage({ data, syllabus }) {
             <OneColumnWithIcon
               title={getAlternativeTranslation('rigobot.title')}
               icon=""
-              handleButton={() => tryRigobot('#try-rigobot')}
+              handleButton={() => setShowModal(true)}
               buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
             >
@@ -1038,6 +1050,27 @@ function CoursePage({ data, syllabus }) {
           </GridContainer>
         </Box>
       </Flex>
+      <SimpleModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        style={{ marginTop: '10vh' }}
+        maxWidth="45rem"
+        borderRadius="13px"
+        headerStyles={{ textAlign: 'center' }}
+        title={t('rigobot.title')}
+        bodyStyles={{ padding: 0 }}
+        closeOnOverlayClick={false}
+      >
+        <Box padding="0 15px 15px">
+          <ReactPlayerV2
+            url={getAlternativeTranslation('rigobot.video_url')}
+            width="100%"
+            height="100%"
+            iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+            autoPlay
+          />
+        </Box>
+      </SimpleModal>
     </>
   );
 }
