@@ -2,12 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Flex, Box, Text, Image, Badge } from '@chakra-ui/react';
 import Icon from './Icon';
+import useStyle from '../hooks/useStyle';
 
 function CustomCarousel({ assignmentList }) {
+  const { borderColorStrong, navbarBackground, lightColor, fontColor } = useStyle();
   const [currentSlide, setCurrentSlide] = useState(0);
   const totalSlides = assignmentList?.length;
   const slideInterval = useRef(null);
   const resetTimeout = useRef(null);
+
+  const difficultyLevel = {
+    EASY: 'green',
+    BEGINNER: 'green',
+    INTERMEDIATE: 'yellow',
+    HARD: 'red',
+  };
 
   const startAutoSlide = (delay = 5000) => {
     clearInterval(slideInterval.current);
@@ -27,6 +36,14 @@ function CustomCarousel({ assignmentList }) {
     }, 20000);
   };
 
+  const nextSlide = () => handleUserInteraction(() => {
+    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
+  });
+
+  const prevSlide = () => handleUserInteraction(() => {
+    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
+  });
+
   useEffect(() => {
     startAutoSlide();
 
@@ -36,20 +53,14 @@ function CustomCarousel({ assignmentList }) {
     };
   }, [totalSlides]);
 
-  const nextSlide = () => handleUserInteraction(() => {
-    setCurrentSlide((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
-  });
-
-  const prevSlide = () => handleUserInteraction(() => {
-    setCurrentSlide((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
-  });
-
-  const difficultyLevel = {
-    EASY: 'green',
-    BEGINNER: 'green',
-    INTERMEDIATE: 'yellow',
-    HARD: 'red',
-  };
+  useEffect(() => {
+    if (assignmentList && assignmentList.length) {
+      assignmentList.forEach((assignment) => {
+        const img = new window.Image();
+        img.src = assignment.preview;
+      });
+    }
+  }, [assignmentList]);
 
   return (
     <Flex flexDirection="column" gridGap="16px" alignItems="center" position="relative" minHeight="300px" maxWidth="1280px">
@@ -57,10 +68,11 @@ function CustomCarousel({ assignmentList }) {
         <Flex
           flexDirection={{ base: 'column', md: 'row' }}
           width="100%"
-          border="1px solid #E2E8F0"
+          border="1px solid"
+          borderColor={borderColorStrong}
           borderRadius="10px"
           overflow="hidden"
-          bg="white"
+          bg={navbarBackground}
           p="16px"
           gridGap="16px"
           alignItems="stretch"
@@ -91,13 +103,13 @@ function CustomCarousel({ assignmentList }) {
             <Flex gridGap="8px" justifyContent="space-between" alignItems="flex-start">
               <Flex gap="10px">
                 {assignmentList[currentSlide].technologies.map((tech) => (
-                  <>
+                  <Box>
                     {tech.icon_url ? (
                       <Image src={tech.icon_url} width="18px" height="18px" />
                     ) : (
                       <Badge borderRadius="10px" px="8px" colorScheme="blue">{tech.title}</Badge>
                     )}
-                  </>
+                  </Box>
                 ))}
               </Flex>
 
@@ -119,7 +131,7 @@ function CustomCarousel({ assignmentList }) {
 
             <Flex direction="column" mt="16px" gap="16px">
               <Text fontSize="20px" fontWeight="bold">{assignmentList[currentSlide].title}</Text>
-              <Text fontSize="14px" color="gray.600">{assignmentList[currentSlide].description}</Text>
+              <Text fontSize="14px" color={lightColor}>{assignmentList[currentSlide].description}</Text>
             </Flex>
 
             <Flex alignItems="flex-end" justifyContent="space-between" mt="auto">
@@ -152,7 +164,7 @@ function CustomCarousel({ assignmentList }) {
           bottom="0"
           width="30px"
           height="30px"
-          color={currentSlide === 0 ? '#EBEBEB' : 'black'}
+          color={currentSlide === 0 ? '#EBEBEB' : fontColor}
           cursor={currentSlide === 0 ? undefined : 'pointer'}
           opacity={currentSlide === 0 ? 0.5 : 1}
         />
@@ -179,7 +191,7 @@ function CustomCarousel({ assignmentList }) {
           bottom="0"
           width="30px"
           height="30px"
-          color={currentSlide === totalSlides - 1 ? '#EBEBEB' : 'black'}
+          color={currentSlide === totalSlides - 1 ? '#EBEBEB' : fontColor}
           cursor={currentSlide === totalSlides - 1 ? undefined : 'pointer'}
           opacity={currentSlide === totalSlides - 1 ? 0.5 : 1}
         />
