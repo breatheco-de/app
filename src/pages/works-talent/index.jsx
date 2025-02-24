@@ -65,7 +65,7 @@ function Talentcard() {
   ];
 
   return (
-    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px">
+    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px">
       <Box>
         <Flex justify="space-between" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
           <Link href="/" _hover={{ textDecoration: 'none' }}>
