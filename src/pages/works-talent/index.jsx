@@ -14,17 +14,20 @@ import {
   InputRightElement,
   Button,
   Divider,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import {
   SearchIcon,
   CloseIcon,
   ArrowForwardIcon,
-  HamburgerIcon,
 } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
+import useStyle from '../../common/hooks/useStyle';
+import Icon from '../../common/components/Icon';
 
 function Talentcard() {
   const { t } = useTranslation('works-talent');
+  const { hexColor } = useStyle();
   const roleTags = [
     { nameTag: 'Fullstack Developer', colorTag: '#0097CF', bgTag: '#EEF9FE' },
     { nameTag: 'Python', colorTag: '#0097CF', bgTag: '#EEF9FE' },
@@ -62,7 +65,7 @@ function Talentcard() {
   ];
 
   return (
-    <Box mb={10} ms={10} mx={10} background="#EEF9FE" margin="0px" padding="30px 0px 0px">
+    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="30px 0px 0px">
       <Box>
         <Flex justify="space-between" align="center" mb={4} ml={3} my={3} margin="0px" paddingLeft="20px">
           <Link href="/" _hover={{ textDecoration: 'none' }}>
@@ -73,15 +76,15 @@ function Talentcard() {
         </Flex>
       </Box>
 
-      <Box bg="#FFFFFF" p={10} borderRadius="md" mt={4} mb={6} margin="30px">
+      <Box bg={hexColor.backgroundColor} p={10} borderRadius="13px" margin={10} padding={6} gap={6}>
         {/* Search Bar */}
         <InputGroup size="lg">
           <InputLeftElement pointerEvents="none">
             <SearchIcon color="gray.500" />
           </InputLeftElement>
-          <Input placeholder="Full Stack developer" borderRadius="md" fontWeight={700} fontSize="17px" lineHeight="20.4px" letterSpacing="0%" />
+          <Input placeholder="Full Stack developer" fontFamily="Lato" fontWeight={400} fontSize="15px" lineHeight="22px" letterSpacing="2%" />
           <InputRightElement>
-            <Button size="sm" bg="#0097CF" _hover={{ bg: '#0077A8' }}>
+            <Button size="big" bg="#0097CF" _hover={{ bg: '#0077A8' }} padding={2} gap="10px" variant="default" borderRadius="4px">
               <ArrowForwardIcon
                 color="white"
                 boxSize={6}
@@ -92,31 +95,34 @@ function Talentcard() {
         </InputGroup>
 
         <Flex justify="space-between" align="center" mt={4} w="100%">
-          <Text mt={2} fontSize="sm" color="gray.600" fontWeight={400}>
+          <Text mt={2} fontSize="12px" color={useColorModeValue('#000000', '#FFFFFF')} fontWeight={400} lineHeight="14.4px" letterSpacing="0%" fontFamily="Lato">
             {`${t('works-talent:showing-results-for')}`}
           </Text>
           {/* Filter Button */}
           <Button
-            leftIcon={<HamburgerIcon />}
             mt={2}
             size="sm"
             colorScheme="blue"
             bg="#0097CF"
+            color="white"
           >
+            <Icon icon="setting" margin="8px" color="#FFFFFF" />
             {`${t('works-talent:filters')}`}
           </Button>
         </Flex>
 
-        {/* Tags con opción de eliminar */}
+        {/* Tags with option to eliminate */}
         <Flex mt={2} gap={2} flexWrap="wrap">
           {roleTags.map((tag, index) => (
             <Tag
               key={index.id}
               size="md"
-              borderRadius="full"
+              borderRadius="18px"
               px={3}
-              color={tag.colorTag}
-              bg={tag.bgTag}
+              color={hexColor.blue3}
+              bg={hexColor.featuredColor}
+              padding="4px 8px"
+              gap={2}
             >
               {tag.nameTag}
               <CloseIcon
@@ -130,7 +136,7 @@ function Talentcard() {
         </Flex>
       </Box>
 
-      <Box background="#FFFFFF" padding="32px 40px">
+      <Box bg={hexColor.backgroundColor} padding="32px 40px">
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="masonry-grid"
@@ -143,9 +149,10 @@ function Talentcard() {
                 key={index.id}
                 borderRadius="8px"
                 overflow="hidden"
-                bg="white"
+                bg={hexColor.backgroundColor}
                 className="masonry-brick"
-                border="1px solid #DADADA"
+                border="1px solid"
+                borderColor={hexColor.borderColor}
               >
                 <Image
                   src={talentNamesPhotos[index]?.photo}
@@ -172,8 +179,8 @@ function Talentcard() {
                     fontSize="9px"
                     lineHeight="10.8px"
                     letterSpacing="5%"
-                    color={randomTag.color}
-                    bg={randomTag.bg}
+                    color={useColorModeValue(randomTag.color, hexColor.black)}
+                    bg={useColorModeValue(randomTag.bg, '#283340')}
                     px={3}
                     borderRadius="full"
                     textAlign="center"
@@ -181,7 +188,7 @@ function Talentcard() {
                     {randomTag.name}
                   </Tag>
                 </Flex>
-                <Divider borderColor="gray.300" />
+                <Divider borderColor={hexColor.borderColor} />
                 <Text
                   fontSize="14px"
                   my={2}
