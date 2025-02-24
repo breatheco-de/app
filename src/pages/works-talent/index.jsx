@@ -65,9 +65,9 @@ function Talentcard() {
   ];
 
   return (
-    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="30px 0px 0px">
+    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px">
       <Box>
-        <Flex justify="space-between" align="center" mb={4} ml={3} my={3} margin="0px" paddingLeft="20px">
+        <Flex justify="space-between" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
           <Link href="/" _hover={{ textDecoration: 'none' }}>
             <Text color="#0097CF" fontWeight="700" fontSize="17px" lineHeight="20.4px" letterSpacing="0%">
               {`← ${t('works-talent:pagination.go-back')}`}
