@@ -2,25 +2,29 @@ import PropTypes from 'prop-types';
 import { Flex, Text, Box, Avatar, SimpleGrid } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
+import useStyle from '../hooks/useStyle';
 import Icon from './Icon';
 
-function CommentCard({ review }) {
+function CommentCard({ review, ...rest }) {
+  const { navbarBackground, fontColor, borderColor, lightColor } = useStyle();
   const roundedRating = Math.round(review.rating) || 0;
 
   return (
     <Flex
       direction="column"
-      border="1px solid #E2E8F0"
+      border="1px solid"
+      borderColor={borderColor}
       borderRadius="md"
       p="16px"
-      bg="white"
+      bg={navbarBackground}
       gap="10px"
+      {...rest}
     >
       {/* Avatar y Nombre */}
       <Flex alignItems="center" gap="10px">
         <Avatar src={review.avatar} name={review.name} size="sm" />
         <Box>
-          <Text fontWeight="bold">{review.name}</Text>
+          <Text fontWeight="bold" fontColor={fontColor}>{review.name}</Text>
           <Flex gap="10px" alignItems="center">
             <Flex gap="4px">
               {Array.from({ length: 5 }).map((_, index) => (
@@ -36,7 +40,7 @@ function CommentCard({ review }) {
         </Box>
       </Flex>
 
-      <Text fontSize="14px" color="gray.700" mt="8px">
+      <Text fontSize="14px" color={lightColor} mt="8px">
         {review.review}
       </Text>
     </Flex>
