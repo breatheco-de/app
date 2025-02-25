@@ -86,7 +86,6 @@ function MktEventCards({
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
 
           const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
-          console.log(eventsFilteredByTech);
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
             fetchCheckedInEvents();
             return;
