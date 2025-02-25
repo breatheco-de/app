@@ -45,6 +45,7 @@
   },
   "reviews": {
     "full-stack-development": {
+      "rating": 4.5,
       "total_ratings": 1346,
       "reviews_numbers": 345,
       "reviews": [
@@ -72,7 +73,7 @@
       ]
     },
     "deep-dive-into-python": {
-      "rating": 5,
+      "rating": 4.5,
       "total_ratings": 1346,
       "reviews_numbers": 313,
       "reviews": [

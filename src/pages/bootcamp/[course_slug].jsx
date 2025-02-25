@@ -1018,12 +1018,12 @@ function CoursePage({ data, syllabus }) {
         {reviewsForCurrentCourse && (
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
             <Rating
-              totalRatings="1356"
-              totalReviews="1234"
-              rating={4.5}
+              totalRatings={reviewsForCurrentCourse.total_ratings}
+              totalReviews={reviewsForCurrentCourse.reviews_numbers}
+              rating={reviewsForCurrentCourse.rating}
               id="rating-commnets"
               marginTop="40px"
-              reviews={reviewsForCurrentCourse}
+              reviews={reviewsForCurrentCourse.reviews}
             />
           </GridContainer>
         )}

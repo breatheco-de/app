@@ -54,25 +54,33 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ..
   if (variant === 'inline') {
     return (
       <Flex alignItems="center" gap="8px" {...rest}>
-        {rating && roundedRating > 0 && (
+        {(rating > 0 && roundedRating > 0) && (
           <>
             <Text fontSize="14px">{rating}</Text>
             <Flex gap="4px">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <>
-                  {index + 1 <= roundedRating ? (
-                    <Icon icon="star" color="#FFB718" width="18px" />
-                  ) : (
-                    <Icon icon="star" color="#ffffff" secondColor="#FFB718" width="18px" />
-                  )}
-                </>
-              ))}
+              {Array.from({ length: 5 }).map((_, index) => {
+                const isFullStar = index + 1 <= Math.floor(rating);
+                const isHalfStar = index === Math.floor(rating) && rating % 1 >= 0.5;
+
+                return (
+                  <Icon
+                    icon="star"
+                    color={isFullStar ? '#FFB718' : '#ffffff'}
+                    secondColor="#FFB718"
+                    width="18px"
+                    fill={isHalfStar ? 'half' : undefined}
+                  />
+                );
+              })}
             </Flex>
           </>
         )}
-        <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
-          {`(${totalRatings} ${t('common:reviews')})`}
-        </Text>
+
+        {totalRatings > 0 && (
+          <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
+            {`(${totalRatings} ${t('common:reviews')})`}
+          </Text>
+        )}
       </Flex>
     );
   }
@@ -83,7 +91,7 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ..
         <Flex direction="column" {...rest}>
           <Flex alignItems="center" gap="14px">
             <Icon icon="star" color="#FFB718" width="18px" />
-            <Text fontSize="24px">{`${rating} ${t('course-rating')} ${totalReviews > 0 && `- ${totalReviews} ${t('comments')}`}`}</Text>
+            <Text fontSize="24px">{`${rating > 0 && rating} ${t('course-rating')} ${totalReviews > 0 && `- ${totalReviews} ${t('comments')}`}`}</Text>
           </Flex>
           <SimpleGrid
             columns={{ base: 1, md: 2, lg: 3 }}
