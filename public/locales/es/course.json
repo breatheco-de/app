@@ -44,52 +44,61 @@
     "payment-methods": "- Tarjeta de crédito. - Contacta a soporte para mas opciones"
   },
   "reviews": {
-    "full-stack-development": [
-      {
-        "name": "Juan Pérez",
-        "avatar": "https://example.com/avatar1.jpg",
-        "rating": 5,
-        "date": "Hace 2 días",
-        "review": "Este curso me proporcionó una comprensión sólida de los conceptos de desarrollo web. ¡Muy recomendado para principiantes!"
-      },
-      {
-        "name": "Emilia Rodríguez",
-        "avatar": "https://example.com/avatar2.jpg",
-        "rating": 4,
-        "date": "Hace 1 semana",
-        "review": "Gran curso con ejemplos prácticos. Me hubiera gustado que cubriera más temas avanzados."
-      },
-      {
-        "name": "Miguel García",
-        "avatar": "https://example.com/avatar3.jpg",
-        "rating": 5,
-        "date": "Hace 3 semanas",
-        "review": "¡Contenido y estructura increíbles! Conseguí mi primer trabajo como desarrollador gracias a este curso."
-      }
-    ],
-    "deep-dive-into-python": [
-      {
-        "name": "Sofía López",
-        "avatar": "https://example.com/avatar4.jpg",
-        "rating": 5,
-        "date": "Hace 5 días",
-        "review": "Explicaciones detalladas y ejemplos claros. Perfecto para quienes buscan dominar Python."
-      },
-      {
-        "name": "Jaime Ramírez",
-        "avatar": "https://example.com/avatar5.jpg",
-        "rating": 4,
-        "date": "Hace 2 semanas",
-        "review": "Buena cobertura de los conceptos básicos de Python, pero podría incluir más aplicaciones prácticas."
-      },
-      {
-        "name": "Olivia Fernández",
-        "avatar": "https://example.com/avatar6.jpg",
-        "rating": 5,
-        "date": "Hace 1 mes",
-        "review": "Este curso me ayudó a pasar de ser principiante a desarrolladora intermedia en Python."
-      }
-    ]
+    "full-stack-development": {
+      "total_ratings": 1346,
+      "reviews_numbers": 345,
+      "reviews": [
+        {
+          "name": "Juan Pérez",
+          "avatar": "https://example.com/avatar1.jpg",
+          "rating": 5,
+          "date": "Hace 2 días",
+          "review": "Este curso me proporcionó una comprensión sólida de los conceptos de desarrollo web. ¡Muy recomendado para principiantes!"
+        },
+        {
+          "name": "Emilia Rodríguez",
+          "avatar": "https://example.com/avatar2.jpg",
+          "rating": 4,
+          "date": "Hace 1 semana",
+          "review": "Gran curso con ejemplos prácticos. Me hubiera gustado que cubriera más temas avanzados."
+        },
+        {
+          "name": "Miguel García",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 5,
+          "date": "Hace 3 semanas",
+          "review": "¡Contenido y estructura increíbles! Conseguí mi primer trabajo como desarrollador gracias a este curso."
+        }
+      ]
+    },
+    "deep-dive-into-python": {
+      "rating": 5,
+      "total_ratings": 1346,
+      "reviews_numbers": 313,
+      "reviews": [
+        {
+          "name": "Sofía López",
+          "avatar": "https://example.com/avatar4.jpg",
+          "rating": 5,
+          "date": "Hace 5 días",
+          "review": "Explicaciones detalladas y ejemplos claros. Perfecto para quienes buscan dominar Python."
+        },
+        {
+          "name": "Jaime Ramírez",
+          "avatar": "https://example.com/avatar5.jpg",
+          "rating": 4,
+          "date": "Hace 2 semanas",
+          "review": "Buena cobertura de los conceptos básicos de Python, pero podría incluir más aplicaciones prácticas."
+        },
+        {
+          "name": "Olivia Fernández",
+          "avatar": "https://example.com/avatar6.jpg",
+          "rating": 5,
+          "date": "Hace 1 mes",
+          "review": "Este curso me ayudó a pasar de ser principiante a desarrolladora intermedia en Python."
+        }
+      ]
+    }
   },
   "featured-bullets": [
     {

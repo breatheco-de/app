@@ -659,7 +659,7 @@ function CoursePage({ data, syllabus }) {
               </Flex>
 
               {reviewsForCurrentCourse && (
-                <Rating variant="inline" totalRatings="1356" rating={4.5} link="#rating-commnets" />
+                <Rating variant="inline" totalRatings={reviewsForCurrentCourse.total_ratings} rating={reviewsForCurrentCourse.rating} link="#rating-commnets" />
               )}
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 

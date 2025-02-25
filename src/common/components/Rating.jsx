@@ -54,18 +54,22 @@ function Rating({ variant, totalRatings, totalReviews, rating, reviews, link, ..
   if (variant === 'inline') {
     return (
       <Flex alignItems="center" gap="8px" {...rest}>
-        <Text fontSize="14px">{rating}</Text>
-        <Flex gap="4px">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <>
-              {index + 1 <= roundedRating ? (
-                <Icon icon="star" color="#FFB718" width="18px" />
-              ) : (
-                <Icon icon="star" color="#ffffff" secondColor="#FFB718" width="18px" />
-              )}
-            </>
-          ))}
-        </Flex>
+        {rating && roundedRating > 0 && (
+          <>
+            <Text fontSize="14px">{rating}</Text>
+            <Flex gap="4px">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <>
+                  {index + 1 <= roundedRating ? (
+                    <Icon icon="star" color="#FFB718" width="18px" />
+                  ) : (
+                    <Icon icon="star" color="#ffffff" secondColor="#FFB718" width="18px" />
+                  )}
+                </>
+              ))}
+            </Flex>
+          </>
+        )}
         <Text onClick={() => router.push(link)} color="blue.default" textDecor="underline" fontWeight="bold" fontSize="14px" cursor="pointer">
           {`(${totalRatings} ${t('common:reviews')})`}
         </Text>
