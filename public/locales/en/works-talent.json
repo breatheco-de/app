@@ -1,8 +1,4 @@
 {
-    "pagination": {
-        "go-back": "Go back",
-        "Next": "Next"
-    },
     "card-student": {
         "description": "Passionate about data-driven problem-solving, with a keen interest in collaborating on ecological initiatives and building a career in Data Science.",
         "link": "See profile"
@@ -10,5 +6,7 @@
     "showing-results-for": "Showing results for",
     "search": "Search",
     "filters": "Filters",
-    "see-profile": "See profile"
+    "see-profile": "See profile",
+    "welcome": "Welcome to our talent pool",
+    "description": "Explore top candidates with detailed profiles to find the perfect fit for your team."
 }

@@ -8,32 +8,26 @@ import {
   Tag,
   Link,
   Flex,
-  Input,
   InputGroup,
-  InputLeftElement,
   InputRightElement,
   Button,
   Divider,
   useColorModeValue,
+  Grid,
+  GridItem,
 } from '@chakra-ui/react';
 import {
-  SearchIcon,
-  CloseIcon,
   ArrowForwardIcon,
+  AddIcon,
 } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import useStyle from '../../common/hooks/useStyle';
-import Icon from '../../common/components/Icon';
 
 function Talentcard() {
   const { t } = useTranslation('works-talent');
   const { hexColor } = useStyle();
   const roleTags = [
-    { nameTag: 'Fullstack Developer', colorTag: '#0097CF', bgTag: '#EEF9FE' },
-    { nameTag: 'Python', colorTag: '#0097CF', bgTag: '#EEF9FE' },
-    { nameTag: 'South America', colorTag: '#0097CF', bgTag: '#EEF9FE' },
-    { nameTag: 'A2-B1', colorTag: '#0097CF', bgTag: '#EEF9FE' },
-    { nameTag: 'CSS', colorTag: '#0097CF', bgTag: '#EEF9FE' },
+    { nameTag: 'Add filter', colorTag: '#0097CF', bgTag: '#EEF9FE' },
   ];
 
   const skillTags = [
@@ -67,74 +61,85 @@ function Talentcard() {
   return (
     <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px">
       <Box>
-        <Flex justify="space-between" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
-          <Link href="/" _hover={{ textDecoration: 'none' }}>
-            <Text color="#0097CF" fontWeight="700" fontSize="17px" lineHeight="20.4px" letterSpacing="0%">
-              {`← ${t('works-talent:pagination.go-back')}`}
-            </Text>
-          </Link>
-        </Flex>
-      </Box>
-
-      <Box bg={hexColor.backgroundColor} p={10} borderRadius="13px" margin={4} padding={6} gap={6}>
-        {/* Search Bar */}
-        <InputGroup size="lg">
-          <InputLeftElement pointerEvents="none">
-            <SearchIcon color="gray.500" />
-          </InputLeftElement>
-          <Input placeholder="Full Stack developer" fontFamily="Lato" fontWeight={400} fontSize="15px" lineHeight="22px" letterSpacing="2%" />
-          <InputRightElement>
-            <Button size="big" bg="#0097CF" _hover={{ bg: '#0077A8' }} padding={2} gap="10px" variant="default" borderRadius="4px">
-              <ArrowForwardIcon
-                color="white"
-                boxSize={6}
-                transform="scaleX(1.0)"
-              />
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-
-        <Flex justify="space-between" align="center" mt={4} w="100%">
-          <Text mt={2} fontSize="12px" color={useColorModeValue('#000000', '#FFFFFF')} fontWeight={400} lineHeight="14.4px" letterSpacing="0%" fontFamily="Lato">
-            {`${t('works-talent:showing-results-for')}`}
+        <Flex direction="column" justify="center" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
+          <Text color="#0097CF" fontWeight="400" fontSize="14px" lineHeight="16.8px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
+            {`${t('works-talent:welcome')}`}
           </Text>
-          {/* Filter Button */}
-          <Button
-            mt={2}
-            size="sm"
-            colorScheme="blue"
-            bg="#0097CF"
-            color="white"
-          >
-            <Icon icon="setting" margin="8px" color="#FFFFFF" />
-            {`${t('works-talent:filters')}`}
-          </Button>
-        </Flex>
-
-        {/* Tags with option to eliminate */}
-        <Flex mt={2} gap={2} flexWrap="wrap">
-          {roleTags.map((tag, index) => (
-            <Tag
-              key={index.id}
-              size="md"
-              borderRadius="18px"
-              px={3}
-              color={hexColor.blue3}
-              bg={hexColor.featuredColor}
-              padding="4px 8px"
-              gap={2}
-            >
-              {tag.nameTag}
-              <CloseIcon
-                ml={2}
-                boxSize={2.5}
-                cursor="pointer"
-                color={tag.color}
-              />
-            </Tag>
-          ))}
+          <Text color="#2E2E38" fontWeight="400" fontSize="18px" lineHeight="21.6px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
+            {`${t('works-talent:description')}`}
+          </Text>
         </Flex>
       </Box>
+      <Grid justifyContent="center" alignItems="center">
+        <GridItem
+          bg={hexColor.backgroundColor}
+          borderRadius="13px"
+          margin="24px 106px"
+          gap={6}
+          width="812px"
+          height="94px"
+        >
+          <InputGroup size="lg">
+            <InputRightElement
+              position="absolute"
+              top="50%"
+              right="24px"
+              transform="translateY(50%)"
+            >
+              <Button
+                size="big"
+                bg="#DADADA"
+                _hover={{ bg: '#0077A8' }}
+                padding={2}
+                gap="10px"
+                borderRadius="4px"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <ArrowForwardIcon color="white" boxSize={6} transform="scaleX(1.0)" />
+              </Button>
+            </InputRightElement>
+          </InputGroup>
+
+          <Grid templateColumns="repeat(3, 1fr)" mt={4} w="100%" alignItems="center">
+            {[...Array(3)].map((_, index) => (
+              <GridItem key={index.id} textAlign="left">
+                <Text
+                  mt={2}
+                  fontSize="12px"
+                  color={useColorModeValue('#000000', '#FFFFFF')}
+                  fontWeight={400}
+                  lineHeight="14.4px"
+                  letterSpacing="0%"
+                  fontFamily="Lato"
+                >
+                  {`${t('works-talent:showing-results-for')}`}
+                </Text>
+                <Flex mt={2} gap={2} flexWrap="wrap" justify="flex-start">
+                  {roleTags.map((tag, i) => (
+                    <Tag
+                      key={i.id}
+                      size="md"
+                      borderRadius="4px"
+                      px={3}
+                      color={hexColor.blue3}
+                      bg={hexColor.featuredColor}
+                      padding="4px 8px"
+                      gap="10px"
+                      display="flex"
+                      alignItems="center"
+                    >
+                      <AddIcon mr={2} boxSize={2.5} cursor="pointer" color={tag.color} />
+                      {tag.nameTag}
+                    </Tag>
+                  ))}
+                </Flex>
+              </GridItem>
+            ))}
+          </Grid>
+        </GridItem>
+      </Grid>
 
       <Box bg={hexColor.backgroundColor} padding="32px 40px">
         <Masonry

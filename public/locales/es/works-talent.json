@@ -1,13 +1,12 @@
 {
-    "pagination": {
-        "go-back": "Atrás",
-        "Next": "Siguiente"
-    },
     "card-student": {
         "description": "Apasionado por la resolución de problemas basada en datos, con un gran interés en la colaboración en iniciativas ecológicas y en construir una carrera en Ciencia de Datos.",
         "link": "Ver perfil"
     },
     "showing-results-for": "Mostrando resultados para",
     "search": "Buscar",
-    "filters": "Filtro"
+    "filters": "Filtro",
+    "see-profile": "Ver perfil",
+    "welcome": "Bienvenido a nuestro pool de talento",
+    "description": "Explora a los mejores candidatos con perfiles detallados para encontrar el ajuste perfecto para tu equipo."
 }
