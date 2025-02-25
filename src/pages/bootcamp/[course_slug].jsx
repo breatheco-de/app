@@ -521,6 +521,11 @@ function CoursePage({ data, syllabus }) {
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
+      certificate: module.certificate,
+      time: module.time,
+      exercises: module.exercises,
+      projects: module.projects,
+      readings: module.readings,
       title: module.name,
       description: module.description,
     })) : [];
