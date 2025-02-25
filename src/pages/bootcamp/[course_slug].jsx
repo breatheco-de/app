@@ -773,9 +773,6 @@ function CoursePage({ data, syllabus }) {
                             {t('common:see-financing-options')}
                           </Button>
                         )}
-                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                          {getAlternativeTranslation('common:money-back-guarantee')}
-                        </Text>
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
