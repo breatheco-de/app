@@ -26,9 +26,7 @@ function LanguageSelector({ display, translations, ...rest }) {
   const locale = router.locale === 'default' ? 'en' : router.locale;
   const popoverContentBgColor = useColorModeValue('white', 'gray.800');
 
-  const {
-    languagesTR,
-  } = navbarTR[locale];
+  const { languagesTR } = navbarTR[locale];
   const [languagesOpen, setLanguagesOpen] = useState(false);
   const currentLanguage = languagesTR.filter((l) => l.value === locale)[0];
   const externalTranslations = userSession?.translations || translations;
