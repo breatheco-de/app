@@ -365,13 +365,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </Accordion>
           )}
         </Box>
-        {
-          isPayable && moneyBack && (
-            <Text size="14px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal" textAlign="center">
-              {t('common:money-back-guarantee')}
-            </Text>
-          )
-        }
       </Flex>
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">

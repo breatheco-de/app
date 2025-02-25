@@ -301,7 +301,7 @@ function MktTwoColumnSideImage({
               muted
               volume={0}
               width="100%"
-              height="100%"
+              height="auto"
               pictureInPicture={false}
               autoPlay={isVisible}
               iframeStyle={{
