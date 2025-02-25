@@ -45,7 +45,7 @@ function Talentcard() {
 
   const talentNamesPhotos = [
     { name: 'Alan Estrada', photo: 'https://s3-alpha-sig.figma.com/img/18e7/ae15/4f0723add520624002b0248a93479fa6?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=E2liyYnq7prc2L2b1y2pkMZ2LLyREfF8lBGVtYE8XytHp2mojwD8VvkvAaeKNZ6jUp1JRcMgYhlDRG0PsrfIANt7rUvzWlXraXm1lYU35R43w1vG6yAcroXeneukTZUW5nPxlc7xDMdXoFkqYyXg0ztFgy-w0P84H8N1AiksENOy4qNzh6xQi2cUk6T5IXz7Gvl-hH4p5RhHfNKS3ZbtVHHeEMj-UEIwvzMBKFtb-rowWD33U9D5r7CcGHqSlzqB25g0ZV44BMdxHM71whD5wUM-naodd-rWRs-ljRU5Q5Y8wCta-O6GKXXyo9mKgNzIqfEKTWULNfZXLkrVSWukTQ__' },
-    { name: 'Alberto Manuel Lazo Begazo', photo: 'https://s3-alpha-sig.figma.com/img/6a09/750e/ff543cba4591ca31b54c754bf055d355?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=GH9zD0-7RlkkZ8WEKKA7sC-4NxaPgOs9ivTFYOy0Tj3E6axmkjte3yCguJMFqQT9oRdtRJBHWRKeyk6UYOJA3qkyeZ2SV7pTr1I6XrPvdgD~rbPj2Z4gX~7Ef78DS2Aa2elxWwzhZqF6IQ1GhZLX-3lV7G9cTPdKNp26nHR7l3OvrWTUMbVltAnWYitwmyrjB3Sl8j4VxddO-pLW5KFuG6CtaKcFCPvhsEAkZZIqeQ0~xrYClXJ4u4K4huiEEcf-pWLh8L0Wkjf5wk-I2XBea1zEDz2Fji6Hvu8ZcFlnDOH0ACR~dBFDLq8tSkZSEORiJ9jEmcE9GZrKkxiPdn3Slg__' },
+    { name: 'Alberto Lazo Begazo', photo: 'https://s3-alpha-sig.figma.com/img/6a09/750e/ff543cba4591ca31b54c754bf055d355?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=GH9zD0-7RlkkZ8WEKKA7sC-4NxaPgOs9ivTFYOy0Tj3E6axmkjte3yCguJMFqQT9oRdtRJBHWRKeyk6UYOJA3qkyeZ2SV7pTr1I6XrPvdgD~rbPj2Z4gX~7Ef78DS2Aa2elxWwzhZqF6IQ1GhZLX-3lV7G9cTPdKNp26nHR7l3OvrWTUMbVltAnWYitwmyrjB3Sl8j4VxddO-pLW5KFuG6CtaKcFCPvhsEAkZZIqeQ0~xrYClXJ4u4K4huiEEcf-pWLh8L0Wkjf5wk-I2XBea1zEDz2Fji6Hvu8ZcFlnDOH0ACR~dBFDLq8tSkZSEORiJ9jEmcE9GZrKkxiPdn3Slg__' },
     { name: 'Andrea Bobadilla', photo: 'https://s3-alpha-sig.figma.com/img/c28d/ec3d/2b74380df84886727317ea735567a66e?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=CThtqb1FKlu~jkCjxxLPed~RTES9d3rpTGDSxDbon92Nr4tmlukCmr2RFfEQkBVfRtXNiHpYqbzGfozx9uqgkU8sI5TuMPM9Ak5z2eRuisTK0zjdZiCccTOW-vkM007KitdD1b-VFDkBKVvlua4476TaL5yLx5NYmhnJwfnHCG3rL~PhM4un8jwoiLqWT7IaB-9dTgYIVqcxeJn4-PD4RjxsVCYul65Df2SEx708nEy80P8sK7ImUXdgyCsm9GiDWrV4dStt8EyEgkp~Nv8lSfElpXoLoY0KRXGba01gIhisX7vOXalDMEJAuEnO5O24uH3LQhTzX5ZDi3cHwhekcw__' },
     { name: 'Alejandro Gonzáles', photo: 'https://s3-alpha-sig.figma.com/img/844a/aec2/6c1af304fabefb0777e59bbf32425bec?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=uV35THKg6Pbkf5FapLmHRMsRvu66Vpg4WGqytjuTI4hAvRh4-1uIE2txP0wXjTg4Dt-tAMgsldI5he3Y4MD9QFKN4ZwJlURc1IQcH02XeLjktZKq5Ui5Umhj4ATWjrXzniYk0mVMRUlg05hBOGXI08gqTQPU9G5vnqq23D7~By4rPj72OFsuhdiTymCWPexUjd4LpeiIfXHxJNlFIc8LHp~0tw1rgnxAdFRciMi4ziVXH9gXP7AvcAZNz3vOYwHQLHBUweR5J0iFFQRbPw1QAwYycdzFJs1dHNsfyqmTA6knNFT8algrSd4xe09VTAwTtAAn3uwSmXGii0rVB8L6uA__' },
     { name: 'Alfredo Castañeda', photo: 'https://s3-alpha-sig.figma.com/img/027f/4cdc/e91035e4b2e6e4bc83366306a876a3cb?Expires=1740960000&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=NFZYJgHceZqEeQywd~Y0Vp6W-ZyVG1eIZNjnPdSz2phhIDJopqf8vBvPM4znvDcJ73vqYYbEQjSO-vJH8STCKM-jJ3ZW~oU9VgL41g09Ctf8Aqys5cejSNDV5faVSuaRQbFvhFLsyELxbveYLYAgohqJEL4pK~3vt~dgYhpzHlrZ8zhhXwr7XBuihP6mHzXsGU~UU4yzEfSjZEZzqKhyJWP2YSNDDW7dayfj1S-8eSLTKJAy7r9oFIRoNXiGUQQilrGP5NOkb2xd4sbTkyNpigZaj7UtkMnHHxt0sXkyvHV2cNPpNBUX4DhfilAcuj4fhRkJWmaFDhWbhmUMqdl9yw__' },
@@ -158,63 +158,55 @@ function Talentcard() {
                 className="masonry-brick"
                 border="1px solid"
                 borderColor={hexColor.borderColor}
+                padding="8px"
               >
-                <Image
-                  src={talentNamesPhotos[index]?.photo}
-                  alt="Talent Profile"
-                  borderRadius="8px 0px 0px 0px"
-                  width="100%"
-                  maxWidth="1280px"
-                  height="161px"
-                  objectFit="cover"
-                  objectPosition="center"
-                />
-                <Flex
-                  padding={2}
-                  gap={2}
-                  key={index.id}
-                  justify="space-between"
-                  align="center"
-                >
-                  <Text fontSize="18px" fontFamily="Lato" fontWeight={400} lineHeight="21.6px" letterSpacing="0%">
-                    {talentNamesPhotos[index]?.name}
-                  </Text>
-                  <Tag
-                    fontFamily="Lato"
-                    fontSize="9px"
-                    lineHeight="10.8px"
-                    letterSpacing="5%"
-                    color={useColorModeValue(randomTag.color, hexColor.black)}
-                    bg={useColorModeValue(randomTag.bg, '#283340')}
-                    px={3}
+                <Flex align="center" gap={4}>
+                  <Box
+                    width="67px"
+                    height="67px"
                     borderRadius="full"
-                    textAlign="center"
+                    bg={useColorModeValue(randomTag.bg, '#283340')}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    overflow="hidden"
+                    border="2px solid"
+                    borderColor={useColorModeValue(randomTag.color, hexColor.black)}
                   >
-                    {randomTag.name}
-                  </Tag>
+                    <Image
+                      src={talentNamesPhotos[index]?.photo}
+                      alt="Talent Profile"
+                      borderRadius="full"
+                      width="100%"
+                      height="100%"
+                      objectFit="cover"
+                    />
+                  </Box>
+                  <Box>
+                    <Text fontSize="18px" fontFamily="Lato" fontWeight={400} textAlign="left" paddingBottom={2}>
+                      {talentNamesPhotos[index]?.name}
+                    </Text>
+                    <Tag
+                      fontFamily="Lato"
+                      fontSize="9px"
+                      color={useColorModeValue(randomTag.color, hexColor.black)}
+                      bg={useColorModeValue(randomTag.bg, '#283340')}
+                      px={3}
+                      borderRadius="full"
+                      textAlign="left"
+                    >
+                      {randomTag.name}
+                    </Tag>
+                  </Box>
                 </Flex>
-                <Divider borderColor={hexColor.borderColor} />
-                <Text
-                  fontSize="14px"
-                  my={2}
-                  fontFamily="Lato"
-                  fontWeight={400}
-                  lineHeight="16.8px"
-                  padding="8px 8px 8px 8px"
-                >
+
+                <Text fontSize="14px" fontFamily="Lato" fontWeight={400} lineHeight="16.8px" textAlign="left" mt={2} letterSpacing={0}>
                   {`${t('works-talent:card-student.description')}`}
                 </Text>
-                <Flex justify="center">
+                <Divider borderColor={hexColor.borderColor} padding="4px 0px" />
+                <Flex justify="center" mt={3}>
                   <Link href="/profile" _hover={{ textDecoration: 'none' }}>
-                    <Text
-                      padding={2}
-                      color="#0097CF"
-                      fontWeight="400"
-                      fontSize="12px"
-                      lineHeight="14.4px"
-                      letterSpacing="0%"
-                      fontFamily="Lato"
-                    >
+                    <Text color="#0097CF" fontWeight="400" fontSize="12px" fontFamily="Lato">
                       {`${t('works-talent:card-student.link')}`}
                     </Text>
                   </Link>
