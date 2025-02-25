@@ -43,6 +43,7 @@ function MktEventCards({
     featured: true,
     academy: WHITE_LABEL_ACADEMY,
     is_public: true,
+    status: techFilter ? 'ACTIVE,FINISHED' : 'ACTIVE',
     past: !!techFilter,
   }, (endpoint && endpoint?.includes('?')));
 
@@ -85,7 +86,7 @@ function MktEventCards({
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
 
           const eventsFilteredByTech = techFilter ? eventsFilteredByLang.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsFilteredByLang;
-
+          console.log(eventsFilteredByTech);
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
             fetchCheckedInEvents();
             return;
