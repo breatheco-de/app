@@ -645,7 +645,6 @@ function CoursePage({ data, syllabus }) {
               {initialDataIsFetching
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
-
                   <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
                     {students.length < limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
@@ -774,9 +773,6 @@ function CoursePage({ data, syllabus }) {
                             {t('common:see-financing-options')}
                           </Button>
                         )}
-                        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                          {getAlternativeTranslation('common:money-back-guarantee')}
-                        </Text>
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
