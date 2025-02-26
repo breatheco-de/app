@@ -2,13 +2,29 @@
   "course-content-text": "Prepárate para obtener un trabajo con nuestro syllabus",
   "course-content-description": "Hemos ajustado nuestro contenido del curso con cientos de posiciones laborales para prepararte para una entrada exitosa en el mundo de la tecnología.",
   "students-enrolled-count": "+{{count}} estudiantes inscritos",
+  "students-enrolled": "cientos de estudiantes inscritos",
   "instructors-more": "+{{count}} instructores más",
+  "course-certificate": "Certificado del curso",
+  "course-readings": "{{count}} Lecturas",
+  "course-exercises": "{{count}} Ejercicios",
   "enroll-now-for-price": "Inscríbete ahora por {{price}} al mes",
   "join-cohort": "Unirse ahora",
   "join-cohort-description": "Únete a esta cohorte y comienza tu viaje en el bootcamp hoy",
   "create-account-text": "Crea una cuenta y comienza tu viaje en el bootcamp hoy",
   "live-bootcamp": "Bootcamp en vivo",
   "free-course": "Curso Gratis",
+  "students-course-images":{
+    "deep-dive-into-python":[
+      "https://randomuser.me/api/portraits/men/12.jpg",
+      "https://randomuser.me/api/portraits/women/25.jpg",
+      "https://randomuser.me/api/portraits/men/17.jpg"
+    ],
+    "full-stack-development":[
+      "https://randomuser.me/api/portraits/men/23.jpg",
+      "https://randomuser.me/api/portraits/women/15.jpg",
+      "https://randomuser.me/api/portraits/men/27.jpg"
+    ]
+  },
   "coupon-bar": {
     "headline": "¡¡Precios tan bajos como {{discount}} de descuento!!",
     "ends-in": "Termina en {{time}}",
@@ -37,7 +53,8 @@
   "rigobot": {
     "title": "Conoce a Rigobot, nuestra IA interna diseñada para quienes aprenden solos",
     "description": "4Geeks.com es la primera plataforma diseñada para maximizar el aprendizaje a tu propio ritmo. Únete a sesiones en vivo cuando tu puedas, obtén ayuda de forma inmediata con IA y pide mentorías uno a uno. Todo nuestro contenido es totalmente interactivo y con videos.",
-    "button": "Prueba Rigobot gratis",
+    "button": "Ver demo",
+    "video_url": "https://www.youtube.com/watch?v=3PMP26t62To",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard",
     "message": "¿Hay algo que quieras saber sobre el programa {{title}}?",
     "payment-methods": "- Tarjeta de crédito. - Contacta a soporte para mas opciones"
