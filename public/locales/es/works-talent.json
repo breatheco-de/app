@@ -1,7 +1,12 @@
 {
     "card-student": {
         "description": "Apasionado por la resolución de problemas basada en datos, con un gran interés en la colaboración en iniciativas ecológicas y en construir una carrera en Ciencia de Datos.",
-        "link": "Ver perfil"
+        "link": "Ver perfil",
+        "card-title": "Bienvenido a nuestro pool de talento",
+        "card-description": "Explora a los mejores candidatos con perfiles detallados para encontrar el ajuste perfecto para tu equipo.",
+        "hire": "Quiero contratar a",
+        "values": "Que valora",
+        "mastery": "Y dominio en"
     },
     "modal-student-profile": {
         "title-form": "Conoce a este talento",
@@ -10,35 +15,29 @@
         "skills": "Habilidades",
         "top-skills": "Top 3 tecnologías",
         "background": "Experiencia",
-        "form":{
-        "full-name": "Nombre completo",
-        "email": "Correo electrónico",
-        "phone": "Teléfono",
-        "company": "Empresa",
-        "role": "Puesto",
-        "button": "Ten una entrevista"
+        "form": {
+            "full-name": "Nombre completo*",
+            "email": "Correo electrónico*",
+            "phone": "Teléfono*",
+            "company": "Empresa",
+            "role": "Puesto",
+            "button": "Ten una entrevista"
         },
-        "tags":{
+        "tags": {
             "fast-learner": "Aprendiz rápido",
             "research-oriented": "Orientado a la investigación",
             "committed": "Comprometido",
             "dedicated": "Dedicado"
         },
-        "technologies":{
+        "technologies": {
             "python": "Python",
             "javascript": "JavaScript",
             "react": "React"
         },
-        "background-skills":{
+        "background-skills": {
             "business": "Negocios",
             "administration": "Administración",
             "full-stack": "Full Stack"
         }
-    },
-    "showing-results-for": "Mostrando resultados para",
-    "search": "Buscar",
-    "filters": "Filtro",
-    "see-profile": "Ver perfil",
-    "welcome": "Bienvenido a nuestro pool de talento",
-    "description": "Explora a los mejores candidatos con perfiles detallados para encontrar el ajuste perfecto para tu equipo."
+    }
 }

@@ -18,9 +18,12 @@ import {
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { EmailIcon, LinkIcon, DownloadIcon } from '@chakra-ui/icons';
+import useStyle from '../../common/hooks/useStyle';
 
 function ModalStudentProfile({ isOpen, onClose }) {
   const { t } = useTranslation('works-talent');
+  const { hexColor } = useStyle();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" trapFocus={false} width="1024px" height="622px">
       <ModalOverlay bg="rgba(0, 0, 0, 0.1)" />
@@ -28,7 +31,7 @@ function ModalStudentProfile({ isOpen, onClose }) {
         <ModalCloseButton color="#A9A9A9" />
         <ModalBody display="flex" flexDirection={{ base: 'column', md: 'row' }} p={0}>
           {/* Form side left */}
-          <Box width="376px" height="622px" bg="#F4F9FF" p={4} display="flex" flexDirection="column">
+          <Box width="376px" height="622px" bg={hexColor.featuredColor4} p={4} display="flex" flexDirection="column">
             {/* Photo and details */}
             <HStack spacing={4} align="center">
               <Image
@@ -41,7 +44,7 @@ function ModalStudentProfile({ isOpen, onClose }) {
                 objectFit="cover"
               />
               <Box>
-                <Text mt={4} fontSize="18px" fontWeight={500} lineHeight="19.58px" letterSpacing="0%">Winston Jesus Lamus Tortolero</Text>
+                <Text mt={4} fontSize="18px" fontWeight={500} lineHeight="19.58px" letterSpacing="0%" color={hexColor.black}>Winston Jesus Lamus Tortolero</Text>
                 <Tag mt={4} mb={4} color="#0084FF" bg="#C7F3FD" borderRadius={7} padding="4px 8px" gap={2} fontSize="12px">Full Stack Developer</Tag>
                 <HStack spacing={2} fontSize="12px" fontWeight={400} lineHeight="14.52px" letterSpacing="0%" align="center" color="#00000">
                   <Text>Español</Text>
@@ -58,11 +61,11 @@ function ModalStudentProfile({ isOpen, onClose }) {
             <Box width="100%" p="48px 0px 0px">
               <Text fontSize="21px" fontWeight={500} lineHeight="22.85px" letterSpacing="0%" marginBottom={4} textAlign="center">{`${t('works-talent:modal-student-profile.title-form')}`}</Text>
               <VStack height="344px" gap="5px" padding={2} align={{ base: 'center', md: 'flex-start' }}>
-                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg="white" placeholder={`${t('works-talent:modal-student-profile.form.full-name')}`} />
-                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg="white" placeholder={`${t('works-talent:modal-student-profile.form.phone')}`} />
-                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg="white" placeholder={`${t('works-talent:modal-student-profile.form.email')}`} />
-                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg="white" placeholder={`${t('works-talent:modal-student-profile.form.company')}`} />
-                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg="white" placeholder={`${t('works-talent:modal-student-profile.form.role')}`} />
+                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.full-name')}`} />
+                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.phone')}`} />
+                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.email')}`} />
+                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.company')}`} />
+                <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.role')}`} />
                 <Button
                   mt={2}
                   bg="#0084FF"
@@ -83,31 +86,31 @@ function ModalStudentProfile({ isOpen, onClose }) {
           </Box>
 
           {/* Right Side */}
-          <Box width={{ base: '100%', md: '504px' }} height="622px" bg="white" padding="32px 16px" textAlign="left">
-            <Text fontSize="18px" fontWeight="500" lineHeight="19.58px" letterSpacing="0%">{`${t('works-talent:modal-student-profile.title-talent')}`}</Text>
-            <Text mt={2} fontSize="14px" fontFamily="Lato" fontWeight={400} lineHeight="16.8px" letterSpacing="5%" color="#606060">
+          <Box width={{ base: '100%', md: '520px' }} height="622px" bg={hexColor.backgroundColor} padding="32px 32px" textAlign="left">
+            <Text fontSize="18px" fontWeight="500" lineHeight="19.58px" letterSpacing="0%" color={hexColor.black1}>{`${t('works-talent:modal-student-profile.title-talent')}`}</Text>
+            <Text mt={2} fontSize="14px" fontFamily="Lato" fontWeight={400} lineHeight="16.8px" letterSpacing="5%" color={hexColor.fontColor4}>
               {`${t('works-talent:modal-student-profile.talent-description')}`}
             </Text>
-            <Text mt={4} fontSize="18px" fontWeight="500" lineHeight={5} letterSpacing="0%">{`${t('works-talent:modal-student-profile.skills')}`}</Text>
+            <Text mt={4} fontSize="18px" fontWeight="500" lineHeight={5} letterSpacing="0%" color={hexColor.black}>{`${t('works-talent:modal-student-profile.skills')}`}</Text>
             <HStack mt={4} spacing={2}>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="blue">Fast learner</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="green">Research-oriented</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="red">Committed</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="purple">Dedicated</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="blue">Fast learner</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="green">Research-oriented</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="red">Committed</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="purple">Dedicated</Tag>
             </HStack>
             <Text mt={4} fontSize="18px" fontWeight="500" lineHeight={5} letterSpacing="0%">
               {`${t('works-talent:modal-student-profile.top-skills')}`}
             </Text>
             <HStack mt={4} spacing={2}>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="yellow">Python</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="teal">JavaScript</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="orange">React</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="yellow">Python</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="teal">JavaScript</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="orange">React</Tag>
             </HStack>
             <Text mt={4} fontSize="18px" fontWeight="500" lineHeight={5} letterSpacing="0%">{`${t('works-talent:modal-student-profile.background')}`}</Text>
             <HStack mt={4} spacing={2}>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="cyan">Business</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="pink">Administration</Tag>
-              <Tag fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color="#000000" colorScheme="gray">Full Stack</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="cyan">Business</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="pink">Administration</Tag>
+              <Tag borderRadius="11px" fontFamily="Lato" fontWeight="400" fontSize="11px" lineHeight="16.8px" letterSpacing="0%" color={hexColor.black} colorScheme="gray">Full Stack</Tag>
             </HStack>
           </Box>
         </ModalBody>

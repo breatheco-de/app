@@ -27,9 +27,6 @@ function Talentcard() {
 
   const { t } = useTranslation('works-talent');
   const { hexColor } = useStyle();
-  const roleTags = [
-    { nameTag: 'Add filter', colorTag: '#0097CF', bgTag: '#EEF9FE' },
-  ];
 
   const skillTags = [
     { name: 'Full Stack Developer', color: '#0097CF', bg: '#EEF9FE' },
@@ -63,11 +60,11 @@ function Talentcard() {
     <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px">
       <Box>
         <Flex direction="column" justify="center" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
-          <Text color="#0097CF" fontWeight="400" fontSize="14px" lineHeight="16.8px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
-            {`${t('works-talent:welcome')}`}
+          <Text color={hexColor.blue3} fontWeight="400" fontSize="14px" lineHeight="16.8px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
+            {`${t('works-talent:card-student.card-title')}`}
           </Text>
-          <Text color="#2E2E38" fontWeight="400" fontSize="18px" lineHeight="21.6px" letterSpacing="0%" fontFamily="Lato">
-            {`${t('works-talent:description')}`}
+          <Text color={hexColor.black1} fontWeight="400" fontSize="18px" lineHeight="21.6px" letterSpacing="0%" fontFamily="Lato">
+            {`${t('works-talent:card-student.card-description')}`}
           </Text>
         </Flex>
       </Box>
@@ -89,7 +86,7 @@ function Talentcard() {
             >
               <Button
                 size="big"
-                bg="#DADADA"
+                bg={hexColor.borderColor}
                 _hover={{ bg: '#0077A8' }}
                 padding={2}
                 gap="10px"
@@ -104,41 +101,100 @@ function Talentcard() {
           </InputGroup>
 
           <Grid templateColumns="repeat(3, 1fr)" mt={4} w="100%" alignItems="center">
-            {[...Array(3)].map((_, index) => (
-              <GridItem key={index.id} textAlign="left">
-                <Text
-                  mt={2}
-                  fontSize="12px"
-                  color={useColorModeValue('#000000', '#FFFFFF')}
-                  fontWeight={400}
-                  lineHeight="14.4px"
-                  letterSpacing="0%"
-                  fontFamily="Lato"
+            <GridItem key="1" textAlign="left">
+              <Text
+                mt={2}
+                fontSize="12px"
+                color={useColorModeValue('#000000', '#FFFFFF')}
+                fontWeight={400}
+                lineHeight="14.4px"
+                letterSpacing="0%"
+                fontFamily="Lato"
+              >
+                {`${t('works-talent:card-student.hire')}`}
+              </Text>
+              <Flex mt={2} gap={2} flexWrap="wrap" justify="flex-start">
+                <Tag
+                  key="1-tag"
+                  size="md"
+                  borderRadius="4px"
+                  px={3}
+                  color={hexColor.blue3}
+                  bg={hexColor.featuredColor}
+                  padding="4px 8px"
+                  gap="10px"
+                  display="flex"
+                  alignItems="center"
                 >
-                  {`${t('works-talent:showing-results-for')}`}
-                </Text>
-                <Flex mt={2} gap={2} flexWrap="wrap" justify="flex-start">
-                  {roleTags.map((tag, i) => (
-                    <Tag
-                      key={i.id}
-                      size="md"
-                      borderRadius="4px"
-                      px={3}
-                      color={hexColor.blue3}
-                      bg={hexColor.featuredColor}
-                      padding="4px 8px"
-                      gap="10px"
-                      display="flex"
-                      alignItems="center"
-                    >
-                      <AddIcon mr={2} boxSize={2.5} cursor="pointer" color={tag.color} />
-                      {tag.nameTag}
-                    </Tag>
-                  ))}
-                </Flex>
-              </GridItem>
-            ))}
+                  <AddIcon mr={2} boxSize={2.5} cursor="pointer" color={hexColor.blue3} border={1} />
+                  Add Filter
+                </Tag>
+              </Flex>
+            </GridItem>
+
+            <GridItem key="2" textAlign="left">
+              <Text
+                mt={2}
+                fontSize="12px"
+                color={useColorModeValue('#000000', '#FFFFFF')}
+                fontWeight={400}
+                lineHeight="14.4px"
+                letterSpacing="0%"
+                fontFamily="Lato"
+              >
+                {`${t('works-talent:card-student.values')}`}
+              </Text>
+              <Flex mt={2} gap={2} flexWrap="wrap" justify="flex-start">
+                <Tag
+                  key="2-tag"
+                  size="md"
+                  borderRadius="4px"
+                  px={3}
+                  color={hexColor.blue3}
+                  bg={hexColor.featuredColor}
+                  padding="4px 8px"
+                  gap="10px"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <AddIcon mr={2} boxSize={2.5} cursor="pointer" color={hexColor.blue3} />
+                  Add filter
+                </Tag>
+              </Flex>
+            </GridItem>
+
+            <GridItem key="3" textAlign="left">
+              <Text
+                mt={2}
+                fontSize="12px"
+                color={useColorModeValue('#000000', '#FFFFFF')}
+                fontWeight={400}
+                lineHeight="14.4px"
+                letterSpacing="0%"
+                fontFamily="Lato"
+              >
+                {`${t('works-talent:card-student.mastery')}`}
+              </Text>
+              <Flex mt={2} gap={2} flexWrap="wrap" justify="flex-start">
+                <Tag
+                  key="3-tag"
+                  size="md"
+                  borderRadius="4px"
+                  px={3}
+                  color={hexColor.blue3}
+                  bg={hexColor.featuredColor}
+                  padding="4px 8px"
+                  gap="10px"
+                  display="flex"
+                  alignItems="center"
+                >
+                  <AddIcon mr={2} boxSize={2.5} cursor="pointer" color={hexColor.blue3} />
+                  Add filter
+                </Tag>
+              </Flex>
+            </GridItem>
           </Grid>
+
         </GridItem>
       </Grid>
 

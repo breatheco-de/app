@@ -1,7 +1,12 @@
 {
     "card-student": {
         "description": "Passionate about data-driven problem-solving, with a keen interest in collaborating on ecological initiatives and building a career in Data Science.",
-        "link": "See profile"
+        "link": "See profile",
+        "card-title": "Welcome to our talent pool",
+        "card-description": "Explore top candidates with detailed profiles to find the perfect fit for your team.",
+        "hire": "I want to hire a",
+        "values": "That values",
+        "mastery": "And mastery on"
     },
     "modal-student-profile": {
         "title-form": "Meet with this talent",
@@ -10,35 +15,29 @@
         "skills": "Skills",
         "top-skills": "Top 3 technologies",
         "background": "Background",
-    "form":{
-        "full-name": "Full name",
-        "email": "Email",
-        "phone": "Phone Number",
-        "company": "Company",
-        "role": "Role",
-        "button": "Get an interview"
-    },
-    "tags":{
-        "fast-learner": "Fast learner",
-        "research-oriented": "Research oriented",
-        "committed": "Committed",
-        "dedicated": "Dedicated"
-    },
-    "technologies":{
-        "python": "Python",
-        "javascript": "JavaScript",
-        "react": "React"
-    },
-    "background-skills":{
-        "business": "Business",
-        "administration": "Administration",
-        "full-stack": "Full Stack"
-    },
-    "showing-results-for": "Showing results for",
-    "search": "Search",
-    "filters": "Filters",
-    "see-profile": "See profile",
-    "welcome": "Welcome to our talent pool",
-    "description": "Explore top candidates with detailed profiles to find the perfect fit for your team."
+        "form": {
+            "full-name": "Full name*",
+            "email": "Email*",
+            "phone": "Phone Number*",
+            "company": "Company",
+            "role": "Role",
+            "button": "Get an interview"
+        },
+        "tags": {
+            "fast-learner": "Fast learner",
+            "research-oriented": "Research oriented",
+            "committed": "Committed",
+            "dedicated": "Dedicated"
+        },
+        "technologies": {
+            "python": "Python",
+            "javascript": "JavaScript",
+            "react": "React"
+        },
+        "background-skills": {
+            "business": "Business",
+            "administration": "Administration",
+            "full-stack": "Full Stack"
+        }
     }
 }
