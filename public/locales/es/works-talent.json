@@ -3,6 +3,38 @@
         "description": "Apasionado por la resolución de problemas basada en datos, con un gran interés en la colaboración en iniciativas ecológicas y en construir una carrera en Ciencia de Datos.",
         "link": "Ver perfil"
     },
+    "modal-student-profile": {
+        "title-form": "Conoce a este talento",
+        "title-talent": "¿Por qué contratar a este talento?",
+        "talent-description": "Apasionado por la tecnología y la mejora continua, se mantiene constantemente actualizado sobre las últimas tendencias en inteligencia artificial, automatización y big data. Su enfoque proactivo y orientado a resultados, combinado con fuertes habilidades de trabajo en equipo y liderazgo, le permite colaborar de manera efectiva con diferentes áreas para garantizar el éxito de los proyectos tecnológicos en los que participa.",
+        "skills": "Habilidades",
+        "top-skills": "Top 3 tecnologías",
+        "background": "Experiencia",
+        "form":{
+        "full-name": "Nombre completo",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "company": "Empresa",
+        "role": "Puesto",
+        "button": "Ten una entrevista"
+        },
+        "tags":{
+            "fast-learner": "Aprendiz rápido",
+            "research-oriented": "Orientado a la investigación",
+            "committed": "Comprometido",
+            "dedicated": "Dedicado"
+        },
+        "technologies":{
+            "python": "Python",
+            "javascript": "JavaScript",
+            "react": "React"
+        },
+        "background-skills":{
+            "business": "Negocios",
+            "administration": "Administración",
+            "full-stack": "Full Stack"
+        }
+    },
     "showing-results-for": "Mostrando resultados para",
     "search": "Buscar",
     "filters": "Filtro",

@@ -3,10 +3,42 @@
         "description": "Passionate about data-driven problem-solving, with a keen interest in collaborating on ecological initiatives and building a career in Data Science.",
         "link": "See profile"
     },
+    "modal-student-profile": {
+        "title-form": "Meet with this talent",
+        "title-talent": "Why hire this talent?",
+        "talent-description": "Passionate about technology and continuous improvement, stays constantly updated on the latest trends in artificial intelligence, automation, and big data. His proactive and results-oriented approach, combined with strong teamwork and leadership skills, allows him to collaborate effectively with different areas to ensure the success of the technological projects he participates in.",
+        "skills": "Skills",
+        "top-skills": "Top 3 technologies",
+        "background": "Background",
+    "form":{
+        "full-name": "Full name",
+        "email": "Email",
+        "phone": "Phone Number",
+        "company": "Company",
+        "role": "Role",
+        "button": "Get an interview"
+    },
+    "tags":{
+        "fast-learner": "Fast learner",
+        "research-oriented": "Research oriented",
+        "committed": "Committed",
+        "dedicated": "Dedicated"
+    },
+    "technologies":{
+        "python": "Python",
+        "javascript": "JavaScript",
+        "react": "React"
+    },
+    "background-skills":{
+        "business": "Business",
+        "administration": "Administration",
+        "full-stack": "Full Stack"
+    },
     "showing-results-for": "Showing results for",
     "search": "Search",
     "filters": "Filters",
     "see-profile": "See profile",
     "welcome": "Welcome to our talent pool",
     "description": "Explore top candidates with detailed profiles to find the perfect fit for your team."
+    }
 }
