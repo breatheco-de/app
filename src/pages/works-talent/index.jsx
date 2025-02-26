@@ -1,12 +1,9 @@
-import React from 'react';
-
 import Masonry from 'react-masonry-css';
 import {
   Box,
   Image,
   Text,
   Tag,
-  Link,
   Flex,
   InputGroup,
   InputRightElement,
@@ -15,6 +12,7 @@ import {
   useColorModeValue,
   Grid,
   GridItem,
+  useDisclosure,
 } from '@chakra-ui/react';
 import {
   ArrowForwardIcon,
@@ -22,8 +20,11 @@ import {
 } from '@chakra-ui/icons';
 import useTranslation from 'next-translate/useTranslation';
 import useStyle from '../../common/hooks/useStyle';
+import ModalStudentProfile from './modalStudentProfile';
 
 function Talentcard() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { t } = useTranslation('works-talent');
   const { hexColor } = useStyle();
   const roleTags = [
@@ -205,12 +206,19 @@ function Talentcard() {
                 </Text>
                 <Divider borderColor={hexColor.borderColor} padding="4px 0px" />
                 <Flex justify="center" mt={3}>
-                  <Link href="/profile" _hover={{ textDecoration: 'none' }}>
-                    <Text color="#0097CF" fontWeight="400" fontSize="12px" fontFamily="Lato">
-                      {`${t('works-talent:card-student.link')}`}
-                    </Text>
-                  </Link>
+                  <Text
+                    as="button"
+                    color="#0097CF"
+                    fontWeight="400"
+                    fontSize="12px"
+                    fontFamily="Lato"
+                    _hover={{ textDecoration: 'none' }}
+                    onClick={onOpen}
+                  >
+                    {`${t('works-talent:card-student.link')}`}
+                  </Text>
                 </Flex>
+                <ModalStudentProfile isOpen={isOpen} onClose={onClose} />
               </Box>
             );
           })}
