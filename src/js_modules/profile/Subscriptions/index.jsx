@@ -32,25 +32,6 @@ import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 
-// function SubscriptionCard(subscription) {
-//   const status = subscription?.status?.toLowerCase();
-//   const invoice = subscription?.invoices[0];
-//   const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
-//   const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
-//   const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-//   const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
-//   const nextPaymentDate = {
-//     en: format(new Date(subscription?.next_payment_at), 'MMM do'),
-//     es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
-//   };
-//   const expirationDate = new Date(subscription?.plan_expires_at);
-//   const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
-//     && subscription?.plans[0]?.financing_options[0];
-//   return (
-//     <></>
-//   );
-// }
-
 function Subscriptions({ cohorts }) {
   const { t, lang } = useTranslation('profile');
   const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
@@ -130,7 +111,10 @@ function Subscriptions({ cohorts }) {
     getConsumables();
   }, []);
 
-  const membershipsArray = [...memberships?.subscriptions, ...memberships?.plan_financings].filter((membership) => membership?.plans?.[0]?.slug !== undefined);
+  const membershipsArray = memberships?.subscriptions
+    && memberships?.plan_financings
+    && [...memberships?.subscriptions, ...memberships?.plan_financings].filter((membership) => membership?.plans?.[0]?.slug !== undefined);
+
   const prioritizeStatus = ['fully_paid', 'active', 'payment_issue', 'expired', 'cancelled', 'error'];
 
   const membershipsFilter = membershipsArray?.length > 0 ? membershipsArray
@@ -142,7 +126,6 @@ function Subscriptions({ cohorts }) {
       if (isFreeTrial && suggestedPlan) return false;
       return true;
     }).reduce((acc, membership) => {
-      console.log(membership);
       const planSlug = membership?.plans?.[0]?.slug;
 
       if (!planSlug) return acc;
@@ -156,7 +139,7 @@ function Subscriptions({ cohorts }) {
       return acc;
     }, {}) : [];
 
-  const subscriptionFiltered = Object.values(membershipsFilter);
+  const membershipsFiltered = Object.values(membershipsFilter);
 
   const closeMentorshipsModal = () => setServicesModal(null);
 
@@ -306,7 +289,7 @@ function Subscriptions({ cohorts }) {
         {t('my-subscriptions')}
       </Text>
 
-      {subscriptionFiltered?.length > 0 ? (
+      {membershipsFiltered?.length > 0 ? (
         <Grid
           gridTemplateColumns={{
             base: 'repeat(auto-fill, minmax(15rem, 1fr))',
@@ -315,7 +298,7 @@ function Subscriptions({ cohorts }) {
           }}
           gridGap="3rem"
         >
-          {subscriptionFiltered?.length > 0 && subscriptionFiltered.map((subscription) => {
+          {membershipsFiltered?.length > 0 && membershipsFiltered.map((subscription) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
             const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
@@ -453,7 +436,7 @@ function Subscriptions({ cohorts }) {
                   </Flex>
                   <ButtonHandler
                     subscription={subscription}
-                    allSubscriptions={subscriptionFiltered}
+                    allSubscriptions={membershipsFiltered}
                     onOpenUpgrade={onOpenUpgrade}
                     setSubscriptionProps={setSubscriptionProps}
                     onOpenCancelSubscription={onOpenCancelSubscription}
