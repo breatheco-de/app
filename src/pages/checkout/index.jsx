@@ -204,15 +204,11 @@ function Checkout() {
       return;
     }
 
-    console.log(coup);
-    console.log(planFormated);
-
     bc.payment({
       coupons: [coup || discountCode],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        console.log(resp);
         const correctCoupon = resp.data.find((c) => c.slug === coup);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
