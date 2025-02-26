@@ -241,7 +241,7 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               return (
                 <Box key={recom?.slug} overflow="hidden" border="1px solid" borderColor={recom.color || { base: 'default', md: 'success' }} borderRadius={rest.borderRadius || '8px'}>
                   {recom?.banner_image
-                  && <Image src={recom?.banner_image} width="100%" height="100px" />}
+                  && <Image src={recom?.banner_image} width="100%" height="120px" />}
                   <Container borderRadius="none" padding={containerPadding} course={recom} courses={recommendations}>
                     <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
                     <Box mb="10px" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
