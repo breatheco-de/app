@@ -59,13 +59,13 @@ function Talentcard() {
   ];
 
   return (
-    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px">
+    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px" width="100%">
       <Box>
         <Flex direction="column" justify="center" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
           <Text color="#0097CF" fontWeight="400" fontSize="14px" lineHeight="16.8px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
             {`${t('works-talent:welcome')}`}
           </Text>
-          <Text color="#2E2E38" fontWeight="400" fontSize="18px" lineHeight="21.6px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
+          <Text color="#2E2E38" fontWeight="400" fontSize="18px" lineHeight="21.6px" letterSpacing="0%" fontFamily="Lato">
             {`${t('works-talent:description')}`}
           </Text>
         </Flex>
@@ -74,7 +74,7 @@ function Talentcard() {
         <GridItem
           bg={hexColor.backgroundColor}
           borderRadius="13px"
-          margin="24px 106px"
+          margin="6px 106px 24px 106px"
           gap={6}
           width="812px"
           height="94px"
