@@ -15,7 +15,6 @@ import {
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { es } from 'date-fns/locale';
 import { format } from 'date-fns';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -32,12 +31,170 @@ import UpgradeModal from './UpgradeModal';
 import { CardSkeleton, SimpleSkeleton } from '../../../common/components/Skeleton';
 import bc from '../../../common/services/breathecode';
 
-function Subscriptions({ cohorts }) {
-  const { t, lang } = useTranslation('profile');
-  const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
-  const { statusStyles, statusLabel, getLocaleDate, payUnitString } = profileHandlers();
-  const { borderColor2, hexColor, backgroundColor3, fontColor, featuredLight } = useStyle();
+function SubscriptionInfo({ subscription }) {
+  const { t } = useTranslation('profile');
+  const { backgroundColor3, hexColor } = useStyle();
   const { blueDefault } = hexColor;
+
+  const getSubscriptionDetails = (sub) => {
+    const status = sub?.status?.toLowerCase();
+    const isPlanFinancing = sub?.type === 'plan_financing';
+    const isOneTimePayment = isPlanFinancing && sub?.how_many_installments === 1;
+    const fullFilledInvoicesAmount = sub?.invoices?.filter((invo) => invo.status === 'FULFILLED').length;
+    const isPlanFinancingFullyPaid = fullFilledInvoicesAmount === sub?.how_many_installments;
+    const nextPaymentDate = sub?.next_payment_at ? format(new Date(sub?.next_payment_at), 'MMM do') : 'N/A';
+    const expirationDate = sub?.plan_expires_at ? format(new Date(sub?.plan_expires_at), 'MMM do') : 'N/A';
+    const paidAt = sub?.paid_at ? format(new Date(sub?.paid_at), 'MMM do') : 'N/A';
+
+    console.log(sub);
+
+    let details = {};
+
+    if (status === 'active') {
+      if (isPlanFinancing) {
+        if (isOneTimePayment) {
+          details = {
+            renewalDate: t('subscription.expiration-date', { date: expirationDate }),
+            paymentInfo: t('subscription.totally-paid', { amount: sub.monthly_price }),
+          };
+        } else {
+          details = {
+            renewalDate: t('subscription.expiration-date', { date: expirationDate }),
+            nextPayment: isPlanFinancingFullyPaid
+              ? t('no-payment-left')
+              : t('next-payment-with-price', { amount: sub?.monthly_price, date: nextPaymentDate }),
+            paymentInfo: isPlanFinancingFullyPaid
+              ? t('subscription.totally-paid', { amount: sub.monthly_price })
+              : t('total-paid', { paidAmount: fullFilledInvoicesAmount * sub.monthly_price, pendingAmount: sub.how_many_installments }),
+          };
+        }
+      } else {
+        details = {
+          renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
+          renewability: t('subscription.active-since', { date: paidAt }),
+          paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+        };
+      }
+    }
+
+    if (status === 'expired') {
+      if (isPlanFinancing) {
+        if (isOneTimePayment) {
+          details = {
+            renewalDate: t('subscription.expired-on', { date: expirationDate }),
+            paymentInfo: t('subscription.totally-paid', { amount: sub.monthly_price * sub.how_many_installments }),
+          };
+        } else {
+          details = {
+            renewalDate: t('expired-on', { date: expirationDate }),
+            paymentInfo: isPlanFinancingFullyPaid
+              ? t('subscription.totally-paid', { amount: sub.monthly_price })
+              : `Total paid to the date: ${fullFilledInvoicesAmount * sub.monthly_price}$/${sub.how_many_installments}$`,
+          };
+        }
+      } else {
+        details = {
+          renewalDate: t('expired-on', { date: expirationDate }),
+          paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+        };
+      }
+    }
+
+    if (status === 'error' || status === 'payment_issue' || status === 'cancelled') {
+      if (isPlanFinancing) {
+        if (isOneTimePayment) {
+          details = {
+            renewalDate: t('subscription.expiration-date', { date: expirationDate }),
+            paymentInfo: t('subscription.totally-paid', { amount: sub.monthly_price * sub.how_many_installments }),
+          };
+        } else {
+          details = {
+            renewalDate: t('subscription.expiration-date', { date: expirationDate }),
+            nextPayment: isPlanFinancingFullyPaid
+              ? t('no-payment-left')
+              : t('next-payment-with-price', { amount: sub?.monthly_price, date: nextPaymentDate }),
+            paymentInfo: isPlanFinancingFullyPaid
+              ? t('subscription.totally-paid', { amount: sub.monthly_price })
+              : t('total-paid', { paidAmount: fullFilledInvoicesAmount * sub.monthly_price, pendingAmount: sub.how_many_installments }),
+          };
+        }
+      } else {
+        details = {
+          errorMessage: status !== 'cancelled' ? t('subscription.error-message', { error: sub?.status_message || 'Something went wrong' }) : false,
+          paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+        };
+      }
+    }
+
+    if (status === 'free_trial') {
+      details = {
+        renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
+        renewability: t('subscription.active-since', { date: paidAt }),
+        paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+      };
+    }
+
+    return details;
+  };
+
+  const { renewalDate, renewability, paymentInfo, nextPayment, errorMessage } = getSubscriptionDetails(subscription);
+
+  return (
+    <Flex flexDirection="column" gridGap="10px" background={backgroundColor3} borderRadius="4px" padding="8px">
+
+      {errorMessage && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon width="18px" height="13px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {errorMessage}
+          </Text>
+        </Flex>
+      )}
+
+      {nextPayment && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon icon="card" width="18px" height="13px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {nextPayment}
+          </Text>
+        </Flex>
+      )}
+
+      {paymentInfo && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon icon="card" width="18px" height="13px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {paymentInfo}
+          </Text>
+        </Flex>
+      )}
+
+      {renewalDate && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon icon="refresh_time" width="16px" height="16px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {renewalDate}
+          </Text>
+        </Flex>
+      )}
+
+      {renewability && (
+        <Flex gridGap="4px" alignItems="center">
+          <Icon icon="renewal" width="16px" height="16px" color={blueDefault} minWidth="18px" />
+          <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
+            {renewability}
+          </Text>
+        </Flex>
+      )}
+    </Flex>
+  );
+}
+
+function Subscriptions({ cohorts }) {
+  const { t } = useTranslation('profile');
+  const { state, isLoading, fetchSubscriptions, cancelSubscription } = useSubscriptionsHandler();
+  const { statusStyles, statusLabel } = profileHandlers();
+  const { borderColor2, hexColor, fontColor, featuredLight } = useStyle();
   const [cancelModalIsOpen, setCancelModalIsOpen] = useState(false);
   const [upgradeModalIsOpen, setUpgradeModalIsOpen] = useState(false);
   const [servicesModal, setServicesModal] = useState(null);
@@ -301,17 +458,7 @@ function Subscriptions({ cohorts }) {
           {membershipsFiltered?.length > 0 && membershipsFiltered.map((subscription) => {
             const status = subscription?.status?.toLowerCase();
             const invoice = subscription?.invoices[0];
-            const isNotCancelled = subscription?.status !== 'CANCELLED' && subscription?.status !== 'PAYMENT_ISSUE';
-            const isTotallyFree = subscription?.invoices[0]?.amount === 0 && subscription?.plans[0]?.trial_duration === 0;
             const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
-            const isNextPaimentExpired = new Date(subscription?.next_payment_at) < new Date();
-            const nextPaymentDate = {
-              en: format(new Date(subscription?.next_payment_at), 'MMM do'),
-              es: format(new Date(subscription?.next_payment_at), 'MMMM d', { locale: es }),
-            };
-            // const expirationDate = new Date(subscription?.plan_expires_at);
-            const currentFinancingOption = subscription?.plans[0]?.financing_options?.length > 0
-              && subscription?.plans[0]?.financing_options[0];
 
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -324,116 +471,20 @@ function Subscriptions({ cohorts }) {
                   </Text>
                 </Box>
                 <Flex flexDirection="column" gridGap="8px" height="100%" width="100%">
-                  <Flex flexDirection="column" gridGap="2px">
+                  <Flex flexDirection="column" gridGap="10px">
                     <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
-                  </Flex>
-
-                  <Flex alignItems="center" gridGap="10px">
-                    {!isFreeTrial && (
-                      <Text fontSize="18px" fontWeight="700">
-                        {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
-                      </Text>
-                    )}
-                    {subscription?.status !== 'PAYMENT_ISSUE' && subscription?.status !== 'FREE_TRIAL' && !isTotallyFree && (
-                      <Text fontSize="12px" fontWeight="400">
-                        {subscription.type !== 'plan_financing' ? (
-                          <>
-                            {isNotCancelled
-                              ? (
-                                <>
-                                  {isNextPaimentExpired
-                                    ? t('subscription.payment-up-to-date')
-                                    : t('subscription.next-payment', { date: getLocaleDate(subscription?.next_payment_at) })}
-                                </>
-                              )
-                              : t('subscription.last-payment', { date: getLocaleDate(invoice?.paid_at) })}
-                          </>
-                        ) : `- ${t('subscription.upgrade-modal.price_remaining_to_pay', { price: currentFinancingOption?.monthly_price * (currentFinancingOption?.how_many_months - subscription?.invoices?.length) })}`}
-                      </Text>
-                    )}
-                  </Flex>
-
-                  <Flex flexDirection="column" gridGap="10px" background={backgroundColor3} borderRadius="4px" padding="8px">
-                    <Flex gridGap="4px">
-                      <Icon
-                        icon="refresh_time"
-                        width="16px"
-                        height="16px"
-                        color={blueDefault}
-                        minWidth="18px"
-                      />
-                      <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {subscription?.type === 'plan_financing' && (
-                          <>
-                            {(currentFinancingOption?.how_many_months - subscription?.invoices?.length) > 0
-                              ? t('subscription.renewal-date', { date: nextPaymentDate[lang] })
-                              : t('subscription.renewal-date-unknown')}
-                          </>
-                        )}
-                        {subscription?.type !== 'plan_financing' && (
-                          <>
-                            {subscription?.status !== 'FREE_TRIAL' ? (
-                              <>
-                                {isNotCancelled
-                                  ? t('subscription.renewal-date', { date: nextPaymentDate[lang] })
-                                  : t('subscription.renewal-date-cancelled')}
-                              </>
-                            ) : t('subscription.renewal-date-unknown')}
-                          </>
-                        )}
-
-                      </Text>
-                    </Flex>
-                    <Flex gridGap="4px">
-                      <Icon
-                        icon="renewal"
-                        width="16px"
-                        height="16px"
-                        color={blueDefault}
-                        minWidth="18px"
-                      />
-                      <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {subscription.type === 'plan_financing'
-                          ? t('subscription.not-renewable')
-                          : t('subscription.renewable')}
-                      </Text>
-                    </Flex>
-                    <Flex gridGap="4px">
-                      <Icon
-                        icon="card"
-                        width="18px"
-                        height="13px"
-                        color={blueDefault}
-                        minWidth="18px"
-                      />
-                      <Text fontSize="12px" fontWeight="700" padding="0 0 0 8px">
-                        {/* payment-trial */}
-                        {subscription.type === 'plan_financing'
-                          ? (
-                            <>
-                              {(currentFinancingOption?.how_many_months - subscription?.invoices?.length) > 0
-                                ? t('subscription.many-payments-left', { qty: currentFinancingOption?.how_many_months - subscription?.invoices?.length })
-                                : t('subscription.no-payment-left')}
-                            </>
-                          )
-                          : (
-                            <>
-                              {subscription?.status !== 'FREE_TRIAL'
-                                ? (
-                                  <>
-                                    {!isTotallyFree
-                                      ? t('subscription.payment', { payment: payUnitString(subscription?.pay_every_unit) })
-                                      : t('subscription.payment-free')}
-                                  </>
-                                )
-                                : t('subscription.payment-trial')}
-                            </>
-                          )}
-                      </Text>
+                    <Flex alignItems="center" gridGap="10px">
+                      {!isFreeTrial && (
+                        <Text fontSize="18px" fontWeight="700">
+                          {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
+                        </Text>
+                      )}
                     </Flex>
                   </Flex>
+
+                  <SubscriptionInfo subscription={subscription} />
                   <ButtonHandler
                     subscription={subscription}
                     allSubscriptions={membershipsFiltered}
@@ -499,6 +550,9 @@ function Subscriptions({ cohorts }) {
 
 Subscriptions.propTypes = {
   cohorts: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.any])),
+};
+SubscriptionInfo.propTypes = {
+  subscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any])).isRequired,
 };
 Subscriptions.defaultProps = {
   cohorts: [],

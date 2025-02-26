@@ -71,6 +71,12 @@
     "submit-button": "Actualizar imagen de perfil"
   },
   "subscription": {
+    "totally-paid": "Total pagado: Has pagado el precio completo del plan de ${{amount}}.",
+    "error-message": "Mensaje de error: {{error}}",
+    "total-paid": "Total pagado hasta la fecha: {{paidAmount}}$/{{pendingAmount}}$",
+    "expiration-date": "Fecha de Expiración: {{date}}",
+    "expired-on": "Su plan expiró el: {{date}}",
+    "active-since": "Suscripcion activa desde: {{date}}",
     "what-you-will-get": "Lo que obtendrás:",
     "bootcamp-mentorships": "Tienes acceso ilimitado a los servicios de mentoría con este ícono ∞ porque perteneces al bootcamp",
     "mentoring-available": "Sesiones de mentorías disponibles",
@@ -79,6 +85,7 @@
     "workshop-available": "Sesiones de workshops disponibles",
     "your-workshop-available": "Tus sesiones de workshops disponibles",
     "see-details": "Ver detalles",
+    "next-payment-with-price": "Siguiente pago: {{amount}} el {{date}}",
     "next-payment": "Siguiente pago el {{date}}",
     "last-payment": "Ultimo pago el {{date}}",
     "duration": "Duración: {{duration}}",
@@ -89,6 +96,10 @@
     "many-payments-left": "Pago: {{qty}} pagos restantes",
     "no-payment-left": "Pago: Sin pagos restantes",
     "renewal-date": "Fecha de renovación: {{date}}",
+    "payment_unit": {
+      "month": "Mensual",
+      "year": "Anual"
+    },
     "renewal-date-unknown": "Fecha de renovación: Desconocida",
     "payment-trial": "Pago: Prueba",
     "payment-free": "Pago: Libre",
