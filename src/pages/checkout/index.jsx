@@ -188,7 +188,7 @@ function Checkout() {
       });
   };
 
-  const handleCoupon = (coupons, actions) => {
+  const handleCoupon = (coup, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       toast({
@@ -204,13 +204,16 @@ function Checkout() {
       return;
     }
 
+    console.log(coup);
+    console.log(planFormated);
+
     bc.payment({
-      coupons: [coupons || discountCode],
+      coupons: [coup || discountCode],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
-        console.log('correctCoupon', correctCoupon);
+        console.log(resp);
+        const correctCoupon = resp.data.find((c) => c.slug === coup);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
@@ -311,9 +314,9 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (checkoutData?.id) {
-      handleCoupon(couponValue);
+    if (checkoutData?.id && !checkoutData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
+      handleCoupon(couponValue);
     }
   }, [couponValue, checkoutData?.id]);
 
