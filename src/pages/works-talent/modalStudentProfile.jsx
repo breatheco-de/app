@@ -25,24 +25,35 @@ function ModalStudentProfile({ isOpen, onClose }) {
   const { hexColor } = useStyle();
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl" trapFocus={false} width="1024px" height="622px">
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl" trapFocus={false} width="1024px">
       <ModalOverlay bg="rgba(0, 0, 0, 0.1)" />
       <ModalContent maxWidth={{ base: '90%', md: '896px' }} height="auto" minWidth={{ base: '100%', ml: '0px' }}>
         <ModalCloseButton color="#A9A9A9" />
-        <ModalBody display="flex" flexDirection={{ base: 'column', md: 'row' }} p={0}>
+        <ModalBody display="flex" flexDirection={{ base: 'column', md: 'row' }} p={0} overflowY="auto">
           {/* Form side left */}
-          <Box width={{ base: '100%', md: '376px' }} height="622px" bg={hexColor.featuredColor4} p={4} display="flex" flexDirection="column">
+          <Box width={{ base: '100%', md: '376px' }} minHeight="auto" bg={hexColor.featuredColor4} p={4} display="flex" flexDirection="column" overflowY="auto">
             {/* Photo and details */}
             <HStack spacing={4} align="center">
-              <Image
-                borderRadius="full"
-                width="129px"
-                height="119px"
+              <Box
+                width={{ base: '119px', sm: '140px', ml: '160px' }}
+                height={{ base: '119px', sm: '140px', ml: '160px' }}
+                borderRadius="50%"
+                overflow="hidden"
                 border="3px solid #0084FF"
-                src="https://s3-alpha-sig.figma.com/img/4c4c/7cb0/61c54f47e6bd57bac0b5b2388de82ddc?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=KVMu61~ThYG7lEhnjcMNqQsu0XSxeCCUd9UcmXzQ2WxuzNW62l4T2d~ncE6peMc~hVP4G9SdV6sBHV7AdpvIDoWiEtiKc9AsibjlUb9iTw7uQTAbD-kCgmfNAXAFi0F15imQ~KN-fgUSvw7W3GK9qz2Vbbv-~gTqoES96tBUz9~lfcewv5KXs3tNT4OPQZEibSzzxMBNL80SItVoR~rHgLLWHmsJZ2QW9mNChkCkRrWkiLItgEL9b7a5FsEVNwWfTxmcvEyvIRMHoblXHEpsLSudQkOkCXDhboET-0P~M00oEBvJ0TQg82hfEiJa2EnJW0M1RqxVgEQL8ciGQL-2oQ__"
-                alt="Profile Picture"
-                objectFit="cover"
-              />
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                aspectRatio="1"
+              >
+                <Image
+                  src="https://s3-alpha-sig.figma.com/img/4c4c/7cb0/61c54f47e6bd57bac0b5b2388de82ddc?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=KVMu61~ThYG7lEhnjcMNqQsu0XSxeCCUd9UcmXzQ2WxuzNW62l4T2d~ncE6peMc~hVP4G9SdV6sBHV7AdpvIDoWiEtiKc9AsibjlUb9iTw7uQTAbD-kCgmfNAXAFi0F15imQ~KN-fgUSvw7W3GK9qz2Vbbv-~gTqoES96tBUz9~lfcewv5KXs3tNT4OPQZEibSzzxMBNL80SItVoR~rHgLLWHmsJZ2QW9mNChkCkRrWkiLItgEL9b7a5FsEVNwWfTxmcvEyvIRMHoblXHEpsLSudQkOkCXDhboET-0P~M00oEBvJ0TQg82hfEiJa2EnJW0M1RqxVgEQL8ciGQL-2oQ__"
+                  alt="Profile Picture"
+                  objectFit="cover"
+                  width="149px"
+                  height="149px"
+                />
+              </Box>
+
               <Box>
                 <Text mt={4} fontSize="18px" fontWeight={500} lineHeight="19.58px" letterSpacing="0%" color={hexColor.black}>Winston Jesus Lamus Tortolero</Text>
                 <Tag mt={4} mb={4} color="#0084FF" bg="#C7F3FD" borderRadius={7} padding="4px 8px" gap={2} fontSize="12px">Full Stack Developer</Tag>
@@ -59,7 +70,7 @@ function ModalStudentProfile({ isOpen, onClose }) {
                 <HStack mt={2} spacing={3}>
                   <Icon icon="github" width="18px" />
                   <Icon icon="linkedin" width="18px" color="#0097CF" />
-                  <Icon icon="pdf" width="18px" />
+                  <Icon icon="pdf" width="18px" color={hexColor.fontColor2} />
                 </HStack>
               </Box>
             </HStack>
@@ -92,7 +103,7 @@ function ModalStudentProfile({ isOpen, onClose }) {
           </Box>
 
           {/* Right Side */}
-          <Box width={{ base: '100%', md: '520px' }} height="622px" bg={hexColor.backgroundColor} padding="32px 32px" textAlign="left">
+          <Box width={{ base: '100%', md: '520px' }} minHeight="auto" bg={hexColor.backgroundColor} padding="32px 32px" textAlign="left" overflowY="auto">
             <Text fontSize="18px" fontWeight="500" lineHeight="19.58px" letterSpacing="0%" color={hexColor.black1}>{`${t('works-talent:modal-student-profile.title-talent')}`}</Text>
             <Text mt={2} fontSize="14px" fontFamily="Lato" fontWeight={400} lineHeight="16.8px" letterSpacing="5%" color={hexColor.fontColor4}>
               {`${t('works-talent:modal-student-profile.talent-description')}`}
