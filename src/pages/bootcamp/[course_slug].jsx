@@ -40,6 +40,7 @@ import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
+import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
 
@@ -166,6 +167,9 @@ function CoursePage({ data, syllabus }) {
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
+
+  const reviewsData = t('course:reviews', {}, { returnObjects: true });
+  const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
 
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
@@ -672,6 +676,9 @@ function CoursePage({ data, syllabus }) {
                 ))}
               </Flex>
 
+              {reviewsForCurrentCourse && (
+                <Rating variant="inline" totalRatings={reviewsForCurrentCourse.total_ratings} rating={reviewsForCurrentCourse.rating} link="#rating-commnets" />
+              )}
               <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
               {/* Course description */}
@@ -1000,6 +1007,18 @@ function CoursePage({ data, syllabus }) {
             description={getAlternativeTranslation('why-learn-with-4geeks.description')}
           />
         </GridContainer>
+        {reviewsForCurrentCourse && (
+          <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
+            <Rating
+              totalRatings={reviewsForCurrentCourse.total_ratings}
+              totalReviews={reviewsForCurrentCourse.reviews_numbers}
+              rating={reviewsForCurrentCourse.rating}
+              id="rating-commnets"
+              marginTop="40px"
+              reviews={reviewsForCurrentCourse.reviews}
+            />
+          </GridContainer>
+        )}
         {/* FAQ section */}
         <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
