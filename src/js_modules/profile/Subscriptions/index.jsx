@@ -186,10 +186,12 @@ function Subscriptions({ cohorts }) {
     event_type_sets: [],
     mentorship_service_sets: [],
     service_sets: [],
+    voids: [],
   });
   const [services, setServices] = useState({
     mentorships: [],
     workshops: [],
+    voids: [],
   });
   const [loadingServices, setLoadingServices] = useState(true);
   const [subscriptionProps, setSubscriptionProps] = useState({});
@@ -233,9 +235,11 @@ function Subscriptions({ cohorts }) {
           return evRes.data.event_types;
         });
         const resMentorships = await Promise.all(promiseMentorship);
+
         const resWorkshops = await Promise.all(promiseEvents);
         allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
         allServices.workshops = resWorkshops.flat();
+        allServices.voids = [...data.voids];
       }
 
       setServices(allServices);
@@ -292,14 +296,15 @@ function Subscriptions({ cohorts }) {
       icon: 'community',
       title: t('subscription.your-workshop-available'),
     },
-    rigobot: {
-      icon: 'rigobot-avatar',
+    voids: {
+      icon: 'rigobot-avatar-tiny',
       title: t('subscription.rigo-available'),
     },
   };
 
   const totalMentorshipsAvailable = consumables.mentorship_service_sets.reduce((acum, service) => acum + service.balance.unit, 0);
   const totalWorkshopsAvailable = consumables.event_type_sets.reduce((acum, service) => acum + service.balance.unit, 0);
+  const totalRigoConsumablesAvailable = consumables.voids.reduce((acum, service) => acum + service.balance.unit, 0);
 
   const existsNoAvailableAsSaas = cohorts.some((c) => c.available_as_saas === false);
 
@@ -313,6 +318,7 @@ function Subscriptions({ cohorts }) {
       <Box display="flex" flexWrap="wrap" gap="24px">
         {loadingServices ? (
           <>
+            <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
             <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
             <SimpleSkeleton borderRadius="17px" height="108px" width={{ base: '100%', md: '265px' }} />
           </>
@@ -354,6 +360,26 @@ function Subscriptions({ cohorts }) {
                   )}
                 </Box>
                 <Button variant="link" onClick={() => setServicesModal('workshops')}>
+                  {t('subscription.see-details')}
+                </Button>
+              </Box>
+            </Box>
+            <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
+              <Text size="sm" mb="10px" fontWeight="700">
+                {t('subscription.workshop-available')}
+              </Text>
+              <Box display="flex" justifyContent="space-between" alignItems="end">
+                <Box display="flex" gap="10px" alignItems="center">
+                  <Icon icon="rigobot-avatar-tiny" color={hexColor.blueDefault} fill="none" width="34px" height="34px" />
+                  {totalRigoConsumablesAvailable >= 0 ? (
+                    <Heading color={hexColor.fontColor3} sieze="l" fontWeight="700">
+                      {totalRigoConsumablesAvailable}
+                    </Heading>
+                  ) : (
+                    <Icon icon="infinite" color={hexColor.fontColor3} width="34px" height="34px" />
+                  )}
+                </Box>
+                <Button variant="link" onClick={() => setServicesModal('voids')}>
                   {t('subscription.see-details')}
                 </Button>
               </Box>

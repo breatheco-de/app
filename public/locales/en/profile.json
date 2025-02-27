@@ -73,7 +73,7 @@
   "subscription": {
     "totally-paid": "Total paid: You've paid the full amount of the plan of ${{amount}}.",
     "error-message": "Error message: {{error}}",
-    "total-paid": "Total paid to the date: {{paidAmount}}$/{{pendingAmount}}$",
+    "total-paid": "Total paid to the date: ${{paidAmount}}/${{pendingAmount}}",
     "expiration-date": "Expiration date: {{date}}",
     "expired-on": "Your plan expired on: {{date}}",
     "active-since": "Active subscription since: {{date}}",
@@ -85,7 +85,7 @@
     "workshop-available": "Workshop sessions available",
     "your-workshop-available": "Your workshop sessions available",
     "see-details": "See details",
-    "next-payment-with-price": "Next payment: {{amount}} on {{date}}",
+    "next-payment-with-price": "Next payment: ${{amount}} on {{date}}",
     "next-payment": "Next payment on {{date}}",
     "last-payment": "Last payment on {{date}}",
     "duration": "Duration: {{duration}}",
