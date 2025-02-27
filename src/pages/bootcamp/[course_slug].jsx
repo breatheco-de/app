@@ -529,6 +529,11 @@ function CoursePage({ data, syllabus }) {
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
+      certificate: module.certificate,
+      time: module.time,
+      exercises: module.exercises,
+      projects: module.projects,
+      readings: module.readings,
       title: module.name,
       description: module.description,
     })) : [];
@@ -583,6 +588,7 @@ function CoursePage({ data, syllabus }) {
         </Head>
       )}
       <FixedBottomCta
+        isFetching={initialDataIsFetching}
         isCtaVisible={isCtaVisible}
         financingAvailable={planData?.financingOptions?.length > 0}
         videoUrl={data?.course_translation?.video_url}
@@ -592,9 +598,10 @@ function CoursePage({ data, syllabus }) {
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
+        zIndex={1100}
       />
-      <CouponTopBar />
-      <Flex flexDirection="column" mt="2rem">
+      <CouponTopBar display={{ base: 'none', md: 'block' }} />
+      <Flex flexDirection="column" mt={{ base: '0', md: '0.5rem' }}>
         <GridContainer maxWidth="1280px" gridTemplateColumns="repeat(12, 1fr)" gridGap="36px" padding="8px 10px 50px 10px" mt="17px">
           <Flex flexDirection="column" gridColumn="1 / span 8" gridGap="24px">
             {/* Title */}
@@ -689,6 +696,7 @@ function CoursePage({ data, syllabus }) {
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
               title={getAlternativeTranslation('join-cohort')}
+              alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
               borderColor={data.color || 'green.400'}
@@ -709,7 +717,6 @@ function CoursePage({ data, syllabus }) {
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
                 <Flex flexDirection="column" position="relative">
-                  {/* <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" /> */}
                   <ReactPlayerV2
                     url={data?.course_translation?.video_url}
                     withThumbnail

@@ -103,6 +103,7 @@
   "our_plans": "Nuestros planes",
   "discount": "{{discount}} DE DESCUENTO",
   "try-again": "Intenta de nuevo",
+  "coupon-error": "Este cupón no es válido o está expirado",
   "join-cohort": {
     "cta": {
       "lesson": "Únete a la cohorte para poder acceder a esta lección",
