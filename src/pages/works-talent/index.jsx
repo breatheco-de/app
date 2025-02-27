@@ -57,7 +57,7 @@ function Talentcard() {
   ];
 
   return (
-    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px">
+    <Box mb={10} ms={10} mx={10} bg={useColorModeValue('#EEF9FE', hexColor.backgroundColor)} margin="0px" padding="18px 0px 0px" width={{ ml: '100%', sm: '100%' }} minWidth="355px">
       <Box>
         <Flex direction="column" justify="center" align="center" mb={4} ml={3} my={3} mt="18px" paddingLeft="20px">
           <Text color={hexColor.blue3} fontWeight="400" fontSize="14px" lineHeight="16.8px" letterSpacing="0%" fontFamily="Lato" paddingBottom={4}>
@@ -72,22 +72,23 @@ function Talentcard() {
         <GridItem
           bg={hexColor.backgroundColor}
           borderRadius="13px"
-          margin="6px 106px 24px 106px"
-          gap={6}
-          width="812px"
-          height="94px"
+          margin={{ base: '6px 16px 24px 16px', md: '6px 106px 24px 106px' }} // Ajuste responsive para margen
+          width={{ base: '312px', md: '728px', lg: '812px' }}
+          height={{ base: '194px', md: '94px' }}
+          padding={{ base: '0px 30px 0px 30px' }}
+          border={useColorModeValue('none', `1px solid ${hexColor.borderColor}`)}
         >
           <InputGroup size="lg">
             <InputRightElement
               position="absolute"
-              top="50%"
-              right="24px"
+              right={{ base: '12px', md: '-10px' }}
+              top={{ base: '50px', md: '0px' }}
               transform="translateY(50%)"
             >
               <Button
                 size="big"
                 bg={hexColor.borderColor}
-                _hover={{ bg: '#0077A8' }}
+                _hover={{ bg: '#CACACA' }}
                 padding={2}
                 gap="10px"
                 borderRadius="4px"
@@ -100,10 +101,9 @@ function Talentcard() {
             </InputRightElement>
           </InputGroup>
 
-          <Grid templateColumns="repeat(3, 1fr)" mt={4} w="100%" alignItems="center">
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }} mt={4} w="100%" alignItems="center" marginLeft={6}>
             <GridItem key="1" textAlign="left">
               <Text
-                mt={2}
                 fontSize="12px"
                 color={useColorModeValue('#000000', '#FFFFFF')}
                 fontWeight={400}
@@ -132,7 +132,12 @@ function Talentcard() {
               </Flex>
             </GridItem>
 
-            <GridItem key="2" textAlign="left">
+            <GridItem
+              key="2"
+              textAlign="left"
+              paddingLeft={{ base: 0, md: 4 }} // Quita el padding en móviles
+              borderLeft={{ base: 'none', md: '1px solid #DADADA' }}
+            >
               <Text
                 mt={2}
                 fontSize="12px"
@@ -163,7 +168,12 @@ function Talentcard() {
               </Flex>
             </GridItem>
 
-            <GridItem key="3" textAlign="left">
+            <GridItem
+              key="3"
+              textAlign="left"
+              paddingLeft={{ base: 0, md: 4 }} // Quita el padding en móviles
+              borderLeft={{ base: 'none', md: '1px solid #DADADA' }}
+            >
               <Text
                 mt={2}
                 fontSize="12px"
@@ -198,7 +208,7 @@ function Talentcard() {
         </GridItem>
       </Grid>
 
-      <Box bg={hexColor.backgroundColor} padding="32px 40px">
+      <Box bg={hexColor.backgroundColor} padding="32px 40px" maxWidth="1280px" margin="0 auto">
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="masonry-grid"

@@ -13,11 +13,11 @@ import {
   VStack,
   HStack,
   Tag,
-  Icon,
+  Avatar,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
-import { EmailIcon, LinkIcon, DownloadIcon } from '@chakra-ui/icons';
+import Icon from '../../common/components/Icon';
 import useStyle from '../../common/hooks/useStyle';
 
 function ModalStudentProfile({ isOpen, onClose }) {
@@ -27,11 +27,11 @@ function ModalStudentProfile({ isOpen, onClose }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" trapFocus={false} width="1024px" height="622px">
       <ModalOverlay bg="rgba(0, 0, 0, 0.1)" />
-      <ModalContent maxWidth={{ base: '90%', md: '896px' }} width="100%" height="auto">
+      <ModalContent maxWidth={{ base: '90%', md: '896px' }} height="auto" minWidth={{ base: '100%', ml: '0px' }}>
         <ModalCloseButton color="#A9A9A9" />
         <ModalBody display="flex" flexDirection={{ base: 'column', md: 'row' }} p={0}>
           {/* Form side left */}
-          <Box width="376px" height="622px" bg={hexColor.featuredColor4} p={4} display="flex" flexDirection="column">
+          <Box width={{ base: '100%', md: '376px' }} height="622px" bg={hexColor.featuredColor4} p={4} display="flex" flexDirection="column">
             {/* Photo and details */}
             <HStack spacing={4} align="center">
               <Image
@@ -47,18 +47,24 @@ function ModalStudentProfile({ isOpen, onClose }) {
                 <Text mt={4} fontSize="18px" fontWeight={500} lineHeight="19.58px" letterSpacing="0%" color={hexColor.black}>Winston Jesus Lamus Tortolero</Text>
                 <Tag mt={4} mb={4} color="#0084FF" bg="#C7F3FD" borderRadius={7} padding="4px 8px" gap={2} fontSize="12px">Full Stack Developer</Tag>
                 <HStack spacing={2} fontSize="12px" fontWeight={400} lineHeight="14.52px" letterSpacing="0%" align="center" color="#00000">
-                  <Text>Español</Text>
-                  <Text>English</Text>
+                  <Avatar
+                    width="24px"
+                    src="/static/images/languajes.png"
+                    height="24px"
+                    style={{ userSelect: 'none' }}
+                  />
+                  <Text fontSize="10px">Español,</Text>
+                  <Text fontSize="10px">English</Text>
                 </HStack>
-                <HStack mt={2} spacing={4}>
-                  <Icon as={EmailIcon} w={4} h={4} />
-                  <Icon as={LinkIcon} w={4} h={4} />
-                  <Icon as={DownloadIcon} w={4} h={4} />
+                <HStack mt={2} spacing={3}>
+                  <Icon icon="github" width="18px" />
+                  <Icon icon="linkedin" width="18px" color="#0097CF" />
+                  <Icon icon="pdf" width="18px" />
                 </HStack>
               </Box>
             </HStack>
             {/* Form */}
-            <Box width="100%" p="48px 0px 0px">
+            <Box width="100%" p="38px 0px 0px">
               <Text fontSize="21px" fontWeight={500} lineHeight="22.85px" letterSpacing="0%" marginBottom={4} textAlign="center">{`${t('works-talent:modal-student-profile.title-form')}`}</Text>
               <VStack height="344px" gap="5px" padding={2} align={{ base: 'center', md: 'flex-start' }}>
                 <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.full-name')}`} />
