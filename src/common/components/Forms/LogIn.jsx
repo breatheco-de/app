@@ -6,6 +6,7 @@ import {
   FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
+import { useRouter } from 'next/router';
 import { reportDatalayer } from '../../../utils/requests';
 import bc from '../../services/breathecode';
 import Icon from '../Icon';
@@ -19,6 +20,8 @@ import { email as emailRe } from '../../../utils/regex';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
+  const router = useRouter();
+  const { query } = router;
   const [emailValidation, setEmailValidation] = useState({
     valid: false,
     loading: false,
@@ -26,11 +29,11 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
     status: null,
   });
   const [showPSW, setShowPSW] = useState(false);
+  const [googleError, setGoogleError] = useState(false);
   const [step, setStep] = useState(1);
 
   const { login } = useAuth();
   const toast = useToast();
-  // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   const [invitationSent, setInvitationSent] = useState(false);
   useEffect(() => setUrl(typeof window !== 'undefined' ? window.location.href : ''), []);
@@ -43,6 +46,14 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const googleLoginUrl = (typeof window !== 'undefined')
     ? `${BREATHECODE_HOST}/v1/auth/google?url=${curUrl}`
     : '#';
+
+  useEffect(() => {
+    const { error, ...queryParams } = query;
+    if (error === 'google-user-not-found') {
+      setGoogleError(true);
+      router.push({ ...queryParams });
+    }
+  }, [query]);
 
   const validateEmail = async (email) => {
     try {
@@ -155,6 +166,11 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         <Form>
           {/* FIRST STEP */}
           <Stack display={step !== 1 && 'none'} spacing={4} justifyContent="space-between">
+            {googleError && (
+              <Box padding="5px" borderRadius="5px" border="1px solid" borderColor={hexColor.danger} background="red.light">
+                <Text color={hexColor.danger} textAlign="center" dangerouslySetInnerHTML={{ __html: t('google-login-error') }} />
+              </Box>
+            )}
             <Button
               as="a"
               href={googleLoginUrl}
@@ -173,7 +189,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                 });
               }}
             >
-              <Icon icon="google-collab" width="18px" height="18px" />
+              <Icon icon="google" width="18px" height="18px" />
               <Text as="span" size="md" marginLeft="10px" textTransform="uppercase">
                 {t('login-with-google')}
               </Text>

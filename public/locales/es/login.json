@@ -6,6 +6,7 @@
   },
   "login-with-github": "Iniciar sesión con Github",
   "login-with-google": "Iniciar sesión con Google",
+  "google-login-error": "Este email no está registrado. Puedes registrarte <a href=\"/checkout\" style=\"text-decoration: underline;\">aquí</a>",
   "or": "o",
   "forgot-password": "¿Has olvidado tu contraseña?",
   "welcome": "¡Bienvenido de vuelta {{email}}!",

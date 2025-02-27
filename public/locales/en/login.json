@@ -6,6 +6,7 @@
   },
   "login-with-github": "Log in with Github",
   "login-with-google": "Log in with Google",
+  "google-login-error": "This email is not registered. You can register <a href=\"/checkout\" style=\"text-decoration: underline;\">here</a>",
   "or": "or",
   "password": "Password",
   "confirm-password": "Confirm Password",
