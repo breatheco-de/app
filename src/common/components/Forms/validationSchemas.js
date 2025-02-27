@@ -32,7 +32,7 @@ const handleProfile = Yup.object().shape({
 
 const login = Yup.object().shape({
   password: Yup.string().required('Password is required'),
-  email: Yup.string().email('Invalid email').required('Password is required'),
+  email: Yup.string().email('Invalid email').required('Email is required'),
 });
 
 const leadForm = Yup.object().shape({

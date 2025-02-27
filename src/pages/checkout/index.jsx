@@ -209,13 +209,21 @@ function Checkout() {
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode || coupons);
+        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
+        console.log('correctCoupon', correctCoupon);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
+          toast({
+            position: 'top',
+            title: t('signup:coupon-error'),
+            status: 'error',
+            duration: 4000,
+            isClosable: true,
+          });
         }
       })
       .finally(() => {
