@@ -1,13 +1,12 @@
 import { Box, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
-import PropTypes from 'prop-types';
 import Text from './Text';
 import Timer from './Timer';
 import useStyle from '../hooks/useStyle';
 import useSignup from '../store/actions/signupAction';
 import NextChakraLink from './NextChakraLink';
 
-function CouponTopBar({ buttonHandler, ...rest }) {
+function CouponTopBar({ ...rest }) {
   const { t } = useTranslation('course');
   const { hexColor } = useStyle();
   const { getPriceWithDiscount, setSelfAppliedCoupon, state } = useSignup();
@@ -92,9 +91,5 @@ function CouponTopBar({ buttonHandler, ...rest }) {
     </Box>
   );
 }
-
-CouponTopBar.propTypes = {
-  buttonHandler: PropTypes.func.isRequired,
-};
 
 export default CouponTopBar;
