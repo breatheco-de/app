@@ -10,7 +10,6 @@ import Icon from '../../common/components/Icon';
 import Heading from '../../common/components/Heading';
 import Text from '../../common/components/Text';
 import MarkDownParser from '../../common/components/MarkDownParser';
-import { error } from '../../utils/logging';
 
 const inputReviewRateCommentLimit = 100;
 const defaultReviewRateData = {
@@ -24,12 +23,12 @@ function TaskCodeRevisions() {
   const { currentTask } = useModuleHandler();
   const { featuredLight, hexColor, backgroundColor, backgroundColor4 } = useStyle();
   const { isAuthenticatedWithRigobot } = useAuth();
-  const toast = useToast();
   const [contextData, setContextData] = useState({
     code_revisions: [],
     revision_content: {},
   });
   const [reviewRateData, setReviewRateData] = useState(defaultReviewRateData);
+  const toast = useToast();
 
   const reviewRateStatus = reviewRateData?.status;
   const codeRevisions = contextData?.code_revisions || [];
@@ -82,7 +81,7 @@ function TaskCodeRevisions() {
       } else {
         toast({
           title: t('alert-message:something-went-wrong'),
-          description: `Cannot get code revisions: ${data?.detail}`,
+          description: `Cannot get code revisions: ${data.Error}`,
           status: 'error',
           duration: 5000,
           position: 'top',
@@ -90,7 +89,7 @@ function TaskCodeRevisions() {
         });
       }
     } catch (errorMsg) {
-      error('Error fetching code revisions:', errorMsg);
+      console.log(`Cannot get code revisions: ${errorMsg}`);
     }
   };
 

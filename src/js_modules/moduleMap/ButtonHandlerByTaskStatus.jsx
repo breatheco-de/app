@@ -116,6 +116,7 @@ export function ButtonHandlerByTaskStatus({
             changeStatusAssignment={changeStatusAssignment}
             externalFiles={fileData}
             currentTask={currentTask}
+            currentAsset={currentAssetData}
             projectLink={currentTask?.github_url}
             onClose={() => setIsReviewModalOpen(false)}
             acceptTC={acceptTC}
