@@ -179,7 +179,7 @@ function CustomCarousel({ assignmentList }) {
               borderRadius="full"
               bg={index === currentSlide ? 'blue.500' : 'gray.300'}
               cursor="pointer"
-              onClick={() => (() => setCurrentSlide(index))}
+              onClick={() => handleUserInteraction(() => setCurrentSlide(index))}
             />
           ))}
         </Flex>
