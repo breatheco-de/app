@@ -45,57 +45,85 @@
   "reviews": {
     "full-stack-development": {
       "rating": 4.5,
-      "total_ratings": 1346,
+      "total_ratings": 1621,
       "reviews_numbers": 345,
       "reviews": [
         {
-          "name": "John Doe",
-          "avatar": "https://example.com/avatar1.jpg",
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
           "rating": 5,
-          "date": "2 days ago",
-          "review": "This course provided me with a solid understanding of web development concepts. Highly recommended for beginners!"
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
         },
         {
-          "name": "Emily Johnson",
-          "avatar": "https://example.com/avatar2.jpg",
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
           "rating": 4,
           "date": "1 week ago",
-          "review": "Great course with practical examples. I wish there were more advanced topics covered."
-        },
-        {
-          "name": "Michael Brown",
-          "avatar": "https://example.com/avatar3.jpg",
-          "rating": 5,
-          "date": "3 weeks ago",
-          "review": "Amazing content and structure. I landed my first developer job thanks to this course!"
+          "review": "Amazing content and structure. The AI tool is wonderful!"
         }
       ]
     },
     "deep-dive-into-python": {
       "rating": 4.5,
       "total_ratings": 1346,
-      "reviews_numbers": 313,
+      "reviews_numbers": 134,
       "reviews": [
         {
-          "name": "Sophia Lee",
-          "avatar": "https://example.com/avatar4.jpg",
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
           "rating": 5,
-          "date": "5 days ago",
-          "review": "In-depth explanations and clear examples. Perfect for those looking to master Python."
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
         },
         {
-          "name": "James Smith",
-          "avatar": "https://example.com/avatar5.jpg",
-          "rating": 4,
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
           "date": "2 weeks ago",
-          "review": "Good coverage of Python basics, but could use more real-world applications."
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
         },
         {
-          "name": "Olivia Davis",
-          "avatar": "https://example.com/avatar6.jpg",
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    },
+    "data-science-and-ml": {
+      "rating": 4.5,
+      "total_ratings": 803,
+      "reviews_numbers": 98,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
           "rating": 5,
-          "date": "1 month ago",
-          "review": "This course helped me transition from a beginner to an intermediate Python developer."
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
         }
       ]
     }
