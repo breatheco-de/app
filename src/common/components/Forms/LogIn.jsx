@@ -96,9 +96,10 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
           isClosable: true,
         });
       } else {
+        const { data } = resp;
         toast({
           position: 'top',
-          title: t('invitation-error'),
+          title: data.detail,
           status: 'error',
           duration: 9000,
           isClosable: true,
@@ -106,6 +107,13 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       }
     } catch (e) {
       console.log(e);
+      toast({
+        position: 'top',
+        title: t('invitation-error'),
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
@@ -259,10 +267,16 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     )}
                   </Text>
                 )}
-                {!invitationSent && (
+                {!invitationSent ? (
                   <Button onClick={() => validateEmail(values.email)} isLoading={emailValidation.loading} isDisabled={errors.email} variant="default" fontSize={actionfontSize || 'l'} type="button">
                     {t('next')}
                   </Button>
+                ) : (
+                  <Box padding="5px" borderRadius="5px" background={hexColor.featuredColor}>
+                    <Text size="md" marginLeft="10px">
+                      {t('invitation-message')}
+                    </Text>
+                  </Box>
                 )}
               </>
             )}

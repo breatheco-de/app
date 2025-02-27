@@ -15,8 +15,9 @@
   "not-you": "Not you?",
   "email-not-found": "We could not find an account with this email",
   "email-not-validated": "You need to validate your email first,",
-  "validation-link": "resend validation link",
-  "invitation-sended": "The invitation was resended! Check your inbox",
+  "validation-link": "resend validation email",
+  "invitation-message": "The validation email has been sent to your email, please follow the instructions in the email. If you can't find it, check the spam folder",
+  "invitation-sended": "The invitation was resent! Check your inbox",
   "invitation-error": "Something went wrong sending the invitation",
   "login": "Log in",
   "register": "Register"

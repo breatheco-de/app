@@ -250,9 +250,6 @@ function ShowPrices({
             ))}
           </Box>
         )}
-        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-          {t('common:money-back-guarantee')}
-        </Text>
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}

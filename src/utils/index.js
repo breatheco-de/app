@@ -286,7 +286,7 @@ const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
     if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1; // Then upcomming evnets
     if ((aHasStarted || aHasExpired) && !bHasStarted && !bHasExpired) return 1;
 
-    return new Date(a.starting_at) - new Date(b.starting_at); // Crono order
+    return new Date(b.starting_at) - new Date(a.starting_at); // Crono order
   });
 };
 

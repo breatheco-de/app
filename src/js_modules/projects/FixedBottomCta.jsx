@@ -71,10 +71,10 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           )}
           {course && (
             <>
-              <Heading size="21px" pt="10px">{t('course:join-cohort')}</Heading>
+              <Heading size="21px" color="black" pt="10px">{t('course:join-cohort')}</Heading>
               {!videoUrl && (
                 <>
-                  <Text>{t('course:create-account-text')}</Text>
+                  <Text color="black">{t('course:create-account-text')}</Text>
                   <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
                     {financingAvailable ? t('common:see-financing-options') : t('common:enroll')}
                   </Button>
