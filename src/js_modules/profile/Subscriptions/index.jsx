@@ -228,15 +228,15 @@ function Subscriptions({ cohorts }) {
 
           return mentRes.data.mentorship_services.map((service) => ({ ...service, unit: elem.balance.unit }));
         });
-
         const promiseEvents = data.event_type_sets.map(async (elem) => {
           const evRes = await bc.payment().getEventTypeSet(elem.id);
 
           return evRes.data.event_types;
         });
-        const resMentorships = await Promise.all(promiseMentorship);
 
+        const resMentorships = await Promise.all(promiseMentorship);
         const resWorkshops = await Promise.all(promiseEvents);
+
         allServices.mentorships = [...resMentorships.flat(), ...nonSaasServices];
         allServices.workshops = resWorkshops.flat();
         allServices.voids = [...data.voids];
@@ -366,7 +366,7 @@ function Subscriptions({ cohorts }) {
             </Box>
             <Box borderRadius="17px" padding="12px 16px" background={featuredLight} width={{ base: '100%', md: '265px' }}>
               <Text size="sm" mb="10px" fontWeight="700">
-                {t('subscription.workshop-available')}
+                {t('subscription.rigo-available')}
               </Text>
               <Box display="flex" justifyContent="space-between" alignItems="end">
                 <Box display="flex" gap="10px" alignItems="center">
@@ -405,7 +405,7 @@ function Subscriptions({ cohorts }) {
                         <Box display="flex" gap="10px" alignItems="center">
                           {logo && <Image src={logo} width={28} height={28} alt="Service logo" />}
                           <Heading size="16px">
-                            {service.name}
+                            {service.name || t(`slug-translations.${service.slug}.title`)}
                           </Heading>
                         </Box>
                         {servicesModal === 'mentorships' && (
@@ -421,9 +421,18 @@ function Subscriptions({ cohorts }) {
                             )}
                           </>
                         )}
+                        {servicesModal === 'voids' && (
+                          <>
+                            <Box width="30px" height="30px" background={hexColor.featuredColor3} padding="5px" borderRadius="full">
+                              <Text textAlign="center" size="l" fontWeight="700">
+                                {service?.balance?.unit}
+                              </Text>
+                            </Box>
+                          </>
+                        )}
                       </Box>
                       <Text size="md" color={hexColor.fontColor3}>
-                        {service.description}
+                        {service.description || t(`slug-translations.${service.slug}.description`)}
                       </Text>
                     </Box>
                   );
