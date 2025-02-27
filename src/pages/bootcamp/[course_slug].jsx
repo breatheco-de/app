@@ -696,6 +696,7 @@ function CoursePage({ data, syllabus }) {
           <Flex flexDirection="column" gridColumn="9 / span 4" mt={{ base: '2rem', md: '0' }} ref={showBottomCTA}>
             <ShowOnSignUp
               title={getAlternativeTranslation('join-cohort')}
+              alignSelf="center"
               maxWidth="396px"
               description={isAuthenticated ? getAlternativeTranslation('join-cohort-description') : getAlternativeTranslation('create-account-text')}
               borderColor={data.color || 'green.400'}
@@ -716,7 +717,6 @@ function CoursePage({ data, syllabus }) {
               invertHandlerPosition
               headContent={data?.course_translation?.video_url && (
                 <Flex flexDirection="column" position="relative">
-                  {/* <Image src={data?.icon_url} top="-1.5rem" left="-1.5rem" width="64px" height="64px" objectFit="cover" position="absolute" /> */}
                   <ReactPlayerV2
                     url={data?.course_translation?.video_url}
                     withThumbnail
