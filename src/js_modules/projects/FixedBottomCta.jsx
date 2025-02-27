@@ -3,14 +3,16 @@ import {
   Box,
   Button,
   Text,
+  Skeleton,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Heading from '../../common/components/Heading';
 import useStyle from '../../common/hooks/useStyle';
 import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
+import CouponTopBar from '../../common/components/CouponTopBar';
 
-function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isAuthenticated, paymentOptions, ...rest }) {
+function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, couponApplied, financingAvailable, isFetching, isAuthenticated, paymentOptions, ...rest }) {
   const { t } = useTranslation('exercises');
   const { hexColor } = useStyle();
 
@@ -46,7 +48,7 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
         display={{ base: 'block', md: 'none' }}
         {...rest}
       >
-        <Box paddingBottom="20px">
+        <Box paddingBottom={!couponApplied && !isFetching ? '20px' : '0'}>
           {videoUrl && (
             <ReactPlayerV2
               title={asset && 'Video tutorial'}
@@ -71,20 +73,39 @@ function StickyBottomCta({ asset, onClick, isCtaVisible, course, videoUrl, coupo
           )}
           {course && (
             <>
-              <Heading size="21px" color="black" pt="10px">{t('course:join-cohort')}</Heading>
-              {!videoUrl && (
-                <>
-                  <Text color="black">{t('course:create-account-text')}</Text>
-                  <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
-                    {financingAvailable ? t('common:see-financing-options') : t('common:enroll')}
-                  </Button>
-                </>
-              )}
-              {includesFreeTier && (
-                <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
-                  {t('common:start-free-trial')}
-                </Button>
-              )}
+              {
+                isFetching ? (
+                  <Skeleton height="40px" width="100%" padding="1px" />
+                ) : (
+                  <>
+                    {!couponApplied ? (
+                      <>
+                        {!videoUrl ? (
+                          <>
+                            <Text color="black" fontSize="18px" fontWeight={600}>{t('course:create-account-text')}</Text>
+                            <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
+                              {financingAvailable ? t('common:see-financing-options') : t('common:enroll')}
+                            </Button>
+                          </>
+                        ) : (
+                          <Button fontSize="18px" display="block" width="95%" margin="10px auto" border={`1px solid ${hexColor.greenLight}`} color={hexColor.greenLight} background={hexColor.backgroundColor} onClick={onClick}>
+                            {t('course:join-cohort')}
+                          </Button>
+                        )}
+                        {includesFreeTier && (
+                          <Button fontSize="18px" display="block" width="95%" margin="10px auto" color="white" background={hexColor.greenLight} onClick={onClick}>
+                            {t('common:start-free-trial')}
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <Box>
+                        <CouponTopBar />
+                      </Box>
+                    )}
+                  </>
+                )
+              }
             </>
           )}
         </Box>
@@ -102,6 +123,7 @@ StickyBottomCta.propTypes = {
   isCtaVisible: PropTypes.bool.isRequired,
   financingAvailable: PropTypes.string,
   isAuthenticated: PropTypes.bool,
+  isFetching: PropTypes.bool,
   paymentOptions: PropTypes.arrayOf(PropTypes.objectOf(PropTypes.oneOfType([PropTypes.any]))).isRequired,
 };
 
@@ -110,6 +132,7 @@ StickyBottomCta.defaultProps = {
   videoUrl: undefined,
   financingAvailable: undefined,
   isAuthenticated: false,
+  isFetching: false,
 };
 
 export default StickyBottomCta;
