@@ -101,7 +101,7 @@ function CustomCarousel({ assignmentList }) {
 
           <Flex flex="1" flexDirection="column" gridGap="10px" justifyContent="space-between">
             <Flex gridGap="8px" justifyContent="space-between" alignItems="flex-start">
-              <Flex gap="10px">
+              <Flex gap="10px" flexWrap="wrap">
                 {assignmentList[currentSlide].technologies.map((tech) => (
                   <Box>
                     {tech.icon_url ? (
