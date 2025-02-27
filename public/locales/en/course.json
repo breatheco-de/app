@@ -1,8 +1,8 @@
 {
   "course-content-text": "Get Job-Ready with Our Syllabus!",
   "course-content-description": "We've fine-tuned our course content with hundreds of job positions to prepare you for a successful entry into tech.",
-  "students-enrolled-count": "+{{count}} students enrolled",
-  "students-enrolled": "hundreds students enrolled",
+  "students-enrolled-count": "+{{count}} of students enrolled",
+  "students-enrolled": "hundreds of students enrolled",
   "instructors-more": "+{{count}} more instructors",
   "course-certificate": "Course certificate",
   "course-readings": "{{count}} Readings",

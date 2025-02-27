@@ -275,18 +275,25 @@ const sortToNearestTodayDate = (data, minutes = 30, includeExpired = false) => {
   });
 
   return filteredDates.sort((a, b) => {
-    const aHasStarted = new Date(a.starting_at) < currentDate;
-    const aHasExpired = new Date(a.ended_at || a.ending_at) < currentDate;
-    const bHasStarted = new Date(b.starting_at) < currentDate;
-    const bHasExpired = new Date(b.ended_at || b.ending_at) < currentDate;
+    const aStartingDate = new Date(a.starting_at);
+    const aEndingDate = new Date(a.ended_at || a.ending_at);
+    const bStartingDate = new Date(b.starting_at);
+    const bEndingDate = new Date(b.ended_at || b.ending_at);
 
-    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1; // Prio live events
+    const aHasStarted = aStartingDate < currentDate;
+    const aHasExpired = aEndingDate < currentDate;
+    const bHasStarted = bStartingDate < currentDate;
+    const bHasExpired = bEndingDate < currentDate;
+
+    if (aHasStarted && !aHasExpired && !(bHasStarted && !bHasExpired)) return -1;
     if (!(aHasStarted && !aHasExpired) && bHasStarted && !bHasExpired) return 1;
 
-    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1; // Then upcomming evnets
+    if (!aHasStarted && !aHasExpired && (bHasStarted || bHasExpired)) return -1;
     if ((aHasStarted || aHasExpired) && !bHasStarted && !bHasExpired) return 1;
 
-    return new Date(b.starting_at) - new Date(a.starting_at); // Crono order
+    if (aHasExpired && bHasExpired) return bStartingDate - aStartingDate;
+
+    return aStartingDate - bStartingDate;
   });
 };
 
