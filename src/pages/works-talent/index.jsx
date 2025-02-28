@@ -23,8 +23,6 @@ import useStyle from '../../common/hooks/useStyle';
 import ModalStudentProfile from './modalStudentProfile';
 
 function Talentcard() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
   const { t } = useTranslation('works-talent');
   const { hexColor } = useStyle();
 
@@ -215,6 +213,7 @@ function Talentcard() {
           columnClassName="masonry-grid_column"
         >
           {[...Array(12)].map((_, index) => {
+            const { isOpen, onOpen, onClose } = useDisclosure();
             const randomTag = skillTags[Math.floor(Math.random() * skillTags.length)];
             return (
               <Box
@@ -284,7 +283,7 @@ function Talentcard() {
                     {`${t('works-talent:card-student.link')}`}
                   </Text>
                 </Flex>
-                <ModalStudentProfile isOpen={isOpen} onClose={onClose} />
+                <ModalStudentProfile key={`modal-${index + 1}`} isOpen={isOpen} onClose={onClose} />
               </Box>
             );
           })}
