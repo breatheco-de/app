@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Flex } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import PropTypes from 'prop-types';
 import { intervalToDuration } from 'date-fns';
@@ -146,45 +146,57 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               maxHeight={{ base: 'none', md: '512px' }}
             >
               <Box
-                gap="16px"
-                width="100%"
                 display="flex"
                 flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }}
-                justifyContent="space-between"
+                width="100%"
+                height="100%"
+                maxHeight="512px"
+                gap={!isExerciseStarted && '10px'}
               >
-                <Box maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '100%' }} display="flex" maxHeight={isExerciseStarted && '45%'} flexDir="column" flexGrow={1}>
+                <Flex flexDirection="column" overflowY="hidden" maxWidth={{ base: 'none', md: !isExerciseStarted && '50%' }}>
                   <Heading color="white" mb="16px" size="l" fontWeight="400">
                     {currentAsset?.title}
                   </Heading>
-
                   <Box
                     className={`horizontal-sroll ${colorMode}`}
-                    maxHeight={isExerciseStarted && '100%'}
-                    overflowY={isExerciseStarted && 'scroll'}
-                    paddingRight="8px"
+                    overflowY="auto"
+                    flexGrow={1}
+                    paddingRight={isExerciseStarted && '8px'}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
                     </Text>
                   </Box>
-                </Box>
-                <Box flexGrow={100} maxWidth="100%" overflow="hidden" borderRadius="10px">
-                  <ReactPlayerV2
-                    withThumbnail
-                    controls={false}
-                    thumbnailStyle={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'contain',
-                    }}
-                    iframeStyle={{
-                      objectFit: 'contain',
-                      width: '100%',
-                      height: '100%',
-                    }}
-                    url={currentAsset?.intro_video_url}
-                  />
-                </Box>
+                </Flex>
+                <Flex justifyContent="center" flexGrow={!isExerciseStarted && 1}>
+                  <Box
+                    flexGrow={1}
+                    flexShrink={isExerciseStarted && 1}
+                    marginTop="10px"
+                    flexBasis="40%"
+                    maxHeight="300px"
+                    minHeight="180px"
+                    maxWidth="500px"
+                    overflow="hidden"
+                    borderRadius="10px"
+                  >
+                    <ReactPlayerV2
+                      withThumbnail
+                      controls={false}
+                      thumbnailStyle={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain',
+                      }}
+                      iframeStyle={{
+                        objectFit: 'contain',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                      url={currentAsset?.intro_video_url}
+                    />
+                  </Box>
+                </Flex>
               </Box>
 
               {isExerciseStarted && (
@@ -217,6 +229,9 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               handleStartLearnpack={handleStartLearnpack}
               isStarted={isExerciseStarted}
               flexGrow="1"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
             />
           </>
         )}
