@@ -14,6 +14,7 @@ import {
   HStack,
   Tag,
   Avatar,
+  Link,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
@@ -69,9 +70,15 @@ function ModalStudentProfile({ isOpen, onClose }) {
                     <Text fontSize="10px">English</Text>
                   </HStack>
                   <HStack mt={2} spacing={3}>
-                    <Icon icon="github" width="18px" />
-                    <Icon icon="linkedin" width="18px" color="#0097CF" />
-                    <Icon icon="pdf" width="18px" color={hexColor.fontColor2} />
+                    <Link to="https://github.com/tu-usuario" target="_blank">
+                      <Icon icon="github" width="18px" />
+                    </Link>
+                    <Link to="https://linkedin.com/in/tu-usuario" target="_blank">
+                      <Icon icon="linkedin" width="18px" color="#0097CF" />
+                    </Link>
+                    <Link to="/ruta-a-tu-pdf" target="_blank">
+                      <Icon icon="pdf" width="18px" color={hexColor.fontColor2} />
+                    </Link>
                   </HStack>
                 </Box>
               </HStack>
@@ -79,14 +86,15 @@ function ModalStudentProfile({ isOpen, onClose }) {
               <Box width="100%" p="38px 0px 0px">
                 <Text fontSize="21px" fontWeight={500} lineHeight="22.85px" letterSpacing="0%" marginBottom={4} textAlign="center">{`${t('works-talent:modal-student-profile.title-form')}`}</Text>
                 <VStack height="344px" gap="5px" padding={2} align={{ base: 'center', md: 'flex-start' }}>
-                  <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.full-name')}`} />
-                  <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.phone')}`} />
-                  <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.email')}`} />
-                  <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.company')}`} />
-                  <Input color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.role')}`} />
+                  <Input required color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.full-name')}`} />
+                  <Input required color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.phone')}`} />
+                  <Input required color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.email')}`} />
+                  <Input required color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.company')}`} />
+                  <Input required color="#606060" fontWeight={400} fontFamily="Lato" fontSize="15px" lineHeight="22px" letterSpacing="2%" bg={hexColor.white2} placeholder={`${t('works-talent:modal-student-profile.form.role')}`} />
                   <Button
                     mt={2}
                     bg="#0084FF"
+                    _hover={{ bg: '#0066CC' }}
                     color="white"
                     width="100%"
                     borderRadius="0"
