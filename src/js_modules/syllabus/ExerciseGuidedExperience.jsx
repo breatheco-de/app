@@ -106,7 +106,19 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
   });
 
   return (
-    <Box className={`horizontal-sroll ${colorMode}`} overflowY="auto" borderRadius="11px" background="blue.1000" height="83vh" mb="30px" padding={learnpackStart ? '0' : '16px'} display="flex" flexDirection="column" justifyContent="space-between" gap={learnpackStart ? '0px' : '20px'}>
+    <Box
+      className={`horizontal-sroll ${colorMode}`}
+      overflowY="auto"
+      borderRadius="11px"
+      background="blue.1000"
+      height="83vh"
+      mb="30px"
+      padding={learnpackStart ? '0' : '16px'}
+      display="flex"
+      flexDirection="column"
+      justifyContent="space-between"
+      gap={learnpackStart ? '0px' : '20px'}
+    >
       {learnpackStart
         ? (
           <>
@@ -126,28 +138,55 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
         )
         : (
           <>
-            <Box display="flex" gap="16px" flexDirection={{ base: 'column', md: 'row' }} flexGrow={100}>
-              <Box gap="16px" width="100%" display="flex" flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }} justifyContent="space-between">
-                <Box maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '40%' }}>
+            <Box
+              display="flex"
+              gap="16px"
+              flexDirection={{ base: 'column', md: 'row' }}
+              flexGrow={10}
+              maxHeight={{ base: 'none', md: '512px' }}
+            >
+              <Box
+                gap="16px"
+                width="100%"
+                display="flex"
+                flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }}
+                justifyContent="space-between"
+              >
+                <Box maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '100%' }} display="flex" maxHeight={isExerciseStarted && '45%'} flexDir="column" flexGrow={1}>
                   <Heading color="white" mb="16px" size="l" fontWeight="400">
                     {currentAsset?.title}
                   </Heading>
-                  <Text color="white" size="l">
-                    {currentAsset?.description}
-                  </Text>
+
+                  <Box
+                    className={`horizontal-sroll ${colorMode}`}
+                    maxHeight={isExerciseStarted && '100%'}
+                    overflowY={isExerciseStarted && 'scroll'}
+                    paddingRight="8px"
+                  >
+                    <Text color="white" size="l">
+                      {currentAsset?.description}
+                    </Text>
+                  </Box>
                 </Box>
-                <Box width="100%" maxWidth={{ base: 'none', md: isExerciseStarted ? 'none' : '50%' }} borderRadius="11px" overflow="hidden">
+                <Box flexGrow={100} maxWidth="100%" overflow="hidden" borderRadius="10px">
                   <ReactPlayerV2
                     withThumbnail
                     controls={false}
                     thumbnailStyle={{
                       width: '100%',
-                      borderRadius: '11px',
+                      height: '100%',
+                      objectFit: 'contain',
+                    }}
+                    iframeStyle={{
+                      objectFit: 'contain',
+                      width: '100%',
+                      height: '100%',
                     }}
                     url={currentAsset?.intro_video_url}
                   />
                 </Box>
               </Box>
+
               {isExerciseStarted && (
                 <Box
                   width="100%"
@@ -172,7 +211,13 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Box>
               )}
             </Box>
-            <ProjectInstructions currentAsset={currentAsset} handleStartLearnpack={handleStartLearnpack} isStarted={isExerciseStarted} />
+
+            <ProjectInstructions
+              currentAsset={currentAsset}
+              handleStartLearnpack={handleStartLearnpack}
+              isStarted={isExerciseStarted}
+              flexGrow="1"
+            />
           </>
         )}
     </Box>
