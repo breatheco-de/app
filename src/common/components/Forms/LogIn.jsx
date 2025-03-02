@@ -222,6 +222,12 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                         height="50px"
                         borderColor="gray.default"
                         borderRadius="3px"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            validateEmail(field.value);
+                          }
+                        }}
                       />
                       <FormErrorMessage>{form.errors.email}</FormErrorMessage>
                     </FormControl>
@@ -270,15 +276,15 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                   {({ field, form }) => (
                     <FormControl marginTop="4px !important" isInvalid={form.errors.password && form.touched.password}>
                       {!hideLabel && (
-                      <FormLabel
-                        margin="0px"
-                        color="gray.default"
-                        fontSize="sm"
-                        float="left"
-                        htmlFor="password"
-                      >
-                        {t('common:password')}
-                      </FormLabel>
+                        <FormLabel
+                          margin="0px"
+                          color="gray.default"
+                          fontSize="sm"
+                          float="left"
+                          htmlFor="password"
+                        >
+                          {t('common:password')}
+                        </FormLabel>
                       )}
                       <InputGroup>
                         <Input
@@ -290,6 +296,12 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                           height="50px"
                           borderColor="gray.default"
                           borderRadius="3px"
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              form.submitForm();
+                            }
+                          }}
                         />
                         <InputRightElement width="2.5rem" top="5px" right="10px">
                           <Button
@@ -354,7 +366,7 @@ LogIn.defaultProps = {
   hideLabel: false,
   actionfontSize: '',
   disableRedirect: false,
-  callBack: () => {},
+  callBack: () => { },
 };
 
 export default LogIn;
