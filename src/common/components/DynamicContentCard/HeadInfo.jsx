@@ -1,5 +1,4 @@
 import { Box, Flex } from '@chakra-ui/react';
-import Image from 'next/image';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
@@ -38,25 +37,18 @@ function HeadInfo({ technologies, duration, type, date }) {
 
   return (
     <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
-      {technologies?.length > 0 ? (
-        <Flex alignItems="center" gridGap="8px">
-          {technologies.filter((tech) => tech.icon_url).map((tech) => {
-            if (tech?.icon_url) {
-              return (
-                <Image src={tech?.icon_url} width={20} height={20} />
-              );
-            }
-            return (
-              <Text alignItems="center" gridGap="4px" background={featuredLight} padding="4px 10px" borderRadius="18px">
-                {tech?.title}
-              </Text>
-            );
-          })}
+      {technologies?.length > 0 && (
+        <Flex alignItems="center" gridGap="3px" flexWrap="wrap">
+          {technologies?.slice(0, 3).map((tech) => (
+            <Text alignItems="center" gridGap="4px" background={featuredLight} padding="4px 10px" borderRadius="18px">
+              {tech}
+            </Text>
+          ))}
         </Flex>
-      ) : <Box />}
-      <Flex display={date?.ended ? 'none' : 'flex'} gridGap="10px" padding={isWorkshop ? '4px 0 0 0' : 'auto'} alignItems="center">
+      )}
+      <Flex display="flex" gridGap="10px" padding={isWorkshop ? '4px 0 0 0' : 'auto'} alignItems="center">
         {/* <--------------- Average time duration ---------------> */}
-        {(Number.isInteger(duration) || date?.text) && (
+        {((Number.isInteger(duration) && !date?.ended) || (date?.text && !date?.ended)) && (
           <Flex display={existsDuration ? 'flex' : 'none'} alignItems="center" gridGap="4px" background={backgroundColor} borderRadius="18px">
             <Icon icon="clock" width="14px" height="14px" />
             {intervalDurationText ? (
@@ -66,7 +58,6 @@ function HeadInfo({ technologies, duration, type, date }) {
             ) : duration && (
               <Text>
                 {t('hrs-average', { number: duration })}
-                {/* {`${duration} min read`} */}
               </Text>
             )}
           </Flex>
