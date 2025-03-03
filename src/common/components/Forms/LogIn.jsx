@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import {
   Button, FormControl, Stack, Box, Input, FormErrorMessage,
-  FormLabel, useToast, Link, Spacer, Flex, InputRightElement, InputGroup,
+  FormLabel, Link, Spacer, Flex, InputRightElement, InputGroup,
 } from '@chakra-ui/react';
 import { Form, Formik, Field } from 'formik';
 import { reportDatalayer } from '../../../utils/requests';
@@ -16,6 +16,7 @@ import useAuth from '../../hooks/useAuth';
 import useStyle from '../../hooks/useStyle';
 import { BREATHECODE_HOST } from '../../../utils/variables';
 import { getBrowserInfo } from '../../../utils';
+import useCustomToast from '../../hooks/useCustomToast';
 
 function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const { t, lang } = useTranslation('login');
@@ -29,7 +30,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
   const [step, setStep] = useState(1);
 
   const { login } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'welcome-account-not-found' });
   // const router = useRouter();
   const [curUrl, setUrl] = useState('');
   const [invitationSent, setInvitationSent] = useState(false);
@@ -84,7 +85,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       const resp = await bc.auth().resendConfirmationEmail(email);
       if (resp?.status === 200) {
         setInvitationSent(true);
-        toast({
+        createToast({
           position: 'top',
           title: t('invitation-sended'),
           status: 'success',
@@ -93,7 +94,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         });
       } else {
         const { data } = resp;
-        toast({
+        createToast({
           position: 'top',
           title: data.detail,
           status: 'error',
@@ -103,7 +104,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         position: 'top',
         title: t('invitation-error'),
         status: 'error',
@@ -125,7 +126,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
             actions.setSubmitting(false);
             callBack();
             if (data.status === 200) {
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:welcome'),
                 status: 'success',
@@ -136,7 +137,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
           })
           .catch(() => {
             actions.setSubmitting(false);
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:account-not-found'),
               status: 'error',

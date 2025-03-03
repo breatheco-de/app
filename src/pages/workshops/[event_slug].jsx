@@ -1,5 +1,5 @@
 import {
-  Box, Button, Grid, useColorModeValue, useToast, Image, Avatar, Skeleton, Flex,
+  Box, Button, Grid, useColorModeValue, Image, Avatar, Skeleton, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext } from 'react';
 import { intervalToDuration, format } from 'date-fns';
@@ -34,6 +34,7 @@ import SmallCardsCarousel from '../../common/components/SmallCardsCarousel';
 import LoaderScreen from '../../common/components/LoaderScreen';
 import DynamicContentCard from '../../common/components/DynamicContentCard';
 import { SessionContext } from '../../common/context/SessionContext';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 const arrayOfImages = [
   'https://github-production-user-asset-6210df.s3.amazonaws.com/426452/264811559-ff8d2a4e-0a34-41c9-af90-57b0a96414b3.gif',
@@ -169,7 +170,7 @@ function Workshop({ eventData, asset }) {
   const router = useRouter();
   const { locale } = router;
   const eventSlug = router?.query?.event_slug;
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'event-and-access-reservation' });
   const { isAuthenticated, user, cohorts } = useAuth();
   const { featuredColor, hexColor } = useStyle();
   const endDate = event?.ended_at || event?.ending_at;
@@ -565,7 +566,7 @@ function Workshop({ eventData, asset }) {
             if (resp !== undefined) {
               setApplied(true);
               setIsCheckinModalOpen(true);
-              toast({
+              createToast({
                 position: 'top',
                 status: 'success',
                 title: t('alert-message:success-event-reservation'),
@@ -587,7 +588,7 @@ function Workshop({ eventData, asset }) {
                 },
               });
             } else {
-              toast({
+              createToast({
                 position: 'top',
                 status: 'info',
                 title: t('alert-message:event-access-error'),
