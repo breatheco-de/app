@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Badge } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import Text from '../Text';
@@ -29,7 +29,7 @@ const getIntervalDurationTranslation = (date) => {
 
 function HeadInfo({ technologies, duration, type, date }) {
   const { t } = useTranslation('common');
-  const { backgroundColor, featuredLight, lightColor } = useStyle();
+  const { backgroundColor, lightColor } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
@@ -40,9 +40,7 @@ function HeadInfo({ technologies, duration, type, date }) {
       {technologies?.length > 0 && (
         <Flex alignItems="center" gridGap="3px" flexWrap="wrap">
           {technologies?.slice(0, 3).map((tech) => (
-            <Text alignItems="center" gridGap="4px" background={featuredLight} padding="4px 10px" borderRadius="18px">
-              {tech}
-            </Text>
+            <Badge borderRadius="10px" px="8px" colorScheme="blue">{tech}</Badge>
           ))}
         </Flex>
       )}
