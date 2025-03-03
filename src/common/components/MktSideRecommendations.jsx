@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import Heading from './Heading';
 import Text from './Text';
-import Icon from './Icon';
 import { CardSkeleton } from './Skeleton';
 // import Link from './NextChakraLink';
 // import modifyEnv from '../../../modifyEnv';
@@ -219,9 +218,8 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
                 marginTop="10px"
               >
                 <Box as="span" display="flex">
-                  {t('learn-more')}
+                  {t('start-tutorial')}
                 </Box>
-                <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
               </Link>
             </>
           );
@@ -241,62 +239,55 @@ function MktSideRecommendations({ title, endpoint, technologies, containerPaddin
               const tags = [];
 
               return (
-                <Container border="1px solid" borderColor={recom.color || { base: 'default', md: 'success' }} key={recom?.slug} course={recom} courses={recommendations} borderRadius={rest.borderRadius} padding={containerPadding}>
-                  <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
-                  <Box display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
-                    <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
-                    {(recom.icon_url || getMainTechIcon())
-                      && <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} background={determineIconBackgroundColor(recom)} />}
-                    <Heading as="span" size="18px" paddingLeft={!recom.icon_url && !getMainTechIcon() && '20px'}>
-                      {recom?.course_translation?.title || recom.title}
-                    </Heading>
-                  </Box>
-                  <Text display={{ base: 'none', md: 'inherit' }} fontSize="12px" lineHeight="14px" padding="0 20px">
-                    {recom?.course_translation?.description || recom?.course_translation?.short_description || recom.description}
-                  </Text>
-                  <Link
-                    variant={{ base: '' }}
-                    onClick={() => {
-                      setStorageItem('redirected-from', link);
-                      reportDatalayer({
-                        dataLayer: {
-                          event: 'ad_interaction',
-                          course_slug: recom.slug,
-                          course_title: recom?.course_translation?.title ? recom.course_translation.title : recom.title,
-                          ad_position: 'top-left',
-                          ad_type: 'course',
-                          agent: getBrowserInfo(),
-                        },
-                      });
-                    }}
-                    href={link}
-                    _hover={{ textDecoratio: 'none' }}
-                    fontWeight="700"
-                    padding="12px 24px"
-                    letterSpacing="0.05em"
-                    fontSize="13px"
-                    borderRadius="3px"
-                    alignItems="center"
-                    display="flex"
-                    colorScheme={{ base: 'default', md: 'blue.400' }}
-                    width="auto"
-                    color={{ base: 'green.light', md: 'white' }}
-                    gridGap="10px"
-                    margin="0 20px"
-                    backgroundColor={recom.color || 'blue.1000'}
-                  >
-                    <Box as="span" display={{ base: 'none', md: 'flex' }}>
-                      {t('learn-more')}
+                <Box key={recom?.slug} overflow="hidden" border="1px solid" borderColor={recom.color || { base: 'default', md: 'success' }} borderRadius={rest.borderRadius || '8px'}>
+                  {recom?.banner_image
+                  && <Image src={recom?.banner_image} width="100%" height="120px" />}
+                  <Container borderRadius="none" padding={containerPadding} course={recom} courses={recommendations}>
+                    <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'none', md: 'inherit' }} />
+                    <Box mb="10px" display="flex" flexDirection={{ base: 'column', md: 'row' }} gridGap="8px" alignItems="center">
+                      <TagCapsule tags={tags} background="green.light" color="green.500" fontWeight={700} fontSize="13px" marginY="0" paddingX="0" variant="rounded" gap="10px" display={{ base: 'inherit', md: 'none' }} />
+                      {(recom.icon_url || getMainTechIcon())
+                        && <Image display={{ base: 'none', md: 'inherit' }} src={recom.icon_url ? recom.icon_url : getMainTechIcon()} width="46px" height="46px" borderRadius="8px" padding={!recom.icon_url && '8px'} />}
+                      <Heading as="span" fontWeight="400" size="xsm">
+                        {recom?.course_translation?.title || recom.title}
+                      </Heading>
                     </Box>
-                    <Icon icon="longArrowRight" width="24px" height="10px" color="currentColor" />
-                  </Link>
-                </Container>
+                    <Text display={{ base: 'none', md: 'inherit' }} fontSize="sm" lineHeight="14px">
+                      {recom?.course_translation?.description || recom?.course_translation?.short_description || recom.description}
+                    </Text>
+                    <Link
+                      onClick={() => {
+                        setStorageItem('redirected-from', link);
+                        reportDatalayer({
+                          dataLayer: {
+                            event: 'ad_interaction',
+                            course_slug: recom.slug,
+                            course_title: recom?.course_translation?.title ? recom.course_translation.title : recom.title,
+                            ad_position: 'top-left',
+                            ad_type: 'course',
+                            agent: getBrowserInfo(),
+                          },
+                        });
+                      }}
+                      href={link}
+                      _hover={{ textDecoration: 'none' }}
+                      textAlign="center"
+                      padding="7px 16px"
+                      fontWeight="700"
+                      borderRadius="4px"
+                      width="100%"
+                      color="white"
+                      backgroundColor={recom.color || 'blue.default'}
+                    >
+                      {t('start-tutorial')}
+                    </Link>
+                  </Container>
+                </Box>
               );
             })}
           </Box>
         </Box>
       ) : (
-
         <CardSkeleton quantity={1} cardHeight="350px" cardWidth="250px" gridTemplateColumns="none" />
       )}
     </>
@@ -313,7 +304,7 @@ MktSideRecommendations.propTypes = {
 MktSideRecommendations.defaultProps = {
   title: '',
   endpoint: defaultEndpoint,
-  containerPadding: '9px 8px',
+  containerPadding: '8px',
   technologies: [],
 };
 

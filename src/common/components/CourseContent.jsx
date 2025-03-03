@@ -19,7 +19,7 @@ function CourseContent({ data }) {
         {t('course-content-description')}
       </Text>
 
-      <AcordionList defaultIndex={0} list={data} />
+      <AcordionList defaultIndex={0} list={data} titleStyle={{ fontWeight: 'bold' }} />
     </Flex>
   );
 }

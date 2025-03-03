@@ -70,24 +70,38 @@ function CodeViewerComponent(props) {
   const nodeEndOffset = node.position.end.offset;
 
   const input = preParsedContent.substring(nodeStartOffset, nodeEndOffset);
+
   const regex = /```([a-zA-Z]+)(.*)([\s\S]+?)```/g;
   let match;
   const fragments = [];
+  let compareMode = false;
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(input)) !== null) {
     const parameters = match[2].split(' ');
+
+    if (parameters.includes('compare=true') || parameters.includes('compare="true"') || parameters.includes("compare='true'")) {
+      compareMode = true;
+    }
+
+    let color = parameters.find((param) => param.includes('color'));
+    if (color) {
+      const removeQuotes = /"|'|color=/g;
+      color = color.replaceAll(removeQuotes, '');
+    }
 
     let path = parameters.find((param) => param.includes('path'));
     if (path) {
       const removeQuotes = /"|'|path=/g;
       path = path.replaceAll(removeQuotes, '');
     }
+
     fragments.push({
       language: languagesNames[match[1].toLowerCase()] || match[1],
       label: languagesLabels[match[1].toLowerCase()] || match[1],
       code: match[3].trim(),
       path,
+      color,
     });
   }
 
@@ -96,6 +110,7 @@ function CodeViewerComponent(props) {
       languagesData={fragments}
       margin="10px 0"
       fileContext={fileContext}
+      compareMode={compareMode}
     />
   );
 }
@@ -218,11 +233,8 @@ function MarkDownParser({
   }, [content]);
 
   const preParsedContent = useMemo(() => {
-    //This regex is to remove the runable empty codeblocks
-    const emptyCodeRegex = /```([a-zA-Z]+).*runable=("true"|true|'true').*(\n{1,}|\s{1,}\n{1,})?```/gm;
-    //This regex is to wrap all the runable codeblocks inside of a <codeviewer> tag
-    const codeViewerRegex = /(```(?<language>[\w.]+).*runable=("true"|'true'|true).*(?<code>(?:.|\n)*?)```\n?)+/gm;
-
+    const emptyCodeRegex = /```([a-zA-Z]+).*(runable=("true"|true|'true')|compare=("true"|true|'true')).*(\n{1,}|\s{1,}\n{1,})?```/gm;
+    const codeViewerRegex = /(```(?<language>[\w.]+).*(runable=("true"|'true'|true)|compare=("true"|'true'|true)).*(?<code>(?:.|\n)*?)```\n?)+/gm;
     const removedEmptyCodeViewers = content?.length > 0 ? content.replace(emptyCodeRegex, () => '') : '';
 
     const contentReplace = removedEmptyCodeViewers.replace(codeViewerRegex, (match) => `<pre><codeviewer>\n${match}</codeviewer></pre>\n`);

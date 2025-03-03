@@ -14,6 +14,17 @@ axiosInstance.interceptors.request.use((config) => {
   };
 });
 
+axiosInstance.interceptors.response.use(
+  (response) => response, // Return the response as is for successful requests
+  (error) => {
+    if (error.response) {
+      // If the server responded with a status code outside 2xx
+      return error.response; // Reject with error response instead of the whole error object
+    }
+    return error; // Handle cases where no response was received
+  },
+);
+
 // Function to manually cancel the request in progress
 export const cancelAllCurrentRequests = (message = 'All request was canceled') => {
   try {
