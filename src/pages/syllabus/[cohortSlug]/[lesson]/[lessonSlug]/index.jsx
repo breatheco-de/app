@@ -415,7 +415,16 @@ function SyllabusContent() {
     cleanCurrentData();
   };
 
-  const EventIfNotFound = () => {
+  const EventIfNotFound = (task) => {
+    if (task.target === 'blank' && task.task_type === 'LESSON') {
+      setReadme({
+        content: t('external-read', { link: task.url }),
+      });
+      setCurrentAsset({
+        title: task?.title || t('no-content-found'),
+      });
+      return;
+    }
     setReadme({
       content: t('no-content-found-description'),
     });
@@ -437,11 +446,6 @@ function SyllabusContent() {
         const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
         const extension = urlPathname ? urlPathname.split('.').pop() : null;
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
-
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
-        }
 
         setReadmeUrlPathname(finalPathname);
         let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
@@ -488,7 +492,7 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound();
+        EventIfNotFound(currTask);
       });
     }
     return () => {
@@ -497,7 +501,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug, cohortSession, sortedAssignments]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);

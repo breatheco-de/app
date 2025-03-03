@@ -25,6 +25,7 @@ import useStyle from '../../../common/hooks/useStyle';
 import RelatedContent from '../../../common/components/RelatedContent';
 import MktEventCards from '../../../common/components/MktEventCards';
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -66,13 +67,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
     }
     const langPrefix = locale === 'en' ? '' : `/${locale}`;
 
-    if (!data.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, data);
+
+    if (!data || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = data.readme.decoded;
 
     const {
       title, description, translations, preview,

@@ -31,6 +31,7 @@ import SupplementaryMaterial from '../../../common/components/SupplementaryMater
 import AssetsBreadcrumbs from '../../../common/components/AssetsBreadcrumbs';
 import Icon from '../../../common/components/Icon';
 import useStyle from '../../../common/hooks/useStyle';
+import { getMarkdownFromCache } from '../../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../../lib/asset-list.json');
@@ -74,12 +75,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-    const markdown = result.readme.decoded;
 
     const {
       title, translations, description, preview,

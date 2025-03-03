@@ -28,6 +28,7 @@ import ReactPlayerV2 from '../../common/components/ReactPlayerV2';
 import MktEventCards from '../../common/components/MktEventCards';
 import SupplementaryMaterial from '../../common/components/SupplementaryMaterial';
 import AssetsBreadcrumbs from '../../common/components/AssetsBreadcrumbs';
+import { getMarkdownFromCache } from '../../utils/requests';
 
 export const getStaticPaths = async ({ locales }) => {
   const assetList = await import('../../lib/asset-list.json');
@@ -76,13 +77,13 @@ export const getStaticProps = async ({ params, locale, locales }) => {
       };
     }
 
-    if (!result.readme?.decoded) {
+    const markdown = await getMarkdownFromCache(slug, result);
+
+    if (!result || !markdown) {
       return {
         notFound: true,
       };
     }
-
-    const markdown = result.readme.decoded;
 
     const {
       title, description, translations, preview,

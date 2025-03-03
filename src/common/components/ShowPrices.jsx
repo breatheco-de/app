@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box, Button,
+  Box, Button, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -10,6 +10,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
+import Icon from './Icon';
 
 function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
@@ -249,9 +250,6 @@ function ShowPrices({
             ))}
           </Box>
         )}
-        <Text size="12px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-          {t('common:money-back-guarantee')}
-        </Text>
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
@@ -267,6 +265,14 @@ function ShowPrices({
           >
             {t('common:enroll')}
           </Button>
+          {!selectedItem?.isFreeTier && (
+            <Flex marginTop="5px" gap="5px" alignItems="center">
+              <Icon icon="shield" width="23px" />
+              <Text fontSize="13px" fontWeight="bold" color="green.400">
+                {t('common:money-back-guarantee-short')}
+              </Text>
+            </Flex>
+          )}
         </Box>
       </Box>
     </>

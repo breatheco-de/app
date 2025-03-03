@@ -28,6 +28,7 @@ module.exports = {
     '/mentorship': ['mentorship'],
     '/mentorship/schedule': ['mentorship', 'dashboard', 'signup', 'common'],
     '/how-to': ['how-to'],
+    '/paymentmethod': ['payment'],
     '/pricing': ['pricing', 'signup'],
     '/how-to/[slug]': ['how-to'],
     '/profile': ['profile'],

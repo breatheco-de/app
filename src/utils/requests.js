@@ -2,17 +2,17 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
 import axios from 'axios';
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
 import TagManager from 'react-gtm-module';
 import { parseQuerys } from './url';
 import { isWhiteLabelAcademy, WHITE_LABEL_ACADEMY } from './variables';
 import bc from '../common/services/breathecode';
 import { log } from './logging';
+import { getExtensionName } from './index';
 
 const BREATHECODE_HOST = process.env.BREATHECODE_HOST || 'https://breathecode-test.herokuapp.com';
 const SYLLABUS = process.env.SYLLABUS || 'full-stack,web-development';
 const PRISMIC_API = process.env.PRISMIC_API || 'https://your-prismic-repo.cdn.prismic.io/api/v2';
-const PRISMIC_REF = process.env.PRISMIC_REF || 'Y-EX4MPL3R3F';
 
 const mapDifficulty = (difficulty) => {
   const difficultyStr = difficulty?.toLowerCase();
@@ -32,16 +32,22 @@ const reportDatalayer = (payload) => {
 
 const getPrismicPages = async () => {
   try {
+    // Obtiene el ref más reciente de Prismic
+    const masterRefResponse = await fetch(`${PRISMIC_API}`);
+    const masterRefData = await masterRefResponse.json();
+    const PRISMIC_REF = masterRefData?.refs?.[0]?.ref;
+
+    if (!PRISMIC_REF) {
+      throw new Error('SITEMAP: No PRISMIC_REF found');
+    }
+
     const response = await fetch(`${PRISMIC_API}/documents/search?ref=${PRISMIC_REF}&type=page&lang=*`);
     const data = await response.json();
-    log(`\n${data?.results?.length} pages fetched from Prismic\n`);
-    if (response.status > 400 && response.statusText !== 'OK') {
-      throw new Error('SITEMAP: Error fetching Prismic pages');
-    } else {
-      return data.results;
-    }
-  } catch (msg) {
-    console.error('SITEMAP:', msg);
+
+    log(`🔍 ${data?.results?.length} pages fetched from Prismic`);
+    return data.results;
+  } catch (error) {
+    console.error('SITEMAP:', error);
     return [];
   }
 };
@@ -208,11 +214,36 @@ const getAsset = async (type = '', extraQuerys = {}, category = '', onlyFirstFet
 const getCacheItem = async (key) => {
   try {
     console.log(`Fetching ${key} from cache`);
-    const item = await kv.get(key);
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    const item = await redis.get(key);
     return item;
   } catch (e) {
-    console.log(`Failed to fetch ${key} from vercel cache`);
+    console.log(`Failed to fetch ${key} from vercel cache: ${e}`);
     return null;
+  }
+};
+
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The value to be stored in the cache
+ */
+const updateJsonStatus = async (key) => {
+  try {
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    const date = new Date().toISOString();
+    let item = await redis.get('jsonStatus');
+    if (!item) item = {};
+
+    item[key] = date;
+    await redis.set('jsonStatus', item);
+  } catch (e) {
+    console.log(e);
   }
 };
 
@@ -223,10 +254,39 @@ const getCacheItem = async (key) => {
 const setCacheItem = async (key, value) => {
   try {
     console.log(`Setting up ${key} on cache`);
-    await kv.set(key, value, { ex: 604800 }); //Set expire time to one week
+    const redis = new Redis({
+      token: process.env.KV_REST_API_TOKEN,
+      url: process.env.KV_REST_API_URL,
+    });
+    await redis.set(key, value, { ex: 604800 }); //Set expire time to one week
+    await updateJsonStatus(key);
   } catch (e) {
-    console.log(`Failed to set ${key} on cache`);
+    console.log(`Failed to set ${key} on cache: ${e}`);
   }
+};
+
+/**
+ * @param {String} key The key of the value in redis
+ * @param {Object} value The data of the asset
+ */
+const getMarkdownFromCache = async (slug, asset) => {
+  let markdown = await getCacheItem(slug);
+
+  if (!markdown) {
+    console.log(`${slug} not found on cache`);
+
+    const exensionName = getExtensionName(asset.readme_url);
+    const extension = exensionName !== 'ipynb' ? 'md' : 'html';
+    const endpoint = `${process.env.BREATHECODE_HOST}/v1/registry/asset/${slug}.${extension}`;
+
+    const resp = await fetch(endpoint);
+    if (resp.status >= 400) {
+      throw new Error(`Error fetching markdown for ${slug}`);
+    }
+    markdown = await resp.text();
+    await setCacheItem(slug, markdown);
+  }
+  return markdown;
 };
 
 // mover a carpeta sitemap-generator
@@ -299,6 +359,7 @@ export {
   reportDatalayer,
   getCacheItem,
   setCacheItem,
+  getMarkdownFromCache,
   getPrismicPages,
   getPublicSyllabus,
   getLandingTechnologies,

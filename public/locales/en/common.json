@@ -1,5 +1,7 @@
 {
   "change-language": "Change language",
+  "reviews": "Ratings",
+  "course-rating": "Course rating",
   "connect-with-github": "Connect with Github",
   "see-financing-options": "See financing options",
   "your-tutors-in-this-cohort": "Your tutors:",
@@ -79,6 +81,7 @@
   "enroll": "Enroll now",
   "enroll-totally-free": "Enroll totally free",
   "enroll-for-connector": "Enroll for",
+  "start-tutorial": "Start tutorial",
   "learn-more": "Learn more",
   "more-technologies": "More technologies",
   "continue-learning": "Continue learning about:",
@@ -176,8 +179,15 @@
       "project": "project",
       "exercise": "exercise"
     },
+    "dependencies":{
+      "node-js": "Node JS",
+      "python": "Python",
+      "javascript": "Javascript"
+    },
     "start-exercise": "Start exercise",
     "recommended": "Recommended",
+    "install-specific-version": "Install {{name}} with version {{version}} in your computer",
+    "banner-description": "It's crucial to install the version specified, otherwise the project may not run correctly. Install version {{version}}",
     "open-in-learnpack-button": {
       "text": "Open in the cloud",
       "title": "Open in the cloud",
@@ -217,12 +227,13 @@
         "slug": "intro",
         "label": "Introduction",
         "description": "This guide will walk you through the process of running your project on your computer. Follow these simple steps to set up everything you need and get your project up and running in no time. Let's get started!",
-        "video": "https://storage.googleapis.com/breathecode/videos/installation-wizard/en-mac-introduction.mp4",
+        "video": "https://www.youtube.com/watch?v=P0C0ZXZKLqU",
         "source-label": "",
         "source": ""
       },
       "agent-vs-code": {
         "label": "Open the project in VS Code",
+        "video": "https://www.youtube.com/watch?v=NgfV30FmhS4",
         "description": "Make sure you have the <a href=\"https://marketplace.visualstudio.com/items?itemName=learn-pack.learnpack-vscode\" target=\"_blank\">LearnPack extension</a> installed, open the folder in VSCode and type <span class=\"highlight-command\">learnpack start</span> on your vscode terminal."
       },
       "agent-os": {
@@ -231,6 +242,7 @@
       },
       "project-readme": {
         "label": "Read the README.md inside the project",
+        "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
         "description": "Once you open the project in your editor you will find a README.md file containing more instructions on how to run the project"
       },
       "os-list": [
@@ -400,7 +412,7 @@
               "name": "python",
               "label": "Install Python in your computer",
               "description": "You must install Python on your computer to run this project locally. Click on the link below to follow a step-by-step about how to install it.",
-              "video": "https://www.youtube.com/watch?v=yivyNCtVVDk",
+              "video": "https://www.youtube.com/watch?v=VdafZF-RiXw",
               "source": "https://4geeks.com/how-to/how-to-install-python",
               "source-label": "How to install Python?"
             },
@@ -408,7 +420,7 @@
               "name": "node-js",
               "label": "Install Node JS in your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
-              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
               "source-label": "How to install NVM on MacOS?"
             },
@@ -416,7 +428,7 @@
               "name": "javascript",
               "label": "Install Node JS in your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on MacOS.",
-              "video": "https://www.youtube.com/watch?v=BhLFxy6Jz8c",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
               "source": "https://4geeks.com/how-to/install-node-nvm-mac-osx",
               "source-label": "How to install NVM on MacOS?"
             }
@@ -426,20 +438,20 @@
               "slug": "download-ide",
               "label": "Download a code editor or IDE on your computer",
               "description": "We recommend installing VSCode, which integrates perfectly with most of our interactive tutorials. Follow the link below to download VSCode.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=KVYDKAelhSQ",
               "source-label": "Go to VSCode Download page",
               "source": "https://code.visualstudio.com/download"
             },
             {
               "label": "Create a folder to store your exercises",
               "description": "If you already created a folder to store a previous exercise, we recommend you using it. Otherwise, create a new folder wherever you feel best (inside Documents for example) and open that new folder in your code editor (VSCode or other). From here open the terminal to follow the next steps.",
-              "video": "https://www.youtube.com/watch?v=eZAT6fwMVgY",
+              "video": "https://www.youtube.com/watch?v=SinR6Q2k0U8",
               "source": ""
             },
             {
               "label": "Install node.js on your computer",
               "description": "We recommend installing NVM to manage your node.js versions locally much easier, follow this link for a full guide about how to install on Windows.",
-              "video": "https://www.youtube.com/watch?v=E6k6R4PnLV0&t=4s",
+              "video": "https://www.youtube.com/watch?v=wF_1lNGUK88",
               "source": "https://4geeks.com/how-to/nvm-install-windows",
               "source-label": "Go to how to install nvm on Windows"
             },
@@ -452,14 +464,14 @@
             {
               "label": "Install GIT on your computer",
               "description": "You must install GIT to clone a GitHub repository locally. You must follow the instructions given in the following link.",
-              "video": "https://www.youtube.com/watch?v=iYkLrXobBbA",
+              "video": "https://www.youtube.com/watch?v=BSQB-vxFtX0",
               "source": "https://git-scm.com/downloads/win"
             },
             {
               "slug": "clone",
               "label": "Clone the project into your computer",
               "description": "You can clone the project into your computer by simply running this command in the terminal: `git clone {{repoUrl}}`. You can check this link if you need a more detailed explanation.",
-              "video": "https://www.youtube.com/watch?v=EhxPBMQFCaI",
+              "video": "https://www.youtube.com/watch?v=NgfV30FmhS4",
               "source": "https://4geeks.com/how-to/github-clone-repository",
               "source-label": "Go to how to clone a GitHub repository"
             }
@@ -469,7 +481,7 @@
               "slug": "read-readme",
               "label": "Read the content of the readme",
               "description": "A README is a standard file that explains, in a simple and clear way, what a project is about. Think of it as a small guide that tells you what it does, how to use it, and what you need to make it work. It’s like a welcome letter for anyone who wants to understand or collaborate on the project. We want you to get used to reading them, as they are essential in almost every project in the industry, and all professionals already have the habit of checking them.",
-              "video": "",
+              "video": "https://www.youtube.com/watch?v=bphlMjXZpLg",
               "source": "#markdown-body",
               "source-label": "Take me to the readme!"
             }
@@ -508,6 +520,7 @@
   "mid-level": "Mid level",
   "senior": "Senior",
   "money-back-guarantee": "Get a full refund within 30 days if it's not what you expected",
+  "money-back-guarantee-short": "100% Money back guarantee",
   "start-free-trial": "Start free trial",
   "proceed-to-payment": "Proceed to payment",
   "select-cohort": "Select a cohort",
