@@ -115,14 +115,12 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
   const { t } = useTranslation('common');
   const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
+  const { user } = useAuth();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
-
-  console.log(currentAsset);
-  console.log(vendors);
 
   const fetchProvisioningVendors = async (academyId) => {
     try {
@@ -201,7 +199,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             publicView={publicView}
           />
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} userID={user?.id} />
       </>
     );
   }
