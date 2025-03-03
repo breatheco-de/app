@@ -22,12 +22,38 @@ import Heading from '../../common/components/Heading';
 import ModalToCloneProject from './ModalToCloneProject';
 import Text from '../../common/components/Text';
 import Icon from '../../common/components/Icon';
+import useAuth from '../../common/hooks/useAuth';
 
-export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, ...rest }) {
+export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLearnpack, isForOpenLocaly, learnpackUrlFromPublicView, startWithLearnpack, openWithLearnpackNoSaas, variant, isStarted, publicView, ...rest }) {
   const { t } = useTranslation('common');
 
   const isExternalExercise = currentAsset.external && currentAsset.asset_type === 'EXERCISE';
 
+  //____USED ONLY ON PUBLIC VIEWS____
+  if (learnpackUrlFromPublicView) {
+    return (
+      <Button
+        cursor="pointer"
+        as="a"
+        href={currentAsset?.learnpack_deploy_url}
+        target="_blank"
+        size="sm"
+        width={variant === 'extra-small' && '100%'}
+        padding="4px 8px"
+        fontSize="14px"
+        fontWeight="bold"
+        background={variant !== 'extra-small' ? 'gray.200' : 'blue.default'}
+        style={variant === 'extra-small' ? { color: 'white', textDecoration: 'none' } : { textDecoration: 'none' }}
+        _hover="none"
+        _active="none"
+        {...rest}
+      >
+        {t('common:learnpack.start-exercise').toUpperCase()}
+      </Button>
+    );
+  }
+
+  //___USED ON PRIVATE VIEWS NO SAAS___
   if (isExternalExercise && !startWithLearnpack) {
     return (
       <Button
@@ -51,6 +77,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
     );
   }
 
+  //___USED ON PRIVATE VIEWS SAAS___
   return (
     <>
       {startWithLearnpack ? (
@@ -65,6 +92,7 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           padding="4px 8px"
           fontSize="14px"
           fontWeight="500"
+          width={variant === 'extra-small' && '100%'}
           background={variant === 'extra-small' ? 'none' : 'gray.200'}
           color={variant === 'extra-small' ? 'white' : 'blue.default'}
           _hover={variant === 'extra-small' && 'none'}
@@ -74,36 +102,69 @@ export function ButtonsHandler({ currentAsset, setShowCloneModal, handleStartLea
           }}
           {...rest}
         >
-          {t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
+          {publicView
+            ? t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) }).toUpperCase()
+            : t('common:learnpack.start-asset', { asset_type: t(`common:learnpack.asset_types.${currentAsset?.asset_type?.toLowerCase() || ''}`) })}
         </Button>
       )}
     </>
   );
 }
 
-function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, ...rest }) {
+function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isStarted, publicViewLearnpack, publicView, ...rest }) {
   const { t } = useTranslation('common');
+  const { cohorts } = useAuth();
   const { currentTask } = useModuleHandler();
+  const { user } = useAuth();
   const { state } = useCohortHandler();
   const { cohortSession } = state;
   const [showCloneModal, setShowCloneModal] = useState(false);
   const [vendors, setVendors] = useState([]);
   const noLearnpackIncluded = noLearnpackAssets['no-learnpack'];
 
-  const fetchProvisioningVendors = async () => {
+  const fetchProvisioningVendors = async (academyId) => {
     try {
-      const { data } = await bc.provisioning().academyVendors(cohortSession.academy.id);
-      setVendors(data);
+      const { data } = await bc.provisioning().academyVendors(academyId);
+      return data;
     } catch (e) {
       console.log(e);
+      return [];
     }
   };
 
   useEffect(() => {
-    if (cohortSession) {
-      fetchProvisioningVendors();
-    }
-  }, [cohortSession]);
+    const fetchVendors = async () => {
+      if (cohortSession && !publicView) {
+        const fetchedVendors = await fetchProvisioningVendors(cohortSession.academy.id);
+        setVendors(fetchedVendors);
+        return;
+      }
+
+      const fetchSequentially = async () => {
+        let found = false;
+
+        await cohorts.reduce(async (previousPromise, cohort) => {
+          await previousPromise;
+
+          if (found || vendors.length > 0) return;
+
+          if (cohort.academy?.id) {
+            const data = await fetchProvisioningVendors(cohort.academy.id);
+            if (data.length > 0) {
+              setVendors(data);
+              found = true;
+            }
+          }
+        }, Promise.resolve());
+      };
+
+      if (vendors.length === 0) {
+        fetchSequentially();
+      }
+    };
+
+    fetchVendors();
+  }, [cohortSession, cohorts]);
 
   const isInteractive = currentAsset?.interactive;
   const isExternalExercise = currentAsset?.external && currentAsset?.asset_type === 'EXERCISE';
@@ -133,10 +194,12 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             setShowCloneModal={setShowCloneModal}
             startWithLearnpack={startWithLearnpack}
             openWithLearnpackNoSaas={openWithLearnpackNoSaas}
+            learnpackUrlFromPublicView={publicViewLearnpack}
             variant={variant}
+            publicView={publicView}
           />
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} userID={user?.id} />
       </>
     );
   }
@@ -173,7 +236,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
             </Box>
           </Box>
         </Box>
-        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+        <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
       </>
     );
   }
@@ -217,7 +280,7 @@ function ProjectInstructions({ currentAsset, variant, handleStartLearnpack, isSt
           />
         </Box>
       </Box>
-      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} />
+      <ModalToCloneProject currentAsset={currentAsset} isOpen={showCloneModal} onClose={setShowCloneModal} provisioningVendors={vendors} publicView={publicView} />
     </>
   );
 }

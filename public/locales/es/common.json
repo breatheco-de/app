@@ -167,6 +167,7 @@
     "description": "<strong>\"{{projectName}}\"</strong> utiliza LearnPack para una experiencia interactiva y autoevaluada; elige una de las siguientes opciones para comenzar a trabajar en el proyecto:",
     "new-exercise": "Comenzar desde el principio",
     "continue-exercise": "Continuar desde una sesión anterior",
+    "open-with-vendor": "Abrir con {{vendor}}",
     "open-locally": "Abrir localmente en tu computadora",
     "start-interactive-asset": "Empezar {{asset_type}} interactivo",
     "start-asset": "Empezar {{asset_type}}",
