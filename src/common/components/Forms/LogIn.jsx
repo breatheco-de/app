@@ -296,12 +296,6 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                           height="50px"
                           borderColor="gray.default"
                           borderRadius="3px"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault();
-                              form.submitForm();
-                            }
-                          }}
                         />
                         <InputRightElement width="2.5rem" top="5px" right="10px">
                           <Button
