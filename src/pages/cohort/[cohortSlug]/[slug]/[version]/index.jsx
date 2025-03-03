@@ -47,7 +47,6 @@ import { BREATHECODE_HOST } from '../../../../../utils/variables';
 import ModalInfo from '../../../../../js_modules/moduleMap/modalInfo';
 import Text from '../../../../../common/components/Text';
 import OnlyFor from '../../../../../common/components/OnlyFor';
-import AlertMessage from '../../../../../common/components/AlertMessage';
 import useCohortHandler from '../../../../../common/hooks/useCohortHandler';
 import useModuleHandler from '../../../../../common/hooks/useModuleHandler';
 import LiveEvent from '../../../../../common/components/LiveEvent';
@@ -58,7 +57,7 @@ import useCustomToast from '../../../../../common/hooks/useCustomToast';
 
 function Dashboard() {
   const { t, lang } = useTranslation('dashboard');
-  const { createToast } = useCustomToast({ toastId: 'fetching-teachers-students-nsync-cohort' });
+  const { createToast, closeToast } = useCustomToast({ toastId: 'fetching-teachers-students-nsync-cohort' });
   const router = useRouter();
   const { colorMode } = useColorMode();
   const [showWarningModal, setShowWarningModal] = useState(false);
@@ -399,6 +398,60 @@ function Dashboard() {
     };
   }, [cohortProgram, taskTodo, router]);
 
+  useEffect(() => {
+    const mandatoryProjectsCount = getMandatoryProjects()?.length || 0;
+    if (isSubscriptionFreeTrial) {
+      console.log('Alerta de prueba gratuita cerrada free trial');
+      createToast({
+        position: 'top',
+        title: (
+          <span
+            dangerouslySetInnerHTML={{
+              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
+            }}
+          />
+        ),
+        status: 'warning',
+        duration: null,
+      });
+    }
+    if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial) {
+      console.log('Alerta de proyectos obligatorios cerrada');
+      createToast({
+        position: 'top',
+        title: (
+          <span>
+            <span
+              dangerouslySetInnerHTML={{
+                __html: t('deliverProject.mandatory-message', { count: getMandatoryProjects().length }),
+              }}
+            />
+            .
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                closeToast();
+                setShowMandatoryModal(true);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                  closeToast();
+                  setShowMandatoryModal(true);
+                }
+              }}
+              style={{ textDecoration: 'underline', cursor: 'pointer', color: 'black', fontWeight: '700' }}
+            >
+              {t('deliverProject.see-mandatory-projects')}
+            </span>
+          </span>
+        ),
+        status: 'warning',
+        duration: null,
+      });
+    }
+  }, [isSubscriptionFreeTrial, getMandatoryProjects()?.length]);
+
   const dailyModuleData = getDailyModuleData() || '';
   const lastTaskDoneModuleData = getLastDoneTaskModuleData() || '';
 
@@ -427,7 +480,7 @@ function Dashboard() {
 
   return (
     <>
-      {getMandatoryProjects() && getMandatoryProjects().length > 0 && !isSubscriptionFreeTrial && (
+      {/* {getMandatoryProjects() && getMandatoryProjects().length > 0 && !isSubscriptionFreeTrial && (
         <AlertMessage
           full
           type="warning"
@@ -455,24 +508,7 @@ function Dashboard() {
             </Button>
           </Text>
         </AlertMessage>
-      )}
-      {isSubscriptionFreeTrial && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-          onClose={() => console.log('Alerta de prueba gratuita cerrada free trial')}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-            dangerouslySetInnerHTML={{
-              __html: t('free-trial-msg', { link: '/profile/subscriptions' }),
-            }}
-          />
-        </AlertMessage>
-      )}
+      )} */}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
