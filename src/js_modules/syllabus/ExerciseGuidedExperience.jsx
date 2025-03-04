@@ -112,7 +112,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
       borderRadius="11px"
       background="blue.1000"
       height="83vh"
-      mb="30px"
       padding={learnpackStart ? '0' : '16px'}
       display="flex"
       flexDirection="column"
@@ -143,7 +142,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               gap="16px"
               flexDirection={{ base: 'column', md: 'row' }}
               flexGrow={10}
-              maxHeight={{ base: 'none', md: '512px' }}
             >
               <Box
                 display="flex"
@@ -161,7 +159,7 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     overflowY="auto"
                     flexGrow={1}
                     paddingRight={isExerciseStarted && '8px'}
-                    maxHeight="70px"
+                    maxHeight={isExerciseStarted && '70px'}
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
@@ -170,12 +168,12 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 </Flex>
                 <Flex justifyContent="center" flexGrow={1}>
                   <Box
-                    flexGrow={1}
+                    flexGrow={isExerciseStarted && 1}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                     width="100%"
-                    height="100%"
+                    height={isExerciseStarted && '100%'}
                     overflow="hidden"
                     borderRadius="10px"
                   >
