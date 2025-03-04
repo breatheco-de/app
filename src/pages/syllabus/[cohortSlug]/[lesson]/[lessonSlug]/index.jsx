@@ -248,7 +248,9 @@ function SyllabusContent() {
     try {
       let aiContext;
       const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
-      if (!cachedContext) {
+      console.log('estoy cachadooooo', cachedContext);
+      if (!cachedContext && currentAsset?.id) {
+        console.log('pase el if');
         const resp = await bc.lesson().getAssetContext(currentAsset.id);
         if (resp?.status === 200) {
           aiContext = resp.data;
@@ -435,7 +437,11 @@ function SyllabusContent() {
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (Object.keys(cohortSession).length > 0) {
+    if (Object.keys(cohortSession).length > 0 && sortedAssignments.length > 0) {
+      if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
+        EventIfNotFound(currTask);
+        return undefined;
+      }
       bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
