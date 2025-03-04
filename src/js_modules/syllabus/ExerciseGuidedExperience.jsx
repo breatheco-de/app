@@ -150,7 +150,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                 flexDirection={{ base: 'column', md: isExerciseStarted ? 'column' : 'row' }}
                 width="100%"
                 height="100%"
-                maxHeight="512px"
                 gap={!isExerciseStarted && '10px'}
               >
                 <Flex flexDirection="column" overflowY="hidden" maxWidth={{ base: 'none', md: !isExerciseStarted && '50%' }}>
@@ -162,39 +161,40 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                     overflowY="auto"
                     flexGrow={1}
                     paddingRight={isExerciseStarted && '8px'}
+                    maxHeight="70px"
                   >
                     <Text color="white" size="l">
                       {currentAsset?.description}
                     </Text>
                   </Box>
                 </Flex>
-                <Flex justifyContent="center" flexGrow={!isExerciseStarted && 1}>
+                <Flex justifyContent="center" flexGrow={1}>
                   <Box
                     flexGrow={1}
-                    flexShrink={isExerciseStarted && 1}
-                    marginTop="10px"
-                    flexBasis="40%"
-                    maxHeight="300px"
-                    minHeight="180px"
-                    maxWidth="500px"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="100%"
+                    height="100%"
                     overflow="hidden"
                     borderRadius="10px"
                   >
-                    <ReactPlayerV2
-                      withThumbnail
-                      controls={false}
-                      thumbnailStyle={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                      }}
-                      iframeStyle={{
-                        objectFit: 'contain',
-                        width: '100%',
-                        height: '100%',
-                      }}
-                      url={currentAsset?.intro_video_url}
-                    />
+                    <Box
+                      borderRadius="10px"
+                      width={{ base: '100%', md: 'auto' }}
+                      maxWidth="100%"
+                      aspectRatio="16 / 9"
+                      height="100%"
+                    >
+                      <ReactPlayerV2
+                        withThumbnail
+                        controls={false}
+                        width="100%"
+                        height="100%"
+                        style={{ objectFit: 'contain' }}
+                        url={currentAsset?.intro_video_url}
+                      />
+                    </Box>
                   </Box>
                 </Flex>
               </Box>
@@ -202,7 +202,6 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
               {isExerciseStarted && (
                 <Box
                   width="100%"
-                  height="fit-content"
                   display="flex"
                   flexWrap="wrap"
                   gap="16px"
@@ -212,10 +211,10 @@ function ExerciseGuidedExperience({ currentTask, currentAsset, handleStartLearnp
                       label={elem.label}
                       icon={elem.icon}
                       value={elem.value}
+                      fontSize={{ base: '17px', sm: '25px', lg: '30px' }}
                       variationColor="#3A3A3A"
                       background="blue.1200"
                       border="none"
-                      height="160px"
                       width={{ base: '100%', md: 'calc(50% - 8px)' }}
                       textProps={{ textTransform: 'none', color: 'gray.dark' }}
                     />
