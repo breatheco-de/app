@@ -650,7 +650,7 @@ function CoursePage({ data, syllabus }) {
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
                   <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students.length < limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
+                    {students?.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
