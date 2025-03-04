@@ -40,12 +40,10 @@ function SubscriptionInfo({ subscription }) {
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
-
     const parsedDate = new Date(date);
-
-    const dateFormat = lang === 'en' || lang === 'us' ? 'MM/dd/yyyy' : 'dd/MM/yyyy';
-
-    return format(parsedDate, dateFormat, { locale: lang === 'en' || lang === 'us' ? enGB : es });
+    const dateFormat = 'dd MMM yyyy';
+    const locale = lang === 'en' || lang === 'us' ? enGB : es;
+    return format(parsedDate, dateFormat, { locale });
   };
 
   const getSubscriptionDetails = (sub) => {
@@ -128,7 +126,7 @@ function SubscriptionInfo({ subscription }) {
       free_trial: () => ({
         renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
         renewability: t('subscription.active-since', { date: paidAt }),
-        paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+        paymentInfo: t('subscription.payment', { payment: t('common:free') }),
       }),
     };
 
@@ -492,8 +490,6 @@ function Subscriptions({ cohorts }) {
         >
           {membershipsFiltered?.length > 0 && membershipsFiltered.map((subscription) => {
             const status = subscription?.status?.toLowerCase();
-            const invoice = subscription?.invoices[0];
-            const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
 
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -510,13 +506,6 @@ function Subscriptions({ cohorts }) {
                     <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
-                    <Flex alignItems="center" gridGap="10px">
-                      {!isFreeTrial && (
-                        <Text fontSize="18px" fontWeight="700">
-                          {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
-                        </Text>
-                      )}
-                    </Flex>
                   </Flex>
 
                   <SubscriptionInfo subscription={subscription} />
