@@ -120,6 +120,10 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
         password: '',
       }}
       onSubmit={(values, actions) => {
+        if (step === 1) {
+          validateEmail(values.email);
+          return;
+        }
         login(values, disableRedirect)
           .then((data) => {
             actions.setSubmitting(false);
@@ -248,7 +252,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                   </Text>
                 )}
                 {!invitationSent ? (
-                  <Button onClick={() => validateEmail(values.email)} isLoading={emailValidation.loading} isDisabled={errors.email} variant="default" fontSize={actionfontSize || 'l'} type="button">
+                  <Button isLoading={emailValidation.loading} isDisabled={errors.email} variant="default" fontSize={actionfontSize || 'l'} type="submit">
                     {t('next')}
                   </Button>
                 ) : (
