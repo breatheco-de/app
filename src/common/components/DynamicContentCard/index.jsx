@@ -127,7 +127,7 @@ function DynamicContentCard({ data, type, technologies, usersWorkedHere, ...rest
     >
       {/* <--------------- Head content (average duration and technology icon/tag) ---------------> */}
       <HeadInfo
-        technologies={technologies}
+        technologies={data?.technologies || technologies}
         date={date}
         duration={data?.duration}
         type={type}

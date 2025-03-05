@@ -38,9 +38,9 @@ function HeadInfo({ technologies, duration, type, date }) {
 
   return (
     <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
-      {technologies?.length > 0 && (
-        <Flex alignItems="center" gridGap="3px" flexWrap="wrap">
-          {technologies.filter((tech) => tech?.icon_url).map((tech) => {
+      {technologies?.length > 0 ? (
+        <Flex alignItems="center" gridGap="8px">
+          {technologies.filter((tech) => tech.icon_url).map((tech) => {
             if (tech?.icon_url) {
               return (
                 <Image src={tech?.icon_url} width={20} height={20} />
@@ -53,7 +53,7 @@ function HeadInfo({ technologies, duration, type, date }) {
             );
           })}
         </Flex>
-      )}
+      ) : <Box />}
       <Flex display="flex" gridGap="10px" padding={isWorkshop ? '4px 0 0 0' : 'auto'} alignItems="center">
         {/* <--------------- Average time duration ---------------> */}
         {((Number.isInteger(duration) && !date?.ended) || (date?.text && !date?.ended)) && (

@@ -95,7 +95,7 @@ function MktEventCards({
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
-          const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
+          const eventsWithTechnologies = sortPrioOneTechs.length > 0 ? transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs) : eventsFilteredByLang;
 
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
@@ -204,7 +204,6 @@ function MktEventCards({
                     <DynamicContentCard
                       type="workshop"
                       data={event}
-                      technologies={event?.technologies}
                       maxHeight="256px"
                       userSelect="none"
                       transition="transform 0.15s ease-in-out"
