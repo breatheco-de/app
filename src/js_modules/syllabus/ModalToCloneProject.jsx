@@ -237,7 +237,10 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
   const agentVsCode = t('common:learnpack.clone-modal.agent-vs-code', {}, { returnObjects: true });
   const agentOS = t('common:learnpack.clone-modal.agent-os', { repoName }, { returnObjects: true });
   const projectReadme = t('common:learnpack.clone-modal.project-readme', {}, { returnObjects: true });
-  const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', {}, { returnObjects: true });
+  const openInLearnpackAction = t('common:learnpack.open-in-learnpack-button', { repoUrl: getFinalUrl() ? `<a href='${getFinalUrl()}'>${t('common:repository-information')}</a>` : t('common:repository-information') }, { returnObjects: true });
+
+  console.log(currentAsset);
+  console.log(provisioningVendors);
 
   const finalStep = currentAsset?.agent === 'vscode' ? agentVsCode : agentOS;
 
@@ -300,6 +303,8 @@ function ModalToCloneProject({ isOpen, onClose, currentAsset, provisioningVendor
 
     setSelectedOption(null);
   }, [isForOpenLocaly, showProvisioningLinks, onlyReadme, lang]);
+
+  console.log(currentAsset);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size={(selectedOption === 'provisioning_vendors' && isInteractive) || !selectedOption ? 'lg' : '5xl'}>
