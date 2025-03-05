@@ -131,6 +131,7 @@ export const processPlans = (data, {
         title: singlePlan?.title ? singlePlan?.title : textInfo.monthly_payment,
         price: data?.price_per_month,
         priceText: `$${data?.price_per_month}`,
+        pricePerMonth: data?.price_per_month,
         plan_id: `p-${data?.price_per_month}`,
         description: translations?.yearly_payment_description || '',
         period: 'MONTH',
@@ -143,6 +144,8 @@ export const processPlans = (data, {
         title: singlePlan?.title ? singlePlan?.title : textInfo.quarterly_payment,
         price: data?.price_per_quarter,
         priceText: `$${data?.price_per_quarter}`,
+        pricePerMonth: data?.price_per_quarter / 4,
+        pricePerMonthText: `${data.currency}${data?.price_per_quarter / 4}`,
         plan_id: `p-${data?.price_per_quarter}`,
         description: translations?.quarterly_payment_description || '',
         period: 'QUARTER',
@@ -156,6 +159,8 @@ export const processPlans = (data, {
         title: singlePlan?.title ? singlePlan?.title : textInfo.half_yearly_payment,
         price: data?.price_per_half,
         priceText: `$${data?.price_per_half}`,
+        pricePerMonth: data?.price_per_half / 6,
+        pricePerMonthText: `${data.currency}${data?.price_per_half / 6}`,
         plan_id: `p-${data?.price_per_half}`,
         description: translations?.half_yearly_payment_description || '',
         period: 'HALF',
@@ -169,6 +174,8 @@ export const processPlans = (data, {
         title: singlePlan?.title ? singlePlan?.title : textInfo.yearly_payment,
         price: data?.price_per_year,
         priceText: `$${data?.price_per_year}`,
+        pricePerMonth: (data?.price_per_year / 12).toFixed(2),
+        pricePerMonthText: `${data.currency}${(data?.price_per_year / 12).toFixed(2)}`,
         plan_id: `p-${data?.price_per_year}`,
         description: translations?.yearly_payment_description || '',
         period: 'YEAR',
@@ -194,8 +201,8 @@ export const processPlans = (data, {
         });
       }) : [{}];
 
-      const planList = [trialPlan, onePaymentFinancing[0], monthPlan, quarterPlan, halfPlan, yearPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
-      const paymentList = [onePaymentFinancing[0], monthPlan, yearPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
+      const planList = [trialPlan, onePaymentFinancing[0], yearPlan, halfPlan, quarterPlan, monthPlan, ...financingOption].filter((plan) => Object.keys(plan).length > 0 && plan.show);
+      const paymentList = [onePaymentFinancing[0], yearPlan, monthPlan, trialPlan].filter((plan) => Object.keys(plan).length > 0);
       const financingList = financingOption?.filter((plan) => Object.keys(plan).length > 0);
 
       resolve({

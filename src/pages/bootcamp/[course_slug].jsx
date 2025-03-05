@@ -165,6 +165,7 @@ function CoursePage({ data, syllabus }) {
   const planList = planData?.planList || [];
   const payableList = planList.filter((plan) => plan?.type === 'PAYMENT');
   const freePlan = planList?.find((plan) => plan?.type === 'TRIAL' || plan?.type === 'FREE');
+  console.log('planList', planList);
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
 
@@ -200,11 +201,16 @@ function CoursePage({ data, syllabus }) {
 
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${handleCoupons(featuredPlanToEnroll.priceText)}`;
-      }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
+        return t('signup:info.enroll-yearly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.priceTextPerMonth),
+          price_per_year: handleCoupons(featuredPlanToEnroll.priceText),
+        });;
+      }
+      if (featuredPlanToEnroll.period === 'MONTH') {
+        return t('signup:info.enroll-monthly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.priceText)
+        });
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
         return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
