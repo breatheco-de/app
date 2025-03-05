@@ -195,28 +195,28 @@
           "label": "Verificar si el repositorio es una plantilla",
           "description": "Verifica si el repositorio es una plantilla de GitHub antes de continuar.<br><br>Puedes averiguar si es una plantilla observando la sección de {{repoUrl}}.<br><br>Si tiene un botón `Usar esta plantilla` o si, después del nombre del repositorio ubicado en la parte superior de tu pantalla (en GitHub), dice `Template` o `Public template`, entonces es una plantilla.",
           "video": "",
-          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
           "label": "Si no es una plantilla",
           "description": "Si el repositorio no es una plantilla:\n1. Ve al repositorio de GitHub y haz clic en el botón `Fork`.\n2. Configura el propietario como 4Geeks si deseas horas gratis en Codespaces, o usa tu propia cuenta de usuario.\n3. Una vez que el fork se complete, tendrás una copia del repositorio en tu cuenta (el fork), que ahora puedes modificar y trabajar en él.\n\nContinúa con el paso 4.",
           "video": "",
-          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
           "label": "Si es una plantilla",
           "description": "Si el repositorio es una plantilla:\n1. Haz clic en `Usar esta plantilla` y selecciona `Crear un nuevo repositorio`.\n2. Elige un propietario (selecciona 4Geeks si eres estudiante para obtener horas gratuitas en Codespaces).\n3. Nombra tu repositorio (por ejemplo, `usuario-nombre-del-proyecto`) y hazlo público.\n4. Haz clic en `Crear repositorio desde plantilla`.\n5. Marca el repositorio con una estrella para encontrarlo fácilmente más tarde.",
           "video": "",
-          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         },
         {
           "label": "Abrir el repositorio",
           "description": "Sigue una de estas opciones para abrir el repositorio:\n- **Abrir en Github Codespaces**: Haz clic en el botón `Code` y abre el proyecto en Codespaces.\n- **Abrir en Gitpod**: Instala la extensión de Gitpod y usa el botón de Gitpod para abrir el proyecto.",
           "video": "",
-          "source": "https://4geeks.com/lesson/how-to-start-a-project",
+          "source": "https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion",
           "source-label": ""
         }
       ]
