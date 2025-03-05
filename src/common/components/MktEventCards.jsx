@@ -95,7 +95,7 @@ function MktEventCards({
           const filteredByLang = existentLiveClasses?.filter((l) => l?.lang === englishLang || l?.lang === lang);
 
           const eventsFilteredByLang = isMoreThanAnyEvents ? filteredByLang : existentLiveClasses;
-          const eventsWithTechnologies = sortPrioOneTechs.length > 0 ? transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs) : eventsFilteredByLang;
+          const eventsWithTechnologies = transformEventsWithTechnologies(eventsFilteredByLang, sortPrioOneTechs);
 
           const eventsFilteredByTech = techFilter ? eventsWithTechnologies.filter((event) => event?.event_type?.technologies?.split(',').includes(techFilter.toLowerCase())) : eventsWithTechnologies;
           if (showCheckedInEvents && user?.id && eventsFilteredByTech.length > 0) {
@@ -115,7 +115,7 @@ function MktEventCards({
     };
 
     fetchEvents();
-  }, [externalEvents, techFilter]);
+  }, [externalEvents, techFilter, sortPrioOneTechs]);
 
   useEffect(() => {
     if (!searchSensitive || techFilter) return undefined;
@@ -204,6 +204,7 @@ function MktEventCards({
                     <DynamicContentCard
                       type="workshop"
                       data={event}
+                      technologies={event?.technologies}
                       maxHeight="256px"
                       userSelect="none"
                       transition="transform 0.15s ease-in-out"
