@@ -1,6 +1,7 @@
-import { Box, Flex, Badge } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
+import Image from 'next/image';
 import Text from '../Text';
 import Icon from '../Icon';
 import useStyle from '../../hooks/useStyle';
@@ -29,7 +30,7 @@ const getIntervalDurationTranslation = (date) => {
 
 function HeadInfo({ technologies, duration, type, date }) {
   const { t } = useTranslation('common');
-  const { backgroundColor, lightColor } = useStyle();
+  const { backgroundColor, lightColor, featuredLight } = useStyle();
   const startedButNotEnded = date?.started && date?.ended === false;
   const intervalDurationText = getIntervalDurationTranslation(date);
   const existsDuration = intervalDurationText || duration;
@@ -39,9 +40,18 @@ function HeadInfo({ technologies, duration, type, date }) {
     <Flex minHeight="24px" alignItems="center" justifyContent="space-between" width="100%">
       {technologies?.length > 0 && (
         <Flex alignItems="center" gridGap="3px" flexWrap="wrap">
-          {technologies?.slice(0, 3).map((tech) => (
-            <Badge borderRadius="10px" px="8px" colorScheme="blue">{tech}</Badge>
-          ))}
+          {technologies.filter((tech) => tech?.icon_url).map((tech) => {
+            if (tech?.icon_url) {
+              return (
+                <Image src={tech?.icon_url} width={20} height={20} />
+              );
+            }
+            return (
+              <Text alignItems="center" gridGap="4px" background={featuredLight} padding="4px 10px" borderRadius="18px">
+                {tech?.title}
+              </Text>
+            );
+          })}
         </Flex>
       )}
       <Flex display="flex" gridGap="10px" padding={isWorkshop ? '4px 0 0 0' : 'auto'} alignItems="center">
