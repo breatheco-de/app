@@ -69,26 +69,48 @@ function SubscriptionInfo({ subscription }) {
           return {
             renewalDate: t('subscription.expiration-date', { date: expirationDate }),
             paymentInfo: isPlanFinancingFullyPaid
-              ? t('subscription.totally-paid', { amount: fullFilledInvoicesAmount * sub.monthly_price, currencySymbol: subCurrency })
-              : t('subscription.total-paid', { paidAmount: fullFilledInvoicesAmount * sub.monthly_price, pendingAmount: sub.how_many_installments * sub.monthly_price, currencySymbol: subCurrency }),
+              ? t('subscription.totally-paid', {
+                amount: fullFilledInvoicesAmount * sub.monthly_price,
+                currencySymbol: subCurrency,
+              })
+              : t('subscription.total-paid', {
+                paidAmount: fullFilledInvoicesAmount * sub.monthly_price,
+                pendingAmount: sub.how_many_installments * sub.monthly_price,
+                currencySymbol: subCurrency,
+              }),
             nextPayment: isPlanFinancingFullyPaid ? t('subscription.no-payment-left') : paymentText(sub?.monthly_price, nextPaymentDate),
           };
         }
         return {
           renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
           renewability: sub.created_at ? t('subscription.active-since', { date: sub.created_at }) : false,
-          paymentInfo: t('subscription.payment', { payment: sub?.invoices[0]?.amount === 0 ? t('common:free') : `${subCurrency}${sub?.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+          paymentInfo: t('subscription.payment', {
+            payment: sub?.invoices[0]?.amount === 0
+              ? t('common:free')
+              : `${subCurrency}${sub?.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}`,
+          }),
         };
       },
       expired: () => ({
         renewalDate: t('subscription.expired-on', { date: expirationDate }),
         paymentInfo: isPlanFinancing
-          ? t('subscription.totally-paid', { amount: fullFilledInvoicesAmount * sub.monthly_price, currencySymbol: subCurrency })
-          : t('subscription.payment', { payment: `${sub?.invoices[0]?.amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
+          ? t('subscription.totally-paid', {
+            amount: fullFilledInvoicesAmount * sub.monthly_price,
+            currencySymbol: subCurrency,
+          })
+          : t('subscription.payment', {
+            payment: `${sub?.invoices[0]?.amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}`,
+          }),
       }),
       error: () => ({
-        errorMessage: t('subscription.error-message', { error: sub?.status_message || 'Something went wrong' }),
-        paymentInfo: t('subscription.payment', { payment: `${subCurrency}${sub?.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+        errorMessage: t('subscription.error-message', {
+          error: sub?.status_message || 'Something went wrong',
+        }),
+        paymentInfo: t('subscription.payment', {
+          payment: sub.invoices[0]?.amount
+            ? `${subCurrency}${sub.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}`
+            : 'Error',
+        }),
       }),
       payment_issue: () => {
         if (isPlanFinancing) {
@@ -96,28 +118,47 @@ function SubscriptionInfo({ subscription }) {
             renewalDate: t('subscription.expiration-date', { date: expirationDate }),
             nextPayment: isPlanFinancingFullyPaid ? t('subscription.no-payment-left') : paymentText(sub?.monthly_price, nextPaymentDate),
             paymentInfo: isPlanFinancingFullyPaid
-              ? t('subscription.totally-paid', { amount: sub.monthly_price, currencySymbol: subCurrency })
-              : t('subscription.total-paid', { paidAmount: fullFilledInvoicesAmount * sub.monthly_price, pendingAmount: sub.how_many_installments * sub.monthly_price, currencySymbol: subCurrency }),
+              ? t('subscription.totally-paid', {
+                amount: sub.monthly_price,
+                currencySymbol: subCurrency,
+              })
+              : t('subscription.total-paid', {
+                paidAmount: fullFilledInvoicesAmount * sub.monthly_price,
+                pendingAmount: sub.how_many_installments * sub.monthly_price,
+                currencySymbol: subCurrency,
+              }),
           };
         }
         return {
-          errorMessage: t('subscription.error-message', { error: sub?.status_message || 'Something went wrong' }),
-          paymentInfo: t('subscription.payment', { payment: `${subCurrency}${sub?.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+          errorMessage: t('subscription.error-message', {
+            error: sub?.status_message || 'Something went wrong',
+          }),
+          paymentInfo: t('subscription.payment', {
+            payment: `${subCurrency}${sub?.invoices[0]?.amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}`,
+          }),
         };
       },
       cancelled: () => {
         if (isPlanFinancing) {
           return {
             renewalDate: t('subscription.expiration-date', { date: expirationDate }),
-            nextPayment: isPlanFinancingFullyPaid ? t('subscription.no-payment-left') : paymentText(sub?.monthly_price, nextPaymentDate),
+            nextPayment: isPlanFinancingFullyPaid
+              ? t('subscription.no-payment-left')
+              : paymentText(sub?.monthly_price, nextPaymentDate),
             paymentInfo: isPlanFinancingFullyPaid
               ? t('subscription.totally-paid', { amount: sub.monthly_price })
-              : t('subscription.total-paid', { paidAmount: fullFilledInvoicesAmount * sub.monthly_price, pendingAmount: sub.how_many_installments * sub.monthly_price, currencySymbol: subCurrency }),
+              : t('subscription.total-paid', {
+                paidAmount: fullFilledInvoicesAmount * sub.monthly_price,
+                pendingAmount: sub.how_many_installments * sub.monthly_price,
+                currencySymbol: subCurrency,
+              }),
           };
         }
         return {
           errorMessage: false,
-          paymentInfo: t('subscription.payment', { payment: `${sub?.invoices[0]?.amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+          paymentInfo: t('subscription.payment', {
+            payment: `${sub?.invoices[0]?.amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}`,
+          }),
         };
       },
       free_trial: () => ({
@@ -129,8 +170,6 @@ function SubscriptionInfo({ subscription }) {
 
     return statusConfig[status] ? statusConfig[status]() : baseDetails;
   };
-
-  console.log(subscription);
 
   const { renewalDate, renewability, paymentInfo, nextPayment, errorMessage } = getSubscriptionDetails(subscription);
 
