@@ -57,7 +57,6 @@ function SubscriptionInfo({ subscription }) {
     const expirationDate = formatDate(sub?.plan_expires_at || sub?.next_payment_at);
     const paidAt = formatDate(sub?.paid_at);
     const subCurrency = currenciesSymbols[sub?.currency?.code] || '$';
-    console.log(sub);
 
     const baseDetails = {
       renewalDate: '',
@@ -135,8 +134,6 @@ function SubscriptionInfo({ subscription }) {
 
     return statusConfig[status] ? statusConfig[status]() : baseDetails;
   };
-
-  console.log(subscription);
 
   const { renewalDate, renewability, paymentInfo, nextPayment, errorMessage } = getSubscriptionDetails(subscription);
 
