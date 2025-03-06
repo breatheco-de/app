@@ -16,7 +16,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { enUS, es } from 'date-fns/locale';
+import { enGB, es } from 'date-fns/locale';
 import Head from 'next/head';
 import Image from 'next/image';
 import Icon from '../../../common/components/Icon';
@@ -40,8 +40,12 @@ function SubscriptionInfo({ subscription }) {
 
   const formatDate = (date) => {
     if (!date) return 'N/A';
+
     const parsedDate = new Date(date);
-    return format(parsedDate, 'dd MMM yy', { locale: lang === 'en' || lang === 'us' ? enUS : es });
+
+    const dateFormat = lang === 'en' || lang === 'us' ? 'MM/dd/yyyy' : 'dd/MM/yyyy';
+
+    return format(parsedDate, dateFormat, { locale: lang === 'en' || lang === 'us' ? enGB : es });
   };
 
   const getSubscriptionDetails = (sub) => {
@@ -51,6 +55,7 @@ function SubscriptionInfo({ subscription }) {
     const isPlanFinancingFullyPaid = fullFilledInvoicesAmount === sub?.how_many_installments;
     const nextPaymentDate = formatDate(sub?.next_payment_at);
     const expirationDate = formatDate(sub?.plan_expires_at || sub?.next_payment_at);
+    const paidAt = formatDate(sub?.paid_at);
     const subCurrency = currenciesSymbols[sub?.currency?.code] || '$';
 
     const baseDetails = {
@@ -76,8 +81,8 @@ function SubscriptionInfo({ subscription }) {
         }
         return {
           renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
-          renewability: sub.created_at ? t('subscription.active-since', { date: sub.created_at }) : false,
-          paymentInfo: t('subscription.payment', { payment: sub.invoices[0].amount === 0 ? t('common:free') : `${subCurrency}${sub.invoices[0].amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+          renewability: t('subscription.active-since', { date: paidAt }),
+          paymentInfo: t('subscription.payment', { payment: `${subCurrency}${sub.invoices[0].amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
         };
       },
       expired: () => ({
@@ -122,8 +127,8 @@ function SubscriptionInfo({ subscription }) {
       },
       free_trial: () => ({
         renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
-        renewability: sub.created_at ? t('subscription.active-since', { date: sub.created_at }) : false,
-        paymentInfo: t('subscription.payment', { payment: t('common:free') }),
+        renewability: t('subscription.active-since', { date: paidAt }),
+        paymentInfo: t('subscription.payment', { payment: `${sub.invoices[0].amount}$/${t(`subscription.payment_unit.${sub?.pay_every_unit.toLowerCase()}`)}` }),
       }),
     };
 
@@ -487,6 +492,8 @@ function Subscriptions({ cohorts }) {
         >
           {membershipsFiltered?.length > 0 && membershipsFiltered.map((subscription) => {
             const status = subscription?.status?.toLowerCase();
+            const invoice = subscription?.invoices[0];
+            const isFreeTrial = subscription?.status?.toLowerCase() === 'free_trial';
 
             return (
               <Flex key={subscription?.id} height="fit-content" position="relative" margin="10px 0 0 0" flexDirection="column" justifyContent="space-between" alignItems="center" border="1px solid" borderColor={borderColor2} p="14px 16px 14px 14px" borderRadius="9px">
@@ -503,6 +510,13 @@ function Subscriptions({ cohorts }) {
                     <Text fontSize="16px" fontWeight="700">
                       {subscription?.plans[0]?.name || toCapitalize(unSlugify(subscription?.plans[0]?.slug))}
                     </Text>
+                    <Flex alignItems="center" gridGap="10px">
+                      {!isFreeTrial && (
+                        <Text fontSize="18px" fontWeight="700">
+                          {(invoice?.amount && `$${invoice?.amount}`) || t('common:free')}
+                        </Text>
+                      )}
+                    </Flex>
                   </Flex>
 
                   <SubscriptionInfo subscription={subscription} />
