@@ -169,7 +169,7 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          const couponData = couponsList.find(({ slug }) => slug ===  || slug === couponValue);
+          const couponData = couponsList.find(({ slug }) => slug === discountCode || slug === couponValue);
           if (couponData) {
             setDiscountCoupon({
               ...couponData,
