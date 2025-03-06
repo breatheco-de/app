@@ -173,7 +173,6 @@ function CoursePage({ data, syllabus }) {
 
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
-    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
     coupon: getQueryString('coupon'),
