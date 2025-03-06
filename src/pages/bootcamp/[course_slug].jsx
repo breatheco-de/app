@@ -115,7 +115,7 @@ function CoursePage({ data, syllabus }) {
   const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
-  const [isCtaVisible, setIsCtaVisible] = useState(true);
+  const [isCtaVisible, setIsCtaVisible] = useState(false);
   const [allDiscounts, setAllDiscounts] = useState([]);
   const { isAuthenticated, user, logout, cohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
@@ -293,22 +293,25 @@ function CoursePage({ data, syllabus }) {
   };
 
   useEffect(() => {
-    if (isWindow) {
-      const handleScroll = () => {
-        if (showBottomCTA.current) {
-          const { scrollY } = window;
-          const top = getElementTopOffset(showBottomCTA.current);
-          setIsCtaVisible(top - scrollY > 700);
-        }
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-      };
-    }
+    const checkCtaVisibility = () => {
+      if (showBottomCTA.current) {
+        const { scrollY } = window;
+        const top = getElementTopOffset(showBottomCTA.current);
+        setIsCtaVisible(top - scrollY > 700);
+      }
+    };
 
-    return undefined;
-  }, [isWindow]);
+    checkCtaVisibility();
+
+    const handleScroll = () => {
+      checkCtaVisibility();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const joinCohort = () => {
     if (isAuthenticated && existsRelatedSubscription) {

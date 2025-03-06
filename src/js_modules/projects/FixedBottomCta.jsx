@@ -87,7 +87,7 @@ function StickyBottomCta({
           </>
         )}
 
-        {course && isFetching && <Skeleton height="40px" width="100%" padding="1px" />}
+        {course && isFetching && <Skeleton height="150px" width="100%" padding="1px" />}
 
         {course && !isFetching && couponApplied && <CouponTopBar />}
 
