@@ -25,7 +25,6 @@ const getPlanPrice = (plan, planList, allDiscounts, t) => {
     if (plan.period === 'YEAR') {
       return t('signup:info.enroll-yearly-subscription', {
         price: handlePriceTextWithCoupon(plan.pricePerMonthText, allDiscounts, plan),
-        year_price: handlePriceTextWithCoupon(plan.priceText, allDiscounts, plan),
       });
     }
     if (plan.period === 'MONTH') {
