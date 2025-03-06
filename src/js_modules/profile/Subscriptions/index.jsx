@@ -135,8 +135,6 @@ function SubscriptionInfo({ subscription }) {
     return statusConfig[status] ? statusConfig[status]() : baseDetails;
   };
 
-  console.log(subscription);
-
   const { renewalDate, renewability, paymentInfo, nextPayment, errorMessage } = getSubscriptionDetails(subscription);
 
   return (
