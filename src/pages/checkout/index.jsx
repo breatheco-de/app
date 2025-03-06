@@ -189,7 +189,7 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === ) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
+    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       toast({
         position: 'top',
