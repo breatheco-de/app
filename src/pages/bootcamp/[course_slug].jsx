@@ -168,6 +168,7 @@ function CoursePage({ data, syllabus }) {
   console.log('planList', planList);
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
+  console.log('featuredPlanToEnroll',featuredPlanToEnroll);
 
   const reviewsData = t('course:reviews', {}, { returnObjects: true });
   const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
@@ -184,7 +185,7 @@ function CoursePage({ data, syllabus }) {
     if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
 
     const currencySymbol = priceText.replace(/[\d.,]/g, '');
-    let discountedPrice = featuredPlanToEnroll.price;
+    let discountedPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 
     allDiscounts.forEach((discount) => {
       if (discount.discount_type === 'PERCENT_OFF') {
@@ -198,13 +199,13 @@ function CoursePage({ data, syllabus }) {
 
     return currencySymbol + discountedPrice;
   };
-
+  
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'YEAR') {
         return t('signup:info.enroll-yearly-subscription', {
-          price: handleCoupons(featuredPlanToEnroll.priceTextPerMonth),
-          price_per_year: handleCoupons(featuredPlanToEnroll.priceText),
+          price: handleCoupons(featuredPlanToEnroll.pricePerMonthText),
+          year_price: handleCoupons(featuredPlanToEnroll.priceText),
         });;
       }
       if (featuredPlanToEnroll.period === 'MONTH') {
@@ -763,9 +764,7 @@ function CoursePage({ data, syllabus }) {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
-                              {!featuredPlanToEnroll?.isFreeTier
-                                ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                                : capitalizeFirstLetter(featurePrice)}
+                              {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
