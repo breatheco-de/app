@@ -103,7 +103,6 @@ function Checkout() {
   const [couponError, setCouponError] = useState(false);
   const [suggestedPlans, setSuggestedPlans] = useState(undefined);
   const [discountValues, setDiscountValues] = useState(undefined);
-  // const [suggestedPlansDiscounts, setSuggestedPlansDiscount] = useState(undefined);
   const [checkInfoLoader, setCheckInfoLoader] = useState(false);
   const [userSelectedPlan, setUserSelectedPlan] = useState(undefined);
   const { backgroundColor3, hexColor, backgroundColor } = useStyle();
@@ -189,7 +188,7 @@ function Checkout() {
       });
   };
 
-  const handleCoupon = (coupons, actions) => {
+  const handleCoupon = (coup, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       toast({
@@ -206,7 +205,7 @@ function Checkout() {
     }
 
     bc.payment({
-      coupons: [coupons || discountCode],
+      coupons: [coup || discountCode],
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
@@ -311,9 +310,9 @@ function Checkout() {
 
   useEffect(() => {
     // verify if coupon exists
-    if (checkoutData?.id) {
-      handleCoupon(couponValue);
+    if (checkoutData?.id && !checkoutData?.isTrial) {
       if (couponValue) setDiscountCode(couponValue);
+      handleCoupon(couponValue);
     }
   }, [couponValue, checkoutData?.id]);
 
@@ -914,6 +913,61 @@ function Checkout() {
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
                                             {`${option?.price} / ${option?.title}`}
+                                          </Text>
+                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
+                                            && (
+                                              <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
+                                            )}
+                                        </Flex>
+                                      </MenuItem>
+                                    ))}
+                                  </MenuList>
+                                </Menu>
+                              </Heading>
+                            </Flex>
+                          )}
+                          {originalPlan?.hasSubscriptionMethod && showPaymentDetails && (
+                            <Flex flexDirection="column" gap="4px">
+                              <Heading as="h3" size="sm" width="100%" position="relative">
+                                <Menu>
+                                  <MenuButton
+                                    as={Button}
+                                    background={useColorModeValue('#eefaf8', 'blue.400')}
+                                    _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
+                                    _active="none"
+                                    padding="8px"
+                                    borderRadius="md"
+                                    display="flex"
+                                    justifyContent="space-between"
+                                    alignItems="center"
+                                    onClick={() => setIsOpenned(true)}
+                                  >
+                                    <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
+                                      <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
+                                      <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
+                                    </Box>
+                                  </MenuButton>
+                                  <MenuList
+                                    boxShadow="lg"
+                                    borderRadius="lg"
+                                    zIndex="10"
+                                    padding="0"
+                                    width={menuWidth}
+                                    border="none"
+                                  >
+                                    {originalPlan.plans.map((option) => (
+                                      <MenuItem
+                                        key={option.plan_id}
+                                        onClick={() => setUserSelectedPlan(option)}
+                                        fontSize="md"
+                                        color="auto"
+                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
+                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
+                                        padding="10px"
+                                      >
+                                        <Flex justifyContent="space-between" alignItems="center" width="100%">
+                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
+                                            {`${option?.price} / ${option?.title}${option?.pricePerMonthText ? `, (${option?.pricePerMonthText}${t('signup:info.per-month')})` : ''}`}
                                           </Text>
                                           {option.plan_id === selectedPlanCheckoutData?.plan_id
                                             && (
