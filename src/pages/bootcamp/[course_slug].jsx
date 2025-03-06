@@ -168,7 +168,7 @@ function CoursePage({ data, syllabus }) {
   console.log('planList', planList);
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
-  console.log('featuredPlanToEnroll',featuredPlanToEnroll);
+  console.log('featuredPlanToEnroll', featuredPlanToEnroll);
 
   const reviewsData = t('course:reviews', {}, { returnObjects: true });
   const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
@@ -199,18 +199,18 @@ function CoursePage({ data, syllabus }) {
 
     return currencySymbol + discountedPrice;
   };
-  
+
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
       if (featuredPlanToEnroll.period === 'YEAR') {
         return t('signup:info.enroll-yearly-subscription', {
           price: handleCoupons(featuredPlanToEnroll.pricePerMonthText),
           year_price: handleCoupons(featuredPlanToEnroll.priceText),
-        });;
+        });
       }
       if (featuredPlanToEnroll.period === 'MONTH') {
         return t('signup:info.enroll-monthly-subscription', {
-          price: handleCoupons(featuredPlanToEnroll.priceText)
+          price: handleCoupons(featuredPlanToEnroll.priceText),
         });
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
