@@ -169,7 +169,7 @@ function Checkout() {
       .then((resp) => {
         const couponsList = resp?.data?.coupons;
         if (couponsList?.length > 0) {
-          const couponData = couponsList.find(({ slug }) => slug === discountCode || slug === couponValue);
+          const couponData = couponsList.find(({ slug }) => slug ===  || slug === couponValue);
           if (couponData) {
             setDiscountCoupon({
               ...couponData,
@@ -189,7 +189,7 @@ function Checkout() {
   };
 
   const handleCoupon = (coup, actions) => {
-    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
+    const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === ) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
       toast({
         position: 'top',
@@ -209,7 +209,7 @@ function Checkout() {
       plan: planFormated,
     }).verifyCoupon()
       .then((resp) => {
-        const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
+        const correctCoupon = resp.data.find((c) => c.slug === coup);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
