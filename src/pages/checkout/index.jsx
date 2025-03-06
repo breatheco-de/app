@@ -210,7 +210,6 @@ function Checkout() {
     }).verifyCoupon()
       .then((resp) => {
         const correctCoupon = resp.data.find((coup) => coup.slug === discountCode);
-        console.log('correctCoupon', correctCoupon);
         if (correctCoupon) {
           const couponsToString = resp?.data.map((item) => item?.slug);
           saveCouponToBag(couponsToString, checkoutData?.id);
