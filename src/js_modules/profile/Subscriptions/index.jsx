@@ -16,7 +16,7 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { enGB, es } from 'date-fns/locale';
+import { enUS, es } from 'date-fns/locale';
 import Head from 'next/head';
 import Image from 'next/image';
 import Icon from '../../../common/components/Icon';
@@ -41,9 +41,7 @@ function SubscriptionInfo({ subscription }) {
   const formatDate = (date) => {
     if (!date) return 'N/A';
     const parsedDate = new Date(date);
-    const dateFormat = 'dd MMM yyyy';
-    const locale = lang === 'en' || lang === 'us' ? enGB : es;
-    return format(parsedDate, dateFormat, { locale });
+    return format(parsedDate, 'dd MMM yy', { locale: lang === 'en' || lang === 'us' ? enUS : es });
   };
 
   const getSubscriptionDetails = (sub) => {
@@ -53,7 +51,6 @@ function SubscriptionInfo({ subscription }) {
     const isPlanFinancingFullyPaid = fullFilledInvoicesAmount === sub?.how_many_installments;
     const nextPaymentDate = formatDate(sub?.next_payment_at);
     const expirationDate = formatDate(sub?.plan_expires_at || sub?.next_payment_at);
-    const paidAt = formatDate(sub?.paid_at);
     const subCurrency = currenciesSymbols[sub?.currency?.code] || '$';
 
     const baseDetails = {
@@ -79,8 +76,8 @@ function SubscriptionInfo({ subscription }) {
         }
         return {
           renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
-          renewability: t('subscription.active-since', { date: paidAt }),
-          paymentInfo: t('subscription.payment', { payment: `${subCurrency}${sub.invoices[0].amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
+          renewability: sub.created_at ? t('subscription.active-since', { date: sub.created_at }) : false,
+          paymentInfo: t('subscription.payment', { payment: sub.invoices[0].amount === 0 ? t('common:free') : `${subCurrency}${sub.invoices[0].amount}/${t(`subscription.payment_unit.${sub?.pay_every_unit?.toLowerCase()}`)}` }),
         };
       },
       expired: () => ({
@@ -125,7 +122,7 @@ function SubscriptionInfo({ subscription }) {
       },
       free_trial: () => ({
         renewalDate: t('subscription.renewal-date', { date: nextPaymentDate }),
-        renewability: t('subscription.active-since', { date: paidAt }),
+        renewability: sub.created_at ? t('subscription.active-since', { date: sub.created_at }) : false,
         paymentInfo: t('subscription.payment', { payment: t('common:free') }),
       }),
     };
