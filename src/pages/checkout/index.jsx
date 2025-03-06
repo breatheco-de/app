@@ -871,7 +871,7 @@ function Checkout() {
                         )}
                         <Flex justifyContent="space-between" width="full" alignItems="center">
                           {showPaymentDetails && renderPlanDetails()}
-                          {!queryPlanId && originalPlan?.financingOptions.length > 0 && showPaymentDetails && (
+                          {!queryPlanId && (originalPlan?.financingOptions.length > 0 || originalPlan?.hasSubscriptionMethod) && showPaymentDetails && (
                             <Flex flexDirection="column" gap="4px">
                               <Heading as="h3" size="sm" width="100%" position="relative">
                                 <Menu>
@@ -912,62 +912,7 @@ function Checkout() {
                                       >
                                         <Flex justifyContent="space-between" alignItems="center" width="100%">
                                           <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {`${option?.price} / ${option?.title}`}
-                                          </Text>
-                                          {option.plan_id === selectedPlanCheckoutData?.plan_id
-                                            && (
-                                              <Icon icon="checked2" width="12px" height="12" color={useColorModeValue('#25BF6C', 'green')} />
-                                            )}
-                                        </Flex>
-                                      </MenuItem>
-                                    ))}
-                                  </MenuList>
-                                </Menu>
-                              </Heading>
-                            </Flex>
-                          )}
-                          {originalPlan?.hasSubscriptionMethod && showPaymentDetails && (
-                            <Flex flexDirection="column" gap="4px">
-                              <Heading as="h3" size="sm" width="100%" position="relative">
-                                <Menu>
-                                  <MenuButton
-                                    as={Button}
-                                    background={useColorModeValue('#eefaf8', 'blue.400')}
-                                    _hover={{ backgroundColor: useColorModeValue('blue.50', 'blue.1000') }}
-                                    _active="none"
-                                    padding="8px"
-                                    borderRadius="md"
-                                    display="flex"
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                    onClick={() => setIsOpenned(true)}
-                                  >
-                                    <Box as="span" display="flex" alignItems="center" flex="1" fontSize="16px" textAlign="left">
-                                      <Text size="md" color={useColorModeValue('blue.1000', '#eefaf8')}>{t('see-financing-opt')}</Text>
-                                      <Icon icon="arrowDown" color={useColorModeValue('', '#eefaf8')} />
-                                    </Box>
-                                  </MenuButton>
-                                  <MenuList
-                                    boxShadow="lg"
-                                    borderRadius="lg"
-                                    zIndex="10"
-                                    padding="0"
-                                    width={menuWidth}
-                                    border="none"
-                                  >
-                                    {originalPlan.plans.map((option) => (
-                                      <MenuItem
-                                        key={option.plan_id}
-                                        onClick={() => setUserSelectedPlan(option)}
-                                        fontSize="md"
-                                        color="auto"
-                                        background={option.plan_id === selectedPlanCheckoutData?.plan_id && useColorModeValue('green.50', 'green.200')}
-                                        _hover={option.plan_id === selectedPlanCheckoutData?.plan_id ? { backgrorund: useColorModeValue('green.50', 'green.200') } : { background: 'none' }}
-                                        padding="10px"
-                                      >
-                                        <Flex justifyContent="space-between" alignItems="center" width="100%">
-                                          <Text fontSize="md" flex="1" color={option.plan_id === selectedPlanCheckoutData?.plan_id ? useColorModeValue('#25BF6C', 'green') : 'auto'}>
-                                            {`${option?.price} / ${option?.title}${option?.pricePerMonthText ? `, (${option?.pricePerMonthText}${t('signup:info.per-month')})` : ''}`}
+                                            {originalPlan?.hasSubscriptionMethod ? `${option?.price} / ${option?.title}${option?.pricePerMonthText ? `, (${option?.pricePerMonthText}${t('signup:info.per-month')})` : ''}` : `${option?.price} / ${option?.title}`}
                                           </Text>
                                           {option.plan_id === selectedPlanCheckoutData?.plan_id
                                             && (
