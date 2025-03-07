@@ -17,7 +17,6 @@ import useCohortHandler from '../../hooks/useCohortHandler';
 function Mentoring({
   width, allCohorts, allSyllabus, programServices, subscriptions, subscriptionData,
 }) {
-  // const toast = useToast();
   const { t } = useTranslation('dashboard');
   const router = useRouter();
   const { isLoading, user } = useAuth();
