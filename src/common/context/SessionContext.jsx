@@ -8,6 +8,7 @@ import { error } from '../../utils/logging';
 
 const initialUserSession = {
   utm_placement: '', // the ad placement
+  utm_referrer: '', // The person or copmany who refered the user
   utm_medium: '', // facebook, tiktok, Instagram, google
   utm_source: '', // cpc, organic, etc.
   utm_term: '', // keyword from cpc
@@ -73,6 +74,7 @@ function SessionProvider({ children }) {
       else conversionUrl = window.location.pathname;
 
       const utm_placement = getQueryString('utm_placement') || storedSession?.utm_placement;
+      const utm_referrer = getQueryString('utm_referrer') || getQueryString('utm_ref') || getQueryString('referrer') || getQueryString('ref') || storedSession?.utm_referrer;
       const utm_medium = getQueryString('utm_medium') || storedSession?.utm_medium;
       const utm_source = getQueryString('utm_source') || storedSession?.utm_source;
       const utm_term = getQueryString('utm_term') || storedSession?.utm_term;
@@ -94,6 +96,7 @@ function SessionProvider({ children }) {
         landing_url: landingUrl,
         conversion_url: conversionUrl,
         utm_placement,
+        utm_referrer,
         utm_medium,
         utm_source,
         utm_term,

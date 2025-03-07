@@ -249,7 +249,6 @@ function SyllabusContent() {
       let aiContext;
       const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
       if (!cachedContext && currentAsset?.id) {
-        console.log('pase el if');
         const resp = await bc.lesson().getAssetContext(currentAsset.id);
         if (resp?.status === 200) {
           aiContext = resp.data;
