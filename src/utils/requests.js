@@ -76,7 +76,7 @@ const getMktCourses = () => {
   const fetchWithLanguages = languages.map((lang) => axios.get(`${BREATHECODE_HOST}/v1/marketing/course?lang=${lang}`)
     .then((res) => {
       const list = res?.data || [];
-      const data = list?.filter((course) => course?.course_translation && course?.is_listed === true)
+      const data = list?.filter((course) => course?.course_translation && course?.is_listed === true && course?.visibility !== 'UNLISTED')
         .map((course) => ({
           ...course,
           lang,
