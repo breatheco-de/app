@@ -719,20 +719,6 @@ function CoursePage({ data, syllabus }) {
                             )}
                           </Flex>
                         </Button>
-                        {payableList?.length > 1 && (
-                          <Button
-                            variant="outline"
-                            color="green.400"
-                            isLoading={initialDataIsFetching}
-                            borderColor="currentColor"
-                            width="100%"
-                            whiteSpace="normal"
-                            wordWrap="break-word"
-                            onClick={goToFinancingOptions}
-                          >
-                            {t('common:see-financing-options')}
-                          </Button>
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
