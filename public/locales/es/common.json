@@ -685,5 +685,6 @@
       }
     ]
   },
-  "hrs-average": "{{number}}hrs promedio"
+  "hrs-average": "{{number}}hrs promedio",
+  "service-blocked": "Fuiste bloqueado de acceder a este servicio. Envía un correo a support@4geeks.com para obtener acceso."
 }
