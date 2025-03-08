@@ -175,7 +175,6 @@ function CoursePage({ data, syllabus }) {
 
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
-    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
     coupon: getQueryString('coupon'),
@@ -185,7 +184,7 @@ function CoursePage({ data, syllabus }) {
     if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
 
     const currencySymbol = priceText.replace(/[\d.,]/g, '');
-    let discountedPrice = featuredPlanToEnroll.price;
+    let discountedPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
 
     allDiscounts.forEach((discount) => {
       if (discount.discount_type === 'PERCENT_OFF') {
@@ -202,11 +201,16 @@ function CoursePage({ data, syllabus }) {
 
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${handleCoupons(featuredPlanToEnroll.priceText)}`;
-      }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.monthly')}`;
+        return t('signup:info.enroll-yearly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.pricePerMonthText),
+          year_price: handleCoupons(featuredPlanToEnroll.priceText),
+        });
+      }
+      if (featuredPlanToEnroll.period === 'MONTH') {
+        return t('signup:info.enroll-monthly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.priceText),
+        });
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
         return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
@@ -531,6 +535,11 @@ function CoursePage({ data, syllabus }) {
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
+      certificate: module.certificate,
+      time: module.time,
+      exercises: module.exercises,
+      projects: module.projects,
+      readings: module.readings,
       title: module.name,
       description: module.description,
     })) : [];
@@ -652,7 +661,7 @@ function CoursePage({ data, syllabus }) {
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
                   <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
-                    {students.length < limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
+                    {students?.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
@@ -754,9 +763,7 @@ function CoursePage({ data, syllabus }) {
                         >
                           <Flex flexDirection="column" alignItems="center">
                             <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
-                              {!featuredPlanToEnroll?.isFreeTier
-                                ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                                : capitalizeFirstLetter(featurePrice)}
+                              {capitalizeFirstLetter(featurePrice)}
                             </Text>
                             {!featuredPlanToEnroll?.isFreeTier && (
                               <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
