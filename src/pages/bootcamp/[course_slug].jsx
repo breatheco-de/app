@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { Box, Button as ChakraButton, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
+import { Box, Button, Flex, Image, Link, SkeletonText, useToast } from '@chakra-ui/react';
 import { useEffect, useState, useRef } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import { useRouter } from 'next/router';
@@ -15,10 +15,9 @@ import Heading from '../../common/components/Heading';
 import { error } from '../../utils/logging';
 import bc from '../../common/services/breathecode';
 import { generateCohortSyllabusModules } from '../../common/handlers/cohorts';
-import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo } from '../../utils';
+import { adjustNumberBeetwenMinMax, capitalizeFirstLetter, cleanObject, setStorageItem, isWindow, getBrowserInfo, getQueryString } from '../../utils';
 import useStyle from '../../common/hooks/useStyle';
 import useRigo from '../../common/hooks/useRigo';
-import Timer from '../../common/components/Timer';
 import OneColumnWithIcon from '../../common/components/OneColumnWithIcon';
 import CourseContent from '../../common/components/CourseContent';
 import ShowOnSignUp from '../../common/components/ShowOnSignup';
@@ -38,9 +37,12 @@ import useCohortHandler from '../../common/hooks/useCohortHandler';
 import { reportDatalayer } from '../../utils/requests';
 import MktTwoColumnSideImage from '../../common/components/MktTwoColumnSideImage';
 import { AvatarSkeletonWrapped } from '../../common/components/Skeleton';
+import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import CouponTopBar from '../../common/components/CouponTopBar';
 import completions from './completion-jobs.json';
-import Button from '../../common/components/Button';
+import Rating from '../../common/components/Rating';
+import SimpleModal from '../../common/components/SimpleModal';
+import CustomCarousel from '../../common/components/CustomCarousel';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -110,10 +112,12 @@ export async function getStaticProps({ locale, locales, params }) {
 
 function CoursePage({ data, syllabus }) {
   const { state, getPriceWithDiscount, getSelfAppliedCoupon, applyDiscountCouponsToPlans } = useSignup();
+  const [coupon] = usePersistentBySession('coupon', '');
   const { selfAppliedCoupon } = state;
   const showBottomCTA = useRef(null);
   const [isCtaVisible, setIsCtaVisible] = useState(true);
-  const { isAuthenticated, user, logout } = useAuth();
+  const [allDiscounts, setAllDiscounts] = useState([]);
+  const { isAuthenticated, user, logout, cohorts } = useAuth();
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
@@ -129,6 +133,7 @@ function CoursePage({ data, syllabus }) {
   const [cohortData, setCohortData] = useState({});
   const [planData, setPlanData] = useState({});
   const [initialDataIsFetching, setInitialDataIsFetching] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const { t, lang } = useTranslation('course');
   const router = useRouter();
   const translationsObj = getTranslations(t);
@@ -162,26 +167,53 @@ function CoursePage({ data, syllabus }) {
   const featuredPlanToEnroll = freePlan?.plan_slug ? freePlan : payableList?.[0];
   const pathname = router.asPath.split('#')[0];
 
+  const reviewsData = t('course:reviews', {}, { returnObjects: true });
+  const reviewsForCurrentCourse = reviewsData[data?.slug] || reviewsData[data?.plan_slug];
+
   const enrollQuerys = payableList?.length > 0 ? parseQuerys({
     plan: featuredPlanToEnroll?.plan_slug,
-    plan_id: featuredPlanToEnroll?.plan_id,
     has_available_cohorts: planData?.has_available_cohorts,
     cohort: cohortId,
+    coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
+
+  const handleCoupons = (priceText) => {
+    if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
+
+    const currencySymbol = priceText.replace(/[\d.,]/g, '');
+    let discountedPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
+
+    allDiscounts.forEach((discount) => {
+      if (discount.discount_type === 'PERCENT_OFF') {
+        discountedPrice -= (discountedPrice * discount.discount_value);
+      } else {
+        discountedPrice -= discount.discount_value;
+      }
+    });
+
+    discountedPrice = Math.floor(discountedPrice * 100) / 100;
+
+    return currencySymbol + discountedPrice;
+  };
 
   const getPlanPrice = () => {
     if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return `${t('signup:info.monthly')} ${featuredPlanToEnroll.priceText}`;
-      }
       if (featuredPlanToEnroll.period === 'YEAR') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.monthly')}`;
+        return t('signup:info.enroll-yearly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.pricePerMonthText),
+          year_price: handleCoupons(featuredPlanToEnroll.priceText),
+        });
+      }
+      if (featuredPlanToEnroll.period === 'MONTH') {
+        return t('signup:info.enroll-monthly-subscription', {
+          price: handleCoupons(featuredPlanToEnroll.priceText),
+        });
       }
       if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${featuredPlanToEnroll.priceText}, ${t('signup:info.one-time-payment')}`;
+        return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
       }
       if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${featuredPlanToEnroll.priceText} ${t('signup:info.installments')}`;
+        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
       }
       if (featuredPlanToEnroll?.type === 'TRIAL') {
         return t('common:start-free-trial');
@@ -332,41 +364,37 @@ function CoursePage({ data, syllabus }) {
 
   const redirectTocohort = () => {
     const cohort = cohortData?.cohortSyllabus?.cohort;
-    const langLink = lang !== 'en' ? `/${lang}` : '';
-    const syllabusVersion = cohort?.syllabus_version;
-
     axiosInstance.defaults.headers.common.Academy = cohort.academy.id;
-    const cohortDashboardLink = `${langLink}/cohort/${cohort?.slug}/${syllabusVersion?.slug}/v${syllabusVersion?.version}`;
+
+    const joinedCohort = cohorts.find(({ slug }) => slug === cohort?.slug);
     setCohortSession({
-      ...cohort,
-      selectedProgramSlug: cohortDashboardLink,
+      ...joinedCohort,
     });
-    router.push(cohortDashboardLink);
+    router.push(joinedCohort.selectedProgramSlug);
   };
+
   const redirectToCohortIfItsReady = ({ withAlert = true, callback = () => { } } = {}) => {
-    bc.admissions().me().then((resp) => {
-      const joinedCohortsData = resp?.data;
-      const alreadyHaveThisCohort = joinedCohortsData?.cohorts?.some((elmnt) => elmnt?.cohort?.id === cohortId);
+    const alreadyHaveThisCohort = cohorts?.some((cohort) => cohort?.id === cohortId);
 
-      if (alreadyHaveThisCohort) {
-        callback();
+    if (alreadyHaveThisCohort) {
+      callback();
 
-        setIsFetching(false);
-        if (withAlert) {
-          toast({
-            position: 'top',
-            title: t('dashboard:already-have-this-cohort'),
-            status: 'info',
-            duration: 5000,
-          });
-        }
-        redirectTocohort();
+      setIsFetching(false);
+      if (withAlert) {
+        toast({
+          position: 'top',
+          title: t('dashboard:already-have-this-cohort'),
+          status: 'info',
+          duration: 5000,
+        });
       }
-    });
+      redirectTocohort();
+    }
   };
 
   const assetCount = cohortData?.modulesInfo?.count;
   const assignmentList = cohortData?.modulesInfo?.assignmentList;
+  const studentsImages = t(`students-course-images.${data?.slug}`, {}, { returnObjects: true });
 
   const getInitialData = async () => {
     setInitialDataIsFetching(true);
@@ -441,7 +469,10 @@ function CoursePage({ data, syllabus }) {
       l.user.id === instructor.user.id
     )) === index) : [];
 
-    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug);
+    await getSelfAppliedCoupon(formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug);
+    const couponOnQuery = await getQueryString('coupon');
+    const { data: allCouponsApplied } = await bc.payment({ coupons: [couponOnQuery || coupon], plan: formatedPlanData.plans?.suggested_plan?.slug || formatedPlanData.plans?.original_plan?.slug }).verifyCoupon();
+    setAllDiscounts(allCouponsApplied);
 
     setCohortData({
       cohortSyllabus,
@@ -501,6 +532,11 @@ function CoursePage({ data, syllabus }) {
 
   const courseContentList = data?.course_translation?.course_modules?.length > 0
     ? data?.course_translation?.course_modules.map((module) => ({
+      certificate: module.certificate,
+      time: module.time,
+      exercises: module.exercises,
+      projects: module.projects,
+      readings: module.readings,
       title: module.name,
       description: module.description,
     })) : [];
@@ -524,6 +560,25 @@ function CoursePage({ data, syllabus }) {
     });
   };
 
+  const adjustFontSizeForMobile = (html) => {
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      return html?.replace(/font-size:\s*\d+px;?/gi, 'font-size: 36px;');
+    }
+    return html;
+  };
+
+  const imageSource = Array.isArray(studentsImages) && studentsImages.length > 0
+    ? studentsImages.slice(0, limitViewStudents)
+    : students.slice(0, limitViewStudents).map((student) => {
+      const existsAvatar = student.user.profile?.avatar_url;
+      const avatarNumber = adjustNumberBeetwenMinMax({
+        number: student.user?.id,
+        min: 1,
+        max: 20,
+      });
+      return existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`;
+    });
+
   return (
     <>
       {cleanedStructuredData?.name && (
@@ -541,6 +596,7 @@ function CoursePage({ data, syllabus }) {
         videoUrl={data?.course_translation?.video_url}
         onClick={goToFinancingOptions}
         course={data}
+        paymentOptions={planData?.paymentOptions}
         couponApplied={selfAppliedCoupon}
         width="calc(100vw - 15px)"
         left="7.5px"
@@ -554,7 +610,9 @@ function CoursePage({ data, syllabus }) {
               <Flex as="h1" gridGap="8px" flexDirection="column" alignItems="start">
                 {
                   data?.course_translation?.heading ? (
-                    <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: data?.course_translation?.heading }} />
+                    <>
+                      <Heading as="span" size={{ base: '33px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal" dangerouslySetInnerHTML={{ __html: adjustFontSizeForMobile(data?.course_translation?.heading) }} />
+                    </>
                   ) : (
                     <>
                       <Heading as="span" size={{ base: '38px', md: '46px' }} fontFamily="lato" letterSpacing="0.05em" fontWeight="normal" lineHeight="normal">
@@ -575,42 +633,32 @@ function CoursePage({ data, syllabus }) {
             {/* Students count */}
             <Flex alignItems="center" gridGap="16px">
               <Flex>
-                {initialDataIsFetching
-                  ? (
-                    <AvatarSkeletonWrapped
-                      quantity={3}
-                      max={3}
-                      margin="0 -21px 0 0 !important"
-                      size="40px"
+                {initialDataIsFetching ? (
+                  <AvatarSkeletonWrapped
+                    quantity={3}
+                    max={3}
+                    margin="0 -21px 0 0 !important"
+                    size={{ base: '30px', md: '40px' }}
+                  />
+                ) : (
+                  imageSource.map((imageUrl, index) => (
+                    <Image
+                      margin={index < limitViewStudents - 1 ? '0 -21px 0 0' : '0'}
+                      src={imageUrl}
+                      width={{ base: '30px', md: '40px' }}
+                      height={{ base: '30px', md: '40px' }}
+                      borderRadius="50%"
+                      objectFit="cover"
+                      alt={`Student image ${index + 1}`}
                     />
-                  )
-                  : students.slice(0, limitViewStudents).map((student, index) => {
-                    const existsAvatar = student.user.profile?.avatar_url;
-                    const avatarNumber = adjustNumberBeetwenMinMax({
-                      number: student.user?.id,
-                      min: 1,
-                      max: 20,
-                    });
-                    return (
-                      <Image
-                        key={student.user?.profile?.full_name}
-                        margin={index < (limitViewStudents - 1) ? '0 -21px 0 0' : '0'}
-                        src={existsAvatar || `${BREATHECODE_HOST}/static/img/avatar-${avatarNumber}.png`}
-                        width="40px"
-                        height="40px"
-                        borderRadius="50%"
-                        objectFit="cover"
-                        alt={`Picture of ${student?.user?.first_name}`}
-                      />
-                    );
-                  })}
+                  ))
+                )}
               </Flex>
               {initialDataIsFetching
                 ? <SkeletonText margin="0 0 0 21px" width="10rem" noOfLines={1} />
                 : (
-
-                  <Text size="16px" color="currentColor" fontWeight={400}>
-                    {students.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : ''}
+                  <Text size={{ base: '14', md: '16px' }} color="currentColor" fontWeight={400}>
+                    {students?.length > limitViewStudents ? t('students-enrolled-count', { count: students.length - limitViewStudents }) : t('students-enrolled')}
                   </Text>
                 )}
             </Flex>
@@ -621,7 +669,7 @@ function CoursePage({ data, syllabus }) {
                   <Flex key={item.title} gridGap="9px" alignItems="center">
                     <Icon icon="checked2" width="15px" height="11px" color={hexColor.green} />
                     <Text
-                      size="16px"
+                      size={{ base: '14', md: '16px' }}
                       fontWeight={400}
                       color="currentColor"
                       lineHeight="normal"
@@ -631,7 +679,10 @@ function CoursePage({ data, syllabus }) {
                 ))}
               </Flex>
 
-              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => tryRigobot('#ai-tutor')} />
+              {reviewsForCurrentCourse && (
+                <Rating variant="inline" totalRatings={reviewsForCurrentCourse.total_ratings} rating={reviewsForCurrentCourse.rating} link="#rating-commnets" />
+              )}
+              <Instructors list={instructors} isLoading={initialDataIsFetching} tryRigobot={() => setShowModal(true)} />
 
               {/* Course description */}
               <Flex flexDirection="column" gridGap="16px">
@@ -640,9 +691,6 @@ function CoursePage({ data, syllabus }) {
                     {data?.course_translation?.short_description}
                   </Text>
                 )}
-                <Text size="16px" fontWeight={400} color={hexColor.fontColor3} lineHeight="normal">
-                  {data?.course_translation?.description}
-                </Text>
               </Flex>
             </Flex>
           </Flex>
@@ -696,20 +744,42 @@ function CoursePage({ data, syllabus }) {
                     ) : (
                       <>
                         <Button
-                          variant="success"
+                          height="auto"
+                          id="bootcamp-enroll-button"
+                          variant="default"
                           isLoading={initialDataIsFetching || (planList?.length === 0 && !featuredPlanToEnroll?.price)}
-                          onClick={() => {
-                            router.push(`/checkout${enrollQuerys}`);
-                          }}
+                          background="green.500"
+                          display="flex"
+                          flexDirection="column"
+                          color="white"
+                          width="100%"
+                          whiteSpace="normal"
+                          wordWrap="break-word"
+                          padding="10px"
+                          onClick={() => { router.push(`/checkout${enrollQuerys}`); }}
                         >
-                          {!featuredPlanToEnroll?.isFreeTier
-                            ? `${getAlternativeTranslation('common:enroll-for-connector')} ${featurePrice}`
-                            : capitalizeFirstLetter(featurePrice)}
+                          <Flex flexDirection="column" alignItems="center">
+                            <Text fontSize={!featuredPlanToEnroll?.isFreeTier ? '16px' : '14px'}>
+                              {capitalizeFirstLetter(featurePrice)}
+                            </Text>
+                            {!featuredPlanToEnroll?.isFreeTier && (
+                              <Flex alignItems="center" marginTop="5px" gap="5px" justifyContent="center">
+                                <Icon icon="shield" color="#ffffff" width="23px" />
+                                <Text fontSize="13px" fontWeight="medium" paddingTop="2px">
+                                  {t('common:money-back-guarantee-short')}
+                                </Text>
+                              </Flex>
+                            )}
+                          </Flex>
                         </Button>
-                        {payableList?.length > 0 && (
+                        {payableList?.length > 1 && (
                           <Button
                             variant="outline"
                             isLoading={initialDataIsFetching}
+                            borderColor="currentColor"
+                            width="100%"
+                            whiteSpace="normal"
+                            wordWrap="break-word"
                             onClick={goToFinancingOptions}
                           >
                             {t('common:see-financing-options')}
@@ -772,7 +842,7 @@ function CoursePage({ data, syllabus }) {
             <OneColumnWithIcon
               title={getAlternativeTranslation('rigobot.title')}
               icon=""
-              handleButton={() => tryRigobot('#try-rigobot')}
+              handleButton={() => setShowModal(true)}
               buttonText={getAlternativeTranslation('rigobot.button')}
               buttonProps={{ id: 'try-rigobot' }}
             >
@@ -800,32 +870,9 @@ function CoursePage({ data, syllabus }) {
             <Text size="18px" textAlign="center">
               {getAlternativeTranslation('build-connector.description')}
             </Text>
-            <Flex flexDirection={{ base: 'column', md: 'row' }} gridGap={{ base: '10px', md: '32px' }} mt="16px">
-              {assignmentList?.length > 0 && assignmentList.slice(0, 3).map((item) => {
-                const taskTranslations = lang === 'en' ? item?.translations?.us : (item?.translations?.[lang] || {});
-                const pathConnector = {
-                  project: `${lang === 'en' ? '/interactive-coding-tutorial' : `/${lang}/interactive-coding-tutorial`}`,
-                  exercise: `${lang === 'en' ? '/interactive-exercise' : `/${lang}/interactive-exercise`}`,
-                };
-                const link = `${pathConnector[item?.asset_type?.toLowerCase()]}/${taskTranslations}`;
-
-                return (
-                  <Flex key={item?.title} flexDirection="column" gridGap="17px" padding="16px" minHeight="128px" flex={{ base: 1, md: 0.33 }} borderRadius="10px" border="1px solid" borderColor={borderColor}>
-                    <Flex alignItems="center" justifyContent="space-between">
-                      {item?.technologies?.length > 0 && (
-                        <TagCapsule tags={item?.technologies.slice(0, 3)} marginY={0} />
-                      )}
-                    </Flex>
-                    <Link href={link} display="flex" fontSize="18px" fontWeight={700} lineHeight="normal" color="currentColor" alignItems="center" gridGap="20px" justifyContent="space-between">
-                      {(lang === 'en' && item?.translations?.us?.title)
-                        || item?.translations?.[lang]?.title
-                        || item?.title}
-                      <Icon icon="arrowRight" width="10px" height="16px" color="currentColor" />
-                    </Link>
-                  </Flex>
-                );
-              })}
-            </Flex>
+            {assignmentList?.length > 0 && (
+              <CustomCarousel assignmentList={assignmentList} />
+            )}
           </Flex>
         </GridContainer>
         {/* Features section */}
@@ -870,6 +917,7 @@ function CoursePage({ data, syllabus }) {
                 background="transparent"
                 imagePosition="right"
                 imageUrl="/static/images/github-repo-preview.png"
+                videoUrl="https://storage.googleapis.com/breathecode/videos/landing-pages/learnpack-demo.mp4"
                 title={features?.['what-is-learnpack']?.title}
                 description={features?.['what-is-learnpack']?.description}
                 informationSize="Medium"
@@ -959,11 +1007,24 @@ function CoursePage({ data, syllabus }) {
             description={getAlternativeTranslation('why-learn-with-4geeks.description')}
           />
         </GridContainer>
+        {reviewsForCurrentCourse && (
+          <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(1, 1fr)">
+            <Rating
+              totalRatings={reviewsForCurrentCourse.total_ratings}
+              totalReviews={reviewsForCurrentCourse.reviews_numbers}
+              rating={reviewsForCurrentCourse.rating}
+              id="rating-commnets"
+              marginTop="40px"
+              reviews={reviewsForCurrentCourse.reviews}
+            />
+          </GridContainer>
+        )}
         {/* FAQ section */}
         <Box mt="6.25rem" background={hexColor.lightColor}>
           <GridContainer padding="0 10px" maxWidth="1280px" width="100%" gridTemplateColumns="repeat(12, 1fr)">
             {Array.isArray(faqList) && faqList?.length > 0 && (
               <Faq
+                width="100%"
                 gridColumn="1 / span 12"
                 background="transparent"
                 headingStyle={{
@@ -987,6 +1048,27 @@ function CoursePage({ data, syllabus }) {
           </GridContainer>
         </Box>
       </Flex>
+      <SimpleModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        style={{ marginTop: '10vh' }}
+        maxWidth="45rem"
+        borderRadius="13px"
+        headerStyles={{ textAlign: 'center' }}
+        title={t('rigobot.title')}
+        bodyStyles={{ padding: 0 }}
+        closeOnOverlayClick={false}
+      >
+        <Box padding="0 15px 15px">
+          <ReactPlayerV2
+            url={getAlternativeTranslation('rigobot.video_url')}
+            width="100%"
+            height="100%"
+            iframeStyle={{ borderRadius: '3px 3px 13px 13px' }}
+            autoPlay
+          />
+        </Box>
+      </SimpleModal>
     </>
   );
 }

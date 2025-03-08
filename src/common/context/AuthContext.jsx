@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { createContext, useEffect, useReducer, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -22,6 +23,7 @@ const initialState = {
   isAuthenticated: false,
   isAuthenticatedWithRigobot: false,
   user: null,
+  cohorts: [],
 };
 
 const langHelper = {
@@ -33,13 +35,14 @@ const langHelper = {
 const reducer = (state, action) => {
   switch (action.type) {
     case 'INIT': {
-      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user } = action.payload;
+      const { isLoading, isAuthenticated, isAuthenticatedWithRigobot, user, cohorts } = action.payload;
       return {
         ...state,
         isLoading,
         isAuthenticated,
         isAuthenticatedWithRigobot,
         user,
+        cohorts,
       };
     }
     case 'LOGIN': {
@@ -72,6 +75,12 @@ const reducer = (state, action) => {
         ...state,
         isLoading: false,
         user: action.payload,
+      };
+    }
+    case 'SET_COHORTS': {
+      return {
+        ...state,
+        cohorts: action.payload,
       };
     }
     case 'LOADING': {
@@ -162,12 +171,27 @@ function AuthProvider({ children, pageProps }) {
     window.location.href = inviteUrl;
   };
 
+  useEffect(() => {
+    if (state.isAuthenticated && (router.pathname === '/' || router.pathname === '')) {
+      router.push('/choose-program');
+    }
+  }, [state.isAuthenticated, router.pathname]);
+
+  const parseCohort = (elem) => {
+    const { cohort, ...cohort_user } = elem;
+    const { syllabus_version } = cohort;
+    return {
+      ...cohort,
+      selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
+      cohort_role: elem.role,
+      cohort_user,
+    };
+  };
+
   const authHandler = async () => {
     const token = getToken();
 
     if (token !== undefined && token !== null) {
-      const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
-      const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
       const requestToken = await fetch(`${BREATHECODE_HOST}/v1/auth/token/${token}`, {
         method: 'GET',
         headers: {
@@ -184,15 +208,23 @@ function AuthProvider({ children, pageProps }) {
         }
         dispatch({
           type: 'INIT',
-          payload: { user: null, isAuthenticated: false, isLoading: false },
+          payload: { user: null, isAuthenticated: false, isLoading: false, cohorts: [] },
         });
       } else {
         handleSession(token);
-        bc.auth().me()
-          .then(({ data }) => {
+        try {
+          // only fetch user info if it is null
+          if (!user) {
+            const { data } = await bc.admissions().me();
+            const { cohorts: cohortUsers, ...userData } = data;
+            const cohorts = cohortUsers.map(parseCohort);
+
+            const respRigobotAuth = await bc.auth().verifyRigobotConnection(token);
+            const isAuthenticatedWithRigobot = respRigobotAuth && respRigobotAuth?.status === 200;
+
             dispatch({
               type: 'INIT',
-              payload: { user: data, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
+              payload: { user: userData, cohorts, isAuthenticated: true, isAuthenticatedWithRigobot, isLoading: false },
             });
             const settingsLang = data?.settings.lang;
 
@@ -202,7 +234,7 @@ function AuthProvider({ children, pageProps }) {
                 method: 'native',
                 user_id: data.id,
                 email: data.email,
-                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(', '),
+                is_academy_legacy: [...new Set(data.roles.map((role) => role.academy.id))].join(','),
                 is_available_as_saas: !data.roles.some((r) => r.academy.id !== 47),
                 first_name: data.first_name,
                 last_name: data.last_name,
@@ -219,10 +251,10 @@ function AuthProvider({ children, pageProps }) {
             if (!pageProps.disableLangSwitcher && langHelper[router?.locale] !== settingsLang) {
               updateSettingsLang();
             }
-          })
-          .catch(() => {
-            handleSession(null);
-          });
+          }
+        } catch (e) {
+          handleSession(null);
+        }
       }
     } else {
       dispatch({

@@ -10,7 +10,6 @@ import Text from '../common/components/Text';
 import Faq from '../common/components/Faq';
 import useStyle from '../common/hooks/useStyle';
 import useAuth from '../common/hooks/useAuth';
-import useCohortHandler from '../common/hooks/useCohortHandler';
 import bc from '../common/services/breathecode';
 import PricingCard from '../common/components/PricingCard';
 import useSignup from '../common/store/actions/signupAction';
@@ -43,11 +42,9 @@ const getYearlyPlans = (originalPlans, suggestedPlans, allFeaturedPlans) => {
 
 function PricingView() {
   const { t, lang } = useTranslation('pricing');
-  const { state, setMyCohorts } = useCohortHandler();
-  const { myCohorts } = state;
   const { getSelfAppliedCoupon } = useSignup();
   const [activeType, setActiveType] = useState('monthly');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, cohorts } = useAuth();
   const [relatedSubscription, setRelatedSubscription] = useState({});
   const { hexColor, modal } = useStyle();
   const [isFetching, setIsFetching] = useState({
@@ -101,6 +98,7 @@ function PricingView() {
     }
     return [];
   };
+
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
     const freeTierList = allPlansList?.filter((p) => p?.isFreeTier);
     const financingList = allPlansList?.filter((p) => p?.period === 'FINANCING');
@@ -114,6 +112,7 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
+    console.log('todos los planes', allPlansList);
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
@@ -123,6 +122,7 @@ function PricingView() {
     }
     return allPlansList;
   };
+
   const handleFetchPlan = async () => {
     const data = await fetchSuggestedPlan(planSlug, planTranslations);
     const originalPlan = data?.plans?.original_plan || {};
@@ -130,7 +130,7 @@ function PricingView() {
     const allPlanList = [...originalPlan?.plans || [], ...suggestedPlan?.plans || []];
     const existsFreeTier = allPlanList?.some((p) => p?.price === 0);
 
-    await getSelfAppliedCoupon(suggestedPlan.slug);
+    await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
     const formatedPlanList = allPlanList?.length > 0
       ? insertFeaturedInfo(formatPlans(allPlanList, true))
@@ -174,35 +174,13 @@ function PricingView() {
     staleTime: Infinity,
   });
 
-  const initializeCohorts = async () => {
-    try {
-      const { data } = await bc.admissions().me();
-      if (!data) throw new Error('No data');
-      const { cohorts } = data;
-
-      const parsedCohorts = cohorts.map(((elem) => {
-        const { cohort, ...cohort_user } = elem;
-        const { syllabus_version } = cohort;
-        return {
-          ...cohort,
-          selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-          cohort_role: elem.role,
-          cohort_user,
-        };
-      }));
-      setMyCohorts(parsedCohorts);
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
-    const hasActiveBootcamp = myCohorts.some((cohort) => !cohort.available_as_saas
+    const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
       && cohort.ending_date && new Date(cohort.ending_date) > new Date()
       && cohort.cohort_user.educational_status === 'ACTIVE');
 
     if (hasActiveBootcamp) router.push('/choose-program');
-  }, [myCohorts]);
+  }, [cohorts]);
 
   useEffect(() => {
     const mktQueryString = parseQuerys({
@@ -274,7 +252,6 @@ function PricingView() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
-      initializeCohorts();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
 
@@ -357,9 +334,8 @@ function PricingView() {
                       </Flex>
                       <Link
                         variant="buttonDefault"
-                        backgroundColor="#0097CF"
-                        borderRadius="4px"
-                        href={`/${lang}/pricing?course=${course?.slug}`}
+                        borderRadius="3px"
+                        href={`/${lang}/bootcamp/${course?.slug}`}
                         textAlign="center"
                         width="100%"
                         // opacity="0.9"
@@ -449,6 +425,7 @@ function PricingView() {
             {paymentOptions?.monthly?.length > 0 && paymentOptions.monthly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 item={plan}
                 isFetching={isFetching.selectedPlan}
@@ -461,6 +438,7 @@ function PricingView() {
             {paymentOptions?.yearly?.length > 0 && paymentOptions.yearly.map((plan) => (
               <PricingCard
                 key={plan?.plan_id}
+                moneyBack
                 courseData={selectedCourseData}
                 isFetching={isFetching.selectedPlan}
                 item={plan}
@@ -472,6 +450,7 @@ function PricingView() {
             {bootcampInfo?.type && (
               <PricingCard
                 item={bootcampInfo}
+                moneyBack={false}
                 width={{ base: '300px', md: '100%' }}
                 display="flex"
               />

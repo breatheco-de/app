@@ -1,14 +1,30 @@
 {
   "course-content-text": "Get Job-Ready with Our Syllabus!",
   "course-content-description": "We've fine-tuned our course content with hundreds of job positions to prepare you for a successful entry into tech.",
-  "students-enrolled-count": "+{{count}} students enrolled",
+  "students-enrolled-count": "+{{count}} of students enrolled",
+  "students-enrolled": "hundreds of students enrolled",
   "instructors-more": "+{{count}} more instructors",
+  "course-certificate": "Course certificate",
+  "course-readings": "{{count}} Readings",
+  "course-exercises": "{{count}} Exercises",
   "enroll-now-for-price": "Enroll now for {{price}} monthly",
   "join-cohort": "Join now",
   "join-cohort-description": "Join now and start your coding journey today",
   "create-account-text": "Create an account and start your coding journey today",
   "live-bootcamp": "Self-paced bootcamp",
   "free-course": "Free Course",
+  "students-course-images":{
+    "deep-dive-into-python":[
+      "https://randomuser.me/api/portraits/men/32.jpg",
+      "https://randomuser.me/api/portraits/women/45.jpg",
+      "https://randomuser.me/api/portraits/men/76.jpg"
+    ],
+    "full-stack-development":[
+      "https://randomuser.me/api/portraits/men/2.jpg",
+      "https://randomuser.me/api/portraits/women/5.jpg",
+      "https://randomuser.me/api/portraits/men/7.jpg"
+    ]
+  },
   "coupon-bar": {
     "headline": "Prices as low as {{discount}} off!!",
     "ends-in": "Ends in {{time}}",
@@ -36,10 +52,97 @@
   "rigobot": {
     "title": "Meet Rigobot, our internal AI designed for solo learners",
     "description": "4Geeks.com is the first platform designed to maximize learning at your own pace. Join live sessions whenever you can, get help immediately with AI, and ask for one-on-one mentorships. All our content is fully interactive and video-enabled.",
-    "button": "Try Rigobot for free",
+    "button": "Watch demo",
+    "video_url": "https://www.youtube.com/watch?v=3PMP26t62To",
     "link": "https://codespaces.new/breatheco-de/exercise-postcard",
     "message": "Is there anything you want to know about the {{title}} program?",
     "payment-methods": "- Credit Card. - Contact support for other options"
+  },
+  "reviews": {
+    "full-stack-development": {
+      "rating": 4.5,
+      "total_ratings": 1621,
+      "reviews_numbers": 345,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    },
+    "deep-dive-into-python": {
+      "rating": 4.5,
+      "total_ratings": 1346,
+      "reviews_numbers": 134,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    },
+    "data-science-and-ml": {
+      "rating": 4.5,
+      "total_ratings": 803,
+      "reviews_numbers": 98,
+      "reviews": [
+        {
+          "name": "Felipe Cespedes",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/felipe-profile-picture-jpg",
+          "rating": 5,
+          "date": "1 week ago",
+          "review": "This course is very flexible and allowed me to learn while doing other things in my life!"
+        },
+        {
+          "name": "Rubi Rimache",
+          "avatar": "https://breathecode.herokuapp.com/v1/media/file/ruby-profile-picture-jpg",
+          "rating": 5,
+          "date": "2 weeks ago",
+          "review": "I love the program, it's very good and comfortable! I would recommend it for its comfort and the clarity with which things are explained."
+        },
+        {
+          "name": "Brian Hernandes ",
+          "avatar": "https://example.com/avatar3.jpg",
+          "rating": 4,
+          "date": "1 week ago",
+          "review": "Amazing content and structure. The AI tool is wonderful!"
+        }
+      ]
+    }
   },
   "featured-bullets": [
     {

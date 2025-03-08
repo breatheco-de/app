@@ -7,7 +7,8 @@ import Icon from './Icon';
 import useStyle from '../hooks/useStyle';
 
 function ReactPlayerV2({
-  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, ...rest
+  url, thumbnail, controls, closeOnOverlayClick, className, withThumbnail, iframeStyle, thumbnailStyle, title, withModal, containerStyle, autoPlay, loop, autoFullScreen, muted, volume, pictureInPicture, playerConfig,
+  ...rest
 }) {
   const { lang } = useTranslation('exercises');
   const isVideoFromDrive = url && url.includes('drive.google.com');
@@ -67,7 +68,7 @@ function ReactPlayerV2({
           >
             <IconButton
               aria-label="Play video"
-              icon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background="darkTheme" borderRadius="6px" padding="4px" />}
+              icon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" />}
             />
           </Flex>
 
@@ -110,16 +111,22 @@ function ReactPlayerV2({
                 className={`react-player ${className}`}
                 url={videoUrl}
                 light={existsThumbnail ? <Image src={thumbnail} width="100%" height="100%" /> : withThumbnail}
-                playing={withThumbnail || existsThumbnail}
-                playIcon={<Icon icon="play" color={hexColor.blueDefault} width="40px" height="40px" background={hexColor.featuredColor} borderRadius="6px" padding="4px" />}
+                playing={withThumbnail || existsThumbnail || autoPlay}
+                playIcon={<Icon icon="play2" width="40px" height="40px" borderRadius="6px" padding="4px" position="absolute" />}
                 controls={controls}
                 width="100%"
+                volume={volume}
+                muted={muted}
+                pip={pictureInPicture}
+                playsinline={autoFullScreen}
                 fallback={<Skeleton width={iframeStyle.width || '100%'} height={iframeStyle.height || '100%'} />}
                 height="-webkit-fill-available"
+                loop={loop}
                 style={{
                   background: 'black',
                   ...iframeStyle,
                 }}
+                config={playerConfig}
                 {...rest}
               />
             </Box>
@@ -161,7 +168,14 @@ ReactPlayerV2.propTypes = {
   thumbnailStyle: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
   withModal: PropTypes.bool,
   title: PropTypes.string,
+  autoPlay: PropTypes.bool,
   closeOnOverlayClick: PropTypes.bool,
+  loop: PropTypes.bool,
+  autoFullScreen: PropTypes.bool,
+  muted: PropTypes.bool,
+  pictureInPicture: PropTypes.bool,
+  volume: PropTypes.number,
+  playerConfig: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.any])),
 };
 ReactPlayerV2.defaultProps = {
   url: '',
@@ -173,8 +187,15 @@ ReactPlayerV2.defaultProps = {
   containerStyle: {},
   thumbnailStyle: {},
   withModal: false,
+  autoPlay: false,
   title: '',
   closeOnOverlayClick: true,
+  loop: false,
+  autoFullScreen: false,
+  muted: false,
+  volume: null,
+  pictureInPicture: false,
+  playerConfig: {},
 };
 
 export default ReactPlayerV2;

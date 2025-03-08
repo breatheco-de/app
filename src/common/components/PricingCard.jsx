@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/destructuring-assignment */
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button as ChakraButton, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Image, Box, Button, Flex, Divider, Skeleton, SkeletonText } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useState } from 'react';
@@ -11,9 +11,9 @@ import Icon from './Icon';
 import { parseQuerys } from '../../utils/url';
 import { getQueryString, isWindow, slugToTitle } from '../../utils';
 import { usePersistentBySession } from '../hooks/usePersistent';
-import Button from './Button';
+import { currenciesSymbols } from '../../utils/variables';
 
-export default function PricingCard({ item, courseData, isFetching, relatedSubscription, ...rest }) {
+export default function PricingCard({ item, courseData, isFetching, relatedSubscription, moneyBack, ...rest }) {
   const { t, lang } = useTranslation('signup');
   const { getPriceWithDiscount, state } = useSignup();
   const { selfAppliedCoupon } = state;
@@ -25,8 +25,9 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
   const [coupon] = usePersistentBySession('coupon', []);
 
   const courseCoupon = selfAppliedCoupon?.plan === item?.plan_slug && selfAppliedCoupon;
+  const currencySymbol = currenciesSymbols[item?.currency?.code] || '$';
 
-  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price, courseCoupon);
+  const priceProcessed = getPriceWithDiscount(selectedFinancing?.price || item?.optionList?.[0]?.price || item.price, courseCoupon);
   const discountApplied = priceProcessed?.originalPrice && priceProcessed.price !== priceProcessed.originalPrice;
 
   const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
@@ -213,16 +214,16 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   ) : (
                     <Flex gridGap="8px" alignItems="center">
                       <Box color={color} textAlign="center">
-                        {existsOptionList
+                        {existsOptionList || discountApplied
                           ? (
                             <>
                               {priceProcessed.originalPrice && (
                                 <s style={{ fontSize: '16px' }}>
-                                  {`$${priceProcessed.originalPrice}`}
+                                  {`${currencySymbol}${priceProcessed.originalPrice}`}
                                 </s>
                               )}
                               <Text fontSize="64px" fontFamily="Space Grotesk Variable" fontWeight={700} lineHeight="70px">
-                                {`$${priceProcessed.price || item.price}`}
+                                {`${currencySymbol}${priceProcessed.price || item.price}`}
                               </Text>
                             </>
                           )
@@ -251,7 +252,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
                     <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
-                      {isPayable && `$${item?.price}`}
+                      {isPayable && `${currencySymbol}${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
                     </Box>
@@ -326,7 +327,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                 <AccordionPanel p={0} border={0}>
                   {item?.optionList.map(
                     (financing, i) => (
-                      <ChakraButton
+                      <Button
                         key={financing?.plan_id}
                         width="100%"
                         borderBottom={i === item.optionList.length - 1 ? '0' : '1px solid'}
@@ -345,8 +346,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                           toggleAccordion();
                         }}
                       >
-                        {`$${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
-                      </ChakraButton>
+                        {`${currencySymbol}${calculateCouponOnFinancing(financing?.price, courseCoupon?.discount_value, courseCoupon?.discount_type)} / ${financing?.title}`}
+                      </Button>
                     ),
                   )}
                 </AccordionPanel>
@@ -465,10 +466,12 @@ PricingCard.propTypes = {
   item: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])).isRequired,
   relatedSubscription: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
   isFetching: PropTypes.bool,
+  moneyBack: PropTypes.bool,
   courseData: PropTypes.objectOf(PropTypes.oneOfType([PropTypes.string, PropTypes.array, PropTypes.object])),
 };
 PricingCard.defaultProps = {
   relatedSubscription: {},
   isFetching: false,
+  moneyBack: false,
   courseData: {},
 };

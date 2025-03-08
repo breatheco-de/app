@@ -69,6 +69,7 @@ function ProfilesSection({
   return (
     <AvatarGroup max={4} justifyContent="center">
       {profiles?.map((c, i) => {
+        if (!c) return null;
         const fullName = `${c.user.first_name} ${c.user.last_name}`;
         const isOnline = usersConnected?.includes(c.user.id);
         return (
@@ -135,7 +136,7 @@ function MentoringConsumables({
     return latestB - latestA;
   };
 
-  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set.mentorship_services.some((service) => service.slug === mentoryProps?.service?.slug));
+  const currentServiceSubscription = Array.isArray(allSubscriptions) && allSubscriptions.sort(sortByMostRecentInvoice).find((subscription) => subscription.selected_mentorship_service_set?.mentorship_services?.some((service) => service.slug === mentoryProps?.service?.slug));
   const currentSubscription = currentServiceSubscription || allSubscriptions?.[0];
 
   useEffect(() => {

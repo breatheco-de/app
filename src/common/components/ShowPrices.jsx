@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import PropTypes from 'prop-types';
 import {
-  Box,
+  Box, Button, Flex,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
@@ -10,7 +10,7 @@ import Heading from './Heading';
 import Text from './Text';
 import useSignup from '../store/actions/signupAction';
 import useStyle from '../hooks/useStyle';
-import Button from './Button';
+import Icon from './Icon';
 
 function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
   const { hexColor, backgroundColor2 } = useStyle();
@@ -35,9 +35,9 @@ function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
     >
       <Box display="flex" flexDirection="column" width="100%" gridGap="12px" minWidth={{ base: 'none', md: 'auto' }} height="fit-content" fontWeight="400">
         {!item?.isFreeTier && (
-        <Box fontSize="18px" fontWeight="700">
-          {item?.title}
-        </Box>
+          <Box fontSize="18px" fontWeight="700">
+            {item?.title}
+          </Box>
         )}
         <Text
           size="md"
@@ -52,11 +52,11 @@ function PlanCard({ item, handleSelect, selectedId, isCouponAvailable }) {
           {item?.priceText || item?.price}
         </Heading>
         {item?.lastPrice && (
-        <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
-          <s>
-            {item?.lastPrice}
-          </s>
-        </Text>
+          <Text lineHeight="21px" fontSize="21px" fontWeight="500" color="#A9A9A9">
+            <s>
+              {item?.lastPrice}
+            </s>
+          </Text>
         )}
       </Box>
     </Box>
@@ -265,6 +265,14 @@ function ShowPrices({
           >
             {t('common:enroll')}
           </Button>
+          {!selectedItem?.isFreeTier && (
+            <Flex marginTop="5px" gap="5px" alignItems="center">
+              <Icon icon="shield" width="23px" />
+              <Text fontSize="13px" fontWeight="bold" color="green.400">
+                {t('common:money-back-guarantee-short')}
+              </Text>
+            </Flex>
+          )}
         </Box>
       </Box>
     </>
@@ -294,7 +302,7 @@ ShowPrices.defaultProps = {
   notReady: null,
   list: null,
   finance: null,
-  onSelect: () => {},
+  onSelect: () => { },
   defaultIndex: null,
   defaultFinanceIndex: 0,
   outOfConsumables: false,

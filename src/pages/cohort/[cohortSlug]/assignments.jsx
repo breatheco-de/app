@@ -31,6 +31,7 @@ import bc from '../../../common/services/breathecode';
 import Icon from '../../../common/components/Icon';
 import Text from '../../../common/components/Text';
 import useStyle from '../../../common/hooks/useStyle';
+import useAuth from '../../../common/hooks/useAuth';
 import useCohortHandler from '../../../common/hooks/useCohortHandler';
 import useAssignments from '../../../common/store/actions/assignmentsAction';
 import Projects from '../../../common/views/Projects';
@@ -106,6 +107,7 @@ function Assignments() {
   const router = useRouter();
   const { query } = router;
   const { cohortSlug, academy } = query;
+  const { cohorts } = useAuth();
   const { setCohortSession } = useCohortHandler();
   const toast = useToast();
   const { hexColor, borderColor2 } = useStyle();
@@ -203,45 +205,17 @@ function Assignments() {
 
   useEffect(() => {
     axiosInstance.defaults.headers.common.academy = academy;
-    bc.admissions()
-      .me()
-      .then(({ data }) => {
-        const cohortFiltered = data.cohorts.filter(
-          (cohort) => cohort.role !== 'STUDENT',
-        ).map((elem) => {
-          const { cohort } = elem;
-          const { syllabus_version } = cohort;
-          return {
-            ...cohort,
-            selectedProgramSlug: `/cohort/${cohort.slug}/${syllabus_version.slug}/v${syllabus_version.version}`,
-            cohort_role: elem?.role,
-            cohort_user: {
-              created_at: elem?.created_at,
-              educational_status: elem?.educational_status,
-              finantial_status: elem?.finantial_status,
-              role: elem?.role,
-            },
-          };
-        });
+    const cohortFiltered = cohorts.filter(
+      (cohort) => cohort.cohort_user.role !== 'STUDENT',
+    );
 
-        setPersonalCohorts(
-          cohortFiltered.sort((a, b) => a.name.localeCompare(b.name)),
-        );
-        const currentCohort = cohortFiltered.find((c) => c.slug === cohortSlug);
-        setSelectedCohort(currentCohort);
-      })
-      .catch((err) => {
-        console.log(err);
-        toast({
-          position: 'top',
-          title: t('alert-message:error-fetching-personal-cohorts'),
-          status: 'error',
-          duration: 7000,
-          isClosable: true,
-        });
-      });
+    setPersonalCohorts(
+      cohortFiltered.sort((a, b) => a.name.localeCompare(b.name)),
+    );
+    const currentCohort = cohortFiltered.find((c) => c.slug === cohortSlug);
+    setSelectedCohort(currentCohort);
     getDefaultStudent();
-  }, []);
+  }, [cohorts]);
 
   useEffect(() => {
     if (selectedCohort && selectedCohort.id) {

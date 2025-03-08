@@ -227,11 +227,28 @@ function SyllabusContent() {
     }
   };
 
+  const processAiContext = (aiContext, cohort) => {
+    if (!aiContext) return '';
+
+    let processedContext = aiContext.replace(/<!--\s*hide\s*-->[\s\S]*?<!--\s*endhide\s*-->/g, '');
+
+    processedContext = processedContext.replace(/<onlyfor\s+saas="(true|false)".*?>([\s\S]*?)<\/onlyfor>/gi, (match, saasValue, content) => {
+      const isCohortSaas = cohort?.available_as_saas === true;
+
+      if ((saasValue === 'false' && isCohortSaas) || (saasValue === 'true' && !isCohortSaas)) {
+        return '';
+      }
+      return content;
+    });
+
+    return processedContext;
+  };
+
   const getAssetContext = async () => {
     try {
       let aiContext;
       const cachedContext = JSON.parse(sessionStorage.getItem(`context-${currentAsset.slug}`));
-      if (!cachedContext) {
+      if (!cachedContext && currentAsset?.id) {
         const resp = await bc.lesson().getAssetContext(currentAsset.id);
         if (resp?.status === 200) {
           aiContext = resp.data;
@@ -243,7 +260,7 @@ function SyllabusContent() {
         const userContext = generateUserContext(user);
         rigo.updateOptions({
           showBubble: false,
-          context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${aiContext.ai_context}`,
+          context: `${userContext ? `Here is some information about this user: ${userContext}. \n` : ''}${processAiContext(aiContext.ai_context, cohortSession)}`,
           completions,
         });
       }
@@ -387,6 +404,7 @@ function SyllabusContent() {
     setIpynbHtmlUrl(null);
     setCurrentBlankProps(null);
     setSubTasks([]);
+    setFileData([]);
   };
 
   const onClickAssignment = (e, item) => {
@@ -396,7 +414,16 @@ function SyllabusContent() {
     cleanCurrentData();
   };
 
-  const EventIfNotFound = () => {
+  const EventIfNotFound = (task) => {
+    if (task.target === 'blank' && task.task_type === 'LESSON') {
+      setReadme({
+        content: t('external-read', { link: task.url }),
+      });
+      setCurrentAsset({
+        title: task?.title || t('no-content-found'),
+      });
+      return;
+    }
     setReadme({
       content: t('no-content-found-description'),
     });
@@ -408,7 +435,11 @@ function SyllabusContent() {
   useEffect(() => {
     const currTask = sortedAssignments[currentModuleIndex]?.modules?.find((l) => l.slug === lessonSlug);
     const currentLanguageTaskUrl = currTask?.translations?.[lang === 'en' ? 'us' : lang]?.slug || lessonSlug;
-    if (Object.keys(cohortSession).length > 0) {
+    if (Object.keys(cohortSession).length > 0 && sortedAssignments.length > 0) {
+      if (currTask?.task_type === 'LESSON' && currTask?.target === 'blank') {
+        EventIfNotFound(currTask);
+        return undefined;
+      }
       bc.lesson({ asset_type: assetTypeValues[lesson] }).getAsset(currentLanguageTaskUrl).then(({ data }) => {
         const translations = data?.translations;
         const exensionName = getExtensionName(data.readme_url);
@@ -418,11 +449,6 @@ function SyllabusContent() {
         const pathnameWithoutExtension = urlPathname ? urlPathname.split('.ipynb')[0] : null;
         const extension = urlPathname ? urlPathname.split('.').pop() : null;
         const finalPathname = `${pathnameWithoutExtension}.${extension}`;
-
-        if (currTask?.target === 'blank') {
-          setCurrentAsset(data);
-          return;
-        }
 
         setReadmeUrlPathname(finalPathname);
         let currentTranslationSlug = data?.lang === language ? data?.slug : data.translations[language];
@@ -469,7 +495,7 @@ function SyllabusContent() {
             });
         }
       }).catch(() => {
-        EventIfNotFound();
+        EventIfNotFound(currTask);
       });
     }
     return () => {
@@ -478,7 +504,7 @@ function SyllabusContent() {
         translations: [],
       });
     };
-  }, [router, lessonSlug, cohortSession]);
+  }, [router, lessonSlug, cohortSession, sortedAssignments]);
 
   useEffect(() => {
     const currentSyllabus = sortedAssignments.find((l) => l.id === currentSelectedModule);
@@ -811,6 +837,7 @@ function SyllabusContent() {
       <Flex className="flex-container" minHeight="93vh" background={isAvailableAsSaas && hexColor.lightColor4} position="relative">
         {!isAvailableAsSaas && (
           <StickySideBar
+            top="300px"
             width="auto"
             menu={[
               ...teacherActions,
@@ -1008,7 +1035,7 @@ function SyllabusContent() {
                         )}
 
                         {(!isAvailableAsSaas || ipynbHtmlUrl) && (
-                          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="15px" right="32px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
+                          <Box display={{ base: 'flex', md: 'block' }} margin={{ base: '2rem 0 0 0', md: '0px' }} position={{ base: '', md: 'absolute' }} width={{ base: '100%', md: '172px' }} height="auto" top="0" right="0px" background={featuredLight} borderRadius="4px" color={fontColor} zIndex="9">
                             {repoUrl && !isQuiz && !isAvailableAsSaas && (
                               <Link
                                 display="flex"
