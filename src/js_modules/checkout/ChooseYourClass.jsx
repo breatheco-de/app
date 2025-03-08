@@ -6,7 +6,6 @@ import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-import AlertMessage from '../../common/components/AlertMessage';
 import { getQueryString, getTimeProps, getBrowserInfo } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
@@ -18,6 +17,20 @@ import useCustomToast from '../../common/hooks/useCustomToast';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
+  const { createToast } = useCustomToast({ toastId: 'sign-up-not-available-date' });
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    if (!cohortIsLoading && !hasShownToast.current) {
+      createToast({
+        position: 'top',
+        title: <span dangerouslySetInnerHTML={{ __html: t('no-date-available') }} />,
+        status: 'info',
+        duration: 8000,
+      });
+      hasShownToast.current = true;
+    }
+  }, [cohortIsLoading]);
 
   return cohortIsLoading ? (
     <CardSkeleton
@@ -29,11 +42,8 @@ function LoaderContent({ cohortIsLoading }) {
       cardWidth="100%"
       cardHeight="120px"
     />
-  ) : (
-    <AlertMessage type="info" message={t('no-date-available')} full />
-  );
+  ) : null;
 }
-
 function ChooseYourClass({
   setCohorts,
 }) {

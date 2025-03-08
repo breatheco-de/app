@@ -416,14 +416,13 @@ function Dashboard() {
       });
     }
     if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial) {
-      console.log('Alerta de proyectos obligatorios cerrada');
       createToast({
         position: 'top',
         title: (
           <span>
             <span
               dangerouslySetInnerHTML={{
-                __html: t('deliverProject.mandatory-message', { count: getMandatoryProjects().length }),
+                __html: t('deliverProject.mandatory-message', { count: mandatoryProjectsCount }),
               }}
             />
             .
@@ -447,7 +446,7 @@ function Dashboard() {
           </span>
         ),
         status: 'warning',
-        duration: null,
+        duration: 8000,
       });
     }
   }, [isSubscriptionFreeTrial, getMandatoryProjects()?.length]);
@@ -480,35 +479,6 @@ function Dashboard() {
 
   return (
     <>
-      {/* {getMandatoryProjects() && getMandatoryProjects().length > 0 && !isSubscriptionFreeTrial && (
-        <AlertMessage
-          full
-          type="warning"
-          style={{ borderRadius: '0px', justifyContent: 'center' }}
-          onClose={() => console.log('Alerta de proyectos obligatorios cerrada')}
-        >
-          <Text
-            size="l"
-            color="black"
-            fontWeight="700"
-          >
-            {t('deliverProject.mandatory-message', { count: getMandatoryProjects().length })}
-            {'  '}
-            <Button
-              variant="link"
-              color="black"
-              textDecoration="underline"
-              fontWeight="700"
-              fontSize="15px"
-              height="20px"
-              onClick={() => setShowMandatoryModal(true)}
-              _active={{ color: 'black' }}
-            >
-              {t('deliverProject.see-mandatory-projects')}
-            </Button>
-          </Text>
-        </AlertMessage>
-      )} */}
       <Container maxW="container.xl">
         <Box width="fit-content" marginTop="18px" marginBottom="48px">
           <NextChakraLink
