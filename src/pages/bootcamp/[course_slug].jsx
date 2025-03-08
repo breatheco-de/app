@@ -387,7 +387,7 @@ function CoursePage({ data, syllabus }) {
         createToast({
           position: 'top',
           title: t('dashboard:already-have-this-cohort'),
-          status: 'info',
+          status: 'success',
           duration: 5000,
         });
       }

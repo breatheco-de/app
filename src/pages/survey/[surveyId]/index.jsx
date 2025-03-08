@@ -15,10 +15,10 @@ import useTranslation from 'next-translate/useTranslation';
 import styles from '../../../../styles/Home.module.css';
 import Steps from '../../../common/styledComponents/Steps';
 import Question from '../../../common/components/Question';
-import AlertMessage from '../../../common/components/AlertMessage';
 import bc from '../../../common/services/breathecode';
 import asPrivate from '../../../common/context/PrivateRouteWrapper';
 import { log } from '../../../utils/logging';
+import useCustomToast from '../../../common/hooks/useCustomToast';
 
 function Survey() {
   const router = useRouter();
@@ -28,6 +28,7 @@ function Survey() {
   const [msg, setMsg] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [currentIndex, setcurrentIndex] = useState(0);
+  const { createToast } = useCustomToast({ toastId: 'questions-toast' });
 
   const handleSurvey = async () => {
     await bc.feedback().getSurvey(surveyId)
@@ -54,6 +55,19 @@ function Survey() {
     }
   }, []);
 
+  useEffect(() => {
+    if (msg) {
+      createToast({
+        title: t(msg.text),
+        status: msg.type,
+        duration: 5000,
+        isClosable: true,
+        position: 'top',
+      });
+      setMsg(null);
+    }
+  }, [msg]);
+
   const confirmSend = () => {
     const q = questions[currentIndex];
     if (q.score === null || !parseInt(q.score, 10) || q.score > 10 || q.score < 0) {
@@ -74,18 +88,6 @@ function Survey() {
     }
   };
 
-  if (msg && msg.type === 'success') {
-    return (
-      <AlertMessage
-        type={msg.type}
-        style={{
-          margin: '20px 0 18px 0',
-        }}
-        message={t('thanks')}
-      />
-    );
-  }
-
   return (
     <div className={styles.container}>
       <main className={styles.main}>
@@ -95,17 +97,6 @@ function Survey() {
             steps={!Array.isArray(questions) ? [] : questions.map((q, i) => ({ label: i }))}
           />
         </div>
-        {msg
-          && (
-            <AlertMessage
-              type={msg.type}
-              style={{
-                margin: '20px 0 18px 0',
-              }}
-              // message={msg.text}
-              message={t(msg.text)}
-            />
-          )}
         {Array.isArray(questions) && questions.length > 0
           && (
             <Question

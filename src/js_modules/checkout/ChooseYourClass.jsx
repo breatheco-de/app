@@ -26,7 +26,7 @@ function LoaderContent({ cohortIsLoading }) {
         position: 'top',
         title: <span dangerouslySetInnerHTML={{ __html: t('no-date-available') }} />,
         status: 'info',
-        duration: 8000,
+        duration: 5000,
       });
       hasShownToast.current = true;
     }
@@ -112,7 +112,7 @@ function ChooseYourClass({
           title: t('alert-message:something-went-wrong-fetching-cohorts'),
           description: error.message,
           status: 'error',
-          duration: 8000,
+          duration: 5000,
           isClosable: true,
         });
       })

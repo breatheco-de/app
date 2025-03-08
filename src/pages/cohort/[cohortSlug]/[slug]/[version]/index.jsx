@@ -412,7 +412,7 @@ function Dashboard() {
           />
         ),
         status: 'warning',
-        duration: null,
+        duration: 5000,
       });
     }
     if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial) {
@@ -446,7 +446,7 @@ function Dashboard() {
           </span>
         ),
         status: 'warning',
-        duration: 8000,
+        duration: 5000,
       });
     }
   }, [isSubscriptionFreeTrial, getMandatoryProjects()?.length]);

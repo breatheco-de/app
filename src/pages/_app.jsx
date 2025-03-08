@@ -36,7 +36,7 @@ import '@fontsource/lato/700.css';
 import '@fontsource/lato/900.css';
 import '@fontsource-variable/space-grotesk';
 import { BREATHECODE_HOST } from '../utils/variables';
-import AlertMessage from '../common/components/AlertMessage';
+import useCustomToast from '../common/hooks/useCustomToast';
 
 function InternalLinkComponent(props) {
   return <Link {...props} />;
@@ -45,6 +45,7 @@ function InternalLinkComponent(props) {
 function App({ Component, pageProps }) {
   const domainName = process.env.DOMAIN_NAME;
   const existsWhiteLabel = typeof domainName === 'string' && domainName !== 'https://4geeks.com';
+  const { createToast } = useCustomToast({ toastId: 'env-warning' });
 
   const pagePropsData = {
     ...pageProps,
@@ -60,6 +61,17 @@ function App({ Component, pageProps }) {
     TagManager.initialize({ gtmId: process.env.TAG_MANAGER_KEY });
   }, []);
 
+  useEffect(() => {
+    if (isEnvModified) {
+      createToast({
+        position: 'top',
+        title: `You are not on the test environment, you are on "${BREATHECODE_HOST}"`,
+        status: 'warning',
+        duration: 8000,
+      });
+    }
+  }, [isEnvModified]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Helmet
@@ -74,15 +86,6 @@ function App({ Component, pageProps }) {
             <SessionProvider>
               <ConnectionProvider>
                 <Navbar pageProps={pageProps} translations={pageProps?.translations} />
-                {isEnvModified && (
-                <AlertMessage
-                  full
-                  type="warning"
-                  message={`You not on the test environment, you are on "${BREATHECODE_HOST}"`}
-                  borderRadius="0px"
-                  justifyContent="center"
-                />
-                )}
                 <InterceptionLoader />
 
                 <PrismicProvider internalLinkComponent={InternalLinkComponent}>

@@ -64,7 +64,7 @@ function Profile() {
           />
         ),
         status: 'success',
-        duration: 8000,
+        duration: 5000,
       });
     }
   }, []);
