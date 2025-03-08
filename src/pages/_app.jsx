@@ -67,7 +67,7 @@ function App({ Component, pageProps }) {
         position: 'top',
         title: `You are not on the test environment, you are on "${BREATHECODE_HOST}"`,
         status: 'warning',
-        duration: 8000,
+        duration: 5000,
       });
     }
   }, [isEnvModified]);

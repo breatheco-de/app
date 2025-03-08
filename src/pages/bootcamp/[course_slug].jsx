@@ -122,7 +122,6 @@ function CoursePage({ data, syllabus }) {
   const { hexColor, backgroundColor, fontColor, borderColor, complementaryBlue, featuredColor } = useStyle();
   const { isRigoInitialized, rigo } = useRigo();
   const { setCohortSession } = useCohortHandler();
-  // const toast = useToast();
   const { createToast } = useCustomToast({ toastId: 'choose-program-pricing-detail' });
   const [isFetching, setIsFetching] = useState(false);
   const [readyToRefetch, setReadyToRefetch] = useState(false);
