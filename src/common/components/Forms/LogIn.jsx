@@ -349,6 +349,7 @@ function LogIn({ hideLabel, actionfontSize, callBack, disableRedirect }) {
                     />
                     <InputRightElement width="2.5rem" top="5px" right="10px">
                       <Button
+                        variant="unstyled"
                         background="transparent"
                         width="100%"
                         height="100%"

@@ -140,7 +140,6 @@ function CoursePage({ data, syllabus }) {
   const limitViewStudents = 3;
   const cohortId = data?.cohort?.id;
   const isVisibilityPublic = data.visibility === 'PUBLIC';
-
   const structuredData = data?.course_translation ? {
     '@context': 'https://schema.org',
     '@type': 'Course',
@@ -776,7 +775,6 @@ function CoursePage({ data, syllabus }) {
                         {payableList?.length > 1 && (
                           <Button
                             variant="outline"
-                            color="green.400"
                             isLoading={initialDataIsFetching}
                             borderColor="currentColor"
                             width="100%"

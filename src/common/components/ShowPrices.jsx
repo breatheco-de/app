@@ -253,7 +253,7 @@ function ShowPrices({
         <Box mt="38px">
           <Button
             display={outOfConsumables && 'none'}
-            variant="default"
+            variant="primary"
             isDisabled={!selectedId}
             onClick={() => {
               if (handleUpgrade === false) {

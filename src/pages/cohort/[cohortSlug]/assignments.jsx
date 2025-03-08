@@ -6,7 +6,7 @@ import {
   Box,
   Divider,
   useToast,
-  Button,
+  Button as ChakraButton,
   ButtonGroup,
   Popover,
   PopoverTrigger,
@@ -38,6 +38,7 @@ import Projects from '../../../common/views/Projects';
 import FinalProjects from '../../../common/views/FinalProjects';
 import StudentAssignments from '../../../common/views/StudentAssignments';
 import axiosInstance from '../../../axios';
+import Button from '../../../common/components/Button';
 
 function Assignments() {
   const { t } = useTranslation('assignments');
@@ -502,11 +503,8 @@ function Assignments() {
           spacing="6"
         >
           <Button
-            background={currentView === 0 ? hexColor.blueDefault : 'none'}
-            borderColor={hexColor.blueDefault}
-            _hover={{ opacity: 0.8 }}
-            _active={{ opacity: 0.8 }}
-            color={currentView === 0 ? '#FFF' : hexColor.blueDefault}
+            hasLoading={false}
+            variant={currentView === 0 ? 'primary' : 'outline'}
             textTransform="uppercase"
             padding={{ base: '5px 10px', sm: '5px 15px' }}
             height="40px"
@@ -531,11 +529,8 @@ function Assignments() {
             {t('students-view')}
           </Button>
           <Button
-            background={currentView === 1 ? hexColor.blueDefault : 'none'}
-            borderColor={hexColor.blueDefault}
-            color={currentView === 1 ? '#FFF' : hexColor.blueDefault}
-            _hover={{ opacity: 0.8 }}
-            _active={{ opacity: 0.8 }}
+            hasLoading={false}
+            variant={currentView === 1 ? 'primary' : 'outline'}
             textTransform="uppercase"
             padding={{ base: '5px 10px', sm: '5px 15px' }}
             height="40px"
@@ -560,11 +555,8 @@ function Assignments() {
             {t('projects-view')}
           </Button>
           <Button
-            background={currentView === 2 ? hexColor.blueDefault : 'none'}
-            borderColor={hexColor.blueDefault}
-            color={currentView === 2 ? '#FFF' : hexColor.blueDefault}
-            _hover={{ opacity: 0.8 }}
-            _active={{ opacity: 0.8 }}
+            hasLoading={false}
+            variant={currentView === 2 ? 'primary' : 'outline'}
             textTransform="uppercase"
             padding={{ base: '5px 2px', sm: '5px 15px' }}
             whiteSpace="wrap"
@@ -592,6 +584,7 @@ function Assignments() {
         </ButtonGroup>
         <Box display={currentView === 2 ? 'none' : 'flex'} gridGap="10px">
           <Button
+            hasLoading={false}
             variant="ghost"
             color={hexColor.blueDefault}
             leftIcon={<Icon icon="filter" width="20px" height="20px" />}
@@ -601,18 +594,18 @@ function Assignments() {
           </Button>
           <Popover maxWidth="200px" placement="bottom-start">
             <PopoverTrigger>
-              <Button variant="unstyled" display="flex" gridGap="6px" color={hexColor.blueDefault} alignItems="center">
+              <ChakraButton variant="unstyled" display="flex" gridGap="6px" color={hexColor.blueDefault} alignItems="center">
                 <Icon icon="sort" width="18px" heigh="11px" color="currentColor" />
                 <Text textTransform="uppercase" size="14px" fontWeight={700}>
                   {t('common:sort')}
                 </Text>
-              </Button>
+              </ChakraButton>
             </PopoverTrigger>
             <PopoverContent>
               <PopoverArrow />
               <PopoverCloseButton />
               <PopoverBody display="flex" flexDirection="column" alignItems="flex-start" pl={4}>
-                <Button
+                <ChakraButton
                   variant="unstyled"
                   onClick={() => {
                     const value = typeof sort === 'string' && sort.startsWith('-') ? 'user__first_name' : '-user__first_name';
@@ -626,7 +619,7 @@ function Assignments() {
                   }}
                 >
                   {`${t('sort.student')} ${typeof sort === 'string' && sort.startsWith('-') ? '▼' : '▲'}`}
-                </Button>
+                </ChakraButton>
               </PopoverBody>
             </PopoverContent>
           </Popover>
@@ -765,14 +758,18 @@ function Assignments() {
 
           <ModalFooter justifyContent="space-between">
             <Button
-              color={hexColor.blueDefault}
+              hasLoading={false}
               variant="ghost"
               mr={3}
               onClick={clearFilters}
             >
               {t('common:clear-all')}
             </Button>
-            <Button colorScheme="blue" onClick={applyFilters}>
+            <Button
+              hasLoading={false}
+              variant="primary"
+              onClick={applyFilters}
+            >
               {t('common:apply-filters')}
             </Button>
           </ModalFooter>

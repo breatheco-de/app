@@ -499,12 +499,8 @@ function Subscriptions({ cohorts }) {
 
           <ModalFooter borderTop={`1px solid ${hexColor.borderColor}`}>
             <Button
-              background={hexColor.blueDefault}
+              variant="primary"
               onClick={closeMentorshipsModal}
-              color="white"
-              _hover={{
-                background: hexColor.blueDefault,
-              }}
             >
               Close
             </Button>
