@@ -23,7 +23,7 @@ const useCustomToast = ({
     position = 'top',
     maxWidth = '1200px',
     width = '90%',
-    duration = 16000,
+    duration = 5000,
     description,
     actions = null,
     isClosable = true,
