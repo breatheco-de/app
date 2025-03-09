@@ -9,7 +9,6 @@ import Text from '../Text';
 import useStyle from '../../hooks/useStyle';
 import CodeReview from './CodeReview';
 import DeliverModalContent from './DeliverModalContent';
-import AlertMessage from '../AlertMessage';
 import Icon from '../Icon';
 import FileList from './FileList';
 import bc from '../../services/breathecode';
@@ -460,6 +459,17 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
     }
   };
 
+  useEffect(() => {
+    if (isOpen && true && !false) {
+      createToast({
+        position: 'top',
+        title: isStudent ? t('code-review.info-student') : t('code-review.info-teacher'),
+        status: isStudent ? 'info' : 'warning',
+        duration: 5000,
+      });
+    }
+  }, [isOpen]);
+
   return (
     <SimpleModal
       isOpen={isOpen}
@@ -516,18 +526,6 @@ function ReviewModal({ isExternal, externalFiles, isOpen, isStudent, externalDat
             </Box>
           ) : (
             <>
-              {hasFilesToReview && !isReadyToApprove && (
-                <AlertMessage
-                  type={isStudent ? 'info' : 'warning'}
-                  full
-                  message={isStudent
-                    ? t('code-review.info-student')
-                    : t('code-review.info-teacher')}
-                  borderRadius="4px"
-                  padding="8px"
-                  mb="24px"
-                />
-              )}
               <Flex flexDirection="column" gridGap="16px">
                 {!isStudent ? (
                   <Flex justifyContent="space-between">
