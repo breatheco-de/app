@@ -325,6 +325,7 @@ function MktTwoColumnSideImage({
               src={imageUrl}
               alt={imageAlt}
               title={imageAlt}
+              px={{ base: '10px', md: 'none' }}
               borderRadius="3px"
               width={imageProps?.width}
               {...imageSideProps}
