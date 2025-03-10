@@ -1,5 +1,5 @@
 import {
-  useEffect, useState,
+  useEffect, useState, useRef,
 } from 'react';
 import {
   Box, Flex, Container, useColorModeValue, Skeleton,
@@ -398,6 +398,8 @@ function Dashboard() {
     };
   }, [cohortProgram, taskTodo, router]);
 
+  const hasShownMandatoryToast = useRef(false);
+
   useEffect(() => {
     const mandatoryProjectsCount = getMandatoryProjects()?.length || 0;
     if (isSubscriptionFreeTrial) {
@@ -415,7 +417,8 @@ function Dashboard() {
         duration: 5000,
       });
     }
-    if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial) {
+    if (mandatoryProjectsCount > 0 && !isSubscriptionFreeTrial && !hasShownMandatoryToast.current) {
+      hasShownMandatoryToast.current = true;
       createToast({
         position: 'top',
         title: (
