@@ -43,6 +43,7 @@ import completions from './completion-jobs.json';
 import Rating from '../../common/components/Rating';
 import SimpleModal from '../../common/components/SimpleModal';
 import CustomCarousel from '../../common/components/CustomCarousel';
+import { usePlanPrice } from '../../utils/getPriceWithDiscount';
 
 export async function getStaticPaths({ locales }) {
   const mktQueryString = parseQuerys({
@@ -178,63 +179,8 @@ function CoursePage({ data, syllabus }) {
     coupon: getQueryString('coupon'),
   }) : `?plan=${data?.plan_slug}&cohort=${cohortId}`;
 
-  const handleCoupons = (priceText) => {
-    if (!allDiscounts.length === 0 || featuredPlanToEnroll.price === 0) return priceText;
-
-    const currencySymbol = priceText.replace(/[\d.,]/g, '');
-    let discountedPrice = parseFloat(priceText.replace(/[^\d.]/g, ''));
-
-    allDiscounts.forEach((discount) => {
-      if (discount.discount_type === 'PERCENT_OFF') {
-        discountedPrice -= (discountedPrice * discount.discount_value);
-      } else {
-        discountedPrice -= discount.discount_value;
-      }
-    });
-
-    discountedPrice = Math.floor(discountedPrice * 100) / 100;
-
-    return currencySymbol + discountedPrice;
-  };
-
-  const getPlanPrice = () => {
-    if (featuredPlanToEnroll?.plan_slug) {
-      if (featuredPlanToEnroll.period === 'YEAR') {
-        return t('signup:info.enroll-yearly-subscription', {
-          price: handleCoupons(featuredPlanToEnroll.pricePerMonthText),
-          year_price: handleCoupons(featuredPlanToEnroll.priceText),
-        });
-      }
-      if (featuredPlanToEnroll.period === 'MONTH') {
-        return t('signup:info.enroll-monthly-subscription', {
-          price: handleCoupons(featuredPlanToEnroll.priceText),
-        });
-      }
-      if (featuredPlanToEnroll.period === 'ONE_TIME') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)}, ${t('signup:info.one-time-payment')}`;
-      }
-      if (featuredPlanToEnroll.period === 'FINANCING') {
-        return `${handleCoupons(featuredPlanToEnroll.priceText)} ${t('signup:info.installments')}`;
-      }
-      if (featuredPlanToEnroll?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-      if (featuredPlanToEnroll?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-    }
-    if (!featuredPlanToEnroll?.plan_slug && planList[0]?.isFreeTier) {
-      if (planList[0]?.type === 'FREE') {
-        return t('common:enroll-totally-free');
-      }
-      if (planList[0]?.type === 'TRIAL') {
-        return t('common:start-free-trial');
-      }
-    }
-    return t('common:enroll');
-  };
-
-  const featurePrice = getPlanPrice().toLocaleLowerCase();
+  const planPriceFormatter = usePlanPrice();
+  const featurePrice = planPriceFormatter(featuredPlanToEnroll, planList, allDiscounts).toLocaleLowerCase();
 
   const getAlternativeTranslation = (slug, params = {}, options = {}) => {
     const keys = slug.split('.');
@@ -773,20 +719,6 @@ function CoursePage({ data, syllabus }) {
                             )}
                           </Flex>
                         </Button>
-                        {payableList?.length > 1 && (
-                          <Button
-                            variant="outline"
-                            color="green.400"
-                            isLoading={initialDataIsFetching}
-                            borderColor="currentColor"
-                            width="100%"
-                            whiteSpace="normal"
-                            wordWrap="break-word"
-                            onClick={goToFinancingOptions}
-                          >
-                            {t('common:see-financing-options')}
-                          </Button>
-                        )}
                         {isAuthenticated ? (
                           <Text size="13px" padding="4px 8px" borderRadius="4px" background={featuredColor}>
                             {t('signup:switch-user-connector', { name: user?.first_name })}
