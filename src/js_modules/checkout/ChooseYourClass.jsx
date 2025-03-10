@@ -1,12 +1,11 @@
 import {
-  Box, Button, Input, useToast,
+  Box, Button, Input,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 import useTranslation from 'next-translate/useTranslation';
 import { useEffect, useRef, useState } from 'react';
 import Heading from '../../common/components/Heading';
 import bc from '../../common/services/breathecode';
-import AlertMessage from '../../common/components/AlertMessage';
 import { getQueryString, getTimeProps, getBrowserInfo } from '../../utils';
 import useGoogleMaps from '../../common/hooks/useGoogleMaps';
 import useSignup from '../../common/store/actions/signupAction';
@@ -14,9 +13,24 @@ import ChooseDate from './ChooseDate';
 import useStyle from '../../common/hooks/useStyle';
 import { reportDatalayer } from '../../utils/requests';
 import { CardSkeleton } from '../../common/components/Skeleton';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 function LoaderContent({ cohortIsLoading }) {
   const { t } = useTranslation('signup');
+  const { createToast } = useCustomToast({ toastId: 'sign-up-not-available-date' });
+  const hasShownToast = useRef(false);
+
+  useEffect(() => {
+    if (!cohortIsLoading && !hasShownToast.current) {
+      createToast({
+        position: 'top',
+        title: <span dangerouslySetInnerHTML={{ __html: t('no-date-available') }} />,
+        status: 'info',
+        duration: 5000,
+      });
+      hasShownToast.current = true;
+    }
+  }, [cohortIsLoading]);
 
   return cohortIsLoading ? (
     <CardSkeleton
@@ -28,11 +42,8 @@ function LoaderContent({ cohortIsLoading }) {
       cardWidth="100%"
       cardHeight="120px"
     />
-  ) : (
-    <AlertMessage type="info" message={t('no-date-available')} />
-  );
+  ) : null;
 }
-
 function ChooseYourClass({
   setCohorts,
 }) {
@@ -42,7 +53,7 @@ function ChooseYourClass({
   const [isLoading, setIsLoading] = useState(false);
   const [coords, setCoords] = useState(null);
   const [addressValue, setAddressValue] = useState('');
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'cohort-google-maps-class' });
   const autoCompleteRef = useRef();
   const inputRef = useRef();
   const buttonRef = useRef();
@@ -96,12 +107,12 @@ function ChooseYourClass({
         setAvailableDates(filteredCohorts);
       })
       .catch((error) => {
-        toast({
+        createToast({
           position: 'top',
           title: t('alert-message:something-went-wrong-fetching-cohorts'),
           description: error.message,
           status: 'error',
-          duration: 8000,
+          duration: 5000,
           isClosable: true,
         });
       })
@@ -136,7 +147,7 @@ function ChooseYourClass({
             });
           })
           .catch(() => {
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:google-maps-no-coincidences'),
               status: 'warning',

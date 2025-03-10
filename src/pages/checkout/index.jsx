@@ -10,7 +10,6 @@ import {
   InputGroup,
   InputRightElement,
   Skeleton,
-  useToast,
   Menu,
   MenuButton,
   MenuList,
@@ -46,6 +45,7 @@ import { getTranslations, processPlans } from '../../common/handlers/subscriptio
 import Icon from '../../common/components/Icon';
 import { usePersistentBySession } from '../../common/hooks/usePersistent';
 import AcordionList from '../../common/components/AcordionList';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'signup');
@@ -113,7 +113,7 @@ function Checkout() {
   axiosInstance.defaults.headers.common['Accept-Language'] = router.locale;
   const { user, isAuthenticated, isLoading } = useAuth();
   const { userSession } = useSession();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'coupon-plan-email-detail' });
   const plan = getQueryString('plan');
   const queryPlans = getQueryString('plans');
   const queryPlanId = getQueryString('plan_id');
@@ -191,7 +191,7 @@ function Checkout() {
   const handleCoupon = (coup, actions) => {
     const alreadyAppliedCoupon = (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === discountCode) || (selfAppliedCoupon?.slug && selfAppliedCoupon?.slug === couponValue);
     if (alreadyAppliedCoupon) {
-      toast({
+      createToast({
         position: 'top',
         title: t('signup:alert-message.coupon-already-applied'),
         status: 'info',
@@ -216,7 +216,7 @@ function Checkout() {
         } else {
           setDiscountCoupon(null);
           setCouponError(true);
-          toast({
+          createToast({
             position: 'top',
             title: t('signup:coupon-error'),
             status: 'error',
@@ -287,7 +287,7 @@ function Checkout() {
     })
       .catch((err) => {
         if (err) {
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -389,7 +389,7 @@ function Checkout() {
                 const respData = await resp.json();
                 if (resp.status > 400) {
                   setShowChooseClass(true);
-                  toast({
+                  createToast({
                     title: respData.detail,
                     status: 'error',
                     duration: 6000,
@@ -425,7 +425,7 @@ function Checkout() {
           if (!resp) {
             setLoader('plan', false);
             router.push('/pricing');
-            toast({
+            createToast({
               position: 'top',
               title: t('alert-message:no-plan-configuration'),
               status: 'error',
@@ -442,7 +442,7 @@ function Checkout() {
 
             if ((resp && resp?.status >= 400) || resp?.data.length === 0) {
               setShowChooseClass(true);
-              toast({
+              createToast({
                 position: 'top',
                 title: t('alert-message:no-plan-configuration'),
                 status: 'info',
@@ -518,7 +518,7 @@ function Checkout() {
         })
         .catch(() => {
           setLoader('plan', false);
-          toast({
+          createToast({
             position: 'top',
             title: t('alert-message:no-plan-configuration'),
             status: 'info',
@@ -732,7 +732,7 @@ function Checkout() {
             .then((resp) => {
               const data = resp?.data;
               if (data === undefined) {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'info',
                   title: t('signup:alert-message.email-already-sent'),
@@ -740,7 +740,7 @@ function Checkout() {
                   duration: 6000,
                 });
               } else {
-                toast({
+                createToast({
                   position: 'top',
                   status: 'success',
                   title: t('signup:alert-message.email-sent-to', { email: data?.email }),

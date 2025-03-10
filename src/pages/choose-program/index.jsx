@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import {
-  Flex, Box, Button, useToast, Skeleton, useColorModeValue,
+  Flex, Box, Button, Skeleton, useColorModeValue,
 } from '@chakra-ui/react';
 import useTranslation from 'next-translate/useTranslation';
 import getT from 'next-translate/getT';
@@ -30,6 +30,7 @@ import SupportSidebar from '../../common/components/SupportSidebar';
 import Feedback from '../../common/components/Feedback';
 import axios from '../../axios';
 import LanguageSelector from '../../common/components/LanguageSelector';
+import useCustomToast from '../../common/hooks/useCustomToast';
 
 export const getStaticProps = async ({ locale, locales }) => {
   const t = await getT(locale, 'choose-program');
@@ -73,7 +74,7 @@ function chooseProgram() {
     data: [],
   });
   const { isAuthenticated, user, updateProfile } = useAuth();
-  const toast = useToast();
+  const { createToast } = useCustomToast({ toastId: 'invitation-error-accepted' });
   const commonStartColor = useColorModeValue('gray.300', 'gray.light');
   const commonEndColor = useColorModeValue('gray.400', 'gray.400');
   const { hexColor } = useStyle();
@@ -347,7 +348,7 @@ function chooseProgram() {
         ...pendingProfileAcademies,
       ]);
     } catch (e) {
-      toast({
+      createToast({
         title: t('alert-message:something-went-wrong-with', { property: 'Admissions' }),
         status: 'error',
         duration: 5000,
@@ -378,14 +379,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted-cohort', { cohortName }),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -394,7 +395,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
@@ -428,14 +429,14 @@ function chooseProgram() {
         invList.splice(invitationIndex, 1);
         setInvites(invList);
 
-        toast({
+        createToast({
           title: t('alert-message:invitation-accepted'),
           status: 'success',
           duration: 9000,
           isClosable: true,
         });
       } else {
-        toast({
+        createToast({
           title: t('alert-message:invitation-error'),
           status: 'error',
           duration: 5000,
@@ -444,7 +445,7 @@ function chooseProgram() {
       }
     } catch (e) {
       console.log(e);
-      toast({
+      createToast({
         title: t('alert-message:invitation-error'),
         status: 'error',
         duration: 5000,
