@@ -34,10 +34,11 @@ export const processPlans = (data, {
     try {
       const slug = encodeURIComponent(data?.slug);
       const resp = await bc.payment().getPlanProps(slug);
+      console.log(resp?.data);
       if (!resp) {
         throw new Error('The plan does not exist');
       }
-      const planPropsData = resp?.data;
+      const planPropsData = Array.isArray(translations.checkout_featured_info(data?.slug)) ? translations.checkout_featured_info(data?.slug) : resp?.data;
       const owner = data?.owner;
       const existsAmountPerHalf = data?.price_per_half > 0;
       const existsAmountPerMonth = data?.price_per_month > 0;
@@ -64,7 +65,7 @@ export const processPlans = (data, {
       const relevantInfo = {
         plan_slug: singlePlan?.slug,
         currency: singlePlan?.currency,
-        featured_info: planPropsData || [],
+        featured_info: planPropsData,
         trial_duration: singlePlan?.trial_duration || 0,
         trial_duration_unit: singlePlan?.trial_duration_unit || '',
         planType,
@@ -239,7 +240,7 @@ export const generatePlan = async (planSlug, translationsObj) => {
  * @param {Function} t - The translation function
  * @returns {object} - The translations object
  */
-export const getTranslations = (t = () => {}) => {
+export const getTranslations = (t = () => { }) => {
   const translations = {
     one_payment: t('signup:one_payment'),
     free_trial: t('signup:free_trial'),
@@ -271,6 +272,7 @@ export const getTranslations = (t = () => {}) => {
     quarterly_payment_description: t('signup:quarterly_payment_description'),
     half_yearly_payment_description: t('signup:half_yearly_payment_description'),
     yearly_payment_description: t('signup:yearly_payment_description'),
+    checkout_featured_info: (planSlug) => t(`signup:custom-plans-pricing.${planSlug}.checkout_features`, {}, { returnObjects: true }),
     financing_description: (price, months) => t('signup:financing_many_months_description', { monthly_price: price, many_months: months }),
     monthly: t('signup:info.monthly'),
     quarterly: t('signup:info.quarterly'),

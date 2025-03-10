@@ -30,98 +30,50 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
 
-  console.log('item', item);
-
   const utilProps = {
-    already_have_it: t('pricing.already-have-plan'),
-
     custom: {
-      type: item?.type,
-      hookMessage: item?.title,
-      heading_description: item?.description,
-      service_items: item?.service_items,
-      added_features: item?.added_features,
-      title: item?.title,
-      description: item?.['sub-description'],
       color: item?.featured_card ? 'white' : hexColor.black,
       featured: item?.featured_card?.color || '',
       border: item?.featured_card?.color || hexColor.lightColor,
-      button: {
-        variant: item?.button?.variant || 'default',
-        color: item?.button?.color || '#fff',
-        background: item?.button?.background || hexColor.blueDefault,
-        title: item?.button?.title || item?.button,
-      },
     },
-
     bootcamp: {
-      type: item?.type,
-      hookMessage: item?.description,
-      service_items: item?.service_items,
-      title: item?.title,
-      description: item?.['sub-description'],
       color: hexColor.black,
       featured: '',
       border: hexColor.lightColor,
-      button: {
-        variant: 'default',
-        color: '#fff',
-        background: hexColor.blueDefault,
-        title: item?.button,
-      },
     },
-
-    // basic
     basic: {
-      type: t('pricing.basic-plan.type'),
-      hookMessage: t('pricing.basic-plan.hook-message'),
-      title: t('pricing.basic-plan.title'),
-      description: t('pricing.basic-plan.description'),
-      service_items: t('pricing.basic-plan.service_items', {}, { returnObjects: true }),
-      featured_info: t('pricing.basic-plan.featured_info', {}, { returnObjects: true }),
       color: hexColor.black,
       featured: '',
       border: hexColor.lightColor,
-      button: {
-        variant: 'default',
-        color: 'white',
-        borderColor: 'blue.default',
-        background: 'blue.default',
-        title: t('pricing.basic-plan.button-title'),
-      },
     },
-
-    // premium
     premium: {
-      type: t('pricing.premium-plan.type'),
-      hookMessage: t('pricing.premium-plan.hook-message'),
-      title: t('pricing.premium-plan.title'),
-      description: t('pricing.premium-plan.description'),
-      service_items: t('pricing.premium-plan.service_items', {}, { returnObjects: true }),
-      featured_info: t('pricing.premium-plan.featured_info', {}, { returnObjects: true }),
       color: 'white',
       featured: courseCoupon ? hexColor.green : hexColor.blueDefault,
       border: isFetching ? hexColor.lightColor : premiumColor(),
-      button: {
-        variant: 'default',
-        color: hexColor.black,
-        borderColor: 'white',
-        background: featuredCard.background,
-        title: t('pricing.premium-plan.button-title'),
-      },
     },
   };
+
   const viewProps = item?.price > 0 ? utilProps.premium : (utilProps?.[item?.planType] || utilProps.basic);
-  const featuredInfo = item?.featured_info ? item?.featured_info : viewProps.featured_info;
-  const isOriginalPlan = item?.planType === 'original';
   const color = viewProps?.color;
   const border = viewProps?.border;
   const featured = viewProps?.featured;
+  const featuredInfo = item?.featured_info;
+  const serviceItems = item?.service_items;
+  const hookMessage = item?.title;
+  const addedFeatures = item?.added_features;
+  const headingDescription = item?.description;
+  const isOriginalPlan = item?.planType === 'original';
   const existsOptionList = item?.optionList?.length > 1;
   const manyMonths = selectedFinancing?.how_many_months || item?.optionList?.[0]?.how_many_months;
   const isPayable = item?.price > 0;
   const isTotallyFree = item?.type === 'FREE';
   const alreadyHaveIt = relatedSubscription?.plans?.[0]?.slug === item?.plan_slug;
+  const buttonProps = {
+    variant: item?.button?.variant || 'default',
+    color: item?.button?.color || '#fff',
+    background: item?.button?.background || hexColor.blueDefault,
+    title: item?.button?.title || item?.button || t('pricing.premium-plan.button.title'),
+  };
 
   const handlePlan = () => {
     const langPath = lang === 'en' ? '' : `/${lang}`;
@@ -140,6 +92,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       }
     }
   };
+
   const toggleAccordion = () => setAccordionState(!accordionState);
   const sortPriority = (a, b) => a.sort_priority - b.sort_priority;
 
@@ -207,9 +160,18 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
           </Box>
         </Box>
       )}
-      <Flex height="auto" position="relative" padding="8px" paddingTop={discountApplied && '14px'} flexDirection="column" gridGap="16px" background={isFetching ? hexColor.lightColor : featured} borderRadius="8px 8px 0 0">
+      <Flex
+        height="auto"
+        position="relative"
+        padding="8px"
+        paddingTop={discountApplied && '14px'}
+        flexDirection="column"
+        gridGap="16px"
+        background={isFetching ? hexColor.lightColor : featured}
+        borderRadius="8px 8px 0 0"
+      >
         <Text fontSize="18px" lineHeight="21px" height="auto" fontWeight={700} color={color} textAlign="center">
-          {viewProps.hookMessage}
+          {hookMessage}
         </Text>
         <Box>
           {!isBootcampOrCustomType ? (
@@ -258,7 +220,15 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                   {isFetching ? (
                     <Skeleton height="48px" margin="0.85rem auto 1.4rem auto" width="10rem" borderRadius="4px" />
                   ) : (
-                    <Box color={color} width={(isPayable || !isTotallyFree) ? 'auto' : '80%'} fontFamily="Space Grotesk Variable" margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'} fontSize={isPayable ? 'var(--heading-xl)' : '38px'} fontWeight={700} textAlign="center">
+                    <Box
+                      color={color}
+                      width={(isPayable || !isTotallyFree) ? 'auto' : '80%'}
+                      fontFamily="Space Grotesk Variable"
+                      margin={(!isPayable && !isTotallyFree) ? '0' : '2rem auto 2.5rem auto'}
+                      fontSize={isPayable ? 'var(--heading-xl)' : '38px'}
+                      fontWeight={700}
+                      textAlign="center"
+                    >
                       {isPayable && `$${item?.price}`}
                       {isTotallyFree && item?.period_label}
                       {!isPayable && !isTotallyFree && item?.priceText}
@@ -269,12 +239,34 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             </>
           ) : (
             <>
-              <Flex alignItems="center" justifyContent="center" flexDirection="column" margin={item?.planType.toLowerCase() === 'custom' ? '0.5rem 0 1rem 0' : '2rem 0 3rem 0'} gridGap="4px">
-                <Text lineHeight="48px" fontFamily="Space Grotesk Variable" color={color} fontSize="38px" fontWeight={item?.planType.toLowerCase() === 'custom' ? 500 : 700} textAlign="center">
+              <Flex
+                alignItems="center"
+                justifyContent="center"
+                flexDirection="column"
+                margin={item?.planType.toLowerCase() === 'custom' ? '0.5rem 0 1rem 0' : '2rem 0 3rem 0'}
+                gridGap="4px"
+              >
+                <Text
+                  lineHeight="48px"
+                  fontFamily="Space Grotesk Variable"
+                  color={color}
+                  fontSize="38px"
+                  fontWeight={item?.planType.toLowerCase() === 'custom' ? 500 : 700}
+                  textAlign="center"
+                >
                   {item?.planType.toLowerCase() === 'custom' ? item.price : item.ask}
                 </Text>
                 {item?.planType.toLowerCase() === 'custom' && item.description && (
-                  <Text color={color} fontSize="14px" lineHeight="16.8px" fontWeight="400" fontFamily="Lato" textAlign="center">{viewProps.heading_description}</Text>
+                  <Text
+                    color={color}
+                    fontSize="14px"
+                    lineHeight="16.8px"
+                    fontWeight="400"
+                    fontFamily="Lato"
+                    textAlign="center"
+                  >
+                    {headingDescription}
+                  </Text>
                 )}
               </Flex>
             </>
@@ -285,7 +277,7 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             <>
               {!isBootcampOrCustomType && item?.title && !isTotallyFree && (
                 <Text color={color} fontSize="14px" fontWeight={700} textAlign="center" padding="10px 0">
-                  {isPayable ? selectedFinancing?.title || item?.title : item?.period_label}
+                  {selectedFinancing?.title || item?.period_label}
                 </Text>
               )}
             </>
@@ -293,15 +285,29 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
           {(!isBootcampOrCustomType && alreadyHaveIt) ? (
             <Text width="100%" textAlign="center" size="17px" fontWeight={700} padding="7.3px 24px">
-              {utilProps.already_have_it}
+              {t('pricing.already-have-plan')}
             </Text>
           ) : (
             <>
-              <Button isLoading={isFetching} margin={isBootcampOrCustomType ? '16px auto auto' : '0 auto'} variant={viewProps.button.variant} color={viewProps.button.color} borderColor={viewProps.button.borderColor} onClick={handlePlan} display="flex" gridGap="10px" background={viewProps.button.background} fontSize="17px" width="100%" textAlign="center" padding="0 24px">
+              <Button
+                isLoading={isFetching}
+                margin={isBootcampOrCustomType ? '16px auto auto' : '0 auto'}
+                variant={buttonProps.variant}
+                color={buttonProps.color}
+                borderColor={buttonProps.borderColor}
+                onClick={handlePlan}
+                display="flex"
+                gridGap="10px"
+                background={buttonProps.background}
+                fontSize="17px"
+                width="100%"
+                textAlign="center"
+                padding="0 24px"
+              >
                 {!isOriginalPlan && !isBootcampOrCustomType && (
-                  <Icon icon="graduationCap" color={viewProps.button.color} width="24px" height="24px" />
+                  <Icon icon="graduationCap" color={buttonProps.color} width="24px" height="24px" />
                 )}
-                {viewProps.button.title}
+                {buttonProps.title}
               </Button>
             </>
           )}
@@ -328,7 +334,6 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
                     <Box borderLeft="1px solid" height="40px" padding="0 10px">
                       <AccordionIcon height="100%" />
                     </Box>
-
                   </AccordionButton>
                 </h3>
                 <AccordionPanel p={0} border={0}>
@@ -371,15 +376,24 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
       <Flex padding="16px" flexDirection="column">
         <Flex gridGap="8px" flexDirection="column">
           <Flex gap={2} alignItems="center">
-            {viewProps.service_items.title_icon && <Icon icon={viewProps.service_items.title_icon} fill={hexColor.blueDefault} color={viewProps.service_items.title_color || hexColor.blueDefault} margin="5px 0 0 0" width="30px" height="30px" />}
-            <Text color={viewProps.service_items.title_color || hexColor.fontColor2} size={viewProps.service_items.title_size || 'l'} fontWeight={700}>
-              {viewProps.service_items.title}
+            {serviceItems?.title_icon && (
+              <Icon
+                icon={serviceItems?.title_icon}
+                fill={hexColor.blueDefault}
+                color={serviceItems?.title_color || hexColor.blueDefault}
+                margin="5px 0 0 0"
+                width="30px"
+                height="30px"
+              />
+            )}
+            <Text color={serviceItems?.title_color || hexColor.fontColor2} size={serviceItems?.title_size || 'l'} fontWeight={700}>
+              {serviceItems?.title}
             </Text>
           </Flex>
-          {viewProps.service_items.items.map((serviceItem) => (
-            <Text key={serviceItem.label} gap="5px" display="flex" alignItems="center" size="14px" width="100%">
-              {serviceItem.icon === null ? '' : <Icon icon="checked2" color={hexColor.blueDefault} width="15px" height="10px" />}
-              {serviceItem.label}
+          {serviceItems?.items?.map((serviceItem) => (
+            <Text key={serviceItem?.label} gap="5px" display="flex" alignItems="center" size="14px" width="100%">
+              {serviceItem?.icon === null ? '' : <Icon icon="checked2" color={hexColor.blueDefault} width="15px" height="10px" />}
+              {serviceItem?.label}
             </Text>
           ))}
         </Flex>
@@ -396,12 +410,27 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
             );
           }) : (
             <>
-              {featuredInfo.sort(sortPriority).map((info) => info?.service?.slug && (
-                <Box key={info.service.slug} display="flex" gridGap="8px">
+              {featuredInfo?.sort(sortPriority)?.map((info) => info?.service?.slug && (
+                <Box key={info?.service?.slug} display="flex" gridGap="8px">
                   {info?.service?.icon_url
-                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                    : (
-                      <Icon icon={info.service.icon} fill={hexColor.blueDefault} color={info.service.icon_color || hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                    ? (
+                      <Image
+                        src={info.service.icon_url}
+                        width={16}
+                        height={16}
+                        style={{ objectFit: 'cover' }}
+                        alt="Icon for service item"
+                        margin="5px 0 0 0"
+                      />
+                    ) : (
+                      <Icon
+                        icon={info.service.icon}
+                        fill={hexColor.blueDefault}
+                        color={info.service.icon_color || hexColor.blueDefault}
+                        width="25px"
+                        height="22px"
+                        margin="5px 0 0 0"
+                      />
                     )}
                   <Box>
                     <Text size="16px" fontWeight={700} textAlign="left">
@@ -422,14 +451,29 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
         </Flex>
 
         <Accordion display={{ base: 'flex', md: 'none' }} allowMultiple flexDirection="column" gridGap="2px" mt="16px">
-          {featuredInfo.sort(sortPriority).map((info) => info.service.slug && (
-            <AccordionItem key={`responsive-${info.service.slug}`} display="flex" flexDirection="column" gridGap="2px" border={0}>
+          {featuredInfo?.sort(sortPriority)?.map((info) => info?.service?.slug && (
+            <AccordionItem key={`responsive-${info?.service?.slug}`} display="flex" flexDirection="column" gridGap="2px" border={0}>
               <AccordionButton padding="8px 0">
                 <Box display="flex" gridGap="10px" flex="1" textAlign="left">
                   {info?.service?.icon_url
-                    ? <Image src={info.service.icon_url} width={16} height={16} style={{ objectFit: 'cover' }} alt="Icon for service item" margin="5px 0 0 0" />
-                    : (
-                      <Icon icon={info?.service?.icon} fill={hexColor.blueDefault} color={hexColor.blueDefault} width="25px" height="22px" margin="5px 0 0 0" />
+                    ? (
+                      <Image
+                        src={info?.service?.icon_url}
+                        width={16}
+                        height={16}
+                        style={{ objectFit: 'cover' }}
+                        alt="Icon for service item"
+                        margin="5px 0 0 0"
+                      />
+                    ) : (
+                      <Icon
+                        icon={info?.service?.icon}
+                        fill={hexColor.blueDefault}
+                        color={hexColor.blueDefault}
+                        width="25px"
+                        height="22px"
+                        margin="5px 0 0 0"
+                      />
                     )}
                   <Text size="16px" fontWeight={700} textAlign="left">
                     {info?.service?.title || slugToTitle(info?.service?.slug)}
@@ -452,11 +496,11 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
           ))}
         </Accordion>
       </Flex>
-      {viewProps.added_features && (
+      {addedFeatures && (
         <Flex flexDirection="column" borderBottomRadius="11px" background={backgroundColor6} padding="16px" gap="16px">
           <Text size="18px" lineHeight="21.6px" fontWeight="400">{t('added-features-title')}</Text>
           <Flex direction="column" gap="8px">
-            {viewProps.added_features.items?.map((addedFeatureItem) => (
+            {addedFeatures.items?.map((addedFeatureItem) => (
               <Flex justifyContent="space-between" width="100%" alignItems="center">
                 <Text fontSize="14px">{addedFeatureItem.label}</Text>
                 <Text fontSize="14px">{addedFeatureItem.price}</Text>

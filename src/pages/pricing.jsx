@@ -89,7 +89,6 @@ function PricingView() {
 
       const isValidCustomFeatures = typeof customFeatures !== 'string';
       const showedMktInfo = isValidCustomFeatures ? customFeatures : defaultUsedMktInfo;
-      console.log(plan);
 
       return {
         ...plan,

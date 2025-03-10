@@ -304,9 +304,13 @@
     ],
     "basic-plan": {
       "type": "Fly Solo",
+      "title": "Try the self-paced experience for free and decide later",
       "hook-message": "Try the self-paced experience for free and decide later",
       "description": "Start learning and discover our amazing content and benefits",
-      "button-title": "Start for free",
+      "button": {
+        "variant": "default",
+        "title": "Start for free"
+      },
       "service_items": {
         "items": [
           {
@@ -358,9 +362,15 @@
     },
     "premium-plan": {
       "type": "Live & with feedback",
+      "title": "Learn at your own pace with feedback and live events",
       "hook-message": "Learn at your own pace with feedback and live events",
       "description": "All the content you need to become a hireable developer",
-      "button-title": "Get Plan",
+      "button": {
+        "variant": "default",
+        "color": "#000000",
+        "background": "#fff",
+        "title": "Get Plan"
+      },
       "service_items": {
         "title": "Everything on Fly Solo plus...",
         "items": [
@@ -427,9 +437,12 @@
   "custom-plans-pricing": {
     "free-trial-full-stack-development": {
       "type": "Fly Solo",
-      "hook-message": "Try the self-paced experience for free and decide later",
+      "title": "Try the self-paced experience for free and decide later",
       "description": "Start learning and discover our amazing content and benefits",
-      "button-title": "Start for free",
+      "button": {
+        "variant": "default",
+        "title": "Start for free"
+      },
       "service_items": {
         "items": [
           {
@@ -477,18 +490,37 @@
             }
           ]
         }
+      ],
+      "checkout_features": [
+        {
+          "features": [
+            {
+              "description": "Get personalized mentoring sessions with our expert instructors",
+              "one_line_desc": "Get mentoring sessions",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "geekpal-mentorship-session"
+          }
+        }
       ]
     },
     "full-stack-development": {
       "type": "Live & with feedback",
-      "hook-message": "Learn at your own pace with feedback and live events",
+      "title": "Learn at your own pace with feedback and live events",
       "description": "All the content you need to become a hireable developer",
-      "button-title": "Get Plan",
+      "button": {
+        "variant": "default",
+        "color": "#000000",
+        "background": "#fff",
+        "title": "Get Plan"
+      },
       "service_items": {
         "title": "Everything on Fly Solo plus...",
         "items": [
           {
-            "label": "Unlimited Live workshops"
+            "label": "Unique workshops every week"
           },
           {
             "label": "4 One-on-one Mentoring sessions"
@@ -543,6 +575,80 @@
               "description": "Earn verifiable certificates as you complete each of the courses."
             }
           ]
+        }
+      ],
+      "checkout_features": [
+        {
+          "features": [
+            {
+              "description": "Try our internally trained AI models which can constantly review your code and give you feedback, advice as you code, and more.",
+              "one_line_desc": "Try our AI interaction",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "ai-interaction"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to LearnPack tests to validate your knowledge",
+              "one_line_desc": "Access to LearnPack tests",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "learnpack-test"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Get personalized mentoring sessions with our expert instructors",
+              "one_line_desc": "Get mentoring sessions",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "geekpal-mentorship-session"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to unlimited technical and career workshops",
+              "one_line_desc": "Access to unlimited workshops",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "join-workshops"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Join a community of more than 5000 developers",
+              "one_line_desc": "Join more than 5000 developers",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "join-the-4geeks-community"
+          }
+        },
+        {
+          "features": [
+            {
+              "description": "Access to projects with real life challenges",
+              "one_line_desc": "Access to projects",
+              "title": null
+            }
+          ],
+          "service": {
+            "slug": "projects-with-real-life-challenges"
+          }
         }
       ]
     }
