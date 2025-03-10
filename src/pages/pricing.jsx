@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import { Box, Flex, Container, Button, Img, Link, Image } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -50,10 +50,11 @@ function PricingView() {
     courses: true,
     selectedPlan: true,
   });
+  const router = useRouter();
   const queryCourse = getQueryString('course');
   const queryPlan = getQueryString('plan');
-  const courseFormated = (queryCourse && encodeURIComponent(queryCourse)) || '';
-  const planFormated = (queryPlan && encodeURIComponent(queryPlan)) || '';
+  const courseFormated = useMemo(() => (queryCourse && encodeURIComponent(queryCourse)) || '', [queryCourse]);
+  const planFormated = useMemo(() => (queryPlan && encodeURIComponent(queryPlan)) || '', [queryPlan]);
   const [selectedPlanData, setSelectedPlanData] = useState({});
   const [selectedCourseData, setSelectedCourseData] = useState({});
   const [allFeaturedPlansSelected, setAllFeaturedPlansSelected] = useState([]);
@@ -63,39 +64,38 @@ function PricingView() {
     monthly: [],
     yearly: [],
   });
-  const router = useRouter();
+
   const defaultMonthlyPlans = t('signup:pricing.monthly-plans', {}, { returnObjects: true });
   const defaultYearlyPlans = t('signup:pricing.yearly-plans', {}, { returnObjects: true });
   const selectedPlanListExists = selectedPlanData?.planList?.length > 0;
 
-  const allDefaultPlansList = [
+  const allDefaultPlansList = useMemo(() => [
     ...defaultMonthlyPlans || [],
     ...defaultYearlyPlans || [],
-  ];
-  const freeFeatures = t('signup:pricing.basic-plan.featured_info', {}, { returnObjects: true });
-  const paymentFeatures = t('signup:pricing.premium-plan.featured_info', {}, { returnObjects: true });
+  ], [defaultMonthlyPlans, defaultYearlyPlans]);
 
+  const defaultFreeMktInfo = t('signup:pricing.basic-plan', {}, { returnObjects: true });
+  const defaultPaymentMktInfo = t('signup:pricing.premium-plan', {}, { returnObjects: true });
   const bootcampInfo = t('common:bootcamp', {}, { returnObjects: true });
-
   const planTranslations = getTranslations(t);
   const planSlug = selectedCourseData?.plan_slug || planFormated;
 
-  const insertFeaturedInfo = (plans) => {
-    if (plans?.length > 0) {
-      return plans?.map((plan) => {
-        if (plan?.price > 0) {
-          return {
-            ...plan,
-            featured_info: paymentFeatures,
-          };
-        }
-        return {
-          ...plan,
-          featured_info: freeFeatures,
-        };
-      });
-    }
-    return [];
+  const insertFeaturedInfo = async (plans) => {
+    if (!plans?.length) return [];
+
+    return plans.map((plan) => {
+      const customFeatures = t(`signup:custom-plans-pricing.${plan?.plan_slug}`, {}, { returnObjects: true });
+      const defaultUsedMktInfo = plan?.price > 0 ? defaultPaymentMktInfo : defaultFreeMktInfo;
+
+      const isValidCustomFeatures = typeof customFeatures !== 'string';
+      const showedMktInfo = isValidCustomFeatures ? customFeatures : defaultUsedMktInfo;
+      console.log(plan);
+
+      return {
+        ...plan,
+        ...showedMktInfo,
+      };
+    });
   };
 
   const formatPlans = (allPlansList, hideYearlyOption = false) => {
@@ -111,13 +111,12 @@ function PricingView() {
       ...initialFinancingOption,
       optionList: payablePlanList,
     };
-    console.log('todos los planes', allPlansList);
+
     if (freeTierList?.length > 0) {
       return freeTierList.concat(financingData);
     }
     if (financingList?.length > 0 && freeTierList?.length === 0) {
-      const newPlanlist = allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
-      return newPlanlist;
+      return allPlansList?.filter((p) => p?.period !== 'FINANCING').concat(financingData);
     }
     return allPlansList;
   };
@@ -131,16 +130,10 @@ function PricingView() {
 
     await getSelfAppliedCoupon(suggestedPlan.slug || originalPlan.slug);
 
-    const formatedPlanList = allPlanList?.length > 0
-      ? insertFeaturedInfo(formatPlans(allPlanList, true))
-      : [];
+    const formatedPlanList = allPlanList?.length > 0 ? await insertFeaturedInfo(formatPlans(allPlanList, true)) : [];
 
-    const originalPlanWithFeaturedInfo = originalPlan?.plans?.length > 0
-      ? insertFeaturedInfo(formatPlans(originalPlan?.plans))
-      : [];
-    const suggestedPlanWithFeaturedInfo = suggestedPlan?.plans?.length > 0
-      ? insertFeaturedInfo(formatPlans(suggestedPlan?.plans))
-      : [];
+    const originalPlanWithFeaturedInfo = originalPlan?.plans?.length > 0 ? await insertFeaturedInfo(formatPlans(originalPlan?.plans)) : [];
+    const suggestedPlanWithFeaturedInfo = suggestedPlan?.plans?.length > 0 ? await insertFeaturedInfo(formatPlans(suggestedPlan?.plans)) : [];
 
     const filteredPlanList = existsFreeTier
       ? formatedPlanList
@@ -149,10 +142,7 @@ function PricingView() {
         ...suggestedPlanWithFeaturedInfo || [],
       ];
 
-    const monthlyAndOtherOptionPlans = filteredPlanList?.length > 0
-      ? filteredPlanList.filter((p) => p?.period !== 'YEAR')
-      : [];
-
+    const monthlyAndOtherOptionPlans = filteredPlanList?.filter((p) => p?.period !== 'YEAR') || [];
     const yearlyPlans = filteredPlanList?.length > 0
       ? getYearlyPlans(originalPlanWithFeaturedInfo, suggestedPlanWithFeaturedInfo, filteredPlanList)
       : [];
@@ -166,12 +156,38 @@ function PricingView() {
     return data;
   };
 
-  const { isLoading, status, data: planData } = useQuery({
+  const { isLoading, status, data: planData, isFetching: isQueryFetching } = useQuery({
     queryKey: ['suggestedPlan', { planSlug }],
     queryFn: handleFetchPlan,
     enabled: !!planSlug,
     staleTime: Infinity,
   });
+
+  useEffect(() => {
+    if (planSlug) {
+      setIsFetching((prev) => ({ ...prev, selectedPlan: true }));
+      setTimeout(async () => {
+        const updatedMonthlyPlans = await insertFeaturedInfo(paymentTypePlans.monthly);
+        const updatedYearlyPlans = await insertFeaturedInfo(paymentTypePlans.yearly);
+        setPaymentTypePlans((prev) => ({
+          ...prev,
+          monthly: updatedMonthlyPlans,
+          yearly: updatedYearlyPlans,
+        }));
+        setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
+      }, 500);
+    }
+  }, [lang]);
+
+  useEffect(() => {
+    if (isLoading || isQueryFetching) {
+      setIsFetching((prev) => ({ ...prev, selectedPlan: true }));
+    }
+    if (!isLoading && !isQueryFetching && status === 'success' && planData) {
+      setSelectedPlanData(planData);
+      setIsFetching((prev) => ({ ...prev, selectedPlan: false }));
+    }
+  }, [status, isLoading, isQueryFetching, planData?.title]);
 
   useEffect(() => {
     const hasActiveBootcamp = cohorts.some((cohort) => !cohort.available_as_saas
@@ -202,26 +218,12 @@ function PricingView() {
         }
       })
       .finally(() => {
-        setIsFetching({
-          ...isFetching,
-          courses: false,
-        });
+        setIsFetching((prev) => ({ ...prev, courses: false }));
       });
   }, [lang]);
 
-  useEffect(() => {
-    if (status === 'success' && planData) {
-      setSelectedPlanData(planData);
-      setIsFetching({
-        ...isFetching,
-        selectedPlan: false,
-      });
-    }
-  }, [status, isLoading, planData?.title]);
-
   const verifyIfUserAlreadyHaveThisPlan = (userPlan, featuredPlans) => featuredPlans.some(
     (ftPlan) => userPlan?.plans[0]?.slug === ftPlan?.plan_slug,
-    // && userPlan?.invoices?.[0]?.amount === ftPlan?.price,
   );
 
   const fetchMySubscriptions = async () => {
@@ -243,23 +245,24 @@ function PricingView() {
       );
       setRelatedSubscription(findPurchasedPlan);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
-  // cuando se trate de un plan ocultar titulo y dejar al lado derecho el boton de monthly y yearly
   useEffect(() => {
     if (isAuthenticated) {
       fetchMySubscriptions();
     }
   }, [isAuthenticated, allFeaturedPlansSelected]);
 
-  const paymentOptions = {
+  const paymentOptions = useMemo(() => ({
     monthly: selectedPlanListExists ? paymentTypePlans.monthly : defaultMonthlyPlans,
     yearly: selectedPlanListExists ? paymentTypePlans.yearly : defaultYearlyPlans,
-  };
+  }), [selectedPlanListExists, paymentTypePlans, defaultMonthlyPlans, defaultYearlyPlans]);
+
   const isAbleToShowPrices = (paymentOptions?.monthly?.length > 0 || paymentOptions?.yearly?.length > 0) && (courseFormated || planFormated);
-  const switcherInfo = [
+
+  const switcherInfo = useMemo(() => [
     {
       type: 'monthly',
       name: t('signup:info.monthly'),
@@ -270,11 +273,10 @@ function PricingView() {
       name: t('signup:info.yearly'),
       exists: paymentOptions.yearly.length > 0,
     },
-  ];
+  ], [paymentOptions, t]);
+
   const existentOptions = switcherInfo.filter((l) => l.exists);
   const existsSubscriptionMehtod = paymentTypePlans.hasSubscriptionMethod;
-
-  console.log(paymentOptions);
 
   return (
     <Container maxWidth="100%" background={hexColor.featuredColor3} paddingY="4rem">

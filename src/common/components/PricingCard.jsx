@@ -30,6 +30,8 @@ export default function PricingCard({ item, courseData, isFetching, relatedSubsc
 
   const premiumColor = () => (courseCoupon ? hexColor.green : hexColor.blueDefault);
 
+  console.log('item', item);
+
   const utilProps = {
     already_have_it: t('pricing.already-have-plan'),
 
